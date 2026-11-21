@@ -1,0 +1,84 @@
+---
+layout: post
+title: "Javassist and code instrumentation"
+date: 2016-04-04T05:05:00.001+02:00
+permalink: /2016/04/javassist-and-code-instrumentation.html
+blogger_id: "9042134654349542173"
+tags: ["code", "instrumentation", "javaagent"]
+---
+Looking for a way to trace an Error in a static initializer block, I have stumbled upon this <a href="http://stackoverflow.com/a/2211150/651288">http://stackoverflow.com/a/2211150/651288</a> example of how to dynamically redefine an ExceptionInInitializerError :
+
+
+<pre class="brush: java">
+import java.lang.instrument.*;
+import javassist.*;
+import java.io.*;
+import java.security.*;
+
+public class InitializerLoggingAgent implements ClassFileTransformer {
+  public static void premain(String agentArgs, Instrumentation inst) {
+    inst.addTransformer(new InitializerLoggingAgent(), true);
+  }
+
+  private final ClassPool pool = new ClassPool(true);
+
+  public byte[] transform(ClassLoader loader, String className, Class classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer)  {
+    try {
+      if (className.equals("java/lang/ExceptionInInitializerError")) {
+        CtClass klass = pool.makeClass(new ByteArrayInputStream(classfileBuffer));
+        CtConstructor[] ctors = klass.getConstructors();
+        for (int i = 0; i < ctors.length; i++) {
+          ctors[i].insertAfter("this.printStackTrace();");
+        }
+        return klass.toBytecode();
+      } else {
+        return null;
+      }
+    } catch (Throwable t) {
+      return null;
+    }
+  }
+}
+</pre>
+
+
+<br/>
+<a href="http://jboss-javassist.github.io/javassist/tutorial/tutorial.html">http://jboss-javassist.github.io/javassist/tutorial/tutorial.html</a>
+
+
+
+<br/>
+Download javassist zip from here <a href="http://jboss-javassist.github.io/javassist/">http://jboss-javassist.github.io/javassist/</a> and explode it 
+
+<br/>
+
+Download Ant (Ant? yes, Ant!) from here <a href="https://ant.apache.org/bindownload.cgi">https://ant.apache.org/bindownload.cgi</a>
+
+<br/>
+
+Build javassist source and put the javassist.jar file in the lib folder of your project, add it to build classpath.
+
+<br/>
+
+Follow instructions to jar your JavaAgent with a MANIFEST.MF containing
+<br/>
+<pre>
+Manifest-Version: 1.0
+Premain-Class: InitializerLoggingAgent
+Can-Retransform-Classes: true
+</pre>
+<br/>
+
+run java -javaagent:agentjar.jar MainClass
+
+
+<br/>
+
+It works! Your Error is intercepted and stacktrace is printed! No more silently failing static initializers!
+<br/>
+
+If you forget to add "Can-Retransform-Classes: true" in the MANIFEST.MF, you get the infamous "java.lang.UnsupportedOperationException: adding retransformable transformers is not supported in this environment"
+
+<br/>
+
+

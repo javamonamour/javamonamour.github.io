@@ -1,0 +1,36 @@
+---
+layout: post
+title: "ORA-24134 and ORA-12015, on Materialized View"
+date: 2012-06-29T18:52:00.000+02:00
+permalink: /2012/06/ora-24134-and-ora-12015-on-materialized.html
+blogger_id: "6108599796176773497"
+tags: ["oracledb"]
+---
+If you create a Materialized View:<br />
+<br />
+CREATE MATERIALIZED VIEW WLI_QS_REPORT_MAT_VIEW <b>refresh fast</b> as select * from WLI_QS_REPORT_ATTRIBUTE;<br />
+<br />
+you get a <br />
+"ORA-23413: table "CMDB"."WLI_QS_REPORT_ATTRIBUTE" does not have a materialized view log"<br />
+<br />
+so you do:<br />
+<br />
+create materialized view log on WLI_QS_REPORT_ATTRIBUTE;<br />
+<br />
+and now your MATERIALIZED VIEW <b>refresh fast</b> can be created.<br />
+<br />
+Suppose now you create a VIEW on WLI_QS_REPORT_ATTRIBUTE: <br />
+<br />
+create or replace view WLI_QS_REPORT_VIEW as select * from WLI_QS_REPORT_ATTRIBUTE;<br />
+<br />
+CREATE MATERIALIZED VIEW WLI_QS_REPORT_MAT_VIEW <b>refresh fast</b> as select * from WLI_QS_REPORT_VIEW;<br />
+<br />
+<br />
+you get:<br />
+ORA-12015: cannot create a fast refresh materialized view from a complex query<br />
+Reissue the command with the REFRESH FORCE or REFRESH COMPLETE option or create a simple materialized view.<br />
+<br />
+If you want to create the Materialized View Fast Refresh, you should create it directly on the table, not on a view<br />
+<br />
+<br />
+http://www.sqlsnippets.com/en/topic-12882.html

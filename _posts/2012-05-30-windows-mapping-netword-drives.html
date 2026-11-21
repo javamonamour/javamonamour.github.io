@@ -1,0 +1,27 @@
+---
+layout: post
+title: "Windows mapping network drives"
+date: 2012-05-30T13:27:00.001+02:00
+permalink: /2012/05/windows-mapping-netword-drives.html
+blogger_id: "6105030695439983074"
+tags: ["network", "windows"]
+---
+Open Windows Explorer, Tools, Map Netword Drives, <br />
+enter FOLDER (eg \\acme1999\PIPPOPPRD) and click on "Connect Using a different user name", enter username and pw<br />
+<br />
+If you get this message:<br />
+<br />
+"the network folder specified is currently mapped using a different name and pw"<br />
+<br />
+<br />
+then open a command prompt, enter<br />
+<br />
+net use<br />
+<br />
+if you see \\acme1999\PIPPOPPRD in the list, issue a<br />
+<br />
+net use \\acme1999\PIPPOPPRD /delete<br />
+<br />
+and try again<br />
+<br />
+Welcome to the wonderful world of Widows (TM).

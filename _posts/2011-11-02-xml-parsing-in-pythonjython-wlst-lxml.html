@@ -1,0 +1,61 @@
+---
+layout: post
+title: "XML parsing in Python/Jython/ WLST: lxml , libxml2 and minidom"
+date: 2011-11-02T22:00:00.001+01:00
+permalink: /2011/11/xml-parsing-in-pythonjython-wlst-lxml.html
+blogger_id: "6472958562755673599"
+tags: ["WLST", "xml"]
+---
+you have the option of using <b>libxml2</b> <a href="http://users.skynet.be/sbi/libxml-python/">http://users.skynet.be/sbi/libxml-python/</a><br />
+<br />
+but I <a href="http://stackoverflow.com/questions/8692/how-to-use-xpath-in-python">read better things</a> about <a href="http://lxml.de/">http://lxml.de/</a>. To use <b>lxml</b> you must first install http://users.skynet.be/sbi/libxml-python/.<br />
+<br />
+<br />
+To determine which version of Python you are running in WLST, do<br />
+<br />
+<i>import sys<br />
+sys.version_info</i><br />
+<br />
+for instance with WLS 10.3.5 I get:<br />
+<br />
+<i>(2, 2, 1, 'final', 0)</i><br />
+<br />
+So the most recent version of libxml2 available for Python 2.2.1 is the 2.6.9:<br />
+<br />
+<a href="http://users.skynet.be/sbi/libxml-python/libxml2-python-2.6.9.win32-py2.2.exe">http://users.skynet.be/sbi/libxml-python/libxml2-python-2.6.9.win32-py2.2.exe</a><br />
+<br />
+Anyway lxml requires Python 2.4 as a minimum, so you are screwed. In any case WLST uses Jython, not Python, so again you are screwed unless you install Python.<br />
+<br />
+<br />
+Alternatively, use <b>minidom</b> which is supported in WLST:<br />
+<i><br />
+from xml.dom.minidom import parse<br />
+dom1 = parse('ALSBCustomizationFile.xml'</i>)<br />
+<br />
+dom1 is a xml.dom.minidom.Document<br />
+<br />
+<a href="http://epydoc.sourceforge.net/stdlib/xml.dom.minidom.Document-class.html">here the javadoc</a><br />
+<br />
+then you can do:<br />
+<br />
+<i>envValueAssignments=dom1.getElementsByTagName('cus:envValueAssignments')</i><br />
+<br />
+and you get a NodeList <a href="http://docs.python.org/library/xml.dom.html">http://docs.python.org/library/xml.dom.html</a><br />
+<br />
+if you do:<br />
+<br />
+<br />
+<i>print envValueAssignments[0].__class__</i><br />
+<br />
+it says <br />
+<i>xml.dom.minidom.Element</i><br />
+whose <a href="http://epydoc.sourceforge.net/stdlib/xml.dom.minidom.Element-class.html">javadoc is here</a><br />
+<br />
+<br />
+you can also do <br />
+<br />
+<i>print envValueAssignments[0].toxml()</i><br />
+<br />
+<br />
+Honestly parsing is very painful using a DOM-based approach.<br />
+I would rather use Groovy which has got a much more intuitive semantic approach to xml parsing.

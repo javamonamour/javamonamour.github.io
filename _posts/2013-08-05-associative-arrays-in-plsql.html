@@ -1,0 +1,65 @@
+---
+layout: post
+title: "Associative Arrays in PL/SQL"
+date: 2013-08-05T16:32:00.002+02:00
+permalink: /2013/08/associative-arrays-in-plsql.html
+blogger_id: "3683690554461344151"
+tags: ["PL-SQL"]
+---
+When splitting/parsing strings in PL/SQL, using REGEXP can bee too computationally expensive. <br/>
+Parsing a CSV string can be done more effectively with SUBSTR, INSTR and associative arrays.<br/> 
+Most of my inspiration is coming from <a href="http://tonyandrews.blogspot.com/2004/10/parsing-delimited-fields-in-character.html?_sm_au_=iVVhqvqv5W75vFHF">this post</a>.
+
+<br/><br/>
+
+<pre>
+
+
+SET SERVEROUTPUT ON;
+
+DECLARE
+  TYPE MSG_LABELS_TYPE IS TABLE OF VARCHAR2(400) INDEX BY VARCHAR2(50);
+  v_delimpos1 PLS_INTEGER;
+  v_delimpos2 PLS_INTEGER;
+  p_delim1 VARCHAR2(1);
+  p_delim2 VARCHAR2(1);
+  INPUT_STRING VARCHAR2(500);
+  v_label varchar(50);
+  v_value varchar(400);
+  v_result MSG_LABELS_TYPE;
+  
+BEGIN
+  INPUT_STRING := 'InterfaceID=ACMEPIPPOConnector;TechnicalMessageID=ACMEPIPPOConnector^INVOICE^f6de3e52000001404d914d04ffff847a^7-382734;EventType=ACMEMessage For PIPPO Posted;PathOfService=ACME_CommonServices/ProxyServices/ACMECommonServices_NESOA_to_PIPPO_PS;EventOccuredOn=2013-08-05T10:22:11.765+02:00;BusinessID=7-382734;ServerName=osbpr1ms3';
+  p_delim1  := ';';
+  p_delim2  := '=';
+  INPUT_STRING := INPUT_STRING || ';';
+  v_delimpos1 := INSTR(INPUT_STRING, p_delim1);
+  while v_delimpos1 > 0 and LENGTH(INPUT_STRING) > 1
+  loop
+    v_delimpos2 := INSTR(INPUT_STRING, p_delim2);
+    v_label := SUBSTR(INPUT_STRING, 1, v_delimpos2 - 1);
+    v_value := SUBSTR(INPUT_STRING, v_delimpos2 + 1, v_delimpos1 - v_delimpos2 - 1);
+    v_result(v_label) := v_value;
+    INPUT_STRING := SUBSTR(INPUT_STRING, v_delimpos1 + 1);
+    v_delimpos1 := INSTR(INPUT_STRING, p_delim1);
+  END LOOP;
+  
+  dbms_output.put_line('InterfaceID ' || v_result('InterfaceID'));
+  dbms_output.put_line('TechnicalMessageID ' || v_result('TechnicalMessageID'));
+  dbms_output.put_line('EventType ' || v_result('EventType'));
+  dbms_output.put_line('PathOfService ' || v_result('PathOfService'));
+  dbms_output.put_line('EventOccuredOn ' || v_result('EventOccuredOn'));
+  dbms_output.put_line('BusinessID ' || v_result('BusinessID'));
+  dbms_output.put_line('ServerName ' || v_result('ServerName'));
+  
+END;
+/
+
+
+
+</pre>
+<br/><br/>
+
+More info on <a href="http://docs.oracle.com/cd/B12037_01/appdev.101/b10807/05_colls.htm">Collections here</a>.
+
+

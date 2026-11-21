@@ -1,0 +1,29 @@
+---
+layout: post
+title: "DevOps with OpenShift "
+date: 2017-08-23T18:22:00.001+02:00
+permalink: /2017/08/devops-with-openshift.html
+blogger_id: "7579716664343656189"
+tags: ["books", "openshift"]
+---
+reblogging the from the excellent friend and mentor Jan: <br />
+<a href="https://jvzoggel.com/2017/08/23/free-ebook-devops-with-openshift/">https://jvzoggel.com/2017/08/23/free-ebook-devops-with-openshift/</a> <br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="https://www.openshift.com/promotions/devops-with-openshift.html" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/2eef4283fcfc0c5a.png" width="565" height="640" data-original-width="265" data-original-height="300" /></a></div><br />
+<br />
+Also interesting the OpenShift for Developers: <br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="https://www.openshift.com/promotions/for-developers.html" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/bf2da27061844514.gif" width="488" height="640" data-original-width="180" data-original-height="236" /></a></div><br />
+<br />
+<br />
+oc project myproject<br />
+<br />
+https://github.com/devops-with-openshift/cotd<br />
+<br />
+oc new-app --name='cotd' --labels name='cotd' php~https://github.com/devopswith-openshift/cotd.git -e SELECTOR=cats<br />
+<br />
+<br />
+oc expose service cotd<br />
+<br />
+<br />
+

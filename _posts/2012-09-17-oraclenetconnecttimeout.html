@@ -1,0 +1,89 @@
+---
+layout: post
+title: "oracle.net.CONNECT_TIMEOUT"
+date: 2012-09-17T08:22:00.003+02:00
+permalink: /2012/09/oraclenetconnecttimeout.html
+blogger_id: "5358740626101130867"
+tags: ["jdbc"]
+---
+A Oracle Consultant suggested to set the property <br />
+<br />
+<b>oracle.net.CONNECT_TIMEOUT=10000</b><br />
+for every ConnectionPool<br />
+<br />
+What is this?<br />
+<br />
+<a href="http://docs.oracle.com/cd/E25178_01/core.1111/e10106/dbac.htm">http://docs.oracle.com/cd/E25178_01/core.1111/e10106/dbac.htm</a><br />
+<br />
+__________________________________<br />
+<br />
+<br />
+Another useful property is:<br />
+<br />
+<a href="http://docs.oracle.com/cd/B28359_01/rac.111/b28252/configwlm.htm">http://docs.oracle.com/cd/B28359_01/rac.111/b28252/configwlm.htm</a><br />
+<br />
+"Set TimeToLiveTimeout to m seconds<br />
+Set PropertyCheckInterval to n seconds<br />
+<br />
+if the network call is blocked, then just setting the TimeToLive timeout alone won't work.  In that case, an additional step is needed -- setting the JDBC driver connection properties as follows:<br />
+<br />
+for the Thin driver:  oracle.net.ns.SQLnetDef.TCP_CONNTIMEOUT_STR<br />
+for the OCI driver:  sqlnet.outbound_connection_timeout<br />
+"<br />
+<br />
+<b>oracle.net.ns.SQLnetDef.TCP_CONNTIMEOUT_STR</b><br />
+<br />
+There is a Oracle KB doc:<br />
+"How to Ensure that JDBC Queries are Always Timed Out [ID 559564.1]"<br />
+<br />
+For more info on the TimeToLiveTimeout  and PropertyCheckInterval :<br />
+<br />
+<a href="http://docs.oracle.com/cd/B13789_01/java.101/b10979/conncache.htm#sthref460">http://docs.oracle.com/cd/B13789_01/java.101/b10979/conncache.htm#sthref460</a><br />
+<br />
+_____________________________<br />
+<br />
+set a timeout on Socket level for the jdbc thin driver:<br />
+<br />
+<b>oracle.net.READ_TIMEOUT</b>  (in ms)<br />
+<br />
+in reality:<br />
+<br />
+<b>oracle.net.READ_TIMEOUT</b>  for jdbc versions &lt; 10.1.0.5
+
+<b>oracle.jdbc.ReadTimeout</b> for jdbc versions &gt;=10.1.0.5<br />
+<br />
+see <a href="http://docs.oracle.com/cd/E17904_01/web.1111/e13737/generic_oracle_rac.htm">http://docs.oracle.com/cd/E17904_01/web.1111/e13737/generic_oracle_rac.htm</a><br />
+<br />
+"In some deployments of Oracle RAC, you may need to set parameters in addition to the out of the box configuration of a data source in an Oracle RAC configuration. The additional parameters are:<br />
+<br />
+Set oracle.jdbc.ReadTimeout=300000 (300000 milliseconds) for each data source."<br />
+<br />
+_____________________________<br />
+<br />
+<br />
+The Oracle Consultant says:<br />
+"I would set the read and connect timeouts to slightly longer than the stuck thread time setting. <br />
+This ensures you get stuck thread warnings but the thread is released soon after "<br />
+<br />
+<br />
+_________________<br />
+<br />
+<br />
+Related Oracle KB docs:<br />
+<br />
+ORACLE.NET.READ_TIMEOUT Property Does Not Work On 11g JDBC Driver [ID 1341966.1]<br />
+<br />
+<br />
+WebLogic Server: Intermittent Stuck Threads Caused Due to the 11.1.x Oracle JDBC Thin Driver [ID 1083794.1]  (this one seems to be pretty old)<br />
+<br />
+<br />
+How to Ensure that JDBC Queries are Always Timed Out [ID 559564.1], the suggest using<br />
+<span id="kmPgTpl:r1:ot71" style="color: black; font-size: x-small;"></span><br />
+<ul>
+<li>for the Thin driver:&nbsp; <span class="kmfixedwidthfont">oracle.net.ns.SQLnetDef.TCP_CONNTIMEOUT_STR</span></li>
+<li><span class="kmfixedwidthfont"></span>for the OCI driver:&nbsp; <span class="kmfixedwidthfont">sqlnet.outbound_connection_timeout </span></li>
+</ul>
+<br />
+<br />
+<br />
+<br />

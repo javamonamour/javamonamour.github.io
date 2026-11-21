@@ -1,0 +1,23 @@
+---
+layout: post
+title: "JMeter and testing Web Services"
+date: 2010-06-13T12:10:00.004+02:00
+permalink: /2010/06/jmeter-and-testing-web-services.html
+blogger_id: "7665117960567181477"
+tags: ["Jmeter", "soapui"]
+---
+I add a Sampler "WebService(SOAP) Request", enter a perfectly working WSDL url (tested also in the browser)... click on "Load WSDL"... nothing happens, the Web Methods drop down doesn't get populated and nothing is logged on the JMeter console.<br />
+<br />
+<a href="http://jakarta.apache.org/jmeter/usermanual/build-ws-test-plan.html">http://jakarta.apache.org/jmeter/usermanual/build-ws-test-plan.html</a><br />
+<br />
+<i>If the WSDL file was loaded correctly, the "Web Methods" drop down  should  be populated. If the drop down remains blank, it means there was a  problem getting the WSDL.&nbsp;</i><br />
+<br />
+Pardon me for being so old fashioned, but in the old days programmers used to LOG what the problem was... I look also in the jmeter.log file in the bin directory (a log file in the bin directory????) and nothing...<br />
+<br />
+JMeter would be a great tool if only it had been better coded....<br />
+<br />
+So I am using SOAPUI (great great tool):<br />
+<a href="http://soapui.com/Functional-Testing/structuring-and-running-tests.html">http://soapui.com/Functional-Testing/structuring-and-running-tests.html</a><br />
+<br />
+an forget JMeter, its UI anyway is pretty bad, they need someone who knows how to do Swing.<br />
+

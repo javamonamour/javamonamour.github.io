@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Imperative vs Functional programming, a simple example"
+date: 2017-08-22T22:16:00.002+02:00
+permalink: /2017/08/imperative-vs-functional-programming.html
+blogger_id: "3398316298718005535"
+tags: ["functional"]
+---
+Today a colleague was asking me the difference between functional and traditional programming in Java... I made a simple example to show how a FUNCTION can be used as a parameter, and the importance of Streams.... of course, in this example the traditional programming is much simpler and readable! Often functional programs can be really hard to decipher! 
+
+<br/><br/>
+
+<pre class="brush: java">
+
+import java.util.Arrays;
+
+public class HelloWorld
+{
+  static String[] theStrings = new String[] {"Pippo", "Pluto", "Paperino"};
+
+  public static void main(String[] args) {
+    theTraditionalWay();
+    theFunctionalWay();  
+  }
+
+  static void theTraditionalWay() {
+    for (int i = 0; i < theStrings.length; i++) System.out.println(theStrings[i].toUpperCase());
+  }
+
+  static void theFunctionalWay() {
+    Arrays.stream(theStrings).map(String::toUpperCase).forEach(System.out::println);
+  }
+}
+
+</pre>
+
+ 
+
+You can run it here <a href="https://www.compilejava.net/">https://www.compilejava.net/</a>
+
+ 
+
+

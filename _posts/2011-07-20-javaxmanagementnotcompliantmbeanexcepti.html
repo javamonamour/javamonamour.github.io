@@ -1,0 +1,28 @@
+---
+layout: post
+title: "javax.management.NotCompliantMBeanException: MBean class bla does not implement DynamicMBean, neither follows the Standard MBean conventions"
+date: 2011-07-20T13:48:00.001+02:00
+permalink: /2011/07/javaxmanagementnotcompliantmbeanexcepti.html
+blogger_id: "7162736540246002779"
+tags: ["MBean"]
+blogger_comments:
+  - author: "Ecca"
+    date: 2011-11-17
+    html: "the xxxMBean and the xxx class that implements the xxxMBean should also be in the same package.<br /><br />It was a pain for me to find that simple factor out &gt;.&lt;"
+  - author: "GeKis"
+    date: 2014-02-21
+    html: "It is also possible just mark any name/package interface by @MXBean annotation"
+---
+javax.management.NotCompliantMBeanException: MBean class com.acme.osb.CachesService does not implement DynamicMBean, neither follows the Standard MBean conventions (javax.management.NotCompliantMBeanException: Class com.acme.osb.CachesService is not a JMX compliant Standard MBean) nor the MXBean conventions (javax.management.NotCompliantMBeanException: com.acme.osb.CachesService: Class com.acme.osb.CachesService is not a JMX compliant MXBean)<br />
+at com.sun.jmx.mbeanserver.Introspector.checkCompliance(Introspector.java:160)<br />
+at com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.registerMBean(DefaultMBeanServerInterceptor.java:305)<br />
+at com.sun.jmx.mbeanserver.JmxMBeanServer.registerMBean(JmxMBeanServer.java:482)<br />
+<br />
+<br />
+<br />
+<a href="http://download.oracle.com/javase/tutorial/jmx/mbeans/standard.html">http://download.oracle.com/javase/tutorial/jmx/mbeans/standard.html</a><br />
+<br />
+"A standard MBean is defined by writing a Java interface called SomethingMBean and a Java class called Something that implements that interface. "<br />
+<br />
+<br />
+Stupid me, I had an implementation CachesService but the Interface was called CachesServiceIF... I have renamed it to CachesServiceMBean and everything works!

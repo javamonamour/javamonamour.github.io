@@ -1,0 +1,64 @@
+---
+layout: post
+title: "List JMS queues in WebLogic with WLST"
+date: 2012-02-19T15:23:00.002+01:00
+permalink: /2012/02/list-jms-queues-in-weblogic-with-wlst.html
+blogger_id: "2411415167319135190"
+tags: ["jms", "WLST"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2016-12-15
+    html: "Hi,<br />How to display Lst of connection Factories in a JMS Module"
+  - author: "Anonymous"
+    date: 2016-12-15
+    html: "Hi,<br />How to display Lst of connection Factories in a JMS Module"
+  - author: "Miguel Ortiz"
+    date: 2017-10-23
+    html: "Ty for this, I&#39;ve extended <a href=\"http://migueleonardortiz.com.ar/wlst/list-all-jms-modules-in-weblogic-with-wlst/1411\" rel=\"nofollow\">the script</a> to provide more information.<br />"
+---
+see also <a href="/2012/02/listing-all-jmsserver-jmsmodules.html">my previous post using Java</a><br />
+<br />
+<pre name="code" class="brush: java">connect('Pierluigi', 'weblogic1', 't3://localhost:7001')
+easeSyntax()
+
+allJMSResources = cmo.getJMSSystemResources()
+for jmsResource in allJMSResources:
+   module = jmsResource.getName()
+   print "MODULE", module
+   udqs = jmsResource.getJMSResource().getUniformDistributedQueues()
+   for udq in udqs:
+      print "QUEUE", udq.getName(), " JNDINAME", udq.getJNDIName()
+
+</pre><br />
+or the simplified version (only JNDI Names)<br />
+<br />
+<pre name="code" class="brush: java">allJMSResources = cmo.getJMSSystemResources()
+for jmsResource in allJMSResources:
+   module = jmsResource.getName()
+
+   udqs = jmsResource.getJMSResource().getUniformDistributedQueues()
+   for udq in udqs:
+      print udq.getJNDIName()
+
+</pre><br />
+<br />
+<br />
+or this other version (first print all modules, then all queues with also module info)<br />
+<br />
+<br />
+<pre name="code" class="brush: java">connect('Pierluigi', 'weblogic1', 't3://localhost:7001')
+easeSyntax()
+
+allJMSResources = cmo.getJMSSystemResources()
+for jmsResource in allJMSResources:
+   module = jmsResource.getName()
+   print "MODULE=", module
+
+for jmsResource in allJMSResources:
+   module = jmsResource.getName()
+   udqs = jmsResource.getJMSResource().getUniformDistributedQueues()
+   for udq in udqs:
+      print "MODULE=", module, "QUEUE", udq.getName(), " JNDINAME", udq.getJNDIName()
+
+
+</pre>

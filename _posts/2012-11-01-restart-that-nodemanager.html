@@ -1,0 +1,21 @@
+---
+layout: post
+title: "Restart that NodeManager"
+date: 2012-11-01T21:31:00.001+01:00
+permalink: /2012/11/restart-that-nodemanager.html
+blogger_id: "8353913389624419654"
+tags: ["nodemanager"]
+---
+I had a domain with admin listening on port 7013. NodeManager was running.<br />
+I have deleted the $DOMAIN_HOME, and recreated the domain from scratch, with the Admin listening at port 7003.<br />
+Much to my despair, restarting the ManagedServers through the NodeManager would still bring up instances referring to the admin running at 7013:<br />
+<br />
+"ps -ef" was showing:<br />
+<br />
+-Dweblogic.management.server=http://myserver.acme.com:7013<br />
+<br />
+&nbsp;Desperate greps everywhere brought no evidence of a 7013 still hiding somewhere.<br />
+<br />
+At last, restarting the NodeManager fixed the issue. Evidently, NodeManager caches the information relative to a given domain, and if you change relevant stuff in the domain you better restart also the NodeManager.<br />
+Sad, but true.<br />
+<br />

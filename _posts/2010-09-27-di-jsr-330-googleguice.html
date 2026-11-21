@@ -1,0 +1,33 @@
+---
+layout: post
+title: "DI, JSR-330, Google/Guice"
+date: 2010-09-27T21:54:00.005+02:00
+permalink: /2010/09/di-jsr-330-googleguice.html
+blogger_id: "7802705968358405331"
+tags: ["guice"]
+---
+On JSR 330: Dependency Injection for Java<br />
+<a href="http://www.jcp.org/en/jsr/detail?id=330">http://www.jcp.org/en/jsr/detail?id=330</a><br />
+<br />
+interesting introduction to Guice: <br />
+<a href="http://google-guice.googlecode.com/files/Guice-Google-IO-2009.pdf">http://google-guice.googlecode.com/files/Guice-Google-IO-2009.pdf</a><br />
+<br />
+Let me copy the DI motto: "push dependencies from the core to the edges"<br />
+<br />
+Nice and lightweight book this one:<br />
+<br />
+Google Guice: Agile Lightweight Dependency Injection Framework<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="http://apress.com/resource/bookcover/9781590599976?size=medium" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="200" src="http://apress.com/resource/bookcover/9781590599976?size=medium" width="200" /></a></div><br />
+<a href="http://apress.com/book/view/9781590599976">http://apress.com/book/view/9781590599976</a><br />
+<br />
+I like Guice, it's very specific and focused. Unfortunately it seems it's not undergoing a lot of development, version 2.0 <a href="http://code.google.com/p/google-guice/downloads/list">http://code.google.com/p/google-guice/downloads/list</a> was released in May 2009....<br />
+They claim it's both more compact than Spring 2.0 and definitely faster to execute.<br />
+This very accurate test <a href="http://www.javalobby.org/articles/guice-vs-spring/">http://www.javalobby.org/articles/guice-vs-spring/</a>&nbsp; seems to prove it. <br />
+Yet no test covers Spring 3.0.<br />
+<br />
+I would say that, with all my sympathy to Guice, I would rather go for Spring 3.0, especially now that most of the bloody XML has gone...just as a resume-builder :o).<br />
+<br />
+Actually Luciano has used Guice and he says "it's better than Spring, if you need only IoC; I would highly recommend Guice"<br />
+<br />
+Here <a href="http://www.theserverside.com/feature/Comparing-Spring-vs-Google-Guice-By-Example">http://www.theserverside.com/feature/Comparing-Spring-vs-Google-Guice-By-Example</a> a detailed dissertation on the topic. It favors definitely Guice over Spring. His conclusion is "Spring wires classes together by bean, whereas Guice wires classes together by type." ... implying that Guice is more typesafe and reliable, and less verbose.

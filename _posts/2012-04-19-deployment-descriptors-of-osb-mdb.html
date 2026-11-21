@@ -1,0 +1,163 @@
+---
+layout: post
+title: "Deployment descriptors of a OSB MDB"
+date: 2012-04-19T18:52:00.007+02:00
+permalink: /2012/04/deployment-descriptors-of-osb-mdb.html
+blogger_id: "6920588713325706052"
+tags: ["mdb", "OSB"]
+---
+Inside the /opt/oracle/domains/osbdv2do/sbgen/_ALSB_1329599716508.ear  you will find:<br />
+<br />
+<b>META-INF/application.xml</b><br />
+<br />
+<pre class="brush: xml" name="code">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;jav:application xmlns:jav="http://java.sun.com/xml/ns/javaee"&gt;
+  &lt;jav:display-name&gt;ProxyService GM_ReqPackMat/ProxyServices/ReqPackMat_ReqPackMatQ_to_WMOS_PS&lt;/jav:display-name&gt;
+  &lt;jav:module&gt;
+    &lt;jav:ejb&gt;ejb.jar&lt;/jav:ejb&gt;
+  &lt;/jav:module&gt;
+&lt;/jav:application&gt;
+
+</pre><br />
+<b>META-INF/weblogic-application.xml</b><br />
+<br />
+<pre class="brush: xml" name="code">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;web:weblogic-application xmlns:web="http://xmlns.oracle.com/weblogic/weblogic-application"&gt;
+  &lt;web:ejb&gt;
+    &lt;web:start-mdbs-with-application&gt;false&lt;/web:start-mdbs-with-application&gt;
+  &lt;/web:ejb&gt;
+  &lt;web:application-param&gt;
+    &lt;web:param-name&gt;service-ref&lt;/web:param-name&gt;
+    &lt;web:param-value&gt;ProxyService$GM_ReqPackMat$ProxyServices$ReqPackMat_ReqPackMatQ_to_WMOS_PS&lt;/web:param-value&gt;
+  &lt;/web:application-param&gt;
+  &lt;web:listener&gt;
+    &lt;web:listener-class&gt;com.bea.wli.sb.transports.jms.JmsEndPointAppListener&lt;/web:listener-class&gt;
+  &lt;/web:listener&gt;
+&lt;/web:weblogic-application&gt;
+
+</pre><br />
+The plan.xml in /opt/oracle/domains/osbdv2do/osb/config/plan/Plan-_ALSB_1335183510889.ear.xml is:<br />
+<br />
+<pre class="brush: xml" name="code">&lt;?xml version='1.0' encoding='UTF-8'?>
+&lt;deployment-plan xmlns="http://xmlns.oracle.com/weblogic/deployment-plan" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.oracle.com/weblogic/deployment-plan http://xmlns.oracle.com/weblogic/deployment-plan/1.0/deployment-plan.xsd">
+  &lt;application-name>_ALSB_1335183510889&lt;/application-name>
+  &lt;module-override>
+    &lt;module-name>_ALSB_1335183510889.ear&lt;/module-name>
+    &lt;module-type>ear&lt;/module-type>
+    &lt;module-descriptor external="false">
+      &lt;root-element>weblogic-application&lt;/root-element>
+      &lt;uri>META-INF/weblogic-application.xml&lt;/uri>
+    &lt;/module-descriptor>
+    &lt;module-descriptor external="false">
+      &lt;root-element>application&lt;/root-element>
+      &lt;uri>META-INF/application.xml&lt;/uri>
+    &lt;/module-descriptor>
+    &lt;module-descriptor external="true">
+      &lt;root-element>wldf-resource&lt;/root-element>
+      &lt;uri>META-INF/weblogic-diagnostics.xml&lt;/uri>
+    &lt;/module-descriptor>
+  &lt;/module-override>
+  &lt;module-override>
+    &lt;module-name>ejb.jar&lt;/module-name>
+    &lt;module-type>ejb&lt;/module-type>
+    &lt;module-descriptor external="false">
+      &lt;root-element>weblogic-ejb-jar&lt;/root-element>
+      &lt;uri>META-INF/weblogic-ejb-jar.xml&lt;/uri>
+    &lt;/module-descriptor>
+    &lt;module-descriptor external="false">
+      &lt;root-element>ejb-jar&lt;/root-element>
+      &lt;uri>META-INF/ejb-jar.xml&lt;/uri>
+    &lt;/module-descriptor>
+  &lt;/module-override>
+  &lt;config-root>/opt/oracle/domains/osbdv2do/osb/config/plan&lt;/config-root>
+&lt;/deployment-plan>
+</pre><br />
+<br />
+And in the ejb.jar you can find:<br />
+<br />
+META-INF/ejb-jar.xml<br />
+<br />
+<pre class="brush: xml" name="code">&lt;?xml version='1.0' encoding='UTF-8'?>
+&lt;jav:ejb-jar xmlns:jav="http://java.sun.com/xml/ns/javaee">
+  &lt;jav:display-name>BEA ALSB JMS Inbound Endpoint&lt;/jav:display-name>
+  &lt;jav:enterprise-beans>
+    &lt;jav:message-driven>
+      &lt;jav:display-name>BEA ALSB JMS Inbound Endpoint (Request)&lt;/jav:display-name>
+      &lt;jav:ejb-name>RequestEJB-2972318866359532858-249b028e.136ddc2e3c6.-7fb5&lt;/jav:ejb-name>
+      &lt;jav:ejb-class>com.bea.wli.sb.transports.jms.JmsInboundMDB&lt;/jav:ejb-class>
+      &lt;jav:transaction-type>Container&lt;/jav:transaction-type>
+      &lt;jav:message-destination-type>javax.jms.Queue&lt;/jav:message-destination-type>
+      &lt;jav:env-entry>
+        &lt;jav:env-entry-name>service-ref&lt;/jav:env-entry-name>
+        &lt;jav:env-entry-type>java.lang.String&lt;/jav:env-entry-type>
+        &lt;jav:env-entry-value>ProxyService$PVReadStockDownloadErrorQueue$PVReadStockDownloadErrorQueue_PS&lt;/jav:env-entry-value>
+      &lt;/jav:env-entry>
+      &lt;jav:env-entry>
+        &lt;jav:env-entry-name>XA-supported&lt;/jav:env-entry-name>
+        &lt;jav:env-entry-type>java.lang.Boolean&lt;/jav:env-entry-type>
+        &lt;jav:env-entry-value>true&lt;/jav:env-entry-value>
+      &lt;/jav:env-entry>
+      &lt;jav:env-entry>
+        &lt;jav:env-entry-name>checksum&lt;/jav:env-entry-name>
+        &lt;jav:env-entry-type>java.lang.Integer&lt;/jav:env-entry-type>
+        &lt;jav:env-entry-value>-2061456480&lt;/jav:env-entry-value>
+      &lt;/jav:env-entry>
+    &lt;/jav:message-driven>
+  &lt;/jav:enterprise-beans>
+  &lt;jav:assembly-descriptor>
+    &lt;jav:container-transaction>
+      &lt;jav:method>
+        &lt;jav:ejb-name>RequestEJB-2972318866359532858-249b028e.136ddc2e3c6.-7fb5&lt;/jav:ejb-name>
+        &lt;jav:method-name>*&lt;/jav:method-name>
+      &lt;/jav:method>
+      &lt;jav:trans-attribute>Required&lt;/jav:trans-attribute>
+    &lt;/jav:container-transaction>
+  &lt;/jav:assembly-descriptor>
+&lt;/jav:ejb-jar>
+</pre><br />
+weblogic-ejb-jar.xml<br />
+<br />
+<pre class="brush: xml" name="code"><?xml version='1.0' encoding='UTF-8'?>
+<web:weblogic-ejb-jar xmlns:web="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar">
+  <web:weblogic-enterprise-bean>
+    <web:ejb-name>RequestEJB-2972318866359532858-249b028e.136ddc2e3c6.-7fb5</web:ejb-name>
+    <web:message-driven-descriptor>
+      <web:pool>
+        <web:max-beans-in-free-pool>1000</web:max-beans-in-free-pool>
+        <web:initial-beans-in-free-pool>1</web:initial-beans-in-free-pool>
+      </web:pool>
+      <web:destination-jndi-name>jms.jndi.dq.GM_StockDownload.StockDownloadReprocessQ</web:destination-jndi-name>
+      <web:provider-url>t3://myhost.acme.com:8245</web:provider-url>
+      <web:connection-factory-jndi-name>weblogic.jms.XAConnectionFactory</web:connection-factory-jndi-name>
+    </web:message-driven-descriptor>
+    <web:transaction-descriptor>
+      <web:trans-timeout-seconds>600</web:trans-timeout-seconds>
+    </web:transaction-descriptor>
+    <web:resource-description>
+      <web:res-ref-name>jms/ConnectionFactory</web:res-ref-name>
+      <web:jndi-name>weblogic.jms.XAConnectionFactory</web:jndi-name>
+    </web:resource-description>
+    <web:resource-description>
+      <web:res-ref-name>jms/QueueName</web:res-ref-name>
+      <web:jndi-name>jms.jndi.dq.GM_StockDownload.StockDownloadReprocessQ</web:jndi-name>
+    </web:resource-description>
+  </web:weblogic-enterprise-bean>
+  <web:disable-warning>BEA-010001</web:disable-warning>
+  <web:disable-warning>BEA-010054</web:disable-warning>
+  <web:disable-warning>BEA-010200</web:disable-warning>
+  <web:disable-warning>BEA-010202</web:disable-warning>
+</web:weblogic-ejb-jar>
+</pre><br />
+<br />
+<br />
+Hyperic will discover this MDB as "Weblogic 10.3 Message Driven EJB"<br />
+<br />
+<i>Weblogic osbdv1do osbdv1ms1 _ALSB_1335183510889 RequestEJB-6533237974024524838-be3fafc.135ee630c77.-7f0a_GM_ReqPackMatJMSModule!AcmeCommonJmsServer1@ReqPackMatQ Message Driven EJB</i><br />
+<br />
+but also as a "Weblogic 10.3 Application"<br />
+<i>Weblogic osbdv2do osbdv2ms1 _ALSB_1335183510889 Application</i><br />
+<br />
+<br />
+<a href="/2012/04/wlst-browsing-deployed-applications.html">/2012/04/wlst-browsing-deployed-applications.html</a><br />
+<br />
+<a href="/2011/10/osb-how-mdb-proxy-service-in.html">/2011/10/osb-how-mdb-proxy-service-in.html</a>

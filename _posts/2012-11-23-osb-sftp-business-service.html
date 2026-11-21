@@ -1,0 +1,92 @@
+---
+layout: post
+title: "OSB SFTP Business Service"
+date: 2012-11-23T04:46:00.001+01:00
+permalink: /2012/11/osb-sftp-business-service.html
+blogger_id: "520955479317101354"
+tags: ["sftp"]
+---
+<a href="http://hhendriks.wordpress.com/2012/08/13/create-a-sftp-polling-service-in-the-osb/">http://hhendriks.wordpress.com/2012/08/13/create-a-sftp-polling-service-in-the-osb/</a><br />
+<br />
+<a href="http://docs.oracle.com/cd/E17904_01/doc.1111/e15866/transport_level.htm#i1058815">http://docs.oracle.com/cd/E17904_01/doc.1111/e15866/transport_level.htm#i1058815</a><br />
+102 and 200 are two hosts.<br />
+<br />
+I have created a PV_POC_SFTP project on 102 7001, to transfer files to 200<br />
+<br />
+on 200:<br />
+<br />
+mkdir /home/soa/sftpdestination<br />
+<br />
+/sbin/ifconfig<br />
+<br />
+10.56.25.135<br />
+<br />
+on 102:<br />
+<br />
+cat /home/soa/.ssh/known_hosts | grep hqchpippo200<br />
+<br />
+hqchpippo200,10.56.25.135 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6KpqfXWf6XdJBQFjYgc2rmapk2yba55BZrdLqbJjIIEb15Huc7zrIxAQeXJh8eohD5qCUGztOhJzmURuPP1oofxI1iERzp0QWED7ZnO1EPqMLp+FdLxTC03he1gn2Ng1ugYPZkpGrkaG/pYEs8LlTFadQ6ICa4fIAxQYNxa8R0MEkzxsCewP66ahzPTGVWp03QpPtUPQV0sOIOb7mZKPaxQ3JhxN+IFDDIKoWuiaz1B08oV51JtdBnQRR0JPIzx1EwwUL9x2tEKNKzcCzhFn8jwsxvKP882c5R6rWHDn1adS6F+rg3jPjmyV1h4J/CnAFmYlNMVdeLo7zhfh95JURw==<br />
+<br />
+hqchpippo200.acme.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6KpqfXWf6XdJBQFjYgc2rmapk2yba55BZrdLqbJjIIEb15Huc7zrIxAQeXJh8eohD5qCUGztOhJzmURuPP1oofxI1iERzp0QWED7ZnO1EPqMLp+FdLxTC03he1gn2Ng1ugYPZkpGrkaG/pYEs8LlTFadQ6ICa4fIAxQYNxa8R0MEkzxsCewP66ahzPTGVWp03QpPtUPQV0sOIOb7mZKPaxQ3JhxN+IFsdDDoWuiaz1B08oV51JtdBnQRR0JPIzx1EwwUL9x2tEKNKzcCzhFn8jwsxvKP882c5R6rWHDn1adS6F+rg3jPjmyV1h4J/CnAFmYlNMVdeLo7zhfh95JURw==<br />
+<br />
+<b>(official Oracle doc is WRONG!&nbsp; it’s not $DOMAIN_HOME/osb/transports/sftp but $DOMAIN_HOME/config/osb/transports/sftp !!!!!)</b><br />
+<br />
+<br />
+mkdir –p /opt/oracle/domains/osbdv2do/config/osb/transports/sftp<br />
+<br />
+cd /opt/oracle/domains/osbdv2do/config/osb/transports/sftp<br />
+<br />
+vi known_hosts<br />
+<br />
+paste the result of cat /home/soa/.ssh/known_hosts | grep hqchpippo200<br />
+(it's above)<br />
+<br />
+create Service Account<br />
+<br />
+PV_POC_SFTP_SA<br />
+<br />
+static<br />
+<br />
+soa<br />
+<br />
+#thepassword<br />
+<br />
+<br />
+create the BS<br />
+<br />
+anyxml<br />
+<br />
+protocol sftp<br />
+<br />
+endpoint uri<br />
+<br />
+sftp://hqchpippo200:22/sftpdestination&nbsp; <br />
+<br />
+<br />
+press ADD<br />
+<br />
+User Authentication =Username Password<br />
+<br />
+attach service account<br />
+<br />
+<br />
+test<br />
+<br />
+if you get this:<br />
+<br />
+<i>The invocation resulted in an error: com.sshtools.j2ssh.transport.InvalidHostFileException: known_hosts file does not exist or it does not have read permissions..</i><br />
+<br />
+check that you put the known_hosts in the right place /opt/oracle/domains/osbdv2do/config/osb/transports/sftp<br />
+<br />
+<br />
+if you get this:<br />
+<br />
+<i>The invocation resulted in an error: com.sshtools.j2ssh.transport.TransportProtocolException: Key Mismatch for host hqchpippo200,10.56.25.135.</i><br />
+<br />
+make sure you got the right ssh-rsa kkeys from the /home/soa/.ssh/known_hosts file<br />
+<br />
+<br />
+upon successful invokation of the service, on 200 in /home/soa/sftpdestination you should see a file<br />
+<br />
+How to specify a destination filename, and how to put some content into it, who knows.... we shall discover<br />
+<br />

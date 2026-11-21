@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Java Generics: Covariance and Contravariance"
+date: 2011-04-26T19:41:00.003+02:00
+permalink: /2011/04/java-generics-covariance-and.html
+blogger_id: "108720717186305784"
+tags: ["contravariant"]
+---
+I was reading <a href="http://www.javacodegeeks.com/2011/04/java-generics-quick-tutorial.html">this nice introduction to Generics</a>, and I realized that the terms "<b>covariance</b>" and "<b>contravariance</b>" were obscure to me, although I was familiar with the "?" notations:<br />
+<br />
+<br />
+* List&lt;<b>? extends Fruit</b>&gt;&nbsp; (means: the list can contain Fruit and any subclasses of Fruit)<br />
+<br />
+* List&lt;<b>? super Apple</b>&gt;&nbsp; (means: the list can contain Apple and any superclass of Apple)<br />
+<br />
+<a href="http://en.wikipedia.org/wiki/Covariance_and_contravariance_%28computer_science%29">Here a more formal</a> (and boring) discussion on the terminology<br />
+<br />
+<br />
+<i><b>covariant</b>: converting from wider (double) to narrower (float).<br />
+<br />
+<b>contravariant</b>: converting from narrower (float) to wider (double).</i><br />
+<br />
+<br />
+which leads to the interesting PECS (Producer Extends Consumer Super) pattern very <a href="http://stackoverflow.com/questions/2723397/java-generics-what-is-pecs">well explained here</a>

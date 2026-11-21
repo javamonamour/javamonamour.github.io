@@ -1,0 +1,15 @@
+---
+layout: post
+title: "How to install a Weblogic patch"
+date: 2009-09-24T18:28:00.001+02:00
+permalink: /2009/09/how-to-install-weblogic-patch.html
+blogger_id: "8334621294778295408"
+blogger_comments:
+  - author: "vernetto"
+    date: 2010-12-29
+    html: "Zakki you have done an excellent job! Kudos!"
+  - author: "Zakki"
+    date: 2010-12-29
+    html: "Hi,<br /><br />nice post, I&#39;ve written a similar post <br /><br />http://zakkiahmed.wordpress.com/2010/12/29/applying-patches-using-oracle-smart-updatebsu-on-weblogic-server/<br /><br />let me know your thoughts.<br /><br />Regards,<br /><br />Zakki"
+---
+in the CLI:<br /><br />bsu.sh -install -patchlist=98AI -prod_dir=C:\bea\home_WLS_922\weblogic92 -log=bsu.log -log_priority=trace<br /><br /><br />to do it with the GUI:<br /><br />1 - Copy the content of the attached archive in your [BEA_HOME]/utils/bsu/cache_dir<br />directory,<br /><br /> <br /><br />2 - Launch the BSU with the bsu.cmd script, (PV: ou bien bsu.sh)<br /><br /> <br /><br />3 - Select "Work Offline"<br /><br /> <br /><br />4 - Select your Weblogic 9.2 MP2 installation on the left column and click on the "Manage Patches" tab. Then click on the green arrow of the<br />Patch ID 98AI.<br /><br /> <br /><br />5 - Restart your server and the patch should now be applied.<br /><br /> <br /><br />6 - Ensure of course to install this patch on every machine that is hosting servers of your domain. Ensure also that all servers have been<br />restarted then.<br /><br />to view all patches:<br /><br />cd $BEA_HOME/utils/bsu<br />./bsu.sh -view -status=applied -prod_dir=/opt/tuxedo/platform922/weblogic92<br /><br /><br />to install with command line interface:<br /><br />bsu.sh -install -patchlist=98AI -prod_dir=$BEA_HOME/weblogic92 -log=bsu.log<br />-log_priority=trace<br /><br />http://download.oracle.com/docs/cd/E14759_01/doc.32/e14143/commands.htm

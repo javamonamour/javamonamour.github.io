@@ -1,0 +1,125 @@
+---
+layout: post
+title: "Integrating Docflex with XMLSpy"
+date: 2012-03-25T01:07:00.000+01:00
+permalink: /2012/03/integrating-docflex-with-xmlspy.html
+blogger_id: "3066585522791610582"
+tags: ["docflex"]
+---
+I install docflex<br />
+http://www.filigris.com/products/docflex_xml/integrations/xmlspy/<br />
+<br />
+I install XMLSpy<br />
+http://www.altova.com/s<br />
+<br />
+I find C:\Program Files\Altova\XMLSpy2012\XMLSpyInterface.jar<br />
+<br />
+I adjust the classpath in generator.bat<br />
+I adjust also the parameters of the  com.docflex.xml.Generator class, adding:<br />
+"-m:IMAGE_PROVIDER_CLASS=com.docflex.xml.xmlspy.SpyKit -m:XMLSPY_VERSION=2012"<br />
+<br />
+<br />
+I get this <br />
+<br />
+================================================================================<br />
+DOCFLEX ERROR REPORT, 2012-03-25 00:08:07<br />
+================================================================================<br />
+DocFlex/XML, Version 1.8.5<br />
+Main class: com.docflex.xml.Generator<br />
+Arguments: -m:IMAGE_PROVIDER_CLASS=com.docflex.xml.xmlspy.SpyKit -m:XMLSPY_VERSION=2012<br />
+java.version=1.6.0_24<br />
+java.vendor=Sun Microsystems Inc.<br />
+os.name=Windows Vista<br />
+os.arch=x86<br />
+os.version=6.0<br />
+locale=en_US<br />
+--------------------------------------------------------------------------------<br />
+When processing: DocFlex/XML XSDDoc, Version 2.5.0<br />
+--------------------------------------------------------------------------------<br />
+Generator Exception:<br />
+When executing function 'spyStart'<br />
+java.lang.UnsatisfiedLinkError: C:\Windows\System32\XmlSpyLib.dll: Can't find dependent libraries<br />
+at Template Init Expression:<br />
+--------------------------------------------------------------------------------<br />
+spyStart (<br />
+getBooleanParam("integration.xmlspy.showApp"),<br />
+getStringParam ("integration.xmlspy.diagramFormat"),<br />
+getBooleanParam("integration.xmlspy.workarounds.fixCoords")<br />
+)<br />
+--------------------------------------------------------------------------------<br />
+Template Location Trace:<br />
+--------------------------------------------------------------------------------<br />
+at Template: C:\pierre\downloads\docflex-xml-1.8.5\docflex-xml-1.8.5\templates\XSDDoc\lib\integrations\xmlspy.tpl<br />
+at Call Template 'lib\integrations\xmlspy.tpl'<br />
+at Stock Section 'Init'<br />
+at Template: C:\pierre\downloads\docflex-xml-1.8.5\docflex-xml-1.8.5\templates\XSDDoc\FramedDoc.tpl<br />
+--------------------------------------------------------------------------------<br />
+When executing function 'callStockSection'<br />
+at Template Init Expression:<br />
+--------------------------------------------------------------------------------<br />
+callStockSection("Init");<br />
+<br />
+setXMLNameForm (<br />
+getBooleanParam("show.nsPrefix") ? "qualified" : "unqualified"<br />
+);<br />
+--------------------------------------------------------------------------------<br />
+Template Location Trace:<br />
+--------------------------------------------------------------------------------<br />
+at Template: C:\pierre\downloads\docflex-xml-1.8.5\docflex-xml-1.8.5\templates\XSDDoc\FramedDoc.tpl<br />
+--------------------------------------------------------------------------------<br />
+Exception Stack Trace:<br />
+--------------------------------------------------------------------------------<br />
+java.lang.UnsatisfiedLinkError: C:\Windows\System32\XmlSpyLib.dll: Can't find dependent libraries<br />
+at java.lang.ClassLoader$NativeLibrary.load(Native Method)<br />
+at java.lang.ClassLoader.loadLibrary0(ClassLoader.java:1806)<br />
+at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1731)<br />
+at java.lang.Runtime.loadLibrary0(Runtime.java:823)<br />
+at java.lang.System.loadLibrary(System.java:1028)<br />
+at XMLSpyInterface.SpyApplication.<clinit>(SpyApplication.java:423)<br />
+ at com.docflex.xml.xmlspy.SpyKit.a(Unknown Source)<br />
+ at com.docflex.xml.xmlspy.a.a(Unknown Source)<br />
+ at com.docflex.a.d.a(Unknown Source)<br />
+ at com.docflex.a.j.if(Unknown Source)<br />
+ at com.docflex.e.d.bq.if(Unknown Source)<br />
+ at com.docflex.e.d.i.lX(Unknown Source)<br />
+ at com.docflex.e.d.ag.if(Unknown Source)<br />
+ at com.docflex.e.d.i.a(Unknown Source)<br />
+ at com.docflex.e.d.ak.else(Unknown Source)<br />
+ at com.docflex.e.d.bt.else(Unknown Source)<br />
+ at com.docflex.e.d.an.do(Unknown Source)<br />
+ at com.docflex.e.d.au.if(Unknown Source)<br />
+ at com.docflex.e.d.n.if(Unknown Source)<br />
+ at com.docflex.e.d.ah.else(Unknown Source)<br />
+ at com.docflex.e.d.ax.do(Unknown Source)<br />
+ at com.docflex.e.d.au.if(Unknown Source)<br />
+ at com.docflex.e.d.n.if(Unknown Source)<br />
+ at com.docflex.e.d.ab.if(Unknown Source)<br />
+ at com.docflex.e.d.a5.a(Unknown Source)<br />
+ at com.docflex.e.d.a.l.a$b.a(Unknown Source)<br />
+ at com.docflex.a.d.a(Unknown Source)<br />
+ at com.docflex.a.y.a(Unknown Source)<br />
+ at com.docflex.a.j.if(Unknown Source)<br />
+ at com.docflex.e.d.bq.if(Unknown Source)<br />
+ at com.docflex.e.d.i.lX(Unknown Source)<br />
+ at com.docflex.e.d.ag.if(Unknown Source)<br />
+ at com.docflex.e.d.i.mb(Unknown Source)<br />
+ at com.docflex.e.d.i.mk(Unknown Source)<br />
+ at com.docflex.e.d.i.l9(Unknown Source)<br />
+ at com.docflex.e.d.i.a(Unknown Source)<br />
+ at com.docflex.e.d.i.a(Unknown Source)<br />
+ at com.docflex.xml.l.case(Unknown Source)<br />
+ at com.docflex.xml.l.access$300(Unknown Source)<br />
+ at com.docflex.xml.l$4.run(Unknown Source)<br />
+ at java.lang.Thread.run(Thread.java:662)<br />
+<br />
+<br />
+<br />
+<br />
+What is missing? Widows doesn't tell you.<br />
+<br />
+I download http://www.dependencywalker.com/<br />
+<br />
+it turns out that ICCFM.DLL was missing. I find this file somewhere and copy it to C:\Windows\System32<br />
+<br />
+<br />
+Anyway the end result is GREAT, the HTML generated with XmlSpy graphs embedded is REALLY looking good. Awesome product this DocFlex</clinit>

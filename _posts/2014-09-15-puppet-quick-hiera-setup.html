@@ -1,0 +1,53 @@
+---
+layout: post
+title: "Puppet: quick hiera setup"
+date: 2014-09-15T10:32:00.001+02:00
+permalink: /2014/09/puppet-quick-hiera-setup.html
+blogger_id: "8279453821124794510"
+tags: ["hiera", "puppet"]
+---
+cat /home/soa/.puppet/hiera.yaml
+<br/><br/>
+<pre>
+:hierarchy:
+  - common
+
+:backends:
+    - yaml
+
+:yaml:
+    :datadir: '/home/soa'
+</pre>
+
+<br/><br/>
+
+cat /home/soa/common.yaml
+<br/><br/>
+
+<pre>
+install_cleanssbatchorder : true
+</pre>
+
+<br/><br/>
+To test if hiera is working:
+
+<br/><br/>
+<pre>
+puppet apply -e "if hiera('install_cleanssbatchorder', false) { notify { 'pippo':}} "
+</pre>
+<br/><br/>
+this should print:
+<br/><br/>
+<pre>
+notice: pippo
+notice: /Stage[main]//Notify[pippo]/message: defined 'message' as 'pippo'
+notice: Finished catalog run in 0.02 seconds
+</pre>
+
+
+
+
+
+
+
+

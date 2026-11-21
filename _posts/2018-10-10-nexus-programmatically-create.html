@@ -1,0 +1,105 @@
+---
+layout: post
+title: "Nexus programmatically create Repositories"
+date: 2018-10-10T08:12:00.001+02:00
+permalink: /2018/10/nexus-programmatically-create.html
+blogger_id: "9188621077347701627"
+tags: ["docker", "nexus"]
+---
+Nexus API sucks - big time.<br />
+<br />
+This <a href="https://blog.sonatype.com/automated-setup-of-a-repository-manager">https://blog.sonatype.com/automated-setup-of-a-repository-manager</a> is a desperate attempt to automate stuff.<br />
+<br />
+<br />
+git clone https://github.com/sonatype/nexus-book-examples.git<br />
+cd ./nexus-book-examples/scripting/complex-script<br />
+<br />
+docker run -d -p 8081:8081 --name nexus sonatype/nexus3:3.10.0<br />
+see <a href="https://hub.docker.com/r/sonatype/nexus3/tags/">https://hub.docker.com/r/sonatype/nexus3/tags/</a><br />
+<br />
+check the logs by<br />
+docker exec -ti nexus /bin/bash<br />
+more /opt/sonatype/sonatype-work/nexus3/log/nexus.log<br />
+<br />
+<br />
+rm -rf /home/centos/.groovy/grapes/<br />
+rm -rf /home/centos/.m2/repository/<br />
+<br />
+<br />
+<br />
+You can easily test your scripts from the Nexus UI (create execute script UI) , and also debut them remotely from Intellij :<br />
+<a href=" https://support.sonatype.com/hc/en-us/articles/115015812727-Nexus-3-Groovy-Script-development-environment-setup"><br />
+https://support.sonatype.com/hc/en-us/articles/115015812727-Nexus-3-Groovy-Script-development-environment-setup</a><br />
+<br />
+Try running this script:<br />
+<br />
+<pre>repository.createMavenHosted('pippo')
+</pre><br />
+it can't be easier!<br />
+<br />
+<br />
+The RepositoryAPI is available here<br />
+<br />
+<a href="https://github.com/sonatype/nexus-public/blob/master/plugins/nexus-script-plugin/src/main/java/org/sonatype/nexus/script/plugin/RepositoryApi.java">https://github.com/sonatype/nexus-public/blob/master/plugins/nexus-script-plugin/src/main/java/org/sonatype/nexus/script/plugin/RepositoryApi.java</a><br />
+<br />
+Repository createMavenHosted(final String name,<br />
+final String blobStoreName,<br />
+final boolean strictContentTypeValidation,<br />
+final VersionPolicy versionPolicy,<br />
+final WritePolicy writePolicy,<br />
+final LayoutPolicy layoutPolicy);<br />
+<br />
+example:<br />
+<br />
+<br />
+repository.createMavenHosted('private-again', 'default', true, org.sonatype.nexus.repository.maven.policy.VersionPolicy.SNAPSHOT, org.sonatype.nexus.repository.storage.WritePolicy.ALLOW_ONCE, org.sonatype.nexus.repository.maven.LayoutPolicy.STRICT)<br />
+<br />
+<br />
+<br />
+To list repositories (unfortunately it returns only partial information about the Repository):<br />
+<br />
+curl -X GET --header 'Accept: application/json' 'http://localhost:8081/service/rest/beta/repositories'<br />
+<br />
+<br />
+<pre>[ {
+  "name" : "nuget.org-proxy",
+  "format" : "nuget",
+  "type" : "proxy",
+  "url" : "http://localhost:8081/repository/nuget.org-proxy"
+}, {
+  "name" : "maven-releases",
+  "format" : "maven2",
+  "type" : "hosted",
+  "url" : "http://localhost:8081/repository/maven-releases"
+}, {
+  "name" : "maven-snapshots",
+  "format" : "maven2",
+  "type" : "hosted",
+  "url" : "http://localhost:8081/repository/maven-snapshots"
+}, {
+  "name" : "maven-central",
+  "format" : "maven2",
+  "type" : "proxy",
+  "url" : "http://localhost:8081/repository/maven-central"
+}, {
+  "name" : "nuget-group",
+  "format" : "nuget",
+  "type" : "group",
+  "url" : "http://localhost:8081/repository/nuget-group"
+}, {
+  "name" : "nuget-hosted",
+  "format" : "nuget",
+  "type" : "hosted",
+  "url" : "http://localhost:8081/repository/nuget-hosted"
+}, {
+  "name" : "maven-public",
+  "format" : "maven2",
+  "type" : "group",
+  "url" : "http://localhost:8081/repository/maven-public"
+} ]
+</pre><br />
+<br />
+Ref: <a href="https://help.sonatype.com/repomanager3/rest-and-integration-api/script-api/writing-scripts">https://help.sonatype.com/repomanager3/rest-and-integration-api/script-api/writing-scripts</a> about Groovy Scripting in Nexus <br />
+<br />
+<br />
+

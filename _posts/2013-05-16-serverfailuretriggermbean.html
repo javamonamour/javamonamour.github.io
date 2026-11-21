@@ -1,0 +1,86 @@
+---
+layout: post
+title: "ServerFailureTriggerMBean, OverloadProtectionMBean, numberOfStuckThreads"
+date: 2013-05-16T18:48:00.000+02:00
+permalink: /2013/05/serverfailuretriggermbean.html
+blogger_id: "5096533111686807826"
+---
+excellent discussion on server health and stuck threads from user  csoto : 
+
+<a href="https://forums.oracle.com/forums/thread.jspa?messageID=10074875">https://forums.oracle.com/forums/thread.jspa?messageID=10074875</a><br />
+<br />
+<br />
+Here is the Javadoc of <a href="http://docs.oracle.com/cd/E28280_01/apirefs.1111/e13945/weblogic/management/configuration/ServerFailureTriggerMBean.html">ServerFailureTriggerMBean</a> .
+<br />
+<br />
+If stuck threads are more than 25 (configurable value), WebLogic goes in failed state. 
+
+<br />
+<br />
+Make sure "Auto Kill If Failed attribute" is false in "Health Monitoring".
+
+<br />
+<br />
+<a href="http://weblogicserveradministration.blogspot.com/2010/10/server-overload-protection-actions.html">http://weblogicserveradministration.blogspot.com/2010/10/server-overload-protection-actions.html</a>
+
+<br />
+<br />
+See also <a href="/2012/08/weblogic-finding-health-state-through.html">/2012/08/weblogic-finding-health-state-through.html</a>
+
+<br />
+<br />
+The WLST to achieve this is:
+
+<br />
+<br />
+<pre class="brush: java" name="code">cd('/Servers/osbdev1ms1/OverloadProtection/osbdev1ms1')
+cmo.setFailureAction('force-shutdown')
+
+cd('/Servers/osbdev1ms1/OverloadProtection/osbdev1ms1/ServerFailureTrigger/osbdev1ms1')
+cmo.setMaxStuckThreadTime(600)
+cmo.setStuckThreadCount(25)
+
+</pre>
+<br />
+<br />
+In fact, it seems to me better to act at cluster level, I don't really want to act on the Admin server:
+
+<br />
+<br />
+<pre class="brush: java" name="code">
+edit()
+startEdit()
+cd('/')
+
+
+cd('/Clusters/' + clustername + '/OverloadProtection/' + clustername)
+cmo.setFailureAction('force-shutdown')
+
+cd('/Clusters/' + clustername + '/OverloadProtection/' + clustername + '/ServerFailureTrigger/' + clustername)
+cmo.setMaxStuckThreadTime(600)
+cmo.setStuckThreadCount(25)
+
+
+cd('/')
+serverList=cmo.getServers()
+for server in serverList:
+    name=server.getName()
+    cd('/Servers/' + name)
+    cmo.setAutoKillIfFailed(true)
+    cmo.setAutoRestart(true)
+
+save()
+activate()
+
+
+
+</pre>
+<br />
+<br />
+This worked like a charm: when there are more than 25 stuck threads, the server state goes to FAILED and it's immediately restarted.
+<br />
+<br />
+
+PS somehow the JSP doesn't seem to be able to generate threads which are marked as STUCK. I had to write a OSB HTTP proxy invoking a Thread.sleep(1000000) in a Java callout, to be able to see the threads as STUCK and the server restarted. Weird.
+
+

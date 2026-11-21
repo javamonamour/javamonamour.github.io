@@ -1,0 +1,17 @@
+---
+layout: post
+title: "Oracle Business Rules. validating the number (count) of elements"
+date: 2010-12-23T18:23:00.000+01:00
+permalink: /2010/12/oracle-business-rules-validating-number.html
+blogger_id: "6270804475885342048"
+tags: ["OracleBusinessRules"]
+---
+I have to verify that the count(Lines) is a given number in a payload. Lines is represented as a List in JAXB, and it's a "element minOccurs=0 maxOccurs=unbounded" in the XSD.<br />
+<br />
+In a Rule definition, there is no way to use a XPath expression on a XML Fact.<br />
+How painful.<br />
+<br />
+I had to create a Function, return type in, input parameter Lines (it is a recognized type in the Facts), and use "return Lines.size()"<br />
+Then in Business Rules you can invoke the Function to compute the number of Lines.<br />
+<br />
+Roundaboutish, eh?

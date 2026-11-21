@@ -1,0 +1,64 @@
+---
+layout: post
+title: "com.bea.wli.monitoring.statistics.ALSBStatisticsManager.getRemoteAggregator failed hostname verification"
+date: 2013-07-14T11:10:00.003+02:00
+permalink: /2013/07/combeawlimonitoringstatisticsalsbstatis.html
+blogger_id: "2415573404080631066"
+---
+In the server logs I was getting:
+
+<br />
+<pre>####&lt;Jul 14, 2013 8:59:00 AM CEST&gt; &lt;Error&gt; &lt;ALSB Statistics Manager&gt; &lt;hqchacme104&gt; &lt;osbts1ms2&gt; &lt;[ACTIVE] ExecuteThread: '31' for queue:
+'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;9455361429c2e897:13c82adc:13fdbf6c9a3:-8000-0000000000000055&gt; &lt;1373785140070&gt;
+&lt;BEA-473003&gt; &lt;Aggregation Server Not Available. Failed to get remote aggregator
+javax.naming.CommunicationException [Root exception is java.net.ConnectException: t3s://acme2-osbts1ms1.acme.com:8002: Destination
+unreachable; nested exception is:
+        javax.net.ssl.SSLKeyException: [Security:090504]Certificate chain received from acme2-osbts1ms1.acme.com - 10.44.5.114 fail
+ed hostname verification check. Certificate contained acmev2.test.acme.com but check expected acme2-osbts1ms1.acme.com; No av
+ailable router to destination]
+        at weblogic.jndi.internal.ExceptionTranslator.toNamingException(ExceptionTranslator.java:40)
+        at weblogic.jndi.WLInitialContextFactoryDelegate.toNamingException(WLInitialContextFactoryDelegate.java:788)
+        at weblogic.jndi.WLInitialContextFactoryDelegate.getInitialContext(WLInitialContextFactoryDelegate.java:368)
+        at weblogic.jndi.Environment.getContext(Environment.java:315)
+        at weblogic.jndi.Environment.getContext(Environment.java:285)
+        at weblogic.jndi.WLInitialContextFactory.getInitialContext(WLInitialContextFactory.java:117)
+        at javax.naming.spi.NamingManager.getInitialContext(NamingManager.java:667)
+        at javax.naming.InitialContext.getDefaultInitCtx(InitialContext.java:288)
+        at javax.naming.InitialContext.init(InitialContext.java:223)
+        at javax.naming.InitialContext.&lt;init&gt;(InitialContext.java:197)
+        at com.bea.alsb.platform.weblogic.topology.WlsRemoteServerImpl.getInitialContext(WlsRemoteServerImpl.java:101)
+        at com.bea.alsb.platform.weblogic.topology.WlsRemoteServerImpl.lookupJNDI(WlsRemoteServerImpl.java:54)
+        at com.bea.wli.monitoring.statistics.ALSBStatisticsManager.getRemoteAggregator(ALSBStatisticsManager.java:291)
+        at com.bea.wli.monitoring.statistics.ALSBStatisticsManager.access$000(ALSBStatisticsManager.java:38)
+        at com.bea.wli.monitoring.statistics.ALSBStatisticsManager$RemoteAggregatorProxy.send(ALSBStatisticsManager.java:55)
+        at com.bea.wli.monitoring.statistics.collection.Collector.sendRawSnaphotToAggregator(Collector.java:284)
+        at com.bea.wli.monitoring.statistics.collection.Collector.doCheckpoint(Collector.java:243)
+        at com.bea.wli.monitoring.statistics.collection.Collector$CheckpointThread.doWork(Collector.java:68)
+        at com.bea.wli.monitoring.utils.Schedulable.timerExpired(Schedulable.java:68)
+        at com.bea.wli.timer.ClusterTimerImpl$InternalTimerListener.timerExpired(ClusterTimerImpl.java:254)
+        at weblogic.timers.internal.TimerImpl.run(TimerImpl.java:273)
+        at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+Caused By: java.net.ConnectException: t3s://acme2-osbts1ms1.acme.com:8002: Destination unreachable; nested exception is:
+        javax.net.ssl.SSLKeyException: [Security:090504]Certificate chain received from acme2-osbts1ms1.acme.com - 10.44.5.114 failed hostname verification check. Certificate contained acmev2.test.acme.com but check expected acme2-osbts1ms1.acme.com; No available router to destination
+
+
+
+</pre>
+<br />
+It turns out that weblogic.security.SSL.ignoreHostnameVerification was false, so I edited:
+<br />
+$DOMAIN_HOME/servers/osbts1as/data/nodemanager/startup.properties
+<br />
+$DOMAIN_HOME/servers/osbts1ms1/data/nodemanager/startup.properties
+<br />
+$DOMAIN_HOME/servers/osbts1ms2/data/nodemanager/startup.properties
+<br />
+<br />
+setting
+<br />
+<br />
+SSLArguments=-Dweblogic.security.SSL.ignoreHostnameVerification\=true -Dweblogic.ReverseDNSAllowed\=false<br />
+<br />
+

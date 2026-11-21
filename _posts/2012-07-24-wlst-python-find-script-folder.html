@@ -1,0 +1,34 @@
+---
+layout: post
+title: "WLST (python) find script folder"
+date: 2012-07-24T18:19:00.001+02:00
+permalink: /2012/07/wlst-python-find-script-folder.html
+blogger_id: "2387712861846189350"
+tags: ["WLST"]
+---
+this will return the folder from which WLST is run, not the script folder:<br />
+<br />
+<i>import os<br />
+print os.getcwd()</i><br />
+<br />
+<br />
+this seems to return the FULL PATH of the script:<br />
+print sys.argv[0]<br />
+<br />
+then with:<br />
+<br />
+import os<br />
+print os.path.dirname(sys.argv[0])<br />
+<br />
+you can get the directory<br />
+<br />
+(update: sys.argv[0] contains only the filename, not the full path, if you run WLST from the same location as the script file)<br />
+<br />
+sys.argv[0] = createDatasourcesFromCMDB.py<br />
+os.path.dirname(sys.argv[0]) =<br />
+os.getcwd()=/home/soa/proton<br />
+os.path.realpath(os.path.dirname(sys.argv[0])) = /home/soa/proton<br />
+<br />
+So the only thing that really works under all circumstances is<br />
+<br />
+<b>os.path.realpath(os.path.dirname(sys.argv[0]))</b>

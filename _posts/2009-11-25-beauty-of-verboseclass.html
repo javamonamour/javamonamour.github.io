@@ -1,0 +1,23 @@
+---
+layout: post
+title: "The beauty of verbose:class"
+date: 2009-11-25T11:40:00.000+01:00
+permalink: /2009/11/beauty-of-verboseclass.html
+blogger_id: "875768234930237859"
+---
+java -verbose:class is simply wonderful, when you are trying to troubleshoot classloader problems.<br />
+<br />
+Here is a sample output:<br />
+<br />
+<i>[INFO ][class&nbsp; ] created: #2859 org/apache/poi/poifs/filesystem/POIFSDocument (file:/acme/users/abraham/abrahammonitoring/lib/poi-3.5-FINAL-20090928.jar)<br />
+[INFO ][class&nbsp; ] 4391 org/apache/poi/poifs/filesystem/POIFSDocument success (0.36 ms)<br />
+[INFO ][class&nbsp; ] 4394 org/apache/poi/poifs/storage/DocumentBlock fail (0.00 ms)<br />
+[INFO ][class&nbsp; ] 4396 org/apache/poi/poifs/storage/BigBlock fail (0.00 ms)<br />
+[INFO ][class&nbsp; ] created: #2861 org/apache/poi/poifs/storage/BigBlock (file:/acme/users/abraham/abrahammonitoring/lib/poi-3.5-FINAL-20090928.jar)<br />
+[INFO ][class&nbsp; ] 4395 org/apache/poi/poifs/storage/BigBlock success (0.12 ms)<br />
+[INFO ][class&nbsp; ] created: #2860 org/apache/poi/poifs/storage/DocumentBlock (file:/acme/users/abraham/abrahammonitoring/lib/poi-3.5-FINAL-20090928.jar)<br />
+[INFO ][class&nbsp; ] 4393 org/apache/poi/poifs/storage/DocumentBlock success (0.30 ms)<br />
+[INFO ][class&nbsp; ] 4398 org/apache/poi/poifs/filesystem/POIFSDocument$BigBlockStore fail (0.00 ms)<br />
+[INFO ][class&nbsp; ] created: #2862 org/apache/poi/poifs/filesystem/POIFSDocument$BigBlockStore (file:/acme/users/abraham/abrahammonitoring/lib/poi-3.5-FINAL-20090928.jar)<br />
+<br />
+</i>

@@ -1,0 +1,26 @@
+---
+layout: post
+title: "Short tutorial on using Weblogic Diagnostics and watches"
+date: 2009-12-08T18:42:00.000+01:00
+permalink: /2009/12/short-tutorial-on-using-weblogic.html
+blogger_id: "8408761497600691014"
+---
+see<br />
+<a href="http://download.oracle.com/docs/cd/E12839_01/apirefs.1111/e13952/taskhelp/diagnostics/CreateWatchesForADiagnosticModule.html">http://download.oracle.com/docs/cd/E12839_01/apirefs.1111/e13952/taskhelp/diagnostics/CreateWatchesForADiagnosticModule.html</a><br />
+<br />
+the trick is: DO NOT FORGET TO TARGET YOUR WATCH to a server!<br />
+I have chosen the dummy criteria JRockitRuntimeMBean.Uptime &gt; 1, which triggers immediately.<br />
+You should see in the log this (set the Severity and Log Watch Severity to error, just to be sure it does log)<br />
+<br />
+&lt;8 dÃ©c. 2009 18 h 35 CET&gt; &lt;Notice&gt; &lt;Diagnostics&gt; &lt;BEA-320068&gt; &lt;Watch 'sockets' with severity 'Error' on server 'myserver' has triggered at 8 dÃ©c. 2009 18 h 35 CET. Notification details:<br />
+WatchRuleType: Harvester<br />
+WatchRule: (${[weblogic.management.runtime.JRockitRuntimeMBean]//Uptime} &gt;= 1)<br />
+WatchData: com.bea:Name=myserver,ServerRuntime=myserver,Type=JRockitRuntime//Uptime = 17420813<br />
+WatchAlarmType: AutomaticReset<br />
+WatchAlarmResetPeriod: 60000<br />
+&gt;<br />
+<br />
+<br />
+You can use the JMS notification: use weblogic.jms.ConnectionFactory as Connection Factory for your alarm queue.<br />
+<br />
+It will generate a MapMessage.

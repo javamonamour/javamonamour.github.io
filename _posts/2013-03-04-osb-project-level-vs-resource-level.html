@@ -1,0 +1,53 @@
+---
+layout: post
+title: "OSB: project level vs resource level export"
+date: 2013-03-04T12:37:00.000+01:00
+permalink: /2013/03/osb-project-level-vs-resource-level.html
+blogger_id: "2867476819138728373"
+tags: ["osbimportexport"]
+---
+in a sbconfig.jar, ExportInfo contains a metadata section "imp:properties xmlns:imp="http://www.bea.com/wli/config/importexport" containing "projectLevelExport" (true/false).
+
+<br/><br/>
+
+This value affects the way a project is imported with ALSBConfigurationMBean.importUploaded: <a href="http://docs.oracle.com/cd/E17904_01/apirefs.1111/e15033/com/bea/wli/sb/management/importexport/ALSBImportPlan.html">http://docs.oracle.com/cd/E17904_01/apirefs.1111/e15033/com/bea/wli/sb/management/importexport/ALSBImportPlan.html</a>, 
+
+<br/><br/>
+<i>
+If the config jar file was exported at the resource level: if the resource is not in the jar file but in the domain: Skip (No-op)
+<br/><br/>
+if the config jar file was exported at the project level (this behavior affects only the resources in the projects that are found in the jar file.) if the resource is not in the jar file but in the domain: Delete
+</i>
+<br/><br/>
+
+There is even a method to test this value <a href="http://docs.oracle.com/cd/E17904_01/apirefs.1111/e15033/com/bea/wli/sb/management/importexport/ALSBJarInfo.html#isProjectLevelExport__">http://docs.oracle.com/cd/E17904_01/apirefs.1111/e15033/com/bea/wli/sb/management/importexport/ALSBJarInfo.html#isProjectLevelExport__</a>
+<br/><br/>
+There is no way to set it. So you MUST generate the sbconfig.jar with already the projectLevelExport set to true.
+<br/><br/>
+The command by which we export the resources (project) is:<br/><br/>
+
+java -Xms384m -Xmx768m -XX:MaxPermSize=256M -Dosgi.bundlefile.limit=1000 -Dosgi.nl=en_US -Dosb.home=${osb_home} -Dweblogic.home=${weblogic_home} -Dharvester.home=${harvester_home} -Dsun.lang.ClassLoader.allowArraySyntax=true -jar ${eclipse_home}/plugins/org.eclipse.equinox.launcher_1.1.1.R36x_v20101122_1400.jar -data ${bamboo_builddir} -application com.bea.alsb.core.ConfigExport -configProject ${configProject} -configJar ${tempdir}sbconfig.jar -configSubProjects "${PROJECT}" -includeDependencies true 2> ${errorlog}
+
+<br/><br/>
+
+<a href="http://docs.oracle.com/cd/E21764_01/doc.1111/e15866/tasks.htm#i1130159">http://docs.oracle.com/cd/E21764_01/doc.1111/e15866/tasks.htm#i1130159</a>
+
+
+<br/><br/>
+
+I really have no clue on how to control the value of that parameter. All I see is that by manually changing it from
+<br/><br/>
+
+imp:property name="projectLevelExport" value="false"
+
+<br/><br/>
+
+to
+<br/><br/>
+imp:property name="projectLevelExport" value="true"
+
+
+<br/><br/>
+in the ExportInfo, the way the project is imported changes accordingly.
+
+

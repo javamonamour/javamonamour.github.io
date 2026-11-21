@@ -1,0 +1,37 @@
+---
+layout: post
+title: "GIT: First steps with JGit"
+date: 2015-10-25T16:03:00.000+01:00
+permalink: /2015/10/git-first-steps-with-jgit.html
+blogger_id: "2812736146090469219"
+tags: ["git", "jgit"]
+---
+If you need a Java API for GIT, forget about JavaGit (it's just a wrapper around GIT CLI) and EGit - which internally uses JGit.
+<br />
+<br />
+<a href="http://eclipse.org/jgit/">http://eclipse.org/jgit/</a>
+
+<br />
+<br />
+Useful snippets here <a href="https://github.com/centic9/jgit-cookbook">https://github.com/centic9/jgit-cookbook</a>
+<br />
+<br />
+<a href="http://eclipse.org/jgit/download/">Download the library JAR here org.eclipse.jgit.jar</a>, or if using maven consider using the dependency:
+
+<br />
+<pre class="brush: xml">&lt;dependency&gt;
+  &lt;groupId&gt;org.eclipse.jgit&lt;/groupId&gt;
+  &lt;artifactId&gt;org.eclipse.jgit&lt;/artifactId&gt;
+  &lt;version&gt;3.5.0.201409260305-r&lt;/version&gt;
+&lt;/dependency&gt;
+</pre>
+<br />
+<br />
+(the jar should end up in \org\eclipse\jgit\org.eclipse.jgit\3.5.0.201409260305-r  inside your stink-maven repo)
+
+
+<br />
+<br />
+Looking at the examples, you must have a LOCAL repository.... there doesn't seem to be a way to query a remote repository, like one hosted on Stash, without first doing a git clone.... I look rather for a REST-based API, this one <a href="https://bitbucket.org/atlassianlabs/stash-java-client">https://bitbucket.org/atlassianlabs/stash-java-client</a> seems quite promising.
+<br />
+<br />

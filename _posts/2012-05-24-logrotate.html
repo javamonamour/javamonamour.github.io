@@ -1,0 +1,68 @@
+---
+layout: post
+title: "logrotate"
+date: 2012-05-24T10:55:00.001+02:00
+permalink: /2012/05/logrotate.html
+blogger_id: "2825407251782805334"
+tags: ["logrotation"]
+---
+Doc here <a href="http://linuxcommand.org/man_pages/logrotate8.html">http://linuxcommand.org/man_pages/logrotate8.html</a><br />
+<br />
+<br />
+<b>find / -name logrotate 2> /dev/null</b><br />
+<i><br />
+/etc/cron.daily/logrotate<br />
+/usr/sbin/logrotate<br />
+</i><br />
+<br />
+<br />
+<b>less /etc/cron.daily/logrotate</b><br />
+<i><br />
+#!/bin/sh<br />
+<br />
+/usr/sbin/logrotate /etc/logrotate.conf<br />
+EXITVALUE=$?<br />
+if [ $EXITVALUE != 0 ]; then<br />
+    /usr/bin/logger -t logrotate "ALERT exited abnormally with [$EXITVALUE]"<br />
+fi<br />
+exit 0<br />
+</i><br />
+<br />
+<br />
+<b>less /etc/logrotate.conf</b><br />
+<br />
+<i><br />
+# see "man logrotate" for details<br />
+# rotate log files weekly<br />
+weekly<br />
+<br />
+# keep 4 weeks worth of backlogs<br />
+rotate 4<br />
+<br />
+# create new (empty) log files after rotating old ones<br />
+create<br />
+<br />
+# uncomment this if you want your log files compressed<br />
+#compress<br />
+<br />
+# RPM packages drop log rotation information into this directory<br />
+include /etc/logrotate.d<br />
+<br />
+# no packages own wtmp -- we'll rotate them here<br />
+/var/log/wtmp {<br />
+monthly<br />
+minsize 1M<br />
+create 0664 root utmp<br />
+rotate 1<br />
+}<br />
+<br />
+/var/log/btmp {<br />
+missingok<br />
+monthly<br />
+minsize 1M<br />
+create 0600 root utmp<br />
+rotate 1<br />
+}<br />
+<br />
+# system-specific logs may be also be configured here.<br />
+</i>

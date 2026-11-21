@@ -1,0 +1,70 @@
+---
+layout: post
+title: "TLS v1.2 support in Java 6"
+date: 2016-07-25T16:26:00.003+02:00
+permalink: /2016/07/tls-v12-support-in-java-6.html
+blogger_id: "5007795843047434983"
+tags: ["security", "tls"]
+---
+According to Oracle Doc:
+<br/>
+
+JDK 6 release supports TLS v1. See:
+<br/>
+<a href="http://docs.oracle.com/javase/6/docs/technotes/guides/security/SunProviders.html#SunJSSEProvider">http://docs.oracle.com/javase/6/docs/technotes/guides/security/SunProviders.html#SunJSSEProvider</a>
+<br/>
+JDK 6 supports TLS 1.1 as well since JDK 6u111.
+<br/>
+<a href="http://www.oracle.com/technetwork/java/javase/overview-156328.html#R160_111">http://www.oracle.com/technetwork/java/javase/overview-156328.html#R160_111</a>
+<br/>
+JDK 7 release supports TLS v1, TLS v1.1 and TLS v1.2. See:
+<br/>
+<a href="https://docs.oracle.com/javase/7/docs/technotes/guides/security/SunProviders.html#SunJSSEProvider">https://docs.oracle.com/javase/7/docs/technotes/guides/security/SunProviders.html#SunJSSEProvider</a>
+
+<br/>
+<br/>
+
+
+In fact, TLS 1.2 is available in Java 6:  "TLS v1.2 is now a TLS protocol option with the release of JDK 6u121"  or maybe even in 6u115 b32 (copy and paste issue?)
+<br/>
+<a href="http://www.oracle.com/technetwork/java/javase/overview-156328.html">http://www.oracle.com/technetwork/java/javase/overview-156328.html</a>
+<br/>
+
+enabled with -Djdk.tls.client.protocols="TLSv1.2"
+<br/><br/>
+
+
+To test if you have TLSv1.2 support:
+<br/>
+
+
+<pre class="brush: java">
+public class TLSTest  {
+        public static void main(String[] args) throws Exception {
+                System.out.println("before TLSv1.1");
+                SSLContext ctx = SSLContext.getInstance("TLSv1.1");
+                System.out.println("before TLSv1.2");
+                ctx = SSLContext.getInstance("TLSv1.2");
+                System.out.println("after");
+        }
+
+}
+</pre>
+
+<br/>
+
+and run with 
+<br/>
+
+
+java -Djdk.tls.client.protocols="TLSv1.1,TLSv1.2" TLSTest
+
+<br/>
+<br/>
+
+
+if you get "Exception in thread "main" java.security.NoSuchAlgorithmException: TLSv1.2 SSLContext not available" then you are screwed.
+
+<br/>
+
+

@@ -1,0 +1,81 @@
+---
+layout: post
+title: "Statement Timeout on a datasource"
+date: 2013-04-29T18:08:00.002+02:00
+permalink: /2013/04/statement-timeout-on-datasource.html
+blogger_id: "1993396005939213425"
+tags: ["oracledb", "weblogic"]
+---
+If your DB takes too long to return data from a JDBC call, you might have STUCK threads.
+<br />
+<br />
+Using DBMS_LOCK.sleep(seconds =&gt; 20); in a stored procedure I have simulated the behaviour of a SLOW DB.
+<br />
+<br />
+I set a Statement Timeout value of 15 seconds on the Datasource.
+<br />
+<br />
+<pre>value = 15 </pre>
+<pre>cd('/JDBCSystemResources/' + dsName + '/JDBCResource/' + dsName + '/JDBCConnectionPoolParams/' + dsName)
+cmo.setStatementTimeout(int(value))
+</pre>
+<br />
+(value is in SECONDS, not in MILLISECONDS)<br />
+<br />
+After 15 seconds I get:
+
+<br />
+<br />
+<pre>java.sql.SQLTimeoutException: ORA-01013: user requested cancel of current operation
+ORA-06512: at "SYS.DBMS_LOCK", line 205
+ORA-06512: at "DEV1_SOAINFRA.PRC_PROCESS", line 17
+ORA-06512: at line 1
+
+ at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:457)
+ at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:405)
+ at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:889)
+ at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:476)
+ at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:204)
+ at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:540)
+ at oracle.jdbc.driver.T4CCallableStatement.doOall8(T4CCallableStatement.java:213)
+ at oracle.jdbc.driver.T4CCallableStatement.executeForRows(T4CCallableStatement.java:1075)
+ at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1466)
+ at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3752)
+ at oracle.jdbc.driver.OraclePreparedStatement.execute(OraclePreparedStatement.java:3937)
+ at oracle.jdbc.driver.OracleCallableStatement.execute(OracleCallableStatement.java:9259)
+ at oracle.jdbc.driver.OraclePreparedStatementWrapper.execute(OraclePreparedStatementWrapper.java:1535)
+ at weblogic.jdbc.wrapper.PreparedStatement.execute(PreparedStatement.java:99)
+ at oracle.tip.adapter.db.sp.AbstractStoredProcedure.execute(AbstractStoredProcedure.java:123)
+</pre>
+<br />
+<br />
+In alternative, you might also get a 
+ java.sql.SQLTimeoutException: ORA-03111: break received on communication channel
+
+
+<br />
+<br />
+I have also added <b>oracle.net.CONNECT_TIMEOUT=10000</b> to the Properties of the datasource, and the timeout still occurs at 15 seconds.<br />
+<br />
+I recommend applying also this parameter, useful in case the DB listener is unresponsive.
+<br />
+<br />
+
+In fact, setting the Statement Timeout is equivalent to <a href="https://docs.oracle.com/javase/7/docs/api/java/sql/Statement.html#setQueryTimeout(int)">https://docs.oracle.com/javase/7/docs/api/java/sql/Statement.html#setQueryTimeout(int)</a>   , which allows you to create only 1 Datasource and programmatically set the timeout on a per-query basis:
+
+<br />
+<br />
+<i>
+"Limiting Statement Processing Time with Statement Timeout 
+
+ With the Statement Timeout option on a JDBC data source, you can limit the amount of time that a statement takes to execute on a database connection reserved from the data source. When you set a value for Statement Timeout, WebLogic Server passes the time specified to the JDBC driver using the java.sql.Statement.setQueryTimeout() method. If your JDBC driver does not support this method, it may throw an exception and the timeout value is ignored. 
+
+ When Statement Timeout is set to -1, (the default) statements do not timeout. 
+
+ See the JDBC Data Source: Configuration: Connection Pool page in the Administration Console or see “ JDBCConnectionPoolParamsBean” in the WebLogic Server MBean Reference for more details about this option. 
+
+</i>
+
+<br />
+<br />
+

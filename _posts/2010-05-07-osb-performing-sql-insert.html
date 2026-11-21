@@ -1,0 +1,24 @@
+---
+layout: post
+title: "OSB performing SQL Insert"
+date: 2010-05-07T12:47:00.000+02:00
+permalink: /2010/05/osb-performing-sql-insert.html
+blogger_id: "4930933398829913207"
+tags: ["fn-bea:execute-sql", "OSB"]
+---
+<span class="xmlview_text">I assign the result of this:</span><br />
+<span class="xmlview_text"> </span><br />
+<span class="xmlview_text">fn-bea:execute-sql('oracleXEDS', xs:QName('company'), 'insert into COMPANIES (id, NAME, CREATIONDATE) values (?, ?, ?)', 2, 'Acme', '2010')</span><br />
+<span class="xmlview_text"> </span><br />
+<span class="xmlview_text"> to a variable companyResult.</span><br />
+<span class="xmlview_text"><br />
+</span><br />
+<span class="xmlview_text">I get this error:</span><br />
+<br />
+<span class="xmlview_text">OSB Assign action failed updating variable  "companyResult":  com.bea.dsp.wrappers.rdb.exceptions.RDBWrapperException: line 1, column  1: {bea-err}RDBW0019: [oracleXEDS]: [insert into COMPANIES (id, NAME,  CREATIONDATE) values (?, ?, ?)]: [2, Acme, 2010]: Error executing SQL  query. Query result is not tabular (Expected ResultSet, got '1')</span><br />
+<br />
+In fact the signature is :<br />
+<br />
+fn-bea:execute-sql( $datasource as xs:string, $rowElemName as xs:QName, $sql as xs:string, $param1, ..., $paramk) <b>as element()*</b><br />
+<br />
+<span class="xmlview_text">Most likely this means that you can only do SELECT and assign the result to a variable, but if you perform an INSERT don't expect to be able to check how many rows you actually inserted.... there must be a workaround, who knows which one... so, basically, USE </span>fn-bea:execute-sql only to do SELECT.

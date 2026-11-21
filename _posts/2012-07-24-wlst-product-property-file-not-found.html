@@ -1,0 +1,50 @@
+---
+layout: post
+title: "WLST \"Product property file not found\" and  .product.properties"
+date: 2012-07-24T13:34:00.000+02:00
+permalink: /2012/07/wlst-product-property-file-not-found.html
+blogger_id: "8983868929392992813"
+tags: ["WLST"]
+---
+in com.oracle.cie.domain.script.jython.WLScriptContext<br />
+it expects a System property "prod.props.file" to be set, and it should point to a directory where a .product.properties property file should be present.<br />
+<br />
+<br />
+<b>find /opt/oracle -name .product.properties 2> /dev/null</b><br />
+<br />
+<i>/opt/oracle/fmw11_1_1_5/wlserver_10.3/.product.properties<br />
+/opt/oracle/fmw11_1_1_5/coherence_3.6/.product.properties<br />
+/opt/oracle/fmw11_1_1_5/oracle_common/.product.properties<br />
+/opt/oracle/fmw11_1_1_5_ORI/wlserver_10.3/.product.properties<br />
+/opt/oracle/fmw11_1_1_5_ORI/coherence_3.6/.product.properties<br />
+/opt/oracle/fmw11_1_1_5_ORI/oracle_common/.product.properties<br />
+</i><br />
+<br />
+<br />
+<b>less /opt/oracle/fmw11_1_1_5/wlserver_10.3/.product.properties</b><br />
+<br />
+<i>#Mon May 07 22:37:48 CEST 2012<br />
+JAVA_HOME=/usr/lib/jvm/java-1.6.0-sun-1.6.0.31.x86_64<br />
+javax.xml.parsers.SAXParserFactory=com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl<br />
+USER_LANGUAGE=en<br />
+NODEMGR_PORT=5556<br />
+WLS_INSTALL_DIR=/opt/oracle/fmw11_1_1_5/wlserver_10.3<br />
+COHERENCE_HOME=/opt/oracle/fmw11_1_1_5/coherence_3.6<br />
+LOCALE=ccjk<br />
+WLS_JAVA_HOME=/usr/lib/jvm/java-1.6.0-sun-1.6.0.31.x86_64<br />
+javax.xml.parsers.DocumentBuilderFactory=com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl<br />
+WL_HOME=/opt/oracle/fmw11_1_1_5/wlserver_10.3<br />
+java.vm.version=20.6-b01<br />
+MW_HOME=/opt/oracle/fmw11_1_1_5<br />
+WLS_JAVA_VENDOR=Sun<br />
+weblogic.server.modules.featurejar=/opt/oracle/fmw11_1_1_5/modules/features/weblogic.server.modules_10.3.5.0.jar<br />
+javax.xml.transform.TransformerFactory=com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl<br />
+PLATFORMHOME=/opt/oracle/fmw11_1_1_5/wlserver_10.3<br />
+WLS_PRODUCT_VERSION=10.3.5.0<br />
+java.vm.vendor=Sun Microsystems Inc.<br />
+BEAHOME=/opt/oracle/fmw11_1_1_5<br />
+DOCSWEBROOT=http\://download.oracle.com/docs/cd/E17904_01/web.1111<br />
+CONFIGWIZ_HOME=/opt/oracle/fmw11_1_1_5/wlserver_10.3<br />
+JAVAHOME=/usr/lib/jvm/java-1.6.0-sun-1.6.0.31.x86_64<br />
+ALSB_INSTALL_DIR=/opt/oracle/fmw11_1_1_5/osb<br />
+</i>

@@ -1,0 +1,57 @@
+---
+layout: post
+title: "How to become an expert in Web Service security in 30 seconds"
+date: 2010-03-04T00:50:00.000+01:00
+permalink: /2010/03/how-to-become-expert-in-web-service.html
+blogger_id: "2449988579115113078"
+---
+First read this:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E13226_01/workshop/docs81/doc/en/core/index.html">http://download.oracle.com/docs/cd/E13226_01/workshop/docs81/doc/en/core/index.html</a><br />
+<br />
+you will learn that there are .WSSE&nbsp; <a href="http://en.wikipedia.org/wiki/Wsse">http://en.wikipedia.org/wiki/Wsse</a> files containing security policies for a WS.<br />
+<br />
+You attach it to the WS with<br />
+<pre>@jws:ws-security-service</pre><pre>&nbsp;</pre><pre>You might need a WSSE file also for callbacks (not needed if Synchronous).</pre><pre></pre><pre></pre><br />
+<br />
+Very interesting also this article:<br />
+<br />
+<a href="https://www6.software.ibm.com/developerworks/education/ws-understand-web-services4/section2.html">https://www6.software.ibm.com/developerworks/education/ws-understand-web-services4/section2.html</a><br />
+<br />
+which goes over security.<br />
+In a nutshell&nbsp;we need to:<br />
+- identify and authenticate the client (security token)<br />
+- ensure the integrity of the message (digital signature)<br />
+- prevent unauthorized parties from eavedropping our message (encryption)<br />
+<br />
+<br />
+It turns out that JPD files (WLI) cannot be secured:<br />
+<a href="http://download.oracle.com/docs/cd/E14981-01/wli/docs1031/bpguide/bpguideCreateApp.html">http://download.oracle.com/docs/cd/E14981-01/wli/docs1031/bpguide/bpguideCreateApp.html</a><br />
+<br />
+<i>WS-Security policy (WSSE) files are not supported for business processes (JPDs). Therefore, the following annotations are not supported for JPD files: com.bea.wli.common.WSSecurityCallback and com.bea.wli.common.WSSecurityService.<br />
+If you want to use WS-Security, then you must front-end the JPD with a JWS. The client would invoke a JWS using WS-Security, then the JWS would locally invoke the JPD via a Process Control.</i><br />
+<br />
+If you use the annotation com.bea.wli.common.WSSecurityService you might get an error:<br />
+<i>Exception trying to load wsse policy definition error: The document is not a wsSecurityPolicy@http://www.bea.com/2003/03/wsse/config</i><br />
+<br />
+<br />
+More info on WS-SecurityPolicy <a href="http://en.wikipedia.org/wiki/WS-SecurityPolicy">http://en.wikipedia.org/wiki/WS-SecurityPolicy</a><br />
+<br />
+sample empty policy file:<br />
+<br />
+<span class="txtplain1"><span style="font-family: courier new,courier,mono;"> <br />
+<wssecuritypolicy xsi:schemalocation="WSSecurity-policy.xsd"><br />
+&nbsp; xmlns="http://www.bea.com/2003/03/wsse/config"<br />
+&nbsp; xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;</wssecuritypolicy></span> <br />
+</span><br />
+<br />
+&nbsp;(see <a href="http://www.devarticles.com/c/a/Web-Graphic-Design/Working-with-Web-Services/7/">http://www.devarticles.com/c/a/Web-Graphic-Design/Working-with-Web-Services/7/</a> )<br />
+<br />
+<br />
+<br />
+One can secure at web.xml level:<br />
+<a href="http://download-llnw.oracle.com/docs/cd/E13222_01/wls/docs81/webapp/web_xml.html#1017885">http://download-llnw.oracle.com/docs/cd/E13222_01/wls/docs81/webapp/web_xml.html#1017885</a><br />
+<br />
+<br />
+This is a sample security-constraint xml:<br />
+<a href="http://docs.sun.com/app/docs/doc/819-3669/bncbk?a=view">http://docs.sun.com/app/docs/doc/819-3669/bncbk?a=view</a>

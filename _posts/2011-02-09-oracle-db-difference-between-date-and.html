@@ -1,0 +1,31 @@
+---
+layout: post
+title: "Oracle DB: difference between date and timestamp"
+date: 2011-02-09T12:20:00.000+01:00
+permalink: /2011/02/oracle-db-difference-between-date-and.html
+blogger_id: "7963443427550022458"
+tags: ["date"]
+---
+<a href="http://www.databasejournal.com/features/oracle/article.php/2234501/A-Comparison-of-Oracles-DATE-and-TIMESTAMP-Datatypes.htm">http://www.databasejournal.com/features/oracle/article.php/2234501/A-Comparison-of-Oracles-DATE-and-TIMESTAMP-Datatypes.htm</a><br />
+<br />
+basically: use DATE in "normal" cases, and TIMESTAMP when computing time intervals is important.<br />
+<br />
+in SQLDeveloper:<br />
+<br />
+create table TESTDATES (<br />
+  column1 date,<br />
+  column2 timestamp(6)<br />
+)<br />
+<br />
+first do this to display dates in all their splendor:<br />
+<br />
+alter session set NLS_DATE_FORMAT='DD/MM/YYYY HH24:MI:SS';<br />
+<br />
+<br />
+<br />
+If you use the JPA wizard in Eclipse, you will find that DATE is mapped to a java.util.Date (with a @Temporal annotation), while TIMESTAMP is mapped to a java.sql.Timestamp<br />
+<br />
+@Temporal( TemporalType.DATE)<br />
+private Date column1;<br />
+<br />
+private Timestamp column2;

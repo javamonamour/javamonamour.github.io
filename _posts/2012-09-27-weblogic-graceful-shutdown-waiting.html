@@ -1,0 +1,87 @@
+---
+layout: post
+title: "WebLogic graceful shutdown waiting forever"
+date: 2012-09-27T20:36:00.002+02:00
+permalink: /2012/09/weblogic-graceful-shutdown-waiting.html
+blogger_id: "4818342632444546377"
+tags: ["shutdown", "weblogic"]
+---
+thread A:<br />
+<br />
+"[ACTIVE] ExecuteThread: '23' for queue: 'weblogic.kernel.Default (self-tuning)'" waiting for lock java.lang.Object@2eed24e4 WAITING
+java.lang.Object.wait(Native Method)
+weblogic.t3.srvr.GracefulShutdownRequest.waitForCompletion(GracefulShutdownRequest.java:62)
+weblogic.t3.srvr.ServerRuntime.shutdown(ServerRuntime.java:315)
+weblogic.server.RemoteLifeCycleOperationsImpl.shutdown(RemoteLifeCycleOperationsImpl.java:51)
+weblogic.server.RemoteLifeCycleOperationsImpl_WLSkel.invoke(Unknown Source)<br />
+<br />
+thread B:
+<br />
+<br />
+"[ACTIVE] ExecuteThread: '18' for queue: 'weblogic.kernel.Default (self-tuning)'" waiting for lock weblogic.deploy.internal.targetserver.BasicDeployment$AdminModeCallback@53110ccd WAITING
+             java.lang.Object.wait(Native Method)
+             weblogic.deploy.internal.targetserver.BasicDeployment$AdminModeCallback.waitForCompletion(BasicDeployment.java:549)
+             weblogic.deploy.internal.targetserver.BasicDeployment.gracefulProductionToAdmin(BasicDeployment.java:212)
+             weblogic.deploy.internal.targetserver.BasicDeployment.productionToAdminFromServerLifecycle(BasicDeployment.java:431)
+             weblogic.management.deploy.internal.DeploymentAdapter$1.gracefulProductionToAdmin(DeploymentAdapter.java:59)
+             weblogic.management.deploy.internal.AppTransition$4.transitionApp(AppTransition.java:48)
+             weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)
+             weblogic.management.deploy.internal.ConfiguredDeployments.productionToAdmin(ConfiguredDeployments.java:182)
+             weblogic.management.deploy.internal.DeploymentPostAdminServerService.stop(DeploymentPostAdminServerService.java:36)
+             weblogic.t3.srvr.ServerServicesManager.stopInternal(ServerServicesManager.java:495)
+             weblogic.t3.srvr.ServerServicesManager.stop(ServerServicesManager.java:309)
+             weblogic.t3.srvr.T3Srvr.suspend(T3Srvr.java:1155)
+             weblogic.t3.srvr.T3Srvr.shutdown(T3Srvr.java:1106)
+             weblogic.t3.srvr.T3Srvr.gracefulShutdown(T3Srvr.java:1017)
+             weblogic.t3.srvr.GracefulShutdownRequest.run(GracefulShutdownRequest.java:41)
+             weblogic.work.ContextWrap.run(ContextWrap.java:41)
+             weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)
+             weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+             weblogic.work.ExecuteThread.run(ExecuteThread.java:178)<br />
+<br />
+We find out that<br />
+<br />
+stopInternal(servicesAfterAdminState.toArray(), flag);<br />
+<br />
+&nbsp;cycles over all services.<br />
+<br />
+&nbsp;To observe which service is stuck we have to enable a debug flag:<br />
+<br />
+private static final DebugCategory debugSLC = Debug.getCategory("weblogic.slc");<br />
+private static final DebugLogger debugSLCWLDF = DebugLogger.getDebugLogger("DebugServerLifeCycle");<br />
+<br />
+This flag is under t3.srvr in weblogic server debug tab<br />
+(read this <a href="http://weblogicinternals.blogspot.ch/2010/09/how-javaee-is-implemented-in-wls.html">fascinating post on the topic</a>)<br />
+<br />
+If you enable the flags, and do the graceful shutdown, you will see stuff like:<br />
+<br />
+BEA-000000 calling stop on weblogic.management.deploy.internal.DeploymentPostAdminServerService@7fead4cc <br />
+<br />
+<br />
+BEA-149059 Module jejb_transport.jar of application JEJB Transport Provider is transitioning from STATE_ACTIVE to STATE_ADMIN on server osbdv1ms1.<br />
+<br />
+BEA-149060 Module jejb_transport.jar of application JEJB Transport Provider successfully transitioned from STATE_ACTIVE to STATE_ADMIN on server osbdv1ms1<br />
+<br />
+In fact, the call to DeploymentPostAdminServerService.stop()&nbsp; invokes a<br />
+ConfiguredDeployments.getConfigureDeploymentsHandler().productionToAdmin(true);<br />
+<br />
+which again calls a transitionApps(AppTransition.GRACEFUL_PRODUCTION_TO_ADMIN)<br />
+<br />
+<br />
+You should also grep for "RunningToAdmin for app" (traced in BasicDeployment.productionToAdminFromServerLifecycle() )<br />
+<br />
+so you should also enable the "DeploymentDebug" flag: 
+<br />
+DebugDeploy DebugDeployment DebugDeploymentService DebugDeploymentServiceInternal 
+DebugDeploymentServiceStatusUpdates DebugDeploymentServiceTransport  DebugDeploymentServiceTransportHttp
+<br />
+having enabled these flags, you will see
+
+Sep 28, 2012 6:04:15 PM CEST Debug Deployment DmsThread-1 WLS Kernel 0000JcD_5_bE8Tk5ozx0iY1GPSV1000002 1348848255372 BEA-000000 Targets for app, DbAdapter
+
+
+
+<br/>
+
+In practice, if you untarget the "JCA Transport Provider" the Server will shut down gracefully.
+

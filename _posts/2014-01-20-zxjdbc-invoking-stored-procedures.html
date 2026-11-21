@@ -1,0 +1,69 @@
+---
+layout: post
+title: "zxJDBC, invoking stored procedures passing parameters (zxjdbc callproc)"
+date: 2014-01-20T03:23:00.001+01:00
+permalink: /2014/01/zxjdbc-invoking-stored-procedures.html
+blogger_id: "303211245842380892"
+tags: ["WLST", "zxJDBC"]
+---
+for the 2 world users of zxJDBC:
+<br/>
+
+This works, the stored procedure is defined as:
+<br/>
+
+<pre>
+create or replace 
+PROCEDURE PVTESTPROC AS 
+BEGIN
+  INSERT INTO PVTEST (COLUMN1) VALUES ('mamma');
+  commit;
+END PVTESTPROC;
+
+</pre>
+
+
+<br/><br/>
+
+and the Python code to invoke it:
+<br/><br/>
+<pre>
+#grab somehow a connection object (conn) for the DB
+....
+#then invoke stored procedure
+procedure='PVTESTPROC'
+c  = conn.cursor()
+params = [None]
+c.callproc(procedure, params)
+</pre>
+<br/><br/>
+
+
+This fails, I have simply added a parameter:
+<br/><br/>
+<pre>
+create or replace 
+PROCEDURE PVTESTPROC
+(
+  PARAM1 IN VARCHAR2  
+) AS 
+BEGIN
+  INSERT INTO PVTEST (COLUMN1) VALUES (PARAM1);
+  commit;
+END PVTESTPROC;
+</pre>
+
+<br/><br/>
+
+
+and the Jython code is the same as before, but with params = ['PLUTO'] . This fails with "PLS-00306: wrong number or types of arguments in call to 'PVTESTPROC'"
+
+
+<br/><br/>
+
+see also same problem reported here <a href=" http://code.activestate.com/lists/python-list/291477/">
+http://code.activestate.com/lists/python-list/291477/</a>
+
+
+Frankly I give up.... I think there is definitely some problem with such an old version of Python
+

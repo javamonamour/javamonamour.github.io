@@ -1,0 +1,35 @@
+---
+layout: post
+title: "wlst goes in OutOfMemory... what to do?"
+date: 2014-07-10T15:39:00.001+02:00
+permalink: /2014/07/wlst-goes-in-outofmemory-what-to-do.html
+blogger_id: "6011510838843437036"
+tags: ["WLST"]
+blogger_comments:
+  - author: "Matt (Brisbane/Australia)"
+    date: 2016-05-23
+    html: "Try<br /><br />export CONFIG_JVM_ARGS=&quot;-Xms1024m -Xmx2048m&quot;<br />$MW_HOME/oracle_common/common/bin/wlst.sh<br /><br /><br />ps auxwww | grep wlst<br />...<br />mshannon  9334 50.7  3.0 3442396 356760 pts/3  Sl+  03:27   0:09 /u01/app/oracle/product/Middleware/jdk6/bin/java -Dprod.props.file=/u01/app/oracle/product/Middleware/wlserver_10.3/.product.properties -Dweblogic.wlstHome=/u01/app/oracle/product/Middleware/oracle_common/common/wlst: -DORACLE_HOME=/u01/app/oracle/product/Middleware/oracle_common -DCOMMON_COMPONENTS_HOME=/u01/app/oracle/product/Middleware/oracle_common -Xms32m -Xmx200m -XX:MaxPermSize=128m -Xms1024m -Xmx2048m weblogic.WLST<br /><br />"
+---
+If you invoke the wlst.sh, it's a can of worms of intricate shall calls, hard to disentangle:<br />
+<br />
+/opt/oracle/fmw11_1_1_5/osb/common/bin/wlst.sh<br />/opt/oracle/fmw11_1_1_5/osb/common/bin/setHomeDirs.sh<br />/opt/oracle/fmw11_1_1_5/oracle_common/common/bin/wlst.sh<br />/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/bin/wlst.sh<br />/opt/oracle/fmw11_1_1_5/wlserver_10.3/server/bin/setWLSEnv.sh<br />
+<br />
+<br />
+<br />
+plus other stuff....<br />
+<br />
+After some hunting, I discover that the JVM memory options are set in:<br />
+<br />
+<br />/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/bin/commEnv.sh<br />
+and hardcoded to<br />
+MEM_ARGS=-Xms32m -Xmx200m -XX:MaxPermSize=128m<br />
+<br />
+and there is no way you can pass these parameters BEFORE calling the script...<br />
+<br />
+So finally your only option is to change commEnv.sh persistently...<br />
+<br />
+Don't tell me this sucks, I already know... 
+<br /><br />
+So if you get the dreaded "Error: GC overhead limit exceeded", you can increase the MEM_ARGS settings or try to disable the error (I don't think this will help) with  <br />
+-XX:-UseGCOverheadLimit
+<br /><br />

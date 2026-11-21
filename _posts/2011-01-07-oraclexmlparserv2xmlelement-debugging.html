@@ -1,0 +1,44 @@
+---
+layout: post
+title: "oracle.xml.parser.v2.XMLElement, debugging and logging in BPEL"
+date: 2011-01-07T18:04:00.002+01:00
+permalink: /2011/01/oraclexmlparserv2xmlelement-debugging.html
+blogger_id: "4206120149132725204"
+tags: ["BPEL", "XmlElement"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2022-07-06
+    html: "The variable &quot;currentLine&quot; is a variable that you keep updated through the execution? Or is it supposed to be a variable that&#39;s internal to SOA that you can access it? <br />When using your code I get a SelectionFailure trying to fetch the currentLine"
+---
+oracle.xml.parser.v2.XMLElement is the result of any XPath operation on a variable. Obvious, it's the way SOA Suite internally represents the payload and complex variables.<br />
+<br />
+You can embed a Java activity like this:<br />
+<br />
+<pre name="code" class="brush: java">oracle.xml.parser.v2.XMLElement currentLine = (oracle.xml.parser.v2.XMLElement)getVariableData("currentLine");     
+     
+System.out.println("currentLine=" + currentLine);
+
+</pre><br />
+<br />
+If you want to print the XML, here is how:<br />
+<br />
+<pre name="code" class="brush: java">oracle.xml.parser.v2.XMLElement currentLine = (oracle.xml.parser.v2.XMLElement)getVariableData("currentLine");     
+     
+System.out.println("currentLine=" + currentLine);
+addAuditTrailEntry("currentLine is: " + currentLine);
+
+java.io.StringWriter writer = new java.io.StringWriter();
+try {
+  currentLine.print(writer);
+  String payloadAsString = writer.toString();
+  System.out.println("currentLine=" + payloadAsString);
+
+}
+catch (Exception e) {
+  e.printStackTrace();
+}
+
+
+</pre><br />
+<br />
+See also <a href="/2010/12/soa-suite-logging-in-bpel.html">here</a> for more on logging in BPEL.

@@ -1,0 +1,50 @@
+---
+layout: post
+title: "Firefox 57 and Tree Style Tabs BROKEN"
+date: 2017-11-18T10:06:00.001+01:00
+permalink: /2017/11/firefox-57-and-tree-style-tabs-broken.html
+blogger_id: "8130090968770227821"
+tags: ["firefox"]
+---
+It's amazing how much damage the new version of Firefox is inflicting to the user community.<br />
+<br />
+If you are a Tree Style Tab user and HATE seeing the tabs being displayed on top and left at same time:<br />
+<br />
+<a href="https://www.reddit.com/r/firefox/comments/736cji/how_to_hide_native_tabs_in_firefox_57_tree_style/">https://www.reddit.com/r/firefox/comments/736cji/how_to_hide_native_tabs_in_firefox_57_tree_style/</a><br />
+<br />
+In a nutshell (on Windows)<br />
+<br />
+open a cmd prompt<br />
+cd %APPDATA%<br />
+cd Mozilla/Firefox/Profiles/<br />
+cd *** (whatever is named your profile.... no clue why they could not choose a fixed name...)<br />
+mkdir chrome<br />
+<br />
+in this chrome folder, create a userChrome.css file with this content:<br />
+<br />
+<pre>@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+/* to hide the native tabs */
+#TabsToolbar {
+    visibility: collapse;
+}
+
+/* to hide the sidebar header */
+#sidebar-header {
+    visibility: collapse;
+}
+
+</pre><br />
+<br />
+and restart Firefox.... and pray that with next release they will not break everything again.<br />
+<br />
+For the time being I have disabled the automatic update of Firefox...<br />
+<br />
+In Linux, use about:config in the browser to find your Profile directory ( /home/centos/.mozilla/firefox/pmrfuuch.default  in my case), then mkdir chrome etc etc. (see https://medium.com/@Aenon/firefox-hide-native-tabs-and-titlebar-f0b00bdbb88b )<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

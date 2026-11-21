@@ -1,0 +1,60 @@
+---
+layout: post
+title: "PL/SQL to transfer files in small chunks"
+date: 2012-11-26T18:05:00.001+01:00
+permalink: /2012/11/plsql-to-transfer-files-in-small-chunks.html
+blogger_id: "4063567145562861267"
+tags: ["PL-SQL"]
+---
+When confronted to copying large amounts of data in a DB, normally you don't want to do it in a mammoth transaction, since this could severely damage running application, and even fill your redo logs. <br/> <br/>
+
+
+This is a sample anonymous block to run the transfer in small chunks (in the example, 7 days worth of data are transferred at 600 seconds blocks)
+
+ <br/> <br/>
+
+<pre name="code" class="brush: java">
+
+declare v_now  date;
+v_delay_in_seconds number;
+
+begin 
+
+v_now := sysdate;
+
+for thedelay in reverse 1.. 7 * 24 * 6 loop
+  v_delay_in_seconds := thedelay * 600;
+
+  insert into WLI_REPORTING_ARCHIVE
+(
+   MSG_GUID, HOST_NAME, MSG_LABELS, ERRORCODE, ERRORDESCRIPTION,  
+ INTERFACEID, BUSINESSID, BUSINESSUNIQUEID, EVENTTYPE, 
+ EVENTOCCUREDON, TECHNICALMESSAGEID, PATHOFSERVICE, 
+ FILENAME, ISERROR, EVENTOCCUREDON_EPOCH, DB_TIMESTAMP, DATA_VALUE
+)
+select A.MSG_GUID, A.HOST_NAME, A.MSG_LABELS, A.ERRORCODE, A.ERRORDESCRIPTION,  
+ A.INTERFACEID, A.BUSINESSID, A.BUSINESSUNIQUEID, A.EVENTTYPE, 
+ A.EVENTOCCUREDON, A.TECHNICALMESSAGEID, A.PATHOFSERVICE, 
+ A.FILENAME, A.ISERROR, A.EVENTOCCUREDON_EPOCH, A.DB_TIMESTAMP, c.data_value 
+from WLI_QS_REPORT_VIEW A, WLI_QS_REPORT_ATTRIBUTE B, WLI_QS_REPORT_DATA C
+where A.MSG_GUID = B.MSG_GUID and C.MSG_GUID = B.MSG_GUID  and ( v_now - B.DB_TIMESTAMP) * 24 * 3600 > v_delay_in_seconds;
+
+WLI_REP_ARCHIVE_LOG_INS('1:INSERT', To_char( SQL%ROWCOUNT ) || ' records inserted into WLI_REPORTING_ARCHIVE older than ' || v_delay_in_seconds || ' seconds');
+
+delete from WLI_QS_REPORT_ATTRIBUTE B where ( v_now - B.DB_TIMESTAMP) * 24 * 3600 > v_delay_in_seconds ;
+
+
+WLI_REP_ARCHIVE_LOG_INS('2:DELETE', To_char( SQL%ROWCOUNT ) || ' records deleted from WLI_QS_REPORT_ATTRIBUTE older than ' || v_delay_in_seconds || ' seconds');
+
+commit;
+end loop;
+
+end;
+/
+
+
+
+</pre>
+
+
+

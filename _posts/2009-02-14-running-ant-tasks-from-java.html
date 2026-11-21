@@ -1,0 +1,16 @@
+---
+layout: post
+title: "Running Ant tasks from Java"
+date: 2009-02-14T10:30:00.000+01:00
+permalink: /2009/02/running-ant-tasks-from-java.html
+blogger_id: "7521532488013606811"
+tags: ["ant"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2010-02-11
+    html: "http://gradle.org/<br /><br />http://gant.codehaus.org/<br /><br />Thanks, but I am not going to touch Groovy even with a barge pole... you touch it, your break it."
+  - author: "Luciano"
+    date: 2010-02-11
+    html: "You can achieve the same fluency using Gant or Grale, Groovy based, Ant compatible build tools."
+---
+<div>let's face it, Ant is great but it's a pain in the butt when it comes to writing complex code, with variables, loops, conditions etc.</div><div>That's why I love the idea of running Ant tasks directly from Java.</div><div>Here is how.</div><div>The trick is to bear in mind the Ant object model: A Project contains Targets, a Target contains Tasks. A Task can't run without a Project, otherwise you get a NPE (my compliments to Ant developers for handling so gracefully this exception :o) ).</div><div><br /></div><div>Of course you can build a "Ant Wrapper" framework on top of this paradygm...</div><div><br /></div><div><br /></div><div>package com.pierre.ant;</div><div><br /></div><div>import java.io.File;</div><div><br /></div><div>import org.apache.tools.ant.Project;</div><div>import org.apache.tools.ant.Target;</div><div>import org.apache.tools.ant.taskdefs.Copy;</div><div><br /></div><div>public class AntRunner {</div><div><br /></div><div><span class="Apple-tab-span" style="white-space:pre"> </span>public static void main(String[] args) {</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>AntRunner runner = new AntRunner();</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>runner.scp();</div><div><span class="Apple-tab-span" style="white-space:pre"> </span>}</div><div><span class="Apple-tab-span" style="white-space:pre"> </span></div><div>/**</div><div>Copy file from a to b, locally</div><div>*/</div><div><span class="Apple-tab-span" style="white-space:pre"> </span>public void scp() {</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>Project project = new Project();</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>Target target = new Target();</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>project.addTarget("ciao", target);</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>Copy scp = new Copy();</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>scp.setFile(new File("c:/tmp/vacations.xsd"));</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>scp.setTodir(new File("c:/temp"));</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>scp.setProject(project);</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>target.addTask(scp);</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>target.execute();</div><div><span class="Apple-tab-span" style="white-space:pre"> </span>}</div><div>}</div><div><br /></div><div><br /></div><div><br /></div>

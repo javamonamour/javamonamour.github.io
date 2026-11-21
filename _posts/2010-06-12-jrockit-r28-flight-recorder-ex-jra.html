@@ -1,0 +1,159 @@
+---
+layout: post
+title: "JRockit R28 Flight Recorder (ex JRA)"
+date: 2010-06-12T17:41:00.004+02:00
+permalink: /2010/06/jrockit-r28-flight-recorder-ex-jra.html
+blogger_id: "4690773569315509936"
+tags: ["jfr", "jra", "jrcmd", "jrmc"]
+---
+Official documentation here:<br />
+<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E15289_01/doc.40/e15070/usingjfr.htm">http://download.oracle.com/docs/cd/E15289_01/doc.40/e15070/usingjfr.htm</a><br />
+entire PDF:<br />
+<a href="http://download.oracle.com/docs/cd/E15289_01/doc.40/e15070.pdf">http://download.oracle.com/docs/cd/E15289_01/doc.40/e15070.pdf</a><br />
+<br />
+interesting reading<br />
+<a href="http://blogs.oracle.com/jrockit/2010/04/jrockit_r28_ropsten_released.html">http://blogs.oracle.com/jrockit/2010/04/jrockit_r28_ropsten_released.html</a><br />
+<br />
+<br />
+C:\bea11\user_projects\domains\osbdomain&gt;<b>jrcmd</b><br />
+576 jrockit.tools.jrcmd.JrCmd<br />
+<br />
+3356 org.apache.derby.drda.NetworkServerControl start<br />
+<br />
+<b>1908 weblogic.Server</b><br />
+<br />
+<br />
+<br />
+C:\bea11\user_projects\domains\osbdomain&gt;<b>jrcmd 1908 help</b><br />
+1908:<br />
+The following commands are available:<br />
+kill_management_server<br />
+start_management_server<br />
+print_object_summary<br />
+memleakserver<br />
+print_class_summary<br />
+print_codeblocks<br />
+dump_codelayout<br />
+dump_codelist<br />
+dump_codemap<br />
+print_codegenlist<br />
+print_vm_state<br />
+print_utf8pool<br />
+<b>check_flightrecording</b><br />
+<b>dump_flightrecording</b><br />
+<b>stop_flightrecording</b><br />
+<b>start_flightrecording</b><br />
+print_properties<br />
+hprofdump<br />
+print_threads<br />
+datadump_request<br />
+runsystemgc<br />
+runfinalization<br />
+heap_diagnostics<br />
+oom_diagnostics<br />
+print_exceptions<br />
+version<br />
+timestamp<br />
+command_line<br />
+sanity<br />
+verbosity<br />
+set_filename<br />
+help<br />
+print_memusage<br />
+set_vmflag<br />
+list_vmflags<br />
+For more information about a specific command use 'help <command>'.<br />
+Parameters to commands are optional unless otherwise stated.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+C:\bea11\user_projects\domains\osbdomain&gt;jrcmd 1908 start_management_server<br />
+1908:<br />
+<br />
+<br />
+C:\bea11\user_projects\domains\osbdomain&gt;<b>jrcmd  1908 help start_flightrecording</b><br />
+1908:<br />
+Starts a JFR recording<br />
+<i>name             - Name of recording (string)<br />
+settings         - Settings file or preset (string)<br />
+defaultrecording - Starts default recording (bool, false)<br />
+delay            - Delay recording start (time, 0s)<br />
+duration         - Duration of recording (time, 0s)<br />
+filename         - Resulting recording filename (string)<br />
+compress         - GZip-compress the resulting recording file (bool,<br />
+false)<br />
+maxage           - Maximum age of buffer data (time, 0s)<br />
+maxsize          - Maximum size of buffers in bytes (long, 0)</i><br />
+<br />
+<br />
+<br />
+C:\bea11\user_projects\domains\osbdomain&gt;jrcmd  1908 start_flightrecording duration=2m name=<b>myfirstgeoosbrecording</b><br />
+1908:<br />
+Started recording 2<br />
+<br />
+<br />
+<br />
+C:\bea11\user_projects\domains\osbdomain&gt;jrcmd  1908 start_flightrecording duration=2m name=<b>myfirstgeoosbrecording2</b><br />
+1908:<br />
+Started recording 3<br />
+<br />
+<br />
+C:\bea11\user_projects\domains\osbdomain&gt;jrcmd  1908 check_flightrecording<br />
+1908:<br />
+Recording : id=1 name="WLDFDiagnosticImageRecording_osbdomain_AdminServer_" duration=0s dest="C:\bea11\user_projects\domains\osbdomain\servers\AdminSe<br />
+rver\logs\diagnostic_images\__tmp847859670567686703.jfr" compress=false (running)<br />
+Recording : id=2 name="<b>myfirstgeoosbrecording</b>" duration=120s (stopped)<br />
+Recording : id=3 name="<b>myfirstgeoosbrecording2</b>" duration=120s (stopped)<br />
+<br />
+<br />
+C:\bea11\user_projects\domains\osbdomain&gt;jrcmd  1908 help <b>dump_flightrecording</b><br />
+1908:<br />
+Copies contents of a JFR recording to file<br />
+name          - Recording name (string)<br />
+recording     - Recording id (long, -1)<br />
+copy_to_file  - Copy recording data to file (string)<br />
+compress_copy - GZip-compress "copy_to_file" destination (bool, false)<br />
+<br />
+<br />
+<br />
+C:\bea11\user_projects\domains\osbdomain&gt;jrcmd  1908 <b>dump_flightrecording </b>name=myfirstgeoosbrecording recording=2 copy_to_file=myfirstgeoosbrecordingf<br />
+ile.jfr compress_copy=true<br />
+1908:<br />
+<br />
+<br />
+C:\bea11\user_projects\domains\osbdomain&gt;dir<br />
+<br />
+Directory of C:\bea11\user_projects\domains\osbdomain<br />
+......<br />
+12-06-2010  16:53           206.158 <b>myfirstgeoosbrecordingfile.jfr</b></command><br />
+......<br />
+<br />
+<br />
+Now you can open the file with JRockit Mission Control <br />
+<br />
+<br />
+To dump on OutOfMemoryException:<br />
+-XX:+FlightRecordingDumpOnUnhandledException<br />
+<br />
+To specify a settings file (more than 1 is possible):<br />
+-XX:FlightRecorderOptions=settings=s1.jfs,settings=s2.jfs<br />
+<br />
+<br />
+<br />
+To start recording:<br />
+jrcmd <pid> start_flightrecording settings=filename.jfs<br />
+<br />
+In JROCKIT_HOME\jre\lib\jfr\default.jfs you find an example of settings.<br />
+<br />
+Non-Persistent (profiling data are kept im memory only) is the default storage mode. Typically max 1 minute of history.</pid><br />
+<br />
+<pid>REMEMBER TO ENABLE THE </pid>"DIAGNOSTIC VOLUME" setting (to Low, Medium or High, but not Off) on your WebLogic server configuration, otherwise Hot Methods will not work!<br />
+<br />
+<br />
+<pid> </pid>

@@ -1,0 +1,45 @@
+---
+layout: post
+title: "WebLogic: resource [weblogic.jdbc.jta.DataSource] is unavailable"
+date: 2014-03-28T08:49:00.001+01:00
+permalink: /2014/03/weblogic-resource-weblogicjdbcjtadataso.html
+blogger_id: "8279909760008122211"
+tags: ["tlog", "transactions", "weblogic"]
+---
+Funnily we see every minute this trace in the logs, after a restart:
+<br />
+<br />
+&lt;BEA-110486&gt; &lt;Transaction BEA1-0707A967026BC04A2B95 cannot complete commit processing because resource [weblogic.jdbc.jta.DataSource] is unavailable. The transaction will be abandoned after 76,586 seconds unless all resources acknowledge the commit decision.&gt;
+
+<br />
+<br />
+in server/monitoring/Recovery Services I see that we have a "Initial Recovered Transaction Total Count" = 1
+
+<br />
+<br />
+and in the Monitoring/JTA/Transactions tab I see
+<br />
+<pre>Transaction ID                  Status          Seconds Active   XA Resources                             Servers 
+BEA1-0707A967026BC04A2B95 Committing 15966          {weblogic.jdbc.jta.DataSource=new, WLStore_osbpr2do_AcmeCommonFileStore4=committed} {osbpr2do+osbpr2ms4=committed}
+</pre>
+<br />
+<br />
+So my guess is that it's trying to recover a 2 phase transaction stored into a TLOG when we did an emergency shutdown. Probably this TX will timeout after 86400 seconds (this is the "Abandon Timeout Seconds" (see domain/JTA configuration)
+<br />
+<br />
+<br />
+Eventually, the transaction was ABANDONED:<br />
+<br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">####&lt;Mar 29, 2014 4:19:02 AM CET&gt; &lt;Error&gt; &lt;JTA&gt; &lt;hqchacme111&gt; &lt;osbpr2ms4&gt; &lt;[ACTIVE] ExecuteThread: '13' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;7bd15190938d1348:-505e336a:14506b7cf60:-8000-000000000002a277&gt; &lt;1396063142807&gt; &lt;BEA-110423&gt; &lt;Abandoning transaction after 86,434 seconds: Xid=BEA1-0707A967026BC04A2B95(1729083635),Status=Committing,numRepliesOwedMe=0,numRepliesOwedOthers=0,seconds since begin=86432,seconds left=0,XAServerResourceInfo[WLStore_osbpr2do_acmeCommonFileStore4]=(ServerResourceInfo[WLStore_osbpr2do_acmeCommonFileStore4]=(state=committed,assigned=osbpr2ms4),xar=WLStore_osbpr2do_acmeCommonFileStore4167158004,re-Registered = true),XAServerResourceInfo[weblogic.jdbc.jta.DataSource]=(ServerResourceInfo[weblogic.jdbc.jta.DataSource]=(state=new,assigned=none),xar=null,re-Registered = false),SCInfo[osbpr2do+osbpr2ms4]=(state=committed),properties=({weblogic.jdbc.affinity.p01osb={service=p01osb_app.acme.com, percent=1, instance &nbsp;=p01osb_2, host=hqbuun551, database=p01osb}}),local properties=({weblogic.transaction.recoveredTransaction=true}),OwnerTransactionManager=ServerTM[ServerCoordinatorDescriptor=(CoordinatorURL=osbpr2ms4+acme2-osbpr2ms4.acme.com:8003+osbpr2do+t3+, XAResources={eis/Apps/Apps, eis/tibjms/Queue, eis/activemq/Queue, acme_SSS_ConfigDS_osbpr2do, WLStore_osbpr2do_WseeFileStore_auto_4, WLStore_osbpr2do_FileStore_auto_4, eis/fioranomq/Topic, eis/jbossmq/Queue, WLStore_osbpr2do_acmeCommonFileStore4, eis/webspheremq/Queue, eis/AQ/aqSample, SOADataSource_osbpr2do, eis/aqjms/Queue, WLStore_osbpr2do__WLS_osbpr2ms4, eis/sunmq/Queue, eis/pramati/Queue, eis/tibjms/Topic, eis/tibjmsDirect/Queue, SOAXADataSource_osbpr2do, eis/wls/Queue, eis/tibjmsDirect/Topic, acmeDataSource_osbpr2do, eis/wls/Topic, eis/aqjms/Topic, WSATGatewayRM_osbpr2ms4_osbpr2do},NonXAResources={})],CoordinatorURL=osbpr2ms4+acme2-osbpr2ms4.acme.com:8003+osbpr2do+t3+)&gt;</span><br />
+<br />
+<br />
+
+
+For an excellent coverage of TLOGs please look here <a href="http://pauldone.blogspot.ch/2012/10/anatomy-of-weblogic-tlogs-and.html">http://pauldone.blogspot.ch/2012/10/anatomy-of-weblogic-tlogs-and.html</a>
+<br />
+<br />
+To purge TLOG tables, just shut down your cluster and drop the *_WLStore tables (there should be 1 per managed server)
+<br />
+<br />
+
+

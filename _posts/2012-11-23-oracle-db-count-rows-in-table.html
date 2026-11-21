@@ -1,0 +1,68 @@
+---
+layout: post
+title: "Oracle DB: count rows in a table"
+date: 2012-11-23T16:49:00.001+01:00
+permalink: /2012/11/oracle-db-count-rows-in-table.html
+blogger_id: "131401028767108369"
+tags: ["oracledb"]
+---
+select COUNT(*) from WLI_REPORTING_ARCHIVE;<br/>
+1513854<br/><br/>
+
+TECHNICALMESSAGEID  can be null, and there is an INDEX on it:<br/>
+
+select COUNT(TECHNICALMESSAGEID ) from WLI_REPORTING_ARCHIVE;<br/>
+1513824<br/>
+
+The difference is 30<br/>
+select COUNT(*) from WLI_REPORTING_ARCHIVE where TECHNICALMESSAGEID is NULL;<br/>
+30<br/><br/>
+
+of course<br/> 
+select COUNT(TECHNICALMESSAGEID) from WLI_REPORTING_ARCHIVE where TECHNICALMESSAGEID is null;  <br/>
+will immediately return 0 <br/> 
+(it's very fast because probably the index keeps track of NULL entries)<br/><br/>
+
+
+
+This is not very accurate<br/><br/>
+SELECT NUM_ROWS FROM USER_TABLES WHERE TABLE_NAME = 'WLI_REPORTING_ARCHIVE';<br/><br/>
+
+unless the table has just been analyzed<br/><br/>
+
+This is VERY inaccurate<br/>
+SELECT NUM_ROWS FROM USER_TABLES WHERE TABLE_NAME = 'WLI_REPORTING_ARCHIVE';
+<br/><br/>
+
+This is very accurate and fast<br/>
+
+SELECT COUNT(*) * 100 FROM WLI_REPORTING_ARCHIVE SAMPLE (1);
+<br/><br/>
+
+explain plan for select COUNT(*) from WLI_REPORTING_ARCHIVE;
+<br/><br/>
+select * from table(dbms_xplan.display);
+<br/><br/>
+
+<pre>
+-----------------------------------------------------------------------------------------------
+| Id  | Operation             | Name                          | Rows  | Cost (%CPU)| Time     |
+-----------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT      |                               |     1 |  2921   (1)| 00:00:36 |
+|   1 |  SORT AGGREGATE       |                               |     1 |            |          |
+|   2 |   INDEX FAST FULL SCAN| WLI_REP_ARCHIVE_INDEX1 |  1499K|  2921   (1)| 00:00:36 |
+-----------------------------------------------------------------------------------------------
+
+</pre>
+
+<br/><br/>
+
+
+
+
+<br/><br/>
+
+
+
+see <a href="http://stackoverflow.com/questions/1840538/faster-alternative-in-oracle-to-select-count-from-sometable">http://stackoverflow.com/questions/1840538/faster-alternative-in-oracle-to-select-count-from-sometable</a>
+

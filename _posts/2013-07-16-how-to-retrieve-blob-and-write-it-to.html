@@ -1,0 +1,52 @@
+---
+layout: post
+title: "How to retrieve a BLOB and write it to a file in WLST"
+date: 2013-07-16T16:00:00.000+02:00
+permalink: /2013/07/how-to-retrieve-blob-and-write-it-to.html
+blogger_id: "523612905683526347"
+tags: ["blob", "WLST"]
+---
+We often need to recover errored payloads from the OSB reporting archiving tables.
+
+in WLST/Python it's VERY easy (much easier than in Java)
+<br/><br/>
+
+
+<pre name="code" class="brush: java">
+
+
+from com.ziclix.python.sql import zxJDBC
+
+def connectToProd(zxJDBC):
+    jdbc_url = "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=mydb.acme.com)(PORT=1522))(CONNECT_DATA=(SERVICE_NAME=myservice)))"
+    username = "USER_SOAINFRA"
+    password = "PASSWORD"
+    driver = "oracle.jdbc.OracleDriver"
+    conn = zxJDBC.connect(jdbc_url, username, password, driver)
+    return conn
+
+
+conn = connectToProd(zxJDBC)
+cursor = conn.cursor(1)
+cursor.execute("select DATA_VALUE, BUSINESSUNIQUEID, TECHNICALMESSAGEID from WLI_NESOA2_REPORTING_ARCHIVE where InterfaceID='BLA' and IsError != 'OK' and EventOccuredOn >= '2012-07-16T00:00:54' and EventOccuredOn <= '2013-07-16T09:30:54' order by businessuniqueid")
+print "executed select  "
+columnNames = []
+for item in cursor.description:
+        columnNames.append(item[0])
+
+
+for dsrow in cursor.fetchall():
+        dv = dsrow[columnNames.index('DATA_VALUE')]
+        tid = dsrow[columnNames.index('TECHNICALMESSAGEID')]
+        bid = dsrow[columnNames.index('BUSINESSUNIQUEID')]
+        myfile = open("thefiles/" + bid + "_" + tid, "w")
+        dv.tofile(myfile)
+        myfile.close()
+
+
+
+</pre>
+
+<br/><br/>
+
+

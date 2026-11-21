@@ -1,0 +1,81 @@
+---
+layout: post
+title: "There was an error while opening the file store file"
+date: 2009-05-28T16:13:00.000+02:00
+permalink: /2009/05/there-was-error-while-opening-file.html
+blogger_id: "8361364639945138692"
+blogger_comments:
+  - author: "Ansuman Dhal"
+    date: 2010-04-09
+    html: "please delete respective directory inside the /servers/adminServer/data/store/diagnostics and store/default.<br /><br />Restart the server, it will work."
+---
+I was getting this error, for no reason since the file would belong to the same Unix user that started the MS. Deleting the persistent store file solved the issue. This with Weblogic 9.2.
+
+<br/>
+<br/>
+<br/>
+ 
+May 28, 2009 3:00:20 PM CEST   Notice   WebLogicServer   BEA-000365   Server state changed to STARTING  <br/>
+ May 28, 2009 3:00:20 PM CEST   Info   WorkManager   BEA-002900   Initializing self-tuning thread pool  <br/>
+ May 28, 2009 3:00:20 PM CEST   Notice   Log Management   BEA-170019   The server log file /data/domains64bit_261/tst/acme/acme_alsb_tst/servers/acme_alsb_tst_server_1/logs/acme_alsb_tst_server_1.log is opened. All server side log events will be written to this file.  <br/>
+ May 28, 2009 3:00:22 PM CEST   Notice   Security   BEA-090082   Security initializing using security realm myrealm.  <br/>
+ May 28, 2009 3:00:23 PM CEST   Error   Store   BEA-280061   The persistent store "_WLS_acme_alsb_tst_server_1" could not be deployed: weblogic.store.PersistentStoreException: java.io.IOException: [Store:280021]There was an error while opening the file store file "_WLS_acme_ALSB_TST_SERVER_1000000.DAT"<br/>
+weblogic.store.PersistentStoreException: java.io.IOException: [Store:280021]There was an error while opening the file store file "_WLS_acme_ALSB_TST_SERVER_1000000.DAT"<br/>
+ at weblogic.store.io.file.Heap.open(Heap.java:166)<br/>
+ at weblogic.store.io.file.FileStoreIO.open(FileStoreIO.java:85)<br/>
+ at weblogic.store.internal.PersistentStoreImpl.open(PersistentStoreImpl.java:353)<br/>
+ at weblogic.store.admin.AdminHandler.activate(AdminHandler.java:135)<br/>
+ at weblogic.store.admin.FileAdminHandler.activate(FileAdminHandler.java:171)<br/>
+ Truncated. see log file for complete stacktrace<br/>
+java.io.IOException: [Store:280021]There was an error while opening the file store file "_WLS_acme_ALSB_TST_SERVER_1000000.DAT"<br/>
+ at weblogic.store.io.file.StoreDir.throwIOException(StoreDir.java:213)<br/>
+ at weblogic.store.io.file.StoreDir.open(StoreDir.java:103)<br/>
+ at weblogic.store.io.file.Heap.open(Heap.java:164)<br/>
+ at weblogic.store.io.file.FileStoreIO.open(FileStoreIO.java:85)<br/>
+ at weblogic.store.internal.PersistentStoreImpl.open(PersistentStoreImpl.java:353)<br/>
+ Truncated. see log file for complete stacktrace<br/>
+java.io.IOException: Error from open(), Permission denied, errno=13<br/>
+ at weblogic.store.io.file.direct.DirectIONative.open(Native Method)<br/>
+ at weblogic.store.io.file.direct.DirectFileChannel. init (DirectFileChannel.java:51)<br/>
+ at weblogic.store.io.file.direct.DirectIOManager.open(DirectIOManager.java:138)<br/>
+ at weblogic.store.io.file.StoreFile.openInternal(StoreFile.java:107)<br/>
+ at weblogic.store.io.file.StoreFile.open(StoreFile.java:142)<br/>
+ Truncated. see log file for complete stacktrace<br/>
+  <br/>
+ May 28, 2009 3:00:23 PM CEST   Critical   WebLogicServer   BEA-000362   Server failed. Reason: <br/>
+<br/>
+There are 1 nested errors:<br/>
+<br/>
+weblogic.management.DeploymentException: <br/>
+ at weblogic.store.admin.AdminHandler.activate(AdminHandler.java:138)<br/>
+ at weblogic.store.admin.FileAdminHandler.activate(FileAdminHandler.java:171)<br/>
+ at weblogic.store.admin.DefaultStoreService.start(DefaultStoreService.java:60)<br/>
+ at weblogic.t3.srvr.SubsystemRequest.run(SubsystemRequest.java:64)<br/>
+ at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)<br/>
+ at weblogic.work.ExecuteThread.run(ExecuteThread.java:181)<br/>
+Caused by: java.io.IOException: Error from open(), Permission denied, errno=13<br/>
+ at weblogic.store.io.file.direct.DirectIONative.open(Native Method)<br/>
+ at weblogic.store.io.file.direct.DirectFileChannel. init (DirectFileChannel.java:51)<br/>
+ at weblogic.store.io.file.direct.DirectIOManager.open(DirectIOManager.java:138)<br/>
+ at weblogic.store.io.file.StoreFile.openInternal(StoreFile.java:107)<br/>
+ at weblogic.store.io.file.StoreFile.open(StoreFile.java:142)<br/>
+ at weblogic.store.io.file.StoreDir.open(StoreDir.java:95)<br/>
+ at weblogic.store.io.file.Heap.open(Heap.java:164)<br/>
+ at weblogic.store.io.file.FileStoreIO.open(FileStoreIO.java:85)<br/>
+ at weblogic.store.internal.PersistentStoreImpl.open(PersistentStoreImpl.java:353)<br/>
+ at weblogic.store.admin.AdminHandler.activate(AdminHandler.java:135)<br/>
+ ... 5 more<br/>
+<br/>
+  <br/>
+ May 28, 2009 3:00:23 PM CEST   Notice   WebLogicServer   BEA-000365   Server state changed to FAILED  <br/>
+ May 28, 2009 3:00:23 PM CEST   Error   WebLogicServer   BEA-000383   A critical service failed. The server will shut itself down
+
+
+<br/><br/>
+
+In another case, there was already an instance of WLS running and locking that file.... killing it solved the issue.
+
+
+
+
+

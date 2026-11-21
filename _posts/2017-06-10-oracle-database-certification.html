@@ -1,0 +1,159 @@
+---
+layout: post
+title: "Oracle Database Certification"
+date: 2017-06-10T16:31:00.000+02:00
+permalink: /2017/06/oracle-database-certification.html
+blogger_id: "5099135344016955025"
+tags: ["oracledb"]
+---
+OCA Associate (<a href="http://education.oracle.com/pls/web_prod-plq-dad/db_pages.getpage?page_id=5001&get_params=p_exam_id:1Z0-061">1Z0-061</a> and  <a href="https://education.oracle.com/pls/web_prod-plq-dad/db_pages.getpage?page_id=5001&get_params=p_exam_id:1Z0-052">1Z0-052</a>) 
+
+<br/>
+OCP Professional
+
+<br/>
+OCM Master
+
+<br/>
+
+RAC Real Application Clusters 
+<br/>
+Database Control process
+<br/>
+
+Oracle Enterprise Manager Grid Control
+<br/>
+OCI (Oracle Call Interface) 
+<br/>
+<br/><br/>
+Data Definition Language (DDL)
+<br/>
+Data Control Language (DCL) 
+<br/>
+Transaction Control Language (TCL)
+<br/><br/>
+
+database = physical files on disk
+<br/>
+instance = background processes 
+<br/>
+shared memory segments = system global area, or SGA . Contains: database buffer cache, log buffer, shared pool.
+<br/>
+nonshareable memory = program global area, or PGA, private to the session
+<br/>
+database buffer cache : to execute SQL.
+<br/>
+log buffer (circular buffer) : contains change vectors before they are written to redo log
+<br/>
+log writer background process, the LGWR, writes log buffer to disk (commit).
+<br/>
+data dictionary cache = tables descriptions etc
+<br/>
+library cache = executed parsed code
+<br/>
+PL/SQL Area = part of the shared pool, in data dictionary
+<br/>
+SQL Query and PL/SQL Function Result Cache
+<br/>
+to retrieve tables definitions:
+<br/>
+SELECT table_name FROM user_tables;
+<br/>
+change vector, redo log
+
+<br/>
+
+data guard: physical standby and logical standby
+
+<br/>
+is part of RAC DB? <br/>
+select parallel from v$instance;
+<br/>
+has standby DB?<br/>
+select protection_level from v$database;
+
+<br/>
+
+<br/>
+Streams configured?
+<br/>
+select * from dba_streams_administrator;
+
+<br/>
+display memory settings for different areas (shared pool, large pool, java pool):
+<br/>
+select COMPONENT,CURRENT_SIZE,MIN_SIZE,MAX_SIZE from v$sga_dynamic_components;
+<br/>
+display PGA memory allocation:
+<br/>
+select name,value from v$pgastat;
+
+<br/>
+<br/>
+
+
+
+Notable processes:
+
+<br/>
+
+System Monitor (SMON), Process Monitor (PMON), Database Writer (DBWn), Log Writer (LGWR), Checkpoint Process (CKPT), 
+Manageability Monitor (MMON), Memory Manager (MMAN), Archiver (ARCn), Recoverer (RECO)
+
+<br/>
+SMON mounts a DB
+<br/>
+DBWn writes Database Buffer Cache to DB files
+<br/>
+LGWR writes Log Buffers to disk
+<br/>
+CKPT flushes dirty buffers
+<br/>
+MMON monitors performance and statistics, launches the ADDM Automatic Database Diagnostic Monitor
+<br/>
+
+MMAN Memory Manager
+<br/>
+
+ARCn Archiver
+<br/>
+to show all processes: select * from v$process; 
+
+<br/>
+
+Files: 
+<br/>
+controlfile (pointers to DB files, integrity checksums ), 
+<br/>
+the online redo log files, 
+<br/>
+and the datafiles
+
+<br/>
+<br/>
+datafiles consist in blocks, segments, extents (=group of blocks)
+<br/>
+SYSTEM and SYSAUX are 2 default tablespaces, they contain the METADATA (data dictionary)
+<br/>
+<br/>
+USER_TABLES ALL_TABLES DBA_TABLES 
+<br/> 
+dba_extents :
+<br/>
+select DISTINCT TABLESPACE_NAME from dba_extents;  -> SYSAUX UNDOTBS1 USERS SYSTEM
+<br/>
+
+v$datafile : select * from v$datafile; gives you all the DBF files who make the DB
+
+<br/>
+
+select * from dba_tablespaces;  TABLESPACE_NAME are SYSTEM SYSAUX UNDOTBS1 TEMP USERS DEV_IAS_TEMP DEV_STB
+
+<br/>
+
+
+
+
+
+
+

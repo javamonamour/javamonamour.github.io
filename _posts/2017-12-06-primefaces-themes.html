@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Primefaces themes"
+date: 2017-12-06T15:33:00.002+01:00
+permalink: /2017/12/primefaces-themes.html
+blogger_id: "3630644009695029292"
+tags: ["primefaces"]
+---
+see <a href="https://stackoverflow.com/questions/30253826/how-to-do-themeswitcher-using-primefaces">https://stackoverflow.com/questions/30253826/how-to-do-themeswitcher-using-primefaces</a><br />
+<br />
+see <a href="https://www.primefaces.org/showcase/ui/misc/themeSwitcher.xhtml">https://www.primefaces.org/showcase/ui/misc/themeSwitcher.xhtml</a><br />
+<br />
+<br />
+add this to your pom.xml<br />
+<br />
+<br />
+&lt;dependency&gt;<br />
+ &lt;groupId&gt;org.primefaces.themes&lt;/groupId&gt;<br />
+ &lt;artifactId&gt;all-themes&lt;/artifactId&gt;<br />
+ &lt;version&gt;1.0.10&lt;/version&gt;<br />
+&lt;/dependency&gt;<br />
+<br />
+<br />
+in the web.xml the primefaces.THEME should be dynamically assigned:<br />
+<br />
+&lt;context-param&gt;<br />
+&lt;param-name&gt;primefaces.THEME&lt;/param-name&gt;<br />
+&lt;param-value&gt;#{guestPreferences.theme}&lt;/param-value&gt;<br />
+&lt;/context-param&gt;<br />
+<br />
+use this themeSwitcher  in a page<br />
+<br />
+&lt;h:form&gt;<br />
+        &lt;p:outputLabel for=&quot;basic&quot; value=&quot;Basic:&quot; /&gt; <br />
+        &lt;p:themeSwitcher id=&quot;basic&quot; style=&quot;width:165px&quot;&gt;<br />
+            &lt;f:selectItem itemLabel=&quot;Choose Theme&quot; itemValue=&quot;&quot; /&gt;<br />
+            &lt;f:selectItems value=&quot;[afterdark, afternoon, afterwork, aristo, black-tie, blitzer, bluesky, bootstrap, casablanca, cupertino, cruze, dark-hive, delta, dot-luv, eggplant, excite-bike, flick, glass-x, home, hot-sneaks, humanity, le-frog, midnight, mint-choc, omega, overcast, pepper-grinder, redmond, rocket, sam, smoothness, south-street, start, sunny, swanky-purse, trontastic, ui-darkness, ui-lightness, vader]&quot; var=&quot;theme&quot; itemLabel=&quot;&quot; itemValue=&quot;&quot;/&gt;<br />
+        &lt;/p:themeSwitcher&gt;<br />
+ &lt;/h:form&gt;<br />
+<br />
+<br />
+

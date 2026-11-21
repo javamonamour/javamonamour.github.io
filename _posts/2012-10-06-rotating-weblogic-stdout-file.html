@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Rotating weblogic stdout file"
+date: 2012-10-06T09:41:00.001+02:00
+permalink: /2012/10/rotating-weblogic-stdout-file.html
+blogger_id: "1731669246949683743"
+tags: ["logrotation", "stdout", "weblogic"]
+---
+taking some notes here:
+<br />
+<a href="https://forums.oracle.com/forums/thread.jspa?threadID=903561">https://forums.oracle.com/forums/thread.jspa?threadID=903561</a>
+<br />
+see also Oracle document ID 827438.1
+"How to rotate .out ( stdout) log file in weblogic 9.2 (solaris/linux)"
+
+<br />
+<br />
+Default location of the file is 
+ &lt;domain_name&gt;/servers/&lt;server_name&gt;/logs/server_name.out
+
+<br />
+<br />
+The answer is "WebLogic Server cannot set this file to another location than the default. But you can use "symbolic link" on Linux OS to realize this function"
+
+<br />
+<br />
+There is a script file wlscontrol.sh declaring a variable OutFile.<br />
+A consultant tried to change it but the server started in FAILED mode.<br />
+<br />
+See also:<br />
+<br />
+By default Weblogic wont have options to rotate the *.out file, If you are running in unix or Linux boxes, you can add the following snippet<br />
+<br />
+under /etc/logrotate.conf file append a function to handle *.out files<br />
+<br />
+<pre>&lt;&lt;Location of logs directory&gt;&gt;/*.out {
+copytruncate
+rotate
+size=20Mb
+}
+</pre>
+<br />
+<br />

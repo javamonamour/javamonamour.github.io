@@ -1,0 +1,86 @@
+---
+layout: post
+title: "Google Kubernetes Engine getting started"
+date: 2018-04-20T21:41:00.000+02:00
+permalink: /2018/04/google-kubernetes-engine-getting-started.html
+blogger_id: "9193699225541184650"
+tags: ["gke", "kubernetes"]
+---
+Use only Google Chrome to access Google Kubernetes Engine.... with Firefox the Shell doesn't work properly (frustrating).<br />
+<br />
+Log into <a href="https://console.cloud.google.com/kubernetes/">https://console.cloud.google.com/kubernetes/</a><br />
+<br />
+<a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app">https://cloud.google.com/kubernetes-engine/docs/tutorials/hello-app</a><br />
+<br />
+<br />
+This is the hello-app <a href="https://github.com/GoogleCloudPlatform/kubernetes-engine-samples/tree/master/hello-app">https://github.com/GoogleCloudPlatform/kubernetes-engine-samples/tree/master/hello-app</a><br />
+<br />
+<br />
+git clone https://github.com/GoogleCloudPlatform/kubernetes-engine-samples<br />
+cd kubernetes-engine-samples/hello-ap<br />
+<br />
+export PROJECT_ID="$(gcloud config get-value project -q)"<br />
+docker build -t gcr.io/${PROJECT_ID}/hello-app:v1 .<br />
+<br />
+<br />
+the Dockerfile being built is:<br />
+<pre>FROM golang:1.8-alpine
+ADD . /go/src/hello-app
+RUN go install hello-app
+
+FROM alpine:latest
+COPY --from=0 /go/bin/hello-app .
+ENV PORT 8080
+CMD ["./hello-app"]
+</pre><br />
+and this is the log<br />
+<br />
+<br />
+<i><br />
+Sending build context to Docker daemon  9.216kB<br />
+Step 1/7 : FROM golang:1.8-alpine<br />
+1.8-alpine: Pulling from library/golang<br />
+550fe1bea624: Pull complete<br />
+cbc8da23026a: Pull complete<br />
+12508f45ab1b: Pull complete<br />
+f6a6c5429359: Pull complete<br />
+1c48badb8476: Pull complete<br />
+2866b24847ef: Pull complete<br />
+Digest: sha256:1b0930a92a5d478d3f93d8d3c06cb3c241262ccbf77de35eb617e202f58c9b76<br />
+Status: Downloaded newer image for golang:1.8-alpine<br />
+---> bbb7421a9337<br />
+Step 2/7 : ADD . /go/src/hello-app<br />
+---> ad8ee8aa671c<br />
+Removing intermediate container b8668e8cdedd<br />
+Step 3/7 : RUN go install hello-app<br />
+---> Running in c4b1bbf253a3<br />
+---> 9f8fb12fadc2<br />
+Removing intermediate container c4b1bbf253a3<br />
+Step 4/7 : FROM alpine:latest<br />
+latest: Pulling from library/alpine<br />
+ff3a5c916c92: Pull complete<br />
+Digest: sha256:8c03bb07a531c53ad7d0f6e7041b64d81f99c6e493cb39abba56d956b40eacbc<br />
+Status: Downloaded newer image for alpine:latest<br />
+---> 3fd9065eaf02<br />
+Step 5/7 : COPY --from=0 /go/bin/hello-app .<br />
+---> 490bb535a1a4<br />
+Removing intermediate container 617f13e84c40<br />
+Step 6/7 : ENV PORT 8080<br />
+---> Running in 828bf4c23c66<br />
+---> 4198dd25173f<br />
+Removing intermediate container 828bf4c23c66<br />
+Step 7/7 : CMD ./hello-app<br />
+---> Running in d009b6f24683<br />
+---> 0a8fed701a4d<br />
+Removing intermediate container d009b6f24683<br />
+Successfully built 0a8fed701a4d<br />
+Successfully tagged gcr.io/pippo-189911/hello-app:v1<br />
+><br />
+<br />
+</i><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

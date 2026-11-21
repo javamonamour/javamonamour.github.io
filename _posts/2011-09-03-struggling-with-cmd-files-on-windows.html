@@ -1,0 +1,36 @@
+---
+layout: post
+title: "Struggling with CMD files on Windows"
+date: 2011-09-03T11:06:00.001+02:00
+permalink: /2011/09/struggling-with-cmd-files-on-windows.html
+blogger_id: "6203250149827052466"
+tags: ["cmd", "jar"]
+---
+Since the old times of DOS, the MS scripting syntax has been probably one of the most pathetic and horrendous pieces of shit I have ever seen in my life.<br />
+Bat files, cmd files, all pathetic spaghetti mess full of GOTO and with cryptic error messages.<br />
+Unix shell scripts for all that matters are not a lot better, but slightly better yes they are.<br />
+<br />
+Now I have to perform a "jar tvf" on all jars in a directory.<br />
+<br />
+The only way I could do it is:<br />
+<br />
+dir /b *.jar &gt; alljars.txt<br />
+<br />
+<br />
+@echo off<br />
+echo &gt; allfilesinjars.txt<br />
+FOR /F %%G IN (alljars.txt) DO (<br />
+<span class="Apple-tab-span" style="white-space: pre;">	</span>@echo %%G &gt;&gt; allfilesinjars.txt<br />
+<span class="Apple-tab-span" style="white-space: pre;">	</span>jar tvf %%G &gt;&gt; allfilesinjars.txt<br />
+<span class="Apple-tab-span" style="white-space: pre;">	</span>@echo "______________________" &gt;&gt; allfilesinjars.txt<br />
+)<br />
+<br />
+<br />
+(see <a href="http://ss64.com/nt/for_f.html">http://ss64.com/nt/for_f.html</a>  for help)<br />
+<br />
+It's crap but it works.<br />
+<br />
+So any time I need a class, I just search it in the txt file instead of doing costly searches in the jars.<br />
+<br />
+<br />
+

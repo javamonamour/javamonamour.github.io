@@ -1,0 +1,74 @@
+---
+layout: post
+title: "Splunk and WebLogic"
+date: 2012-12-15T12:41:00.000+01:00
+permalink: /2012/12/splunk-and-weblogic.html
+blogger_id: "7565476584603152273"
+tags: ["splunk", "weblogic"]
+---
+Tired of grepping like a monkey? Use <a href="http://www.splunk.com/">SPLUNK</a><br />
+<br />
+The tutorial videos on their home page are excellent. <br />
+<br />
+for managed server logs:<br />
+<br />
+<a href="http://splunkbase.splunk.com/apps/All/3.x/app:WebLogic+Event+Types#">http://splunkbase.splunk.com/apps/All/3.x/app:WebLogic+Event+Types#</a><br />
+<br />
+<br />
+for access logs:<br />
+<br />
+<a href="http://splunkbase.splunk.com/apps/All/3.x/app:WebLogic+Access">http://splunkbase.splunk.com/apps/All/3.x/app:WebLogic+Access</a><br />
+<br />
+<br />
+<br />
+<br />
+The tutorial video on<a href="http://www.splunk.com/page/download_track?file=5.0.1/splunk/linux/splunk-5.0.1-143156-linux-2.6-x86_64.rpm&amp;platform=Linux&amp;architecture=x86_64&amp;version=5.0.1&amp;typed=release&amp;name=linux_installer&amp;d=pro&amp;elq=00aaca4c-d84b-45df-ae96-fdfb341807ec"> installing Splunk on Linux is here</a>&nbsp; (you must create an account).<br />
+Downloaded&nbsp;splunk-5.0.1-143156-Linux-x86_64.gz . Put in /opt2, tar xvf&nbsp;splunk-5.0.1-143156-Linux-x86_64.gz,<br />
+cd /opt2/splunk/<br />
+./splunk start<br />
+<br />
+log into&nbsp;http://myserver.com:8000/en-GB/account/login?return_to=%2Fen-GB%2F as admin / changeme<br />
+change password<br />
+add data, A file or directory of files, Consume any file on this Splunk server, select a weblogic file  <br />
+the choices available are:
+
+
+
+<br />
+<br />
+<br />
+&nbsp; &nbsp; A file or directory of files<br />
+&nbsp; &nbsp; Syslog<br />
+&nbsp; &nbsp; Windows event logs<br />
+&nbsp; &nbsp; Windows Registry<br />
+&nbsp; &nbsp; Windows performance metrics<br />
+<br />
+&nbsp; &nbsp; Unix/Linux logs and metrics<br />
+&nbsp; &nbsp; File integrity monitoring<br />
+&nbsp; &nbsp; Configuration files<br />
+&nbsp; &nbsp; OPSEC LEA<br />
+&nbsp; &nbsp; Cisco device logs<br />
+<br />
+&nbsp; &nbsp; llS logs<br />
+&nbsp; &nbsp; Apache logs<br />
+&nbsp; &nbsp; WebSphere logs, metrics and other data<br />
+&nbsp; &nbsp; Any other data...<br />
+<br />
+Out of the box, the WebLogic files are not recognized
+
+<br />
+You can read the book Exploring Splunk at <a href="http://www.splunk.com/web_assets/v5/book/Exploring_Splunk.pdf">http://www.splunk.com/web_assets/v5/book/Exploring_Splunk.pdf</a>
+
+<br />
+<br />
+To install the WebLogic Eventy Type app:
+<br />
+<a href="http://docs.splunk.com/Documentation/Splunk/3.4.13/Admin/InstallSplunkApplications">http://docs.splunk.com/Documentation/Splunk/3.4.13/Admin/InstallSplunkApplications</a>
+<br />
+<br />
+the menu is: splunk, Manager, Apps, Upload App, and provide the weblogic.tar.gz downloaded from the link <a href="http://splunkbase.splunk.com/apps/All/3.x/app:WebLogic+Event+Types#">http://splunkbase.splunk.com/apps/All/3.x/app:WebLogic+Event+Types#</a><br />
+<br />
+Cool video on how to add a directory of files for indexing:<br />
+<br />
+<iframe allowfullscreen="allowfullscreen" frameborder="0" height="360" src="http://www.youtube.com/embed/42h4wKj3ngo?feature=player_detailpage" width="640"></iframe>
+

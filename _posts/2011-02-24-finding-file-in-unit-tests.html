@@ -1,0 +1,51 @@
+---
+layout: post
+title: "Finding a file in Unit Tests"
+date: 2011-02-24T15:03:00.001+01:00
+permalink: /2011/02/finding-file-in-unit-tests.html
+blogger_id: "2378324313568870226"
+tags: ["unitils"]
+---
+A common problem is if you need to access a file in a JUnit test in Eclipse and also in the unit tests run in Hudson. <br />
+For Eclipse, if you do <br />
+<br />
+File dir = new File(".");<br />
+<br />
+this directory will point to the root directory of the current project.<br />
+So all relative paths should refer to this root directory.<br />
+<br />
+In Hudson, the mapping is not quite the same.<br />
+<br />
+<br />
+So in my Unit tests I use:<br />
+<br />
+<pre name="code" class="brush: java">import org.unitils.core.Unitils;
+import org.unitils.dbunit.datasetfactory.DataSetResolver;
+import org.unitils.dbunit.datasetfactory.impl.DefaultDataSetResolver;
+
+        static DataSetResolver datasetResolver;
+
+ @BeforeClass
+ public static void initUnitiles() {
+  Unitils unitilsInstance = Unitils.getInstance();
+  unitilsInstance.init();
+  datasetResolver = new DefaultDataSetResolver();
+  datasetResolver.init(unitilsInstance.getConfiguration());
+ }
+
+@Test
+   public void testIcoli() {
+
+        File file = datasetResolver.resolve(MyTest.class, "sampleFile.xml");
+
+
+}
+</pre><br />
+and I place the sampleFile.xml in the same directory and the MyTest class...<br />
+<br />
+Go look in the DefaultDataSetResolver code to see how the magic is done... it's quite easy anyway, just do <br />
+<br />
+URL myURL = MyTestClass.getResource("myfile.xml");<br />
+File myFile = toFile(myURL);<br />
+<br />
+(where toFile is an Apache Commons function).

@@ -1,0 +1,133 @@
+---
+layout: post
+title: "Playing with CAT and classloaders"
+date: 2015-09-20T10:19:00.001+02:00
+permalink: /2015/09/playing-with-cat-and-classloaders.html
+blogger_id: "2749438859287665031"
+tags: ["classloaders"]
+---
+tutorial video here:
+<br />
+<br />
+<iframe width="1280" height="720" src="https://www.youtube.com/embed/ArLTKapjV_8" frameborder="0" allowfullscreen></iframe>
+<br />
+<br />
+
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/9f9cb22dde3ceeca.jpeg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="200" src="/images/5b6dbe9d54cc5d91.jpeg" width="200" /></a></div>
+<br />
+I was reading the excellent Oracle document <a href="http://docs.oracle.com/middleware/1212/wls/WLPRG/classloading.htm#WLPRG320">http://docs.oracle.com/middleware/1212/wls/WLPRG/classloading.htm#WLPRG320</a> on classloaders - very nice but it misses pictures and real data.
+<br />
+<br />
+So I have created a EAR PVEar, and inside a Stateless EJB, an EJBClient (and a PVTimer, ignore it) and a WebApp<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/b599020712854a79.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="230" src="/images/bfa5c9d95cd914ce.png" width="640" /></a></div>
+<br />
+<br />
+I open the cat tool, analyze the PVEar, click on "detailed", and I get this:
+<br />
+<pre>System Classloaders
+
+
+ Type: sun.misc.Launcher$ExtClassLoader
+HashCode: 22293724
+Classpath:
+
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/jdk/jre/lib/ext/access-bridge-32.jar
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/jdk/jre/lib/ext/access-bridge.jar
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/jdk/jre/lib/ext/dnsns.jar
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/jdk/jre/lib/ext/jaccess.jar
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/jdk/jre/lib/ext/localedata.jar
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/jdk/jre/lib/ext/sunec.jar
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/jdk/jre/lib/ext/sunjce_provider.jar
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/jdk/jre/lib/ext/sunmscapi.jar
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/jdk/jre/lib/ext/sunpkcs11.jar
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/jdk/jre/lib/ext/zipfs.jar
+
+Type: sun.misc.Launcher$AppClassLoader
+HashCode: 27035333
+Classpath:
+
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/jdk/lib/tools.jar
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/modules/com.oracle.cie.config-wls-online_8.1.0.0.jar
+    /D:/Oracle/Middleware/Oracle_Home/oracle_common/modules/net.sf.antcontrib_1.1.0.0_1-0b3/lib/ant-contrib.jar
+    /D:/Oracle/Middleware/Oracle_Home/wlserver/common/derby/lib/derby.jar
+    /D:/Oracle/Middleware/Oracle_Home/wlserver/common/derby/lib/derbyclient.jar
+    /D:/Oracle/Middleware/Oracle_Home/wlserver/common/derby/lib/derbynet.jar
+    /D:/Oracle/Middleware/Oracle_Home/wlserver/modules/features/oracle.wls.common.nodemanager_2.0.0.0.jar
+    /D:/Oracle/Middleware/Oracle_Home/wlserver/server/lib/weblogic.jar
+    /D:/Oracle/Middleware/Oracle_Home/wlserver/server/lib/weblogic_sp.jar
+    /D:/Oracle/Middleware/Oracle_Home/wlserver/server/lib/xqrl.jar
+
+Type: weblogic.utils.classloaders.GenericClassLoader
+HashCode: 21751181
+Classpath:
+
+
+
+Application Classloaders
+
+
+
+Type: weblogic.utils.classloaders.FilteringClassLoader
+HashCode: 10170360
+Filter: []
+Classpath: empty
+Type: weblogic.utils.classloaders.GenericClassLoader
+HashCode: 1771581
+Classpath:
+
+    D:\pierre\domains\pvdomain\servers\AdminServer\cache\EJBCompilerCache\h8uvtcz3nyfq
+    D:\pierre\workspace12c\PVEar\EarContent\APP-INF\classes
+    D:\pierre\workspace12c\PVEjbProjectClient\build\classes
+    D:\pierre\workspace12c\PVEjbProject\build\PVEjbProjectClient.jar
+    D:\pierre\workspace12c\PVEjbProject\build\classes
+
+
+</pre>
+<br />
+<br />
+clicking on the EJB module I get exactly the same picture. But on the WebApp module I get an extra FilteringClassLoader:
+
+<br />
+<pre>Application Classloaders
+
+(this one is same as in the EJB)
+
+Type: weblogic.utils.classloaders.FilteringClassLoader
+HashCode: 10170360
+Filter: []
+Classpath: empty
+Type: weblogic.utils.classloaders.GenericClassLoader
+HashCode: 1771581
+Classpath:
+
+    D:\pierre\domains\pvdomain\servers\AdminServer\cache\EJBCompilerCache\h8uvtcz3nyfq
+    D:\pierre\workspace12c\PVEar\EarContent\APP-INF\classes
+    D:\pierre\workspace12c\PVEjbProjectClient\build\classes
+    D:\pierre\workspace12c\PVEjbProject\build\PVEjbProjectClient.jar
+    D:\pierre\workspace12c\PVEjbProject\build\classes
+
+
+(this one is new)
+
+Type: weblogic.utils.classloaders.FilteringClassLoader
+HashCode: 6976334
+Filter: []
+Classpath: empty
+Type: weblogic.utils.classloaders.ChangeAwareClassLoader
+HashCode: 12727142
+Classpath:
+
+    D:\pierre\workspace12c\PVWeb\build\classes
+
+
+
+</pre>
+<br />
+<br />
+So, the FilteringClassLoader 10170360 separates from the System Classloader ANYTHING inside the EAR module.<br />
+The FilteringClassLoader 6976334 separates the WebApp from the EAR.WebApp and EJB share the same Application Classloaders GenericClassLoader 1771581.
+
+<br />
+<br />

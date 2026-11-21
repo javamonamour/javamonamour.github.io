@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Consensus-based server migration: caveat"
+date: 2013-10-01T12:44:00.000+02:00
+permalink: /2013/10/consensus-based-server-migration-caveat.html
+blogger_id: "7961727093253095476"
+tags: ["migration", "network", "weblogic"]
+---
+I used to have a Database-based lease mechanism for Server Migration, but occasionally it was failing ("unable to contact DB", no clue why...) and the server would restart itself.
+<br/>
+We changed to Consensus, hoping the network would be more robust. However, due to a network reconfiguration, some IPs were left undefined and the cluster broke:
+
+<pre name="code" class="brush: xml">
+
+&lt;[ACTIVE] ExecuteThread: '37' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;f56960fb001bca18:-33f939f3:1413c1039a1:-8000-0000000000065ea0> &lt;1380619475997> &lt;BEA-000802> &lt;ExecuteRequest failed
+java.lang.AssertionError: Invalid state transition from failed to stable_leader.
+java.lang.AssertionError: Invalid state transition from failed to stable_leader
+        at weblogic.cluster.leasing.databaseless.ClusterState.setState(ClusterState.java:100)
+        at weblogic.cluster.leasing.databaseless.ClusterState.setState(ClusterState.java:59)
+        at weblogic.cluster.leasing.databaseless.ClusterFormationServiceImpl.leaderInitialization(ClusterFormationServiceImpl.java:318)
+        at weblogic.cluster.leasing.databaseless.ClusterFormationServiceImpl.formClusterInternal(ClusterFormationServiceImpl.java:148)
+        at weblogic.cluster.leasing.databaseless.ClusterFormationServiceImpl.timerExpired(ClusterFormationServiceImpl.java:339)
+        at weblogic.timers.internal.TimerImpl.run(TimerImpl.java:273)
+        at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+>
+
+</pre>
+
+
+<br/>
+
+The issue is that once the network has been fixed, the cluster didn't recover and we had to restart the servers... however this could simply be because when we restart the server, the Virtual IP associated to each server is readded to the NIC (/sbin/ifconfig -addif). Instead of restarting the servers I should have tried to add the IP manually... one should really monitor continuously the availability of those IPs...
+
+
+
+

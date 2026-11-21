@@ -1,0 +1,26 @@
+---
+layout: post
+title: "OSB Stubs implementing asynchronous callback"
+date: 2011-01-25T13:17:00.000+01:00
+permalink: /2011/01/osb-stubs-implementing-asynchronous.html
+blogger_id: "1334899746832031322"
+tags: ["stub"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2012-10-02
+    html: "no, David, absolutely no issues"
+  - author: "Anonymous"
+    date: 2012-10-02
+    html: "Bonjour Pierluigi,<br /><br />Any issue happened while using a Thread.sleep in a java callout?<br /><br />david<br /><br />"
+---
+I needed to implement a stub acting as follows:<br />
+<br />
+1) request-reply (the reply sends back an ACK)<br />
+2) asynchronous callback 10 seconds later to send the response to the request made in point 1<br />
+<br />
+Of course there are zillion of solutions... Citrus Framework, Asynchronous BPEL, a WS with a separate thread to process the callback, a JMS queue...<br />
+<br />
+I decided the - for me - simplest solution: in the main PS, publish to a Callback PS which does a Java Callout to a Thread.sleep(10000), then routes the callback.<br />
+Publish is a non blocking operation (in most circumstances, unless you do HTTP with a QoS "exactly once").<br />
+<br />
+It works like a charm. I don't know how OSB implements this non-blocking operation internally, nor which impact a Thread.sleep() has on the bus.... time will tell.... anyway it doesn't go to production, so it doesn't have to be a robust solution.

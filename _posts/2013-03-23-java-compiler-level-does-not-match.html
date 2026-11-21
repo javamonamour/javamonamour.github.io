@@ -1,0 +1,36 @@
+---
+layout: post
+title: "Java compiler level does not match the version of the installed Java project facet. "
+date: 2013-03-23T14:06:00.001+01:00
+permalink: /2013/03/java-compiler-level-does-not-match.html
+blogger_id: "365007278392238332"
+tags: ["maven", "mavensucks"]
+---
+I have created a webapp artifact with maven:
+<br />
+<br />
+mvn archetype:generate -DgroupId=com.acme.osb -DartifactId=wlobelix -DarchetypeArtifactId=maven-archetype-webapp -DinteractiveMode=false
+<br />
+mvn eclipse:eclipse -Dwtpversion=2.0
+<br />
+<br />
+When I open the project with Eclipse, I get:
+
+<br />
+<br />
+Java compiler level does not match the version of the installed Java project facet. 
+<br />
+Faceted Project Problem (Java Version Mismatch)
+<br />
+<br />
+<br />
+<br />
+Don't panic: it's normal with Maven that things take 10 times more than normal and require a lot of manual hacks and desperate googling.
+
+<br />
+<br />
+Just right-click on the project in Eclipse, Project facets, 
+and set it to 1.6 (I assume your Workspace default is 1.6). For some strange reason Maven defaults to 1.4. My grandmother - deceased in 2009 at the age of 97 - used to code in 1.6, so I guess that Maven authors are older than her - maybe they are <a href="http://en.wikipedia.org/wiki/Trilobite">Trilobites</a>, who ruled the Earth some 500 million years ago. Welcome to the 21st century, pals.<br /><br /><br />
+<br />
+<a href="/images/9e8eeaed1f3b6e18.jpg" imageanchor="1"><img border="0" height="456" src="/images/33a7782729bff5ad.jpg" width="640" /></a>
+

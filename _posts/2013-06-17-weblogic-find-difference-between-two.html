@@ -1,0 +1,27 @@
+---
+layout: post
+title: "weblogic find difference between two domains"
+date: 2013-06-17T23:18:00.000+02:00
+permalink: /2013/06/weblogic-find-difference-between-two.html
+blogger_id: "6477789392960505834"
+tags: ["weblogic"]
+---
+If you have 2 working domains and want to find out in which way they differ, you have several options:<br />
+<br />
+- use Enterprise manager, which has a Compare domains tool<br />
+<br />
+- tar up the DOMAIN_HOME/bin folder and the&nbsp; DOMAIN_HOME/config folder and use Beyond Compare<br />
+<br />
+- do a domainToScript() with WLST and do a diff<br />
+<br />
+- find all .sh and .xml and .properties files under /opt/oracle/fmw, tar up and diff with beyond compare<br />
+<br />
+- see <a href="/2013/02/remote-compare-directories-diff-for.html">/2013/02/remote-compare-directories-diff-for.html</a> for rsync (I suggest to tar and copy both domains to another machine)<br />
+<br />
+- do a jinfo PID on each instance of server, and do a diff<br />
+<br />
+<br />
+- &nbsp;find /opt/oracle/fmw11_1_1_5/ -name *.jar | sort | xargs md5sum &gt; allmd5.txt<br />
+<br />
+<br />
+<br />

@@ -1,0 +1,118 @@
+---
+layout: post
+title: "OSB and Log4J"
+date: 2011-07-31T13:22:00.002+02:00
+permalink: /2011/07/osb-and-log4j.html
+blogger_id: "1711045050557026747"
+tags: ["log4j", "OSB"]
+---
+<b>Objective</b>: enable custom logging from OSB with Log4J<br />
+<br />
+<b>Libraries</b>:<br />
+in C:\Oracle\Middleware\Oracle_OSB1\lib\external\log4j_1.2.8.jar you find the libraries <br />
+<br />
+<b>OSB Logger code</b>:<br />
+<br />
+<pre name="code" class="brush: java">package com.acme.osb;
+
+public class OSBLogger {
+ static java.util.logging.Logger loggerJava = java.util.logging.Logger.getLogger(OSBLogger.class.getName());
+ static org.apache.log4j.Logger loggerLog4j = org.apache.log4j.Logger.getLogger(OSBLogger.class.getName());
+ 
+ public static String logMessage(String message) {
+  String messageout = "the message is " + message;
+  System.out.println(messageout);
+  loggerJava.log(java.util.logging.Level.SEVERE, messageout);
+  loggerLog4j.debug("log4j" + messageout);
+  return messageout;
+ }
+ 
+ public static String reloadConfiguration(String configFilename) throws Exception {
+  String messageout = "reloading configuration from " + configFilename;
+  System.out.println(messageout);
+  URL url = Thread.currentThread().getContextClassLoader().getResource(configFilename);
+  if (url == null) {
+   throw new IllegalArgumentException("unable to locate resource " + configFilename);
+  }
+  String file = url.getFile();
+  System.out.println("file=" + file);
+  BufferedReader in = new BufferedReader(new FileReader(file));
+  String text = "";
+  while (in.ready()) {
+   text = in.readLine();
+   System.out.println(text);
+  }
+  //LogManager.resetConfiguration();
+  PropertyConfigurator.configure(url);
+  PropertyConfigurator.configureAndWatch(file);
+  System.out.println("done reloading");
+  return messageout;
+ }
+ 
+ 
+}
+</pre><br />
+<br />
+<br />
+<b>Extra configuration</b>:<br />
+<br />
+put <a href="/2010/09/sample-log4jxml.html">your log4j.xml file</a> in $DOMAIN_HOME/config/osb<br />
+(another example <a href="http://www.vaannila.com/log4j/log4j-xml-configuration-multiple-appender.html">here</a>)<br />
+<br />
+<br />
+Log4j 1.2.13 source <a href="http://olex.openlogic.com/packages/log4j/1.2.13">here</a><br />
+<br />
+<a href="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PropertyConfigurator.html">http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PropertyConfigurator.html</a><br />
+<br />
+"The hierarchy will be reset before configuration when <b>log4j.reset=true</b> is present in the properties file. "  but this is available only for log4j 1.2.15 <br />
+<br />
+<a href="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd</a><br />
+<br />
+<a href="http://juliusdavies.ca/logging.html">This great post</a> on logging best practices<br />
+<br />
+See <a href="http://forums.oracle.com/forums/thread.jspa?threadID=932901">http://forums.oracle.com/forums/thread.jspa?threadID=932901</a><br />
+<br />
+<br />
+My conclusion: configureAndWatch doesn't simply work. I am fed up investigating on this issue. Probably upgrading to the latest version of log4j would help.<br />
+<br />
+I had to add an extra logger:<br />
+<br />
+&lt;logger name="org.apache.commons" additivity="false"&gt;<br />
+&lt;level value="WARN"/&gt;<br />
+&lt;appender-ref ref="FILEAPACHE"/&gt;<br />
+&lt;/logger><br />
+<br />
+to avoid my own log file being cluttered by org.apache.commons messages (no clue why they end up in my own com.acme.osb logger).<br />
+<br />
+<br />
+Appendix: custom xpath definitions:<br />
+<br />
+<pre name="code" class="brush: xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;xpf:xpathFunctions xmlns:xpf="http://www.bea.com/wli/sb/xpath/config"&gt;
+    &lt;xpf:category id="logMessage"&gt;
+        &lt;xpf:function&gt;
+            &lt;xpf:name&gt;logMessage&lt;/xpf:name&gt;
+            &lt;xpf:comment&gt;logMessage&lt;/xpf:comment&gt;
+            &lt;xpf:namespaceURI&gt;http://www.bea.com/xquery/xquery-functions&lt;/xpf:namespaceURI&gt;
+            &lt;xpf:className&gt;com.acme.osb.OSBLogger&lt;/xpf:className&gt;
+            &lt;xpf:method&gt;java.lang.String logMessage(java.lang.String)&lt;/xpf:method&gt;
+            &lt;xpf:isDeterministic&gt;true&lt;/xpf:isDeterministic&gt;
+            &lt;xpf:scope&gt;Pipeline&lt;/xpf:scope&gt;
+            &lt;xpf:scope&gt;SplitJoin&lt;/xpf:scope&gt;
+        &lt;/xpf:function&gt;
+        &lt;xpf:function&gt;
+            &lt;xpf:name&gt;reloadConfiguration&lt;/xpf:name&gt;
+            &lt;xpf:comment&gt;reloadConfiguration&lt;/xpf:comment&gt;
+            &lt;xpf:namespaceURI&gt;http://www.bea.com/xquery/xquery-functions&lt;/xpf:namespaceURI&gt;
+            &lt;xpf:className&gt;com.acme.osb.OSBLogger&lt;/xpf:className&gt;
+            &lt;xpf:method&gt;java.lang.String reloadConfiguration(java.lang.String)&lt;/xpf:method&gt;
+            &lt;xpf:isDeterministic&gt;true&lt;/xpf:isDeterministic&gt;
+            &lt;xpf:scope&gt;Pipeline&lt;/xpf:scope&gt;
+            &lt;xpf:scope&gt;SplitJoin&lt;/xpf:scope&gt;
+        &lt;/xpf:function&gt;
+    &lt;/xpf:category&gt;
+&lt;/xpf:xpathFunctions&gt;
+
+
+</pre>

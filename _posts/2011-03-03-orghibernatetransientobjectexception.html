@@ -1,0 +1,20 @@
+---
+layout: post
+title: "org.hibernate.TransientObjectException"
+date: 2011-03-03T12:54:00.000+01:00
+permalink: /2011/03/orghibernatetransientobjectexception.html
+blogger_id: "369880168886837708"
+tags: ["TransientObjectException"]
+---
+object references an unsaved transient instance - save the transient instance before flushing<br />
+<br />
+classa.product -> Product<br />
+<br />
+<br />
+just add <br />
+@ManyToOne(<b>cascade={CascadeType.MERGE, CascadeType.PERSIST}</b>)<br />
+<br />
+to classa.product attribute <br />
+<br />
+<br />
+This could happen by mistake, for instance if the product has id = 0...

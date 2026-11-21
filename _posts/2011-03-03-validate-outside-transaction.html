@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Validate outside the Transaction"
+date: 2011-03-03T11:18:00.000+01:00
+permalink: /2011/03/validate-outside-transaction.html
+blogger_id: "4300884381235558778"
+tags: ["JTA"]
+---
+Some debate today over whether validation should be done outside or inside a transaction.<br />
+For me it's a no-brainer that you should start the transaction only when you need it. And you don't need it to validate your data.<br />
+<br />
+<br />
+So, I shall create a validate() method with <a href="http://download.oracle.com/javaee/6/api/javax/ejb/TransactionAttributeType.html">TransactionAttributeType</a> SUPPORTS and a persist() method with REQUIRED.<br />
+<br />
+See also<br />
+<a href="http://download.oracle.com/javaee/6/api/javax/ejb/TransactionAttribute.html">http://download.oracle.com/javaee/6/api/javax/ejb/TransactionAttribute.html</a><br />
+<br />
+Of course we use CMT.<br />
+<br />
+See also tips <a href="http://download.oracle.com/docs/cd/E19159-01/819-3681/abecj/index.html">here</a>.<br />
+<br />
+<br />
+@TransactionManagement(TransactionManagementType.CONTAINER)<br />
+<br />
+@TransactionAttribute(TransactionAttributeType.REQUIRED)

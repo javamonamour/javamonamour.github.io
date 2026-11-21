@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Failed while installing Axis2 Web Services Core 1.1"
+date: 2011-02-03T17:52:00.001+01:00
+permalink: /2011/02/i-am-using-eclipse-version-3.html
+blogger_id: "6584522768088307760"
+tags: ["Axis2", "eclipse"]
+blogger_comments:
+  - author: "Tobi"
+    date: 2012-01-18
+    html: "&quot;I found the solution for this problem. After conf. the apache tomcat and Axis2 just create new workspace and the error will not be occur again.&quot;<br />- Neeraj <br /><br />It worked for me"
+---
+I am using Eclipse<br />
+Version: 3.6.1<br />
+Build id: M20100909-0800<br />
+<br />
+I try to add Axis2 facet to a Web Service project, I get:<br />
+<br />
+<i><br />
+Unable to add the follwing facets to project : Axis2 Web Services Core, Axis2 Web Services Extensions<br />
+<br />
+Failed while installing Axis2 Web Services Core 1.1<br />
+<br />
+java.lang.NullPointerException<br />
+at org.eclipse.jst.ws.axis2.facet.utils.Axis2RuntimeUtils.getAxis2ServletAdminClass(Axis2RuntimeUtils.java:226)<br />
+at org.eclipse.jst.ws.axis2.facet.commands.MergeWEBXMLCommand.getAdmintServletDescriptor(MergeWEBXMLCommand.java:119)<br />
+at org.eclipse.jst.ws.axis2.facet.commands.MergeWEBXMLCommand.exexuteOverride(MergeWEBXMLCommand.java:72)<br />
+at org.eclipse.jst.ws.axis2.facet.commands.Axis2WebservicesServerCommand.executeOverride(Axis2WebservicesServerCommand.java:134)<br />
+at org.eclipse.jst.ws.axis2.facet.deligate.Axis2CoreFacetInstallDelegate.execute(Axis2CoreFacetInstallDelegate.java:43)<br />
+at org.eclipse.wst.common.project.facet.core.internal.FacetedProject.callDelegate(FacetedProject.java:1478)<br />
+... 8 more<br />
+</i><br />
+<br />
+<br />
+In fact this turns out to be a BUG<br />
+<br />
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?format=multiple&id=327800">https://bugs.eclipse.org/bugs/show_bug.cgi?format=multiple&id=327800</a><br />
+<br />
+<br />
+<br />
+See also<br />
+<br />
+<br />
+<a href="http://www.eclipse.org/forums/index.php?&t=msg&th=62333">http://www.eclipse.org/forums/index.php?&t=msg&th=62333</a><br />
+<br />
+To configure the Axis2 runtime:<br />
+<br />
+in Windows/Preferences/Web Services/Axis2 Preferences set the runtime location<br />
+<br />
+Windows/Preferences/Web Services/Server and Runtime/Apache Axis2<br />
+<br />
+<br />
+Dynamic Web Module should be set to 2.5 - they say.<br />
+<br />
+<br />
+Guys, this is <b>ridiculous</b>, in Eclipse 3.6 one cannot develop Axis2 Web Services. Simply OBSCENE.

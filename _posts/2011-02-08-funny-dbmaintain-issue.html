@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Funny DBMAINTAIN issue"
+date: 2011-02-08T13:02:00.000+01:00
+permalink: /2011/02/funny-dbmaintain-issue.html
+blogger_id: "5406649066776792896"
+tags: ["dbmaintain"]
+---
+WARNING: Executed scripts table "DBMAINTAIN"."DBMAINTAIN_SCRIPTS" doesn't exist yet or is invalid. A new one is created automatically.<br />
+Exception in thread "main" java.lang.AbstractMethodError: oracle.jdbc.driver.OracleDatabaseMetaData.getDatabaseMajorVersion()I<br />
+<br />
+<br />
+I am using database.driverClassName=oracle.jdbc.driver.OracleDriver<br />
+and I put DBMAINTAIN_JDBC_DRIVER=C:/Oracle2/Middleware/oracle_common/oui/jlib/classes12.jar<br />
+<br />
+Possibly changing the jar file could solve the issue. <br />
+Yet I found out that creating manually the DBMAINTAIN_SCRIPTS table solves the issue:<br />
+<br />
+create table "DBMAINTAIN_SCRIPTS" ( FILE_NAME VARCHAR2(150), FILE_LAST_MODIFIED_AT INTEGER, CHECKSUM VARCHAR2(50), EXECUTED_AT VARCHAR2(20), SUCCEEDED INTEGER )

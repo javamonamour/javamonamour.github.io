@@ -1,0 +1,39 @@
+---
+layout: post
+title: "Oracle DB Invalid Objects"
+date: 2018-08-14T09:39:00.001+02:00
+permalink: /2018/08/oracle-db-invalid-objects.html
+blogger_id: "4541253306356054258"
+tags: ["oracledb"]
+---
+Some usefuls commands to troubleshoot:<br />
+<br />
+select count(*) from USER_OBJECTS where OBJECT_TYPE = 'TABLE';<br />
+select count(*) from user_objects where object_type='TYPE';<br />
+select count(*)  from user_tables;<br />
+<br />
+select * from USER_OBJECTS where STATUS = 'INVALID';<br />
+<br />
+<br />
+<br />
+exec dbms_utility.compile_schema( 'MYUSER' ); <br />
+<br />
+alter package MYPACKAGE COMPILE;<br />
+<br />
+alter package MYPACKAGE COMPILE BODY;<br />
+<br />
+show errors;<br />
+<br />
+select * from user_errors ;<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+References:<br />
+<br />
+<a href="https://oracle-base.com/articles/misc/recompiling-invalid-schema-objects">https://oracle-base.com/articles/misc/recompiling-invalid-schema-objects</a><br />
+<br />
+<a href="https://asktom.oracle.com/pls/asktom/f?p=100:11:0::::P11_QUESTION_ID:637156098168">https://asktom.oracle.com/pls/asktom/f?p=100:11:0::::P11_QUESTION_ID:637156098168</a><br />
+<br />
+

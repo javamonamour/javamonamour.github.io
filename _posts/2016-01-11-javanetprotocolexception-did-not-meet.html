@@ -1,0 +1,28 @@
+---
+layout: post
+title: "java.net.ProtocolException: Did not meet stated content length of OutputStream"
+date: 2016-01-11T12:38:00.002+01:00
+permalink: /2016/01/javanetprotocolexception-did-not-meet.html
+blogger_id: "5708419812288417477"
+tags: ["serialization"]
+---
+We were getting this error:
+<br/>
+<pre>
+java.net.ProtocolException: Did not meet stated content length of OutputStream:  you wrote 139 bytes and I was expecting  you to write exactly 153 bytes!!!
+                at weblogic.net.http.ContentLengthOutputStream.close(ContentLengthOutputStream.java:52)
+                at java.io.FilterOutputStream.close(FilterOutputStream.java:160)
+
+
+</pre>
+
+<br/>
+
+There are a number of posts suggesting that one needs to change encoding.... also the Oracle doc
+"ProtocolException is thrown if multibyte characters is specified for HttpServletResponse.sendError method (Doc ID 1902525.1)" suggests the same.
+
+<br/>
+However in our case upgrading the JVM fixed the issue. Probably the communication was happening between 2 versions of JVM using a different serialization strategy, who knows....
+
+<br/>
+Thanks to Andrea for the resolution.

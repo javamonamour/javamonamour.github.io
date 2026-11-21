@@ -1,0 +1,54 @@
+---
+layout: post
+title: "OSB: coherence and caching"
+date: 2010-05-21T18:24:00.002+02:00
+permalink: /2010/05/osb11-coherence-and-caching.html
+blogger_id: "7026996043567763598"
+tags: ["coherence", "osb11"]
+blogger_comments:
+  - author: "Anil Datt"
+    date: 2011-03-31
+    html: "Pierluigi - Yes that was my posting on the OTN forum. <br /><br />I am writing a helper OSB service which can take in the &quot;Cache key&quot; and clear the cache for that key. My other OSB service has result caching enabled. When I use use the regular class loader or just the CacheFactory and get the cache to list the keys persisted in it, it does not show  any keys set by OSB. So was the reason I was  thinking and looking for a different class loader. <br /><br />Thanks for the other link. If CacheProviderManager  can give me the singleton access to cache it may help probably?"
+  - author: "vernetto"
+    date: 2011-03-31
+    html: "Anil, I have seen your post (I guess it&#39;s yours) on http://forums.oracle.com/forums/thread.jspa?threadID=2199859&amp;tstart=75<br /><br />In reality OSB uses a ALSB Coherence Cache provider ( see http://www.javamonamour.org/2010/09/alsb-osb-coherence-cache-provider.html ) which has got its own classloader in its own EAR, so it doesn&#39;t use the System Classloader.<br /><br />Anyway the classloader matters only for Coherence network configuration : if you query the cache from a standalone application, that should not matter as long as you configure it the same as the OSB cache. <br /><br />If you query the cache from an application running in WebLogic but outside OSB, then you must startup your own Coherence Cluster and configure it the same as OSB cluster... not sure if this would raise conflicts though.... I am not so good at Coherence :o("
+  - author: "Anil Datt"
+    date: 2011-03-31
+    html: "I have the Result cache enabled in OSB, but am not able to get the keys associated with that from the Cache. It may be related to the Classloader. Coherence jars are loaded as a part of weblogic startup. How can I get access to that classloader and the cache and read the Cache key that is used for Result caching?"
+  - author: "vernetto"
+    date: 2011-04-01
+    html: "if I find the time I will try to implement this functionality this weekend... can&#39;t promise anything anyway :o)"
+  - author: "bgbauer"
+    date: 2011-08-10
+    html: "Anil,<br /><br />Do you got the corret method to get or remove a entry from result cache?<br />I&#39;m trying to do this, but, so far, all that i got was list and clear a content of cache."
+  - author: "Anil Datt"
+    date: 2011-09-19
+    html: "bgbauer - I got side tracked with other priorities. Is it possible for you to share what you did to get the list and clear the content?<br /><br />Thanks,<br />Anil"
+  - author: "Yuan Meng"
+    date: 2012-04-11
+    html: "This comment has been removed by the author."
+  - author: "Anonymous"
+    date: 2013-08-21
+    html: "HI,<br />IS there any way to know the key format of resultcache."
+---
+this <br />
+<a href="http://www.oracle.com/technology/architect/enterprise_solution_cookbook/data_tier_caching_for_soa.html">http://www.oracle.com/technology/architect/enterprise_solution_cookbook/data_tier_caching_for_soa.html</a><br />
+<br />
+makes a good reading just to get an idea of how to make a CacheService invoking Coherence. The service can be exposed with a LOCAL transport protocol to avoid marshalling/unmarshalling.<br />
+<br />
+In a nutshell it says: you can cache either <b>Service State</b> (e.g. for a BPM the serialized state of a Process Instance) or <b>Service Result</b> (the result of a DB query).<br />
+<br />
+<b>Cache-aside</b> means: 1) readFromCache 2) miss 3) retrieveFromDB 4) storeInCache<br />
+next time you read the same key, you have a hit.<br />
+<br />
+This is very illuminating:<br />
+<br />
+<i>Oracle Coherence offers a Java API; a native service call from BPEL to  Coherence was a preference over a standard web service interface. The  performance overhead of invoking web service operations is several  orders of magnitude larger than that of invoking native Java classes.  That's because marshaling and un-marshaling XML, processing SOAP  envelopes, etc. are expensive operations.</i><br />
+<br />
+Note the use of<br />
+<br />
+<br />
+<pre style="font-family: monospace; font-size: 11px;">thread.setContextClassLoader(com.tangosol.net.NamedCache.class.getClassLoader());</pre><br />
+<br />
+to avoid creating a different cache per each classloader in the application! Well done!<br />
+(don't forget to set the classloader again to its previous value!)

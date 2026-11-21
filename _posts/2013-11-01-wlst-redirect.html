@@ -1,0 +1,21 @@
+---
+layout: post
+title: "wlst redirect "
+date: 2013-11-01T14:35:00.003+01:00
+permalink: /2013/11/wlst-redirect.html
+blogger_id: "5965496003572443796"
+tags: ["WLST"]
+---
+sometimes we don't want to clutter the stdout with the result of a ls():
+
+<a href="http://docs.oracle.com/cd/E15051_01/wls/docs103/config_scripting/using_WLST.html#wp1094015">http://docs.oracle.com/cd/E15051_01/wls/docs103/config_scripting/using_WLST.html#wp1094015</a>
+
+
+This works quite well:
+
+<pre>
+redirect('/dev/null', 'false')
+allds=ls('/SystemResources/', returnMap='true')
+stopRedirect()
+
+</pre>

@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Missing JAVA_VENDOR and JAVA_HOME in WebLogic silent installation"
+date: 2015-10-25T16:01:00.001+01:00
+permalink: /2015/10/missing-javavendor-and-javahome-in.html
+blogger_id: "730196987462230266"
+---
+in $DOMAIN_HOME/bin/SetDomainEnv.sh I keep finding:
+
+<br />
+<br />
+<pre>BEA_JAVA_HOME=""
+export BEA_JAVA_HOME
+
+SUN_JAVA_HOME=""
+export SUN_JAVA_HOME
+
+if [ "${JAVA_VENDOR}" = "Oracle" ] ; then
+
+</pre>
+(and JAVA_VENDOR is not declared, and *_JAVA_HOME is blank... so WLS fails when started complaining about missing JAVA_HOME....)
+
+<br />
+<br />
+The secret is that you should declare (export) these 2 environment variables BEFORE you run the weblogic installation:
+
+<br />
+<pre>export JAVA_VENDOR=Sun
+export JAVA_HOME=/usr/java/jdk1.7.0_55/
+java -d64 -Xmx1024m -Djava.io.tmpdir=/opt/oracle/temp -jar /software/wls1036_generic.jar -mode=silent -silent_xml=/software/weblogic_silent_install.xml
+
+</pre>
+<br />
+<br />
+Why those 2 values cannot be part of the silent installer xml, no clue!
+
+<br />
+<br />
+Here is the official doc of the silent installer <a href="http://docs.oracle.com/cd/E15523_01/doc.1111/e14142/appendix.htm#WLSIG185">http://docs.oracle.com/cd/E15523_01/doc.1111/e14142/appendix.htm#WLSIG185</a>
+
+<br />
+<br />

@@ -1,0 +1,17 @@
+---
+layout: post
+title: "JAXRS client with Jersey"
+date: 2019-04-29T23:51:00.001+02:00
+permalink: /2019/04/jaxrs-client-with-jersey.html
+blogger_id: "5420558014206274021"
+tags: ["jaxrs"]
+---
+As usual we start from the excellent Baeldung <a href="https://www.baeldung.com/jersey-jax-rs-client">https://www.baeldung.com/jersey-jax-rs-client</a><br />
+<br />
+The working solution is in <a href="https://github.com/vernetto/jerseyrest">https://github.com/vernetto/jerseyrest</a> and the client is in the test directory (Jersey is provided with "test" scope, while the "main" can be built with maven and deployed to WebLogic for instance)<br />
+<br />
+The project is to turn the Service in a set of services with different types of payloads (JSON, XML, binary) and different marshaling/unmarshaling frameworks (Jexson, GSON...) , then run some performance test (using junit5) under different load conditions.<br />
+<br />
+<br />
+<br />
+

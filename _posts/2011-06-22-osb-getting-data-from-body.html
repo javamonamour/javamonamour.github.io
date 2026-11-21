@@ -1,0 +1,16 @@
+---
+layout: post
+title: "OSB: getting data from $body"
+date: 2011-06-22T17:28:00.001+02:00
+permalink: /2011/06/osb-getting-data-from-body.html
+blogger_id: "7822648878645581191"
+tags: ["body", "OSB"]
+---
+bear in mind these differences when passing $body to XQuery functions:<br />
+<br />
+assume:<br />
+ <b>$body </b> = &lt;soapenv:Body  xmlns:soapenv=&quot;<a href="http://schemas.xmlsoap.org/soap/envelope/">http://schemas.xmlsoap.org/soap/envelope/</a>&quot;&gt;   &lt;BLANotification Type=&quot;TrainItinerary&quot; DateTime=&quot;2007-10-26T08:36:28&quot;  Id=&quot;3&quot; ValidityDate=&quot;2004-02-14&quot;/&gt;&lt;/soapenv:Body&gt;<br />
+<br />
+then:<br />
+<b> $body/.</b> = $body<br />
+ <b>$body/* = $body/node()</b> = &lt;BLANotification Type=&quot;TrainItinerary&quot; DateTime=&quot;2007-10-26T08:36:28&quot;  Id=&quot;3&quot; ValidityDate=&quot;2004-02-14&quot;/&gt;

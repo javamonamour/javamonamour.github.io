@@ -1,0 +1,28 @@
+---
+layout: post
+title: "OSB: how a MDB Proxy Service is implemented"
+date: 2011-10-23T22:46:00.002+02:00
+permalink: /2011/10/osb-how-mdb-proxy-service-in.html
+blogger_id: "5308884730761825510"
+tags: ["OSB"]
+---
+today I have created a Proxy Service, reading messages from a Topic, durable subscriber, and I have called it badmdb/consumefromtopic<br />
+(badmdb is the project name)<br />
+<br />
+If you look in WL deployments, you find:<br />
+C:\bea103b\user_projects\domains\osb_domain\sbgen\ProxyService_badmdb_consumefromto641026.ear<br />
+<br />
+this contains a ejb.jar, which contains only a <b>ejb-jar.xml</b> and a <b>weblogic-ejb-jar.xml</b><br />
+These DD specify:<br />
+<br />
+ejb-class=<b>com.bea.wli.sb.transports.jms.JmsInboundMDB</b><br />
+activation-config-property: subscriptionDurability=Durable<br />
+<br />
+destination-jndi-name=<b>the_topic_jndi</b><br />
+provider-url=t3://localhost:7011<br />
+connection-factory-jndi-name=weblogic.jms.XAConnectionFactory<br />
+generate-unique-jms-client-id=true<br />
+durable-subscription-deletion=true<br />
+<br />
+<br />
+My guess is that the JmsInboundMDB will internally dispatch the JMSMessage to the OSB Kernel for Message Flow processing

@@ -1,0 +1,138 @@
+---
+layout: post
+title: "Deploying JPA solution to WebLogic"
+date: 2010-08-13T19:59:00.004+02:00
+permalink: /2010/08/deploying-jpa-solution-to-weblogic.html
+blogger_id: "778221046402940876"
+tags: ["eclipselink"]
+---
+After having successfully tested a JPA module using TopLink Essentials,<br />
+I want to deploy it in WebLogic as part of an EAR.<br />
+<br />
+I read that WebLogic recommends using the <br />
+<br />
+org.eclipse.persistence.jpa.PersistenceProvider<br />
+<br />
+persistence provider, rather than the <br />
+<br />
+oracle.toplink.essentials.PersistenceProvider<br />
+<br />
+At this point I remove the toplink-essentials.jar, but the javax.persistence imports are not satisfied any more. So from the Weblogic System Library  I add the javax.persistence module.<br />
+<br />
+<br />
+<br />
+<br />
+I also switch from <br />
+<br />
+transaction-type="RESOURCE_LOCAL"<br />
+<br />
+to<br />
+<br />
+transaction-type="JTA"<br />
+<br />
+<br />
+<br />
+and make sure you remane all your<br />
+<br />
+property name="toplink.blablabla"<br />
+<br />
+into <br />
+<br />
+property name="javax.persistence.blablabla"<br />
+<br />
+<br />
+(remember that "property eclipselink.jdbc.user is deprecated")<br />
+<br />
+<br />
+<br />
+I get also a<br />
+<br />
+"bla has transactionType RESOURCE_LOCAL and therefore jtaDataSource will be ignored"<br />
+<br />
+<br />
+<br />
+This http://wiki.eclipse.org/EclipseLink/Examples/JPA/WebLogic_Web_Tutorial#JNDI_Datasource_Setup<br />
+<br />
+will help understand how to configure the JNDI<br />
+<br />
+<br />
+<br />
+<br />
+This is my fantastic persistence.xml - which has made suffer generations of developers:<br />
+<br />
+<pre name="code" class="brush: xml"><?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0"
+ xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+ <persistence-unit name="GEO_OSB_Persistence"
+  transaction-type="JTA">
+  <!-- use JTA in container, RESOURCE_LOCAL out of container -->
+  
+  <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+  
+
+  <!--provider>oracle.eclipselink.essentials.PersistenceProvider</provider-->
+  <jta-data-source>MQParserDataSource</jta-data-source>
+  <!-- non-jta-data-source>mydatasource</non-jta-data-source-->
+  <class>com.acme.cache.domain.GeographicArea</class>
+  <class>com.acme.cache.domain.GeoTimeZone</class>
+  <class>com.acme.cache.domain.GeoSiteParent</class>
+  <class>com.acme.cache.domain.GeoSiteNameAliaPK</class>
+  <class>com.acme.cache.domain.GeoSiteNameAlia</class>
+  <class>com.acme.cache.domain.GeoSiteExtension</class>
+  <class>com.acme.cache.domain.GeoSiteCodeAliaPK</class>
+  <class>com.acme.cache.domain.GeoSiteCodeAlia</class>
+  <class>com.acme.cache.domain.GeoSiteAddress</class>
+  <class>com.acme.cache.domain.GeoSite</class>
+  <class>com.acme.cache.domain.GeoPostalArea</class>
+  <class>com.acme.cache.domain.GeoLatestTag</class>
+  <class>com.acme.cache.domain.GeoDaylightSavingZone</class>
+  <class>com.acme.cache.domain.GeoDaylightSavingDisplaceme</class>
+  <class>com.acme.cache.domain.GeoBda</class>
+  <class>com.acme.cache.domain.GeoAreaParentagePK</class>
+  <class>com.acme.cache.domain.GeoAreaParentage</class>
+  <class>com.acme.cache.domain.GeoAreaNameAlia</class>
+  <class>com.acme.cache.domain.GeoAreaCodeAlia</class>
+  <class>com.acme.cache.domain.BdaConnectorGeoSitePK</class>
+  <class>com.acme.cache.domain.BdaConnectorGeoSite</class>
+  <class>com.acme.cache.domain.BdaConnectorGeoAreaPK</class>
+  <class>com.acme.cache.domain.BdaConnectorGeoArea</class>
+  <properties>
+   
+   <property name="javax.persistence.cache.type.default" value="NONE" />
+   <!-- 
+   <property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@10.8.27.27:1521:XLEAP" />
+   <property name="javax.persistence.jdbc.user" value="REFDATA_TEST1" />
+   <property name="javax.persistence.jdbc.driver" value="oracle.jdbc.xa.client.OracleDriver" />
+   <property name="javax.persistence.jdbc.password" value="SLT" />
+    -->
+   <property name="eclipselink.target-database" value="Oracle"/>
+   <property name="eclipselink.target-server" value="WebLogic"/> 
+   <property name="eclipselink.logging.level" value="FINE"/> 
+   <property name="javax.persistence.logging.logger" value="DefaultLogger" />
+   <property name="javax.persistence.logging.level" value="FINE" />
+   <property name="javax.persistence.logging.exceptions" value="true" />
+   <property name="SetBigStringTryClob" value="true" />
+
+   <!--
+    <property name="eclipselink.target-server" value="None"/> <property
+    name="eclipselink.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
+    <property name="eclipselink.jdbc.url"
+    value="jdbc:oracle:thin:@localhost:1521:XE"/> <property
+    name="eclipselink.jdbc.user" value="SCOTT"/> <property
+    name="eclipselink.jdbc.password" value="TIGER"/> <property
+    name="eclipselink.logging.level" value="FINEST"/>
+   -->
+
+  </properties>
+
+ </persistence-unit>
+
+</persistence>
+
+
+
+</pre><br />
+<br />
+<br />
+Here http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd you have the XSD, you can notice it's pathetically generic.

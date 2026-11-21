@@ -1,0 +1,40 @@
+---
+layout: post
+title: "Struts Royally Sucks"
+date: 2011-03-29T18:34:00.009+02:00
+permalink: /2011/03/struts-really-sucks.html
+blogger_id: "7269577630461459652"
+tags: ["mockrunner", "struts"]
+---
+I have heard that 100s of times, and I have vague memories of myself struggling, some 7 years ago, against Struts quirks and all those HORRIBLE tag libraries (writing code in XML? Noooooo way.).<br />
+<br />
+I have even hoped to be able to mock Struts, instead of having to deploy in container,<br />
+using this <a href="http://strutstestcase.sourceforge.net/">http://strutstestcase.sourceforge.net/</a> framework...<br />
+<br />
+I use MockStrutsTestCase in a very basic setup and I get this:<br />
+<br />
+<br />
+<i>java.lang.UnsupportedOperationException: getPathTranslated operation is not supported!<br />
+at servletunit.HttpServletRequestSimulator.getPathTranslated(HttpServletRequestSimulator.java:635)</i><br />
+<br />
+<br />
+no matter what I try...<br />
+<br />
+So I am switching to <a href="http://mockrunner.sourceforge.net/index.html">MockRunner</a> which so far seems to work.<br />
+<br />
+There are also plugins for JUnit and Maven:<br />
+<a href="http://struts.apache.org/2.2.1/docs/struts-2-junit-plugin-tutorial.html">http://struts.apache.org/2.2.1/docs/struts-2-junit-plugin-tutorial.html</a><br />
+<a href="http://struts.apache.org/2.0.14/docs/testng-plugin.html">http://struts.apache.org/2.0.14/docs/testng-plugin.html</a><br />
+<br />
+<br />
+This framework is <b>THE BLACK WIDOW MAKER</b> of Front End Developers.<br />
+<br />
+<br />
+My advice: just throw Struts in the toilet and flush, you will immediately feel an intense relief. Then implement your Front End in <a href="http://static.springsource.org/spring/docs/2.0.x/reference/mvc.html">Spring MVC</a> or <a href="http://vaadin.com/home">Vaadin</a>.<br />
+<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="http://t1.gstatic.com/images?q=tbn:ANd9GcQFj-N0cIAxBELp5buBaNHfbHO4m95d8K-CaSB1FSKv6FfZ1zVG&amp;t=1" imageanchor="1"><br />
+</a></div><br />
+<br />
+<a href="http://raibledesigns.com/rd/entry/does_struts_2_suck">Here</a> more reasons why Struts sucks.

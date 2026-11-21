@@ -1,0 +1,21 @@
+---
+layout: post
+title: "virtualbox hanging at \"net registered protocol family 2\""
+date: 2013-04-24T00:50:00.000+02:00
+permalink: /2013/04/virtualbox-hanging-at-net-registered.html
+blogger_id: "4279130484471400494"
+---
+I was trying to start the "learning puppet virtual box" on Windows 7...and it was hanging at  "net registered protocol family 2".<br />
+<br />
+Enabling IO APIC fixed the issue: <br />
+<br />
+<a href="/images/71346d1125b03c34.jpg" imageanchor="1"><img border="0" height="458" src="/images/708ec42c926f3ad3.jpg" width="640" /></a>
+<br /><br />
+
+this is explained also here: <a href="http://docs.puppetlabs.com/learning/index.html">http://docs.puppetlabs.com/learning/index.html</a>
+
+<br /><br />
+in Linux , "Log in as root, with the password puppet."
+<br />
+In the  Puppet Enterprise web console, "Log in as puppet@example.com, with the password learningpuppet" 
+

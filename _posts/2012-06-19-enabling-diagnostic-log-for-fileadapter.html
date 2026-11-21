@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Enabling diagnostic log for FileAdapter (in general for oracle.soa.adapter)"
+date: 2012-06-19T11:24:00.002+02:00
+permalink: /2012/06/enabling-diagnostic-log-for-fileadapter.html
+blogger_id: "1410315662002232369"
+tags: ["FileAdapter", "JCA", "OSB"]
+---
+The official doc here:<br />
+<br />
+<a href="http://docs.oracle.com/cd/E21764_01/integration.1111/e10231/life_cycle.htm#BABBIBEE">http://docs.oracle.com/cd/E21764_01/integration.1111/e10231/life_cycle.htm#BABBIBEE</a><br />
+<br />
+open em: http://myadmin.acme.com:7001/em<br />
+and identify the FileAdapter for each MS:<br />
+<br />
+<a href="/images/d3cab1244905c2e3.jpg" imageanchor="1"><img border="0" height="640" src="/images/2360193efa990034.jpg" width="433" /></a><br />
+<br />
+right click, Logs, Log configuration:<br />
+<br />
+<a href="/images/a4ef170da37857f4.jpg" imageanchor="1"><img border="0" height="260" src="/images/e9dfbda4e23ec64b.jpg" width="640" /></a><br />
+<br />
+<br />
+<br />
+select "loggers with persistent log state level" (NOT Runtime Loggers)<br />
+<br />
+<a href="/images/232bdbd5f3154c0d.jpg" imageanchor="1"><img border="0" height="260" src="/images/6b09d6428b8232ba.jpg" width="640" /></a><br />
+<br />
+<br />
+search oracle.soa.adapter, and set to TRACE:32 FINEST, scroll down and enable the "persist" checkbox, click on Apply<br />
+<br />
+<a href="/images/e03f191f9e30de94.jpg" imageanchor="1"><img border="0" height="530" src="/images/f4bc340c3fcd395d.jpg" width="640" /></a><br />
+<br />
+<br />
+do it for all MS in the cluster<br />
+<br />
+<br />
+the logs should go to<br />
+${MW_HOME}/user_projects/domains/${DOMAIN_NAME}/servers/${SERVER_NAME}/logs/${SERVER_NAME}-diagnostic.log

@@ -1,0 +1,89 @@
+---
+layout: post
+title: "Tomcat, WebApplication using a DataSource"
+date: 2012-04-29T21:37:00.001+02:00
+permalink: /2012/04/tomcat-webapplication-using-datasource.html
+blogger_id: "4767662294566815506"
+tags: ["tomcat"]
+---
+<a href="http://wiki.apache.org/tomcat/UsingDataSources">http://wiki.apache.org/tomcat/UsingDataSources</a><br />
+<br />
+<a href="http://tomcat.apache.org/tomcat-5.5-doc/jndi-datasource-examples-howto.html">http://tomcat.apache.org/tomcat-5.5-doc/jndi-datasource-examples-howto.html</a><br />
+<br />
+copy ojdbc5.jar to $TOMCAT_HOME/lib directory<br />
+<br />
+create your "cmdb" webapp folder under $TOMCAT_HOME/webapps/cmdb<br />
+<br />
+create $TOMCAT_HOME/webapps/cmdb/META-INF/context.xml and put this in it:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version="1.0" encoding="UTF-8"?>
+
+&lt;Context>
+
+ &lt;Resource name="jdbc/cmdb" auth="Container"
+   type="javax.sql.DataSource" driverClassName="oracle.jdbc.OracleDriver"
+   url="jdbc:oracle:thin:@127.0.0.1:1521:xe"
+   username="cmdb" password="cmdb" maxActive="20" maxIdle="10"
+   maxWait="-1"/>
+&lt;/Context>
+
+</pre><br />
+in WEB-INF/web.xml put<br />
+<br />
+<br />
+<pre name="code" class="brush: xml">&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+  &lt;description>CMDB&lt;/description>
+  &lt;resource-ref>
+      &lt;description>DB Connection&lt;/description>
+      &lt;res-ref-name>jdbc/cmdb&lt;/res-ref-name>
+      &lt;res-type>javax.sql.DataSource&lt;/res-type>
+      &lt;res-auth>Container&lt;/res-auth>
+  &lt;/resource-ref>
+&lt;/web-app>
+</pre><br />
+<br />
+<br />
+in WEB-INF\lib put standard.jar and jstl.jar<br />
+<br />
+and your test.jsp is<br />
+<br />
+<pre name="code" class="brush: xml">&lt;%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql" %>
+&lt;%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+&lt;sql:query var="rs" dataSource="jdbc/cmdb">
+select JMSMODULENAME from NESOA2_JMSMODULES
+&lt;/sql:query>
+
+&lt;html>
+  &lt;head>
+    &lt;title>Machines&lt;/title>
+  &lt;/head>
+  &lt;body>
+
+  &lt;h2>Results&lt;/h2>
+  
+&lt;c:forEach var="row" items="${rs.rows}">
+    JMSMODULENAME ${row.JMSMODULENAME}&lt;br/>
+&lt;/c:forEach>
+
+  &lt;/body>
+&lt;/html>
+</pre><br />
+<br />
+If you get errors like <br />
+<br />
+"javax.servlet.jsp.JspException: Unable to get connection, DataSource invalid: "org.apache.tomcat.dbcp.dbcp.SQLNestedException: Cannot create PoolableConnectionFactory (IO Error: The Network Adapter could not establish the connection)""<br />
+<br />
+and "tnsping" works, it's very possible that you need to ipconfig /renew or something like that...<br />
+<br />
+<br />
+On another instance of Tomcat, the same WebApp works only if I add<br />
+<br />
+<pre name="code" class="brush: xml">&lt;Context path="/cmdb">
+     &lt;ResourceLink name="jdbc/cmdb" type="javax.sql.DataSource" global="jdbc/cmdb"/>
+&lt;/Context>
+</pre>

@@ -1,0 +1,28 @@
+---
+layout: post
+title: "Message Digest Performance"
+date: 2018-11-05T19:08:00.000+01:00
+permalink: /2018/11/message-digest-performance.html
+blogger_id: "6566152552584714053"
+tags: ["md5", "sha2"]
+---
+If I use the dependency groupId=commons-codec artifactId=commons-codec I get a huge performance hit on the method:<br />
+<br />
+sun.security.provider.MD5.implCompress(byte[], int) <br />
+<br />
+<br />
+the code is:<br />
+<br />
+<br />
+import org.apache.commons.codec.digest.DigestUtils;<br />
+import java.io.File;<br />
+import java.io.FileInputStream;<br />
+<br />
+FileInputStream fis = new FileInputStream(file);<br />
+String md5 = DigestUtils.md5Hex(fis);<br />
+fis.close();<br />
+<br />
+<br />
+If I use sha2 https://www.baeldung.com/sha-256-hashing-java<br />
+<br />
+

@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Very useful Oracle DB queries"
+date: 2012-12-24T16:30:00.000+01:00
+permalink: /2012/12/very-useful-oracle-db-queries.html
+blogger_id: "2485900083680675457"
+tags: ["oracledb"]
+---
+show all tablespaces used in this DB:<br />
+<br />
+<i>select unique TABLESPACE_NAME from DBA_TABLES;</i><br />
+<br />
+<br />
+show all indexes on a table:<br />
+<br />
+<i>SELECT i.index_name, ic.column_position, ic.column_name<br />
+FROM   user_indexes i JOIN user_ind_columns ic<br />
+ON     i.index_name = ic.index_name<br />
+WHERE  i.TABLE_NAME = 'MYTABLE';</i><br />
+<br />
+<br />
+<br />
+select * from V$DATABASE,<br />
+<br />
+and<br />
+<br />
+select * from GV$INSTANCE;<br />
+<br />
+tell you a lot about SID, SERVICE_NAME and other properties of your instance. <br />
+<br />

@@ -1,0 +1,51 @@
+---
+layout: post
+title: "Hyperic and SNMP traps"
+date: 2012-05-14T11:29:00.000+02:00
+permalink: /2012/05/hyperic-and-snmp-traps.html
+blogger_id: "1728511838071835706"
+tags: ["hyperic", "SNMP"]
+---
+<a href="http://support.hyperic.com/display/DOC/Configuring+HQ+as+an+SNMP+Trap+Receiver">http://support.hyperic.com/display/DOC/Configuring+HQ+as+an+SNMP+Trap+Receiver</a><br />
+<br />
+I add <br />
+snmpTrapReceiver.listenAddress=udp:0.0.0.0/1620<br />
+to agent.properties<br />
+<br />
+<br />
+restart agent<br />
+<br />
+netstat -an<br />
+<br />
+UDP    0.0.0.0:1620           *:*<br />
+<br />
+<br />
+Click on Resources/New Platform/<br />
+<br />
+name=TrapProxy<br />
+description=receiving SNMP traps<br />
+Platform type=Network device<br />
+agent connection=127.0.0.1:2144<br />
+fqdn=myhostSNMP.acme.com<br />
+ipaddress=10.56.64.190<br />
+mac=???<br />
+netmask=???<br />
+<br />
+<br />
+OK<br />
+<br />
+now scroll down and click Edit in the "Configuration Properties"<br />
+<br />
+interface.index=ifDescr<br />
+snmpIp=10.56.64.190<br />
+snmpCommunity=public<br />
+snmpPort=1620 (instead of the default 161)<br />
+<br />
+OK<br />
+<br />
+I get "Error contacting resource: Unable to connect to SNMP Agent (10.56.64.190:1620 v2c,public)"<br />
+<br />
+<a href="http://communities.vmware.com/message/1939292">http://communities.vmware.com/message/1939292</a><br />
+<br />
+<br />
+... to be continued....

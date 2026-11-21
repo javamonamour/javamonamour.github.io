@@ -1,0 +1,45 @@
+---
+layout: post
+title: "Booleans in Python"
+date: 2014-02-27T08:55:00.002+01:00
+permalink: /2014/02/booleans-in-python.html
+blogger_id: "465034037316431440"
+tags: ["python"]
+---
+I firmly believe that a boolean value should be represented by 0 and 1 - yesterday I have wasted 1 hour because in Ruby you say "True" but in YAML it's "true" (morons the Puppet founding fathers who chose Ruby).
+<br/>
+How does it work in Python?
+
+<br/>
+
+<pre>
+value='1'
+booleanValue = (value == '1')
+print booleanValue
+1
+
+value='0'
+booleanValue = (value == '1')
+print booleanValue
+0
+</pre>
+
+<br/>
+BUT:
+<br/>
+<pre>
+value=1
+if value:
+   print "bla"
+bla
+
+value=0
+if value:
+   print "bla"
+bla
+</pre>
+<br/>
+So there you are, you can make out the rule to convert 0 and 1 into a boolean.
+
+
+

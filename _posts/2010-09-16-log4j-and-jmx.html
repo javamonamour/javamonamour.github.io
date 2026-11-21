@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Log4j and JMX"
+date: 2010-09-16T10:09:00.001+02:00
+permalink: /2010/09/log4j-and-jmx.html
+blogger_id: "2445870435960959442"
+tags: ["JMX", "log4j"]
+---
+A correct Logging mechanism / Error Reporting is one of the most vital parts of an IT solution, yet it's one of the most overlooked and let to the individual developer's taste. <br />
+<br />
+This normally leads to frightening GREP nightmares in environments where the application is deployed in a cluster... usually several grepping monkeys (I have been one of them often :o( ) are assigned to the task of grooming the logs in search of error conditions.<br />
+&nbsp; <br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="http://i.dailymail.co.uk/i/pix/2008/01_01/MacaquemonkeysL_228x288.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><br />
+</a></div><br />
+The <b>adoption </b>of <b>monitoring tools</b> - often <b>grepping </b>logs based on a set of regexps - is normally something which <b>happens very late</b> in the project, and it entails a painful series of flashbacks and retrospectives to remember all the error conditions we have seen in the past, manually troubleshooted and not captured anywhere.<br />
+<br />
+In most projects, logging is configured with a unique <b>log4j.properties</b> or log4j.xml (I prefer the xml).... which is edited by hand and ofter requires a restart of the appserver .... unless you use the propertyconfigurator, which is not something I particularly like. For instance, it becomes impossible to have any automated tests involving logs, because you don't have a way to <b>configure them programmatically</b>. But since logs are Cinderellas, nobody really want to test them. <br />
+<br />
+Anyway I like the idea <a href="http://www.theserverlabs.com/blog/2010/04/22/dynamically-changing-log-level-with-weblogic-log4j-jmx-and-wlst/">http://www.theserverlabs.com/blog/2010/04/22/dynamically-changing-log-level-with-weblogic-log4j-jmx-and-wlst/</a> of using JMX in conjunction with log4j. To be definitely explored in the next project, and that I have seen used in the past.<br />
+<br />
+In the past I have used also a JSP console to change log levels at runtime, something like this:<br />
+<br />
+<a href="http://ananthkannan.blogspot.com/2009/10/how-to-change-log-levels-on-fly-using.html">http://ananthkannan.blogspot.com/2009/10/how-to-change-log-levels-on-fly-using.html</a>

@@ -1,0 +1,82 @@
+---
+layout: post
+title: "Liquibase in Action"
+date: 2015-10-25T17:59:00.001+01:00
+permalink: /2015/10/liquibase-in-action.html
+blogger_id: "1632569264339948111"
+tags: ["db", "liquibase"]
+---
+Download the product from <a href="http://sourceforge.net/projects/liquibase/files/Liquibase%20Core/liquibase-3.1.1-bin.zip/download">http://sourceforge.net/projects/liquibase/files/Liquibase%20Core/liquibase-3.1.1-bin.zip/download</a>
+<br />
+<br />
+Unzip it on your local drive
+<br />
+<br />
+Type "liquibase" , you will get a pretty help. We learn that we have several areas:
+<br />
+Standard Commands (update, rollback..)
+<br />
+Diff commands
+<br />
+Maintenance Commands
+<br />
+<br />
+We learn that some parameters are required (changeLogFile, username and pw, DB url) and other optional (drive, logfile...).
+<br />
+<br />
+All the default parameters can be stored in liquibase.properties. <a href="http://www.liquibase.org/documentation/command_line.html">More info here</a>
+<br />
+<br />
+vi liquibase.properties
+<br />
+<pre>driver: oracle.jdbc.OracleDriver
+classpath: /opt/oracle/fmw11_1_1_5/wlserver_10.3/server/lib/ojdbc6.jar
+url: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=myrachost.acme.com)(PORT=1522))(CONNECT_DATA=(SERVICE_NAME=d01osb_app.acme.com)))
+username: pl1_soainfra
+password: pl1_acme
+</pre>
+mkdir data
+<br />
+I try first an export:
+<br />
+java -jar liquibase.jar --changeLogFile="./data/myexportfile.xml" --diffTypes="data" generateChangeLog
+<br />
+you must provide an extension (.xml) in the filename, otherwise you get "Liquibase generateChangeLog Failed: No serializer associated with the filename or extension '/data/myexportfile'"
+
+<br />
+<br />
+A sample entry generated is:
+<br />
+<pre class="brush: xml">    &lt;changeSet author="soa (generated)" id="1395989865665-193"&gt;
+        &lt;insert tableName="BPM_MEASUREMENT_ACTION_SEQ"&gt;
+            &lt;column name="SEQ_NAME" value="ACTION_SEQ"/&gt;
+            &lt;column name="SEQ_COUNT" valueNumeric="0"/&gt;
+        &lt;/insert&gt;
+    &lt;/changeSet&gt;
+</pre>
+<br />
+<br />
+The changelog file is a huge file not very easy to read. If I do 2 subsequent changelogs, the differences are many even if schema/data are the same... not very intuitive.
+
+<br />
+<br />
+Now I try:<br />
+java -jar liquibase.jar updateSQL<br />
+<i>Errors:<br />
+  --changeLogFile is required<br />
+</i>
+<br />
+I try again:<br />
+java -jar liquibase.jar --changeLogFile=./data/myexportfile.xml  updateSQL<br />
+<br />
+<br />
+<i>
+-- Changeset ./data/myexportfile.xml::1395989865665-193::soa (generated)<br />
+INSERT INTO PL1_SOAINFRA.BPM_MEASUREMENT_ACTION_SEQ (SEQ_NAME, SEQ_COUNT) VALUES ('ACTION_SEQ', 0);<br />
+<br /><br />
+INSERT INTO PL1_SOAINFRA.DATABASECHANGELOG (ID, AUTHOR, FILENAME, DATEEXECUTED, ORDEREXECUTED, MD5SUM, DESCRIPTION, COMMENTS, EXECTYPE, LIQUIBASE) VALUES ('1395989865665-193', 'soa (generated)', './data/myexportfile.xml', SYSTIMESTAMP, 193, '7:f8ab8f75bd7c0bafd9cd43fd119e4340', 'insert', '', 'EXECUTED', '3.1.1');
+
+</i>
+<br />
+so basically for each row in the DB (in this case it's a definition of a sequence, not a row) it produces the SQL and the reference to the changeset element.
+

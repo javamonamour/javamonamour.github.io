@@ -1,0 +1,108 @@
+---
+layout: post
+title: "Puppet and WebLogic the Biemond way"
+date: 2013-12-02T22:27:00.000+01:00
+permalink: /2013/12/puppet-and-weblogic-biemond-way.html
+blogger_id: "2562676184247463271"
+tags: ["puppet", "weblogic"]
+---
+I always follow Biemond post, on the the richest sources of inspiration for all Oracle Professionals.
+<br/><br/>
+Here he makes his WebLogic/Puppet module available to the public:
+<br/>
+<a href="http://biemond.blogspot.ch/2013/11/new-puppet-3-weblogic-provisioning.html">http://biemond.blogspot.ch/2013/11/new-puppet-3-weblogic-provisioning.html</a>
+
+<br/><br/>
+I login as root on my vagrant VirtualBox (RHEL) and I type:
+<br/>
+<b>puppet --version</b>
+<br/>
+<i>3.2.4 (Puppet Enterprise 3.0.1)</i>
+<br/><br/>
+Then I type<br/>
+
+<b>puppet module install biemond/orawls</b>
+<br/>
+<pre>
+
+Notice: Preparing to install into /etc/puppetlabs/puppet/modules ...
+Notice: Created target directory /etc/puppetlabs/puppet/modules
+Notice: Downloading from https://forge.puppetlabs.com ...
+Notice: Installing -- do not interrupt ...
+/etc/puppetlabs/puppet/modules
+âââ biemond-orawls (v0.2.1)
+
+</pre>
+Cool!
+
+<br/>
+
+I see that he has also provided a Vagrant box <a href="https://github.com/biemond/biemond-orawls-vagrant">https://github.com/biemond/biemond-orawls-vagrant</a>. I do a "git clone https://github.com/biemond/biemond-orawls-vagrant" and I got the biemond-orawls-vagrant folder with my vagrantfile in it. I cd biemond-orawls-vagrant and do vagrant up.
+
+<br/><br/>
+
+I get this nasty message
+<pre>
+Vagrant has detected that you have a version of VirtualBox installed
+that is not supported. Please install one of the supported versions
+listed below to use Vagrant:
+
+4.0, 4.1, 4.2
+
+</pre>
+and in fact I have the latest 4.3.4 version of VirtualBox.
+<br/>
+
+I do <b>vagrant --version</b>
+<br/>
+<i>Vagrant version 1.1.5</i>
+
+<br/>
+
+Ok let's download the latest <a href="http://downloads.vagrantup.com/tags/v1.3.5">1.3.5 vagrant</a> .
+<br/>
+and install it (it takes a looooong time, reboot required )
+<br/>
+
+I repeat "vagrant up" and this time Vagrant is happy and it downloads the centos-6.4-x86_64 base box (600 MB, it can take a long time depending on the connection speed)
+<br/>
+
+
+<br/>
+<br/>
+
+The second attempt fails because there is no /vagrant/jdk-7u45-linux-x64.tar.gz file
+<br/><br/>
+I download the missing file from http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html and I put the jdk-7u45-linux-x64.tar.gz file in the same folder where I keep the vagrantfile (it will be synced by Vagrant, and mapped to /vagrant/jdk-7u45-linux-x64.tar.gz  - after a vagrant destroy and another vagrant up... ).
+<br/><br/>
+When you connect to the VBOX, configure your putty with 127.0.0.1 port 2222 (note that in the VirtualBOx, it's also specified the IP 127.0.0.1, otherwise each time the IP of the host changes, you have to change the putty configuration...)
+<br/><br/>
+This time around, it complains that /data/install/wls1036_generic.jar is not found.
+<br/><br/>
+I download it from here <a href="http://download.oracle.com/otn/nt/middleware/11g/wls/1036/wls1036_generic.jar">http://download.oracle.com/otn/nt/middleware/11g/wls/1036/wls1036_generic.jar</a> and manually copy it to /data/install  and to the /vagrant share (melius abundare quam deficere) in the VBOX
+<br/><br/>
+I run "vagrant provision".<br/><br/>
+Again, p17071663_1036_Generic.zip is missing (ah if only I had read the doc before...)...<br/>to get this file, you must log into support.oracle.com, click on "patches", specify the WebLogic 10.3.6 Product for Any platform and you will be presented with only one download: "SU Patch [BYJ1]: WLS PATCH SET UPDATE 10.3.6.0.6 (Patch) p17071663_1036_Generic.zip"
+<br/><br/>
+This time around I get a  "Error: /Stage[main]/Bsu/Orawls::Bsu[BYJ1]/Exec[exec bsu ux BYJ1]/returns: change from notrun to 0 failed: Command exceeded timeout" after the extraction of the patchset. 
+
+<br/><br/>
+
+For the OSB version, refer to:
+<br/><br/>
+<a href="https://github.com/matthewbaldwin/vagrant-osb">https://github.com/matthewbaldwin/vagrant-osb</a> 
+<br/><br/>
+which is really well documented. 
+
+
+
+<br/><br/>
+
+
+PS Important: don't run "vagrant up" because the node1 will copydomain from admin node BEFORE this is ready. You should first do "vagrant up admin", then "vagrant up node1" and vagrant up node2". After the "vagrant up admin" the admin server is running and accessble from the host machine with http://10.10.10.10:7001/console/  (this is not a global ip, it will work only locally)
+
+
+
+
+
+

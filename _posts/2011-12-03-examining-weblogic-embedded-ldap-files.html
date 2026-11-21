@@ -1,0 +1,127 @@
+---
+layout: post
+title: "Examining WebLogic embedded LDAP files with Apache Active Directory"
+date: 2011-12-03T15:04:00.002+01:00
+permalink: /2011/12/examining-weblogic-embedded-ldap-files.html
+blogger_id: "6538646488931608583"
+tags: ["LDAP"]
+---
+Install <a href="http://directory.apache.org/studio">Apache Active Directory</a><br />
+<br />
+You can open either<br />
+<br />
+C:\bea1035\user_projects\domains\prod_domain\servers\osb_server1\data\ldap\osb_server1.ldif<br />
+<br />
+or<br />
+<br />
+C:\bea1035\user_projects\domains\prod_domain\servers\AdminServer\data\ldap\osb_server1.ldif<br />
+<br />
+they should be identical (if they are not, be worried)<br />
+<br />
+you will find something along this line:<br />
+<br />
+(domain, realm, groups, people)<br />
+<br />
+<i><br />
+dn: dc=<b>prod_domain</b><br />
+dc: prod_domain<br />
+objectclass: top<br />
+objectclass: domain<br />
+orclguid: D4F9FF20F2B911E0BF1ED596F66B2A93<br />
+createTimestamp: 201109092101Z<br />
+creatorsName: cn=Admin<br />
+<br />
+dn: ou=<b>myrealm</b>,dc=prod_domain<br />
+ou: myrealm<br />
+objectclass: top<br />
+objectclass: organizationalUnit<br />
+orclguid: D4FD8190F2B911E0BF1ED596F66B2A93<br />
+createTimestamp: 201109092101Z<br />
+creatorsName: cn=Admin<br />
+<br />
+dn: ou=<b>groups</b>,ou=myrealm,dc=prod_domain<br />
+ou: groups<br />
+objectclass: organizationalUnit<br />
+objectclass: top<br />
+orclguid: D4FDCFB0F2B911E0BF1ED596F66B2A93<br />
+createTimestamp: 201109092101Z<br />
+creatorsName: cn=Admin<br />
+<br />
+dn: ou=<b>people</b>,ou=myrealm,dc=prod_domain<br />
+ou: people<br />
+objectclass: organizationalUnit<br />
+objectclass: top<br />
+orclguid: D4FDF6C0F2B911E0BF1ED596F66B2A93<br />
+createTimestamp: 201109092101Z<br />
+creatorsName: cn=Admin<br />
+<br />
+dn: cn=<b>ALSBSystemGroup</b>,ou=groups,ou=myrealm,dc=prod_domain<br />
+memberURL: ldap:///ou=groups,ou=myrealm,dc=prod_domain??sub?(&(objectclass=person)(wlsMemberOf=cn=ALSBSystemGroup,ou=groups,ou=myrealm,dc=prod_domain))<br />
+description: The ALSBSystemGroup is a built-in group which has access to ALSBs internals artifacts<br />
+objectclass: top<br />
+objectclass: groupOfUniqueNames<br />
+objectclass: groupOfURLs<br />
+cn: ALSBSystemGroup<br />
+orclguid: D4FF0830F2B911E0BF1ED596F66B2A93<br />
+createTimestamp: 201109092101Z<br />
+creatorsName: cn=Admin<br />
+</i><br />
+<br />
+follow list of all groups<br />
+<br />
+then the users will appear:<br />
+<br />
+<i><br />
+dn: uid=OracleSystemUser,ou=people,ou=myrealm,dc=prod_domain<br />
+description: Oracle application software system user.<br />
+objectclass: inetOrgPerson<br />
+objectclass: organizationalPerson<br />
+objectclass: person<br />
+objectclass: top<br />
+objectclass: wlsUser<br />
+cn: OracleSystemUser<br />
+sn: OracleSystemUser<br />
+userpassword:: e3NzaGF9dEFnSFNTS25IMk54WjJhOUNkUGNGaGdTMm1LWUFxcms=<br />
+uid: OracleSystemUser<br />
+wlsMemberOf: cn=OracleSystemGroup,ou=groups,ou=myrealm,dc=prod_domain<br />
+orclguid: D508CC30F2B911E0BF1ED596F66B2A93<br />
+createTimestamp: 201109092101Z<br />
+creatorsName: cn=Admin<br />
+<br />
+dn: uid=alsb-system-user,ou=people,ou=myrealm,dc=prod_domain<br />
+description: The ALSB system user is a built-in system account which belongs to the ALSBSystem role. As such it has access to ALSBs internal artifacts. The password for this account is automatically changed when the admin server boots to prevent direct access to this account.<br />
+objectclass: inetOrgPerson<br />
+objectclass: organizationalPerson<br />
+objectclass: person<br />
+objectclass: top<br />
+objectclass: wlsUser<br />
+cn: alsb-system-user<br />
+sn: alsb-system-user<br />
+uid: alsb-system-user<br />
+wlsMemberOf: cn=ALSBSystemGroup,ou=groups,ou=myrealm,dc=prod_domain<br />
+orclguid: D5091A50F2B911E0BF1ED596F66B2A93<br />
+createTimestamp: 201109092101Z<br />
+creatorsName: cn=Admin<br />
+userpassword:: e3NzaGF9UVhWVUVOSzN4VFRsUSs1REVWdWpvRFhKbU83K29VMXo=<br />
+modifyTimeStamp: 201110231247Z<br />
+modifiersName: cn=Admin<br />
+<br />
+dn: uid=weblogic,ou=people,ou=myrealm,dc=prod_domain<br />
+description: This user is the default administrator.<br />
+objectclass: inetOrgPerson<br />
+objectclass: organizationalPerson<br />
+objectclass: person<br />
+objectclass: top<br />
+objectclass: wlsUser<br />
+cn: weblogic<br />
+sn: weblogic<br />
+userpassword:: e3NzaGF9bVo2RlJqazM1cXJFOFpSbXVlVUdRWUNwQmluUXptUFE=<br />
+uid: weblogic<br />
+wlsMemberOf: cn=Administrators,ou=groups,ou=myrealm,dc=prod_domain<br />
+orclguid: D5096870F2B911E0BF1ED596F66B2A93<br />
+createTimestamp: 201109092101Z<br />
+creatorsName: cn=Admin<br />
+<br />
+</i><br />
+<br />
+how fascinating...just kidding.

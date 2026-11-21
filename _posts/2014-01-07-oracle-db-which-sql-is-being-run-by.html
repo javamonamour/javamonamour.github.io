@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Oracle DB: which SQL is being run by a given OS user?"
+date: 2014-01-07T11:10:00.002+01:00
+permalink: /2014/01/oracle-db-which-sql-is-being-run-by.html
+blogger_id: "3426654054087332098"
+tags: ["oracledb"]
+---
+assuming the os user is nnvernetpi:
+<br/>
+<pre>
+select * from v$sql where sql_id in (select sql_ID from gv$session where lower(OSUSER) = 'nnvernetpi');
+</pre>
+<br/><br/>
+
+on RAC, v$session refers only to the current node. gv$session is the whole RAC 
+<br/>
+(thanks Alain for the explanation)
+<br/>

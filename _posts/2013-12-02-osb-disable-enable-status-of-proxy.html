@@ -1,0 +1,286 @@
+---
+layout: post
+title: "OSB: disable enable status  of Proxy Services"
+date: 2013-12-02T17:50:00.000+01:00
+permalink: /2013/12/osb-disable-enable-status-of-proxy.html
+blogger_id: "5890669808563544884"
+tags: ["OSB"]
+---
+<pre class="brush: java">
+#There is a change to do to be able to run this WLST script:
+#vi /opt/oracle/fmw11_1_1_5/osb/common/bin/wlst.sh
+#change this:
+#export CLASSPATH
+#into this:
+#CLASSPATH=/opt/oracle/fmw11_1_1_5/osb/lib/sb-kernel-api.jar:/opt/oracle/fmw11_1_1_5/osb/lib/sb-kernel-impl.jar:/opt/oracle/fmw11_1_1_5/osb/modules/com.bea.common.configfwk_1.5.0.0.jar:$CLASSPATH
+#export CLASSPATH
+
+
+import javax.management
+import java.util
+import javax.management.remote
+import javax.naming
+import weblogic.management.mbeanservers.domainruntime
+import com.bea.wli.sb.management.configuration
+
+from java.util import Hashtable
+from java.util import HashSet
+from javax.management.remote import JMXServiceURL
+from weblogic.management.mbeanservers.domainruntime import DomainRuntimeServiceMBean
+from javax.naming import Context
+from javax.management.remote import JMXConnectorFactory
+from javax.management import ObjectName
+from com.bea.wli.sb.management.configuration import SessionManagementMBean
+from com.bea.wli.sb.management.configuration import ALSBConfigurationMBean
+from com.bea.wli.sb.management.configuration import CommonServiceConfigurationMBean
+import weblogic.management.jmx.MBeanServerInvocationHandler
+from com.bea.wli.config import Ref
+
+
+
+from com.bea.wli.config.env import EnvValueQuery
+from com.bea.wli.config.env import QualifiedEnvValue
+from com.bea.wli.config.resource import DependencyQuery
+from com.bea.wli.sb.management.query import ProxyServiceQuery
+from com.bea.wli.sb.management.query import BusinessServiceQuery
+
+from com.bea.wli.sb.util import EnvValueTypes
+from java.util import Collection
+from java.util import Collections
+
+def readvarsDPCL(clargs):
+    print "readvarsDPCL executed with clargs=", clargs
+    domain = None
+    password = None
+    command = None
+    list = None
+    opts, args = getopt.getopt(clargs, "d:p:c:l:")
+    for opt, arg in opts:
+        if opt in "-d":
+            domain = arg
+        if opt in "-p":
+            password = arg
+        if opt in "-c":
+            command = arg
+        if opt in "-l":
+            list = arg
+    return domain, password, command, list
+
+
+
+def enableDisableAllServices(command):
+    refs = configMBean.getRefs(Ref.DOMAIN)
+    refsList = ArrayList()
+    refsList.addAll(refs)
+    
+    for ref in refsList :
+        if ref.getTypeId() == "ProxyService" or ref.getTypeId() == "BusinessService" :
+            if ref.getTypeId() == "ProxyService" :
+                projectName = ref.getFullName()
+                found = False
+                for project in list.split(','):
+                    if project in projectName:
+                        found = True
+                if (list == 'ALL') or found:
+                    if command == 'enable':
+                        print "enabling service for ", projectName
+                        proxyServiceConfigurationMBean.enableService(ref)
+                    if command == 'disable':
+                        print "disabling service for ", projectName
+                        proxyServiceConfigurationMBean.disableService(ref)
+                    if command == 'status':
+                        print "service ", projectName , " enabled=", proxyServiceConfigurationMBean.isEnabled(ref)
+
+
+#reading command line parameters
+domain, password, command, list = readvarsDPCL(sys.argv[1:])
+print "domain=", domain
+
+if (domain == None) :
+    print('<b>ERROR</b>: invalid command, expected arguments "domain" ')
+    exit()
+
+
+
+#please enter here your parameters
+adminUserName, adminPassword, adminURL = ["bla", "bla", "bla"]
+LISTEN_ADDRESS_VIP = 'bla'
+PORT = 'bla'
+
+if (adminPassword == None) :
+     sys.stderr.write("unable to proceed, password not set\n")
+     sys.exit()
+
+if (command == None):
+    print "please provide a command (enable/disable)"
+    exit()
+         
+if (list == None):
+    print "please provide a comma separated list of projects (ALL for all projects)"
+    exit()
+             
+sessionName = "EnabledChange"
+
+serviceURL=JMXServiceURL("t3", LISTEN_ADDRESS_VIP, int(PORT), "/jndi/" + DomainRuntimeServiceMBean.MBEANSERVER_JNDI_NAME)
+
+h=Hashtable()
+h.put(Context.SECURITY_PRINCIPAL, adminUserName)
+h.put(Context.SECURITY_CREDENTIALS, adminPassword)
+h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, "weblogic.management.remote")
+
+conn = JMXConnectorFactory.connect(serviceURL, h)
+
+mbconn = conn.getMBeanServerConnection()
+
+sm = JMX.newMBeanProxy(mbconn, ObjectName.getInstance(SessionManagementMBean.OBJECT_NAME), SessionManagementMBean)
+
+sm.createSession(sessionName)
+
+try:
+    configMBean = JMX.newMBeanProxy(mbconn, ObjectName.getInstance("com.bea:Name=" + ALSBConfigurationMBean.NAME + "." + sessionName + ",Type=" + ALSBConfigurationMBean.TYPE), ALSBConfigurationMBean)
+    domainService = weblogic.management.jmx.MBeanServerInvocationHandler.newProxyInstance(mbconn, ObjectName(DomainRuntimeServiceMBean.OBJECT_NAME), DomainRuntimeServiceMBean, false)
+    proxyServiceConfigurationMBean = domainService.findService(String("ProxyServiceConfiguration.").concat(sessionName),'com.bea.wli.sb.management.configuration.ProxyServiceConfigurationMBean', None)
+    enableDisableAllServices(command)
+    sm.activateSession(sessionName, "Complete enable/disable services")
+    conn.close()
+
+except Exception, inst:
+    print inst
+    print sys.exc_info()[0]
+    dumpStack()
+    if sm.sessionExists(sessionName):
+        print "undoing session"
+        sm.discardSession(sessionName)
+    sys.stderr.write("unable to work on domain " + domain)
+
+
+</pre>
+
+<br/>
+
+An alternative script - connecting with t3 and using the secureConfig files for authentication - is:
+
+<pre  class="brush: java">
+
+#There is a change to do to be able to run this WLST script:
+#vi /opt/oracle/fmw11_1_1_5/osb/common/bin/wlst.sh
+#change this:
+#export CLASSPATH
+#into this:
+#CLASSPATH=/opt/oracle/fmw11_1_1_5/osb/lib/sb-kernel-api.jar:/opt/oracle/fmw11_1_1_5/osb/lib/sb-kernel-impl.jar:/opt/oracle/fmw11_1_1_5/osb/modules/com.bea.common.configfwk_1.5.0.0.jar:$CLASSPATH
+#export CLASSPATH
+
+
+import javax.management
+import java.util
+import javax.management.remote
+import javax.naming
+import weblogic.management.mbeanservers.domainruntime
+import com.bea.wli.sb.management.configuration
+
+from java.util import Hashtable
+from java.util import HashSet
+from javax.management.remote import JMXServiceURL
+from weblogic.management.mbeanservers.domainruntime import DomainRuntimeServiceMBean
+from javax.naming import Context
+from javax.management.remote import JMXConnectorFactory
+from javax.management import ObjectName
+from com.bea.wli.sb.management.configuration import SessionManagementMBean
+from com.bea.wli.sb.management.configuration import ALSBConfigurationMBean
+from com.bea.wli.sb.management.configuration import CommonServiceConfigurationMBean
+import weblogic.management.jmx.MBeanServerInvocationHandler
+from com.bea.wli.config import Ref
+from cmdbfile import connectSecureToAdmin
+import getopt
+
+verbose = False
+
+def readvarsDCL(clargs):
+    print "readvarsDPCL executed with clargs=", clargs
+    domain = None
+    password = None
+    command = None
+    list = None
+    opts, args = getopt.getopt(clargs, "d:c:l:")
+    for opt, arg in opts:
+        if opt in "-d":
+            domain = arg
+        if opt in "-c":
+            command = arg
+        if opt in "-l":
+            list = arg
+    return domain, command, list
+
+
+
+def enableDisableAllServices(command):
+    refs = configMBean.getRefs(Ref.DOMAIN)
+    refsList = ArrayList()
+    refsList.addAll(refs)
+    if verbose: print len(refsList), " Refs found"
+    
+    for ref in refsList :
+        if ref.getTypeId() == "ProxyService" :
+            projectName = ref.getFullName()
+            if verbose: print "processing ", projectName
+            found = False
+            for project in list.split(','):
+                if project in projectName:
+                    found = True
+            if (list == 'ALL') or found:
+                if command == 'enable':
+                    print "enabling service for ", projectName
+                    proxyServiceConfigurationMBean.enableService(ref)
+                if command == 'disable':
+                    print "disabling service for ", projectName
+                    proxyServiceConfigurationMBean.disableService(ref)
+                if command == 'status':
+                    print "service ", projectName , " enabled=", proxyServiceConfigurationMBean.isEnabled(ref)
+
+
+#reading command line parameters
+domain, command, list = readvarsDCL(sys.argv[1:])
+print "domain=", domain
+
+if (domain == None) :
+    print('<b>ERROR</b>: invalid arguments, expected arguments "domain" ')
+    exit()
+
+if (command == None or command not in ['enable', 'disable', 'status']):
+    print "please provide a valid command (enable/disable/status)"
+    exit()
+         
+if (list == None):
+    print "please provide a comma separated list of projects (ALL for all projects)"
+    exit()
+             
+
+userConfigFile, userKeyFile, serverURL = connectSecureToAdmin(domain)
+connect(userConfigFile=userConfigFile,userKeyFile=userKeyFile,url=serverURL)
+
+domainRuntime()
+
+sessionName = "DisableEnableProjects" + Long(System.currentTimeMillis()).toString()
+sessionMBean = findService(SessionManagementMBean.NAME,SessionManagementMBean.TYPE)
+sessionMBean.createSession(sessionName)
+print 'Session was created … ' + sessionName
+
+try:
+    proxyServiceConfigurationMBean = findService("ProxyServiceConfiguration." + sessionName,"com.bea.wli.sb.management.configuration.ProxyServiceConfigurationMBean")
+    configMBean = findService(ALSBConfigurationMBean.NAME, ALSBConfigurationMBean.TYPE)
+    enableDisableAllServices(command)
+    sessionMBean.activateSession(sessionName, "Complete enable/disable services")
+
+except Exception, inst:
+    print inst
+    print sys.exc_info()[0]
+    dumpStack()
+    if sessionMBean.sessionExists(sessionName):
+        print "undoing session"
+        sessionMBean.discardSession(sessionName)
+    sys.stderr.write("unable to work on domain " + domain)
+
+
+</pre>
+
+

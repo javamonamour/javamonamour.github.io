@@ -1,0 +1,29 @@
+---
+layout: post
+title: "PL-SQL logging info with DBMS_OUTPUT.PUT_LINE in SQL Developer"
+date: 2012-08-15T17:29:00.002+02:00
+permalink: /2012/08/pl-sql-logging-info-with.html
+blogger_id: "6766601175696867093"
+tags: ["PL-SQL"]
+---
+unless you explicitly enable the logging, you will never see anything...<br />
+<br />
+<pre>
+SET SERVEROUTPUT ON;
+
+BEGIN
+
+  DBMS_OUTPUT.ENABLE;
+ DBMS_OUTPUT.PUT_LINE('Hello...');
+
+ DBMS_OUTPUT.PUT_LINE('Goodbye.');
+ END;
+ /
+
+</pre>
+ <br/> <br/>
+
+in a stored procedure, just do <br/> <br/>
+dbms_output.enable (1000000); 
+
+ <br/> <br/>

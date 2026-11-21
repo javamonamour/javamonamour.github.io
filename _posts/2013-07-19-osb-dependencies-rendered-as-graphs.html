@@ -1,0 +1,48 @@
+---
+layout: post
+title: "OSB dependencies rendered as graphs"
+date: 2013-07-19T23:31:00.001+02:00
+permalink: /2013/07/osb-dependencies-rendered-as-graphs.html
+blogger_id: "7258928072642903253"
+tags: ["graphs"]
+---
+Excellent "graphviz getting started" guide: <a href="http://dborody.wordpress.com/2013/02/23/graph-visualization-with-graphviz-examples-tutorial/">http://dborody.wordpress.com/2013/02/23/graph-visualization-with-graphviz-examples-tutorial/</a>
+
+<br />
+<br />
+Official graphviz site: <a href="http://www.graphviz.org/">http://www.graphviz.org/</a>
+<br />
+<br />
+<a href="/2013/07/osb-service-discovery-code-poor-mans.html">Details on Service Discovery in OSB</a>
+
+<br />
+<br />
+Here a sample graph, showing some PS, BS and JMS queues (unfortunately native shapes don't match normal EAI symbols, one should use HTML shapes)
+
+<br />
+<pre>
+digraph {
+  rankdir = LR; 
+  ps01 [label = "ps1", fillcolor = red, style = filled, shape = box];
+  bs01 [label = "bs1", shape = rarrow];
+  ps02 [label = "ps02", fillcolor = red, style = filled, shape = box];
+  bs02 [label = "bs02", shape = rarrow];
+  q01 [label = "q01", shape = doublecircle];
+  rq01 [label = "rq01", shape = doublecircle];
+  ps01 -&gt; bs01 [label = "invokes"];
+  ps02 -&gt; bs02 [label = "invokes"];
+  bs01 -&gt; q01 [label = "posts"];
+  bs02 -&gt; q01 [label = "posts"];
+  q01 -&gt; rq01 [label = "onerror"];
+  ps03 [label = "ps03", fillcolor = red, style = filled, shape = box];
+  q01 -&gt; ps03 [label = "consume"];
+}
+
+</pre>
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/be100a7e2e7cbb7d.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="168" src="/images/0fae230236224799.png" width="640" /></a></div>
+<br />
+It's really easy to generate the graph from code
+
+

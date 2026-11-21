@@ -1,0 +1,135 @@
+---
+layout: post
+title: "kill weblogic on OutOfMemory error"
+date: 2015-05-18T10:05:00.002+02:00
+permalink: /2015/05/kill-weblogic-on-outofmemory-error.html
+blogger_id: "5097561754431405996"
+---
+When a weblogic server is hit by an OutOfMemory condition, it often agonizes for a while before finally collapsing. This is not very healthy for the poor beast, and for humanitarian reasons you might want to end its suffering sooner.
+
+<br/><br/>
+
+
+The first approach could be to use the
+<br/><br/>
+
+<pre class="brush: xml">
+&lt;overload-protection>
+   &lt;panic-action>system-exit&lt;/panic-action>
+&lt;/overload-protection>
+
+</pre>
+
+<br/><br/>
+
+OnOutOfMemoryError is a little-know flag documented here <a href="http://www.oracle.com/technetwork/articles/java/vmoptions-jsp-140102.html">http://www.oracle.com/technetwork/articles/java/vmoptions-jsp-140102.html</a>
+
+<br/><br/>
+Try starting the JVM with -XX:OnOutOfMemoryError="kill -9 %p" or -XX:OnOutOfMemoryError='kill -9 %p' and see if this does the job.
+<br/><br/>
+
+This is my test (source code copied from <a href="http://crunchify.com/how-to-generate-out-of-memory-oom-in-java-programatically/">Crunchify site</a>):
+<br/><br/>
+
+
+
+<br/><br/>
+
+cat GenerateOOM.java 
+
+<pre class="brush: java">
+
+public class GenerateOOM {
+ 
+ 
+        public static void main(String[] args) throws Exception {
+                GenerateOOM memoryTest = new GenerateOOM();
+                memoryTest.generateOOM();
+        }
+ 
+        public void generateOOM() throws Exception {
+                int iteratorValue = 20;
+                System.out.println("\n=================> OOM test started..\n");
+                for (int outerIterator = 1; outerIterator < 20; outerIterator++) {
+                        System.out.println("Iteration " + outerIterator + " Free Mem: " + Runtime.getRuntime().freeMemory());
+                        int loop1 = 2;
+                        int[] memoryFillIntVar = new int[iteratorValue];
+                        // feel memoryFillIntVar array in loop..
+                        do {
+                                memoryFillIntVar[loop1] = 0;
+                                loop1--;
+                        } while (loop1 > 0);
+                        iteratorValue = iteratorValue * 5;
+                        System.out.println("\nRequired Memory for next loop: " + iteratorValue);
+                        Thread.sleep(1000);
+                }
+        }
+ 
+}
+</pre>
+
+
+<br/><br/>
+This is the run:
+
+<pre>
+java -XX:OnOutOfMemoryError="kill -9 %p" GenerateOOM 
+
+=================> OOM test started..
+
+Iteration 1 Free Mem: 244998456
+
+Required Memory for next loop: 100
+Iteration 2 Free Mem: 244998456
+
+Required Memory for next loop: 500
+Iteration 3 Free Mem: 244998456
+
+Required Memory for next loop: 2500
+Iteration 4 Free Mem: 244998456
+
+Required Memory for next loop: 12500
+Iteration 5 Free Mem: 244998456
+
+Required Memory for next loop: 62500
+Iteration 6 Free Mem: 244998456
+
+Required Memory for next loop: 312500
+Iteration 7 Free Mem: 244998456
+
+Required Memory for next loop: 1562500
+Iteration 8 Free Mem: 243748440
+
+Required Memory for next loop: 7812500
+Iteration 9 Free Mem: 237498424
+
+Required Memory for next loop: 39062500
+Iteration 10 Free Mem: 206248408
+
+Required Memory for next loop: 195312500
+Iteration 11 Free Mem: 49998392
+
+Required Memory for next loop: 976562500
+Iteration 12 Free Mem: 50003032
+#
+# java.lang.OutOfMemoryError: Java heap space
+# -XX:OnOutOfMemoryError="kill -9 %p"
+#   Executing /bin/sh -c "kill -9 3860"...
+Killed
+
+
+</pre>
+
+I have also tested that if OnOutOfMemoryError and HeapDumpOnOutOfMemoryError are used together, the HeapDumpOnOutOfMemoryError is executed first, then the server is killed.
+<br/><br/>
+
+java -XX:OnOutOfMemoryError="kill -9 %p" -XX:+HeapDumpOnOutOfMemoryError GenerateOOM
+
+<br/><br/>
+
+PS I have tested using single quotes ( java -XX:OnOutOfMemoryError='kill -9 %p'  ) and it works on Linux )
+
+
+
+
+

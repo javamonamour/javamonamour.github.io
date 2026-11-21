@@ -1,0 +1,28 @@
+---
+layout: post
+title: "More on Security of Web Applications"
+date: 2010-03-27T19:39:00.000+01:00
+permalink: /2010/03/more-on-security-of-web-applications.html
+blogger_id: "2101603651769908403"
+tags: ["security"]
+---
+You can apply <span style="font-size: large;"><b>BASIC Authentication</b></span> (the browser will request username and password).<br />
+<br />
+In the <i>web.xml</i>, declare a <b>security-constraint</b> which defines a <b>web-resource-collection</b> and a <b>auth-constraint</b> with a <b>role-name</b>.<br />
+You shall also define which <b>security realm</b> will authenticate the user.<br />
+Specify a <b>login-config/auth-method=BASIC</b>.<br />
+<br />
+In <i>weblogic.xml</i>, you create&nbsp; a <b>security-role-assignment</b> where you map a <b>role-name</b> to a <b>principal-name</b>.<br />
+<br />
+At the end of the story, your&nbsp; <b>principal-name</b> is authorized to access a <b>web-resource-collection.</b><br />
+<br />
+To have a <span style="font-size: large;"><b>FORM based authentication</b></span>, you define a <b>login-config/auth-method=FORM</b>, and you provide a form-login-config to tell which jsp page to use for login.<br />
+<br />
+<br />
+You can have <b>CLIENT-CERT based authentication</b> using 2 way SSL. (TODO find more about this)<br />
+It seems that this is supported only with JNDI login, and not with the JAAS login.<br />
+<br />
+The <b>user-data-constraint</b>-transport-guarantee clause determines the level of encryption/signature of the data.<br />
+<br />
+<br />
+<b>SAML</b> is a remote, or <b>perimeter</b>, login method.

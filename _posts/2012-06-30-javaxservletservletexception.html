@@ -1,0 +1,11 @@
+---
+layout: post
+title: "javax.servlet.ServletException: java.lang.NoSuchMethodError: javax.el.ExpressionFactory.newInstance()Ljavax/el/ExpressionFactory"
+date: 2012-06-30T16:53:00.000+02:00
+permalink: /2012/06/javaxservletservletexception.html
+blogger_id: "3926644381330624712"
+tags: ["wlfullclient"]
+---
+This happens because we had a wlfullclient.jar with javax.el package different from the one in JSTL libraries..... the only solution was to remove that package from wlfullclient.jar<br />
+<br />
+What a pain.... modules in Java ... 8?  or 7 already? should take care of this problem

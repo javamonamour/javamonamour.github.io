@@ -1,0 +1,57 @@
+---
+layout: post
+title: "OSB and rejectedMessageHandlers in JCA File Adapter"
+date: 2011-11-16T18:25:00.000+01:00
+permalink: /2011/11/osb-and-rejectedmessagehandlers-in-jca.html
+blogger_id: "3128224958561884350"
+tags: ["FileAdapter", "OSB"]
+blogger_comments:
+  - author: "Yuan Meng"
+    date: 2012-01-16
+    html: "I am trying to understand how the dynamic endpoints properties work. <br /><br />The console allows me to enter any name/value pair like &quot;foo/bar&quot;. But how do i pick parameter &quot;foo&quot; inside my proxy?<br /><br />thanks."
+  - author: "vernetto"
+    date: 2012-01-17
+    html: "if I understand your question... those dynamic activation properties are set on the JCA adapter, so you are not able to get their value inside OSB.... I might be wrong though...."
+---
+I am completing <a href="/2011/11/jca-file-adapter-and-error-files.html">a previous post</a> on the same topic.<br />
+<br />
+By default, the JCA File Adapter will write bad files into $DOMAIN_HOME/jca/Read/rejectedMessages, renaming them to a filename like:<br />
+<br />
+INVALID_MSG_154330703_Read_20111109_103658_0898.dat<br />
+<br />
+<br />
+If you specify in your JCA file the property PhysicalErrorArchiveDirectory=/path/to/my/errorDirectory, the bad files will be written here and not to the $DOMAIN_HOME/jca/Read/rejectedMessages directory.<br />
+<br />
+<br />
+<br />
+To retry a "failed" file (only those who are not directly rejected by the Adapter, but for instance those who fail validation in the Proxy Service), you can specify in the JCA Transport Configuration of the Proxy Service:<br />
+<br />
+<b>jca.retry.count = "3"<br />
+jca.retry.interval = "40"<br />
+</b><br />
+<br />
+If you want to change the destination, there is a property rejectedMessageHandlers to be set (see oracle.tip.adapter.file. package). In SOA Suite you would set it in bpel.xml, in OSB it's a bit tricky:<br />
+<br />
+edit the JCA Proxy Service, JCA Transport Configuration, Dynamic EndPoint Properties, add "rejectedMessageHandlers" with value "file://path/to/your/dir"  <br />
+<br />
+<br />
+If you fail format, you will get this message:<br />
+<br />
+<i>Error JCA_FRAMEWORK_AND_ADAPTER BEA-000000 Unrecognized Rejection handler<br />
+Unrecognized Rejection handler<br />
+The Rejection handler C:/acme/po/rejected is not recognized.<br />
+Please use on of the existing Rejection handlers: file://, queue://, bpel:// or wsif://<br />
+</i><br />
+<br />
+so your options are a AQ queue (queue refers to AQ, not to JMS!), a BPEL process, a Web Service. <br />
+<br />
+<br />
+<br />
+Here you have a series of possible formats for the destination:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/B14099_19/integrate.1012/b14058/life_cycle.htm">http://download.oracle.com/docs/cd/B14099_19/integrate.1012/b14058/life_cycle.htm</a><br />
+<br />
+it says that you can send the file to a JMS queue or a DB, not necessarily to a Directory... I haven't tested this.<br />
+<br />
+<br />
+<a href="http://www.oracle.com/technetwork/testcontent/ds-oracleasadapter-files-130342.pdf">Here the Oracle Integration File Adapter Datasheet</a> , but it doesn't say much about error handler.

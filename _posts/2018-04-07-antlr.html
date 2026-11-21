@@ -1,0 +1,71 @@
+---
+layout: post
+title: "ANTLR"
+date: 2018-04-07T09:57:00.000+02:00
+permalink: /2018/04/antlr.html
+blogger_id: "8065705877994803610"
+tags: ["antlr", "grammar", "parser"]
+---
+<a href="http://www.antlr.org/">http://www.antlr.org/</a><br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="https://pragprog.com/book/tpantlr2/the-definitive-antlr-4-reference" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" data-original-height="1600" data-original-width="1334" height="320" src="/images/c8bcd5d005a583bb.jpg" width="267" /></a></div><br />
+<br />
+Source code: https://pragprog.com/titles/tpantlr2/source_code<br />
+<br />
+(I am using GIT bash)<br />
+on Windows:<br />
+export CLASSPATH=/d/pierre/downloads/antlr/antlr-4.0-complete.jar:.<br />
+alias antlr="java -jar /d/pierre/downloads/antlr/antlr-4.0-complete.jar"<br />
+alias grun='java org.antlr.v4.runtime.misc.TestRig'<br />
+<br />
+on Linux<br />
+export CLASSPATH=/home/centos/antlr/antlr-4.0-complete.jar:.<br />
+alias grun='java -cp /home/centos/antlr/antlr-4.0-complete.jar:. org.antlr.v4.runtime.misc.TestRig'<br />
+<br />
+<br />
+grun Hello r -tokens<br />
+<br />
+I could not find which EOF key to press on Windows (it's CTRL-D in Linux).<br />
+<br />
+<br />
+<br />
+If more people knew how to write a grammar and a parser, we probably would not be wasting so much of our life manually sorting horrendous Maven pom.xml files, or hacking HTML pages embedded with all sort of obscure hocus-pocus additions, or even typing unreadable GIT commands to undo a commit. <br />
+<br />
+But we don't want to be monkeys, we want to learn the fundamentals of our profession : elaborate languages to explain, in a clear concise and unambiguous way, what we expect from a computing machine.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/a8b9c3b67c4c16a0.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="590" data-original-width="789" height="299" src="/images/eca8e61f3098b175.jpg" width="400" /></a></div><br />
+<br />
+<h2>Troubleshooting:</h2><br />
+If you get<br />
+<pre>java.lang.NullPointerException
+at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:311)
+at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+at org.antlr.v4.runtime.misc.TestRig.process(TestRig.java:157)
+at org.antlr.v4.runtime.misc.TestRig.main(TestRig.java:142)
+</pre><br />
+check this:<br />
+<br />
+http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/8u40-b25/sun/misc/Launcher.java?av=f<br />
+<br />
+<pre>public Class&lt;?>  [More ...] loadClass(String name, boolean resolve)
+throws ClassNotFoundException
+{
+int i = name.lastIndexOf('.');
+if (i != -1) {
+SecurityManager sm = System.getSecurityManager();
+if (sm != null) {
+sm.checkPackageAccess(name.substring(0, i));
+}
+}
+</pre><br />
+and this http://grepcode.com/file/repo1.maven.org/maven2/org.antlr/antlr4/4.0/org/antlr/v4/runtime/misc/TestRig.java?av=f<br />
+<br />
+<pre>try {
+lexerClass = cl.loadClass(lexerName).asSubclass(Lexer.class);
+}
+</pre><br />
+At this point I am pretty hopeless.... just ignore this issue, when you run grun with parameters, it works.<br />
+<br />
+See <a href="https://github.com/antlr/antlr4/issues/174">https://github.com/antlr/antlr4/issues/174</a><br />
+

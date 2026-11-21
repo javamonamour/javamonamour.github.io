@@ -1,0 +1,61 @@
+---
+layout: post
+title: "Eclipse not responding"
+date: 2012-04-15T23:03:00.002+02:00
+permalink: /2012/04/eclipse-not-responding.html
+blogger_id: "5867379716761012951"
+tags: ["eclipse"]
+---
+Having spent most of my current project watching an hourglass hovering on Eclipse,<br />
+I have at last decided to do something about that.<br />
+<br />
+Eclipse executable is in: C:\Oracle\Middleware\oepe_11gR1PS4\eclipse.exe<br />
+<br />
+C:/Oracle/Middleware/jrockit_160_24_D1.1.2-4/jre/bin/javaw.exe<br />
+<br />
+In the same directory, the eclipse.ini contains:<br />
+<br />
+<pre>-vm
+C:/Oracle/Middleware/jrockit_160_24_D1.1.2-4/jre/bin/javaw.exe
+-startup
+plugins/org.eclipse.equinox.launcher_1.1.1.R36x_v20101122_1400.jar
+--launcher.library
+plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.1.2.R36x_v20101222
+-showsplash
+org.eclipse.platform
+--launcher.defaultAction
+openFile
+-vmargs
+-Xms256m
+-Xmx768m
+-XX:MaxPermSize=256m
+-Dsun.lang.ClassLoader.allowArraySyntax=true
+-Dweblogic.home=C:\Oracle\Middleware\wlserver_10.3
+-Dharvester.home=C:\Oracle\Middleware\Oracle_OSB1\harvester
+-Dosb.home=C:\Oracle\Middleware\Oracle_OSB1
+-Dosgi.bundlefile.limit=750
+-Dosgi.nl=en_US
+</pre><br />
+I run Task Manager, and View Columns PID, so that I know the PID of this JVM<br />
+<br />
+I install VisualVM to connect to the Eclipse JVM (anyway the Eclipse process is properly named in VisualVM, no need to use Task Manager to view the PID)<br />
+<br />
+I click on the Threads tab and I am ready to monitor the next "Not Responding" event...I also click on "Sampler", it hangs for a while to determine if Eclipse supports CPU and Memory profiling.... it does!<br />
+<br />
+So I monitor the CPU while Eclipse seems to be hanging, and I notice that the <b>jrockit.net.SocketNativeIO.readBytesPinned</b> is eating my CPU alive...<br />
+<br />
+Oh, but why JRockit? Because it's the vm option in eclipse.ini.<br />
+<br />
+What if I switch to Sun JVM?<br />
+I try with C:/Oracle/Middleware/jdk160_24/bin/javaw.exe<br />
+<br />
+It seems to be more responsive now...<br />
+<br />
+Will keep an eye on it.... next time I will do a <br />
+<b>netstat -ano</b><br />
+(see <a href="http://www.exnol.com/how-to-find-out-all-open-ports-connections-and-originating-ip-addresses">here</a>)<br />
+to find out on Windows which sockets are open by a PID<br />
+<br />
+<br />
+I have tried using:<br />
+Window/Preferences/Java/Editor/Content Assist/ Uncheck Auto Activation

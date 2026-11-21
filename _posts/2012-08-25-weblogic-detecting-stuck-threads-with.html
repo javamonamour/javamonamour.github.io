@@ -1,0 +1,39 @@
+---
+layout: post
+title: "WebLogic, detecting stuck threads with JMX and Java"
+date: 2012-08-25T22:03:00.000+02:00
+permalink: /2012/08/weblogic-detecting-stuck-threads-with.html
+blogger_id: "8956176354486957587"
+tags: ["JMX", "weblogic"]
+---
+Surprisingly, the "Health" reported in the Servers monitoring tab<br />
+<br />
+<br />
+<a href="/images/5cc24580cc55883d.jpg" imageanchor="1"><img border="0" height="332" src="/images/9ad2b7bd0e0c5a22.jpg" width="640" /></a><br />
+<br />
+<br />
+is NOT the ServerRuntime.HealthState, but rather the<br />
+<br />
+/serverRuntime/ThreadPoolRuntime/ThreadPoolRuntime.HealthState<br />
+<br />
+the parent of this MBean is com.bea:Name=osbpl1ms1,Type=ServerRuntime, its type and name are <a href="http://docs.oracle.com/cd/E15051_01/wls/docs103/wlsmbeanref/mbeans/ThreadPoolRuntimeMBean.html">ThreadPoolRuntime</a><br />
+<br />
+which also contains a weblogic.health.HealthState<br />
+<br />
+For this reason, to the code of the previous post I have added a new method:<br />
+<br />
+<pre class="brush: java">
+    public static String getThisServerThreadPoolHealth() throws Exception {
+ MBeanServerConnection connection = initConnection();
+ ObjectName runtimeService = new ObjectName("com.bea:Name=RuntimeService,Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean");
+ String managedServerName = (String) connection.getAttribute(runtimeService, "ServerName");
+ ObjectName serverRT = new ObjectName("com.bea:Name=" + managedServerName + ",Type=ServerRuntime");
+ System.out.println("serverRT=" + serverRT);
+ ObjectName serverTP = (ObjectName)connection.getAttribute(serverRT, "ThreadPoolRuntime");
+ weblogic.health.HealthState tpHealthState = (weblogic.health.HealthState) connection.getAttribute(serverTP, "HealthState");
+ return healthStateToString(tpHealthState.getState());
+    }
+
+
+</pre><br />
+

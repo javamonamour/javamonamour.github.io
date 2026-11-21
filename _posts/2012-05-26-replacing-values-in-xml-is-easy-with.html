@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Replacing values in XML is easy with XmlTask"
+date: 2012-05-26T14:06:00.000+02:00
+permalink: /2012/05/replacing-values-in-xml-is-easy-with.html
+blogger_id: "8578545929091297792"
+tags: ["xml"]
+---
+<a href="http://www.oopsconsultancy.com/software/xmltask/">http://www.oopsconsultancy.com/software/xmltask/</a><br />
+<br />
+especially the replace command is quite useful:<br />
+<br />
+<pre name="code" class="brush: xml">  &lt;xmltask source="../${env.BUILD_ENVIRONMENT}/tmp/System/SMTP_Servers/EmailServer.SMTPServer" dest="../${env.BUILD_ENVIRONMENT}/tmp/System/SMTP_Servers/EmailServer.SMTPServer">
+    &lt;!-- change email server URL -->
+    &lt;replace path="/xml-fragment/*[local-name(.)='serverURL']/text()" withText="${EmailServer.smtp.Server_URL}"/>
+    &lt;!-- change email server port number -->
+    &lt;replace path="/xml-fragment/*[local-name(.)='portNumber']/text()" withText="${EmailServer.smtp.Port_Number}"/>
+  &lt;/xmltask>
+  
+</pre><br />
+<br />
+as explained in <a href="http://osbisourfriend.blogspot.com/2012/05/deploying-osb-components-onto-different.html">this excellent post</a>, you can use it to customize a OSB project

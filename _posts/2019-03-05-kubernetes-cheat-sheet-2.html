@@ -1,0 +1,156 @@
+---
+layout: post
+title: "Kubernetes cheat sheet 2"
+date: 2019-03-05T14:35:00.001+01:00
+permalink: /2019/03/kubernetes-cheat-sheet-2.html
+blogger_id: "8300138334612468264"
+tags: ["kubernetes"]
+---
+<h2>Namespaces</h2><br />
+kubectl get pods --namespace=dev<br />
+kubectl get pods --namespace=default<br />
+<br />
+kubectl config set-context $(kubectl config current-context) --namespace=dev<br />
+<br />
+<br />
+<h2>ConfigMap</h2><br />
+kubectl create configmap myconfigmap --from-literal=APP_COLOR=blue<br />
+kubectl create -f myconfigmap.yml<br />
+<br />
+<pre>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myconfigmap
+data:
+  APP_COLOR: blue
+  APP_MODE: prod
+</pre><br />
+then you inject into a container definition using <br />
+<pre>envFrom: 
+- configMapRef
+    name: myconfigmap
+</pre><br />
+kubectl get configmaps<br />
+kubectl describe configmaps db-config<br />
+<br />
+<br />
+<h2>Secrets</h2><br />
+kubectl create secret generic mysecret --from-literal=mykey=myvalue<br />
+<br />
+<pre>apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+data:
+  DBHost: mysql
+  DBUser: root
+  DBPassword: password
+
+</pre><br />
+kubectl create -f secret_data.yaml<br />
+<br />
+<br />
+<h2>SECURITY</h2><a href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/">https://kubernetes.io/docs/tasks/configure-pod-container/security-context/</a><br />
+<br />
+you can declare at Pod or container level:<br />
+<br />
+<pre>spec:
+  securityContext:
+    runAsUser: 1000
+    capabilities:
+      add: ["MAC_ADMIN"]
+</pre><br />
+#check which user runs the container<br />
+kubectl exec ubuntu-sleeper whoami<br />
+<br />
+<br />
+<br />
+kubectl create serviceaccount dashboard-sa<br />
+kubectl get serviceaccount <br />
+kubectl describe serviceaccount dashboard-sa<br />
+kubectl describe secret dashboard-sa-account-token<br />
+<br />
+curl https://myip/api -insecure --header "Authorization: Bearer PASTE_THE_TOKEN_HERE"<br />
+<br />
+#change serviceaccount for a deployment<br />
+kubectl --record deployment.apps/web-dashboard set serviceaccount dashboard-sa<br />
+<br />
+<br />
+<br />
+<h2>RESOURCES</h2><br />
+<pre>resources:
+  requests:
+    memory: "1Gi"
+    cpu: 1
+</pre><br />
+<br />
+<br />
+<br />
+<h2>Taints and Tolerations</h2><br />
+kubectl taint nodes node-name key=value:taint-effect<br />
+<br />
+taint-effect can be: NoSchedule, PreferNoSchedule, NoExecute<br />
+<br />
+key=value can be app=blue<br />
+<br />
+<src><br />
+tolerations:<br />
+- key: "app"<br />
+operator: "Equal"<br />
+value: "blue"<br />
+effect: "NoSchedule"<br />
+</src><br />
+<br />
+<br />
+to remove taint:<br />
+<br />
+kubectl taint nodes master node-role.kubernetes.io/master:NoSchedule-<br />
+<br />
+<br />
+<h2>NODE SELECTOR</h2><br />
+<pre>nodeSelector:
+  size: Large
+</pre><br />
+<br />
+where size is a key and Large a value<br />
+<br />
+to label a node:<br />
+kubectl label node mynode key=value<br />
+<br />
+<pre>affinity:
+ nodeAffinity:
+   requiredDuringSchedulingIgnoredDuringExecution:
+  nodeSelectorTerms:
+  - matchExpressions:
+    - key: color
+   operator: In
+   values:
+   - blue
+  
+</pre><br />
+<br />
+<h2>Readiness Probe</h2><br />
+<a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/">https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/</a><br />
+<br />
+in the spec/containers/ section for each container:<br />
+<br />
+<pre>readinessProbe:
+  httpGet:
+    path: /api/ready
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 5
+</pre><br />
+beside httpGet you can have: "tcpSocket: port:", "exec: command:"<br />
+<br />
+<br />
+<br />
+<h2>Liveness Probe</h2><br />
+<pre>livenessProbe:
+  httpGet:
+    path: /api/ready
+    port: 8080
+</pre><br />
+<br />
+<br />
+

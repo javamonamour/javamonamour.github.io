@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Django getting started"
+date: 2017-11-22T20:03:00.002+01:00
+permalink: /2017/11/django-getting-started.html
+blogger_id: "962185975701928908"
+tags: ["django", "python"]
+---
+<br />
+<br />
+sudo pip3.6 install Django==1.11.7<br />
+<br />
+<br />
+follow the instructions <a href="https://docs.djangoproject.com/en/1.11/intro/tutorial01/">https://docs.djangoproject.com/en/1.11/intro/tutorial01/</a><br />
+<br />
+cd ~<br />
+vi .bash_profile<br />
+insert this line:<br />
+alias python=python3.6<br />
+source .bash_profile<br />
+<br />
+django-admin startproject mysite<br />
+cd mysite/<br />
+python manage.py runserver<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/60d5c043df280472.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/c1216682a935eb4b.jpg" width="272" height="400" data-original-width="182" data-original-height="268" /></a></div><br />
+<pre>Performing system checks...
+
+System check identified no issues (0 silenced).
+
+You have 13 unapplied migration(s). Your project may not work properly until you apply the migrations for app(s): admin, auth, contenttypes, sessions.
+Run 'python manage.py migrate' to apply them.
+
+November 22, 2017 - 19:02:58
+Django version 1.11.7, using settings 'mysite.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+</pre><br />
+<br />
+<br />
+in your browser enter http://127.0.0.1:8000/<br />
+<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,40 @@
+---
+layout: post
+title: "JMS Reporting Provider is not deployed, or it is not active"
+date: 2011-08-01T19:45:00.001+02:00
+permalink: /2011/08/jms-reporting-provider-is-not-deployed.html
+blogger_id: "5253797637727585488"
+tags: ["OSB", "reporting"]
+---
+<i>Provider Not Available<br />
+JMS Reporting Provider is not deployed, or it is not active </i> <br />
+<br />
+If you get this message when you click on Operations/Message Reports<br />
+<br />
+open WL console,<br />
+check if "<b>JMS Reporting Provider</b>" is deployed;<br />
+<br />
+this application should use the <br />
+Module <b>jmsResources </b>-> <br />
+Queue <b>wli.reporting.jmsprovider.queue</b> -> <br />
+Server <b>wlsbJMSServer</b><br />
+<br />
+and the <b>wlsbjmsrpDataSource </b>- mapped to a DB<br />
+<br />
+When you do a Report action, a message is queued to the JMS queue, and asynchronously dequeued to the DB.<br />
+<br />
+<b>PurgingMDB</b> listens on the queue <b>wli.reporting.purge.queue</b>, which is part of the same module jmsResources .<br />
+<br />
+DB scripts are in $ORACLE_HOME/Oracle_OSB1/dbscripts/oracle/reporting_runtime.sql, tables WLI_QS_REPORT_ATTRIBUTE and  WLI_QS_REPORT_DATA<br />
+<br />
+The JMS Reporting Provider is in $ORACLE_HOME/Oracle_OSB1/lib/common/<b>jmsreportprovider.ear</b>, so you can redeploy it from there.<br />
+<br />
+<br />
+<br />
+<br />
+See <a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/deploy/cluster_res_appx.html">here for list of resources</a><br />
+<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E17904_01/doc.1111/e15867/reporting.htm">Here the full doc on reporting</a><br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E17904_01/doc.1111/e15867/reporting.htm#i1061255">Here how to untarget the JMS Reporter</a>

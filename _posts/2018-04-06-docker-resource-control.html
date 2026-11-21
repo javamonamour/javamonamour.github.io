@@ -1,0 +1,115 @@
+---
+layout: post
+title: "Docker resource control"
+date: 2018-04-06T23:13:00.000+02:00
+permalink: /2018/04/docker-resource-control.html
+blogger_id: "8721718708117210605"
+tags: ["cgroups", "docker"]
+---
+<b>systemd-cgls</b><br />
+<b>systemd-cgtop</b><br />
+<br />
+<b>ls -ltr /sys/fs/cgroup/</b><br />
+<br />
+<a href="https://goldmann.pl/blog/2014/09/11/resource-management-in-docker/">https://goldmann.pl/blog/2014/09/11/resource-management-in-docker/</a><br />
+<br />
+<br />
+mkdir stress<br />
+cd stress/<br />
+<br />
+cat &lt;&lt;EOT >> Dockerfile<br />
+FROM fedora:latest<br />
+RUN yum -y install stress && yum clean all<br />
+ENTRYPOINT ["stress"]<br />
+EOT<br />
+<br />
+<b>docker build . -t stress</b><br />
+<b>docker run -d stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M --timeout 30s</b><br />
+<b>systemd-cgtop</b><br />
+<br />
+<br />
+To display the scope of a container:<br />
+<br />
+<b>docker ps --no-trunc</b><br />
+CONTAINER ID                                                       IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES<br />
+c82c5d0e0a0dac72ce935fd10c49bb0c6f680f009cdce20995b1c731d9698d80   ubuntu              "/usr/bin/top -b"   38 hours ago        Up 37 hours                             topdemo<br />
+<br />
+<b>systemctl show docker-c82c5d0e0a0dac72ce935fd10c49bb0c6f680f009cdce20995b1c731d9698d80.scope</b><br />
+<br />
+<br />
+<pre>TimeoutStopUSec=1min 30s
+Result=success
+MemoryCurrent=18446744073709551615
+TasksCurrent=18446744073709551615
+Delegate=no
+CPUAccounting=no
+CPUShares=18446744073709551615
+StartupCPUShares=18446744073709551615
+CPUQuotaPerSecUSec=infinity
+BlockIOAccounting=no
+BlockIOWeight=18446744073709551615
+StartupBlockIOWeight=18446744073709551615
+MemoryAccounting=no
+MemoryLimit=18446744073709551615
+DevicePolicy=auto
+TasksAccounting=no
+TasksMax=18446744073709551615
+KillMode=control-group
+KillSignal=15
+SendSIGKILL=yes
+SendSIGHUP=no
+Id=docker-c82c5d0e0a0dac72ce935fd10c49bb0c6f680f009cdce20995b1c731d9698d80.scope
+Names=docker-c82c5d0e0a0dac72ce935fd10c49bb0c6f680f009cdce20995b1c731d9698d80.scope
+Description=docker-c82c5d0e0a0dac72ce935fd10c49bb0c6f680f009cdce20995b1c731d9698d80.scope
+LoadState=not-found
+ActiveState=inactive
+SubState=dead
+InactiveExitTimestampMonotonic=0
+ActiveEnterTimestampMonotonic=0
+ActiveExitTimestampMonotonic=0
+InactiveEnterTimestampMonotonic=0
+CanStart=yes
+CanStop=yes
+CanReload=no
+CanIsolate=no
+StopWhenUnneeded=no
+RefuseManualStart=no
+RefuseManualStop=no
+AllowIsolate=no
+DefaultDependencies=yes
+OnFailureJobMode=replace
+IgnoreOnIsolate=yes
+IgnoreOnSnapshot=yes
+NeedDaemonReload=no
+JobTimeoutUSec=0
+JobTimeoutAction=none
+ConditionResult=no
+AssertResult=no
+ConditionTimestampMonotonic=0
+AssertTimestampMonotonic=0
+LoadError=org.freedesktop.DBus.Error.FileNotFound "No such file or directory"
+Transient=no
+</pre><br />
+<br />
+<b>cat /proc/meminfo</b><br />
+<br />
+<b>cat /proc/vmstat</b><br />
+<br />
+<br />
+#remove all containers with stress image<br />
+docker ps -a | awk '{ print $1,$2 }' | grep stress | awk '{print $1 }' | xargs -I {} docker rm {}<br />
+#or even better<br />
+docker ps -a -q --filter=ancestor=stress | xargs -I {} docker rm {}<br />
+<br />
+dockerd --iptables=false<br />
+<br />
+<br />
+<br />
+References <br />
+<br />
+<a href="https://www.javacodegeeks.com/minibook/docker-containerization-cookbook">https://www.javacodegeeks.com/minibook/docker-containerization-cookbook</a><br />
+<br />
+<a href="https://fralef.me/docker-and-iptables.html">https://fralef.me/docker-and-iptables.html</a><br />
+<br />
+<br />
+

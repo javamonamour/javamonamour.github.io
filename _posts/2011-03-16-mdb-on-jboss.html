@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Minimalistic MDB on JBoss"
+date: 2011-03-16T21:52:00.001+01:00
+permalink: /2011/03/mdb-on-jboss.html
+blogger_id: "6066049297364787461"
+tags: ["mdb"]
+---
+<a href="http://docs.jboss.org/ejb3/docs/tutorial/1.0.7/html/Message_Driven_Beans.html">http://docs.jboss.org/ejb3/docs/tutorial/1.0.7/html/Message_Driven_Beans.html</a><br />
+<br />
+<br />
+<pre class="brush: java">import javax.ejb.ActivationConfigProperty;
+import javax.ejb.MessageDriven;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
+import javax.jms.TextMessage;
+
+import org.apache.log4j.Logger;
+
+@MessageDriven(activationConfig = { 
+       @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
+       @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/testQueue")
+     }, 
+     mappedName = "ejb/MyMDB")
+     
+public class MyMDB implements MessageListener {
+ final static Logger logger = Logger.getLogger(MyMDB.class);
+ 
+ public void onMessage(Message paramMessage) {
+  TextMessage tm = (TextMessage)paramMessage;
+        try {
+   String text = tm.getText();
+   logger.info("received JMS message" + text);
+  } catch (JMSException e) {
+   logger.error("unable to read jms message", e);
+   
+  }
+        
+  
+ }
+
+}
+</pre>

@@ -1,0 +1,51 @@
+---
+layout: post
+title: "The JVM was unable to load the native wlfileio library , on Linux"
+date: 2016-03-02T12:08:00.000+01:00
+permalink: /2016/03/the-jvm-was-unable-to-load-native.html
+blogger_id: "4357076346931172326"
+tags: ["sharedlibrary", "weblogic"]
+---
+We are getting this message:
+
+<pre>
+
+&lt;Warning&gt; &lt;Store&gt; &lt;BEA-280109&gt; &lt;The JVM was unable to load the native wlfileio library for the store &quot;bla&quot;. File and paging stores will continue to function correctly. Specifically, file stores that are configured with a transactionally safe synchronous write policy will continue to operate safely and transactionally but may open with a different write-policy. Other store types may not be able to open.&gt; 
+
+</pre>
+
+<br/>
+
+<a href="http://docs.oracle.com/cd/E21764_01/apirefs.1111/e13952/pagehelp/Corecoreserverserverconfigservicestitle.html#attributes">http://docs.oracle.com/cd/E21764_01/apirefs.1111/e13952/pagehelp/Corecoreserverserverconfigservicestitle.html#attributes</a>
+
+under Synchronous Write Policy  it explains a lot
+
+<br/>
+
+Your default-file-store or file-store should be using in the LD_LIBRARY_PATH env variable one of the following folders / files 
+(LD_LIBRARY_PATH  should point to a FOLDER only, not to a specific FILE):
+
+<br/>
+
+WL_HOME/wlserver/server/native/linux/x86_64/libwlfileio3.so
+WL_HOME/wlserver/server/native/linux/i686/libwlfileio3.so
+WL_HOME/wlserver/server/native/win/32/wlfileio3.dll
+WL_HOME/wlserver/server/native/win/x64/wlfileio3.dll
+WL_HOME/wlserver/server/native/solaris/sparc64/libwlfileio3.so
+
+<br/>
+
+Check the java.library.path which should also be initialized to the same value.
+<br/>
+
+Otherwise, run weblogic with strace to find out what is going wrong
+<br/>
+See also <a href="http://mcgmiddleware.blogspot.ch/2012/03/weblogic-on-linux-x86-64-libmuxer.html">http://mcgmiddleware.blogspot.ch/2012/03/weblogic-on-linux-x86-64-libmuxer.html</a>
+
+and see <a href="http://blog.whitehorses.nl/2012/05/30/native-io-in-weblogic-on-solaris-11-x64/">http://blog.whitehorses.nl/2012/05/30/native-io-in-weblogic-on-solaris-11-x64/</a>
+<br/>
+
+Check also that you are using the 64 bit JVM and not the 32 bit 
+<br/>
+
+

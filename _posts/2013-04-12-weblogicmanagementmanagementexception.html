@@ -1,0 +1,25 @@
+---
+layout: post
+title: "weblogic.management.ManagementException: Booting as admin server, but servername does not match the admin server name"
+date: 2013-04-12T13:43:00.001+02:00
+permalink: /2013/04/weblogicmanagementmanagementexception.html
+blogger_id: "8390987529485779013"
+tags: ["weblogic"]
+---
+I have created a domain on one machine, packed and unpacked on another machine.<br/>Then enrolled the domain.<br/>
+When I try to start the MS2 on the second machine using nmConnect() + nmStart(), I get this error:<br/>
+
+weblogic.management.ManagementException: Booting as admin server, but servername does not match the admin server name
+
+<br/>
+
+even if starting the MS2 with startManagedWebLogic.sh works perfectly.
+
+<br/>
+
+I have then started the MS2 with the WebLogic console, shut it down, and next time the nmStart() works.
+
+<br/>
+
+Mysteries of WebLogic.
+

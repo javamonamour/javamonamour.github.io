@@ -1,0 +1,23 @@
+---
+layout: post
+title: "Weird Hiera related error messages in Puppet"
+date: 2014-06-02T12:05:00.002+02:00
+permalink: /2014/06/weird-hiera-related-error-messages-in.html
+blogger_id: "4339802803468594281"
+tags: ["hiera", "puppet"]
+---
+A colleague had a YAML file not properly formatted, and he kept getting this error message:
+
+<br/><br/>
+<i>
+Could not retrieve catalog from remote server: Error 400 on SERVER: syntax error on line 16, col -1: `' at /etc/puppetlabs/puppet/environments/dev/modules/introscope/manifests/pippo.pp:22 on node mynode.acme.com
+
+</i>
+
+<br/><br/>
+
+at line pippo.pp:22 there is a call to hiera
+<br/><br/>
+
+One would say that hiera is so poorly coded that it doesn't even bother to log that there is a YAML parsing error... I remember working in GWBasic 30 years ago and most errors were reported in the same way, "syntax error"... but it was 30 years ago.... in fact working with Puppet I have often this 1980 feeling...
+

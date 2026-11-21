@@ -1,0 +1,67 @@
+---
+layout: post
+title: "the version of incoming SOAP message does not match the one returned from provider: FabricProvider"
+date: 2011-01-23T19:05:00.007+01:00
+permalink: /2011/01/version-of-incoming-soap-message-does.html
+blogger_id: "7522211603039055372"
+tags: ["soap1.2"]
+blogger_comments:
+  - author: "nasreen basu"
+    date: 2013-09-05
+    html: "nice piece of information, I had come to know about your internet site from my friend vinay, delhi,i have read atleast 12 posts of yours by now, and let me tell you, your website gives the best and the most interesting information. This is just the kind of information that i had been looking for, i&#39;m already your rss reader now and i would regularly watch out for the new post, once again hats off to you! Thanx a ton once again, Regards, <a href=\"http://www.obieetraininghyderabad.com//\" rel=\"nofollow\">obiee training in hyderebad</a>"
+---
+The fault code value says "env:VersionMismatch"<br />
+<br />
+The entire stacktrace is:<br />
+<br />
+<i>Error oracle.webservices.service <b>OWS-04086</b> oracle.j2ee.ws.common.WebServiceException: the version of incoming SOAP message does not match the one returned from provider: FabricProvider<br />
+at oracle.j2ee.ws.server.provider.ProviderProcessor.doRequestProcessing(ProviderProcessor.java:602)<br />
+at oracle.j2ee.ws.server.WebServiceProcessor.processRequest(WebServiceProcessor.java:232)<br />
+at oracle.j2ee.ws.server.WebServiceProcessor.doService(WebServiceProcessor.java:192)<br />
+at oracle.j2ee.ws.server.WebServiceServlet.doPost(WebServiceServlet.java:459)<br />
+at oracle.integration.platform.blocks.soap.FabricProviderServlet.doPost(FabricProviderServlet.java:507)<br />
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:727)<br />
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:820)<br />
+</i><br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12839_01/core.1111/e10113/chapter_ows_messages.htm">http://download.oracle.com/docs/cd/E12839_01/core.1111/e10113/chapter_ows_messages.htm</a><br />
+<br />
+<i><b>OWS-04086</b>: {0}<br />
+Cause: An unexpected error occured<br />
+Action: None<br />
+<br />
+Level: 1<br />
+<br />
+Type: ERROR<br />
+<br />
+Impact: Configuration</i><br />
+<br />
+I have literally NO CLUE. Probably I am passing a SOAP 1.2 to SOA Suite, and it returns me a SOAP 1.1. I will figure this out...<br />
+<br />
+Here <a href="http://www.w3.org/TR/soap12-part1/">http://www.w3.org/TR/soap12-part1/</a> it says:<br />
+<br />
+<i>If a SOAP node receives a message whose version is not supported it MUST generate a fault (see 5.4 SOAP Fault) with a Value of Code set to "env:VersionMismatch".<br />
+</i><br />
+<br />
+Also here <a href="http://www.w3.org/TR/soap12-part1/#version">http://www.w3.org/TR/soap12-part1/#version</a> it says:<br />
+<i>A SOAP/1.1 node receiving a SOAP Version 1.2 message will according to SOAP/1.1 generate a version mismatch SOAP fault based on a SOAP/1.1 message construct.</i><br />
+<br />
+The oracle.j2ee.ws.server.provider.ProviderProcessor class is in C:\Oracle1\Middleware\oracle_common\modules\oracle.webservices_11.1.1\wsserver.jar<br />
+<br />
+Unfortunately, by looking at the code of this class, there is no way to set a debug flag to trace the message returned.<br />
+<br />
+<br />
+<br />
+SOAP1.1 uses http://schemas.xmlsoap.org/soap/envelope/<br />
+SOAP1.2 uses http://www.w3.org/2003/05/soap-envelope<br />
+<br />
+If I change the NS of my message to http://schemas.xmlsoap.org/soap/envelope/<br />
+I get:<br />
+<br />
+<i>oracle.fabric.common.FabricException: oracle.j2ee.ws.saaj.soap.SOAPVersionMismatchException: Mime Header Content-Type: application/soap+xml requires SOAP envelope namespace: http://www.w3.org/2003/05/soap-envelope: Mime Header Content-Type: application/soap+xml requires SOAP envelope namespace: http://www.w3.org/2003/05/soap-envelope<br />
+<br />
+</i><br />
+<br />
+which makes sense since the WSDL is a SOAP 1.2 and hence the WebService uses 1.2 headers - which are not compatible with 1.1<br />
+<br />
+We have a real issue here for support of SOAP 1.2 services in SOA Suite- evidently come internal component is only SOAP 1.1 compliant and doesn't recognize SOAP 1.2 messages.

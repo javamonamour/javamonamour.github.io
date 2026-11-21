@@ -1,0 +1,130 @@
+---
+layout: post
+title: "springdoc-openapi-maven-plugin"
+date: 2023-07-15T12:59:00.001+02:00
+permalink: /2023/07/springdoc-openapi-maven-plugin.html
+blogger_id: "6264998884670111580"
+tags: ["springdoc-openapi-maven-plugin"]
+---
+I will guide you to build a simple RESTful web service using Spring Boot, and then we will generate the OpenAPI 3.0 documentation using the springdoc-openapi-maven-plugin.
+
+Step 1: Setup Spring Boot Project
+
+Create a new Spring Boot project. You can use Spring Initializr (https://start.spring.io/) for easy bootstrapping of your project.
+
+For the dependencies, select:
+
+Web
+JPA
+H2 (for simplicity, we're using an in-memory database)
+Springdoc OpenAPI UI
+
+
+Step 2: Create the application.properties
+
+In src/main/resources/application.properties, add the following configuration:
+
+<pre>
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+</pre>
+
+
+Step 3: Create a simple Entity
+
+Create a Student class in your project:
+
+<pre>
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Student {
+
+    @Id
+    private String id;
+    private String name;
+
+    // getters and setters
+}
+</pre>
+
+Step 4: Create a JPA Repository
+
+Create an interface StudentRepository that extends JpaRepository:
+
+<pre>
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface StudentRepository extends JpaRepository&lt;Student, String> {}
+</pre>
+
+Step 5: Create a REST Controller
+
+Create a StudentController class:
+
+<pre>
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/students")
+public class StudentController {
+
+    private final StudentRepository repository;
+
+    public StudentController(StudentRepository repository) {
+        this.repository = repository;
+    }
+
+    @GetMapping
+    public List&lt;Student> getAllStudents() {
+        return repository.findAll();
+    }
+
+    @PostMapping
+    public Student newStudent(@RequestBody Student newStudent) {
+        return repository.save(newStudent);
+    }
+}
+</pre>
+
+Step 6: Generating OpenAPI 3.0 docs
+
+Add the springdoc-openapi-maven-plugin to your pom.xml:
+
+<pre>  
+&lt;plugin>
+    &lt;groupId>org.springdoc&lt;/groupId>
+    &lt;artifactId>springdoc-openapi-maven-plugin&lt;/artifactId>
+    &lt;version>1.5&lt;/version>
+    &lt;executions>
+        &lt;execution>
+            &lt;goals>
+                &lt;goal>generate&lt;/goal>
+            &lt;/goals>
+            &lt;phase>compile&lt;/phase>
+            &lt;configuration>
+                &lt;apiDocsUrl>http://localhost:8080/v3/api-docs&lt;/apiDocsUrl>
+                &lt;outputFileName>openapi.json&lt;/outputFileName>
+                &lt;outputDir>${project.build.directory}&lt;/outputDir>
+            &lt;/configuration>
+        &lt;/execution>
+    &lt;/executions>
+&lt;/plugin>
+</pre>
+  
+This will generate an openapi.json file in your target directory whenever you compile your project.
+
+Now when you run your application and go to http://localhost:8080/swagger-ui.html, you should see the OpenAPI UI with your API documented. You can use the UI to send requests and see the responses.
+
+Remember to start your application before generating the documentation, because the plugin makes an actual HTTP request to the /v3/api-docs endpoint to generate the OpenAPI specification.
+
+Please be aware that as of my knowledge cut-off in September 2021, the above mentioned plugin and setup were in use. Please ensure that you're using up-to-date versions and configurations by checking the official documentation.
+  
+  
+  

@@ -1,0 +1,42 @@
+---
+layout: post
+title: "java.net.ProtocolException: EOF after reading only BLA of MUMBLE promised bytes"
+date: 2017-03-01T12:18:00.001+01:00
+permalink: /2017/03/javanetprotocolexception-eof-after.html
+blogger_id: "2662001638180303617"
+---
+<pre>
+java.net.ProtocolException: EOF after reading only: '1343374' of: '17674381' promised bytes, 
+               out of which at least: '0' were already buffered
+        at weblogic.servlet.internal.PostInputStream.complain(PostInputStream.java:97)
+        at weblogic.servlet.internal.PostInputStream.read(PostInputStream.java:198)
+        at weblogic.servlet.internal.ServletInputStreamImpl.read(ServletInputStreamImpl.java:228)
+        at java.io.FilterInputStream.read(FilterInputStream.java:116)
+        at org.apache.commons.fileupload.util.LimitedInputStream.read(LimitedInputStream.java:134)
+        at org.apache.commons.fileupload.MultipartStream$ItemInputStream.makeAvailable(MultipartStream.java:999)
+        at org.apache.commons.fileupload.MultipartStream$ItemInputStream.read(MultipartStream.java:903)
+        at java.io.FilterInputStream.read(FilterInputStream.java:116)
+        at org.apache.commons.fileupload.util.LimitedInputStream.read(LimitedInputStream.java:134)
+        at java.io.FilterInputStream.read(FilterInputStream.java:90)
+        at org.apache.commons.fileupload.util.Streams.copy(Streams.java:100)
+        at org.apache.commons.fileupload.util.Streams.copy(Streams.java:70)
+        at org.apache.commons.fileupload.FileUploadBase.parseRequest(FileUploadBase.java:347)
+
+</pre>
+<br/>
+<br/>
+Several things can be attempted:
+<br/>
+1) increase max post size and post timeout
+<br/>
+2) restart server
+<br/>
+3) change browser
+<br/><br/>
+
+
+<a href="https://blogs.oracle.com/vijaya/entry/java_net_protocolexception_eof_after">https://blogs.oracle.com/vijaya/entry/java_net_protocolexception_eof_after</a>
+<br/><br/>
+<a href="https://docs.oracle.com/cd/E13222_01/wls/docs81/ConsoleHelp/domain_server_protocols_http.html">https://docs.oracle.com/cd/E13222_01/wls/docs81/ConsoleHelp/domain_server_protocols_http.html</a>
+
+<br/><br/>

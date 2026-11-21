@@ -1,0 +1,34 @@
+---
+layout: post
+title: "java.util.MissingResourceException: No localizer class found for message id"
+date: 2011-09-22T13:56:00.002+02:00
+permalink: /2011/09/javautilmissingresourceexception-no.html
+blogger_id: "2694006243961659416"
+---
+While executing this code:<br />
+<br />
+TopicConnectionFactory qcf = (TopicConnectionFactory) ctx.lookup( "my.connection.factory" );<br />
+TopicConnection topicConnection = qcf.createTopicConnection();<br />
+<br />
+<br />
+the thread hangs for 1 minute and then I get this great stacktrace:<br />
+<br />
+Exception in thread "main" java.util.MissingResourceException: No localizer class found for message id.<br />
+at weblogic.i18ntools.L10nLookup.getLocalizer(L10nLookup.java:260)<br />
+at weblogic.i18ntools.L10nLookup.getLocalizer(L10nLookup.java:212)<br />
+at weblogic.i18n.logging.Loggable.getMessage(Loggable.java:183)<br />
+at weblogic.i18n.logging.Loggable.getMessage(Loggable.java:207)<br />
+at weblogic.jms.common.JMSException.<init>(JMSException.java:66)<br />
+at weblogic.jms.client.JMSConnectionFactory.setupJMSConnection(JMSConnectionFactory.java:258)<br />
+at weblogic.jms.client.JMSConnectionFactory.createConnectionInternal(JMSConnectionFactory.java:285)<br />
+at weblogic.jms.client.JMSConnectionFactory.createTopicConnection(JMSConnectionFactory.java:184)<br />
+at durablesubscribers.Main.main(Main.java:43)<br />
+<br />
+<br />
+I am running it using the classpath with <br />
+wlclient.jar and javax.jms_1.1.1.jar<br />
+<br />
+<br />
+The exception was due to the fact that I was trying to create a Durable Subscriber to a Distributed Topic, and not to an individual member...<br />
+<br />
+Anyway L10nLookup needs i18n_user.properties and weblogic/i18n/i18n.properties in the classpath. These files are included in most WebLogic modules (jars).

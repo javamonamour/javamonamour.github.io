@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Exception on TransportManagerImpl.receiveMessage, com.bea.wli.sb.pipeline.PipelineException: The configurations for the proxy service is in flux."
+date: 2011-07-01T13:47:00.001+02:00
+permalink: /2011/07/exception-on-transportmanagerimplreceiv.html
+blogger_id: "2917220995026176282"
+---
+this is a BEA-380003 / BEA-381519 error...<br><br>if you change the Message Flow while it is processing requests, the change is not done transparently to the user (no hot deploy).... bummer...<br><br>this happened when I made changes to a Message Flow while it was processing requests...<br>  <br>I wonder how to make deployments in production without having to take the server offline...<br> 

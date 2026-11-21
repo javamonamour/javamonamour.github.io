@@ -1,0 +1,91 @@
+---
+layout: post
+title: "SOA Architect Questions"
+date: 2015-10-25T21:48:00.000+01:00
+permalink: /2015/10/soa-architect-questions.html
+blogger_id: "4521745604811274427"
+tags: ["questions"]
+---
+How would you monitor a WebLogic instance (hint: console, Nagios/ Oracle Enterprise Manager and or Grid Control/ HP Open View)<br />
+<br />
+Need for SOA Governance?<br />
+<br />
+Have you read some EAI books, and which EAI patterns do you remember?<br />
+<br />
+Do you know which are the main internal variable in OSB?( Hint: body, inbound, outbound)<br />
+<br />
+If a process is long running, with human interaction, how would you manage it? (hint asynchronous)<br />
+<br />
+Explain me how you would handle errors in OSB (hint: eror handler stage level, proxy level, …)<br />
+<br />
+How do you monitor performance and response time and Errors using the OSB console? (hint SLA -Alert, logging and reporting actions)<br />
+<br />
+What is a fault in OSB? How is represented? (hint: $fault details, ….)<br />
+<br />
+Which problem do you face when deploying an integration solution to a new environment, and how do you solve this (customization plans/files)<br />
+<br />
+When is it necessary to apply compensation? (hint error handling, non transactional)<br />
+<br />
+Which features are available in BPEL which are not in a general purpose programming language like Java?<br />
+<br />
+How would you test an integration solution?<br />
+<br />
+What is JNDI?<br />
+<br />
+You have a CSV or EDI file, how do you tranform it in XML?<br />
+<br />
+What is Oracle RAC? How do you configure WebLogic to take advantage of RAC (hint: Multidatasource)<br />
+<br />
+Which options do you have to enforce data integrity in a DB (constraints, triggers, range check, not null, foreign keys)<br />
+<br />
+What is a WSDL? <br />
+<br />
+How can we reuse services?<br />
+<br />
+How would you configure WebLogic domains without using manual operations (hint: WLST, domain templates)<br />
+<br />
+Difference between a Proxy service and Business Service?<br />
+<br />
+What are JMX Beans, what to they do …how can we use it<br />
+<br />
+How would you create and monitor a JMS queue with scripts? (hint: WLST, eventually Java)<br />
+<br />
+Can you start and stop a WebLogic server from WLST, and how? (hint: nmConnect, nmStart, Node Manager)<br />
+<br />
+Which options do you have to target a JMS queue? (hint: cluster, individual WLS server, individual JMS server, subdeployments)<br />
+<br />
+How do you ensure that operations can continue without disruption even if a WLS instance goes down<br />
+(hint: cluster, whole server migration, service migration, load balancing with failover)<br />
+<br />
+How do you change the log properties? Which are the main logs you have for weblogic and osb?<br />
+<br />
+Which metrics would you monitor in WLS for a JDBC Data Source? <br />
+<br />
+How would you implement the following integration interface?<br />
+. Our source system is sending the requests via FTP (it writes into ftp) and the target destination is a database. (hint database and ftp adapters).<br />
+. we want the implementation not to manage the connection details to the ftp or the database (JCA)<br />
+. We want messages to be persisted (persistent stores, jms queues)<br />
+. control error  (error handler strategies)<br />
+. monitor the execution (tracking actions logging messages) end to end (messages id)<br />
+. in case something is failing we want ensure the database integrity so if we update the database and before ending the process something fails we want the database to be back to the original status( XA)<br />
+. The source message has a different format than the target  (hint: xquery, xslt)<br />
+. we want to ensure that messages are processed in order (sequences, unit of order)<br />
+. We need to ensure that the message we send and we receive is valid according to the input and output schemas (hint validate actions)<br />
+.  While mapping the values some of them , for example currency or country codes are represented in a different format in each system. For example EURO and EUR, POUND and PND, ... (Hint: domain value mapping)<br />
+. We want the service to be reused and accessible from multiple systems (service registry and service repository)<br />
+. Finally we would like to have the schemas in a repository (metadata repository) "<br />
+Please explain how to create a queue in FIFO mode in Weblogic? (Hint :one consumer)<br />
+<br />
+What is a Canonical Data model? (hint common data, reusability)<br />
+<br />
+Would you mind to explain the difference between async and synch behaviour?<br />
+<br />
+Can you explain me something about ORM (Object Relational Mapping)<br />
+<br />
+How do you ensure that a request is persisted and executed even in case of system crash (hint: persistence, transactions)<br />
+<br />
+What is a transactional resource? What is a XA interface?<br />
+<br />
+How do you configure a UnitofOrder in Weblogic? A persistent store? A remotequeue?<br />
+<br />
+Is it possible a Managed server continue providing services in spite of shutting down the admin server? How to?

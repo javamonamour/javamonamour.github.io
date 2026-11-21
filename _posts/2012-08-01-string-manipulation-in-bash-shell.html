@@ -1,0 +1,30 @@
+---
+layout: post
+title: "String manipulation in Bash shell"
+date: 2012-08-01T05:02:00.000+02:00
+permalink: /2012/08/string-manipulation-in-bash-shell.html
+blogger_id: "6997620813795681159"
+tags: ["bash"]
+---
+I am really fed up by people who use unreadable sed and awk commands to perform basic string manipulations, like a find and replace on a string.<br />
+<br />
+There are very nice expression you can use:<br />
+<br />
+<a href="http://tldp.org/LDP/abs/html/string-manipulation.html">http://tldp.org/LDP/abs/html/string-manipulation.html</a><br />
+<br />
+string length:  ${#string}<br />
+<br />
+expression matching: expr match "$string" '$substring'<br />
+<br />
+index: expr index $string $substring<br />
+<br />
+substring: ${string:position:length}<br />
+<br />
+substring delete: ${string#substring}<br />
+<br />
+find and replace: ${string//substring/replacement}<br />
+<br />
+<br />
+Please use awk and sed only if REALLY needed.<br />
+<br />
+The only good code is readable code.

@@ -1,0 +1,26 @@
+---
+layout: post
+title: "OSB Cannot create resource outside of a session"
+date: 2012-05-17T17:54:00.001+02:00
+permalink: /2012/05/osb-cannot-create-resource-outside-of.html
+blogger_id: "8566429777914027090"
+tags: ["OSB"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2017-02-20
+    html: "sometimes the only way to fix  these situations is to log onto the server, cd $DOMAIN_HOME/osb and manually delete all the session folders (remember first to shut down the servers!)."
+  - author: "Anonymous"
+    date: 2017-02-20
+    html: "I got the same error when I need to activate. And I don&#39;t know since when it happened. <br />I&#39;ve restart all the MS and AS, but still got the issue.<br /><br />Any Ideas how to fix that?"
+  - author: "vernetto"
+    date: 2017-07-07
+    html: "&quot;remember first to shut down the servers!&quot; means that you should not do any manual pruning of those folder while the server is running. First shut down everything, then manually remove the crap."
+  - author: "Anonymous"
+    date: 2017-07-07
+    html: "Ok, so just like the other blogs says, if some sessions stuck or have a trouble, just delete all the folder under osb/sessions.<br /><br />But strangely, after I got &quot;Cannot create resource outside of a session&quot; error, I discard the changes, and logout, then nothing on the session folder.<br /><br />What do you mean by &quot;(remember first to shut down the servers!)&quot;. Because there are no (stuck) session on osb/sessions.<br /><br />I don&#39;t find any clue either on support.oracle or other blogs."
+---
+Today I was unable to activate a OSB session after making some changes.<br />
+The only way was to restart cluster and admin....<br />
+I suspect someone made some configuration changes in WebLogic and didn't restart.<br />
+<br />
+Failing to restart after making configuration changes can lead to funny behaviour.

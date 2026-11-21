@@ -1,0 +1,23 @@
+---
+layout: post
+title: "Jenkins Blueocean and integration with JIRA"
+date: 2018-04-16T21:48:00.000+02:00
+permalink: /2018/04/jenkins-blueocean-and-integration-with.html
+blogger_id: "6041871039776865130"
+tags: ["blueocean", "docker", "JIRA"]
+---
+docker run -u root -d --rm -p 8090:8080 --name jenkins-blueocean -v jenkins-data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/blueocean<br />
+<br />
+<a href="http://localhost:8080">http://localhost:8080</a> and finish configuring admin user and install all recommended plugins<br />
+<br />
+docker ps (note the containerid)<br />
+docker commit $containerid myjenkinsblueocean<br />
+<br />
+sudo docker run --detach --publish 8080:8080 cptactionhank/atlassian-jira:latest<br />
+(for some reason, jira in docker needs 8080:8080... I tried 8090:8080 and it tries internally to connect to 8080 which fails)<br />
+<br />
+<br />
+<br />
+See also <a href="/2017/11/jira-on-docker-and-integration-with.html">/2017/11/jira-on-docker-and-integration-with.html</a><br />
+<br />
+

@@ -1,0 +1,41 @@
+---
+layout: post
+title: "OSB: Changing the JNDIProvider for EJB"
+date: 2010-07-06T13:47:00.001+02:00
+permalink: /2010/07/osb-changing-jndiprovider-for-ejb.html
+blogger_id: "1773486411253651900"
+tags: ["JNDI"]
+blogger_comments:
+  - author: "Alejandro Vidal Quiroga"
+    date: 2013-11-14
+    html: "Hi, in some cases you can deactivate  the BS pointing to the EJB, using the Operative Configuration tab, and activate it again to reset the object cache."
+  - author: "grepstar"
+    date: 2014-11-03
+    html: "Thanks, Alejandro. Your solution worked for me."
+---
+This is what happens if you change target to a EJB, then upgrade the JNDIProvider to point to the new target.... it looks like OSB is caching the remote reference to the EJB, and doesn't clear the cache when you change the JNDIProvider... this doesn't happen so often, but still it's an operational issue and the only workaround I could figure out is restarting the Admin and the MS!<br />
+The other solution is to disable JNDI Cache on the JNDIProvider.<br />
+<br />
+<br />
+<pre name="code" class="brush: xml"><env:Body xmlns:env="
+http://schemas.xmlsoap.org/soap/envelope/">
+ <env:Fault>
+  <faultcode>env:Server</faultcode>
+  <faultstring>Failed to invoke end component com.bea.wli.sb.transports.ejb.Jws (POJO), operation=getLocationsByName
+ -> Failed to invoke method
+ -> The object identified by: '324' could not be found.  Either it was has not been exported or it has been collected by
+ the distributed garbage collector.; nested exception is: java.rmi.NoSuchObjectException: The object identified by: '324
+' could not be found.  Either it was has not been exported or it has been collected by the distributed garbage collector
+.</faultstring>
+  <detail>
+   <java:string xmlns:java="java.io">javax.ejb.EJBException: The object identified by: '324' could not be found.  Eit
+her it was has not been exported or it has been collected by the distributed garbage collector.; nested exception is: ja
+va.rmi.NoSuchObjectException: The object identified by: '324' could not be found.  Either it was has not been exported o
+r it has been collected by the distributed garbage collector.
+java.rmi.NoSuchObjectException: The object identified by: '324' could not be found.  Either it was has not been exported
+ or it has been collected by the distributed garbage collector.</java:string>
+  </detail>
+ </env:Fault>
+</env:Body>
+
+</pre>

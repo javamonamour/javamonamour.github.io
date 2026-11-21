@@ -1,0 +1,19 @@
+---
+layout: post
+title: "JAVA_HOME property hidden in the WebLogic binaries and used in domain creation"
+date: 2013-01-30T09:55:00.001+01:00
+permalink: /2013/01/javahome-property-hidden-in-weblogic.html
+blogger_id: "8939064895863668591"
+---
+When installing WebLogic, a JDK is picked up, and stored in several "hidden" files:<br/><br/>
+$WEBLOGIC_HOME/coherence_3.6/.product.properties  (JAVAHOME and JAVA_HOME)<br/><br/>  
+$WEBLOGIC_HOME/oracle_common/inventory/Components21/oracle.swd.oui/11.1.0.9.0/context.xml<br/><br/>  
+$WEBLOGIC_HOME/osb/inventory/Components21/oracle.swd.oui/11.1.0.9.0/context.xml<br/><br/>
+$WEBLOGIC_HOME/wlserver_10.3/.product.properties (JAVA_HOME, WLS_JAVA_HOME, JAVAHOME)<br/><br/>
+
+and possibly others<br/>
+
+One of these values is stored in the $DOMAIN_HOME/bin/setDomainEnv.sh<br/>
+If by any chance you change JDK (NOT RECOMMENDED AT ALL!!!), I would recommend to reinstall the binaries altogether.<br/>
+
+

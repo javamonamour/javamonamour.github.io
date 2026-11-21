@@ -1,0 +1,15 @@
+---
+layout: post
+title: "Thread Dumps and WLST"
+date: 2009-03-20T13:18:00.000+01:00
+permalink: /2009/03/thread-dumps-and-wlst.html
+blogger_id: "2177250517518786258"
+blogger_comments:
+  - author: "vernetto"
+    date: 2011-05-06
+    html: "try this:<br /><br />  WLSTInterpreter interpreter = WLST.getWLSTInterpreter();<br />  interpreter.exec(connect);<br />  interpreter.exec(&quot;serverRuntime()\\n&quot;);<br />  while (true) {<br />   OutputStream os = new ByteArrayOutputStream();<br />   interpreter.setOut(os);<br />   <br />   interpreter.exec(&quot;myvar=pwd()&quot;);<br />   interpreter.exec(&quot;print myvar&quot;);<br />   <br />   System.out.println(&quot;buffer=&quot;  + os.toString());<br />   Thread.sleep(1000);<br />  }"
+  - author: "Antonio De Juan"
+    date: 2011-05-06
+    html: "Hi a little question, have ou tried using pwd()command?, I have tested a big list of commands but thar doesn&#39; work, if you have a way or advice would be great.<br /><br />thanks in advance."
+---
+you can read WLST output into a String, so instead of into a file you can redirect some commands into a String:<div><br /></div><div><div><span class="Apple-tab-span" style="white-space:pre">  </span>String connect = "connect('weblogic', 'weblogic', 't3://bcdev07:5210')";</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>WLST.ensureInterpreter();</div><div><br /></div><div><span class="Apple-tab-span" style="white-space:pre">  </span>WLSTInterpreter interpreter = WLST.getWLSTInterpreter();</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>interpreter.exec(connect);</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>while (true) {</div><div><span class="Apple-tab-span" style="white-space:pre">   </span>OutputStream os = new <span class="Apple-style-span" style="font-weight: bold;">ByteArrayOutputStream</span>();</div><div><span class="Apple-tab-span" style="white-space:pre">   </span>interpreter.<span class="Apple-style-span" style="font-weight: bold;">setOut</span>(os);</div><div><span class="Apple-tab-span" style="white-space:pre">   </span>interpreter.exec("<span class="Apple-style-span" style="font-weight: bold;">threadDump</span>('<span class="Apple-style-span" style="font-weight: bold;">false</span>')");</div><div><span class="Apple-tab-span" style="white-space:pre">   </span>System.out.println("buffer="  + os.toString());</div><div><span class="Apple-tab-span" style="white-space:pre">   </span>TestingUtilities.sleep(100);</div><div><span class="Apple-tab-span" style="white-space:pre">  </span>}</div><div><br /></div><div><br /></div><div><br /></div></div>

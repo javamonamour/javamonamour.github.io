@@ -1,0 +1,52 @@
+---
+layout: post
+title: "OSB sequencing of JMS messages"
+date: 2012-02-10T09:41:00.000+01:00
+permalink: /2012/02/osb-sequencing-of-jms-messages.html
+blogger_id: "4704309210537292040"
+tags: ["OSB", "sequence"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2012-02-15
+    html: "you can do it only with JMS proxy; this creates a separate Deployment in WebLogic, you can target it as you want, and play on the Deployment plan to create a pool with only 1 MDB - if you need only 1 consumer"
+  - author: "Dodd Pfeffer"
+    date: 2012-02-15
+    html: "Great post.  We are just starting an OSB implementation and have the same use case.  Can you comment on how you target a proxy EJB to a specific managed instance?"
+---
+A common requirement is to process messages in a strict order.<br />
+<br />
+<a href="https://forums.oracle.com/forums/thread.jspa?threadID=2136854">This post on the OTN forum</a> goes in depth over the possible solutions (I am copying it here just in case the post gets deleted):<br />
+<br />
+<i><br />
+By default Weblogic JMS Queues are FIFO. But that is true only if there is only one consumer of the queue.<br />
+<br />
+In case of a clustered environment that is not true and in case of OSB even with a single managed server multiple threads are created for a JMS listener Proxy(by default 16). So there will be 16 instances of the Proxy trying to read messages from the Queue and each will be handed out a message and sequential integrity is disturbed.<br />
+<br />
+There are three ways to overcome this problem:<br />
+1. Unit of Order<br />
+This is suitable only when you want messages of the same group to be processed sequentially while multiple groups can be processed in parallel.<br />
+For e.x. you are getting multiple orders for multiple customers and you want to ensure that the orders of same customer are processed sequentially (in case a customer tries to change the quantity of an order then the latest one should be processed last). In this case you can set UOO as the CustomerID and each customer's order will be processed sequentially but orders of different customers will be still processed in parallel. WLS JMS achieves this by assigning a target queue instance on the cluster for each UOO value. It will assign Q!MS1 to CustID=1, Q!MS2 to CustID=2 and so on. All messages of the same UOO(of the same customer) will go to the same instance on the queue. Furthermore it will ensure that no two messages of the same UOO are released together to the listeners. So if a queue instance has 5 messages each of both Cust=1 and Cust=2, only one message each of Cust1 and Cust2 will be processed by the listeners even if there are 16 listening threads.<br />
+Pros and Cons:<br />
+Overall performance is improved since you can still achieve some parallel processing.<br />
+There will be a slight overhead of processing the UOO headers on the JMS servers.<br />
+Can not ensure sequencing of all the messages. (Although you can achieve that by setting the same UOO on all the messages)<br />
+If the managed server assigned to a UOO is down, if a publisher tried to put the next message for that UOO, it will fail since it will not try to send that message to any other managed server.<br />
+<br />
+2. Single threaded processing<br />
+If you don't want to process even different groups of messages in parallel and if you want absolute sequencing (i.e. irrespective of the CustomerID you want all the messages to be processed in the sequence they arrive) you will need to process them in a single threaded model. The JMS queue should be deployed on only one managed server of the cluster. The JMS proxy listening to the queue should also be deployed on a single managed server(You will need to change the targeting for the EJB created for this Proxy in the Deployments) and there should be a Work Manager for this Proxy with Maximum Thread Constraint set as 1. In the Connection Factory which the Proxy uses, set the Maximum Messages per session to 1. Another approach for Single threaded could be to set the same value of UOO on all of the messages. This will make all the messages to go to the same Q instance in the cluster and also will make sure that even if Proxy has multiple threads, only one message will be processed at a time.<br />
+Pros and Cons:<br />
+Completely single threaded processing, will take more time since messages will be processed one after the other.<br />
+Load balancing will go awry as all the messages will be processed by only one server.<br />
+<br />
+3. Using custom implementation<br />
+The most complex way is to create a completely custom implementation. Put all the messages in a DB and then process them one at a time based on timestamp.<br />
+Pros and Cons:<br />
+It will take more effort to implement than the other two approaches.<br />
+It will again need single threaded processing after the messages are put on the DB<br />
+Performance wise there will be more impact because of additional DB calls<br />
+More complex to maintain<br />
+<br />
+Based on your exact requirements you can choose which approach you want. If you have SOA suite as well them it would be better to move this solution to SOA suite as OESB(Mediator) component of SOA suite has re-sequencing feature.<br />
+<br />
+<br />
+</i>

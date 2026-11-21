@@ -1,0 +1,53 @@
+---
+layout: post
+title: "How to look inside a JMS ObjectMessage"
+date: 2013-10-11T15:08:00.001+02:00
+permalink: /2013/10/how-to-look-inside-jms-objectmessage.html
+blogger_id: "6318969805951696459"
+tags: ["jms", "OSB"]
+---
+<a href="http://docs.oracle.com/javaee/6/api/javax/jms/ObjectMessage.html">http://docs.oracle.com/javaee/6/api/javax/jms/ObjectMessage.html</a>
+
+<br/>
+
+In OSB, all reporting messages are instances of com.bea.wli.reporting.jmsprovider.runtime.ReportMessage, and in the JMS message they are stored as an ObjectMessage. So, you won't be able to view their content in the WebLogic console, when they end up in the jmsResources module/dist_wli.reporting.jmsprovider_error.queue_auto queue.
+
+<br/><br/>
+<br/>
+
+
+<b>Solution:</b>
+
+export the message (one by one) into a jmsmessages.xml file using the WebLogic console Export tool (show messages).
+
+<br/>
+
+in the resulting XML, the Object is expressed in base64 encoded format (text), in a xml tag mes:Object. Copy this text and put in a messagebody.xml (this can be automated, of course).
+<br/><br/>
+
+
+
+make sure these 2 jars are in WLST classpath (you can directly edit wlst.sh file):<br/>
+/opt/oracle/fmw11_1_1_5/osb/lib/modules/com.bea.alsb.reporting.api.jar<br/>
+/opt/oracle/fmw11_1_1_5/osb/lib/modules/com.bea.alsb.reporting.impl.jar<br/><br/>
+
+<pre>
+
+from org.apache.commons.codec.binary import Base64
+f = open('messagebody.xml', 'r')
+bytes = Base64.decodeBase64(f.read())
+
+from java.io import ByteArrayInputStream
+from java.io import ObjectInputStream
+inputStream = ByteArrayInputStream(bytes)
+objectStream = ObjectInputStream(inputStream)
+obj = objectStream.readObject()
+
+print obj.class
+#it will print com.bea.wli.reporting.jmsprovider.runtime.ReportMessage
+
+
+print obj.getXmlPayload()
+print obj.getMetadata()
+
+</pre>

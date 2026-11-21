@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Too small initial heap for new size specified"
+date: 2016-10-17T09:33:00.001+02:00
+permalink: /2016/10/too-small-initial-heap-for-new-size.html
+blogger_id: "6386326915485117053"
+tags: ["JVM"]
+---
+You must provide a max total heap > min new heap.
+<br/>
+This is fine:
+<br/>
+<pre>
+java -XX:NewSize=256m -Xmx257m -version 
+java version "1.6.0_20"
+OpenJDK Runtime Environment (IcedTea6 1.9.8) (rhel-1.22.1.9.8.el5_6-x86_64)
+OpenJDK 64-Bit Server VM (build 19.0-b09, mixed mode)
+</pre>
+<br/><br/>
+
+This is not fine, as no space is left for Old generation
+<br/>
+<pre>
+java -XX:NewSize=256m -Xmx256m -version 
+Error occurred during initialization of VM
+Too small initial heap for new size specified
+
+</pre>
+
+
+
+<br/><br/>
+
+See <a href="http://www.oracle.com/technetwork/articles/java/vmoptions-jsp-140102.html">http://www.oracle.com/technetwork/articles/java/vmoptions-jsp-140102.html</a>  for more documentation
+
+<br/><br/>
+
+I know this is trivial, but many people don't know.

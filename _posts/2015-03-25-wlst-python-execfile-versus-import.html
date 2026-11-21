@@ -1,0 +1,94 @@
+---
+layout: post
+title: "WLST / Python: execfile versus import"
+date: 2015-03-25T17:46:00.004+01:00
+permalink: /2015/03/wlst-python-execfile-versus-import.html
+blogger_id: "7361023122461238700"
+tags: ["WLST"]
+---
+I have lately come across to some usage of "execfile".
+<br/><br/>
+I had immediately the impression "this stinks, why don't they use <b>import</b> instead?"
+
+
+<br/>
+I also <a href="http://stackoverflow.com/questions/11703327/python-import-vs-execfile">read here</a> that execfile is stinky-stinky.
+<br/>
+
+
+
+<br/>
+Let's see if they are actually equivalent.
+
+<br/>
+vi toimport.py
+<br/>
+<pre>
+def hello():
+  print 'helloooo!'
+</pre>
+
+<br/>
+
+To use the method I run the wlst.sh and type:
+
+
+
+<pre class="brush: java">
+execfile('toimport.py')
+hello()
+helloooo!
+</pre>
+
+<br/>
+ok cool, so execfile has the effect of "inlining" your code. This is very 1960-programming style. All is just a <a href="http://www.laputan.org/mud/">big ball of mud</a>. 
+
+<br/><br/>
+
+If instead of execfile I use import: 
+
+
+<pre class="brush: java">
+import toimport
+
+hello()
+NameError: hello
+
+
+toimport.hello()
+helloooo!
+
+</pre>
+
+
+
+the apparent advantage is that the method is QUALIFIED by its module. Disadvantage is that you must type the extra module name.
+
+<br/><br/>
+The "better" way (IMHO) is to explicitly import the method:
+
+<pre class="brush: java">
+from toimport import hello
+
+hello()
+helloooo!
+
+</pre>
+
+
+
+
+<br/><br/>
+
+Needless to say, one should strive for true OO programming, so that the method hello() is defined for a specific class of objects... so please steer away from this "static method compulsive programming syndrome (SMCPS)".
+
+<br/><br/>
+
+PS execfile is deprecated in Python 3... so just get used to NOT using it...
+
+
+
+
+
+
+

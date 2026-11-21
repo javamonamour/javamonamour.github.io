@@ -1,0 +1,54 @@
+---
+layout: post
+title: "vsftpd on Linux RedHat"
+date: 2012-02-18T19:29:00.001+01:00
+permalink: /2012/02/vsftpd-on-linux-redhat.html
+blogger_id: "8636472419170315051"
+tags: ["ftp", "linux"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2014-10-09
+    html: "no, sorry mate..."
+  - author: "Anonymous"
+    date: 2014-10-09
+    html: "Did you ever figure this out?"
+---
+homepage<br />
+<a href="https://security.appspot.com/vsftpd.html">https://security.appspot.com/vsftpd.html</a><br />
+<br />
+download here<br />
+<a href="https://security.appspot.com/downloads/vsftpd-2.3.5.tar.gz">https://security.appspot.com/downloads/vsftpd-2.3.5.tar.gz</a><br />
+<br />
+copied to Linux server<br />
+gunzip vsftpd-2.3.5.tar.gz<br />
+tar xvf vsftpd-2.3.5.tar<br />
+cd vsftpd-2.3.5<br />
+<br />
+<i>/lib/libcap.so.1: could not read symbols: File in wrong format</i><br />
+<br />
+<a href="http://www.andreaswacker.com/blog/2009/01/23/sysdeputilc162-error-expected-declaration-specifiers-or-before-capset/">http://www.andreaswacker.com/blog/2009/01/23/sysdeputilc162-error-expected-declaration-specifiers-or-before-capset/</a><br />
+<br />
+vi vsf_findlibs.sh<br />
+<br />
+<br />
+# Look for libcap (capabilities)<br />
+#if locate_library /lib/libcap.so.1; then<br />
+#  echo "/lib/libcap.so.1";<br />
+if locate_library /lib/libcap.so.2; then<br />
+echo "/lib/libcap.so.2";<br />
+else<br />
+locate_library /usr/lib/libcap.so &amp;&amp; echo "-lcap";<br />
+locate_library /lib/libcap.so &amp;&amp; echo "-lcap";<br />
+locate_library /lib64/libcap.so &amp;&amp; echo "-lcap";<br />
+fi<br />
+<br />
+<br />
+I still get<br />
+<br />
+<i>gcc -o vsftpd main.o utility.o prelogin.o ftpcmdio.o postlogin.o privsock.o tunables.o ftpdataio.o secbuf.o ls.o postprivparent.o logging.o str.o netstr.o sysstr.o strlist.o banner.o filestr.o parseconf.o secutil.o ascii.o oneprocess.o twoprocess.o privops.o standalone.o hash.o tcpwrap.o ipaddrparse.o access.o features.o readwrite.o opts.o ssl.o sslslave.o ptracesandbox.o ftppolicy.o sysutil.o sysdeputil.o -Wl,-s `./vsf_findlibs.sh`<br />
+/usr/bin/ld: cannot find -lcap<br />
+collect2: ld returned 1 exit status<br />
+make: *** [vsftpd] Error 1</i><br />
+<br />
+<br />
+Ok I give up for now....

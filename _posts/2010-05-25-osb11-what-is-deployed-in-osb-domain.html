@@ -1,0 +1,98 @@
+---
+layout: post
+title: "OSB: what is deployed in the OSB domain?"
+date: 2010-05-25T16:18:00.002+02:00
+permalink: /2010/05/osb11-what-is-deployed-in-osb-domain.html
+blogger_id: "7247534396222877191"
+tags: ["osb11"]
+---
+<b>FMW Welcome Page Application</b>: <br />
+C:/bea11/oracle_common/modules/oracle.jrf_11.1.1/fmw-welcome.ear<br />
+<br />
+<br />
+this is the Fusion MiddleWare welcome page (???? what is this exactly?)<br />
+<br />
+<br />
+<b>DMS Application</b><br />
+C:/bea11/oracle_common/modules/oracle.dms_11.1.1/dms.war<br />
+<br />
+DMS is Dynamic Monitoring System<br />
+(The Oracle Dynamic Monitoring Service (DMS) consists of a small set of  simple Sensor classes that help Java programmers to measure important  events and status values in their applications.)<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/B10464_05/core.904/b12020/oracle/dms/instrument/DMSConsole.html">http://download.oracle.com/docs/cd/B10464_05/core.904/b12020/oracle/dms/instrument/DMSConsole.html</a><br />
+<br />
+<br />
+<b>wsil-wls</b><br />
+C:/bea11/oracle_common/modules/oracle.webservices_11.1.1/wsil-wls.ear<br />
+<br />
+(WSIL is the Web Service Inspection Language)<br />
+<br />
+<b>FileAdapter</b><br />
+C:/bea11/Oracle_OSB11/soa/connectors/FileAdapter.rar<br />
+<br />
+<b>DbAdapter</b><br />
+C:/bea11/Oracle_OSB11/soa/connectors/DbAdapter.rar<br />
+<br />
+<b>JmsAdapter</b><br />
+C:/bea11/Oracle_OSB11/soa/connectors/JmsAdapter.rar<br />
+<br />
+<b>AqAdapter</b><br />
+C:/bea11/Oracle_OSB11/soa/connectors/AqAdapter.rar<br />
+<br />
+<b>FtpAdapter</b><br />
+C:/bea11/Oracle_OSB11/soa/connectors/FtpAdapter.rar<br />
+<br />
+<b>SocketAdapter</b><br />
+C:/bea11/Oracle_OSB11/soa/connectors/SocketAdapter.rar<br />
+<br />
+<b>MQSeriesAdapter</b><br />
+C:/bea11/Oracle_OSB11/soa/connectors/MQSeriesAdapter.rar<br />
+<br />
+<b>OracleAppsAdapter</b><br />
+C:/bea11/Oracle_OSB11/soa/connectors/AppsAdapter.rar<br />
+<br />
+<b>OracleBamAdapter</b><br />
+C:/bea11/Oracle_OSB11/soa/connectors/OracleBamAdapter.rar<br />
+<br />
+<br />
+<b>ALSB Cluster Singleton Marker Application</b><br />
+C:/bea11/Oracle_OSB11/lib/common/clustersingletonmarker.ear<br />
+<br />
+Its listener is com.bea.wli.sb.init.MarkerAppListener&nbsp; <br />
+which is in sb-kernel-wls.jar<br />
+<br />
+<br />
+<b>ALSB Domain Singleton Marker Application</b><br />
+C:/bea11/Oracle_OSB11/lib/common/domainsingletonmarker.ear<br />
+The ALSB Domain Singleton Marker Application is responsible for the  collection and aggregation of data from all managed servers in the  domain.<br />
+<br />
+Its listener is com.bea.wli.sb.init.MarkerAppListener&nbsp; <br />
+which is in sb-kernel-wls.jar and which does absolutely nothing.<br />
+<br />
+&nbsp; <br />
+<b>ALSB Framework Starter Application</b><br />
+C:/bea11/Oracle_OSB11/lib/common/frameworkstarter.ear<br />
+<br />
+<b>ALSB Coherence Cache Provider</b><br />
+C:/bea11/Oracle_OSB11/lib/coherence.ear<br />
+<br />
+<b>XBus Kernel</b><br />
+C:/bea11/Oracle_OSB11/lib/kernelEar<br />
+<br />
+with subdeployment <br />
+<b>XBus HTTP Transport Webapp</b><br />
+/httpTransport<br />
+<br />
+<b>ALSB UDDI Manager</b><br />
+C:/bea11/Oracle_OSB11/lib/uddiEar<br />
+<br />
+<b>ALSB Subscription Listener</b><br />
+C:/bea11/Oracle_OSB11/lib/uddi_subscription<br />
+<br />
+<b>JMS Reporting Provider</b><br />
+C:/bea11/Oracle_OSB11/lib/common/jmsreportprovider.ear<br />
+<br />
+<b>Message Reporting Purger</b><br />
+C:/bea11/Oracle_OSB11/lib/common/msgpurger.ear<br />
+<br />
+...... more to come.... I want to discover who is who...and who does what...

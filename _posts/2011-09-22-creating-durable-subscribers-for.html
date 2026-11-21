@@ -1,0 +1,36 @@
+---
+layout: post
+title: "Creating Durable Subscribers for a Distributed Topic"
+date: 2011-09-22T14:19:00.001+02:00
+permalink: /2011/09/creating-durable-subscribers-for.html
+blogger_id: "709000075228344005"
+tags: ["topic"]
+---
+I need to run a stress test for a DT with &gt;100 Durable Subscribers.<br />
+<br />
+The Connection Factory to connect to the DT is registered in JNDI as a <strong>weblogic.jms.client.JMSConnectionFactory</strong> which implements <a href="http://java.sun.com/javaee/6/docs/api/javax/jms/QueueConnectionFactory.html">javax.jms.QueueConnectionFactory</a> AND <a href="http://java.sun.com/javaee/6/docs/api/javax/jms/TopicConnectionFactory.html">javax.jms.TopicConnectionFactory</a> (and some other interfaces)<br />
+<br />
+A <a href="http://java.sun.com/javaee/6/docs/api/javax/jms/TopicConnectionFactory.html">TopicConnectionFactory</a> creates a <a href="http://java.sun.com/javaee/6/docs/api/javax/jms/TopicConnection.html">TopicConnection</a>,<br />
+which creates a <a href="http://java.sun.com/javaee/6/docs/api/javax/jms/TopicSession.html">TopicSession</a>, which <a href="http://java.sun.com/javaee/6/docs/api/javax/jms/TopicSession.html#createDurableSubscriber(javax.jms.Topic,%20java.lang.String)">creates a Durable Subscriber</a> identified with a name. This Durable Subscriber is a <a href="http://java.sun.com/javaee/6/docs/api/javax/jms/TopicSubscriber.html">TopicSubscriber</a>.<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/1050a86032a1b7cf.jpg" imageanchor="1" style=""><img border="0" height="217" width="180" src="/images/9ca6281c2ff7f46d.jpg" /></a></div><br />
+<br />
+A TopicSubscriber is a <a href="http://java.sun.com/javaee/6/docs/api/javax/jms/MessageConsumer.html">MessageConsumer</a><br />
+<br />
+<br />
+Funnily enough, with WebLogic console you can examine only Durable Subscribers to a Distributed Topic is you are in a standalone server, but if you are in a cluster this Monitoring page is not available. You must write a WLST script for that.<br />
+<br />
+<br />
+<br />
+Now, pay attention to this: when you create a Distributed Topic, with JNDI name "BLA", and you target it to 2 members, say JMSServer1 and JMSServer2, you get 2 different kind of entries in JNDI tree:<br />
+<br />
+BLA = weblogic.jms.common.DistributedDestinationImpl<br />
+<br />
+and <br />
+JMSServer1@BLA = weblogic.jms.common.DestinationImpl<br />
+JMSServer2@BLA = weblogic.jms.common.DestinationImpl<br />
+<br />
+<br />
+Be aware that YOU CANNOT CREATE A DURABLE SUBSCRIBER to a DistributedDestinationImpl, it must be a DestinationImpl.<br />
+So, lookup JMSServer1@BLA in JNDI, and not BLA.

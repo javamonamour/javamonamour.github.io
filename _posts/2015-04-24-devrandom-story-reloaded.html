@@ -1,0 +1,41 @@
+---
+layout: post
+title: "/dev/random story reloaded"
+date: 2015-04-24T19:28:00.001+02:00
+permalink: /2015/04/devrandom-story-reloaded.html
+blogger_id: "6596329325432701850"
+tags: ["weblogic"]
+---
+If a t3s protocol is used -> SSL requires Random Numbers -> it's important to check that famous /dev/random story.
+<br/>
+
+first check if the JVM is using /dev/random or /dev/urandom
+<br/>
+
+doing <b>lsof -p PID | grep random </b> can show you which Randomness source the JVM is using 
+
+<br/>
+
+To check the performance of /dev/random on your specific machine, check how fast this command returns:
+<br/>
+
+head -n 1 /dev/random
+<br/>
+
+
+check that you have:
+<br/>
+
+-Djava.security.egd=file:/dev/./urandom
+<br/>
+
+
+<br/>
+it should be configured in : /opt/java/jdk160_85-64b/jre/lib/security/java.security
+
+<br/>
+
+
+see also <a href="http://docs.oracle.com/cd/E13209_01/wlcp/wlss30/configwlss/jvmrand.html">http://docs.oracle.com/cd/E13209_01/wlcp/wlss30/configwlss/jvmrand.html
+</a>
+

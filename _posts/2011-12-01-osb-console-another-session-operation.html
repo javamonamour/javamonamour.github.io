@@ -1,0 +1,21 @@
+---
+layout: post
+title: "OSB Console: Another session operation is in progress. Please retry later."
+date: 2011-12-01T12:23:00.000+01:00
+permalink: /2011/12/osb-console-another-session-operation.html
+blogger_id: "153392050450653257"
+tags: ["OSB"]
+blogger_comments:
+  - author: "mydemotest2022"
+    date: 2015-11-24
+    html: "HI There,<br />Can this issue happen,If two different users are trying to activate their sessions simultaneously.<br />What happens, if these users have used their different credentials for making their changes on OSB console."
+---
+I have seen this problem a number of times. <br />
+Two people login with the same credentials, and at the time one activates (or even discard!) a OSB Session, he gets this message.<br />
+<br />
+The only solution known to me is to restart the whole environment.<br />
+Possibly you must also delete the session in ${DOMAIN_HOME}/osb/config/sessions
+<br />
+Ideally you should create a WebLogic user per operator, to avoid these kind of issues.
+
+

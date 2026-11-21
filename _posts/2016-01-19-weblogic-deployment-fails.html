@@ -1,0 +1,189 @@
+---
+layout: post
+title: "WebLogic deployment fails with java.lang.ArrayIndexOutOfBoundsException in com.bea.objectweb.asm.ClassReader.readClass "
+date: 2016-01-19T16:20:00.004+01:00
+permalink: /2016/01/weblogic-deployment-fails.html
+blogger_id: "3876401533071692927"
+tags: ["weblogic"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2020-06-07
+    html: "neomashab I just decompile the classes with Intellij, unfortunately Weblogic sources are not available -which is a pain of course."
+  - author: "Neomashab"
+    date: 2020-06-07
+    html: "I&#39;m facing a similar issue with my Weblogic Deployment. <br />Where did you get the source file for weblogic.application.utils.annotation.ClassfinderClassInfos?"
+---
+<pre>
+BEA-149205 Failed to initialize the application "BLA" due to error weblogic.application.ModuleException: 26
+26
+weblogic.application.ModuleException: 26
+26
+ at weblogic.servlet.internal.WebAppModule.createModuleException(WebAppModule.java:1824)
+ at weblogic.servlet.internal.WebAppModule.init(WebAppModule.java:270)
+ at weblogic.servlet.internal.WebAppModule.init(WebAppModule.java:682)
+ at weblogic.application.internal.flow.ScopedModuleDriver.init(ScopedModuleDriver.java:162)
+ at weblogic.application.internal.ExtensibleModuleWrapper.init(ExtensibleModuleWrapper.java:98)
+ at weblogic.application.internal.flow.ModuleListenerInvoker.init(ModuleListenerInvoker.java:84)
+ at weblogic.application.internal.flow.InitModulesFlow.initModule(InitModulesFlow.java:288)
+ at weblogic.application.internal.flow.InitModulesFlow.initModules(InitModulesFlow.java:301)
+ at weblogic.application.internal.flow.InitModulesFlow.prepare(InitModulesFlow.java:329)
+ at weblogic.application.internal.BaseDeployment$1.next(BaseDeployment.java:706)
+ at weblogic.application.utils.StateMachineDriver.nextState(StateMachineDriver.java:42)
+ at weblogic.application.internal.BaseDeployment.prepare(BaseDeployment.java:237)
+ at weblogic.application.internal.EarDeployment.prepare(EarDeployment.java:61)
+ at weblogic.application.internal.DeploymentStateChecker.prepare(DeploymentStateChecker.java:158)
+ at weblogic.deploy.internal.targetserver.AppContainerInvoker.prepare(AppContainerInvoker.java:61)
+ at weblogic.deploy.internal.targetserver.AppDeployment.prepare(AppDeployment.java:155)
+ at weblogic.management.deploy.internal.DeploymentAdapter$1.doPrepare(DeploymentAdapter.java:39)
+ at weblogic.management.deploy.internal.DeploymentAdapter.prepare(DeploymentAdapter.java:191)
+ at weblogic.management.deploy.internal.AppTransition$1.transitionApp(AppTransition.java:21)
+ at weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)
+ at weblogic.management.deploy.internal.ConfiguredDeployments.prepare(ConfiguredDeployments.java:165)
+ at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:122)
+ at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:210)
+ at weblogic.management.deploy.internal.DeploymentServerService.start(DeploymentServerService.java:118)
+ at weblogic.server.AbstractServerService.postConstruct(AbstractServerService.java:78)
+ at sun.reflect.GeneratedMethodAccessor6.invoke(Unknown Source)
+ at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+ at java.lang.reflect.Method.invoke(Method.java:606)
+ at org.glassfish.hk2.utilities.reflection.ReflectionHelper.invoke(ReflectionHelper.java:1017)
+ at org.jvnet.hk2.internal.ClazzCreator.postConstructMe(ClazzCreator.java:388)
+ at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:430)
+ at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+ at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+ at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+ at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+ at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+ at org.jvnet.hk2.internal.ServiceLocatorImpl.getService(ServiceLocatorImpl.java:606)
+ at org.jvnet.hk2.internal.ThreeThirtyResolver.resolve(ThreeThirtyResolver.java:77)
+ at org.jvnet.hk2.internal.ClazzCreator.resolve(ClazzCreator.java:231)
+ at org.jvnet.hk2.internal.ClazzCreator.resolveAllDependencies(ClazzCreator.java:254)
+ at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:413)
+ at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+ at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+ at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+ at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+ at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+ at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:87)
+ at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.oneJob(CurrentTaskFuture.java:1162)
+ at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.run(CurrentTaskFuture.java:1147)
+ at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:548)
+ at weblogic.work.ExecuteThread.execute(ExecuteThread.java:311)
+ at weblogic.work.ExecuteThread.run(ExecuteThread.java:263)
+Caused By: java.lang.ArrayIndexOutOfBoundsException: 26
+ at com.bea.objectweb.asm.ClassReader.readClass(Unknown Source)
+ at com.bea.objectweb.asm.ClassReader.accept(Unknown Source)
+ at com.bea.objectweb.asm.ClassReader.accept(Unknown Source)
+ at weblogic.application.utils.annotation.ClassInfoImpl.<init>(ClassInfoImpl.java:42)
+ at weblogic.application.utils.annotation.ClassfinderClassInfos.polulateOneClassInfo(ClassfinderClassInfos.java:240)
+ at weblogic.application.utils.annotation.ClassfinderClassInfos.populateClassInfos(ClassfinderClassInfos.java:193)
+ at weblogic.application.utils.annotation.ClassfinderClassInfos.<init>(ClassfinderClassInfos.java:44)
+ at weblogic.servlet.internal.War.initializeClassInfosIfNecessary(War.java:446)
+ at weblogic.servlet.internal.War.getAnnotatedClasses(War.java:376)
+ at weblogic.servlet.utils.WarUtils.isJsfApplication(WarUtils.java:258)
+ at weblogic.servlet.internal.WebAppModule.detectJsfApplication(WebAppModule.java:277)
+ at weblogic.servlet.internal.WebAppModule.init(WebAppModule.java:262)
+ at weblogic.servlet.internal.WebAppModule.init(WebAppModule.java:682)
+ at weblogic.application.internal.flow.ScopedModuleDriver.init(ScopedModuleDriver.java:162)
+ at weblogic.application.internal.ExtensibleModuleWrapper.init(ExtensibleModuleWrapper.java:98)
+ at weblogic.application.internal.flow.ModuleListenerInvoker.init(ModuleListenerInvoker.java:84)
+ at weblogic.application.internal.flow.InitModulesFlow.initModule(InitModulesFlow.java:288)
+ at weblogic.application.internal.flow.InitModulesFlow.initModules(InitModulesFlow.java:301)
+ at weblogic.application.internal.flow.InitModulesFlow.prepare(InitModulesFlow.java:329)
+ at weblogic.application.internal.BaseDeployment$1.next(BaseDeployment.java:706)
+ at weblogic.application.utils.StateMachineDriver.nextState(StateMachineDriver.java:42)
+ at weblogic.application.internal.BaseDeployment.prepare(BaseDeployment.java:237)
+ at weblogic.application.internal.EarDeployment.prepare(EarDeployment.java:61)
+ at weblogic.application.internal.DeploymentStateChecker.prepare(DeploymentStateChecker.java:158)
+ at weblogic.deploy.internal.targetserver.AppContainerInvoker.prepare(AppContainerInvoker.java:61)
+ at weblogic.deploy.internal.targetserver.AppDeployment.prepare(AppDeployment.java:155)
+ at weblogic.management.deploy.internal.DeploymentAdapter$1.doPrepare(DeploymentAdapter.java:39)
+ at weblogic.management.deploy.internal.DeploymentAdapter.prepare(DeploymentAdapter.java:191)
+ at weblogic.management.deploy.internal.AppTransition$1.transitionApp(AppTransition.java:21)
+ at weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)
+ at weblogic.management.deploy.internal.ConfiguredDeployments.prepare(ConfiguredDeployments.java:165)
+ at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:122)
+ at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:210)
+ at weblogic.management.deploy.internal.DeploymentServerService.start(DeploymentServerService.java:118)
+ at weblogic.server.AbstractServerService.postConstruct(AbstractServerService.java:78)
+ at sun.reflect.GeneratedMethodAccessor6.invoke(Unknown Source)
+ at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+ at java.lang.reflect.Method.invoke(Method.java:606)
+ at org.glassfish.hk2.utilities.reflection.ReflectionHelper.invoke(ReflectionHelper.java:1017)
+ at org.jvnet.hk2.internal.ClazzCreator.postConstructMe(ClazzCreator.java:388)
+ at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:430)
+ at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+ at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+ at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+ at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+ at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+ at org.jvnet.hk2.internal.ServiceLocatorImpl.getService(ServiceLocatorImpl.java:606)
+ at org.jvnet.hk2.internal.ThreeThirtyResolver.resolve(ThreeThirtyResolver.java:77)
+ at org.jvnet.hk2.internal.ClazzCreator.resolve(ClazzCreator.java:231)
+ at org.jvnet.hk2.internal.ClazzCreator.resolveAllDependencies(ClazzCreator.java:254)
+ at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:413)
+ at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+ at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+ at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+ at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+ at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+ at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:87)
+ at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.oneJob(CurrentTaskFuture.java:1162)
+ at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.run(CurrentTaskFuture.java:1147)
+ at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:548)
+ at weblogic.work.ExecuteThread.execute(ExecuteThread.java:311)
+ at weblogic.work.ExecuteThread.run(ExecuteThread.java:263)
+
+</pre>
+
+<br/><br/><br/>
+
+In Oracle support I find that
+<br/><br/>
+<b>Unable To Deploy An Application In WebLogic 12C That Works In WebLogic 10 (Doc ID 1565172.1)
+<br/><br/>
+WebLogic Server 12c (12.1.1 and higher) does a complete scan of all *.class files in an application when it is deployed. This is an enhancement over previous versions which prevents invalid Java classes being deployed with an application. However, in a few cases where there is an unused invalid class packaged with the application, deployment which succeeded in WLS 11g or earlier could fail in WebLogic 12c. See Note 1504269.1 for more information about a similar case. In that case, there was an invalid class file in the application being deployed. The problem wasn't caught by the previous JVM, but was caught in WLS 12.1.1.
+In the customer's case, there were files in the customer application which were not Java class files, but which were named with the .class extension. These files were scanned and validated on deployment of the application, and failed validation since they were not Java classes. This caused the deployment failure.
+</b>
+
+<br/><br/>
+
+I restart the WLS server with -verbose:class, to find out that weblogic.application.utils.annotation.ClassfinderClassInfos is loaded from wlserver/modules/features/weblogic.server.merged.jar
+<br/><br/>
+I patch this class adding this println:
+<pre>
+  private void polulateOneClassInfo(Source source)
+    throws AnnotationProcessingException
+  {
+    if (source == null) {
+      return;
+    }
+    System.out.println("polulateOneClassInfo: source=" + source.getURL().toString());
+
+</pre>
+
+<br/><br/>
+
+and I find out that the offending class is loaded from a JAR compiled with Java 1.4 (check the manifest.mf)
+<br/><br/>
+
+See also <a href="http://stackoverflow.com/questions/19152655/java-lang-arrayindexoutofboundsexception-while-deploying-app-in-wls-12">http://stackoverflow.com/questions/19152655/java-lang-arrayindexoutofboundsexception-while-deploying-app-in-wls-12</a>
+<br/><br/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

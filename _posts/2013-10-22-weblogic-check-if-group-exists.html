@@ -1,0 +1,77 @@
+---
+layout: post
+title: "WebLogic: check if a Group exists"
+date: 2013-10-22T10:31:00.002+02:00
+permalink: /2013/10/weblogic-check-if-group-exists.html
+blogger_id: "954740432970204938"
+tags: ["security", "WLST"]
+---
+When you create users and need to assign them to Groups, chances are that you will have also to dynamically create those groups. Luckily there is a function atnt.groupExists('somegroup').
+<br/><br/>
+
+This will work only if the JMSGroup doesn't exist:
+
+<pre>
+conect(...)
+atnr = cmo.getSecurityConfiguration().getDefaultRealm().lookupAuthenticationProvider('DefaultAuthenticator')
+atnr.createGroup('JMSGroup', 'JMSGroup')
+
+</pre>
+<br/>
+the second time you will get a "weblogic.management.utils.AlreadyExistsException: [Security:090267]Group JMSGroup" exception. You can decide to simply catch and ignore the exception.
+
+<br/>
+
+If you do viewMBean(atnr) you will notice that there is a host of operations available:
+
+<pre>
+
+setGroupDescription
+changeUserPassword
+setUserDescription
+listMemberGroups
+removeMemberFromGroup
+groupExists
+getGroupDescription
+advance
+getUserDescription
+haveCurrent
+listGroupMembers
+unSet
+getSupportedUserAttributeType
+getUserAttributeValue
+wls_getDisplayName
+userExists
+close
+isSet
+createGroup
+listGroups
+resetUserPassword
+createUser
+removeUser
+addMemberToGroup
+listAllUsersInGroup
+setUserAttributeValue
+importData
+isMember
+removeGroup
+listUsers
+exportData
+isUserAttributeNameSupported
+getCurrentName
+
+</pre>
+
+so the code becomes:
+<pre>
+#ROLES contains a CSV list of groups for the user USERNAME 
+for role in ROLES.split(','):
+    if not atnr.groupExists(role):
+        atnr.createGroup(role, role)
+        print "WARNING: I have  created group ", role
+    print "adding ", USERNAME, "to group", role
+    atnr.addMemberToGroup(role, USERNAME)
+</pre>
+
+
+

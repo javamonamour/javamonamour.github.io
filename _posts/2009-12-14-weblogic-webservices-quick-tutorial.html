@@ -1,0 +1,66 @@
+---
+layout: post
+title: "WebLogic WebServices, a quick tutorial"
+date: 2009-12-14T18:25:00.000+01:00
+permalink: /2009/12/weblogic-webservices-quick-tutorial.html
+blogger_id: "237919711967797570"
+tags: ["webservices"]
+---
+<b>JAX-WS</b> = Java API for XML-based Web Services<br />
+is replacing <b>JAX-RPC&nbsp;</b><br />
+<br />
+it supports <b>SOAP 1.2</b>,<br />
+<b>JAXB 2.1</b>(Java Architecture for XML Binding)<br />
+attachments with <b>MTOM&nbsp;</b><br />
+<b>EJB 3.0&nbsp;</b><br />
+WS-Security <b>WSS</b> 1.1<br />
+<br />
+<br />
+A Java Web Service (<b>JWS</b>) contains a @WebService annotation<br />
+@WebMethod for each method<br />
+<br />
+@WebParam and @WebResult<br />
+@SOAPBinding<br />
+<br />
+these annotations belong to the javax.jws package.<br />
+<br />
+You use the jwsc Ant task to compile it<br />
+<br />
+<br />
+<br />
+<br />
+The WS is available at:<br />
+http://host:port/HelloWorldImpl/HelloWorldService?WSDL<br />
+HelloWorldImpl=<b>contextPath&nbsp;</b><br />
+HelloWorldService=<b>serviceUri</b><br />
+<br />
+<br />
+<br />
+You can create a Web Service from an existing WSDL file, "the golden WSDL". Use wsdlc to generate the JWS artifacts.<br />
+<br />
+A WSDL is made of:<br />
+<b>service </b>has a <b>port</b>, qualified by an address and a&nbsp; <br />
+<b>binding </b>(soap, http) which contains a portType, specifying the input and output parameters <b><br />
+</b><br />
+message<br />
+<br />
+all these parameters are expressed in the @WebService tag<br />
+<br />
+ClientGenTask is a Ant task which "generates, from an existing WSDL file, the client component files that client applications use to invoke both WebLogic and non-WebLogic Web Services"<br />
+<a href="http://download.oracle.com/docs/cd/E13222_01/wls/docs92/webserv/anttasks.html#wp1039270">http://download.oracle.com/docs/cd/E13222_01/wls/docs92/webserv/anttasks.html#wp1039270</a><br />
+<br />
+<br />
+Different styles of binding are possible:<br />
+<a href="http://www.ibm.com/developerworks/webservices/library/ws-whichwsdl/">http://www.ibm.com/developerworks/webservices/library/ws-whichwsdl/</a><br />
+<br />
+RPC literal, RPC encoded<br />
+Document literal, Document encoded<br />
+<br />
+<br />
+More on how to use annotations:<br />
+<br />
+<a href="http://www.oracle.com/technology/tech/java/oc4j/1013/how_to/how-to-ws-annotations/doc/how-to-ws-annotations.html">http://www.oracle.com/technology/tech/java/oc4j/1013/how_to/how-to-ws-annotations/doc/how-to-ws-annotations.html</a><br />
+<br />
+Some useful tutorials:<br />
+<br />
+<a href="http://netbeans.org/kb/trails/web.html">http://netbeans.org/kb/trails/web.html</a>

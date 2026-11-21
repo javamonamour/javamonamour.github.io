@@ -1,0 +1,122 @@
+---
+layout: post
+title: "JRules: deploying a Ruleset as a Web Service"
+date: 2010-06-01T08:50:00.000+02:00
+permalink: /2010/05/jrules-deploying-ruleset-as-web-service.html
+blogger_id: "6569364194187790119"
+tags: ["jrules"]
+---
+Something cool is "Import-Rule Studio Samples and Tutorials", a nice one is webdecisionservice. unfortunately it looks like the example is in Java binding, and not XML binding.... If I want to expose the Ruleset as a Web Service I need to use XML binding (is this true?).<br />
+XML handling is done with <a href="http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m2/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/html/api/html/ilog/rules/xml/binding/IlrXmlDefaultDataDriver.html">IlrXmlDataDriver</a>. <br />
+<br />
+<br />
+1)<br />
+Create a Java Project, call it PV01_JRulesResources, create a folder xsds and put inside this file:<br />
+<br />
+<a href="http://sites.google.com/site/javamonamour/xsds/Employee.xsd?attredirects=0&amp;d=1">http://sites.google.com/site/javamonamour/xsds/Employee.xsd?attredirects=0&amp;d=1</a><br />
+<a href="http://sites.google.com/site/javamonamour/xsds/EmployeeResponse.xsd?attredirects=0&amp;d=1"><br />
+</a><br />
+<br />
+<br />
+2)<br />
+New, <b>Rule Project with a BOM</b>, call it PV01_RuleProject<br />
+no JAVA XOM<br />
+specify the Employee XSD as XML XOM:<br />
+<br />
+<br />
+3)<br />
+Add the Employee and EmployeeResponse XSDs as a parameter to the Ruleset (right click on PV01_RuleProject, properties, Ruleset Parameters, add employee as a IN parameter and verbalization employee, add employeeResponse as an OUT parameter and verbalization employeeResponse) <br />
+Don't forget to set the default value of the response to <br />
+new com.acme.employee.EmployeeResponse()<br />
+<br />
+otherwise you will get a Null Pointer Exception when accessing it.<br />
+<br />
+4) Code this business rule<br />
+<br />
+<br />
+<i>if the name of employeeRequest is "Pierre" then<br />
+&nbsp;set the fired of employeeResponse to "TRUE";<br />
+<br />
+else set the fired of employeeResponse to "FALSE";</i><br />
+<br />
+<br />
+5) Create a Rule App project, add to it the RuleSet Project<br />
+<br />
+6) Export the RuleApp project to a JAR, open the console http://localhost:8080/res and do "Deploy RuleApp Archive" and install the Rules. <br />
+<br />
+7) click on "Get HTDS WSDL for this ruleset version", copy the WLSD link, go to SOAP UI and create a new Web Services Client project using the WSDL URL<br />
+<br />
+8) you are now ready to test your rule from SOAP-UI! Time to celebrate.<br />
+<br />
+<br />
+<br />
+In our case, we will get this SOAP message for test:<br />
+<br />
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:dec="http://www.ilog.com/rules/DecisionService" xmlns:par="http://www.ilog.com/rules/param" xmlns:emp="http://www.acme.com/Employee"&gt;<br />
+&lt;soapenv:Header/&gt;<br />
+&lt;soapenv:Body&gt;<br />
+&lt;dec:<b>DecisionServiceRequest</b>&gt;<br />
+&lt;<b>par:</b>employeeRequest&gt;<br />
+&lt;emp:EmployeeRequest&gt;<br />
+&lt;emp:SSN&gt;1234-56-7890&lt;/emp:SSN&gt;<br />
+&lt;emp:name&gt;Pierre&lt;/emp:name&gt;<br />
+&lt;emp:dateOfBirth&gt;1961-02-11&lt;/emp:dateOfBirth&gt;<br />
+&lt;emp:employeeType&gt;none&lt;/emp:employeeType&gt;<br />
+&lt;emp:salary&gt;20&lt;/emp:salary&gt;<br />
+&lt;/emp:EmployeeRequest&gt;<br />
+&lt;/par:employeeRequest&gt;<br />
+&lt;/dec:DecisionServiceRequest&gt;<br />
+&lt;/soapenv:Body&gt;<br />
+&lt;/soapenv:Envelope&gt;<br />
+<br />
+<br />
+We can see that we have a operation DecisionServiceRequest which contains a node par:employeeRequest which contains the value EmployeeRequest.<br />
+<br />
+The generic request will be:<br />
+<br />
+<br />
+&lt;soapenv:Body&gt;<br />
+&lt;dec:<b>DecisionServiceRequest</b>&gt;<br />
+&lt;<b>par:</b>parameter1Name&gt;<br />
+<the parameter1="" value=""> </the><br />
+&lt;/par:parameter1Name&gt;&lt;<b>par:</b>parameter2Name&gt;<br />
+<the parameter2="" value=""> <br />
+</the><br />
+&lt;/par:parameter2Name&gt; <br />
+&lt;/dec:DecisionServiceRequest&gt;<br />
+&lt;/soapenv:Body&gt;<br />
+<br />
+<br />
+you should get this response:<br />
+<br />
+<br />
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ds="http://www.ilog.com/rules/DecisionService"&gt;<br />
+&lt;soapenv:Body&gt;<br />
+&lt;<b>DecisionServiceResponse </b>xmlns="http://www.ilog.com/rules/DecisionService"&gt;<br />
+&lt;<b>ilog.rules.outputString</b>&gt;&lt;/ilog.rules.outputString&gt;<br />
+&lt;<b>ilog.rules.firedRulesCount</b>&gt;1&lt;/ilog.rules.firedRulesCount&gt;<br />
+&lt;<b>employeeResponse </b>xmlns="http://www.ilog.com/rules/param"&gt;&lt;EmployeeResponse xmlns="http://www.acme.com/Employee" xmlns:ns0="http://www.acme.com/Employee"&gt;<br />
+&lt;fired xmlns="http://www.acme.com/Employee"&gt;TRUE&lt;/fired&gt;<br />
+&lt;/EmployeeResponse&gt;<br />
+&lt;/employeeResponse&gt;<br />
+&lt;/DecisionServiceResponse&gt;<br />
+&lt;/soapenv:Body&gt;<br />
+&lt;/soapenv:Envelope&gt;<br />
+<br />
+<br />
+and the WSDL is here:<br />
+<br />
+<a href="http://sites.google.com/site/javamonamour/xsds/rulesetwsdl.wsdl?attredirects=0&amp;d=1">http://sites.google.com/site/javamonamour/xsds/rulesetwsdl.wsdl?attredirects=0&amp;d=1</a><br />
+<br />
+<br />
+In case of fault, you get this:<br />
+<br />
+&lt;soapenv:Fault&gt;<br />
+&nbsp;&lt;faultcode&gt;soapenv:Server&lt;/faultcode&gt;<br />
+&nbsp;&lt;faultstring&gt;Error when executing the ruleset /PV01_RuleApp/1.0/PV01_RuleProject/1.0&lt;/faultstring&gt;<br />
+&nbsp;&lt;<b>faultactor</b>&gt;http://www.ilog.com/rules/DecisionService&lt;/faultactor&gt;<br />
+&nbsp;&lt;detail&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;ds:<b>DecisionServiceException</b>&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ds:exception&gt;ilog.rules.res.decisionservice.IlrDecisionServiceException: Error when executing the ruleset /PV01_RuleApp/1.0/PV01_RuleProject/1.0<br />
+at ilog.rules.res.decisionservice.web.IlrDecisionServiceController.executeRuleset(IlrDecisionServiceController.java:125)

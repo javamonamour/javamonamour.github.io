@@ -1,0 +1,97 @@
+---
+layout: post
+title: "wlst NameError: cd (using WLST as a Jython module)"
+date: 2013-08-09T11:43:00.000+02:00
+permalink: /2013/08/wlst-nameerror-cd.html
+blogger_id: "3023476009874775350"
+tags: ["WLST"]
+---
+I am defining a function in a python module acmelibrary.py:
+<br/>
+
+<pre>
+def createMailSession(theMailSessionName, adminName, clusterName):
+    cd('/')
+</pre>
+
+<br/>
+and I invoke it like this:
+<br/>
+<pre>
+from acmelibrary import createMailSession
+
+createMailSession(theMailSessionName, adminName, clusterName)
+
+
+</pre>
+
+
+
+Much to my dismay, the cd('/') statement works perfectly when invoked in the main module, but not in the library:
+
+<br/>
+
+NameError: cd
+
+<br/><br/>
+
+
+Workaround:
+
+
+<br/><br/>
+
+in all WLST scripts there is a variable WLS of type com.oracle.cie.domain.script.jython.WLScriptContext, and you have to pass it as a parameter to the createMailSession:
+<br/><br/>
+
+<pre>
+def createMailSession(wls, theMailSessionName, adminName, clusterName):
+    wls.cd('/')
+</pre>
+
+
+
+A more radical approach is to create a wl.py module:
+
+<pre name="code" class="brush: java">
+from weblogic.management.scripting.utils import WLSTUtil
+import sys
+origPrompt = sys.ps1
+theInterpreter = WLSTUtil.ensureInterpreter();
+WLSTUtil.ensureWLCtx(theInterpreter)
+execfile(WLSTUtil.getWLSTScriptPath())
+execfile(WLSTUtil.getOfflineWLSTScriptPath())
+exec(WLSTUtil.getOfflineWLSTScriptForModule())
+execfile(WLSTUtil.getWLSTCommonModulePath())
+theInterpreter = None
+sys.ps1 = origPrompt
+modules = WLSTUtil.getWLSTModules()
+for mods in modules:
+  execfile(mods.getAbsolutePath())
+wlstPrompt = "false"  
+</pre>
+
+<br/>
+
+and in your acmelibrary.py you start with a
+<br/>
+<pre>
+import wl
+</pre>
+<br/>
+
+<br/>
+at this point your code can do
+<br/>
+<pre>
+def createMailSession(theMailSessionName, adminName, clusterName):
+    wl.cd('/')
+</pre>
+<br/>
+
+<br/>
+
+
+See also <a href="http://docs.oracle.com/cd/E15051_01/wls/docs103/config_scripting/using_WLST.html#wp1094333">http://docs.oracle.com/cd/E15051_01/wls/docs103/config_scripting/using_WLST.html#wp1094333</a>
+
+

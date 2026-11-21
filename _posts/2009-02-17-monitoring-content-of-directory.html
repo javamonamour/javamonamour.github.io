@@ -1,0 +1,12 @@
+---
+layout: post
+title: "Monitoring the content of a directory"
+date: 2009-02-17T18:41:00.001+01:00
+permalink: /2009/02/monitoring-content-of-directory.html
+blogger_id: "4975142759606733895"
+---
+if you want to keep under control the content of a directory, here is a quick and dirty Unix script:<br />
+<br />
+<span style="font-style:italic;">while :; do echo `date`; ls -ltr .ssh; sleep 1; done</span><br />
+<br />
+you can achieve the same with watch date; ls -ltr .ssh

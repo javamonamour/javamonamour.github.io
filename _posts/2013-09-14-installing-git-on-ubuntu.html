@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Installing git on Ubuntu"
+date: 2013-09-14T19:21:00.004+02:00
+permalink: /2013/09/installing-git-on-ubuntu.html
+blogger_id: "8889918024870476372"
+tags: ["git", "ubuntu"]
+---
+"apt-get install git" not necessarily will work, especially <a href="https://help.ubuntu.com/community/AptGet/Howto#Setting_up_apt-get_to_use_a_http-proxy">if you are behind a proxy</a>. This is how I have done it:
+<br/>
+sudo su - root
+<br/>
+export http_proxy=http://myusername:mypassword@myproxyhost:myproxyport
+<br/>
+apt-get install git
+<br/>
+
+<br/>
+
+
+If you get:<br/>
+
+<pre>
+E: Could not open lock file /var/lib/dpkg/lock - open (13: Permission denied)
+E: Unable to lock the administration directory (/var/lib/dpkg/), are you root?
+</pre>
+<br/>
+
+then make sure you are root, and eventually if it keep bugging you, just restart the box. This worked for me.
+<br/>
+<br/>
+
+All these things could be self evident for a Linux administrator, but surely some more helpful error messages would not hurt...
+
+
+
+
+

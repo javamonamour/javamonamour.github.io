@@ -1,0 +1,54 @@
+---
+layout: post
+title: "Jboss CLI, change individual attributes of a security domain without having to remove and add the domain from scratch"
+date: 2018-11-14T18:28:00.000+01:00
+permalink: /2018/11/jboss-cli-change-individual-attributes.html
+blogger_id: "2798375631123268347"
+tags: ["jbosscli"]
+---
+Jboss CLI, change individual attributes of a security domain without having to remove and add the domain from scratch<br />
+<br />
+<br />
+If you need for instance to update the baseFilter of the AdvancedAdLdap module:<br />
+<br />
+<br />
+<br />
+In the custom cli, execute this command:<br />
+<br />
+<br />
+<br />
+/subsystem=security/security-domain=SPNEGO/authentication=classic/login-module=AdvancedAdLdap:write-attribute(name=module-options.baseFilter,value="(sAMAccountName={0})")<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+and the baseFilter is updated:<br />
+<br />
+<pre class="brush:xml">&lt;security-domain name=&quot;SPNEGO&quot; cache-type=&quot;default&quot;&gt;
+ &lt;authentication&gt;
+  &lt;login-module code=&quot;SPNEGO&quot; flag=&quot;requisite&quot;&gt;
+   &lt;module-option name=&quot;password-stacking&quot; value=&quot;useFirstPass&quot;/&gt;
+   &lt;module-option name=&quot;serverSecurityDomain&quot; value=&quot;host&quot;/&gt;
+  &lt;/login-module&gt;
+  &lt;login-module code=&quot;AdvancedAdLdap&quot; flag=&quot;required&quot;&gt;
+   &lt;module-option name=&quot;password-stacking&quot; value=&quot;useFirstPass&quot;/&gt;
+   &lt;module-option name=&quot;bindDN&quot; value=&quot;BLA&quot;/&gt;
+   &lt;module-option name=&quot;bindCredential&quot; value=&quot;BLA&quot;/&gt;
+   &lt;module-option name=&quot;java.naming.provider.url&quot; value=&quot;BLA&quot;/&gt;
+   &lt;module-option name=&quot;baseCtxDN&quot; value=&quot;BLA&quot;/&gt;
+   &lt;module-option name=&quot;baseFilter&quot; value=&quot;(sAMAccountName={0})&quot;/&gt;
+   &lt;module-option name=&quot;roleAttributeID&quot; value=&quot;memberOf&quot;/&gt;
+   &lt;module-option name=&quot;rolesCtxDN&quot; value=&quot;BLA&quot;/&gt;
+   &lt;module-option name=&quot;roleAttributeIsDN&quot; value=&quot;true&quot;/&gt;
+   &lt;module-option name=&quot;roleNameAttributeID&quot; value=&quot;cn&quot;/&gt;
+   &lt;module-option name=&quot;searchScope&quot; value=&quot;SUBTREE_SCOPE&quot;/&gt;
+   &lt;module-option name=&quot;recurseRoles&quot; value=&quot;true&quot;/&gt;
+  &lt;/login-module&gt;
+  &lt;login-module code=&quot;org.jboss.security.auth.spi.RoleMappingLoginModule&quot; flag=&quot;optional&quot;&gt;
+   &lt;module-option name=&quot;rolesProperties&quot; value=&quot;${jboss.server.config.dir}/bla-war/roles.properties&quot;/&gt;
+   &lt;module-option name=&quot;replaceRole&quot; value=&quot;false&quot;/&gt;
+  &lt;/login-module&gt;
+ &lt;/authentication&gt;
+&lt;/security-domain&gt;
+</pre>

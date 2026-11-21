@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Removing empty optional elements erroneously inserted by mapping"
+date: 2011-12-28T14:01:00.001+01:00
+permalink: /2011/12/removing-empty-optional-elements.html
+blogger_id: "53478153261825273"
+tags: ["XQuery"]
+---
+if a XQuery mapping, theoretically you should check for existence of an optional element in the source, and only if it exists you create it on the destination:<br />
+<br />
+if ($myvar/customer/shoesize) then<br />
+&lt;shoesize&gt;<br />
+data($myvar/customer/shoesize)<br />
+&lt;/shoesize&gt;<br />
+<br />
+<br />
+If the developer likes to take shortcuts (=is a lazy bum), and doesn't do the "if", you must clean the garbage afterwards.<br />
+<br />
+You can use the action:<br />
+delete //*[not(node()) and not(.//@*)] from body

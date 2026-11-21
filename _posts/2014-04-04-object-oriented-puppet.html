@@ -1,0 +1,17 @@
+---
+layout: post
+title: "Object Oriented Puppet"
+date: 2014-04-04T21:40:00.003+02:00
+permalink: /2014/04/object-oriented-puppet.html
+blogger_id: "6423804995193708950"
+tags: ["puppet"]
+---
+One of the most shocking aspects of working with Puppet is that it goes to a great length at providing a High Level Interface to Resources, but it provides literally no facility to abstract access to configuration values.<br />
+<br />
+All is a hiera() and Hash/Array manipulation, from which to painfully extract subset of data with totally garbled and complex manipulations of the Hashes, Keys and Values, interspersed with some create_resources() to be able to cycle over a collection of homogeneous resources.<br />
+<br />
+People who come from ANY Object Oriented, functional and fluent-interface programming languages, like Groovy or Java 8,&nbsp; can only scream in horror in front of the total inelegance, un-refactorability, un-maintainability and lack of encapsulation of the Puppet DSL.<br />
+<br />
+To this, add that YAML is not generally associated to a schema - hence you can't validate that you haven't broken your model somewhere in your hundred of YAML files - on per each host - and you have the mother of all Spaghetti Western Code.<br />
+<br />
+For all these reasons, please Puppet Gods, heed my call, dump that pathetic DSL and adopt some OO language.

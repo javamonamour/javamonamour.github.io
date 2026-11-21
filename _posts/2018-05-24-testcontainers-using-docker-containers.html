@@ -1,0 +1,136 @@
+---
+layout: post
+title: "Testcontainers, using Docker containers in JUnit tests"
+date: 2018-05-24T05:02:00.003+02:00
+permalink: /2018/05/testcontainers-using-docker-containers.html
+blogger_id: "3531526298958467961"
+tags: ["docker", "junit", "testng"]
+---
+Junit sucks, use at least <a href="https://junit.org/junit5/">5.0</a> or better switch to TestNG (see <a href="http://www.baeldung.com/junit-vs-testng">http://www.baeldung.com/junit-vs-testng</a> for comparison) <br />
+<br />
+<br />
+<a href="https://www.javacodegeeks.com/2018/05/testcontainers-and-spring-boot.html">https://www.javacodegeeks.com/2018/05/testcontainers-and-spring-boot.html</a><br />
+<br />
+<a href="https://github.com/bijukunjummen/cities">https://github.com/bijukunjummen/cities</a><br />
+<br />
+<a href="https://www.testcontainers.org/usage.html#maven-dependencies">https://www.testcontainers.org/usage.html#maven-dependencies</a><br />
+<br />
+<a href="https://github.com/testcontainers/testcontainers-java-examples">https://github.com/testcontainers/testcontainers-java-examples</a><br />
+<br />
+<a href="https://github.com/testcontainers/testcontainers-java">https://github.com/testcontainers/testcontainers-java</a><br />
+<br />
+<br />
+<a href="https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.testcontainers%22">https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.testcontainers%22</a><br />
+<br />
+<br />
+To keep it really minimalistic, I have created a Maven Java project:<br />
+<br />
+<pre class="brush: xml">&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+ &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+ &lt;groupId&gt;org.pierre&lt;/groupId&gt;
+ &lt;artifactId&gt;testcontainer&lt;/artifactId&gt;
+ &lt;version&gt;1.0&lt;/version&gt;
+ &lt;dependencies&gt;
+  &lt;dependency&gt;
+   &lt;groupId&gt;org.testcontainers&lt;/groupId&gt;
+   &lt;artifactId&gt;testcontainers&lt;/artifactId&gt;
+   &lt;version&gt;1.7.3&lt;/version&gt;
+  &lt;/dependency&gt;
+  
+  &lt;dependency&gt;
+   &lt;groupId&gt;org.testcontainers&lt;/groupId&gt;
+   &lt;artifactId&gt;selenium&lt;/artifactId&gt;
+   &lt;version&gt;1.7.3&lt;/version&gt;
+  &lt;/dependency&gt;
+  
+   
+  
+  &lt;dependency&gt;
+   &lt;groupId&gt;org.seleniumhq.selenium&lt;/groupId&gt;
+   &lt;artifactId&gt;selenium-remote-driver&lt;/artifactId&gt;
+   &lt;version&gt;2.45.0&lt;/version&gt;
+  &lt;/dependency&gt;
+  &lt;dependency&gt;
+   &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+   &lt;artifactId&gt;slf4j-api&lt;/artifactId&gt;
+   &lt;version&gt;1.7.7&lt;/version&gt;
+   &lt;scope&gt;provided&lt;/scope&gt;
+  &lt;/dependency&gt;
+  &lt;dependency&gt;
+   &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+   &lt;artifactId&gt;logback-classic&lt;/artifactId&gt;
+   &lt;version&gt;1.1.2&lt;/version&gt;
+   &lt;scope&gt;test&lt;/scope&gt;
+  &lt;/dependency&gt;
+ &lt;/dependencies&gt;
+
+ &lt;properties&gt;
+  &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+  &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+ &lt;/properties&gt;
+&lt;/project&gt;
+
+</pre><br />
+and copied this example<br />
+<br />
+<br />
+<pre class="brush: java">package org.pierre.testcontainer;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.testcontainers.containers.BrowserWebDriverContainer;
+
+import java.io.File;
+
+import static org.rnorth.visibleassertions.VisibleAssertions.assertTrue;
+import static org.testcontainers.containers.BrowserWebDriverContainer.VncRecordingMode.RECORD_ALL;
+
+
+public class SeleniumContainerTest {
+
+    @Rule
+    public BrowserWebDriverContainer chrome = new BrowserWebDriverContainer()
+                                                    .withDesiredCapabilities(DesiredCapabilities.chrome())
+                                                    .withRecordingMode(RECORD_ALL, new File("target"));
+
+    @Test
+    public void simplePlainSeleniumTest() {
+        RemoteWebDriver driver = chrome.getWebDriver();
+
+        driver.get("https://wikipedia.org");
+        WebElement searchInput = driver.findElementByName("search");
+
+        searchInput.sendKeys("Rick Astley");
+        searchInput.submit();
+
+        WebElement otherPage = driver.findElementByLinkText("Rickrolling");
+        otherPage.click();
+
+        boolean expectedTextFound = driver.findElementsByCssSelector("p")
+                .stream()
+                .anyMatch(element -&gt; element.getText().contains("meme"));
+
+        assertTrue("The word 'meme' is found on a page about rickrolling", expectedTextFound);
+}
+
+}
+
+
+</pre><br />
+<br />
+The first time it failed with a SocketTimeoutException.... the second time it succeeded... I guess simply the Docker container was taking too much time to start.<br />
+<br />
+If I do "docker images" I see richnorth/vnc-recorder and selenium/standalone-chrome-debug. If I do "docker ps -a" I see no trace of containers, probably they are removed at the end of test.<br />
+<br />
+<br />
+It looks really interesting! Convenient way to prepare a test environment in a fully automated way.<br />
+<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Consensus-based Whole Server Migration"
+date: 2013-06-29T10:25:00.001+02:00
+permalink: /2013/06/consensus-based-whole-server-migration.html
+blogger_id: "3442050958792869213"
+tags: ["migration"]
+---
+I have a cluster with 2 MS <br />
+<br />
+On both MS, tick "enable whole server migration", and select both machines as possible targets (you will need both, if you want to migrate your server back)
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/f1f0489cde53be8f.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/f1f0489cde53be8f.jpg" /></a></div>
+<br />
+<br />
+<br />
+At cluster level, don't forget to switch to "Consensus" (the default is "Database"), and again to choose both machines as target (not sure why this double settings):
+<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/4fb4f6de110fe342.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/bea062d5c5853c10.jpg" /></a></div>
+<br />
+<br />
+At this point, after a good restart of both MS, you will be able to migrate a MS from one machine to the other - this will shutdown MS from 310 and startup on 311:
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/9aff91f5e297be3a.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/9aff91f5e297be3a.jpg" /></a></div>
+<br />
+<br />
+The end result will be that both MS are running on the same machine:
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/dafd7efe71facf08.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/dafd7efe71facf08.jpg" /></a></div>
+<br />
+<br />
+You can now bring down the first machine for maintenance.<br />
+<br />
+Be aware that, if your MS uses a Virtual IP, and WSM is enabled, whenever you migrate a MS the VIP will be removed from the Origin machine and added to the Target machine. <br />
+<br />
+<br />
+
+If you forget to enable consensus, you will get this error:
+<br />
+BEA-003109 Cluster osbpp4cl uses database as the migration basis but no data source for migration has been configured.
+<br /><br />
+
+

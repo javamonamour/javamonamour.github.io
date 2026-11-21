@@ -1,0 +1,19 @@
+---
+layout: post
+title: "XQuery: how to chain (concat) 2 elements"
+date: 2011-12-19T15:40:00.004+01:00
+permalink: /2011/12/xquery-how-to-chain-concat-2-elements.html
+blogger_id: "5866680569167064994"
+tags: ["XQuery"]
+---
+curly braces will do the job:<br />
+<br />
+let $a := &lt;a&gt;bla&lt;/a&gt;<br />
+let $b := &lt;b&gt;blu&lt;/b&gt;<br />
+<br />
+return { $a, $b }<br />
+<br />
+<br />
+will return<br />
+&lt;a&gt;bla&lt;/a&gt;<br />
+&lt;b&gt;blu&lt;/b&gt;

@@ -1,0 +1,86 @@
+---
+layout: post
+title: "Warning: org.apache.xerces.parsers.SAXParser: Feature 'http://javax.xml.XMLConstants/feature/secure-processing' is not recognized"
+date: 2017-03-07T12:38:00.000+01:00
+permalink: /2017/03/warning-orgapachexercesparserssaxparser.html
+blogger_id: "5227792449508063223"
+tags: ["saxparser"]
+---
+We often see in the logs
+<br/><br/>
+
+Warning: org.apache.xerces.parsers.SAXParser: Feature 'http://javax.xml.XMLConstants/feature/secure-processing' is not recognized.<br/>
+Warning: org.apache.xerces.parsers.SAXParser: Property http://javax.xml.XMLConstants/property/accessExternalDTD' is not recognized.<br/>
+Warning  org.apache.xerces.parsers.SAXParser: Property 'http://www.oracle.com/xml/jaxp/properties/entityExpansionLimit' is not recognized<br/>
+
+<br/><br/>
+
+
+
+
+See https://access.redhat.com/solutions/1124603 and https://issues.apache.org/jira/browse/XERCESJ-1654
+<br/><br/>
+
+
+see also Oracle Support:
+<br/><br/>
+
+Warning: org.apache.xerces.parsers.SAXParser After Upgrade to JDK 1.6.0_75 or Higher (Doc ID 1951255.1)
+
+<br/><br/>
+
+
+
+These messages are "logged" by com.sun.org.apache.xml.internal.utils.XMLReaderManager
+
+<pre class="brush: java">
+
+public synchronized XMLReader getXMLReader()
+    throws SAXException
+  {
+    if (this.m_readers == null) {
+      this.m_readers = new ThreadLocal();
+    }
+    if (this.m_inUse == null) {
+      this.m_inUse = new HashMap();
+    }
+    XMLReader reader = (XMLReader)this.m_readers.get();
+    boolean threadHasReader = reader != null;
+    String factory = SecuritySupport.getSystemProperty("org.xml.sax.driver");
+    if ((threadHasReader) && (this.m_inUse.get(reader) != Boolean.TRUE) && ((factory == null) || (reader.getClass().getName().equals(factory))))
+    {
+      this.m_inUse.put(reader, Boolean.TRUE);
+    }
+    else
+    {
+      try
+      {
+        try
+        {
+          reader = XMLReaderFactory.createXMLReader();
+          try
+          {
+            reader.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", this._secureProcessing);
+          }
+          catch (SAXNotRecognizedException e)
+          {
+            System.err.println("Warning:  " + reader.getClass().getName() + ": " + e.getMessage());
+          }
+        }
+        catch (Exception e)
+
+
+
+</pre>
+
+
+
+<br/>
+
+so even if you add a Log Filter in WebLogic you won't prevent them from appearing in the stdout/stderr
+
+<br/>
+Try updating to latest Xerces implementation http://xerces.apache.org/mirrors.cgi (prepend xercesImpl.jar and xml-apis.jar to your system classpath, or deploy in your EAR using prefer-application-packages)
+<br/>
+
+

@@ -1,0 +1,30 @@
+---
+layout: post
+title: "SOAP messages patterns"
+date: 2010-04-11T23:11:00.000+02:00
+permalink: /2010/04/soap-messages-pattenrs.html
+blogger_id: "5867682731218825677"
+tags: ["SOAP"]
+---
+a useful collection of SOAP message patterns:<br />
+<br />
+http://www.w3.org/TR/xmlp-scenarios/<br />
+<br />
+a message for all seasons....<br />
+<br />
+<br />
+Especially interesting:<br />
+<br />
+<a href="http://www.w3.org/TR/xmlp-scenarios/#S807">http://www.w3.org/TR/xmlp-scenarios/#S807</a><br />
+<br />
+<br />
+<pre>TrackingHeader with Via Intermediary with Timestamp&nbsp;</pre><pre>(excellent for troubleshooting and performance monitoring!)</pre><pre>&nbsp;</pre><pre>&lt;t:TrackingHeader xmlns:t="http://example.org/2001/06/tracking"&gt;
+      &lt;t:Via&gt;
+        &lt;t:Intermediary&gt;soap://A.com/some/endpoint&lt;/t:Intermediary&gt;
+        &lt;t:Timestamp&gt;2001-03-09T08:00:00Z&lt;/t:Timestamp&gt;
+      &lt;/t:Via&gt;
+&nbsp;</pre><pre>&nbsp;</pre><pre>&nbsp;</pre><pre>and the response correlated to the messageId</pre><pre></pre>&nbsp;&lt;n:MsgHeader xmlns:n="http://example.org/requestresponse"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;n:MessageId&gt;uuid:09233523-567b-2891-b623-9dke28yod7m9&lt;/n:MessageId&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;n:ResponseTo&gt;uuid:09233523-345b-4351-b623-5dsf35sgs5d6&lt;/n:ResponseTo&gt;<br />
+<br />
+&nbsp; &lt;/n:MsgHeader&gt;

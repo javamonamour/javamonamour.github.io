@@ -1,0 +1,28 @@
+---
+layout: post
+title: "WebLogic: disabling JMS message consumption at startup"
+date: 2014-08-29T17:42:00.000+02:00
+permalink: /2014/08/weblogic-disabling-jms-message.html
+blogger_id: "980073776412509780"
+tags: ["jms", "weblogic"]
+---
+One can TEMPORARILY disable consumption from a JMS Destination (JMSServer / Active Destinations/Monitor) , but when you restart, the queue is enabled again. This in production can be fatal.
+<br />
+<br />
+One can disable PERMANENTLY consumption with this setting in the queue configuration:
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/89d2f9b4d4757e43.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/70522ad461569c51.png" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/b1ff795d25066ab4.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/48ea5c3e1d74024d.png" /></a></div>
+<br />
+<br />
+See 
+<a href="http://docs.oracle.com/cd/E23943_01/apirefs.1111/e13952/taskhelp/jms_modules/distributed_queues/ConfigureUDQPauseMessages.html">http://docs.oracle.com/cd/E23943_01/apirefs.1111/e13952/taskhelp/jms_modules/distributed_queues/ConfigureUDQPauseMessages.html</a>
+<br />
+<br />
+<br />
+<br />

@@ -1,0 +1,50 @@
+---
+layout: post
+title: "Vagrant, Puppet, Geppetto"
+date: 2013-04-07T23:02:00.000+02:00
+permalink: /2013/04/vagrant-puppet-geppetto.html
+blogger_id: "983832055327488663"
+tags: ["puppet"]
+---
+In a nutshell, <a href="https://en.wikipedia.org/wiki/Vagrant_%28software%29" rel="nofollow">Vagrant</a> is a wrapper around <a href="https://en.wikipedia.org/wiki/Puppet_%28software%29" rel="nofollow">Puppet</a> to provision <a href="https://en.wikipedia.org/wiki/VirtualBox" rel="nofollow">Virtual Box</a>es.<br />
+Vagrant doc here&nbsp; <a href="http://docs-v1.vagrantup.com/v1/docs/index.html" rel="nofollow">http://docs-v1.vagrantup.com/v1/docs/index.html</a><br />
+Vagrant and Puppet doc here&nbsp; <a href="http://docs-v1.vagrantup.com/v1/docs/provisioners/puppet.html" rel="nofollow">http://docs-v1.vagrantup.com/v1/docs/provisioners/puppet.html</a><br />
+Virtual Box doc here <a href="https://www.virtualbox.org/" rel="nofollow">https://www.virtualbox.org/</a><br />
+<h5>
+<a href="http://www.blogger.com/blogger.g?blogID=3195885170348729753" name="VagrantandPuppet-Gettingstarted"></a>Getting started</h5>
+Download Virtual box here <a href="https://www.virtualbox.org/wiki/Downloads" rel="nofollow">https://www.virtualbox.org/wiki/Downloads</a><br />
+Install it to C:\pierre\virtualbox\<br />
+Download vagrant from here <a href="http://www.vagrantup.com/" rel="nofollow">http://www.vagrantup.com/</a><br />
+Install it to C:\pierre\vagrant\<br />
+<br />
+To check the Vagrant installation, open a DOS prompt and type "vagrant". <br />
+<br />
+<a href="http://docs-v1.vagrantup.com/v1/docs/getting-started/">Vagrant Getting Started </a>, this is an excellent hands on tutorial<br />
+<br />
+<pre>vagrant box add lucid32 http://files.vagrantup.com/lucid32.box
+vagrant init lucid32
+vagrant up
+</pre>
+<pre>&nbsp;</pre>
+<pre>&nbsp;</pre>
+if you get<br />
+<i>Vagrant timed out while attempting to connect to the HTTP host.<br />Please check your internet and proxy settings and try again.</i><br />
+<br />
+
+you can download the file and run:
+<br />
+set HOMEDRIVE=C:
+<br />
+set HOMESHARE=c:\pierre\vagrant
+<br />
+vagrant box add lucid32 c:/pierre/downloads/lucid32.box
+<br />
+
+
+<br />
+<br />
+Geppetto can be <a href="http://cloudsmith.github.io/geppetto/download.html">downloaded here</a> 
+<br />
+<br />
+
+

@@ -1,0 +1,17 @@
+---
+layout: post
+title: "Getting Service Name from SID in Oracle DB"
+date: 2012-05-11T15:10:00.004+02:00
+permalink: /2012/05/getting-service-name-from-sid-in-oracle.html
+blogger_id: "63810568198441703"
+tags: ["oracledb"]
+---
+select sys_context('userenv','service_name') from dual<br />
+select sys_context('userenv','instance_name') from dual<br />
+<br />
+to get all available service_name s: (needs privileged access)<br />
+<br />
+select value from v$parameter where name = 'service_names';<br />
+<br />
+<br />
+for more info on the sys_context, <a href="http://docs.oracle.com/cd/E14072_01/server.112/e10592/functions182.htm">read here</a>

@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Log rotation in Unix"
+date: 2009-06-12T10:35:00.000+02:00
+permalink: /2009/06/log-rotation-in-unix.html
+blogger_id: "7776241667697985542"
+---
+put this code in loopforever.sh:<br /><br />while [ true ]<br />do<br />        echo ciao<br />        sleep 1<br />done<br /><br /><br />then run loopforever.sh > loop.log<br /><br />in another shell do<br />echo > loop.log<br /><br />if everything works well, the first process can keep writing to the loop.log file...

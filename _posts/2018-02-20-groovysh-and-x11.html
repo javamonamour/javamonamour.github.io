@@ -1,0 +1,102 @@
+---
+layout: post
+title: "groovysh and X11"
+date: 2018-02-20T14:21:00.001+01:00
+permalink: /2018/02/groovysh-and-x11.html
+blogger_id: "4591689217285506520"
+tags: ["groovy"]
+---
+Running groovysh I get this error:<br />
+<br />
+<br />
+java.awt.AWTError: Can't connect to X11 window server using 'myserver:0.0' as the value of the DISPLAY variable<br />
+<br />
+Really weird.... I could fix it only by "unset DISPLAY".<br />
+<br />
+Complete stacktrace is:<br />
+<br />
+<br />
+java.awt.AWTError: Can't connect to X11 window server using ':0' as the value of the DISPLAY variable.<br />
+        at sun.awt.X11GraphicsEnvironment.initDisplay(Native Method)<br />
+        at sun.awt.X11GraphicsEnvironment.access$200(X11GraphicsEnvironment.java:65)<br />
+        at sun.awt.X11GraphicsEnvironment$1.run(X11GraphicsEnvironment.java:115)<br />
+        at java.security.AccessController.doPrivileged(Native Method)<br />
+        at sun.awt.X11GraphicsEnvironment.&lt;clinit>(X11GraphicsEnvironment.java:74)<br />
+        at java.lang.Class.forName0(Native Method)<br />
+        at java.lang.Class.forName(Class.java:264)<br />
+        at java.awt.GraphicsEnvironment.createGE(GraphicsEnvironment.java:103)<br />
+        at java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment(GraphicsEnvironment.java:82)<br />
+        at sun.awt.X11.XToolkit.&lt;clinit>(XToolkit.java:126)<br />
+        at java.lang.Class.forName0(Native Method)<br />
+        at java.lang.Class.forName(Class.java:264)<br />
+        at java.awt.Toolkit$2.run(Toolkit.java:860)<br />
+        at java.awt.Toolkit$2.run(Toolkit.java:855)<br />
+        at java.security.AccessController.doPrivileged(Native Method)<br />
+        at java.awt.Toolkit.getDefaultToolkit(Toolkit.java:854)<br />
+        at java.awt.Desktop.isDesktopSupported(Desktop.java:169)<br />
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)<br />
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)<br />
+        at java.lang.reflect.Method.invoke(Method.java:497)<br />
+        at org.codehaus.groovy.reflection.CachedMethod.invoke(CachedMethod.java:93)<br />
+        at groovy.lang.MetaMethod.doMethodInvoke(MetaMethod.java:325)<br />
+        at groovy.lang.MetaClassImpl.getProperty(MetaClassImpl.java:1850)<br />
+        at groovy.lang.MetaClassImpl.getProperty(MetaClassImpl.java:3758)<br />
+        at org.codehaus.groovy.runtime.callsite.ClassMetaClassGetPropertySite.getProperty(ClassMetaClassGetPropertySite.java:51)<br />
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callGetProperty(AbstractCallSite.java:296)<br />
+        at org.codehaus.groovy.tools.shell.commands.DocCommand.&lt;clinit>(DocCommand.groovy:57)<br />
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)<br />
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)<br />
+        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)<br />
+        at java.lang.reflect.Constructor.newInstance(Constructor.java:422)<br />
+        at org.codehaus.groovy.reflection.CachedConstructor.invoke(CachedConstructor.java:83)<br />
+        at org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce.callConstructor(ConstructorSite.java:105)<br />
+        at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallConstructor(CallSiteArray.java:60)<br />
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:235)<br />
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:247)<br />
+        at org.codehaus.groovy.tools.shell.util.DefaultCommandsRegistrar.register(DefaultCommandsRegistrar.groovy:82)<br />
+        at org.codehaus.groovy.tools.shell.util.DefaultCommandsRegistrar$register.call(Unknown Source)<br />
+        at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCall(CallSiteArray.java:48)<br />
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:113)<br />
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:117)<br />
+        at org.codehaus.groovy.tools.shell.Groovysh$_createDefaultRegistrar_closure3.doCall(Groovysh.groovy:116)<br />
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)<br />
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)<br />
+        at java.lang.reflect.Method.invoke(Method.java:497)<br />
+        at org.codehaus.groovy.reflection.CachedMethod.invoke(CachedMethod.java:93)<br />
+        at groovy.lang.MetaMethod.doMethodInvoke(MetaMethod.java:325)<br />
+        at org.codehaus.groovy.runtime.metaclass.ClosureMetaClass.invokeMethod(ClosureMetaClass.java:294)<br />
+        at groovy.lang.MetaClassImpl.invokeMethod(MetaClassImpl.java:1022)<br />
+        at org.codehaus.groovy.runtime.callsite.PogoMetaClassSite.call(PogoMetaClassSite.java:42)<br />
+        at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCall(CallSiteArray.java:48)<br />
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:113)<br />
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.call(AbstractCallSite.java:125)<br />
+        at org.codehaus.groovy.tools.shell.Groovysh.&lt;init>(Groovysh.groovy:103)<br />
+        at org.codehaus.groovy.tools.shell.Groovysh.&lt;init>(Groovysh.groovy:122)<br />
+        at org.codehaus.groovy.tools.shell.Groovysh.&lt;init>(Groovysh.groovy:126)<br />
+        at org.codehaus.groovy.tools.shell.Groovysh.&lt;init>(Groovysh.groovy:130)<br />
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)<br />
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)<br />
+        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)<br />
+        at java.lang.reflect.Constructor.newInstance(Constructor.java:422)<br />
+        at org.codehaus.groovy.reflection.CachedConstructor.invoke(CachedConstructor.java:83)<br />
+        at org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce.callConstructor(ConstructorSite.java:105)<br />
+        at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallConstructor(CallSiteArray.java:60)<br />
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:235)<br />
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:247)<br />
+        at org.codehaus.groovy.tools.shell.Main.&lt;init>(Main.groovy:57)<br />
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)<br />
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)<br />
+        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)<br />
+        at java.lang.reflect.Constructor.newInstance(Constructor.java:422)<br />
+        at org.codehaus.groovy.reflection.CachedConstructor.invoke(CachedConstructor.java:83)<br />
+        at org.codehaus.groovy.runtime.callsite.ConstructorSite$ConstructorSiteNoUnwrapNoCoerce.callConstructor(ConstructorSite.java:105)<br />
+        at org.codehaus.groovy.runtime.callsite.CallSiteArray.defaultCallConstructor(CallSiteArray.java:60)<br />
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:235)<br />
+        at org.codehaus.groovy.runtime.callsite.AbstractCallSite.callConstructor(AbstractCallSite.java:247)<br />
+        at org.codehaus.groovy.tools.shell.Main.main(Main.groovy:151)<br />
+        <br />
+        <br />
+<br />
+

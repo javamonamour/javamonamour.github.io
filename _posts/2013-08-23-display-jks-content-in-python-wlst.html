@@ -1,0 +1,54 @@
+---
+layout: post
+title: "Display JKS content in Python (WLST)"
+date: 2013-08-23T18:58:00.002+02:00
+permalink: /2013/08/display-jks-content-in-python-wlst.html
+blogger_id: "2882894041080032971"
+tags: ["jks", "WLST"]
+---
+<pre name="code" class="brush: java">
+
+
+from java.security import KeyStore
+from java.security import MessageDigest
+from java.io import FileInputStream
+
+
+def hexify(bytes):
+    hexDigits = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
+    buf = StringBuffer()
+    for i in range(len(bytes)):
+        buf.append(hexDigits[(bytes[i] & 0xf0) >> 4])
+        buf.append(hexDigits[bytes[i] & 0x0f])
+        if i < len(bytes) - 1:
+            buf.append(':')
+    return buf.toString()
+
+
+filestore='myacme.jks'
+password='111111'
+ks = KeyStore.getInstance("JKS")
+ks.load(FileInputStream(filestore), password)
+md = MessageDigest.getInstance("MD5")
+
+for item in ks.aliases():
+ print "alias", item, "isCertificate", ks.isCertificateEntry(item)
+ if ks.isCertificateEntry(item):
+  print "isCertificate"
+  cert = ks.getCertificate(item)
+  der = cert.getEncoded()
+  md.update(der)
+  print hexify(md.digest())
+
+</pre>
+<br/><br/>
+
+Inspired by <a href="http://stackoverflow.com/questions/1270703/how-to-retrieve-compute-an-x509-certificates-thumbprint-in-java">http://stackoverflow.com/questions/1270703/how-to-retrieve-compute-an-x509-certificates-thumbprint-in-java</a>
+
+
+
+<br/><br/>
+
+Javadoc: <a href="http://docs.oracle.com/javase/6/docs/api/java/security/MessageDigest.html">MessageDigest</a> , <a href="http://docs.oracle.com/javase/6/docs/api/java/security/KeyStore.html">KeyStore</a>, <a href="http://docs.oracle.com/javase/6/docs/api/java/security/cert/Certificate.html">Certificate</a>, <a href="http://docs.oracle.com/javase/6/docs/api/java/security/Key.html">Key</a>
+
+

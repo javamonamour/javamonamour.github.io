@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Extended Logging Format Fields (ELFF) in WebLogic"
+date: 2012-04-17T06:51:00.002+02:00
+permalink: /2012/04/extended-logging-format-fields-elff-in.html
+blogger_id: "8656402278416333951"
+tags: ["log", "weblogic"]
+---
+By default WebLogic logs this fields in the access.log:<br />
+date time cs-method cs-uri sc-status<br />
+<br />
+Here is the <a href="http://download.oracle.com/docs/cd/E14571_01/apirefs.1111/e13951/mbeans/WebServerLogMBean.html#ELFFields">MBean</a> WebServerLogMBean.ELFFields<br />
+<br />
+and here the entire documentation on the <a href="http://docs.oracle.com/cd/E14571_01/web.1111/e13701/web_server.htm#CNFGD207">supported field identifiers</a>.<br />
+<br />
+<i><b>c-ip</b><br />
+<br />
+The IP address of the client.<br />
+<br />
+<b>s-ip</b><br />
+<br />
+The IP address of the server.</i><br />
+<br />
+Don't forget that in case of need you can define a Java class to provide extra ELF fields.

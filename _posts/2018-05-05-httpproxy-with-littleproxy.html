@@ -1,0 +1,151 @@
+---
+layout: post
+title: "httpproxy with littleproxy"
+date: 2018-05-05T04:32:00.002+02:00
+permalink: /2018/05/httpproxy-with-littleproxy.html
+blogger_id: "9001960250046646264"
+tags: ["httpproxy", "littleproxy", "maven", "nexus"]
+---
+great product <a href="https://github.com/adamfisk/LittleProxy">https://github.com/adamfisk/LittleProxy</a><br />
+<br />
+git clone https://github.com/adamfisk/LittleProxy<br />
+cd LittleProxy<br />
+./run.bash<br />
+<br />
+<br />
+To intercept HTTP requests, edit org.littleshoot.proxy.Launcher and insert the line with "withFiltersSource":<br />
+<br />
+System.out.println("About to start...");<br />
+bootstrap.withFiltersSource(new MyHttpFiltersSourceAdapter());<br />
+bootstrap.start();<br />
+<br />
+<br />
+<br />
+<pre class="brush: java">package org.littleshoot.proxy.impl;
+
+import org.littleshoot.proxy.HttpFilters;
+import org.littleshoot.proxy.HttpFiltersAdapter;
+import org.littleshoot.proxy.HttpFiltersSource;
+import java.util.Arrays;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpObject;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.DefaultHttpRequest;
+
+public class MyHttpFiltersSourceAdapter implements HttpFiltersSource {
+    private static final String HTTP_REPO1_MAVEN_ORG_MAVEN2 = "http://repo1.maven.org/maven2/";
+    public HttpFiltersAdapter filterRequest(HttpRequest originalRequest, ChannelHandlerContext ctx) {
+        return new HttpFiltersAdapter(originalRequest) {
+            @Override
+            public HttpResponse clientToProxyRequest(HttpObject httpObject) {
+                // TODO: implement your filtering here
+             System.out.println("clientToProxyRequest invoked");
+             System.out.println(httpObject.toString());
+             if (httpObject instanceof DefaultHttpRequest) {
+              DefaultHttpRequest request = (DefaultHttpRequest)httpObject;
+              System.out.println("it's a DefaultHttpRequest with uri:");
+              String uri = request.getUri()
+              System.out.println(uri);
+              System.out.println(request.toString());
+              System.out.println(request.headers());
+  if (uri.startsWith(HTTP_REPO1_MAVEN_ORG_MAVEN2)) {
+   String gavstring = uri.substring(HTTP_REPO1_MAVEN_ORG_MAVEN2.length());
+   System.out.println("gavstring=" + gavstring);
+   String[] parts = gavstring.split("/");
+   int len = parts.length;
+   if (len < 4) {
+    System.err.println("invalid length for gavstring " + gavstring + " len = " + len + " should be at least 4");
+   }
+   else {
+    String filename =  parts[len-1];
+    String version =  parts[len-2];
+    String artifactid = parts[len-3];
+    String group = String.join(".", Arrays.copyOfRange(parts, 0, len - 3));
+    System.out.println("filename=" + filename + " version=" + version + " artifactid=" + artifactid + " group=" + group);
+   }
+   
+   
+    }
+    }
+         System.out.println();
+        return null;
+    }
+
+    @Override
+    public HttpObject serverToProxyResponse(HttpObject httpObject) {
+             System.out.println("serverToProxyResponse invoked");
+             System.out.println(httpObject.toString());
+             System.out.println();
+                return httpObject;
+            }
+        };
+    }
+
+    @Override
+    public int getMaximumRequestBufferSizeInBytes() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int getMaximumResponseBufferSizeInBytes() {
+        // TODO Auto-generated method stub
+    return 0;
+    }
+}
+
+</pre>
+This is priceless to analyze what is going on between Nexus repository and Maven central:
+
+make sure your maven uses Nexus as a mirror:
+
+vi /home/centos/apache-maven-3.5.0/conf/settings.xml
+
+<pre class="brush: xml">&lt;mirror&gt;
+&lt;id&gt;nexus&lt;/id&gt;
+&lt;mirrorOf&gt;*&lt;/mirrorOf&gt;
+&lt;url&gt;http://localhost:8081/repository/maven-public/&lt;/url&gt;
+&lt;/mirror&gt;
+
+</pre>then make sure that Nexus "maven-central" proxy repo (http://localhost:8081/repository/maven-central/) points to http://repo1.maven.org/maven2/ and not to https://repo1.maven.org/maven2/  (it's easier to trace http traffic than https)
+
+
+then configure Nexus 3.11 (login as admin/admin123, menu System/HTTP, set HTTP proxy to localhost and 8080)
+
+let's prepare a Maven project to compile:
+
+git clone https://github.com/gabrielf/maven-samples
+
+cd maven-samples/
+
+mvn package
+
+to make sure a give jar is missing from the m2 repository, delete it before each build:
+
+rm -rf /home/centos/.m2/repository/org/codehaus/plexus/plexus-utils/3.0/plexus-utils-3.0.jar
+
+and remove it also from Nexus (Search/Maven, search for plexus-utils 3.0, Delete component)
+
+
+What you see in the LittleProxy stdout is:
+
+<pre>clientToProxyRequest invoked
+DefaultHttpRequest(decodeResult: success, version: HTTP/1.1)
+GET http://repo1.maven.org/maven2/org/codehaus/plexus/plexus-utils/3.0/plexus-utils-3.0.jar HTTP/1.1
+Host: repo1.maven.org
+Proxy-Connection: Keep-Alive
+User-Agent: Nexus/3.11.0-01 (OSS; Linux; 3.10.0-693.17.1.el7.x86_64; amd64; 1.8.0_141)
+Accept-Encoding: gzip,deflate
+</pre>As you can read in <a href="https://github.com/adamfisk/LittleProxy/blob/master/src/main/java/org/littleshoot/proxy/HttpFilters.java">https://github.com/adamfisk/LittleProxy/blob/master/src/main/java/org/littleshoot/proxy/HttpFilters.java</a> 
+
+for the method clientToProxyRequest, if you return null the request will be further processed; if you return a io.netty.handler.codec.http.HttpResponse, then you effectively break the flow and you can stop the request.
+
+
+
+It's worth mentioning also <a href="https://github.com/lightbody/browsermob-proxy">https://github.com/lightbody/browsermob-proxy</a> as a superset of Littleproxy<br />
+<br />
+<br />
+<br />
+

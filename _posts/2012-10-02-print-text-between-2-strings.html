@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Parse log files in WLST, print text between 2 strings"
+date: 2012-10-02T18:04:00.002+02:00
+permalink: /2012/10/print-text-between-2-strings.html
+blogger_id: "406544951283664188"
+blogger_comments:
+  - author: "vernetto"
+    date: 2012-10-05
+    html: "IMHO the FIRST quality of code is READABILITY. Perl, awk, sed, are all very powerful but totally unreadable unless you know them very well. "
+  - author: "Anonymous"
+    date: 2012-10-05
+    html: "Or you could try this: perl -nle &#39;print $1 if /\\s+pool\\s+&quot;(.*?)&quot;:\\s+ORA-04031/&#39; /path/to/logfile"
+---
+When grepping logs, it's often useful to isolate a specific string occurring between 2 other strings, like<br />
+<br />
+Received exception while creating connection for pool "PIPPODataSourceJP": ORA-04031: unable to allocate 32 bytes of shared memory ("shared pool","DATABASESYS","trigger inform","kglhin: temp")<br />
+osbpr1do.log00253:ORA-04031: unable to allocate 32 bytes of shared memory ("shared pool","select obj#,type#,ctime,mtim...","sql area","tmp"<br />
+<br />
+<br />
+I am interested in all the strings like PIPPODataSourceJP, to extract from the logs&nbsp; a unique list of Datasources failing.<br />
+<br />
+Let's first grep all the lines:<br />
+<br />
+grep ORA-04031 * &gt; /tmp/allora04031.txt<br />
+<br />
+<br />
+this doesn't work, it prints all the line:<br />
+sed -n '/for pool /,/: ORA-04031/p' /tmp/allora04031.txt<br />
+<br />
+All this sed and awk is bullshit.<br />
+<br />
+/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/bin/wlst.sh<br />
+<br />
+<br />
+<code><span class="pln"><br />import fileinput<br />start = 'for pool "'<br />end = '": ORA-04031'<br /><br />for line in fileinput.input(['/tmp/allora04031.txt']):<br />&nbsp;&nbsp;&nbsp; indstart = line.find(start, 0)<br />&nbsp;&nbsp;&nbsp; if indstart &gt; 0:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; indend = line.find(end, indstart)<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; print line[indstart + len(start):indend]<br /><br />&nbsp;&nbsp;&nbsp; <br />&nbsp;&nbsp;&nbsp; <br />&nbsp;&nbsp;&nbsp; <br />Here is the doc <a href="http://docs.python.org/library/string.html">http://docs.python.org/library/string.html</a><br />&nbsp;</span></code><br />
+<br />
+<code> </code>

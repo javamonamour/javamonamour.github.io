@@ -1,0 +1,34 @@
+---
+layout: post
+title: "Installing puppet-lint on your Vagrant VirtualBox"
+date: 2013-09-18T09:56:00.003+02:00
+permalink: /2013/09/installing-puppet-lint-on-your-vagrant.html
+blogger_id: "2792165733478367709"
+tags: ["puppet"]
+---
+BEFORE you commit your puppet stuff, you better "lint" it :<br/><br/>
+
+<a href="http://rubydoc.info/gems/puppet-lint/0.3.2/frames">http://rubydoc.info/gems/puppet-lint/0.3.2/frames</a>
+<br/><br/>
+
+<i>gem install puppet-lint</i>
+<br/><br/>
+
+Although there are ways to <a href="http://help.rubygems.org/discussions/questions/79-installing-rubygems-on-machine-not-connected-to-internet">install a gem offline</a>, it's a lot easier to configure a proxy:
+
+<pre>
+export http_proxy=http://myuser:mypassword@myproxyhost:myproxyport
+gem install puppet-lint
+</pre>
+
+
+and then:
+
+<pre>
+cd /tmp/vagrant-puppet/modules-0/osb/manifests
+puppet-lint --with-filename instance.pp
+
+instance.pp - ERROR: trailing whitespace found on line 17
+</pre>
+
+

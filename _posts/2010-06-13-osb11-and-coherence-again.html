@@ -1,0 +1,135 @@
+---
+layout: post
+title: "OSB and Coherence, a real life scenario with performance data"
+date: 2010-06-13T17:38:00.013+02:00
+permalink: /2010/06/osb11-and-coherence-again.html
+blogger_id: "6549232150916510743"
+tags: ["coherence", "osb11"]
+blogger_comments:
+  - author: "Narasimha Dasari"
+    date: 2010-12-06
+    html: "Excample is simple and very descriptive to explian how cache works.thanks for that.<br /><br />it would be nice if you can post similar example how to use cahe in java callout with sample java class and the setup."
+  - author: "Yuan Meng"
+    date: 2012-04-11
+    html: "My cache test works. I use coherence command console to list all entries in the cache (http://www.oracle.com/technetwork/articles/soa/bus-coherence-caching-421276.html). This is what i see with your example:<br />Map (/osb/service/ResultCache): list<br />PipelineResultCacheKey[BusinessService cachingTests/CachingBS,NewOperation1, foo) = owner=BusinessService cachingTests/CachingBS,value=[B@8497904<br /><br />Do you know in this case, what&#39;s the key for the cache entry?<br /><br />Oracle document is blury on what the key is exactly: &quot;Each cached result is uniquely identified by a cache key that is made up of the<br />ServiceRef (the unique identifier for the service which is the fully qualified path name<br />of the service), the operation being invoked, and a cache token String.&quot;<br /><br />I have tried a couple of combinations, they don&#39;t work. The reason I look for the key is to remove the entry from the cache.<br /><br />thanks!"
+  - author: "Yuan Meng"
+    date: 2012-04-11
+    html: "This comment has been removed by the author."
+---
+<div class="separator" style="clear: both; text-align: center;"></div><br />
+Here <a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBArtifacts/OSBCachingTests.jar">http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBArtifacts/OSBCachingTests.jar</a>  you have a sample project that you can explore and play with. I also log if the cache was hit or missed.<br />
+<br />
+<br />
+Make sure you enable Caching in OSB: "Operations/Global Settings/Enable Result Caching".<br />
+<br />
+You can configure caching only at Business Service level:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/c5c822bae603ade2.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="400" src="/images/6ec8ae5b44284370.png" width="383" /></a></div><br />
+and make sure you extract the Cache Token (a unique ID for the request) from the payload.<br />
+<br />
+Make sure you read this:<br />
+<br />
+<b>in order to test result caching, do not invoke the business service directly from the test console</b><br />
+<br />
+You should then create a PS with a routing node pointing to the BS, and using inbound operation for outbound.<br />
+<br />
+The configuration is:<br />
+<br />
+GeoOsbServicePS is the actual service<br />
+GeoOsbServiceBS is the BS with caching enabled, and pointing to GeoOsbServicePS<br />
+GeoOsbServiceWithCachePS is simply a facade to expose the GeoOsbServiceBS<br />
+<br />
+Test with cache:<br />
+<div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: x-small;"><br />
+</span></div><div class="separator" style="clear: both; text-align: center;"><a href="/images/43bb2ebdcdf3153d.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="209" src="/images/498f5dc076df557d.png" width="640" /></a></div><br />
+<br />
+Test without cache:<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/dd125e72d4a50369.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="64" src="/images/0168bde0a274a739.png" width="320" /></a></div><br />
+<br />
+<br />
+<br />
+Using SoapUI I am injecting a 5 Threads load, first on the GeoOsbServicePS Proxy Service (no cache) and then on the GeoOsbServiceWithCachePS. These are the average response times measured:<br />
+<br />
+GeoOsbServicePS : 47 ms<br />
+GeoOsbServiceWithCachePS : 13 ms<br />
+<br />
+I was requesting over and over the same data.... for a more realistic test we should try requesting a variety of data.... the improvement of course will heavily depend on the hit/miss ratio.... if the overhead introduced by the extra PS and the caching layer is not justified by the percentage of hits, then performance will be deteriorated...<br />
+<br />
+<br />
+It is particurarly fascinating to observe the outbound message to the BS:<br />
+<br />
+cache token in this case is the unique identifier extracted from the payload, and the TTL in cache is set to 30 minutes<br />
+<br />
+<code><br />
+&lt;tran:cache-token xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;2&lt;/tran:cache-token&gt;<br />
+&lt;tran:cache-ttl xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;PT30M&lt;/tran:cache-ttl&gt;<br />
+</code><br />
+the outbound response contains:<br />
+<br />
+&lt;tran:cache-originated xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;<b>false</b>&lt;/tran:cache-originated&gt;<br />
+<br />
+the first time, and for subsequent invocations it becomes true.<br />
+<br />
+<br />
+Which Cache Token Expression are you allowed to use? Not any user defined expression, but only one dependent on:<br />
+$body, $header, $operation or $metadata.<br />
+<br />
+otherwise you will get a OSB Kernel BEA-398311 error <br />
+Cache Token expression is using invalid variable variableName.<br />
+<br />
+The good thing is that you can use a single BS to cache the result of multiple operations on an external service, since the actual token used in Coherence will be made by your Cache Token + Operation + BS Identifier, so there is no chance that two different operations conflict with each other because they provide the same token.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+When you start your OSB server, you should find this:<br />
+<br />
+<code><br />
+&lt;13-06-2010 16:05:25 CEST&gt; &lt;Info&gt; &lt;Coherence&gt; &lt;BEA-000000&gt; &lt;Oracle Coherence 3.5.3/465p2 (member=n/a): Loaded <b>operational configuration</b> from resource "zip:C:/bea11/coherence_3.5/lib/<b>coherence.jar!</b>/<b>tangosol-coherence.xml</b>"&gt;<br />
+<br />
+&lt;13-06-2010 16:05:25 CEST&gt; &lt;Info&gt; &lt;Coherence&gt; &lt;BEA-000000&gt; &lt;Oracle Coherence 3.5.3/465p2 (member=n/a): Loaded <b>operational overrides</b> from resource "zip:C:/bea11/coherence_3.5/lib/<b>coherence.jar</b>!/<b>tangosol-coherence-override-dev.xml</b>"&gt;<br />
+<br />
+&lt;13-06-2010 16:05:25 CEST&gt; &lt;Info&gt; &lt;Coherence&gt; &lt;BEA-000000&gt; &lt;Oracle Coherence 3.5.3/465p2 (member=n/a): Loaded <b>operational overrides</b> from resource "zip:C:/bea11/user_projects/domains/osbdomain/servers/AdminServer/tmp/_WL_user/ALSB Coherence Cache Provider/sm027g/APP-INF/lib/<b>com.bea.alsb.coherence-impl.jar</b>!/<b>tangosol-coherence-override.xml</b>"&gt;<br />
+<br />
+&lt;13-06-2010 16:05:25 CEST&gt; &lt;Info&gt; &lt;Coherence&gt; &lt;BEA-000000&gt; &lt;Oracle Coherence 3.5.3/465p2 (member=n/a): Loaded operational overrides from resource "file:/C:/bea11/user_projects/domains/osbdomain/<b>config/osb/coherence/osb-coherence-override.xml</b>"&gt;<br />
+<br />
+&lt;13-06-2010 16:05:26 CEST&gt; &lt;Warning&gt; &lt;Coherence&gt; &lt;BEA-000000&gt; &lt;Oracle Coherence 3.5.3/465p2 (member=n/a): Local address "127.0.0.1<br />
+" is a loopback address; this cluster node will not connect to nodes located on different machines&gt;<br />
+<br />
+&lt;13-06-2010 16:05:29 CEST&gt; &lt;Info&gt; &lt;Coherence&gt; &lt;BEA-000000&gt; &lt;Oracle Coherence 3.5.3/465p2 (member=n/a): <b>Created a new cluster "OSB-</b><br />
+<b>cluster"</b> with Member(Id=1, Timestamp=2010-06-13 16:05:26.258, Address=127.0.0.1:<b>7890</b>, MachineId=50080, Location=machine:localhost,<br />
+process:4468, Role=<b>OSB-node</b>, Edition=Grid Edition, Mode=Development, CpuCount=2, SocketCount=2) UID=0x7F0000010000012931A11172C3A0<br />
+1ED2&gt;<br />
+&lt;13-06-2010 16:05:30 CEST&gt; &lt;Info&gt; &lt;OSB Coherence WebLogic&gt; &lt;BEA-2032482&gt; &lt;The OSB Coherence <b>Cache Provider</b> <b>has been initialized</b> wi<br />
+th com.bea.alsb.coherence.impl.CoherenceProvider: SafeCluster: Name=OSB-cluster<br />
+<br />
+WellKnownAddressList(Size=1,<br />
+WKA{Address=127.0.0.1, Port=7890}<br />
+)<br />
+<br />
+<b>MasterMemberSet</b><br />
+(<br />
+<b>ThisMember</b>=Member(Id=1, Timestamp=2010-06-13 16:05:26.258, Address=127.0.0.1:7890, MachineId=50080, Location=machine:localhost,p<br />
+rocess:4468, Role=OSB-node)<br />
+OldestMember=Member(Id=1, Timestamp=2010-06-13 16:05:26.258, Address=127.0.0.1:7890, MachineId=50080, Location=machine:localhost<br />
+,process:4468, Role=OSB-node)<br />
+ActualMemberSet=MemberSet(Size=1, BitSetCount=2<br />
+Member(Id=1, Timestamp=2010-06-13 16:05:26.258, Address=127.0.0.1:7890, MachineId=50080, Location=machine:localhost,process:44<br />
+68, Role=OSB-node)<br />
+)<br />
+RecycleMillis=120000<br />
+RecycleSet=MemberSet(Size=0, BitSetCount=0<br />
+)<br />
+)<br />
+<br />
+Services<br />
+(<br />
+<b>TcpRing</b>{TcpSocketAccepter{State=STATE_OPEN, ServerSocket=127.0.0.1:7890}, Connections=[]}<br />
+<b>ClusterService</b>{Name=Cluster, State=(SERVICE_STARTED, STATE_JOINED), Id=0, Version=3.5, OldestMemberId=1}<br />
+<b>InvocationService</b>{Name=Management, State=(SERVICE_STARTED), Id=1, Version=3.1, OldestMemberId=1}<br />
+).&gt;<br />
+<br />
+</code>

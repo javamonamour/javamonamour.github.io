@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Aspects to log enter and exit method"
+date: 2020-03-21T00:32:00.000+01:00
+permalink: /2020/03/aspects-to-log-enter-and-exit-method.html
+blogger_id: "3292974071303590227"
+tags: ["aspectj", "springboot"]
+---
+<a href="https://github.com/vernetto/logaspect">https://github.com/vernetto/logaspect</a>  <br />
+<br />
+The idea is:<br />
+<br />
+use @EnableAspectJAutoProxy  in a @Configuration<br />
+<br />
+create an annotation EntryExitLogger to mark the method(s) you want to be logged for entry/exit<br />
+<br />
+have a @Component annotated with @Aspect and inside it you specify the aspects:<br />
+<br />
+@Around("@annotation(EntryExitLogger)")<br />
+public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable{<br />
+}<br />
+<br />
+<br />
+That's all.<br />
+<br />
+Detailed post on the topic <a href="https://medium.com/@wkrzywiec/moving-into-next-level-in-user-log-events-with-spring-aop-3b4435892f16">https://medium.com/@wkrzywiec/moving-into-next-level-in-user-log-events-with-spring-aop-3b4435892f16</a><br />
+<br />
+Doc of AspectJ here <a href="https://docs.spring.io/spring/docs/2.0.x/reference/aop.html">https://docs.spring.io/spring/docs/2.0.x/reference/aop.html</a><br />
+<br />
+Good Aspectj cookbock here <a href="https://blog.espenberntsen.net/2010/03/20/aspectj-cheat-sheet/">https://blog.espenberntsen.net/2010/03/20/aspectj-cheat-sheet/</a>

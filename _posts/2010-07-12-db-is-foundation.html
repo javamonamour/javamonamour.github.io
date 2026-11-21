@@ -1,0 +1,9 @@
+---
+layout: post
+title: "The DB is the foundation"
+date: 2010-07-12T11:13:00.001+02:00
+permalink: /2010/07/db-is-foundation.html
+blogger_id: "4099713646901911754"
+tags: ["db"]
+---
+Call me archaic or protozoic, but I still believe that the design of any application starts from the DB.<br /><br />I like to get the DB structure first, then do:<br /><br /><span style="font-weight: bold;">for all columns:</span><br /><br />select * FROM USER_TAB_COLUMNS;<br /><br /><span style="font-weight: bold;">for all tables:</span><br /><br />select unique(table_name) FROM USER_TAB_COLUMNS;<br /><br />you can stick the result in an Excel and generate from it plenty of useful stuff...

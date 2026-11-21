@@ -1,0 +1,61 @@
+---
+layout: post
+title: "Funny errors while using the OSB console"
+date: 2010-08-13T12:24:00.000+02:00
+permalink: /2010/08/funny-errors-while-using-osb-console.html
+blogger_id: "3694970545509940774"
+tags: ["OSB"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2018-03-19
+    html: "no my friend, I am not using OSB since 4 years now... sorry"
+  - author: "Vuong Nguyen"
+    date: 2018-03-19
+    html: "any update yet"
+---
+Could not deserialize session data. java.io.NotSerializableException: com.bea.console.taglib.html.model.TableModel<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+followed by<br />
+<br />
+<br />
+<pre>
+Could not deserialize session data.
+java.lang.ClassCastException: cannot assign instance of com.bea.console.handles.JMXHandle to field com.bea.console.actionforms.ConsoleValidatorForm.handle of type com.bea.console.handles.Handle in instance of com.bea.console.actionforms.app.update.Form
+ at java.io.ObjectStreamClass$FieldReflector.setObjFieldValues(ObjectStreamClass.java:2032)
+ at java.io.ObjectStreamClass.setObjFieldValues(ObjectStreamClass.java:1212)
+ at java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.java:1953)
+ at java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1871)
+ at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1753)
+ at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1329)
+ at java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.java:1947)
+ at java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1871)
+ at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1753)
+ at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1329)
+ at java.io.ObjectInputStream.readObject(ObjectInputStream.java:351)
+ at weblogic.common.internal.PassivationUtils.toObject(PassivationUtils.java:54)
+ at weblogic.common.internal.PassivationUtils.toObject(PassivationUtils.java:46)
+ at weblogic.common.internal.PassivationUtils.copy(PassivationUtils.java:64)
+ at weblogic.servlet.internal.AttributeWrapper.getObject(AttributeWrapper.java:93)
+ at weblogic.servlet.internal.AttributeWrapper.getObject(AttributeWrapper.java:43)
+ at weblogic.servlet.internal.session.SessionData.getAttribute(SessionData.java:404)
+ at weblogic.servlet.internal.ServletRequestImpl$SessionHelper.updateSessionId(ServletRequestImpl.java:2951)
+ at weblogic.servlet.security.internal.SecurityModule.generateNewSession(SecurityModule.java:304)
+ at weblogic.servlet.security.internal.SecurityModule.login(SecurityModule.java:291)
+ at weblogic.servlet.security.internal.FormSecurityModule.processJSecurityCheck(FormSecurityModule.java:285)
+ at weblogic.servlet.security.internal.FormSecurityModule.checkUserPerm(FormSecurityModule.java:209)
+ at weblogic.servlet.security.internal.FormSecurityModule.checkAccess(FormSecurityModule.java:92)
+ at weblogic.servlet.security.internal.ServletSecurityManager.checkAccess(ServletSecurityManager.java:82)
+ at weblogic.servlet.internal.WebAppServletContext.securedExecute(WebAppServletContext.java:2204)
+ at weblogic.servlet.internal.WebAppServletContext.execute(WebAppServletContext.java:2174)
+ at weblogic.servlet.internal.ServletRequestImpl.run(ServletRequestImpl.java:1446)
+ at weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)
+ at weblogic.work.ExecuteThread.run(ExecuteThread.java:173)
+
+
+</pre><br />
+<br />
+never seen before.... trying to identify the cause....

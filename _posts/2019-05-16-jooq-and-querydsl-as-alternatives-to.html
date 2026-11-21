@@ -1,0 +1,37 @@
+---
+layout: post
+title: "Jooq and QueryDSL as alternatives to JPQL, Panache,  "
+date: 2019-05-16T15:59:00.000+02:00
+permalink: /2019/05/jooq-and-querydsl-as-alternatives-to.html
+blogger_id: "6056660983834408644"
+tags: ["jooq", "JPA", "querydsl"]
+---
+HQL (and JPQL) both suck because they are not statically typed..."lack of type safety and absence of static query checking" "concatenation of strings which is usually very unsafe "<br />
+<br />
+"Criteria Query API ended up very verbose and practically unreadable. "<br />
+<br />
+<br />
+<a href="https://www.jooq.org/">https://www.jooq.org/</a><br />
+<br />
+"jOOQ generates Java code from your database and lets you build type safe SQL queries through its fluent API. "<br />
+<br />
+So this is no ORM framework, it uses your DB as it is, it simply allows you to write safer SQL queries directly in a fluent Java API. No Hocus-Pocus, it's a 1-to-1 mapping between DB and Java.<br />
+<br />
+Here some examples <a href="https://www.jooq.org/doc/3.11/manual-single-page/#jooq-in-7-steps">https://www.jooq.org/doc/3.11/manual-single-page/#jooq-in-7-steps</a><br />
+<br />
+<br />
+<br />
+<a href="http://www.querydsl.com/">http://www.querydsl.com/</a><br />
+<br />
+how to use it https://www.baeldung.com/querydsl-with-jpa-tutorial  and https://www.baeldung.com/intro-to-querydsl<br />
+<br />
+<br />
+<br />
+If you want to use Native SQL or JPQL in Spring: <a href="https://www.baeldung.com/spring-data-jpa-query">https://www.baeldung.com/spring-data-jpa-query</a><br />
+<br />
+<br />
+This is the horribly verbose JPA Criteria API <a href="https://www.baeldung.com/hibernate-criteria-queries">https://www.baeldung.com/hibernate-criteria-queries</a><br />
+" the main and most hard-hitting advantage of Criteria queries over HQL is the nice, clean, Object Oriented API."<br />
+<br />
+<br />
+

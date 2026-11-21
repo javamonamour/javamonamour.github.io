@@ -1,0 +1,26 @@
+---
+layout: post
+title: "Cleaning up old releases in Nexus 2 and 3"
+date: 2018-12-14T12:14:00.002+01:00
+permalink: /2018/12/cleaning-up-old-releases-in-nexus-2-and.html
+blogger_id: "6244043188035740424"
+tags: ["nexus"]
+---
+In Nexus 2 there is the task "remove releases from repository", where you can further refine the scope by specifying a "repository target" (=a filter).... problem is, the only option you have is the number of the most recent versions to retain.... there is no way to specify "delete all versions older than 2 years, but in any case keep the last 10".<br />
+<br />
+I have written this Spring Boot utility <a href="https://github.com/vernetto/nexusclean">https://github.com/vernetto/nexusclean</a>  to generate curl commands to delete artifacts based on multiple selection criteria. But it doesn't handle parent pom, which is a limitation.<br />
+<br />
+Also, be aware that the curl command to delete a component, like<br />
+<br />
+curl -u admin:admin123 -X "DELETE" -w "%{http_code}" http://localhost:8281/nexus/service/local/repositories/central/content/org/codehaus/plexus/plexus-classworlds/1.2-alpha-7<br />
+<br />
+every time rebuilds the index, which is very CPU intensive. There is no way to batch multiple deletes in a single transaction.<br />
+<br />
+<br />
+In Nexus 3<br />
+<br />
+<a href="https://github.com/xninjaxelitex/nexus3-cleanup-release-artifact">https://github.com/xninjaxelitex/nexus3-cleanup-release-artifact</a><br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,50 @@
+---
+layout: post
+title: "Connecting to Derby with Eclipse"
+date: 2011-08-02T16:46:00.000+02:00
+permalink: /2011/08/connecting-to-derby-with-eclipse.html
+blogger_id: "7092820284251235580"
+tags: ["derby"]
+---
+I have posted <a href="/2010/06/osb11-and-derby-database-console-with.html">how to connect with NetBeans</a><br />
+<br />
+<br />
+With Eclipse:<br />
+<br />
+Windows/Open Perspective/Database Development<br />
+Database Connections/New/Derby , name derbyLocal<br />
+<br />
+<br />
+database location = //localhost:1527/osbexamples;create=true;ServerName=localhost;databaseName=osbexamples<br />
+<br />
+username = DEV_SOAINFRA<br />
+password = DEV_SOAINFRA or welcome1<br />
+<br />
+save password<br />
+<br />
+<br />
+test connection<br />
+<br />
+if you get<br />
+<br />
+java.lang.Exception: Connection failed with unspecified error.  at org.eclipse.datatools.connectivity.DriverConnectionBase.internalCreateConnection(DriverConnectionBase.java:110)<br />
+<br />
+<br />
+then you are screwed - what a crappy error message is that, "unspecified error".... this is ridiculous!<br />
+<br />
+<br />
+<br />
+<br />
+you can still use<br />
+<br />
+C:\Oracle\Middleware\wlserver_10.3\common\derby\bin\ij.bat<br />
+<br />
+see <a href="http://db.apache.org/derby/docs/dev/tools/">here for manual</a> <br />
+<br />
+for help type:<br />
+help;<br />
+<br />
+(don' forget the ";" at the end)<br />
+<br />
+<br />
+I give up. I will just switch to Oracle DB. Screw Derby.

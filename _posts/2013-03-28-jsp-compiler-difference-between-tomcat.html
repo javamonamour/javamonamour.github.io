@@ -1,0 +1,54 @@
+---
+layout: post
+title: "JSP compiler, difference between Tomcat and WebLogic"
+date: 2013-03-28T12:27:00.000+01:00
+permalink: /2013/03/jsp-compiler-difference-between-tomcat.html
+blogger_id: "8735317412220656692"
+tags: ["jsp", "tomcat", "weblogic"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2014-08-28
+    html: "doh, you are right... the weblogic one is correct, the problem is that I can&#39;t find any more the tomcat version ..."
+  - author: "Anonymous"
+    date: 2014-08-28
+    html: "I don&#39;t see any difference between the strings.  Could you highlight the change for me please?  Thanks"
+---
+In Tomcat I had some rather nasty EL code to get a BLOB value from a table:
+<br/><br/>
+<pre>
+
+&lt;c:set var="sqlStatement2" value="select DATA_VALUE 
+from ${datatable} where MSG_GUID = '${theMSGGUIDvalue}' "/>
+
+
+&lt;sql:query var="msgguidDataResult" dataSource="${domainds}">
+ ${sqlStatement2}
+&lt;/sql:query>
+
+&lt;c:set var="DATA_VALUE" value="${msgguidDataResult.rowsByIndex[0][0]}" 
+scope="request"/>
+
+
+</pre>
+
+<br/><br/>
+
+In Tomcat this was working, in WebLogic it was giving:
+<br/><br/>
+Syntax error in expression. Encountered "(". Expected one of : "}", ".", "[", ">", "gt", "&lt;", "lt", ">=", "ge", "&lt;=", "le", "==", "eq", "!=", "ne", "&&", "and", "||", "or", "*", "+", "-", "?", "/", "div", "%", "mod", 
+
+
+<br/><br/>
+
+
+It turns out that in WebLogic you must change the syntax to:
+
+<br/><br/>
+&lt;c:set var="DATA_VALUE" value="${msgguidDataResult.rowsByIndex[0][0]}" scope="request"/>
+
+<br/><br/>
+
+
+It's just one of those things...
+
+

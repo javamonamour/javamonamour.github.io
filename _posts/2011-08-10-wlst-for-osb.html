@@ -1,0 +1,42 @@
+---
+layout: post
+title: "WLST for OSB"
+date: 2011-08-10T14:07:00.002+02:00
+permalink: /2011/08/wlst-for-osb.html
+blogger_id: "3903790679706390761"
+tags: ["WLST"]
+---
+I had some trouble running the wlst.sh script associated with OSB:<br />
+<br />
+. $ORACLE_HOME/Oracle_OSB1/common/bin/wlst.sh<br />
+<br />
+I get:<br />
+<br />
+$ORACLE_HOME ... wlserver_10.3/common/bin/wlst.sh: line 23: /bin/java: No such file or directory<br />
+<br />
+in fact JAVA_HOME was not defined. Weird, because if I do "echo $JAVA_HOME" I get a valid value.<br />
+<br />
+Well, wlst.sh invokes a bunch os other shell scripts, and one of them resets JAVA_HOME if JAVA_VENDOR is not defined. No warning given. Grunt!<br />
+<br />
+So, you need to <br />
+export JAVA_VENDOR=Sun<br />
+<br />
+before you run the script.<br />
+<br />
+<br />
+Yet when I use this version of wlst.sh to rnu the import.py, I get an error:<br />
+<i>ImportError: no module named wli</i><br />
+<br />
+<br />
+At this point I would rather use the traditional way:<br />
+<br />
+(make sure you type the leading ".")<br />
+. $ORACLE_HOME/user_projects/domains/mydomain/bin/setDomainEnv.sh<br />
+java weblogic.WLST<br />
+<br />
+<br />
+which works without any issue.<br />
+<br />
+Weird-oh.<br />
+<br />
+

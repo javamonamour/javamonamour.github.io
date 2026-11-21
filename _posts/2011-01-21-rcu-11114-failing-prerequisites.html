@@ -1,0 +1,26 @@
+---
+layout: post
+title: "RCU 11.1.1.4 : failing prerequisites creating ESS schema"
+date: 2011-01-21T11:00:00.001+01:00
+permalink: /2011/01/rcu-11114-failing-prerequisites.html
+blogger_id: "4988403109835562137"
+tags: ["rcu"]
+---
+<i>oracle.sysman.assistants.rcu.backend.validation.PrereqException: RCU-6083:Failed - Check prerequisites requirement for selected component:ESS <br />
+Please refer to RCU log at C:\temp\rcuHome\rcu\log\logdir.2011-01-21_09-53\rcu.log for details.<br />
+at oracle.sysman.assistants.rcu.backend.validation.PrereqEvaluator.executePrereqTask(PrereqEvaluator.java:642)<br />
+at oracle.sysman.assistants.rcu.backend.task.PrereqTask.execute(PrereqTask.java:68)<br />
+at oracle.sysman.assistants.rcu.backend.task.ActualTask.run(TaskRunner.java:306)<br />
+at java.lang.Thread.run(Thread.java:619)<br />
+<br />
+<br />
+<br />
+</i><br />
+<br />
+<br />
+the funny thing is that the log says to refer to itself for details.... but provides no details!<br />
+<br />
+<br />
+I see <a href="http://cn.forums.oracle.com/forums/thread.jspa?messageID=3987458">here</a> other people struggling with this issue.<br />
+<br />
+Luckily I don't need ESS, so I simply removed it and RCU worked....

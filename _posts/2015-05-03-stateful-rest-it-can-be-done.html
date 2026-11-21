@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Stateful REST : it can be done"
+date: 2015-05-03T10:05:00.005+02:00
+permalink: /2015/05/stateful-rest-it-can-be-done.html
+blogger_id: "1947491526573195429"
+tags: ["REST", "weblogic"]
+---
+Even in the SOA Philosophy, mostly based on SOAP over HTTP, a Service can be Stateful:
+you just need to enable <a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/ws/BindingProvider.html#SESSION_MAINTAIN_PROPERTY">javax.xml.ws.BindingProvider.SESSION_MAINTAIN_PROPERTY</a> on the <a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/ws/BindingProvider.html">BindingProvider</a>
+
+
+<br/><br/>
+in order to maintain state, you don't necessarily need to implement a Service as a Stateful EJB!
+
+<br/><br/>
+See <a href="http://docs.oracle.com/cd/E19226-01/820-7627/6nisfjmk8/index.html">http://docs.oracle.com/cd/E19226-01/820-7627/6nisfjmk8/index.html</a>  :
+<br/><br/>
+
+<i>Stateful interactions through hyperlinks. Every interaction with a resource is stateless; that is, request messages are self-contained. Stateful interactions are based on the concept of explicit state transfer. Several techniques exist to exchange state, such as URI rewriting, cookies, and hidden form fields. State can be embedded in response messages to point to valid future states of the interaction. This topic is discussed somewhat in Using Entity Providers to Map HTTP Response and Request Entity Bodies, is discussed somewhat in the section Building URIs in the JAX-RS Overview document, and may be discussed in more detail in a forthcoming advanced version of this tutorial.</i>
+
+
+<br/><br/>
+One can achieve this in JAX-RS 2.0 by using the  <a href="http://docs.oracle.com/javaee/7/api/javax/ws/rs/client/ClientResponseFilter.html">javax.ws.rs.client.ClientResponseFilter</a> for saving the cookie(s) from the HttpRequest and the <a href="http://docs.oracle.com/javaee/7/api/javax/ws/rs/client/ClientRequestFilter.html">javax.ws.rs.client.ClientRequestFilter</a> for adding them again in the (subsequent) requests.
+
+<br/><br/>
+If you use WebLogic on the server side, remember that <a href=" https://docs.oracle.com/middleware/1213/wls/RESTF/use-jersey20-ri.htm">Jersey 2.5.1 is the supported "JAX-RS 2.0 Reference Implementation"</a> 
+
+<br/><br/>
+
+
+

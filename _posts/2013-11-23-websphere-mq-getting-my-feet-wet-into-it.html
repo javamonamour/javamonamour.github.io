@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Websphere MQ: getting my feet wet into it"
+date: 2013-11-23T15:32:00.003+01:00
+permalink: /2013/11/websphere-mq-getting-my-feet-wet-into-it.html
+blogger_id: "2492658487666916817"
+tags: ["MQ"]
+---
+First install Eclipse<br />
+<a href="http://archive.eclipse.org/eclipse/downloads/drops/R-3.4.2-200902111700/download.php?dropFile=eclipse-SDK-3.4.2-win32.zip">http://archive.eclipse.org/eclipse/downloads/drops/R-3.4.2-200902111700/download.php?dropFile=eclipse-SDK-3.4.2-win32.zip</a><br />
+<br />
+Download and install it - do the custom installation without MQ Explorer which requires also Websphere Eclipse installation.<br />
+<br />
+One restarted, you find an icon in the bottom right "Webpshere MQ Running".<br />
+Right click to open the Alert monitor<br />
+<br />
+<a href="http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/index.jsp?topic=/com.ibm.mq.amqtac.doc/wq10860_.htm">http://publib.boulder.ibm.com/infocenter/wmqv6/v6r0/index.jsp?topic=/com.ibm.mq.amqtac.doc/wq10860_.htm</a><br />
+<br />
+<br />
+For OSB, you should download com.ibm.mq.jar for 7.0.1 :<br />
+<br />
+<a href="http://www-01.ibm.com/support/docview.wss?rs=171&amp;uid=swg24019253&amp;loc=en_US&amp;cs=utf-8&amp;lang=en">http://www-01.ibm.com/support/docview.wss?rs=171&amp;uid=swg24019253&amp;loc=en_US&amp;cs=utf-8&amp;lang=en</a><br />
+<br />
+A useful tool is <a href="http://www.angussoft.co.uk/">http://www.angussoft.co.uk/</a> queuezee. I could not make it work though :o(<br />
+<br />
+<br />
+________<br />
+<br />
+HOw to configure OSB for MQ:<br />
+<br />
+<span class="bea-portal-theme-taskcontent"><span class="statusmessageerror"><a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/mqtransport/">http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/mqtransport/</a> </span></span><br />
+<br />
+<span class="bea-portal-theme-taskcontent"><span class="statusmessageerror">new BS, Transport typed,&nbsp; protocol MQ</span></span><br />
+<br />
+<span class="bea-portal-theme-taskcontent"><span class="statusmessageerror">Add URI</span></span><br />
+<span class="bea-portal-theme-taskcontent"><span class="statusmessageerror"> </span></span><br />
+<span class="bea-portal-theme-taskcontent"><span class="statusmessageerror">"The MQ Connection Resource  default/mqConnection specified in URI  mq://local-queue?conn=default/mqConnection does not exist"</span></span><br />
+<br />
+<span class="bea-portal-theme-taskcontent"><span class="statusmessageerror">Why? Because you need to create first a&nbsp;</span></span><span class="bea-portal-theme-taskcontent"><span class="help" title="Use
+ this page to enter the information for a MQ Connection resource."> New  MQ Connection Resource</span></span><br />
+<br />
+<span class="bea-portal-theme-taskcontent"><span class="help" title="Use
+ this page to enter the information for a MQ Connection resource.">this tool can help: </span></span><br />
+<span class="bea-portal-theme-taskcontent"><span class="help" title="Use
+ this page to enter the information for a MQ Connection resource.">http://www.niratul.com/</span></span><br />
+<br />
+<span class="bea-portal-theme-taskcontent"><span class="help" title="Use
+ this page to enter the information for a MQ Connection resource.">before you install, add this to env variable CLASSPATH&nbsp;</span></span><span class="bea-portal-theme-taskcontent"><span class="statusmessageerror">&nbsp;</span></span><br />
+<span class="bea-portal-theme-taskcontent"><span class="statusmessageerror">C:\apps\mq\com.ibm.mq.commonservices.jar;C:\apps\mq\com.ibm.mq.defaultconfig.jar;C:\apps\mq\connector.jar;C:\apps\mq\com.ibm.mq.headers.jar;C:\apps\mq\com.ibm.mq.jar;C:\apps\mq\com.ibm.mq.jmqi.jar;C:\apps\mq\com.ibm.mq.pcf.jar;C:\apps\mq\com.ibm.mq.postcard.jar;C:\apps\mq\com.ibm.mq.tools.ras.jar</span></span><br />
+<span class="bea-portal-theme-taskcontent"><span class="statusmessageerror"> </span></span><br />
+<span class="bea-portal-theme-taskcontent"><span class="statusmessageerror"> (these jars are in C:\Program Files\IBM\WebSphere MQ\java\lib)</span></span><br />
+<span class="bea-portal-theme-taskcontent"><span class="statusmessageerror"><br />
+</span></span><br />
+<span class="bea-portal-theme-taskcontent"><span class="statusmessageerror"><br />
+</span></span><br />
+

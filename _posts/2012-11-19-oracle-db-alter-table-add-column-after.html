@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Oracle DB: alter table add column after"
+date: 2012-11-19T18:37:00.001+01:00
+permalink: /2012/11/oracle-db-alter-table-add-column-after.html
+blogger_id: "3899258953544087606"
+tags: ["sql"]
+---
+Terrible news, in Oracle DB you cannot add a column in a specific position, it will always be added at the end.
+<br />
+<br />
+Why would that matter? Because if you use this statement to copy data from one table to the other:<br />
+<br />
+<i>insert into ONE select * from TWO</i><br />
+<br />
+you rely on ONE and TWO having the same position for each corresponding column.<br />
+<br />
+Here some tips on how to work around (they all entail creating a new table, which sucks):<br />
+<a href="http://www.orafaq.com/faq/how_does_one_add_a_column_to_the_middle_of_a_table">http://www.orafaq.com/faq/how_does_one_add_a_column_to_the_middle_of_a_table</a>
+
+<br />
+<br />
+<br />
+The safest way is to add at the bottom and in order to copy use:<br />
+<br />
+<i>insert into ONE (COL1, COL2) select COL2, COL1 from TWO;&nbsp;</i><br />
+<br />
+and avoid the more generic statement<br />
+<br />
+<i>insert into ONE select * from TWO&nbsp;</i><br />
+<br />
+<br />

@@ -1,0 +1,143 @@
+---
+layout: post
+title: "Nexus Repository Migration"
+date: 2017-09-10T21:06:00.000+02:00
+permalink: /2017/09/nexus-repository-migration.html
+blogger_id: "286083808142674855"
+tags: ["nexus"]
+---
+<h1>MIGRATING FROM 2.12.1 TO 2.14.5</h1>
+
+Migrating from Nexus Repository Manager OSS 2.12.1-01  to the latest 3.0 version:
+<br/><br/>
+
+<a href="http://www.sonatype.org/nexus/2016/05/11/migrating-to-nexus-repository-3-easy-peasy/">http://www.sonatype.org/nexus/2016/05/11/migrating-to-nexus-repository-3-easy-peasy/</a>
+
+
+<br/><br/>
+
+
+<a href="https://www.youtube.com/watch?v=ba4VtpusRxo">https://www.youtube.com/watch?v=ba4VtpusRxo</a>
+
+<br/><br/>
+
+beware: upgrade agent is part of 2.14 only! You should first upgrade to 2.14 then migrate to 3.0, as shown here <a href="https://www.youtube.com/watch?v=q6qkj8UiSRY">https://www.youtube.com/watch?v=q6qkj8UiSRY</a>
+
+<br/><br/> 
+Very detailed instructions here <a href="https://help.sonatype.com/display/NXRM3/Upgrading">https://help.sonatype.com/display/NXRM3/Upgrading</a>
+<br/><br/> 
+Download old releases here <a href="https://support.sonatype.com/hc/en-us/articles/218238798-Nexus-Repository-Manager-OSS-Download-Archives">https://support.sonatype.com/hc/en-us/articles/218238798-Nexus-Repository-Manager-OSS-Download-Archives</a>
+<br/><br/> 
+I have installed Nexus 2.12 here: /home/centos/nexus2/nexus-2.12.0-01/bin
+<br/><br/> 
+<pre>
+cd /home/centos/nexus2/nexus-2.12.0-01/bin
+./nexus start
+</pre>
+<br/><br/> 
+The URL is http://localhost:8081/nexus/  (in 3.X it's simply http://localhost:8081 )
+<br/><br/> 
+
+
+<br/><br/> 
+
+In maven's settings.xml I had this
+
+<pre class="brush: xml">
+  &lt;mirror&gt;
+        &lt;!--This sends everything else to /public --&gt;
+        &lt;id&gt;nexus&lt;/id&gt;
+        &lt;mirrorOf&gt;*&lt;/mirrorOf&gt;
+        &lt;url&gt;http://localhost:8081/repository/maven-public/&lt;/url&gt;
+     &lt;/mirror&gt;
+
+</pre>
+
+<br/><br/> 
+this was valid for 3.5, in 2.12 the URL should be changed to http://localhost:8081/nexus/content/repositories/central/
+<br/><br/> 
+
+I run a sample "mvn package" from "https://github.com/gabrielf/maven-samples" and I can observe that the repository "Maven Central" is filled with stuff: <a href="http://localhost:8081/nexus/service/local/feeds/recentlyCachedReleaseArtifacts">http://localhost:8081/nexus/service/local/feeds/recentlyCachedReleaseArtifacts</a>, then I select the "Central" repo, "Browse Index" and I can see stuff in it (junit, hamcrest, codehaus...)
+<br/><br/> 
+
+
+I want now to upgrade from 2.12.1 to 2.14.5 <a href="https://support.sonatype.com/hc/en-us/articles/213464198">https://support.sonatype.com/hc/en-us/articles/213464198</a>, which is the supported version to late upgrade to 3.5
+<br/><br/> 
+
+
+I extract the 2.14.5 zip file in a temporary location and I copy the nexus-2.14.5-02 folder (NOT the sonatype-work folder!!!) to 
+/home/centos/nexus2, so that the nexus-2.12 and nexus-2.14 share the same sonatype-work folder. 
+<br/><br/> 
+<pre>
+[centos@localhost nexus2]$ pwd
+/home/centos/nexus2
+
+[centos@localhost nexus2]$ ls -ltra
+total 4
+drwxr-xr-x.  8 centos centos  113 Dec 16  2015 nexus-2.12.0-01
+drwxr-xr-x.  3 centos centos   37 Dec 16  2015 sonatype-work
+drwxr-xr-x.  8 centos centos  113 Jul 25 12:39 nexus-2.14.5-02
+drwx------. 33 centos centos 4096 Sep 10 19:28 ..
+drwxrwxr-x.  5 centos centos   73 Sep 10 19:34 .
+
+</pre>
+<br/><br/> 
+apparently the sonatype-work format is binary compatible among the 2.12 and 2.14.5 versions.
+
+<br/><br/> 
+I stop nexus, make a backup copy of the conf folder:
+<br/><br/> 
+<pre>
+cd /home/centos/nexus2
+cp -R nexus-2.12.0-01/conf/ nexus-2.12.0-01/confBACKUP
+</pre>
+
+
+<br/><br/> 
+apparently no further manual steps are required <a href="https://support.sonatype.com/hc/en-us/articles/213464338-Sonatype-Nexus-Upgrade-and-Compatibility-Notes">https://support.sonatype.com/hc/en-us/articles/213464338-Sonatype-Nexus-Upgrade-and-Compatibility-Notes</a>
+<br/><br/> 
+
+and now I start the new version of Nexus 
+<br/><br/> 
+<pre>
+cd nexus-2.14.5-02/bin
+./nexus start
+</pre>
+
+At a quick look, the content of the repository and an extra user I had created are preserved in the migration...
+<br/><br/> 
+
+<h1>MIGRATING TO 3.5</h1>
+
+Now I start nexus 3.5 side by side, on the same host, making sure I use a different number:
+<br/><br/> 
+
+<pre>
+cd /home/centos/nexus3
+grep -R 8081 *
+nexus-3.5.1-02/etc/nexus-default.properties:application-port=8081
+</pre>
+<br/><br/> 
+
+and I change that port to 18081
+<br/><br/> 
+<pre>
+cd /home/centos/nexus3/nexus-3.5.1-02/bin
+./nexus start
+</pre>
+<br/><br/> 
+<a href="localhost:18081">localhost:18081</a>
+<br/><br/> 
+things are working. I delete all pre-existing repositories
+<br/><br/> 
+
+I follow all the steps as in <a href="https://help.sonatype.com/display/NXRM3/Upgrading">https://help.sonatype.com/display/NXRM3/Upgrading</a> and things work perfectly - using the "download" method (slowest)
+
+
+<br/><br/> 
+
+I have tested the 3 methods and they all work, of course the file copy (hard link or not) is much faster than HTTP. If you wonder what a hard link is, read here <a href="https://askubuntu.com/questions/108771/what-is-the-difference-between-a-hard-link-and-a-symbolic-link">https://askubuntu.com/questions/108771/what-is-the-difference-between-a-hard-link-and-a-symbolic-link</a>
+
+<br/><br/> 
+
+

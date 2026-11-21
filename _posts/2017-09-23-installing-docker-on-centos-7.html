@@ -1,0 +1,84 @@
+---
+layout: post
+title: "Installing Docker on CentOS 7"
+date: 2017-09-23T19:24:00.001+02:00
+permalink: /2017/09/installing-docker-on-centos-7.html
+blogger_id: "7696502672355344787"
+tags: ["centos", "docker"]
+---
+from the excellent guide <a href="https://docs.docker.com/engine/installation/linux/docker-ce/centos/">https://docs.docker.com/engine/installation/linux/docker-ce/centos/</a><br />
+<br />
+<pre>sudo yum remove docker docker-common docker-selinux docker-engine
+sudo yum install -y yum-utils   device-mapper-persistent-data   lvm2
+sudo yum-config-manager --add-repo  https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum-config-manager --enable docker-ce-edge
+sudo yum-config-manager --enable docker-ce-test
+sudo yum install docker-ce
+yum list docker-ce.x86_64  --showduplicates | sort -r
+sudo systemctl start docker
+sudo docker run hello-world
+sudo docker run -it ubuntu bash
+sudo yum makecache fast
+sudo groupadd docker
+echo $USER
+sudo usermod -aG docker $USER
+#(perform logout/login here)
+groups
+#"centos docker"
+sudo systemctl enable docker
+#"Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/lib/systemd/system/docker.service."
+sudo chkconfig docker on
+env | grep DOCKER_HOST
+#DOCKER_HOST should not be defined if you want to connect to local daemon
+#to restart daemon:
+sudo service docker restart
+</pre><br />
+<br/><br/><br />
+useful commands (from the presentation below):<br />
+<br/><br/><br />
+<a href="https://www.youtube.com/watch?v=VeiUjkiqo9E&feature=youtu.be">https://www.youtube.com/watch?v=VeiUjkiqo9E&feature=youtu.be</a><br />
+<pre>docker ps -a
+docker version
+docker info
+docker images
+
+docker run ubuntu echo "hello world"
+
+docker run -i -t ubuntu
+exit
+
+docker diff 82af4da88bd7
+docker rm 042cbb043587
+
+docker run -d ubuntu /bin/sh -c "while true; do echo hello world; date; sleep 2; done"
+docker logs 7939ad46d57c
+docker attach 7939ad46d57c
+docker stop 7939ad46d57c
+
+docker inspect 7939ad46d57c
+
+docker commit -m "installed apache" 7939ad46d57c mynamespace/myimage
+docker images
+
+#login into https://hub.docker.com
+docker login
+docker push mynamespace/myimage
+
+docker rmi 77bde6a39eda
+
+#execute the Dockerfile in myfolder and build a new image
+docker build -t mynamespace/myimage github.com/myrepo/myfolder
+
+#run assigning a non default port
+docker run -d -p :8000 mynamespace/myimage
+
+
+
+</pre><br />
+<br/><br/><br />
+<br />
+here the link to shipyard <a href="https://github.com/shipyard/shipyard">https://github.com/shipyard/shipyard</a><br />
+<br/><br/><br />
+<br />
+<br />
+

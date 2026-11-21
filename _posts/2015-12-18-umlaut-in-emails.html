@@ -1,0 +1,31 @@
+---
+layout: post
+title: "Umlaut in emails"
+date: 2015-12-18T14:12:00.004+01:00
+permalink: /2015/12/umlaut-in-emails.html
+blogger_id: "8139947703955249126"
+tags: ["encoding", "javamail"]
+---
+If in an email you see f�r instead of für, chances are that your weblogic/JavaMail is not using the right encoding (presumably UTF-8)
+<br/><br/>
+
+You can try several options:
+<br/><br/>
+-Dfile.encoding=UTF-8  
+<br/>
+change the template to use escaped (HTML) charachers
+<br/>
+see <a href="https://issues.apache.org/jira/browse/GERONIMO-5022">https://issues.apache.org/jira/browse/GERONIMO-5022</a> : <br/>
+message.setSubject(subject,"UTF-8");<br/>
+message.setText(text, "UTF-8");<br/>
+properties.setProperty("mail.mime.charset","UTF8");<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+
+

@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Puppet \"exec\" always requires a path"
+date: 2013-10-04T16:44:00.000+02:00
+permalink: /2013/10/puppet-exec-always-requires-path.html
+blogger_id: "5830432685876740872"
+tags: ["puppet"]
+---
+I needed to run a simple "mv" command in Puppet, with an "exec" type (I know, exec should be used only in desperate cases):
+<br/><br/>
+
+<pre>
+
+  exec { "mv OracleDomainScript-${version}":
+    command => "mv OracleDomainScript-${version}/* .",
+    cwd     => "$destination_folder",
+  }
+
+</pre>
+
+
+<br/><br/>
+and I got a weird error message:
+<br/>
+
+'mv OracleDomainScript-2.5/* .' is not qualified and no path was specified. Please qualify the command or specify a path
+<br/><br/>
+
+The workaround is to specify explicitly a path:
+
+<pre>
+
+  exec { "mv OracleDomainScript-${version}":
+    command => "mv OracleDomainScript-${version}/* .",
+    path => "/bin",
+    cwd     => "$destination_folder",
+  }
+
+</pre>
+
+the "default" path of the current user is not used by Puppet:
+
+<pre>
+echo $PATH
+/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
+</pre>
+
+and the "mv" command is in /bin
+<br/><br/>
+
+I bet EVERY Puppet beginner has made this mistake.
+
+
+
+<br/><br/>
+

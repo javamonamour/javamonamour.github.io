@@ -1,0 +1,13 @@
+---
+layout: post
+title: "find files with windows style linefeed"
+date: 2014-03-11T11:03:00.003+01:00
+permalink: /2014/03/find-files-with-windows-style-linefeed.html
+blogger_id: "5622372620481832105"
+tags: ["bash"]
+---
+find . -name "*.sh" -exec grep -l "\r\n" {} \;<br />
+<br />
+to fix them:<br />
+<br />
+find . -name "*.sh" -exec grep -l "\r\n" {} \; | xargs dos2unix

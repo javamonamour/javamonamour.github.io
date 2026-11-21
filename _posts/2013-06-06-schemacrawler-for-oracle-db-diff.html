@@ -1,0 +1,34 @@
+---
+layout: post
+title: "SchemaCrawler for Oracle DB diff"
+date: 2013-06-06T15:57:00.000+02:00
+permalink: /2013/06/schemacrawler-for-oracle-db-diff.html
+blogger_id: "803829537838842671"
+tags: ["oracledb"]
+---
+I want to be able to trace all the modifications to my CMDB, and email the diff report on a regular basis. Lots of tools there but none seems to be a) free b) simple to use. SchemaCrawler doesn't do the diff, but you can export the whole schema and data into a txt file, and do a diff.
+<br />
+<br />
+Download from http://schemacrawler.sourceforge.net/ and unzip.
+<br />
+<br />
+Copy C:\Oracle\Middleware\wlserver_10.3\server\ext\jdbc\oracle\11g\ojdbc6_g.jar into the $SC_HOME/lib folder.
+
+<br />
+<br />
+This will NOT display data, only structure:<br />
+sc -host=dbhost.acme.com -port=1522 -database=mydb.acme.com -user=CMDBTRUNK -infolevel=maximum -password=blablabla -c=details &gt; cmdbtrunk.txt
+
+<br />
+<br />
+This will display data (dump):<br />
+sc -host=dbhost.acme.com -port=1522 -database=mydb.acme.com -user=CMDBTRUNK -infolevel=maximum -password=blablabla -c=details,dump &gt; cmdbtrunk.txt
+
+<br />
+<br />
+This one will dump tables ACME but NOT tables ACME_BLA:<br />
+<br />
+<span style="color: #222222;">./sc.sh -host=</span><a href="http://mydb.acme.com/" target="_blank">mydb.acme.com</a><span style="color: #222222;">&nbsp;-port=1522 -database=</span><a href="http://mydb.com/" target="_blank">mydb.com</a><span style="color: #222222;">&nbsp;-user=<wbr></wbr>CMDBTRUNK -infolevel=standard -password=blablabla -schemas=.*CMDBTRUNK.*&nbsp; -tabletypes=TABLE&nbsp;</span><b style="color: #222222;">-tables=(?!.<wbr></wbr>*\.ACME_BLA.*)(.*\.ACME.*)</b><span style="color: #222222;">&nbsp;-c=<wbr></wbr>details,dump &gt; CMDBTRUNK.txt</span><br />
+<br />
+<br />
+<br />

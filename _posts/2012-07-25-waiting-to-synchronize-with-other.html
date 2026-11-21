@@ -1,0 +1,12 @@
+---
+layout: post
+title: "Waiting to synchronize with other running members of mycluster"
+date: 2012-07-25T17:12:00.001+02:00
+permalink: /2012/07/waiting-to-synchronize-with-other.html
+blogger_id: "7797632908537775141"
+tags: ["cluster"]
+---
+If using unicast cluster and WebLogic Servers take a long time to startup, you can check for the message "Waiting to synchronize with other running members of " and see if it corresponds to a silence of 30 seconds.<br />
+If this is the case, you can change at cluster level the <b>"Member Warmup Timeout"</b>:<br />
+<br />
+"Maximum number of seconds that a cluster member will wait to discover and synchronize with other servers in the cluster. Normally, the member will be able to sync in 30 seconds. If the value of this attribute is higher, that does not necessarily mean that it will take longer for the member to warmup. Instead it defines an upper bound on the time that a server will wait to sync with the servers that it has discovered. If the value is set 0, servers will not attempt to discover other running server in the cluster during server initialization"

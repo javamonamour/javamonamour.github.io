@@ -1,0 +1,37 @@
+---
+layout: post
+title: "docker monitoring CPU and memory usage"
+date: 2018-01-31T12:33:00.002+01:00
+permalink: /2018/01/docker-monitoring-cpu-and-memory-usage.html
+blogger_id: "8210072231222341221"
+tags: ["docker"]
+---
+you can run "top" on the host machine, or even better use "docker stats":<br />
+<br />
+docker stats <a href="https://docs.docker.com/engine/reference/commandline/stats/#usage">https://docs.docker.com/engine/reference/commandline/stats/#usage</a><br />
+<br />
+<pre>CONTAINER           CPU %               MEM USAGE / LIMIT       MEM %               NET I/O               BLOCK I/O             PIDS
+481ab8c0e8c3        0.00%               1.152 MiB / 15.51 GiB   0.01%               57.44 kB / 34.53 kB   10.06 MB / 4.096 kB   3
+335eac0388c6        0.10%               575.2 MiB / 15.51 GiB   3.62%               37.72 kB / 1.296 kB   98.64 MB / 172 kB     45
+57adda2fc2ca        0.08%               851.3 MiB / 15.51 GiB   5.36%               6.311 MB / 1.029 MB   152.3 MB / 258 kB     91
+58d783dd5b7e        0.09%               849.8 MiB / 15.51 GiB   5.35%               9.961 MB / 2.459 MB   157.1 MB / 266.2 kB   88
+f935787e6800        0.10%               2.03 GiB / 15.51 GiB    13.09%              227.9 MB / 36.82 MB   357.7 MB / 311.3 kB   114
+a6996fee63aa        184.91%             653.8 MiB / 15.51 GiB   4.12%               876 B / 1.296 kB      100.8 MB / 0 B        92
+</pre><br />
+"docker top" seems to be a misnomer, it's more similar to "ps"<br />
+<br />
+docker top 481ab8c0e8c3<br />
+<pre>UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                21277               21262               0                   Jan30               ?                   00:00:00            /bin/bash /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 -bmanagement 0.0.0.0
+root                21309               21277               0                   Jan30               ?                   00:00:00            /bin/bash /usr/local/bin/ssh-start
+root                21312               21309               0                   Jan30               ?                   00:00:00            /usr/sbin/sshd -D
+</pre><br />
+<br />
+<br />
+It's good to set LIMITS on the MEMORY and CPU a container can use:<br />
+<br />
+<a href="https://docs.docker.com/engine/admin/resource_constraints/#limit-a-containers-access-to-memory">https://docs.docker.com/engine/admin/resource_constraints/#limit-a-containers-access-to-memory</a><br />
+<br />
+docker run -it --cpus=".5" ubuntu /bin/bash<br />
+<br />
+

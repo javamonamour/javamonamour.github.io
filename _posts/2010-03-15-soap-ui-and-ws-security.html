@@ -1,0 +1,39 @@
+---
+layout: post
+title: "SOAP UI and WS-Security"
+date: 2010-03-15T14:27:00.001+01:00
+permalink: /2010/03/soap-ui-and-ws-security.html
+blogger_id: "8181257610582856084"
+tags: ["soapui", "ws-security"]
+blogger_comments:
+  - author: "legmar"
+    date: 2015-10-22
+    html: "No worries, I actually figured it out!  I am using SoapUI 5.2.1 (free version) and had to go to the Project WS-Security Configurations &gt; Outgoing WS-Security Configurations tab.  For my specific outgoing configuration, I had a WSS Entry for &quot;Signature&quot;.  For the Signature options, there is a checkbox to &quot;Use single certificate for signing&quot;.  I had to check that box, and it resolved my issue.  Cheers!"
+  - author: "vernetto"
+    date: 2015-10-22
+    html: "no, sorry mate, it was loong time ago...."
+  - author: "legmar"
+    date: 2015-10-22
+    html: "So, I got to the last step with the &quot;127, too big&quot; message.  I agree that I have survived this far.  But, any idea how to resolve the too big error? I&#39;d like to continue surviving. :)"
+---
+<a href="http://www.soapui.org/userguide/projects/wss.html">http://www.soapui.org/userguide/projects/wss.html</a><br />
+<br />
+in SOAPUI, right click on project, and "show project view"<br />
+<br />
+"security configurations" tab<br />
+<br />
+"keystores/certificates"<br />
+<br />
+add your keystore and specify keystore password, default alias and alias password (should match store password)<br />
+<br />
+then go to "Outgoing WS-Security Configurations" and create a profile (e.g. "signed") putting the default alias and password.<br />
+Then in the same tab add "WSS entry" for signature (I know, the UI really sucks), select keystore, alias etc<br />
+<br />
+Now CLOSE AND REOPEN SOAPUI (little bug here), then open the Request and look for a tiny "Aut" tab on the bottom (as I said, the UI really sucks). In "outgoing WSS" choose the configuration you have created.<br />
+<br />
+<br />
+If you get this:<br />
+<br />
+Unable to decode certificate: java.security.cert.CertificateException: Unable to initialize, java.io.IOException: DerInputStream.getLength(): lengthTag=127, too big<br />
+<br />
+then it means you have survived so far to this terrible horrible mess which is WS-Security.

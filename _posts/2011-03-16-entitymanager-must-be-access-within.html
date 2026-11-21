@@ -1,0 +1,27 @@
+---
+layout: post
+title: "EntityManager must be access within a transaction"
+date: 2011-03-16T15:42:00.000+01:00
+permalink: /2011/03/entitymanager-must-be-access-within.html
+blogger_id: "3158852304387293069"
+tags: ["EntityManager"]
+---
+The error means of course<br />
+"EntityManager must be access<b>ED</b> within a transaction"<br />
+<br />
+annotating your EJB method with:<br />
+@TransactionAttribute(TransactionAttributeType.REQUIRED)<br />
+<br />
+(which is the default), ensures that<br />
+"If the client is not associated with a transaction, the container starts a new transaction before running the method."<br />
+<br />
+(see <a href="http://download.oracle.com/javaee/5/tutorial/doc/bncij.html">here</a>)<br />
+( see also discussion <a href="http://stackoverflow.com/questions/1084627/entitymanager-throws-transactionrequiredexception-on-merge-in-jboss-jsf-bean">here</a>) <br />
+<br />
+Using the<br />
+em.joinTransaction();<br />
+<br />
+<br />
+you can annotate your method with<br />
+@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)<br />
+to make sure you join a brand new transaction

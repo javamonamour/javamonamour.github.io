@@ -1,0 +1,27 @@
+---
+layout: post
+title: "Using Subject Alternative Names in certificates"
+date: 2015-07-30T10:58:00.001+02:00
+permalink: /2015/07/using-subject-alternative-names-in.html
+blogger_id: "2198855932384944444"
+tags: ["certificate"]
+---
+if your site can be served via more than 1 hostname, you might have to set a "Subject Alternative Name" (SAN) with a comma separated list of all your valid hostnames.
+<br/><br/>
+The MAD thing is that is you use a SAN, your MAIN Common Name (certificate SUbject) will be ignored. So in your SAN list you should specify also the hostname that used to go in the Main subject.
+
+<br/><br/>
+Unless you do that, you will get a "Server's certificate does not match URL" in Chrome, or a "Mismatched Address" in IE. IE really stinks because its error message gives absolutely no extra info, while Chrome gives some extra context information. Shame on Microsoft.
+
+<br/><br/>
+
+Chrome full message says "This server could not prove that it is bla.acme.net; its security certificate is from pippo.acme.net . This may be caused by a misconfiguration or an attacker intercepting your connection"
+
+<br/><br/>
+
+The RFC which could bring some order in this chaos is here <a href="https://tools.ietf.org/html/rfc6125">https://tools.ietf.org/html/rfc6125</a> and search for subjectAlternativeName .
+
+
+<br/><br/>
+
+

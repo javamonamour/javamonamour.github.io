@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Fun run of JClarity Censum - Garbage Collection analysis tool"
+date: 2014-10-02T16:53:00.001+02:00
+permalink: /2014/10/fun-run-of-jclarity-censum-garbage.html
+blogger_id: "2686168170489924862"
+tags: ["jclarity", "tools"]
+---
+I have downloaded the 14 days trial of JClarity Censum.  It's EXTREMELY simple to use and gives you a quick feedback on your GC issues.
+
+<br/><br/>
+First, you HAVE to enable a few flags: -XX:+PrintTenuringDistribution and -XX:+PrintGCDetails (safe in PROD). Then you run your tests for some 24 hours and feed your GC log into Censum.
+<br/><br/>
+
+It gives you statistical info like:
+<br/><br/>
+Longest GC pause (I had 5 seconds, quite bad)
+<br/><br/>
+Percentage of time spent in GC pauses (mine is 9%, pretty bad, should be max 5%)
+<br/><br/>
+Average memory allocation rate (I had 90 MB / second, quite bad)
+<br/><br/>
+Max memory allocation rate (I had 900 MB / second, horrible)
+<br/><br/>
+Total Full GC pause time, and Total Pause time
+<br/><br/>
+Full GC to GC ratio (mine was 45%, pretty stiff)
+<br/><br/>
+Application throughput (percentage of time spent working, versus time spent in GC.... should be 95% or more)
+<br/><br/>
+
+The graphs are breathtaking...
+<br/><br/>
+
+All in all, they charge you a quite hefty (ANNUAL!) fee for this software... to perform analysis that doesn't seem all that complicated - I am sure I can figure out most of this stuff in Excel in a matter of hours!
+<br/><br/>
+However, if your time is precious, it seems a quite valuable tool...
+
+
+
+
+
+

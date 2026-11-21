@@ -1,0 +1,94 @@
+---
+layout: post
+title: "docker create vs docker run"
+date: 2017-12-19T17:02:00.001+01:00
+permalink: /2017/12/docker-create-vs-docker-run.html
+blogger_id: "3370516524357966562"
+tags: ["docker"]
+---
+This exercise takes a base image jboss/wildfly, spins a container, add a ping.war in the deployments folder and commits a new image named wildflywithping. You can easily reproduce yourself, all you need is docker and a pair of hands (one is enough... also no hands but a pen in your mouth can be enough) <br />
+<br />
+<br />
+#this pulls a new image from docker hub to local registry<br />
+docker pull jboss/wildfly<br />
+docker images<br />
+<i><br />
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE<br />
+jboss/wildfly               latest              ec52433b28ee        2 weeks ago         622MB<br />
+</i><br />
+<br />
+#this creates a container from imageid<br />
+docker create ec52433b28ee<br />
+docker ps -a<br />
+<i><br />
+CONTAINER ID        IMAGE                     COMMAND                  CREATED             STATUS                     PORTS                    NAMES<br />
+177bdb401283        ec52433b28ee              "/opt/jboss/wildfly/…"   4 minutes ago       Created                                             dreamy_lamarr<br />
+</i><br />
+<br />
+but the container is not running:<br />
+<br />
+docker exec -ti 177bdb401283 /bin/bash<br />
+<i><br />
+Error response from daemon: Container 177bdb4012832d42a386ad24c92588d4d245b27249fb95e146d98f5266a74706 is not running<br />
+</i><br />
+<br />
+docker start 177bdb401283<br />
+docker exec -ti 177bdb401283 /bin/bash<br />
+<i><br />
+[jboss@177bdb401283 ~]$ <br />
+</i><br />
+<br />
+in another terminal, run this<br />
+<br />
+docker ps<br />
+<i><br />
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES<br />
+177bdb401283        ec52433b28ee        "/opt/jboss/wildfly/…"   8 minutes ago       Up About a minute   8080/tcp            dreamy_lamarr<br />
+<br />
+</i><br />
+<br />
+<br />
+#rename container<br />
+docker rename 177bdb401283 con_pvwildfly<br />
+docker ps<br />
+<i><br />
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES<br />
+177bdb401283        ec52433b28ee        "/opt/jboss/wildfly/…"   22 minutes ago      Up 15 minutes       8080/tcp            con_pvwildfly<br />
+</i><br />
+<br />
+#now you can use container name instead of containerid<br />
+docker exec -ti con_pvwildfly /bin/bash<br />
+<br />
+<br />
+One could have reached the same result in a single command:<br />
+<br />
+<b>docker run --name con_pvwildfly -ti jboss/wildfly /bin/bash</b><br />
+<br />
+<br />
+Now, in the container, go to the wildfly deployment folder, we shall copy here a ping.war from outside:<br />
+<br />
+cd /opt/jboss/wildfly/standalone/deployments<br />
+ls -ltra<br />
+<br />
+Open a new terminal on the host (not in the container!):<br />
+<br />
+curl -O https://github.com/AdamBien/ping/releases/download/ping-0.0.1/ping.war<br />
+(see https://github.com/AdamBien/ping)<br />
+docker cp ping.war con_pvwildfly:/opt/jboss/wildfly/standalone/deployments<br />
+<br />
+and check in the container that the file was copied: ls -ltra <br />
+<br />
+docker stop con_pvwildfly<br />
+<br />
+docker commit con_pvwildfly wildflywithping<br />
+<i>sha256:99d6ae628596f0fa658f4927bfab1823d654d81bf4afd6b004edfede39ce34cd</i><br />
+<br />
+docker images<br />
+<i><br />
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE<br />
+wildflywithping             latest              99d6ae628596        33 seconds ago      622MB<br />
+</i><br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,121 @@
+---
+layout: post
+title: "SAFfic love...aka Getting started with SAF"
+date: 2011-09-11T14:35:00.005+02:00
+permalink: /2011/09/saffic-loveaka-getting-started-with-saf.html
+blogger_id: "4463675744457580348"
+tags: ["saf"]
+---
+Good "getting started guide" by our Indian-Dutch friends of MiddlewareMagic: <br />
+<br />
+<a href="http://weblogic-wonders.com/weblogic/2010/06/14/configuring-saf-store-and-forward-between-two-weblogic-server-domains/">http://weblogic-wonders.com/weblogic/2010/06/14/configuring-saf-store-and-forward-between-two-weblogic-server-domains/</a><br />
+<br />
+In a nutshell, to get started you need:<br />
+a <b>Persistent Store, a SAF Agent, a JMS Module, a SAF Imported Destinations with a SAF Queue, a SAF Remote Context, and a JMS Queue</b> on the target server.<br />
+<br />
+** create <b>managed servers</b> ms1 and ms2. ms2 will contain the SAF Agent, ms1 the destination queue.<br />
+<br />
+** on ms2 create a <b>persistent store</b> "filestore2"<br />
+<br />
+** create a <b>SAF Agent</b> "TESTSAFAgent", Sending only, targeted to the Persistent Store "filestore2" on ms2 <br />
+(the SAF Agent doesn't use a JMS Server, only a Persistent Store)<br />
+<br />
+<br />
+This will appear in the JNDI tree, under weblogic.jms:<br />
+<br />
+Binding Name: <br />
+<i>weblogic.jms.ServerSessionPoolFactory:TESTSAFAgent@ms2</i><br />
+Class: <br />
+<i>weblogic.jms.backend.BEServerSessionPoolFactory</i><br />
+<br />
+and under weblogic.jms.backend<br />
+<br />
+Binding Name: <br />
+<i>weblogic.jms.backend.TESTSAFAgent@ms2</i><br />
+Class:<br />
+<i>weblogic.jms.common.JMSServerId</i><br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="http://webpage.pace.edu/nreagin/tempmotherhood/spring2002a/sappho12.jpg" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" height="320" src="http://webpage.pace.edu/nreagin/tempmotherhood/spring2002a/sappho12.jpg" width="143" /></a></div><br />
+<br />
+** Create a <b>JMSModule</b> "SAFTestModule", target to ms2<br />
+<br />
+this will populate JNDI with an entry "weblogic.SAFTestModule "<br />
+<br />
+** Create a "<b>SAFImportedDestinations0</b>", assign to it a newly created "SAFImportedDestinationsSD" SubDeployment also targeted to ms2 <br />
+<br />
+This doesn't bring anything in the JNDI tree<br />
+<br />
+** Create a "<b>RemoteSAFContext</b>-0"  and associate it to "SAFImportedDestinations0"<br />
+<br />
+<br />
+** under "SAFImportedDestinations0", create a SAF queue "SAFTestQueue"<br />
+providing a SAFTESTREMOTE_ON_MS1 remote JNDI name, and SAFTESTLOCAL_ON_MS2 local JNDI names<br />
+<br />
+this creates in JNDI a<br />
+Binding Name: SAFImportedDestinations0SAFTESTLOCAL_ON_MS2<br />
+Class:  weblogic.jms.common.DistributedDestinationImpl<br />
+<br />
+and a<br />
+Binding Name: SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@SAF<br />
+Class: weblogic.jms.common.DestinationImpl<br />
+<br />
+The engine is ready to start. If you activate now, you will see in the logs:<br />
+<br />
+####&lt;09-Sep-2011 13:57:04 o'clock BST&gt; &lt;Info&gt; &lt;JMS&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315573024219&gt; &lt;BEA-040507&gt; &lt;The JMS SAF forwarder failed to connect to the remote destination "null/SAFTESTREMOTE_ON_MS1", because of javax.naming.NameNotFoundException: Unable to resolve 'SAFTESTREMOTE_ON_MS1'. Resolved ''; remaining name 'SAFTESTREMOTE_ON_MS1'<br />
+at weblogic.jndi.internal.BasicNamingNode.newNameNotFoundException(BasicNamingNode.java:1139)<br />
+at weblogic.jndi.internal.BasicNamingNode.lookupHere(BasicNamingNode.java:252)<br />
+at weblogic.jndi.internal.ServerNamingNode.lookupHere(ServerNamingNode.java:182)<br />
+at weblogic.jndi.internal.BasicNamingNode.lookup(BasicNamingNode.java:206)<br />
+at weblogic.jndi.internal.WLEventContextImpl.lookup(WLEventContextImpl.java:254)<br />
+at weblogic.jndi.internal.WLContextImpl.lookup(WLContextImpl.java:411)<br />
+at weblogic.jms.forwarder.Forwarder$Subforwarder.lookupTargetDestination(Forwarder.java:611)<br />
+at weblogic.jms.forwarder.Forwarder$Subforwarder.connectLocalJMS(Forwarder.java:572)<br />
+at weblogic.jms.forwarder.Forwarder$Subforwarder.access$100(Forwarder.java:533)<br />
+at weblogic.jms.forwarder.Forwarder.reconnect(Forwarder.java:275)<br />
+at weblogic.jms.forwarder.Forwarder.timerExpired(Forwarder.java:311)<br />
+at weblogic.timers.internal.TimerImpl.run(TimerImpl.java:273)<br />
+at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)<br />
+at weblogic.work.ExecuteThread.execute(ExecuteThread.java:207)<br />
+at weblogic.work.ExecuteThread.run(ExecuteThread.java:176)<br />
+.&gt; <br />
+<br />
+weblogic.jms.common.JMSException: Error producing message for destination MS1SystemModule!SAFTESTREMOTE_ON_MS1<br />
+<br />
+weblogic.jms.common.JMSException: Error producing message for destination MS1SystemModule!SAFTESTREMOTE_ON_MS1<br />
+weblogic.messaging.dispatcher.DispatcherException: could not find Server ms1<br />
+<br />
+Caused by: javax.naming.NameNotFoundException: Unable to resolve 'weblogic.messaging.dispatcher.S:ms1'. Resolved 'weblogic.messaging.dispatcher'; remaining name 'S:ms1'<br />
+<br />
+Undelivered messages are visible on<br />
+TESTSAFAgent/Monitoring/Remote Endpoints/ SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2<br />
+<br />
+<br />
+** You need to create the "SAFTESTREMOTE_ON_MS1"  <b>JMS Queue</b> on ms1 and start ms1. At this point the SAF Agent is happy.<br />
+<br />
+<br />
+<br />
+You also get a log file in jms.messages.log - if you enable message logging it should contain details of the forwarded messages.<br />
+<br />
+Monitoring pages are available at SAFAgent level, and at ImportedDestination level<br />
+<br />
+<br />
+<br />
+Message should arrive at destination. The message has these properties set:<br />
+JMS_BEA_SAF_SEQUENCE_NAME=osb_domain@myCluster@ms2@SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2201109091356440079<br />
+JMS_BEA_SAF_SEQUENCE=1<br />
+<br />
+<br />
+The logs should trace:<br />
+<br />
+BEA-040506 The JMS SAF forwarder has successfully connected to the remote destination "null/SAFTESTREMOTE_ON_MS1".<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+SAF Remote Context <a href="http://edocs.bea.com/wls/docs103/wlsmbeanref/mbeans/SAFRemoteContextBean.html">http://edocs.bea.com/wls/docs103/wlsmbeanref/mbeans/SAFRemoteContextBean.html</a><br />
+<br />
+<br />
+SAF Imported Destination <br />
+<a href="http://edocs.bea.com/wls/docs103/wlsmbeanref/mbeans/SAFImportedDestinationsBean.html">http://edocs.bea.com/wls/docs103/wlsmbeanref/mbeans/SAFImportedDestinationsBean.html</a><br />
+contains a reference to SAF Remote Context

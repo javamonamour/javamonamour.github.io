@@ -1,0 +1,68 @@
+---
+layout: post
+title: "Mockito revisited"
+date: 2019-04-13T03:50:00.000+02:00
+permalink: /2019/04/mockito-revisited.html
+blogger_id: "6789094665066855965"
+tags: ["mockito"]
+---
+<a href="https://github.com/mockito/mockito">https://github.com/mockito/mockito</a><br />
+<br />
+<br />
+I have used Mockito in 2010. Then I never did SERIOUS Java development any more (shame on me...)<br />
+<br />
+Yet I strongly believe that a solid implementation of Mocks is the foundation of healthy, fully testable software.<br />
+If you can't entirely automate your application tests, you are playing with your life.<br />
+<br />
+<br />
+https://search.maven.org/artifact/org.mockito/mockito-core/2.26.0/jar<br />
+<br />
+<pre>&lt;dependency&gt;
+    &lt;groupId&gt;org.mockito&lt;/groupId&gt;
+    &lt;artifactId&gt;mockito-core&lt;/artifactId&gt;
+    &lt;version&gt;2.26.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+</pre><br />
+<br />
+<br />
+<br />
+<iframe width="800" height="600" src="https://www.youtube.com/embed/d2KwvXQgQx4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br />
+<br />
+<br />
+<br />
+<a href="https://github.com/in28minutes/MockitoTutorialForBeginners">https://github.com/in28minutes/MockitoTutorialForBeginners</a><br />
+<br />
+<br />
+<br />
+<a href="https://www.baeldung.com/mockito-annotations">https://www.baeldung.com/mockito-annotations</a><br />
+<br />
+source code is here <a href="https://github.com/eugenp/tutorials/tree/master/testing-modules/mockito">https://github.com/eugenp/tutorials/tree/master/testing-modules/mockito</a><br />
+<br />
+<br />
+<a href="https://static.javadoc.io/org.mockito/mockito-core/2.27.0/org/mockito/Mock.html">https://static.javadoc.io/org.mockito/mockito-core/2.27.0/org/mockito/Mock.html</a><br />
+<br />
+@Mock<br />
+List<String> mockedList;<br />
+<br />
+<br />
+<a href="https://static.javadoc.io/org.mockito/mockito-core/2.27.0/org/mockito/Spy.html">https://static.javadoc.io/org.mockito/mockito-core/2.27.0/org/mockito/Spy.html</a><br />
+<br />
+@Spy<br />
+List<String> spiedList = new ArrayList<String>();<br />
+<br />
+<br />
+<a href="https://static.javadoc.io/org.mockito/mockito-core/2.27.0/org/mockito/ArgumentCaptor.html">https://static.javadoc.io/org.mockito/mockito-core/2.27.0/org/mockito/ArgumentCaptor.html</a><br />
+<br />
+@Captor<br />
+ArgumentCaptor argCaptor;<br />
+<br />
+<br />
+I am getting : Illegal reflective access by org.mockito.internal.util.reflection.AccessibilityChanger<br />
+Hopefully Mockito folks will fix this one da.<br />
+<br />
+<br />
+<script src="https://gist.github.com/vernetto/79a6643e9afe9e6d717c395582f6cbf1.js"></script><br />
+<br />
+<br />
+

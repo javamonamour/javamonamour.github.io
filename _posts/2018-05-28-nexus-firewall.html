@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Nexus Firewall"
+date: 2018-05-28T16:51:00.000+02:00
+permalink: /2018/05/nexus-firewall.html
+blogger_id: "4322116084456492979"
+tags: ["nexus", "sonatype"]
+---
+/2017/09/software-vulnerability-control-with.html<br />
+<br />
+As usual, Sonatype scatters his product documentation across the 5 Oceans, in the most disparate formats (blogs, videos, poorly formatted wiki pages etc)<br />
+<br />
+<br />
+<a href="https://my.sonatype.com/firewall/">https://my.sonatype.com/firewall/</a><br />
+<br />
+<br />
+Good video here <a href="https://blog.sonatype.com/nexus-firewall-for-oss-users">https://blog.sonatype.com/nexus-firewall-for-oss-users</a><br />
+<a href=" https://help.sonatype.com/iqserver/nexus-firewall-quick-start"><br />
+https://help.sonatype.com/iqserver/nexus-firewall-quick-start</a>  quick start <br />
+<br />
+The Firewall product is really simple: given a GAV, it checks a DB (NIST Vulnerabilities) for all its vulnerabilities, and applies a bunch of rules to determine if the component is risky. If it's risky, it quarantines it, but provides a function to "unlock it" to the end user (Maven).<br />
+

@@ -1,0 +1,27 @@
+---
+layout: post
+title: "WebLogic fails with NullPointerException at weblogic.deploy.service.internal.adminserver.AdminDeploymentService$2.run(AdminDeploymentService.java:311)"
+date: 2016-09-21T09:17:00.002+02:00
+permalink: /2016/09/weblogic-fails-with-nullpointerexceptio.html
+blogger_id: "1433224213301403407"
+tags: ["weblogic"]
+---
+<pre>
+
+&lt;Sep 20, 2016 9:26:42 PM CEST&gt; &lt;Error&gt; &lt;Kernel&gt; &lt;BEA-000802&gt; &lt;ExecuteRequest failed
+ java.lang.NullPointerException.
+java.lang.NullPointerException
+        at weblogic.deploy.service.internal.adminserver.AdminDeploymentService$2.run(AdminDeploymentService.java:311)
+        at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:553)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:311)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:263)
+&gt; 
+
+</pre>
+
+<br/>
+
+We had similar cases ... always look in the weblogic_yyyy....log file for a root cause, it could be that the port used for administration is already in use, or that some security setting is messed up... you can also use "strace" to trace in detail the issue 
+<br/>
+
+

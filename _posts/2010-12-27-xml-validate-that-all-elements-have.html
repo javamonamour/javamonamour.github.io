@@ -1,0 +1,32 @@
+---
+layout: post
+title: "XML validate that all elements have same value"
+date: 2010-12-27T21:14:00.001+01:00
+permalink: /2010/12/xml-validate-that-all-elements-have.html
+blogger_id: "7732870349735184875"
+tags: ["validation"]
+---
+I have a payload like this:<br />
+<pre name="code" class="brush: xml">
+<lines>
+
+<line><name>alfa></name><number>3<number></line>
+<line><name>beta></name><number>3<number></line>
+<line><name>gamma></name><number>3<number></line>
+<line><name>delta></name><number>3<number></line>
+
+</lines>
+
+</pre><br />
+and I need to validate that all "number" are the same within the same <lines> element... can be 3, can be anything else.<br />
+<br />
+Now, with Schematron I doubt this is possible. With XSD neither. They all seem to be NOT oriented to operate on collections, the validation scope is the single element.<br />
+<br />
+We need to come up with a different strategy.<br />
+<br />
+I wish there was a DSL allowing me to state:<br />
+<br />
+test: assert all /lines/line/number are same within /lines<br />
+with message: 'all line number must be same'<br />
+<br />
+where we establish a scope (/lines), a predicate (are same), a subject (/lines/line/number) and a selection rule (all)

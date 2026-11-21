@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Spring Cloud, getting started"
+date: 2018-05-21T13:51:00.000+02:00
+permalink: /2018/05/spring-cloud-getting-started.html
+blogger_id: "6221997517944995734"
+tags: ["Spring", "springcloud"]
+---
+<a href="http://www.baeldung.com/spring-cloud-bootstrapping ">http://www.baeldung.com/spring-cloud-bootstrapping </a><br />
+<br />
+<br />
+generate your starter zip from <a href="http://start.spring.io/">http://start.spring.io/</a> :<br />
+<br />
+http://start.spring.io/starter.zip?type=maven-project&language=java&bootVersion=2.0.1.RELEASE&baseDir=config&groupId=org.pierre&artifactId=config&name=config&description=Demo+project+for+Spring+Boot&packageName=org.pierre.config&packaging=jar&javaVersion=1.8&autocomplete=&generate-project=&style=cloud-config-server<br />
+<br />
+<br />
+unzip it<br />
+add import org.springframework.cloud.config.server.EnableConfigServer; and @EnableConfigServer to ConfigApplication<br />
+<br />
+cd <br />
+mkdir application-config<br />
+cd application-config<br />
+git init<br />
+<br />
+<br />
+mvn spring-boot:run<br />
+<br />
+<br />
+<br />
+<br />
+http://callistaenterprise.se/blogg/teknik/2015/04/10/building-microservices-with-spring-cloud-and-netflix-oss-part-1/<br />
+<br />
+git clone https://github.com/callistaenterprise/blog-microservices.git<br />
+<br />
+

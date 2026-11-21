@@ -1,0 +1,16 @@
+---
+layout: post
+title: "Rich Data Model versus Anemic Data Model"
+date: 2011-04-06T13:23:00.001+02:00
+permalink: /2011/04/rich-data-model-versus-anemic-data.html
+blogger_id: "1768344013237386021"
+tags: ["ddd", "RichDomainModel"]
+---
+We are moving away from an <b>Anemic Data Model</b> (the Entity contains only data; the Logic to validate/manipulate/cross join this data is in the EJB Service)<br />
+towards a <b>Rich Data Model</b> (Entities contain most logic, entity methods are allowed to retrieve data from related entities).<br />
+<br />
+This is more in line with good OO practices (mostly encapsulation), and it avoids have a lot of imperative code in the Service Layer. It improves, of course, code reusability, since the logic is one layer down the Service layer - so you avoid cross-services calls.<br />
+<br />
+The only drawback is that Entities become more Service-like, sometimes they need to make DAO or EJB calls to retrieve extra information - its very difficult to expect an Entity to stay as a pure POJO without any access to Resources.<br />
+<br />
+See also an <a href="http://www.martinfowler.com/bliki/AnemicDomainModel.html">often-quoted MF article</a>.

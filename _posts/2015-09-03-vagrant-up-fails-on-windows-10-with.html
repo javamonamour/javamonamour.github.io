@@ -1,0 +1,31 @@
+---
+layout: post
+title: "Vagrant up fails on Windows 10 with VBoxManage.exe creating the host-only adapter"
+date: 2015-09-03T02:02:00.001+02:00
+permalink: /2015/09/vagrant-up-fails-on-windows-10-with.html
+blogger_id: "8755306922602510223"
+tags: ["virtualbox"]
+---
+<pre>
+
+Bringing machine 'admin' up with 'virtualbox' provider...
+==> admin: Clearing any previously set network interfaces...
+There was an error while executing `VBoxManage`, a CLI used by Vagrant
+for controlling VirtualBox. The command and stderr is shown below.
+
+Command: ["hostonlyif", "create"]
+
+Stderr: 0%...
+Progress state: E_FAIL
+VBoxManage.exe: error: Failed to create the host-only adapter
+VBoxManage.exe: error: Code E_FAIL (0x80004005) - Unspecified error (extended info not available)
+VBoxManage.exe: error: Context: "int __cdecl handleCreate(struct HandlerArg *,int,int *)" at line 66 of file VBoxManageHostonly.cpp
+
+</pre>
+<br/><br/>
+
+Just upgrade to latest vagrant an VirtualBox 5.0.2, it worked for me... even if they say VBOX 5.0.2 is not officially supported... I have no other choice...
+
+<br/><br/>
+
+

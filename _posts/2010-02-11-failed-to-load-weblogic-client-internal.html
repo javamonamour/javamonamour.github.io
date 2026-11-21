@@ -1,0 +1,41 @@
+---
+layout: post
+title: "Failed to load weblogic client internal deployment descriptor"
+date: 2010-02-11T13:13:00.001+01:00
+permalink: /2010/02/failed-to-load-weblogic-client-internal.html
+blogger_id: "2141817728977876719"
+---
+are you getting this error while running a Java WSEE client?<br />
+the solution SEEMS to be<br />
+http://kr.forums.oracle.com/forums/thread.jspa?threadID=723357&amp;tstart=-1<br />
+unzipping $WEBLOGIC_10_3/wlserver_10.3/server/lib/wseeclient.zip and add all jars to the classpath<br />
+<br />
+This zip file contains a host of jar files... <br />
+<br />
+here is the original error:<br />
+<br />
+Exception in thread "Main Thread" javax.xml.rpc.ServiceException: Failed to load weblogic client internal deployment descriptor. weblogic.descriptor.DescriptorException: Unmarshaller failed<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.jaxrpc.ServiceImpl.throwServiceException(ServiceImpl.java:174)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.jaxrpc.ServiceImpl.loadWeblogicDD(ServiceImpl.java:449)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.jaxrpc.ServiceImpl.loadInternalDD(ServiceImpl.java:382)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.jaxrpc.ServiceImpl.<init>(ServiceImpl.java:121)<br />
+&nbsp;&nbsp;&nbsp; at com.pierre.helloworld.HelloWorldSync_Impl.<init>(Unknown Source)<br />
+&nbsp;&nbsp;&nbsp; at com.pierre.helloworld.HelloWorldSync_Impl.<init>(Unknown Source)<br />
+&nbsp;&nbsp;&nbsp; at com.pierre.tests.TestWSDLJar.main(TestWSDLJar.java:9)<br />
+Caused by: weblogic.descriptor.DescriptorException: Unmarshaller failed<br />
+&nbsp;&nbsp;&nbsp; at weblogic.descriptor.internal.MarshallerFactory$1.createDescriptor(MarshallerFactory.java:152)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.descriptor.BasicDescriptorManager.createDescriptor(BasicDescriptorManager.java:306)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.descriptor.BasicDescriptorManager.createDescriptor(BasicDescriptorManager.java:270)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.descriptor.BasicDescriptorManager.createDescriptor(BasicDescriptorManager.java:336)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.jaxrpc.ServiceImpl.loadWeblogicDD(ServiceImpl.java:440)<br />
+&nbsp;&nbsp;&nbsp; ... 5 more<br />
+Caused by: com.bea.xml.XmlException: failed to load java type corresponding to e=weblogic-wsee-standaloneclient@http://www.bea.com/ns/weblogic/weblogic-wsee-standaloneclient<br />
+&nbsp;&nbsp;&nbsp; at com.bea.staxb.runtime.internal.UnmarshalResult.getPojoBindingType(UnmarshalResult.java:361)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.staxb.runtime.internal.UnmarshalResult.determineTypeForGlobalElement(UnmarshalResult.java:316)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.staxb.runtime.internal.UnmarshalResult.determineTypeForGlobalElement(UnmarshalResult.java:326)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.staxb.runtime.internal.UnmarshalResult.determineRootType(UnmarshalResult.java:307)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.staxb.runtime.internal.UnmarshalResult.unmarshalDocument(UnmarshalResult.java:158)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.staxb.runtime.internal.UnmarshallerImpl.unmarshal(UnmarshallerImpl.java:65)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.descriptor.internal.MarshallerFactory$1.createDescriptor(MarshallerFactory.java:141)<br />
+&nbsp;&nbsp;&nbsp; ... 9 more<br />
+</init></init></init>

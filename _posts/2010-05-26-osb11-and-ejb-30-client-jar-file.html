@@ -1,0 +1,106 @@
+---
+layout: post
+title: "OSB and EJB 3.0 Client Jar File"
+date: 2010-05-26T13:14:00.001+02:00
+permalink: /2010/05/osb11-and-ejb-30-client-jar-file.html
+blogger_id: "2625155919058465810"
+tags: ["ejbclient", "osb11"]
+blogger_comments:
+  - author: "Jesús María Guerra"
+    date: 2011-04-18
+    html: "Hi PierLuigi,<br /><br />I get at the same error. Annoying but the solution is set the mappedName parameter at the bean definition<br /><br />@Stateless (mappedName=&quot;Somethingweird&quot;)<br /><br />I have just loose 4 hours looking for the solution.<br /><br />IHTH"
+---
+Now, we want to expose an EJB 3.0 Stateless Session Bean in a Business Service in OSB11.<br />
+<br />
+Create an EJB 3.0 Project, and ASSOCIATE IT to a EAR, and enable generation of EJB Client Jar.<br />
+<br />
+The EJB will look like this:<br />
+<br />
+<i>package com.lassi.mejb;<br />
+import javax.ejb.Stateless;<br />
+<br />
+/**<br />
+&nbsp;* Session Bean implementation class LassiEJB<br />
+&nbsp;*/<br />
+@Stateless(mappedName="</i><i>LassiEJB</i><i>")<br />
+public class <b>LassiEJB </b>implements LassiEJBRemote, LassiEJBLocal {<br />
+<br />
+&nbsp;&nbsp;&nbsp; /**<br />
+&nbsp;&nbsp;&nbsp;&nbsp; * Default constructor. <br />
+&nbsp;&nbsp;&nbsp;&nbsp; */<br />
+&nbsp;&nbsp;&nbsp; public LassiEJB() {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // TODO Auto-generated constructor stub<br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp;&nbsp; @Override<br />
+&nbsp;&nbsp;&nbsp; public String hello(String message) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; System.out.println("message=" + message);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return "hello " + message;<br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp;&nbsp; @Override<br />
+&nbsp;&nbsp;&nbsp; public String helloLocal(String message) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; System.out.println("messagelocal=" + message);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return "hellolocal " + message;<br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp;&nbsp; <br />
+}</i><br />
+<br />
+<br />
+<br />
+and the interfaces:<br />
+<br />
+<br />
+<i>package com.lassi.mejb;<br />
+import javax.ejb.Remote;<br />
+<br />
+@Remote<br />
+public interface <b>LassiEJBRemote </b>{<br />
+&nbsp;&nbsp;&nbsp; String hello(String message);<br />
+}</i><br />
+<br />
+<br />
+and<br />
+<br />
+<br />
+<i>package com.lassi.mejb;<br />
+import javax.ejb.Local;<br />
+<br />
+@Local<br />
+public interface <b>LassiEJBLocal </b>{<br />
+&nbsp;&nbsp;&nbsp; String helloLocal(String message);<br />
+}</i><br />
+<br />
+<br />
+To generate the Client EJB Jar, just export the EAR project as an EAR, then unzip it.<br />
+You will get a LassiEJBProjectClient.jar in APP-INF/lib.<br />
+Otherwise you can right-click on the EJB project, choose Java EE&nbsp; Tools and Generate EJB Client JAR.<br />
+<br />
+Make sure that your Local and Remote interfaces are created in the EJBClient project, otherwise your EJB Client JAR will contain only the manifest.mf file and you will be very disappointed.<br />
+<br />
+THIS EJB Client JAR is the JAR you need to import into OSB.<br />
+<br />
+To find the JNDI name of your EJB click on the WLServer in the console and look into "View JNDI tree". <br />
+It should be something like LassiEARLassiEJBProject_jarLassiEJB_Home <br />
+Also, in OSB create a JNDI provider with t3://localhost:7001 and call it myjndiprovider<br />
+<br />
+Create a Business Service, Transport Typed,<br />
+the URI will be like ejb:myjndiprovider:LassiEJB#com.lassi.mejb.LassiEJBRemote<br />
+<br />
+In the Business Interface&nbsp; you can choose the Local or the Remote interface (of course if you choose Local it will be faster! But if you use the JNDI name of the Remote interface it will not work... I presume ???? )....<br />
+<br />
+<br />
+At the end, if you get a<br />
+<br />
+java.lang.ClassCastException:&nbsp;weblogic.ejb.container.internal.StatelessEJBHomeImpl<br />
+<br />
+or a<br />
+<br />
+<br />
+java.lang.ClassCastException:&nbsp;$Proxy224<br />
+&nbsp;at&nbsp;com.bea.wli.sb.transports.ejb.Jws.hellopierrelocal(Unknown&nbsp;Source)<br />
+<br />
+<br />
+<br />
+most likely it means you are binding to the wrong JNDI name...

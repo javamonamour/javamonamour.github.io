@@ -1,0 +1,22 @@
+---
+layout: post
+title: "application/xml vs text/xml"
+date: 2011-06-08T08:11:00.000+02:00
+permalink: /2011/06/applicationxml-vs-textxml.html
+blogger_id: "3650416883234885288"
+tags: ["application/xml"]
+---
+Just reblogging <a href="http://www.grauw.nl/blog/entry/489">this</a> precious information:<br />
+<br />
+"XML has two MIME types, application/xml and text/xml. These are often used interchangeably, but there is a subtle difference which is why application/xml is generally recommended over the latter.<br />
+<br />
+Let me explain why: according to the standard, text/*-MIME types have a us-ascii character set unless otherwise specified in the HTTP headers. This effectively means that any encoding defined in the XML prolog (e.g. <?xml version=”1.0” encoding=”UTF-8”?>) is ignored. This is of course not the expected and desired behaviour.<br />
+<br />
+To further complicate matters, most/all browser implementations actually implement nonstandard behaviour for text/xml because they process the encoding as if it were application/xml.<br />
+<br />
+So, text/* has encoding issues, and is not implemented by browsers in a standards-compliant manner, which is why using application/* is recommended.  <br />
+  <br />
+  Grauw"<br />
+<br />
+<br />
+That's yet another of those things which make SOAP so exciting: a poor standard poorly implemented poorly defined and poorly respected. It must be on purpose, I can't believe engineers are so stupid.

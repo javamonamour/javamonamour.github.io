@@ -1,0 +1,20 @@
+---
+layout: post
+title: "BPEL how to loop over elements of a collection"
+date: 2011-01-08T18:36:00.006+01:00
+permalink: /2011/01/in-bpel-if-you-want-to-get-value-of.html
+blogger_id: "723350573672096706"
+tags: ["BPEL"]
+---
+In BPEL, if you want to get the value of an indexed variable, like in this XPath:<br />
+<br />
+/ns5:PreactivationCollection/ns5:Preactivation[$lineIndex]<br />
+<br />
+you must do some acrobatics using a "concat" function:<br />
+<br />
+bpws:getVariableData('Invoke_ReadLinesForLot_ReadLinesForLotSelect_OutputVariable','PreactivationCollection',<b>concat('/ns5:PreactivationCollection/ns5:Preactivation[', bpws:getVariableData('lineIndex'), ']')</b>)"<br />
+<br />
+<br />
+This is the mess you end up entangled with when, instead of using a proper programming language (DSL), you resort to XML to implement your programming needs.<br />
+<br />
+BPEL is yet another EXTREMELY poor implementation of something which otherwise contains powerful programming paradigms.

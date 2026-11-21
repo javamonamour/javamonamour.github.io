@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Eclipse JPA, classpath needed"
+date: 2012-05-02T16:23:00.001+02:00
+permalink: /2012/05/eclipse-jpa-classpath-needed.html
+blogger_id: "5965963390617702519"
+tags: ["eclipse", "JPA"]
+---
+&lt;classpathentry kind="lib" path="C:/Oracle/Middleware/wlserver_10.3/server/lib/weblogic.jar"/><br />
+<br />
+&lt;classpathentry kind="lib" path="C:/Oracle/Middleware/modules/org.apache.openjpa_1.2.0.0_1-1-1-SNAPSHOT.jar"/><br />
+<br />
+&lt;classpathentry kind="lib" path="C:/Oracle/Middleware/wlserver_10.3/server/lib/wlthint3client.jar"/><br />
+<br />
+<br />
+not only, but running from Eclipse you should put weblogic.jar in the BOOTSTRAP classpath...<br />
+<br />
+terrible, really terrible...<br />
+<br />
+<br />
+and don't forget to put<br />
+property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.OraclePlatform"<br />
+<br />
+in the persistence.xml

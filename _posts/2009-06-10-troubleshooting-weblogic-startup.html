@@ -1,0 +1,9 @@
+---
+layout: post
+title: "Troubleshooting Weblogic startup"
+date: 2009-06-10T16:43:00.000+02:00
+permalink: /2009/06/troubleshooting-weblogic-startup.html
+blogger_id: "5122104397865496986"
+tags: ["weblogic startup"]
+---
+if your Weblogic hangs while starting up, try the following:<br /><br />- use the startWeblogic.sh in foreground more<br />- use lsof to check which files/sockets are open, and which libraries are loaded<br />- make sure you are using the right Unix user<br />- check for the existence of .lock file especially in the server/data/ldap directory<br />- use some JVM parameters such as  -verbose:class print<br /><pre><span style="font-family: Georgia,serif;"><br /></span></pre>

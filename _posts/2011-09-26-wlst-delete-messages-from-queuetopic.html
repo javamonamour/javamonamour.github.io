@@ -1,0 +1,36 @@
+---
+layout: post
+title: "WLST delete messages from a Queue/Topic"
+date: 2011-09-26T16:19:00.006+02:00
+permalink: /2011/09/wlst-delete-messages-from-queuetopic.html
+blogger_id: "6632464454230160901"
+tags: ["jms"]
+---
+<b>connect('weblogic', 'weblogic', 't3:localhost:7001')<br />
+serverRuntime()<br />
+<br />
+cd('/JMSRuntime/ManagedServer1.jms/JMSServers/JMS_SRVR_Man01/Destinations/MyJMSModule!JMS_SRVR_Man01@MyDistributedTopic')<br />
+<br />
+cmo.deleteMessages('')<br />
+</b><br />
+<br />
+<i>java.lang.UnsupportedOperationException: java.lang.UnsupportedOperationException: deleteMessages(String) not valid for class weblogic.jms.backend.BEDestinationRuntimeMBeanImpl<br />
+</i><br />
+<br />
+<br />
+WTF???<br />
+<br />
+In fact, BEDestinationRuntimeMBeanImpl extends BEMessageManagementRuntimeDelegate, and it's BEMessageManagementRuntimeDelegate who implements <br />
+public Integer deleteMessages(String selector)<br />
+<br />
+BEDestinationRuntimeMBeanImpl implements JMSDestinationRuntimeMBean, which doesn't expose the deleteMessages method.<br />
+<br />
+It could very well be that WLST evaluates the Interface, not the Implementation of the cmo...<br />
+<br />
+In fact, when you deleteMessages from WebLogic console, it's directly the weblogic.jms.backend.BEMessageManagementRuntimeDelegate.deleteMessages() which is invoked, and not the BEDestinationRuntimeMBeanImpl.<br />
+<br />
+<br />
+The same API works for a Queue, but NOT for a Distributed Topic.<br />
+<br />
+PS I have tested on 10.3.4 and the same problem is present.<br />
+Workaround: delete all durable subscribers and the messages should disappear :o(((

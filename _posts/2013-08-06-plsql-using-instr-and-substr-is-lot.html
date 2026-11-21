@@ -1,0 +1,60 @@
+---
+layout: post
+title: "PL/SQL: using INSTR and SUBSTR is a lot faster than REGEXP_SUBSTR"
+date: 2013-08-06T18:23:00.002+02:00
+permalink: /2013/08/plsql-using-instr-and-substr-is-lot.html
+blogger_id: "3447594106256350942"
+tags: ["PL-SQL"]
+---
+Given this "labels":
+<br/>
+
+"InterfaceID=Common_NCRS;TechnicalMessageID=Common_NCRS^ACMEPreOrder.quote_order^5505352925343722746--4337ac89.1404f3a3d07.-8bc;EventType=InvokedACME;PathOfService=Commons_NCRS/ProxyServices/Common_NCRS_PS;EventOccuredOn=2013-08-05T18:17:59.470+02:00;BusinessID=DE11PC089^d3a59751-38e4-eed5-7bf7-4f45592a9d18;ServerName=osbpr1ms2"
+
+and this labelname "EventOccuredOn", the following function extracts the value "2013-08-05T18:17:59.470+02:00" :
+
+<br/><br/>
+
+<pre>
+
+create or replace 
+FUNCTION ACME_findLabelValue 
+  (labels IN VARCHAR2, labelname IN VARCHAR2 )  return VARCHAR2
+is 
+begin
+  return  REPLACE(REGEXP_SUBSTR(labels, labelname || '=[^;]+'), labelname || '=', '');
+end;
+
+
+</pre>
+
+<br/>
+
+Performance was abysmal. I have replaced with this much faster function:
+
+<br/>
+
+<pre>
+
+create or replace 
+FUNCTION ACME_findLabelValue 
+  (labels IN VARCHAR2, labelname IN VARCHAR2 )  return VARCHAR2
+is 
+v_delimpos1 PLS_INTEGER;
+v_delimpos2 PLS_INTEGER;
+labels2 VARCHAR2(4000);
+begin
+ 
+  v_delimpos1 := INSTR(labels, labelname || '=' );
+  if v_delimpos1 > 0 then
+    labels2 := SUBSTR(labels, v_delimpos1 + 1 + LENGTH(labelname));
+    v_delimpos2 := INSTR(labels2, ';' );
+    return SUBSTR(labels2, 1, v_delimpos2 - 1);  
+  else
+    return '';
+  end if;
+end;
+
+</pre>
+
+

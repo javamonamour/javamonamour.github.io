@@ -1,0 +1,53 @@
+---
+layout: post
+title: "Using Raise Error in OSB"
+date: 2011-10-23T23:47:00.002+02:00
+permalink: /2011/10/using-raise-error-in-osb.html
+blogger_id: "5125601049673933757"
+tags: ["fault", "OSB"]
+---
+If in your Message Flow you Raise Error:<br />
+<br />
+Raise Error using error code [ MY_ERROR_CODE ] with error Message MY_ERROR_MESSAGE<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/4f6644bf9c8bea64.jpg" imageanchor="1" style=""><img border="0" height="123" width="320" src="/images/98f7cc8d96e6a4a7.jpg" /></a></div><br />
+<br />
+the error handler will show in the <br />
+"errorCode" and "reason" respectively the <br />
+"error code and "error message"<br />
+that you have provided:<br />
+<br />
+&lt;con:fault   xmlns:con="http://www.bea.com/wli/sb/context"&gt;<br />
+&lt;con:errorCode&gt;MY_ERROR_CODE&lt;/con:errorCode&gt;<br />
+&lt;con:reason&gt;MY_ERROR_MESSAGE&lt;/con:reason&gt;<br />
+&lt;con:location&gt;<br />
+&lt;con:node&gt;PipelinePairNode1&lt;/con:node&gt;<br />
+&lt;con:pipeline&gt;PipelinePairNode1_request&lt;/con:pipeline&gt;<br />
+&lt;con:stage&gt;stage1&lt;/con:stage&gt;<br />
+&lt;con:path&gt;request-pipeline&lt;/con:path&gt;<br />
+&lt;/con:location&gt;<br />
+&lt;/con:fault&gt;<br />
+<br />
+both <b>Service Error Handler</b> and <b>System Error Handler</b> are invoked with the same fault, because in my Message Flow, the Service Error Handler doesn't handle the error:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/9b77aac38f6d25ad.jpg" imageanchor="1" style=""><img border="0" height="262" width="320" src="/images/52290c336ea579f5.jpg" /></a></div><br />
+If the Service Error Handler does a "reply with success", the same body as the request is returned in the response.<br />
+If the Service Error Handler does a "reply with error", the test console returns a message "The invocation resulted in an error: ." <br />
+<br />
+Analyzing with SOAP UI (I create a Rest service and do a POST), if I show the RAW response I get:<br />
+<br />
+HTTP/1.1 500 Internal Server Error<br />
+Date: Sun, 23 Oct 2011 21:45:50 GMT<br />
+Content-Length: 61<br />
+Content-Type: text/xml; charset=utf-8<br />
+X-Powered-By: Servlet/2.5 JSP/2.1<br />
+<br />
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />
+&lt;hello&gt;pierre&lt;/hello&gt;<br />
+<br />
+<br />
+in fact "Reply with Error" returns a HTTP 500<br />
+<br />
+<br />
+<br />
+see also <a href="/2011/07/throwing-exceptions-in-xquery-fnerror.html">/2011/07/throwing-exceptions-in-xquery-fnerror.html</a> on how to raise an error in XQuery

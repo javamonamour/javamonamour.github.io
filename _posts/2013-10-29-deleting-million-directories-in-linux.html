@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Deleting a million directories in Linux"
+date: 2013-10-29T15:44:00.002+01:00
+permalink: /2013/10/deleting-million-directories-in-linux.html
+blogger_id: "6725521318155433731"
+tags: ["linux"]
+blogger_comments:
+  - author: "Unknown"
+    date: 2013-11-08
+    html: "&quot;find&quot; has -delete parameter to avoid risks with -exec rm &quot;{}&quot; \\; and such.<br /><br />I only discovered it recently and I&#39;m not sure it&#39;s available on Solaris but on Linux and Mac, it is.<br /><br />For other complex situations, it is also sometimes useful to pipe the find results to xargs.<br />find . -atime +4 -print | xargs ls -l<br />An advantage if you specify xargs -n2 is that it will run the command as soon as it gets two items. This is helpful for a grep to display the name of the file too. (I know grep -r is better for simple cases)"
+---
+This morning a component went ballistic and created more than a million folders under /path/to/myfolder, until the file system was completely full.
+<br/>
+
+this command was showing 100% of Inodes used:
+<br/>
+watch df -i /opt/oracle/domains/osbpr1do/shared/apps/fileadapter/controlDir/fileftp/controlFiles
+
+
+<br/>
+You could delete folder/files in several way, most of them VERY inefficient:
+
+<pre>
+#this takes forever and deletes also the parent folder
+rm -rf /path/to/myfolder
+
+#this funnily fails with "file not found", most likely because there are 
+#special characters like a equal sign = in the folder name
+find /path/to/myfolder -type d -mtime +5 -exec ls -ltr {} \;
+
+#of course I have tried also with quotes, with same result
+find /path/to/myfolder -type d -mtime +5 -exec ls -ltr "{}" \;
+
+#I have tried deleting only subsets
+rm -rf /opt/oracle/domains/osbpr1do/shared/apps/fileadapter/controlDir/fileftp/controlFiles/a*
+#but the problem is that the shell expands the a*, and this can resolve to too many argumnent
+#so the command fails
+
+
+#this is very simple but deletes also 
+find /path/to/myfolder/ -type d -delete
+</pre>
+
+<br/>
+then <a href="http://linuxnote.net/jianingy/en/linux/a-fast-way-to-remove-huge-number-of-files.html">I read this article</a> and I tested this:
+<br/>
+<pre>
+rsync -av --delete --remove-source-files /tmp/empty/ /path/to/myfolder/
+</pre>
+
+<br/>
+where /tmp/empty/ is an empty folder, and it works like magic. Reading around it says that this is due to the fact that rsync has a LIFO way of reading file system info, rather than FIFO.
+
+
+

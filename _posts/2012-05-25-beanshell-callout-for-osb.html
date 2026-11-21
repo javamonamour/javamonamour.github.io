@@ -1,0 +1,58 @@
+---
+layout: post
+title: "BeanShell callout for OSB"
+date: 2012-05-25T04:06:00.000+02:00
+permalink: /2012/05/beanshell-callout-for-osb.html
+blogger_id: "168793667728374382"
+tags: ["beanshell"]
+---
+Problem with Java Callouts is that they are a pain to maintain  - separate Java project, need to build and deploy to OSB project.<br />
+<br />
+If you have frequent, simple Java code to execute, you might avail yourself of an INTERPRETER like <a href="http://www.beanshell.org/manual/bshmanual.html">BeanShell</a><br />
+<br />
+Just copy bsh-2.0b4.jar to $DOMAIN_HOME/lib directory, restart your server, and you are ready to use the BeanShellJavaCallout Java wrapper to BeanShell:<br />
+<br />
+<pre name="code" class="brush: java">
+package com.acme.javacallout; 
+
+import bsh.EvalError;
+import bsh.Interpreter;
+
+public class BeanShellJavaCallout {
+ 
+ public static String callBeanShell(String code) throws EvalError {
+  Interpreter i = new Interpreter();
+  Object result = i.eval(code);
+  return result.toString(); 
+ }
+ 
+ 
+}
+
+</pre><br />
+<br />
+<br />
+<br />
+<pre name="code" class="brush: java">
+package com.acme.javacallout; 
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import bsh.EvalError;
+import bsh.Interpreter;
+
+public class BeanShellJavaCalloutTest {
+ 
+ @Test
+ public void callBeanShellTest() throws EvalError {
+  System.setProperty("weblogic.Name", "osbdv1ms1");
+  String result = BeanShellJavaCallout.callBeanShell("return java.lang.System.getProperty(\"weblogic.Name\")");
+  assertEquals("osbdv1ms1", result);
+ }
+ 
+ 
+}
+
+</pre>

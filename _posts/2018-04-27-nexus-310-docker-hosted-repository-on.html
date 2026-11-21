@@ -1,0 +1,118 @@
+---
+layout: post
+title: "Nexus 3.10 Docker hosted repository on HTTPS"
+date: 2018-04-27T16:09:00.001+02:00
+permalink: /2018/04/nexus-310-docker-hosted-repository-on.html
+blogger_id: "5190862866767543198"
+tags: ["docker", "nexus", "ssl"]
+---
+<a href="https://support.sonatype.com/hc/en-us/articles/213465098-How-to-Configure-HTTPS-Protocols-Used-By-Nexus">https://support.sonatype.com/hc/en-us/articles/213465098-How-to-Configure-HTTPS-Protocols-Used-By-Nexus</a><br />
+<br />
+<a href="https://support.sonatype.com/hc/en-us/articles/213465768-SSL-Certificate-Guide">https://support.sonatype.com/hc/en-us/articles/213465768-SSL-Certificate-Guide</a><br />
+<br />
+<a href="https://hub.docker.com/r/bradbeck/nexus-https/">https://hub.docker.com/r/bradbeck/nexus-https/</a><br />
+<br />
+<br />
+<a href="https://hub.docker.com/r/bradbeck/nexus-https/~/dockerfile/">https://hub.docker.com/r/bradbeck/nexus-https/~/dockerfile/</a><br />
+<br />
+<pre>FROM sonatype/nexus3 
+MAINTAINER Brad Beck &lt;bradley.beck+docker@gmail.com&gt; 
+ENV NEXUS_SSL=${NEXUS_HOME}/etc/ssl 
+ENV PUBLIC_CERT=${NEXUS_SSL}/cacert.pem \ 
+    PUBLIC_CERT_SUBJ=/CN=localhost \ 
+    PRIVATE_KEY=${NEXUS_SSL}/cakey.pem \ 
+    PRIVATE_KEY_PASSWORD=password ARG GOSU_VERSION=1.10 
+
+USER root 
+RUN yum -y update &amp;&amp; yum install -y openssl libxml2 libxslt &amp;&amp; yum clean all
+RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+ &amp;&amp; curl -o /usr/local/bin/gosu -SL &quot;https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64&quot; \
+ &amp;&amp; curl -o /usr/local/bin/gosu.asc -SL &quot;https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64.asc&quot; \
+ &amp;&amp; gpg --verify /usr/local/bin/gosu.asc \
+ &amp;&amp; rm /usr/local/bin/gosu.asc \
+ &amp;&amp; rm -r /root/.gnupg/ \
+ &amp;&amp; chmod +x /usr/local/bin/gosu
+
+RUN sed \
+    -e '/^nexus-args/ s:$:,${jetty.etc}/jetty-https.xml:' \
+    -e '/^application-port/a \
+application-port-ssl=8443\
+' \
+    -i ${NEXUS_HOME}/etc/nexus-default.properties
+COPY entrypoint.sh ${NEXUS_HOME}/entrypoint.sh
+RUN chown nexus:nexus ${NEXUS_HOME}/entrypoint.sh &amp;&amp; chmod a+x ${NEXUS_HOME}/entrypoint.sh
+VOLUME [ &quot;${NEXUS_SSL}&quot; ]
+EXPOSE 8443 WORKDIR ${NEXUS_HOME}
+ENTRYPOINT [ &quot;./entrypoint.sh&quot; ]
+CMD [ &quot;bin/nexus&quot;, &quot;run&quot;]
+
+
+
+
+[root@9118f1784d46 ssl]# more /opt/sonatype/nexus/entrypoint.sh
+#!/usr/bin/env bash
+
+set -x
+set -eo pipefail
+
+if [ &quot;$1&quot; == 'bin/nexus' ]; then
+  if [ ! -f &quot;$NEXUS_SSL/keystore.jks&quot; ]; then
+    mkdir -p $NEXUS_SSL
+    if [ ! -f $PUBLIC_CERT ] &amp;&amp; [ ! -f $PRIVATE_KEY ]; then
+      openssl req -nodes -new -x509 -keyout $PRIVATE_KEY -out $PUBLIC_CERT -subj
+ &quot;${PUBLIC_CERT_SUBJ}&quot;
+    fi
+    if [ ! -f $NEXUS_SSL/jetty.key ]; then
+      openssl pkcs12 -export -in $PUBLIC_CERT -inkey $PRIVATE_KEY -out $NEXUS_SS
+L/jetty.key -passout pass:$PRIVATE_KEY_PASSWORD
+    fi
+    $JAVA_HOME/bin/keytool -importkeystore -noprompt -deststorepass $PRIVATE_KEY
+_PASSWORD -destkeypass $PRIVATE_KEY_PASSWORD -destkeystore $NEXUS_SSL/keystore.j
+ks -srckeystore $NEXUS_SSL/jetty.key -srcstoretype PKCS12 -srcstorepass $PRIVATE
+_KEY_PASSWORD
+    sed -r '/&lt;Set name=&quot;(KeyStore|KeyManager|TrustStore)Password&quot;&gt;/ s:&gt;.*$:&gt;'$PR
+IVATE_KEY_PASSWORD'&lt;/Set&gt;:' -i $NEXUS_HOME/etc/jetty/jetty-https.xml
+  fi
+
+  mkdir -p &quot;$NEXUS_DATA&quot;
+  chown -R nexus:nexus &quot;$NEXUS_DATA&quot;
+
+  exec gosu nexus &quot;$@&quot;
+fi
+
+exec &quot;$@&quot;
+
+
+
+
+
+</pre><br />
+<br />
+<br />
+create a Docker hosted repo on HTTPS port 8282 <br />
+<br />
+no need for insecure registry:<br />
+<br />
+[centos@localhost ~]$ docker run -d -p 127.0.0.1:8081:8081 -p 127.0.0.1:8443:8443 -p 127.0.0.1:8482:8482 -v ~/nexus-data:/nexus-data -v ~/nexus-ssl:/opt/sonatype/nexus/etc/ssl --name nexus bradbeck/nexus-https<br />
+4b4e525ee28d5f10a26c4667065f15a7e9f308412bbcc6ebab18e2a030c042dd<br />
+[centos@localhost ~]$ netstat -an | grep 8482<br />
+tcp        0      0 127.0.0.1:8482          0.0.0.0:*               LISTEN    <br />
+[centos@localhost ~]$ docker login https://localhost:8482<br />
+Username: admin<br />
+Password:<br />
+Login Succeeded<br />
+<br />
+this is the image https://hub.docker.com/r/bradbeck/nexus-https/~/dockerfile/<br />
+<br />
+<br />
+<br />
+<br />
+How to create the .cer, .key and jks files....<br />
+<br />
+this will create a wildfly.keystore:<br />
+keytool -genkeypair -keystore wildfly.keystore -storepass mypassword -keypass mypassword -keyalg RSA -validity 180 -alias wildfly -dname "cn=packtpub,o=PackPub,c=GB"<br />
+<br />
+<br />
+<br />
+<br />
+

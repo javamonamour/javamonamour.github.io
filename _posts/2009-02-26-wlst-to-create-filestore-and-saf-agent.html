@@ -1,0 +1,8 @@
+---
+layout: post
+title: "WLST to create a FileStore and a SAF agent"
+date: 2009-02-26T13:45:00.001+01:00
+permalink: /2009/02/wlst-to-create-filestore-and-saf-agent.html
+blogger_id: "1634682524323315438"
+---
+<div><br /></div><div>cd('/')</div><div>cmo.createFileStore('<span class="Apple-style-span" style="font-weight: bold;">FileStore_auto_1</span>')</div><div><br /></div><div>cd('/Deployments/FileStore_auto_1')</div><div>cmo.setDirectory('FileStore_auto_1')</div><div>set('Targets',jarray.array([ObjectName('com.bea:Name=<span class="Apple-style-span" style="font-weight: bold;">AdminServer</span>,Type=Server')], ObjectName))</div><div><br /></div><div>cd('/')</div><div>cmo.createSAFAgent('<span class="Apple-style-span" style="font-weight: bold;">SAFAgent-0</span>')</div><div><br /></div><div>cd('/SAFAgents/SAFAgent-0')</div><div>cmo.setStore(getMBean('/Deployments/FileStore_auto_1'))</div><div>set('Targets',jarray.array([ObjectName('com.bea:Name=AdminServer,Type=Server')], ObjectName))</div><div>cmo.setServiceType('Sending-only')</div><div><br /></div><div><br /></div><div><br /></div>

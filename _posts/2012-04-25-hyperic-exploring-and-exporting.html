@@ -1,0 +1,74 @@
+---
+layout: post
+title: "Hyperic, exploring (and exporting) autodiscovered resources with HQApi"
+date: 2012-04-25T10:06:00.004+02:00
+permalink: /2012/04/hyperic-exploring-and-exporting.html
+blogger_id: "2704136963321291679"
+tags: ["hyperic"]
+---
+<a href="http://support.hyperic.com/display/DOC/HQApi+3.2+resource+command">http://support.hyperic.com/display/DOC/HQApi+3.2+resource+command</a><br />
+<br />
+<br />
+List details of a platform (machine)<br />
+<br />
+cd C:\pierre\workspace\Hyperic\lib\hqapi1-client-5.0.0\bin<br />
+<b>hqapi resource list -platform myhost.acme.com</b><br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+&lt;ResourcesResponse>
+    &lt;Status>Success&lt;/Status>
+    &lt;Resource id="11328" name="myhost.acme.com" description="Red Hat Enterprise Linux 5"
+location="" instanceId="10003" typeId="1">
+        &lt;ResourcePrototype resourceTypeId="1" instanceId="10001" id="10001" name="Linux"/>
+        &lt;Agent id="10003" address="10.58.25.132" port="2144" version="4.6.5" unidirectional="false"/>
+
+        &lt;Ip address="10.58.25.132" mac="34:8E:99:27:FD:80" netmask="255.255.255.0"/>
+        &lt;Ip address="127.0.0.1" mac="00:00:00:00:00:00" netmask="255.0.0.0"/>
+        &lt;ResourceInfo key="fqdn" value="myhost.acme.com"/>
+    &lt;/Resource>
+&lt;/ResourcesResponse>
+
+</pre><br />
+<br />
+List all details of a all Linux platforms (machine)<br />
+<br />
+<b>hqapi resource list -prototype Linux</b><br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+&lt;ResourcesResponse>
+    &lt;Status>Success&lt;/Status>
+    &lt;Resource id="10882" name="myhost1.acme.com" description="Red Hat Enterprise Linux 5"
+location="" instanceId="10001" typeId="1">
+        &lt;ResourcePrototype resourceTypeId="1" instanceId="10001" id="10001" name="Linux"/>
+        &lt;Agent id="10001" address="10.56.5.191" port="2144" version="4.5.3" unidirectional="false"/>
+
+        &lt;Ip address="10.56.53.191" mac="99:8E:99:27:FD:98" netmask="255.255.255.0"/>
+        &lt;Ip address="10.56.53.174" mac="99:8E:99:27:FD:98" netmask="255.255.255.0"/>
+        &lt;Ip address="127.0.0.1" mac="00:00:00:00:00:00" netmask="255.0.0.0"/>
+        &lt;ResourceInfo key="fqdn" value="myhost1.acme.com"/>
+    &lt;/Resource>
+
+    &lt;Resource id="10883" name="myhost2.acme.com" description="Red Hat Enterprise Linux 5"
+location="" instanceId="10002" typeId="1">
+        &lt;ResourcePrototype resourceTypeId="1" instanceId="10001" id="10001" name="Linux"/>
+        &lt;Agent id="10001" address="10.56.5.192" port="2144" version="4.5.3" unidirectional="false"/>
+
+        &lt;Ip address="10.56.53.191" mac="99:8E:99:27:FD:98" netmask="255.255.255.0"/>
+        &lt;Ip address="10.56.53.174" mac="99:8E:99:27:FD:98" netmask="255.255.255.0"/>
+        &lt;Ip address="127.0.0.1" mac="00:00:00:00:00:00" netmask="255.0.0.0"/>
+        &lt;ResourceInfo key="fqdn" value="myhost.acme.com"/>
+    &lt;/Resource>
+&lt;/ResourcesResponse>
+
+</pre><br />
+<br />
+Something really fantastic is when you do:<br />
+<br />
+<b>hqapi resource list -prototype Linux --children > myresources.xml</b><br />
+<br />
+this will dump the ENTIRE database of resources!<br />
+<br />
+And the real great thing is that you can<br />
+<b>resource sync --file myresources.xml</b><br />
+<br />
+to import into a HQ Server the resources exported by "resource list"

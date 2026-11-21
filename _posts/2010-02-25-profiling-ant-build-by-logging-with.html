@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Profiling a Ant build by logging with Log4J"
+date: 2010-02-25T14:16:00.000+01:00
+permalink: /2010/02/profiling-ant-build-by-logging-with.html
+blogger_id: "8768843577698710102"
+tags: ["ant"]
+---
+You would think it's an easy task to profile your build, but Ant authors simply neglected this feature.<br />
+In order to timestamp each step, do this way:<br />
+<br />
+1) create a log4j.properties file and put it in the classpath:<br />
+<br />
+# Set root category priority to INFO and its only appender to CONSOLE.<br />
+log4j.rootCategory=DEBUG, CONSOLE<br />
+#log4j.rootCategory=DEBUG, CONSOLE, LOGFILE<br />
+<br />
+# Set the enterprise logger category to FATAL and its only appender to CONSOLE.<br />
+log4j.logger.org.apache.tools.ant=DEBUG, CONSOLE<br />
+<br />
+# CONSOLE is set to be a ConsoleAppender using a PatternLayout.<br />
+log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender<br />
+log4j.appender.CONSOLE.Threshold=DEBUG<br />
+log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout<br />
+log4j.appender.CONSOLE.layout.ConversionPattern=- %m%n<br />
+<br />
+# LOGFILE is set to be a File appender using a PatternLayout.<br />
+log4j.appender.LOGFILE=org.apache.log4j.FileAppender<br />
+log4j.appender.LOGFILE.File=axis.log<br />
+log4j.appender.LOGFILE.Append=true<br />
+log4j.appender.LOGFILE.Threshold=DEBUG<br />
+log4j.appender.LOGFILE.layout=org.apache.log4j.PatternLayout<br />
+log4j.appender.LOGFILE.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n<br />
+<br />
+2) add to the classpath the log4j.jar file<br />
+<br />
+3) run:<br />
+set ANT_OPTS=-Dlog4j.debug -Dlog4j.configuration=file:./log4j.properties<br />
+ant -listener org.apache.tools.ant.listener.Log4jListener -verbose -buildfile mybuild.xml build<br />
+<br />
+<br />
+Terrible, eh?

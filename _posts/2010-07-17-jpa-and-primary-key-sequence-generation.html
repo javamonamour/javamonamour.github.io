@@ -1,0 +1,32 @@
+---
+layout: post
+title: "JPA and primary key sequence generation"
+date: 2010-07-17T19:39:00.000+02:00
+permalink: /2010/07/jpa-and-primary-key-sequence-generation.html
+blogger_id: "6914718520190205065"
+tags: ["JPA"]
+---
+Nothing is easy...<br />
+<br />
+I do:<br />
+create sequence GEO_MESSAGES_LOG_SEQ;<br />
+<br />
+and I assign the primary key as "sequence generated".<br />
+This entails these annotations:<br />
+<br />
+<pre>@Id
+@SequenceGenerator(name="GEO_MESSAGES_LOG_ID_GENERATOR", sequenceName="GEO_MESSAGES_LOG_SEQ", allocationSize=1)
+@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="GEO_MESSAGES_LOG_ID_GENERATOR")
+</pre><br />
+<br />
+I immediately get this error:<br />
+<br />
+Exception [TOPLINK-7027] <br />
+<br />
+Exception Description: The sequence named [GEO_MESSAGES_LOG_SEQ] is setup incorrectly. Its increment does not match its pre-allocation size.<br />
+<br />
+<br />
+<br />
+in @SequenceGenerator I add allocationSize=1<br />
+<br />
+and things magically work... I suspect performance will not be great...

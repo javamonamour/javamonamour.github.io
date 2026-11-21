@@ -1,0 +1,39 @@
+---
+layout: post
+title: "High Availability File Adapter in OSB"
+date: 2011-10-30T22:45:00.003+01:00
+permalink: /2011/10/high-availability-file-adapter-in-osb.html
+blogger_id: "4600849447475687646"
+tags: ["FileAdapter", "HA", "JCA"]
+---
+While running the FileAdapter (eis/FileAdapter) in a cluster with 2 instances, I get this error<br />
+<br />
+BINDING.JCA-11042 File deletion failed<br />
+<br />
+the full error is<br />
+<br />
+onFatalError: Adapter forced endpoint deactivation due to:<br />
+BINDING.JCA-11042<br />
+File deletion failed.<br />
+<br />
+here <a href="https://forums.oracle.com/forums/thread.jspa?threadID=2157695">https://forums.oracle.com/forums/thread.jspa?threadID=2157695</a> and here <a href="https://kr.forums.oracle.com/forums/thread.jspa?messageID=9757727">https://kr.forums.oracle.com/forums/thread.jspa?messageID=9757727</a> and here <a href="https://cn.forums.oracle.com/forums/thread.jspa?threadID=2252967">https://cn.forums.oracle.com/forums/thread.jspa?threadID=2252967</a> they report the same story.<br />
+<br />
+<br />
+OK, we need to use eis/HAFileAdapter and give a controlDir. But we are not having a SOAINFRA DB schema because we installed only OSB. <br />
+<br />
+see High Availability in Inbound Operations here <a href="http://download.oracle.com/docs/cd/E15523_01/integration.1111/e10231/adptr_file.htm">http://download.oracle.com/docs/cd/E15523_01/integration.1111/e10231/adptr_file.htm</a><br />
+<br />
+it is not clear if you have an option to use a file as a coordinator, instead of a DB. What is controlDir for?<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E14571_01/doc.1111/e17059.pdf">http://download.oracle.com/docs/cd/E14571_01/doc.1111/e17059.pdf</a> here the HA FileAdapter documentation<br />
+<br />
+<br />
+<a href="http://www.oracle.com/technetwork/database/features/availability/maa-soa-assesment-194432.pdf">This document</a> is also quite cool, it says:<br />
+<br />
+"Database-based mutex and locks are used to coordinate these operations in a File Adapter clustered topology. Other coordinators are available but Oracle recommends using the Oracle Database."<br />
+<br />
+yet they don't mention the alternatives.... if you use a DB, then it must be a HA DB otherwise a DB failure would mean a File Adapter failure...<br />
+<br />
+<br />
+<br />
+<a href="/2012/04/setting-up-hafileadapter-with-oracle.html">see also here for full solution</a>

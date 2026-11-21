@@ -1,0 +1,119 @@
+---
+layout: post
+title: "kubectl generators and restart option"
+date: 2019-07-10T05:11:00.003+02:00
+permalink: /2019/07/kubectl-generators-and-restart-option.html
+blogger_id: "3505253908527454572"
+tags: ["kubectl"]
+---
+<a href="https://kubernetes.io/docs/reference/kubectl/conventions/#generators">https://kubernetes.io/docs/reference/kubectl/conventions/#generators</a><br />
+<br />
+the only non-deprecated generatori is "run-pod/v1" :<br />
+<br />
+kubectl run nginx --image=nginx <b>--generator=run-pod/v1</b> --dry-run -o yaml<br />
+<br />
+<pre>apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    imagePullPolicy: IfNotPresent
+    name: nginx
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+</pre><br />
+<br />
+kubectl run nginx --image=nginx --dry-run -o yaml<br />
+<br />
+<pre>apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}
+
+</pre><br />
+<br />
+#create nginx POD only<br />
+<br />
+kubectl run nginx --image=nginx --port=80 <b>--restart=Never</b>  --dry-run -o yaml <br />
+<br />
+<pre>apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  containers:
+  - image: nginx
+    imagePullPolicy: IfNotPresent
+    name: nginx
+    ports:
+    - containerPort: 80
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Never
+status: {}
+</pre><br />
+<br />
+#create deployment nginx and pod<br />
+<br />
+kubectl run nginx --image=nginx --port=80 <b>--restart=Always</b> --dry-run -o yaml<br />
+ <br />
+<pre>apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: nginx
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+        - containerPort: 80
+        resources: {}
+status: {}
+</pre><br />
+<br />
+

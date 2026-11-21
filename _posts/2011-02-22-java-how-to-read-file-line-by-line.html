@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Java how to read a file line by line"
+date: 2011-02-22T16:43:00.003+01:00
+permalink: /2011/02/java-how-to-read-file-line-by-line.html
+blogger_id: "4976890887738044964"
+tags: ["fileread"]
+---
+I keep forgetting and I keep having to google it up...<br />
+<br />
+<pre name="code" class="brush: java">public class MyFileReader {
+ File file;
+ FileReader fr;
+ BufferedReader br = null;
+
+ public MyFileReader(File f) throws FileNotFoundException {
+  file = f;
+  fr = new FileReader(file);
+  br = new BufferedReader(fr);
+ }
+
+ public void readAll() throws IOException {
+  String line;
+  while ( (line = br.readLine()) != null ) {
+
+   System.out.println(line);
+  }
+
+ }
+
+ public void close() {
+  br.close();
+  fr.close();
+ }
+}
+
+
+</pre><br />
+<br />
+<br />
+How to write a file:<br />
+<br />
+<pre name="code" class="brush: java">   FileWriter fstream = new FileWriter("out.txt");
+        BufferedWriter out = new BufferedWriter(fstream);
+    out.write("I Love Silvio (just kidding)");
+    out.close();
+</pre>

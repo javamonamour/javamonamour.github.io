@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Maven hell as usual: No connector available ..."
+date: 2013-11-18T12:14:00.001+01:00
+permalink: /2013/11/maven-hell-as-usual-no-connector.html
+blogger_id: "1002125228891042953"
+tags: ["maven"]
+---
+<i>
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy (default-deploy) on project AcmeScripts: Failed to deploy artifacts/metadata: No connector available to access repository acme-repository (${acme.deploy.url}) of type default using the available factories WagonRepositoryConnectorFactory -> [Help 1]
+
+</i>
+
+
+<br/>
+
+Never seen this wagon anywhere.
+<br/>
+In reality the issue was that in my pom.xml I had:
+<br/>
+ &lt;version>1.0&lt;/version>
+<br/>
+instead of
+<br/>
+ &lt;version>1.0-SNAPSHOT&lt;/version>
+
+<br/><br/><br/>
+
+Maven is an incredible piece of shit and I am more and more persuaded of it every time I use it.
+
+<br/><br/><br/>
+
+

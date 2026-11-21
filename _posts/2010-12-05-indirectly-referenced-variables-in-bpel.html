@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Indirectly referenced variables in BPEL"
+date: 2010-12-05T12:38:00.001+01:00
+permalink: /2010/12/indirectly-referenced-variables-in-bpel.html
+blogger_id: "8613737992130817793"
+tags: ["BPEL", "XPath"]
+---
+or "Dynamically specified XPaths in BPEL"<br />
+<br />
+Let's assume I have a String variable "counter", <br />
+and I want to do a lookup on a collection MyCollection accessing its MyElement number "counter".<br />
+<br />
+In Java it would be Element element = myCollection.get(counter).<br />
+<br />
+In BPEL you have to toil a lot more even to do the simplest thing:<br />
+<br />
+<br />
+<pre name="code" class="brush: xml"><assign name="InitData">
+                    <copy>
+                        <from expression="concat('/ns2:MyCollection/ns2:MyElement[',bpws:getVariableData('Counter'),']')"/>
+                        <to variable="Temp_Variable"/>
+                    </copy>
+                    <copy>
+                        <from expression="bpws:getVariableData('InputVariable','MyCollection',bpws:getVariableData('Temp_Variable'))"/>
+                        <to variable="Destination"
+                            query="/ns2:Destination"/>
+                    </copy>
+                </assign>
+</pre><br />
+<br />
+If Counter contains 4, <br />
+Temp_Variable will contain a string  "/ns2:MyCollection/ns2:MyElement[4]"<br />
+which will be evaluated as a XPath by the second "copy" statement.<br />
+<br />
+One can - more effectively - use dynamic indexing:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12483_01/integrate.1013/b28981/manipdoc.htm#CIHGBJCE">http://download.oracle.com/docs/cd/E12483_01/integrate.1013/b28981/manipdoc.htm#CIHGBJCE<br />
+</a><br />
+<br />
+<br />
+<br />
+Why do simple things in Java, when you can do overly complicated programming in XML?

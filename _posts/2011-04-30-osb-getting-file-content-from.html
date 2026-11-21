@@ -1,0 +1,58 @@
+---
+layout: post
+title: "OSB getting file content with a File Proxy Service"
+date: 2011-04-30T16:17:00.002+02:00
+permalink: /2011/04/osb-getting-file-content-from.html
+blogger_id: "4703527967299238801"
+tags: ["file", "OSB"]
+---
+I would start by polling with a Proxy Service :<br />
+Service Type:    Messaging Service<br />
+Request Message Type  . binary Type<br />
+Endpoint URI  : file:///c:/temp/files<br />
+<br />
+when OSB polls the file, the body is populated with this:<br />
+<br />
+con:binary-content ref="cid:3042380f:12fa58f6644:-7fd8" xmlns:con="http://www.bea.com/wli/sb/context"<br />
+<br />
+<br />
+you assign a OSB variable as explained here <br />
+<a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/context.html#wp1104506">http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/context.html#wp1104506</a><br />
+<br />
+assign $body/ctx:binary-content to myBinaryData<br />
+<br />
+<br />
+<br />
+<br />
+then you invoke a java Callout with that myBinaryData variable<br />
+<br />
+This post explains a little more <br />
+<a href="http://frommyworkshop.blogspot.com/2009/04/send-e-mail-with-attachment-through-osb.html">http://frommyworkshop.blogspot.com/2009/04/send-e-mail-with-attachment-through-osb.html</a><br />
+<br />
+<br />
+Here is the Java Callout code<br />
+<br />
+<pre name="code" class="brush: java">package com.pierre.filefromosb;
+
+public class FileFromOSB {
+public static void processFile(Object param) {
+System.out.println("class=" + param.getClass().getName());
+System.out.println("param=" + param);
+byte[] bytes = (byte[])param;
+
+String content = new String(bytes);
+System.out.println("content=" + content);
+}
+}
+</pre><br />
+the result is:<br />
+<br />
+class=[B<br />
+param=[B@47b291<br />
+content=ciao<br />
+<br />
+<br />
+(the file's content was "ciao")<br />
+<br />
+<br />
+Once you have the binary content (byte[]) of the file you can do anything you want with it.

@@ -1,0 +1,21 @@
+---
+layout: post
+title: "OSB Proxy Services and Transactions"
+date: 2011-12-03T21:02:00.000+01:00
+permalink: /2011/12/osb-proxy-services-and-transactions.html
+blogger_id: "7903836234244345330"
+tags: ["OSB", "transactions"]
+---
+This is a topic on which I still have to experiment a lot.<br />
+<br />
+<a href="http://docs.oracle.com/cd/E14571_01/doc.1111/e15866/ui_ref.htm#i1345330">http://docs.oracle.com/cd/E14571_01/doc.1111/e15866/ui_ref.htm#i1345330</a><br />
+<br />
+This is quite interesting.<br />
+<i><br />
+- If a global transaction already exists, the transport provider propagates it in the request<br />
+<br />
+- if Service Callouts or Publish actions have the outbound quality of service parameter set to <b>best-effort</b> (the default), Oracle Service Bus executes those actions <b>outside of the transaction context</b>. To have Oracle Service Bus execute those actions in the same request transaction context, set quality of service on those actions to exactly-once.<br />
+<br />
+</i><br />
+<br />
+« Publish «  is executed in a separate transaction only if the Quality of Service is “best effort”. If you use “exactly once”, the Publish is executed in the same TX

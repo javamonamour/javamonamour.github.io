@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Oracle XE DB running as Docker Container, and a freaky Docker error"
+date: 2018-02-12T16:09:00.002+01:00
+permalink: /2018/02/oracle-xe-db-running-as-docker.html
+blogger_id: "2966415172896214746"
+tags: ["docker", "oraclexe"]
+---
+<a href="https://hub.docker.com/r/sath89/oracle-xe-11g/">https://hub.docker.com/r/sath89/oracle-xe-11g/</a><br />
+<br />
+docker run -d -p 8080:8080 -p 1521:1521 sath89/oracle-xe-11g<br />
+<br />
+<br />
+Error response from daemon: updating the store state of sandbox failed: failed to update store for object type *libnetwork.sbState: json: cannot unmarshal string into Go struct field sbState.ExtDNS of type libnetwork.extDNSEntry.<br />
+<br />
+it seems that the only way to solve it is:<br />
+<br />
+sudo rm -rf /var/lib/docker<br />
+<br />
+then reboot<br />
+<br />
+I did so and it worked (but of course I have lost all my images and containers).<br />
+<br />
+Scary.

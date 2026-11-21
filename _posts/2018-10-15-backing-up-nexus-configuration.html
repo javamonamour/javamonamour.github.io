@@ -1,0 +1,38 @@
+---
+layout: post
+title: "backing up the Nexus configuration"
+date: 2018-10-15T18:23:00.004+02:00
+permalink: /2018/10/backing-up-nexus-configuration.html
+blogger_id: "6147543830138588258"
+tags: ["nexus"]
+---
+Using the built-in procedure is risky - to say the least. I was unable to make it work (the restore part, I mean).<br />
+<br />
+You can do this (see <a href="https://stackoverflow.com/a/45986526/651288">https://stackoverflow.com/a/45986526/651288</a> ):<br />
+<br />
+<pre>java -jar /opt/sonatype/nexus/lib/support/nexus-orient-console.jar
+
+CONNECT create database plocal:/home/centos/nexus310/sonatype-work/nexus3/db/component admin admin
+
+#to export, use this:
+export database component-export
+
+
+
+#to import, use this:
+drop database
+create database plocal:/home/centos/nexus310/sonatype-work/nexus3/db/component
+import database component-export.json.gz
+
+</pre><br />
+I also do this:<br />
+<br />
+gunzip component-export.json.gz<br />
+python -m json.tool component-export.json > component-exportPRETTY.json<br />
+<br />
+<br />
+and the JSON file is quite readable, probably you can even stick it into a Git repo and relax.<br />
+<br />
+just replace "component" with "config" and do all over again, to backup the configuration<br />
+<br />
+From an operational point of view, Nexus 3 is simply too fragile.

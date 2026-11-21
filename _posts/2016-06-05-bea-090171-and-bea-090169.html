@@ -1,0 +1,50 @@
+---
+layout: post
+title: "BEA-090171 and BEA-090169"
+date: 2016-06-05T10:38:00.002+02:00
+permalink: /2016/06/bea-090171-and-bea-090169.html
+blogger_id: "6955097413743829953"
+tags: ["security", "ssl"]
+---
+in WebLogic there are 2 messages helping us identify the identity and trust store used :
+
+<br/>
+BEA-090171 Loading the identity certificate and private key stored under the alias client .... 
+<br />
+<br />
+BEA-090169 Loading trusted certificates from the JKS file store
+
+<br />
+<br />
+This flag is useful to trace: -Dweblogic.security.SSL.verbose=true -Djavax.net.debug=all 
+<br />
+Check also the "ssl" element in config.xml:
+<br />
+<pre class="brush: xml">    &lt;ssl&gt;
+      &lt;use-java&gt;true&lt;/use-java&gt;
+      &lt;enabled&gt;true&lt;/enabled&gt;
+      &lt;ciphersuite&gt;TLS_RSA_WITH_AES_256_CBC_SHA&lt;/ciphersuite&gt;
+      &lt;ciphersuite&gt;TLS_RSA_WITH_AES_128_CBC_SHA&lt;/ciphersuite&gt;
+      &lt;ciphersuite&gt;TLS_RSA_WITH_RC4_128_SHA&lt;/ciphersuite&gt;
+      &lt;ciphersuite&gt;TLS_RSA_WITH_3DES_EDE_CBC_SHA&lt;/ciphersuite&gt;
+      &lt;hostname-verifier&gt;com.pierre.HostNameVerifier&lt;/hostname-verifier&gt;
+      &lt;hostname-verification-ignored&gt;false&lt;/hostname-verification-ignored&gt;
+      &lt;export-key-lifespan&gt;500&lt;/export-key-lifespan&gt;
+      &lt;client-certificate-enforced&gt;true&lt;/client-certificate-enforced&gt;
+      &lt;listen-port&gt;33641&lt;/listen-port&gt;
+      &lt;two-way-ssl-enabled&gt;true&lt;/two-way-ssl-enabled&gt;
+      &lt;server-private-key-alias&gt;some.certificate.alias&lt;/server-private-key-alias&gt;
+      &lt;server-private-key-pass-phrase-encrypted&gt;{AES}blablabla=&lt;/server-private-key-pass-phrase-encrypted&gt;
+      &lt;ssl-rejection-logging-enabled&gt;true&lt;/ssl-rejection-logging-enabled&gt;
+      &lt;inbound-certificate-validation&gt;BuiltinSSLValidationAndCertPathValidators&lt;/inbound-certificate-validation&gt;
+      &lt;outbound-certificate-validation&gt;BuiltinSSLValidationOnly&lt;/outbound-certificate-validation&gt;
+      &lt;jsse-enabled&gt;true&lt;/jsse-enabled&gt;
+    &lt;/ssl&gt;
+
+
+</pre>
+<br />
+<br />
+SSLMBean.ServerPrivateKeyAlias   <a href="https://docs.oracle.com/cd/E13222_01/wls/docs100/schemaref/security/http.www.bea.com.ns.weblogic.920.domain/types/ssltype.server-private-key-alias.html">https://docs.oracle.com/cd/E13222_01/wls/docs100/schemaref/security/http.www.bea.com.ns.weblogic.920.domain/types/ssltype.server-private-key-alias.html</a>
+<br />
+<br />

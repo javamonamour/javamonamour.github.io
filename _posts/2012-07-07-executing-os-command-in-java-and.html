@@ -1,0 +1,28 @@
+---
+layout: post
+title: "Executing a OS command in Java and capture the stdout"
+date: 2012-07-07T12:50:00.000+02:00
+permalink: /2012/07/executing-os-command-in-java-and.html
+blogger_id: "964233005408232282"
+tags: ["java"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2012-07-08
+    html: "Raju, I did test it and it worked on Linux (of course &quot;ls&quot; is a Unix command)... the methodology, I admit, is a bit iffy, sometimes there is some synchronization issue. If you are working locally, the best thing is to redirect the Unix command stdout to a file, and then display the content of that file. Much safer."
+  - author: "Raju Angani"
+    date: 2012-07-08
+    html: "You might want to check the method again, it doesn&#39;t work."
+---
+<pre name="code" class="brush: java"> Process proc = Runtime.getRuntime().exec("ls");
+ InputStream is = proc.getInputStream();
+ DataInputStream in = new DataInputStream(is);
+ BufferedReader br = new BufferedReader(new InputStreamReader(in));
+ String line = null;
+ out.write("result&lt;br/>");
+ while ( (line = br.readLine()) != null) {
+  out.write(line);
+  out.write("&lt;br/>");
+ }
+ 
+ out.write("end result&lt;br/>");  
+</pre>

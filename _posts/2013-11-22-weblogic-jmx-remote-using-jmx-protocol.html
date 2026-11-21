@@ -1,0 +1,105 @@
+---
+layout: post
+title: "WebLogic JMX remote using JMX protocol and JMXTrans"
+date: 2013-11-22T12:18:00.001+01:00
+permalink: /2013/11/weblogic-jmx-remote-using-jmx-protocol.html
+blogger_id: "8865850629850358162"
+tags: ["JMX"]
+---
+Make sure this is enabled in your domain configuration:
+<br/>
+
+<pre>
+a) [domain name]->[Configuration][General]->[Advanced]
+[X] Platform MBean Server Enabled
+[X] Platform MBean Server Used
+
+b) [domain name]->[Security][General]
+[X] Anonymous Admin Lookup Enabled
+
+</pre>
+<br/><br/><br/>
+
+make sure each server listens on a different jmx port:
+<br/>
+vi /opt/oracle/domains/osbpl1do/bin/setDomainEnv.sh
+<br/>
+<pre>
+
+if [ "${SERVER_NAME}" = "osbpl1ms1" ] ; then
+JAVA_OPTIONS="${JAVA_OPTIONS} -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8888 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djavax.management.builder.initial=weblogic.management.jmx.mbeanserver.WLSMBeanServerBuilder"
+fi
+
+
+if [ "${SERVER_NAME}" = "osbpl1as" ] ; then
+JAVA_OPTIONS="${JAVA_OPTIONS} -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8889 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djavax.management.builder.initial=weblogic.management.jmx.mbeanserver.WLSMBeanServerBuilder"
+fi
+
+</pre>
+<br/><br/>
+
+restart your servers
+
+
+<br/><br/>
+
+To monitor a DataSource Active Connections:
+<br/><br/>
+vi myds.json:
+<br/><br/>
+<pre class:"brush: java">
+{
+  "servers" : [ {
+    "port" : "25006",
+    "host" : "myhost.acme.com",
+    "queries" : [ {
+      "outputWriters" : [ {
+        "@class" : "com.googlecode.jmxtrans.model.output.StdOutWriter",
+        "settings" : {
+        }
+      } ],
+      "obj" : "com.bea:ServerRuntime=acme-server-1,Name=acme-import.PickupPointDS,Type=JDBCDataSourceRuntime",
+      "attr" : [ "ActiveConnectionsCurrentCount" ]
+    }, {
+      "outputWriters" : [ {
+        "@class" : "com.googlecode.jmxtrans.model.output.StdOutWriter",
+        "settings" : {
+        }
+      } ],
+      "obj" : "java.lang:name=CMS Old Gen,type=MemoryPool",
+      "attr" : [ "Usage" ]
+    }, {
+      "outputWriters" : [ {
+        "@class" : "com.googlecode.jmxtrans.model.output.StdOutWriter",
+        "settings" : {
+        }
+      } ],
+      "obj" : "java.lang:name=ConcurrentMarkSweep,type=GarbageCollector",
+      "attr" : [ "LastGcInfo" ]
+    } ],
+    "numQueryThreads" : 2
+  } ]
+}
+
+</pre>
+
+<br/><br/>
+
+./jmxtrans.sh start myds.json
+
+<br/><br/>
+
+you should get this
+<br/><br/>
+<i> Result [attributeName=ActiveConnectionsCurrentCount, className=weblogic.jdbc.common.internal.DataSourceRuntimeMBeanImpl, typeName=Name=acme-import.PickupPointDS,ServerRuntime=acme-server-1,Type=JDBCDataSourceRuntime, values={ActiveConnectionsCurrentCount=0}, epoch=1385119401592]</i>
+
+
+<br/><br/>
+
+
+To find the ObjectName (like: com.bea:ServerRuntime=acme-server-1,Name=acme-import.PickupPointDS,Type=JDBCDataSourceRuntime ) you connect to the Managed Server with WLST, serverRuntime(), then you cd to the MBean and you do "cmo", this will tell you the ObjectName. The attribute can be discovered wish "ls".
+
+
+
+
+

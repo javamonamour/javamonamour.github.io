@@ -1,0 +1,63 @@
+---
+layout: post
+title: "running ssh workflow on group of servers"
+date: 2019-09-05T18:07:00.001+02:00
+permalink: /2019/09/running-ssh-workflow-on-group-of-servers.html
+blogger_id: "4853920254268534838"
+tags: ["bash", "saltstack"]
+---
+#generate sample servers<br />
+<br />
+for i in {1..110}; do     printf "myserver%05d\n" $i; done > myservers.txt<br />
+<br />
+<pre>#group servers by 20
+count=0
+group=0
+for line in $(cat  myservers.txt);
+do
+  printf "GROUP_%03d %s\n" $group $line
+  ((count=$count + 1))
+  if [ $count -eq 20 ]; then
+    ((group=$group + 1))
+    count=0
+  fi
+done >> grouped.txt
+
+</pre><br />
+#print servers in given group<br />
+cat grouped.txt | grep GROUP_005 | awk -F' ' '{print $2}'<br />
+<br />
+<br />
+#put this in steps.sh<br />
+<br />
+<pre>
+myserver=$1
+step=$2
+
+
+case $step in
+  1)
+    echo "hello, this is step 1 for server $myserver"
+    ;;
+  2)
+    echo "ciao, this is step 2 for server $myserver"
+    ;;
+  3)
+    echo "Gruezi, this is step 3 for server $myserver"
+    ;;
+  *)
+    echo "ERROR invalid step $step"
+esac
+
+</pre><br />
+<br />
+<br />
+<br />
+#execute given step for GROUP<br />
+<br />
+THESTEP=3; cat grouped.txt | grep GROUP_005 | awk -vstep="$THESTEP" -F' ' '{print $2,step}' | xargs ./steps.sh<br />
+<br />
+<br />
+<br />
+<br />
+

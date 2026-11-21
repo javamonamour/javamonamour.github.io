@@ -1,0 +1,27 @@
+---
+layout: post
+title: "osb sample xquery"
+date: 2012-07-14T14:09:00.000+02:00
+permalink: /2012/07/osb-sample-xquery.html
+blogger_id: "27272832722886248"
+tags: ["XQuery"]
+---
+Since I always need an XQuery skeleton and I am too lazy to run Eclipse, here is one:<br />
+<br />
+<pre name="code" class="brush: java">
+xquery version "1.0" encoding "Cp1252";
+(:: pragma  parameter="$anyType1" type="xs:anyType" ::)
+(:: pragma  type="xs:anyType" ::)
+
+declare namespace xf = "http://tempuri.org/OSB%20Project%201/Sample/";
+
+declare function xf:Sample($anyType1 as element(*))
+    as element(*) {
+        <result>{count($anyType1)}</result>
+};
+
+declare variable $anyType1 as element(*) external;
+
+xf:Sample($anyType1)
+
+</pre>

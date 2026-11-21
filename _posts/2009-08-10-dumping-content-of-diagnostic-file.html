@@ -1,0 +1,9 @@
+---
+layout: post
+title: "Dumping the content of a Diagnostic File Store"
+date: 2009-08-10T19:16:00.000+02:00
+permalink: /2009/08/dumping-content-of-diagnostic-file.html
+blogger_id: "584627105828818728"
+tags: ["filestore"]
+---
+if in WLST you try:<br /><br /><span style="font-style:italic;">openfilestore(store, dir='.', create='false')</span><br /><br />and you get this:<br /><br />Traceback (innermost last):<br />  File "<console>", line 1, in ?<br />  File "<iostream>", line 66, in openfilestore<br />TypeError: getParam(): 2nd arg can't be coerced to String<br /><br /><br />don't cry (or, rather, cry but don't despair).<br />You can still use<br /><br />java weblogic.store.Admin<br /><br />openfile -store WLS_DIAGNOSTICS -dir /path/to/data/store/diagnostics<br /><br />dump -store WLS_DIAGNOSTICS -out /tmp/diags.log<br /><br />this should give you statistics about the content of the file (events)

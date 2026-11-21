@@ -1,0 +1,141 @@
+---
+layout: post
+title: "WLST and NodeManager"
+date: 2011-05-15T21:21:00.001+02:00
+permalink: /2011/05/wlst-and-nodemanager.html
+blogger_id: "7588799371338572485"
+tags: ["nodemanager", "WLST"]
+---
+wls:/offline> <b>nm()</b><br />
+Not connected to Node Manager<br />
+<br />
+wls:/offline> <b>startNodeManager()</b><br />
+Launching NodeManager ...<br />
+blablabla<br />
+Node Manager starting in the background<br />
+<br />
+<br />
+wls:/offline> <b>nmConnect('weblogic','weblogic1','localhost','5556','soadev','C:/Oracle2/Middleware/user_projects/domains/soadev','ssl')</b><br />
+Connecting to Node Manager ...<br />
+Successfully Connected to Node Manager.<br />
+<br />
+wls:/offline><b>nmServerStatus('AdminServer')</b><br />
+<br />
+wls:/offline><b>nmKill('AdminServer')</b><br />
+<br />
+<br />
+start a server WITHOUT NodeManager:<br />
+wls:/offline><b>startServer('AdminServer','soadev','t3://localhost:7001','weblogic','weblogic1','C:/Oracle2/Middleware/user_projects/domains/soadev','true',60000,'false')</b><br />
+<br />
+<br />
+see here <a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/config_scripting/manage_servers.html">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/config_scripting/manage_servers.html</a><br />
+<br />
+<br />
+<br />
+<b>connect('weblogic', 'weblogic1', 't3://localhost:7001')</b><br />
+<br />
+<b>serverRuntime()</b><br />
+<br />
+wls:/soadev/serverRuntime> <b>ls()</b><br />
+dr--   ApplicationRuntimes<br />
+dr--   AsyncReplicationRuntime<br />
+dr--   ClusterRuntime<br />
+dr--   ConnectorServiceRuntime<br />
+dr--   DefaultExecuteQueueRuntime<br />
+dr--   EntityCacheCumulativeRuntime<br />
+dr--   EntityCacheCurrentStateRuntime<br />
+dr--   EntityCacheHistoricalRuntime<br />
+dr--   ExecuteQueueRuntimes<br />
+dr--   JDBCServiceRuntime<br />
+dr--   JMSRuntime<br />
+dr--   JTARuntime<br />
+dr--   JVMRuntime<br />
+dr--   JoltRuntime<br />
+dr--   LibraryRuntimes<br />
+dr--   LogBroadcasterRuntime<br />
+dr--   LogRuntime<br />
+dr--   MANAsyncReplicationRuntime<br />
+dr--   MANReplicationRuntime<br />
+dr--   MailSessionRuntimes<br />
+dr--   MaxThreadsConstraintRuntimes<br />
+dr--   MinThreadsConstraintRuntimes<br />
+dr--   PathServiceRuntime<br />
+dr--   PersistentStoreRuntimes<br />
+dr--   RequestClassRuntimes<br />
+dr--   SAFRuntime<br />
+dr--   SNMPAgentRuntime<br />
+dr--   ServerChannelRuntimes<br />
+dr--   ServerSecurityRuntime<br />
+dr--   ServerServices<br />
+dr--   SingleSignOnServicesRuntime<br />
+dr--   ThreadPoolRuntime<br />
+dr--   TimerRuntime<br />
+dr--   WANReplicationRuntime<br />
+dr--   WLDFRuntime<br />
+dr--   WTCRuntime<br />
+dr--   WebServerRuntimes<br />
+dr--   WorkManagerRuntimes<br />
+dr--   WseeClusterFrontEndRuntime<br />
+dr--   WseeWsrmRuntime<br />
+<br />
+-r--   ActivationTime                               1305484322463<br />
+-r--   AdminServer                                  true<br />
+-r--   AdminServerHost                              [2001:0:5ef5:79fd:1c05:d557:ab21:abcd]<br />
+-r--   AdminServerListenPort                        7001<br />
+-r--   AdminServerListenPortSecure                  false<br />
+-r--   AdministrationPort                           9002<br />
+-r--   AdministrationPortEnabled                    false<br />
+-r--   AdministrationURL                            t3://[2001:0:5ef5:79fd:1c05:d557:ab21:abcd]:7001<br />
+-r--   AsyncReplicationRuntime                      null<br />
+-r--   ClusterRuntime                               null<br />
+-r--   CurrentDirectory                             C:\Oracle2\Middleware\user_p<br />
+rojects\domains\soadev\.<br />
+-rw-   CurrentMachine<br />
+-r--   DefaultExecuteQueueRuntime                   null<br />
+-r--   DefaultURL                                   t3://[2001:0:5ef5:79fd:1c05:d557:ab21:abcd]:7001<br />
+-r--   EntityCacheCumulativeRuntime                 null<br />
+-r--   EntityCacheCurrentStateRuntime               null<br />
+-r--   EntityCacheHistoricalRuntime                 null<br />
+-r--   HealthState                                  Component:ServerRuntime,State:HEALTH_OK,MBean:AdminServer,ReasonCode:[]<br />
+-r--   JoltRuntime                                  null<br />
+-r--   ListenAddress                                pierrepc/2001:0:5ef5:79fd:1c05:d557:ab21:abcd<br />
+-r--   ListenPort                                   7001<br />
+-r--   ListenPortEnabled                            true<br />
+-r--   MANAsyncReplicationRuntime                   null<br />
+-r--   MANReplicationRuntime                        null<br />
+-r--   MiddlewareHome                               C:\Oracle2\Middleware<br />
+-r--   Name                                         AdminServer<br />
+-r--   OpenSocketsCurrentCount                      1<br />
+-r--   OracleHome                                   C:\Oracle2\Middleware<br />
+-rw-   Parent                                       null<br />
+-r--   PathServiceRuntime                           null<br />
+-r--   RestartRequired                              false<br />
+-r--   RestartsTotalCount                           0<br />
+-r--   SSLListenAddress                             null<br />
+-r--   SSLListenPort                                7002<br />
+-r--   SSLListenPortEnabled                         false<br />
+-r--   SocketsOpenedTotalCount                      1<br />
+-r--   State                                        RUNNING<br />
+-r--   StateVal                                     2<br />
+-r--   Type                                         ServerRuntime<br />
+-r--   WANReplicationRuntime                        null<br />
+-r--   WLECConnectionServiceRuntime                 null<br />
+-r--   WeblogicHome                                 C:\Oracle2\Middleware\wlserver_10.3<br />
+-r--   WeblogicVersion                              WebLogic Server 10.3.4.0  Fri Dec 17 20:47:33 PST 2010 1384255<br />
+-r--   WseeClusterFrontEndRuntime                   null<br />
+<br />
+-r-x   addRequestClassRuntime                       Boolean : WebLogicMBean(weblogic.management.runtime.RequestClassRuntimeMBean)<br />
+-r-x   forceShutdown                                Void :<br />
+-r-x   forceSuspend                                 Void :<br />
+-r-x   getIPv4URL                                   String : String(protocol)<br />
+-r-x   getIPv6URL                                   String : String(protocol)<br />
+-r-x   getServerChannel                             java.net.InetSocketAddress : String(protocol)<br />
+-r-x   getURL                                       String : String(protocol)<br />
+-r-x   preDeregister                                Void :<br />
+-r-x   restartSSLChannels                           Void :<br />
+-r-x   resume                                       Void :<br />
+-r-x   shutdown                                     Void :<br />
+-r-x   shutdown                                     Void : Integer(timeout),Boolean(ignoreSessions)<br />
+-r-x   start                                        Void :<br />
+-r-x   suspend                                      Void :<br />
+-r-x   suspend                                      Void : Integer(timeout),Boolean(ignoreSessions)

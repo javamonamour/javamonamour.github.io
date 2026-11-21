@@ -1,0 +1,48 @@
+---
+layout: post
+title: "funny /etc/hosts behaviour"
+date: 2017-06-16T17:09:00.002+02:00
+permalink: /2017/06/funny-etchosts-behaviour.html
+blogger_id: "4093467228211669288"
+---
+Someone entered 2 lines in /etc/hosts, specifying the same host and 2 different IPs
+<br/><br/>
+<pre>
+cat /etc/hosts | grep myvp.pippo.net
+
+116.8.194.82   myvp.pippo.net 
+119.57.52.83   myvp.pippo.net
+
+</pre>
+
+<br/><br/>
+
+the funny thing is that:
+<br/><br/>
+<pre>
+nslookup myvp.pippo.net 
+Name: myvp.pippo.net
+Address: 119.57.52.83
+</pre>
+<br/><br/>
+but
+<br/><br/>
+<pre>
+telnet myvp.pippo.net 443
+Trying 116.8.194.82...
+
+</pre>
+
+<br/><br/>
+
+
+so nslookup and telnet don't follow the same strategy to pick up the IP...
+
+<br/><br/>
+At least on  Linux 2.6.18-417.el5 RHAT 5.11 Tikanga
+<br/><br/>
+Weird that Linux doesn't report the issue...
+
+
+
+

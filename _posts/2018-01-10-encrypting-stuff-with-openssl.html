@@ -1,0 +1,48 @@
+---
+layout: post
+title: "Encrypting stuff with Openssl"
+date: 2018-01-10T16:54:00.002+01:00
+permalink: /2018/01/encrypting-stuff-with-openssl.html
+blogger_id: "7237524002948967343"
+tags: ["openssl"]
+---
+Let's first encode base64 the password:<br />
+<br />
+<b>echo -n "pippo" | openssl enc -base64</b><br />
+cGlwcG8=<br />
+<br />
+<br />
+man echo says: "-n     do not output the trailing newline"<br />
+<br />
+<br />
+This is equivalent to<br />
+<br />
+<b>echo -n "pippo" | base64</b><br />
+cGlwcG8=<br />
+<br />
+You can then decode with "base64 -decode" :<br />
+<br />
+<b>echo -n "pippo" | base64 | base64 --decode</b><br />
+pippo<br />
+<br />
+<br />
+or with "openssl enc -base64 -d":<br />
+<br />
+<b>echo -n "pippo" | openssl enc -base64 | openssl enc -base64 -d </b><br />
+pippo<br />
+<br />
+<br />
+If you want to encrypt with a salt:<br />
+<br />
+<b>openssl aes-256-cbc -in mypw.txt -out mypwenc.txt -e -pass pass:pluto</b><br />
+<br />
+and to decrypt:<br />
+<br />
+<b>openssl aes-256-cbc -in mypwenc.txt -out mypwclear.txt -d -pass pass:pluto</b><br />
+<br />
+Details on the openssl command options are here <a href="https://wiki.openssl.org/index.php/Manual:Openssl(1)">https://wiki.openssl.org/index.php/Manual:Openssl(1)</a><br />
+<br />
+<br />
+You can always check here <a href="https://encode-decode.com/aes-256-ofb-encrypt-online/">https://encode-decode.com/aes-256-ofb-encrypt-online/</a><br />
+<br />
+

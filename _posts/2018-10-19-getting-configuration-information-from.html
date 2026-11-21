@@ -1,0 +1,40 @@
+---
+layout: post
+title: "Getting configuration information from Nexus FOR FREE"
+date: 2018-10-19T11:38:00.001+02:00
+permalink: /2018/10/getting-configuration-information-from.html
+blogger_id: "3990021866617732937"
+tags: ["nexus"]
+---
+One VERY SIMPLE way to log all the Nexus 3 configuration in the nexus.log is to enable debug logging (Administration/Logging/ set the ROOT logger at DEBUG level), then navigate to the Repositories/Roles/Users administration page. You will see that precious JSON is logged in nexus.log, containing all the most minute details of the Repositories/Roles/User configuration.<br />
+<br />
+Programmatically you can achieve the same with a HTTP POST to http://mynexusserver:8081/service/extdirect with this JSON request, Content-Type application/json <br />
+<br />
+<pre>[{"action":"coreui_Blobstore","method":"read","data":null,"type":"rpc","tid":104},{"action":"coreui_Repository","method":"read","data":null,"type":"rpc","tid":105},{"action":"coreui_Repository","method":"readRecipes","data":null,"type":"rpc","tid":106},{"action":"coreui_Repository","method":"readReferences","data":[{"page":1,"start":0,"limit":25}],"type":"rpc","tid":107},{"action":"coreui_Repository","method":"read","data":null,"type":"rpc","tid":108}]
+
+</pre><br />
+<br />
+<br />
+<br />
+<pre>[{"action":"coreui_User","method":"read","data":[{"filter":[{"property":"source","value":"default"},{"property":"userId","value":""}],"page":1,"start":0,"limit":100}],"type":"rpc","tid":63},{"action":"coreui_User","method":"readSources","data":null,"type":"rpc","tid":64},{"action":"coreui_Role","method":"read","data":null,"type":"rpc","tid":65},{"action":"coreui_User","method":"read","data":[{"page":1,"start":0,"limit":100}],"type":"rpc","tid":66}]
+
+</pre><br />
+<br />
+It would be really cool if such API was made available through SwaggerUI... Nexus 3 is very very primitive as far as API is concerned.<br />
+<br />
+Internally, those actions coreui_Blobstore , coreui_User, coreui_Repository are mapped this way:<br />
+<br />
+action class 'org.sonatype.nexus.coreui.UserComponent' mapped to 'coreui_User'<br />
+<br />
+action class 'org.sonatype.nexus.coreui.RepositoryComponent' mapped to 'coreui_Repository'<br />
+<br />
+action class 'org.sonatype.nexus.coreui.BlobStoreComponent' mapped to 'coreui_Blobstore'<br />
+<br />
+<br />
+which are in the plugin/nexus-coreui-plugin area as Groovy classes (this for Nexus 3.10... I think in Nexus 3.13 things have changed..)<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

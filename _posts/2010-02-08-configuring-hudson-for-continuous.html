@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Configuring Hudson for continuous integration"
+date: 2010-02-08T11:43:00.000+01:00
+permalink: /2010/02/configuring-hudson-for-continuous.html
+blogger_id: "6163107581510863930"
+---
+Unfortunately, you will have to download a VERY OLD CVS client here:<br />
+<br />
+http://www.wincvs.org/download.html<br />
+<br />
+(I have downloaded WinCvs2_0_2-4.zip, installed to C:\Program Files\cvsnt and added this path to the PATH system variable)<br />
+<br />
+in Hudson, if your username contains the domain name (eg mydomain\myusername), remove mydomain\ from the connection string:<br />
+<br />
+:pserver:mycvsusername:mycvspassword@10.130.123.229:d:/cvsroot<br />
+<br />
+If you checkout multiple modules, they should be separated by BLANK, not by comma....<br />
+<br />
+Hudson will checkout into<br />
+C:\Users\myusername\.hudson\jobs\PVDemo\workspace<br />
+<br />
+<br />
+A Workshop Ant build.xml will not work unless it can find the .metadata directory in<br />
+C:\Users\pierre\.hudson\jobs\PVDemo\workspace, so you must copy it from your real workspace.<br />
+Copy here also the workshop-lib directory and the workspace.xml file.<br />
+<br />
+<br />
+Remember also to add Ant to your PATH, such as C:\beawli\modules\org.apache.ant_1.6.5\bin<br />
+<br />
+<br />
+<br />
+ON LINUX:<br />
+<br />
+<br />
+creade a directory /home/weblogic/hudson<br />
+copy hudson.war in it<br />
+<b>java -jar hudson.war</b> (or <b>nohup java -jar hudson.war &amp;</b>&nbsp; to run in background)<br />
+<br />
+it will create a /home/weblogic/.hudson&nbsp; containing all the data files<br />
+in your browser, point to http://yourhostname:8080/<br />
+<br />
+new job<br />
+build a free style software project, call it ACME_INTEG_WEB<br />
+Source Code Management, select CVS and enter a CVSROOT ":pserver:cvsusername:cvspassword@cvshost:/cvsrepository"<br />
+<br />
+enter the modules you want to checkout (separated by blanks)

@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Hyperic MBeanDumper"
+date: 2012-05-04T11:54:00.001+02:00
+permalink: /2012/05/hyperic-mbeandumper.html
+blogger_id: "8462895049940200841"
+tags: ["hyperic", "MBean"]
+---
+According to the Hyperic doc, one should run this:<br />
+<br />
+java -Duser=weblogic -Dpass=weblogic1 -Dplugins.include=jmx -jar pdk/lib/hq-product.jar jmx MBeanDumper service:jmx:rmi:///jndi/rmi://myserver:1099/jmxrmi<br />
+<br />
+this fails with <br />
+<br />
+<i>Failed to load Main-Class manifest attribute from<br />
+pdk/lib/hq-product.jar</i><br />
+<br />
+I google and find that one is supposed to use a hq-pdk-shared-VERSION.jar .....to be found nowhere, even looking for hq-pdk-shared<br />
+<br />
+At last I try this:<br />
+<br />
+<b>cd C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5<br />
+<br />
+java -Duser=weblogic -Dpass=weblogic1 -Dplugins.include=jmx -cp C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\hq-pdk-4.6.5<br />
+.jar org.hyperic.hq.product.jmx.MBeanDumper service:jmx:rmi:///jndi/rmi://myserver:8888/jmxrmi<br />
+</b><br />
+<br />
+and it works... with some exceptions.... anyway it doesn't provide insight in the WebLogic MBean tree.... maybe the connection parameters should be different, and the jar file wlfullclient.jar  should be added to the classpath<br />
+<br />
+On the whole, I would think Hyperic is in urgent need of a good documentation technical writer.

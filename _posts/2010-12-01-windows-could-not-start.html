@@ -1,0 +1,10 @@
+---
+layout: post
+title: "Windows could not start the OracleXETNSListener service"
+date: 2010-12-01T12:15:00.000+01:00
+permalink: /2010/12/windows-could-not-start.html
+blogger_id: "6936448939693537773"
+tags: ["ORACLE_HOME"]
+---
+I had the smart idea of declaring ORACLE_HOME in the System Variables, as c:\Oracle1\Middleware . Apparently this interferes with the Oracle TNS Listener installed as a System Service. <br />
+Removing the variable ORACLE_HOME from the System area fixes the problem.... funny!

@@ -1,0 +1,17 @@
+---
+layout: post
+title: "Puppet: file recurse remote caveat"
+date: 2014-09-29T17:24:00.002+02:00
+permalink: /2014/09/puppet-file-recurse-remote-caveat.html
+blogger_id: "7203089438414299099"
+tags: ["puppet"]
+---
+Puppet contains a beautiful "macro" <a href="https://docs.puppetlabs.com/references/latest/type.html#file-attribute-recurse">file recurse remote</a>, by which you keep a while directory (with subdirectories!) in sync with the content of a Puppet files repository. Great.
+<br />
+<br />
+BUT. There is a BUT: if apart from maintaining the whole folder (say: /myfiles) with recurse-remote, you also maintain a file in a subfolder (say: /myfiles/myfolder/hello.txt), this breaks the whole synchronization of /myfiles/myfolder/. OTHER subfolders (say: /myfiles/myotherfolder/) will syncronize perfectly, but not /myfiles/myfolder/.
+<br />
+<br />
+Now you know, so you can plan your workarounds to this - maybe unexpected - behavior.
+
+

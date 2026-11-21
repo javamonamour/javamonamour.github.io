@@ -1,0 +1,62 @@
+---
+layout: post
+title: "Adding JAR in the weblogic domain lib folder"
+date: 2013-12-19T11:33:00.002+01:00
+permalink: /2013/12/adding-jar-in-weblogic-domain-lib-folder.html
+blogger_id: "6800083025765107509"
+tags: ["classpath", "weblogic"]
+---
+The problem is: if I put a JAR in the $DOMAIN_HOME/lib folder, will it be actually added to the System classpath, and available to ANYTHING which turns inside WebLogic?
+<br/>
+To test this, I create a class
+<br/>
+<pre>
+public class Pippo {
+ public static String ciao() {
+  return "CIAO!";
+ }
+}
+</pre>
+<br/><br/>
+and export it to a file pvtestjava.jar, and put the jar in the domain/lib folder, and restart the whole thing.
+<br/><br/>
+
+IN THE SERVER STDOUT file (NOT in the log file...) I can see:
+
+<pre>
+
+&lt;Dec 19, 2013 11:23:38 AM CET> &lt;Info> &lt;Security> &lt;BEA-090906> &lt;Changing the default 
+Random Number Generator in RSA CryptoJ from
+ ECDRBG to FIPS186PRNG. To disable this change, specify -Dweblogic.security.allowCryptoJDefaultPRNG=true>
+&lt;Dec 19, 2013 11:23:38 AM CET> &lt;Notice> &lt;WebLogicServer> &lt;BEA-000395>
+ &lt;Following extensions directory contents added to the end of the classpath:
+/opt/oracle/domains/osbpl1do/lib/log4j_1.2.8.jar:
+/opt/oracle/domains/osbpl1do/lib/pvtestjava.jar>
+&lt;Dec 19, 2013 11:23:39 AM CET> &lt;Info> &lt;WebLogicServer> &lt;BEA-000377> &lt;Starting WebLogic Server with Java HotSpot(TM) 64-Bit Server VM Version 20.8-b03 from Sun Microsystems Inc.>
+
+
+</pre>
+
+<br/>
+
+HOWEVER, refrain from rejoicing so soon. Not necessarily your application will see the JAR.
+<br/>
+<a href="http://docs.oracle.com/cd/E17904_01/web.1111/e13706/classloading.htm#i1096881">The documentation says</a>
+<br/>
+"" The JARS in the domain /lib directory will not be appended to the system classpath. The classloader that gets created is a child of the system classloader. Any classes that are in JARs in the domain /lib directory will only be visible to J2EE applications, such as EAR files. Classes in the system classpath cannot access classes in the domain /lib directory.""
+
+<br/>
+
+
+For instance, the "Driver Interceptor:" to profile a Datasource will not be able to use this classpath extension mechanism. And if you<a href="/2012/04/how-to-find-weblogic-classpath-how-to.html"> dump the system classpath</a> you will NOT see those domain/lib jars.
+<br/>
+<br/>
+
+
+The EXTENSION classpath can be explicitly set with -Dweblogic.ext.dirs=$DOMAIN_HOME/lib
+
+
+
+
+
+

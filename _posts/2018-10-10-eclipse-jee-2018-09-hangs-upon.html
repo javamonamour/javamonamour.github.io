@@ -1,0 +1,69 @@
+---
+layout: post
+title: "Eclipse jee-2018-09 hangs upon restarting"
+date: 2018-10-10T11:06:00.000+02:00
+permalink: /2018/10/eclipse-jee-2018-09-hangs-upon.html
+blogger_id: "4286503575305694200"
+tags: ["eclipse"]
+---
+Eclipse jee-2018-09 hangs upon restarting<br />
+<br />
+I do a "ps -ef | grep -i eclipse" then a jstack on the process, to find out that:<br />
+<br />
+<pre>ModalContext" #136 prio=6 os_prio=0 tid=0x00007fbe7885f000 nid=0x2744 waiting for monitor entry [0x00007fbdc980f000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+ at org.eclipse.swt.widgets.Display.asyncExec(Display.java:866)
+ - waiting to lock <0x00000000c030b110> (a java.lang.Class for org.eclipse.swt.graphics.Device)
+ at org.eclipse.jface.operation.AccumulatingProgressMonitor.beginTask(AccumulatingProgressMonitor.java:146)
+ at org.eclipse.core.runtime.ProgressMonitorWrapper.beginTask(ProgressMonitorWrapper.java:51)
+ at org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor$CancelableProgressMonitorWrapper.beginTask(IDEWorkbenchAdvisor.java:463)
+ at org.eclipse.core.runtime.ProgressMonitorWrapper.beginTask(ProgressMonitorWrapper.java:51)
+ at org.eclipse.core.internal.resources.SaveManager.save(SaveManager.java:1157)
+ at org.eclipse.core.internal.resources.Workspace.save(Workspace.java:2335)
+ at org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor$5.run(IDEWorkbenchAdvisor.java:529)
+ at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:122)
+
+
+"Worker-33: Building workspace" #133 prio=5 os_prio=0 tid=0x00007fbe54f7b800 nid=0x2731 waiting for monitor entry [0x00007fbdf8133000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+ at org.eclipse.swt.graphics.Device.isDisposed(Device.java:835)
+ - waiting to lock <0x00000000c030b110> (a java.lang.Class for org.eclipse.swt.graphics.Device)
+ at org.eclipse.ui.internal.UILockListener.isUI(UILockListener.java:188)
+ at org.eclipse.ui.internal.UILockListener.aboutToRelease(UILockListener.java:123)
+ at org.eclipse.core.internal.jobs.LockManager.aboutToRelease(LockManager.java:92)
+ at org.eclipse.core.internal.jobs.OrderedLock.doRelease(OrderedLock.java:189)
+ - locked <0x00000000c648be58> (a org.eclipse.core.internal.jobs.OrderedLock)
+ at org.eclipse.core.internal.jobs.OrderedLock.release(OrderedLock.java:237)
+ at org.eclipse.core.internal.resources.WorkManager.beginUnprotected(WorkManager.java:109)
+ at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2291)
+ at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2319)
+ at org.eclipse.wst.jsdt.internal.core.JavaModelManager.initializeAllContainers(JavaModelManager.java:2162)
+ at org.eclipse.wst.jsdt.internal.core.JavaModelManager.getJsGlobalScopeContainer(JavaModelManager.java:1536)
+ at org.eclipse.wst.jsdt.core.JavaScriptCore.getJsGlobalScopeContainer(JavaScriptCore.java:1358)
+ at org.eclipse.wst.jsdt.internal.core.JavaProject.resolveClasspath(JavaProject.java:2748)
+ at org.eclipse.wst.jsdt.internal.core.JavaProject.getResolvedClasspath(JavaProject.java:2027)
+ at org.eclipse.wst.jsdt.internal.core.DeltaProcessor.validateClasspaths(DeltaProcessor.java:2264)
+ at org.eclipse.wst.jsdt.internal.core.DeltaProcessor.resourceChanged(DeltaProcessor.java:1950)
+ at org.eclipse.wst.jsdt.internal.core.DeltaProcessingState.resourceChanged(DeltaProcessingState.java:389)
+ at org.eclipse.core.internal.events.NotificationManager$1.run(NotificationManager.java:300)
+ at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+ at org.eclipse.core.internal.events.NotificationManager.notify(NotificationManager.java:290)
+ at org.eclipse.core.internal.events.NotificationManager.broadcastChanges(NotificationManager.java:153)
+ at org.eclipse.core.internal.resources.Workspace.broadcastBuildEvent(Workspace.java:365)
+ at org.eclipse.core.internal.events.AutoBuildJob.doBuild(AutoBuildJob.java:141)
+ at org.eclipse.core.internal.events.AutoBuildJob.run(AutoBuildJob.java:235)
+ at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+
+</pre><br />
+<br />
+it seems related to this bug <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=522174">https://bugs.eclipse.org/bugs/show_bug.cgi?id=522174</a> <br />
+<br />
+Just kill the bastard and move on.<br />
+<br />
+<br />
+Eclipse is a total piece of shit - they should simply rewrite it from scratch using a better design. Time invested in maintaining this old elephant is totally wasted.<br />
+<br />
+<br />
+<br />
+<br />
+

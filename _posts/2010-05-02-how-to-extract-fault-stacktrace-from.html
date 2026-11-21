@@ -1,0 +1,84 @@
+---
+layout: post
+title: "How to extract a fault stacktrace from the SOAP fault using Java"
+date: 2010-05-02T22:18:00.000+02:00
+permalink: /2010/05/how-to-extract-fault-stacktrace-from.html
+blogger_id: "665831534764210147"
+tags: ["fault", "java", "XPath"]
+---
+It's..... COMPLICATED!<br />
+ps.txt contains the entire fault.... you can adapt to read from a String...<br />
+<br />
+package com.integration.xpath;<br />
+<br />
+import java.io.File;<br />
+import java.io.IOException;<br />
+import java.util.Iterator;<br />
+<br />
+import javax.xml.XMLConstants;<br />
+import javax.xml.namespace.NamespaceContext;<br />
+import javax.xml.parsers.DocumentBuilder;<br />
+import javax.xml.parsers.DocumentBuilderFactory;<br />
+import javax.xml.parsers.ParserConfigurationException;<br />
+import javax.xml.xpath.XPath;<br />
+import javax.xml.xpath.XPathConstants;<br />
+import javax.xml.xpath.XPathExpression;<br />
+import javax.xml.xpath.XPathExpressionException;<br />
+import javax.xml.xpath.XPathFactory;<br />
+<br />
+import org.w3c.dom.Document;<br />
+import org.w3c.dom.Node;<br />
+import org.w3c.dom.NodeList;<br />
+import org.xml.sax.SAXException;<br />
+<br />
+public class XPathRunner {<br />
+&nbsp;&nbsp;&nbsp; public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; doFault();&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp;&nbsp; private static void doFault() throws ParserConfigurationException,<br />
+&nbsp;&nbsp;&nbsp; SAXException, IOException, XPathExpressionException {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; factory.setNamespaceAware(true); // never forget this!<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; DocumentBuilder builder = factory.newDocumentBuilder();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; File f = new File("st.txt");<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Document doc = builder.parse(f);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; XPathFactory xpathFactory = XPathFactory.newInstance();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; XPath xpath = xpathFactory.newXPath();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; xpath.setNamespaceContext(new PersonalNamespaceContext());<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; XPathExpression expr = xpath.compile("//bea_fault:stacktrace/text()");<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Object result = expr.evaluate(doc, XPathConstants.NODESET);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; NodeList nodes = (NodeList) result;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; for (int i = 0; i &lt; nodes.getLength(); i++) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Node item = nodes.item(i);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; System.out.println(item.getNodeValue()); <br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; public static class PersonalNamespaceContext implements NamespaceContext {<br />
+<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; public String getNamespaceURI(String prefix) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (prefix == null) throw new NullPointerException("Null prefix");<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if ("env".equals(prefix)) return "http://schemas.xmlsoap.org/soap/envelope/";<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; else if ("bea_fault".equals(prefix)) return "http://www.bea.com/servers/wls70/webservice/fault/1.0.0";<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; else if ("xml".equals(prefix)) return XMLConstants.XML_NS_URI;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return XMLConstants.NULL_NS_URI;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; // This method isn't necessary for XPath processing.<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; public String getPrefix(String uri) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; throw new UnsupportedOperationException();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; // This method isn't necessary for XPath processing either.<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; public Iterator getPrefixes(String uri) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; throw new UnsupportedOperationException();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp;&nbsp; }&nbsp;&nbsp;&nbsp; <br />
+}<br />
+<br />
+thank you to <a href="http://www.ibm.com/developerworks/library/x-javaxpathapi.html">http://www.ibm.com/developerworks/library/x-javaxpathapi.html</a>

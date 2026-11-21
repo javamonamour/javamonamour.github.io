@@ -1,0 +1,32 @@
+---
+layout: post
+title: "WebLogic: log JMS message body"
+date: 2013-09-19T18:04:00.001+02:00
+permalink: /2013/09/weblogic-log-jms-message-body.html
+blogger_id: "1024418217408914261"
+tags: ["jms", "WLST"]
+---
+Unfortunately the WebLogic console missed this option.
+<br/><br/>
+See also "Logging the Uniform Distributed Queue Message Body (Doc ID 1377584.1)"
+<br/><br/>
+the Oracle DOC gives only the manual workaround (hack! hack!).
+<br/><br/>
+with WLST:
+
+<br/><br/>
+
+<pre name="code" class="brush: java">
+moduleName = 'CommonAlertingJMSModule'
+queueName = 'CommonAlertingQ'
+
+edit()
+startEdit()
+cd '/JMSSystemResources/' + moduleName + '/JMSResource/' + moduleName + '/UniformDistributedQueues/' + queueName + '/MessageLoggingParams/' + queueName
+cmo.setMessageLoggingFormat('%header%,%properties%,%body%')
+save()
+activate()
+
+</pre>
+
+

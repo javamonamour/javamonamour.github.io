@@ -1,0 +1,73 @@
+---
+layout: post
+title: "Iterations in Puppet: create_resources"
+date: 2013-08-30T04:12:00.002+02:00
+permalink: /2013/08/iterations-in-puppet-createresources.html
+blogger_id: "1880705658103963116"
+tags: ["puppet"]
+---
+So, the BAD news is that in Puppet you cannot do a for loop and create resources specified in a Collection.
+<br/>
+Why not? Because. Don't ask. The Founding Fathers of Puppet decided so, and thou shall not dare question why.
+<br/>
+The good news is that you can STILL iterate, sticking all your (homogeneous) resources in a hash (Puppet supports this very advanced concept of Hash, disregarding 30 years of Object Oriented programming technology... call it Time Travel).
+<br/>
+
+<pre>
+#Where the .crt .key and .cer files are
+$certsFolder = '/home/soa/jkstest/source/'
+
+#where to create the JKS files
+$targetJKSFolder = '/home/soa/jkstest/target/'
+
+$trustPassword = '111111'
+
+
+/* This is how a traditional java_ks invokation looks like
+java_ks { "ca_nestle:trustDEV.jks" :
+    ensure       => latest,
+    certificate  => "${certsFolder}ACMECA.cer",
+    target       => "${targetJKSFolder}/trustDEV.jks",
+    password     => "${trustPassword}",
+    trustcacerts => true,
+}
+
+ */
+ 
+
+$jksHash = {
+  trustDEV1 => {
+    ensure       => latest,
+    certificate  => "${certsFolder}ACMECA.cer",
+    target       => "${targetJKSFolder}/trustDEV.jks",
+    password     => "${trustPassword}",
+    trustcacerts => true,
+  },
+
+  trustDEV2 => {
+    ensure       => latest,
+    certificate  => "${certsFolder}ItalianSignCA.cer",
+    target       => "${targetJKSFolder}/trustDEV.jks",
+    password     => "${trustPassword}",
+    trustcacerts => true,
+  }
+}
+
+create_resources(java_ks, $jksHash)
+
+
+
+</pre>
+
+
+
+This is how, in one go, I can add 2 certificates in a JKS store.
+
+<br/><br/>
+
+What can I say. It could be worse. It could be Maven.
+<br/><br/>
+
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/74d064fa0296849f.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/83cff437f990dee0.jpg" /></a></div>
+
+

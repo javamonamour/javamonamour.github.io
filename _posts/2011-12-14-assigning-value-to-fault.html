@@ -1,0 +1,28 @@
+---
+layout: post
+title: "Assigning a value to $fault"
+date: 2011-12-14T15:47:00.000+01:00
+permalink: /2011/12/assigning-value-to-fault.html
+blogger_id: "8419689459048887480"
+tags: ["fault"]
+---
+I was trying to assign a value to $fault in a "Error Reporting" service, to see if the built-in "Report" action could parse the $fault and populate the right fields in the Error Report message.<br />
+<br />
+This is a sample $fault:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;con:fault xmlns:con="http://www.bea.com/wli/sb/context"&gt;
+  &lt;con:errorCode&gt;MYERROR&lt;/con:errorCode&gt;
+  &lt;con:reason&gt;MYMESSAGE&lt;/con:reason&gt;
+  &lt;con:location&gt;
+    &lt;con:node&gt;PipelinePairNode1&lt;/con:node&gt;
+    &lt;con:pipeline&gt;PipelinePairNode1_request&lt;/con:pipeline&gt;
+    &lt;con:stage&gt;stage1&lt;/con:stage&gt;
+    &lt;con:path&gt;request-pipeline&lt;/con:path&gt;
+  &lt;/con:location&gt;
+&lt;/con:fault&gt;
+</xml>
+</pre><br />
+Unfortunately the $fault variable is meaningful only in the error handler.<br />
+If you try to use it in a normal message flow, you get:<br />
+<br />
+<b>Variable name validation failed: The variable "fault" cannot be used here</b>

@@ -1,0 +1,42 @@
+---
+layout: post
+title: "OSB: description getting lost in Import/Export process"
+date: 2011-08-09T11:58:00.001+02:00
+permalink: /2011/08/osb-description-getting-lost-in.html
+blogger_id: "4394195747246211769"
+tags: ["osbimportexport"]
+---
+If you create an XQuery in OSB Console, you assign a description to it,<br />
+and export it to a sbconfig.jar file, it is packaged this way:<br />
+<br />
+<br />
+<br />
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />
+&lt;con:xqueryEntry xmlns:con="http://www.bea.com/wli/sb/resources/config"&gt;<br />
+&lt;con:description&gt;la mia mamma&lt;/con:description&gt;<br />
+&lt;con:xquery&gt;&lt;ciao/&gt;&lt;/con:xquery&gt;<br />
+&lt;/con:xqueryEntry&gt;<br />
+<br />
+<br />
+But if you import this sbconfig.jar into Eclipse, and export it again to another sbconfig.jar, the description is lost.<br />
+<br />
+The same goes for Project-level descriptions - stored in the LocationData file.<br />
+<br />
+Under certain circumstances the description goes into the ExportInfo file....<br />
+For instance for a MQConnection you have this entry in the ExportInfo file:<br />
+imp:property name="custom DESC" value="MQ connection to read messages from MQ Server"<br />
+<br />
+<br />
+Incidentally in the sbconfig.jar "description" can be stored as:<br />
+<br />
+con:description where con="http://www.bea.com/wli/sb/resources/config" (in WSDL)<br />
+<br />
+ser:description where ser="http://www.bea.com/wli/sb/services" (in Proxy Services)<br />
+<br />
+proj:description where proj="http://www.bea.com/wli/config/project" (in LocationData)<br />
+<br />
+aler:description where aler="http://www.bea.com/wli/monitoring/alert" (in Alerts)<br />
+<br />
+<br />
+<br />
+

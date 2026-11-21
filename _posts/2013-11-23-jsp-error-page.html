@@ -1,0 +1,28 @@
+---
+layout: post
+title: "JSP error page"
+date: 2013-11-23T16:58:00.002+01:00
+permalink: /2013/11/jsp-error-page.html
+blogger_id: "8853030412186203634"
+tags: ["jsp"]
+---
+<pre class="brush: java">
+
+&lt;%@page isErrorPage="true" %>
+&lt;html>
+&lt;body>
+&lt;h1>Error page&lt;/h1>
+&lt;pre>
+&lt;% if (exception != null) {
+ out.write("exception message=" + exception.toString());
+}
+else {
+ out.write("no exception available");
+} 
+%>
+&lt;/pre>
+&lt;/body>
+&lt;/html>
+
+
+</pre>

@@ -1,0 +1,40 @@
+---
+layout: post
+title: "Browsermob as a whitelisting/blacklisting Proxy"
+date: 2018-06-07T05:08:00.000+02:00
+permalink: /2018/06/browsermob-as-whitelistingblacklisting.html
+blogger_id: "7267278951855670261"
+tags: ["blacklist", "browsermob", "httpproxy", "littleproxy", "whitelist"]
+---
+<a href="http://bmp.lightbody.net/">http://bmp.lightbody.net/</a><br />
+<br />
+<a href="https://github.com/lightbody/browsermob-proxy">https://github.com/lightbody/browsermob-proxy</a><br />
+<br />
+It's based on our friend Littleproxy. <br />
+<br />
+Its latest release it 2.1.6. It seems not much going on recently... no commits in last 8 months...<br />
+<br />
+In our case, 2 APIs are interesting:<br />
+<br />
+<b>Sets a list of URL patterns to whitelist</b>  PUT  /proxy/[port]/whitelist  <br />
+<br />
+Request Parameters:<br />
+<br />
+regex - A comma separated list of regular expressions.<br />
+<br />
+status - The HTTP status code to return for URLs that do not match the whitelist.<br />
+<br />
+<br />
+<b><br />
+Set a URL to blacklist</b>  PUT  /proxy/[port]/blacklist  <br />
+<br />
+Request Parameters:<br />
+<br />
+regex - The blacklist regular expression.<br />
+<br />
+status - The HTTP status code to return for URLs that are blacklisted.<br />
+<br />
+method - The regular expression for matching HTTP method (GET, POST, PUT, etc). Optional, by default processing all HTTP method.<br />
+<br />
+<br />
+

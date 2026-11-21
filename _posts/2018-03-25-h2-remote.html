@@ -1,0 +1,28 @@
+---
+layout: post
+title: "h2 remote"
+date: 2018-03-25T20:33:00.003+02:00
+permalink: /2018/03/h2-remote.html
+blogger_id: "7737044284100799895"
+tags: ["h2"]
+---
+./h2.sh -tcpAllowOthers -webAllowOthers<br />
+<br />
+<i><br />
+Web Console server running at http://localhost:8082 (others can connect)<br />
+Failed to start a browser to open the URL http://localhost:8082: Browser detection failed and system property h2.browser not set<br />
+TCP server running at tcp://localhost:9092 (others can connect)<br />
+PG server running at pg://localhost:5435 (only local connections)<br />
+</i><br />
+<br />
+At this point you can connect remotely to the console (even if it says "localhost") and you can specify a remote tcp url in your datasource: <br />
+<br />
+jdbc:h2:tcp://YOURIP:9092/~/YOURDB;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE<br />
+<br />
+When using h2, don't forget to use<br />
+<br />
+ &lt;property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/><br />
+<br />
+in your persistence.xml <br />
+(see <a href="http://www.mastertheboss.com/jboss-server/jboss-datasource/h2-database-tutorial">http://www.mastertheboss.com/jboss-server/jboss-datasource/h2-database-tutorial</a> )<br />
+

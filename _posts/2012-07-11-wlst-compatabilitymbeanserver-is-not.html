@@ -1,0 +1,35 @@
+---
+layout: post
+title: "WLST:  The CompatabilityMBeanServer is not initialized properly"
+date: 2012-07-11T17:29:00.001+02:00
+permalink: /2012/07/wlst-compatabilitymbeanserver-is-not.html
+blogger_id: "5389431751212478684"
+tags: ["WLST"]
+---
+wls:/offline> connect('Pierluigi', 'weblogic1', 't3://acme.com:7001')<br />
+Connecting to t3://acme:7001 with userid Pierluigi ...<br />
+<br />
+The CompatabilityMBeanServer is not initialized properly.<br />
+This might happen if the CompatabilityMBeanServer is<br />
+disabled via the JMXMBean.<br />
+<br />
+To view the root cause exception use dumpStack()<br />
+<b><br />
+WLST detected that the RuntimeMBeanServer is not enabled. This</b><br />
+might happen if the RuntimeMBeanServer is disabled via the JMXMBean.<br />
+Please ensure that this MBeanServer is enabled. Online WLST cannot<br />
+function without this MBeanServer.<br />
+Traceback (innermost last):<br />
+File "<console>", line 1, in ?<br />
+File "<iostream>", line 22, in connect<br />
+File "<iostream>", line 646, in raiseWLSTException<br />
+WLSTException: <b>Error occured while performing connect : "Cannot connect to WLST." : Bad IPv6 address: acme.com</b><br />
+Use dumpStack() to view the full stacktrace<br />
+<br />
+wls:/offline> dumpStack()<br />
+This Exception occurred at Wed Jul 11 17:17:55 CEST 2012.<br />
+java.net.MalformedURLException: Bad IPv6 address: acme.com<br />
+<br />
+<br />
+<br />
+Don't let yourself fool by the first error message....it could be very well that the root cose has nothing to do with the CompatabilityMBeanServer ! Always do dumpStack()!

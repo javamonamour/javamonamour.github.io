@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Garbage Collection: testing the GC plugin for VisualVM"
+date: 2014-01-21T23:46:00.001+01:00
+permalink: /2014/01/garbage-collection-testing-gc-plugin.html
+blogger_id: "5859929081570047905"
+tags: ["gc", "java"]
+---
+<a href="http://www.youtube.com/watch?v=DoJr5QQYsl8">Watch the excellent tutorial</a>
+<br />
+<br />
+<a href="http://java.net/projects/visualvm/downloads/download/release132/com-sun-tools-visualvm-modules-visualgc.nbm">Install VisualVm GC plugin </a> (I had to download it locally to install it, I could not install directly...) (beware, you should use visualvm for java 7, otherwise the plugin installation will fail)
+
+<br />
+<br />
+I run this test code:
+
+<br />
+<br />
+<pre class="brush: java">package com.pierre.gctests;
+
+import java.util.ArrayList;
+
+public class PVOOM {
+ public static void main(String[] args) throws InterruptedException {
+  ArrayList<animal> al = new ArrayList<animal>(); 
+  for (int i = 0; i &lt; 1000000; i++) {
+   for (int j = 0; j&lt; 1000; j++) {  
+    al.add(new Animal(Integer.toString(i)));
+   }
+   Thread.sleep(1);
+   
+  }
+ }
+}
+
+class Animal {
+ public Animal(String name) {
+  super();
+  this.name = name;
+ }
+
+ String name;
+ 
+}
+
+</animal></animal></pre>
+<br />
+<br />
+I run it with Java 7 and I get this:
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/86fca74c1408ab47.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/0da65553249aba74.jpg" height="368" width="640" /></a></div>
+

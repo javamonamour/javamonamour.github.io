@@ -1,0 +1,37 @@
+---
+layout: post
+title: "dind docker in docker , permission denied on /var/run/docker.sock"
+date: 2018-03-11T18:08:00.001+01:00
+permalink: /2018/03/dind-docker-in-docker-permission-denied.html
+blogger_id: "5396695634043212156"
+tags: ["docker"]
+---
+<br />
+<br />
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.33/version: dial unix /var/run/docker.sock: connect: permission denied<br />
+<br />
+ls -alh /var/run/docker.sock<br />
+srw-rw----. 1 root docker 0 Mar 11 15:45 /var/run/docker.sock<br />
+<br />
+<br />
+doing "chmod 777 /var/run/docker.sock" doesn't help<br />
+<br />
+<br />
+on the host:<br />
+<br />
+docker version<br />
+Client:<br />
+Version:         1.12.6<br />
+API version:     1.24<br />
+<br />
+<br />
+in the container: <br />
+<br />
+docker version<br />
+Client:<br />
+Version:      17.10.0-ce<br />
+API version:  1.33<br />
+<br />
+<br />
+<br />
+The problem went away by installing on the host the latest docker version as per <a href="https://docs.docker.com/install/linux/docker-ce/centos/#install-using-the-convenience-script">https://docs.docker.com/install/linux/docker-ce/centos/#install-using-the-convenience-script</a>

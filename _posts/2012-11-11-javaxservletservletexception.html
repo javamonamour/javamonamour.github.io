@@ -1,0 +1,120 @@
+---
+layout: post
+title: "javax.servlet.ServletException: java.sql.SQLException: Closed Connection"
+date: 2012-11-11T19:58:00.000+01:00
+permalink: /2012/11/javaxservletservletexception.html
+blogger_id: "5067621234921191716"
+---
+When using JSTL setDataSource:
+<br/><br/>
+
+&lt;sql:setDataSource var="domainds" driver="${DS_JDBCDRIVER}"
+     url="${DS_URL}" user="${DS_USERNAME}"  password="${DS_ENCRYPTED_PASSWORD}" scope="session"/>
+
+<br/><br/>
+
+as documented here
+<br/><br/>
+<a href="http://docs.oracle.com/javaee/5/jstl/1.1/docs/tlddocs/sql/setDataSource.html">http://docs.oracle.com/javaee/5/jstl/1.1/docs/tlddocs/sql/setDataSource.html</a>
+
+<br/><br/>
+
+
+and then I use the var datasource as in:
+
+<br/><br/>
+
+&lt;sql:query var="rsMessageCount" dataSource="${domainds}" scope="request">
+ select DATA_VALUE from ${datatable} where MSG_GUID='${theMSGGUIDvalue}' 
+&lt;/sql:query>
+
+
+<br/><br/>
+
+it all works fine until I try to do a
+<br/><br/>
+
+<pre name="code" class="brush: java">
+ java.sql.Blob blob = (java.sql.Blob)((org.apache.taglibs.standard.tag.common.sql.ResultImpl)(request.getAttribute("rsMessageCount"))).getRowsByIndex()[0][0];
+ if (blob != null) {
+  byte[] bdata = blob.getBytes(1, (int) blob.length());
+  String text = new String(bdata);
+
+</pre>
+
+
+
+<br/><br/>
+
+When I do the blob.getBytes bit, I get a
+
+<br/><br/>
+
+java.sql.SQLException: Closed Connection
+ oracle.sql.BLOB.getDBAccess(BLOB.java:1087)
+ oracle.sql.BLOB.getBytes(BLOB.java:331)
+ oracle.sql.BLOB.getBytes(BLOB.java:217)
+
+
+<br/><br/>
+
+
+This ONLY if I use setDataSource. If I use a datasource declared in the context.xml file, I have no issue.
+
+
+
+<br/><br/>
+
+This is the only way I managed to make it work:
+<br/><br/>
+
+<pre name="code" class="brush: java">
+
+
+    public static String getBlobData(String driver, String url, String username, String password, String sqlQuery) throws Exception {
+ String result = "";
+ Class.forName(driver);
+ Connection conn = DriverManager.getConnection(url, username, password);
+ try {
+     Statement stmt = conn.createStatement();
+     try {
+  ResultSet rset = stmt.executeQuery(sqlQuery);
+  try {
+      rset.next();
+      java.sql.Blob blob = (java.sql.Blob) rset.getBlob(1);
+      if (blob != null) {
+   byte[] bdata = blob.getBytes(1, (int) blob.length());
+   String text = new String(bdata);
+   text = text.replace("<", "&lt;"); // the second is ampersand followed by lt;
+   result = text;
+      } else {
+   result = "empty body";
+      }
+
+  } finally {
+      try {
+   rset.close();
+      } catch (Exception e) {
+   e.printStackTrace();
+      }
+  }
+     } finally {
+  try {
+      stmt.close();
+  } catch (Exception e) {
+      e.printStackTrace();
+  }
+     }
+ } finally {
+     try {
+  conn.close();
+     } catch (Exception e) {
+  e.printStackTrace();
+     }
+ }
+ return result;
+    }
+
+
+</pre>
+

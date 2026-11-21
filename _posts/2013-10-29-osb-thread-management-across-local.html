@@ -1,0 +1,48 @@
+---
+layout: post
+title: "OSB thread management across LOCAL Proxy Service invocation"
+date: 2013-10-29T16:29:00.002+01:00
+permalink: /2013/10/osb-thread-management-across-local.html
+blogger_id: "4584060744138080164"
+tags: ["OSB"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2016-04-28
+    html: "That&#39;s the same we experienced here. I guess that&#39;s because of some internal optimization mechanisms used for proxy services (not only local once) executed from within another proxy: They always try to run it on the same thread on the same node etc. The documentation basically refers to &quot;external&quot; services not hosted on the OSB (I did not try but I guess it&#39;s like this).<br /><br />Sorry for replying on that old post ;)<br /><br />Regards<br />Steffen"
+---
+I grew in the faith that a Publish (one way) operation would be carried in a separate thread form the calling thread, even much so when you use QoS = Best Effort and no transactions.
+<br />
+Here <a href="http://docs.oracle.com/cd/E23943_01/admin.1111/e15867/modelingmessageflow.htm#OSBAG181">http://docs.oracle.com/cd/E23943_01/admin.1111/e15867/modelingmessageflow.htm#OSBAG181</a> at chapter 37.12.1.3 it says:
+
+<br />
+<br />
+<pre>The Oracle Service Bus threading model works as follows:
+
+    The request and response flows in a proxy service execute in different threads.
+
+    Service callouts are always blocking. An HTTP route or publish action is non-blocking 
+    (for request/response or one-way invocation), if the value of the qualityOfService 
+    element is best-effort.
+
+    JMS route actions or publish actions are always non-blocking, but the response 
+    is lost if the server restarts after the request is sent because Oracle Service Bus 
+    has no persistent message processing state.
+</pre>
+<br />
+<br />
+I tried from a HTTP ServiceA to do:
+<br />
+<ul>
+<li>a service callout
+</li>
+<li>a publish
+</li>
+<li>a route
+</li>
+</ul>
+to a LOCAL ServiceB, and with a Java callout I was getting the thread name in ServiceA and ServiceB. This either with Transaction Required enabled or not (on both services), and with Qos = Exactly Once or Best Effort.
+<br />
+In ALL cases, much to my surprise, the same thread was executing both ServiceA and ServiceB.
+
+<br />
+<br />

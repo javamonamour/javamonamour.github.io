@@ -1,0 +1,38 @@
+---
+layout: post
+title: "ManyToOne, OneToMany, ManyToMany"
+date: 2011-03-14T16:05:00.000+01:00
+permalink: /2011/03/manytoone-onetomany-manytomany.html
+blogger_id: "7374782048909896893"
+tags: ["JPA"]
+---
+http://download.oracle.com/javaee/6/api/javax/persistence/ManyToOne.html<br />
+<br />
+@ManyToOne(optional=false) <br />
+     @JoinColumn(name="CUST_ID", nullable=false, updatable=false)<br />
+     public Customer getCustomer() { return customer; }<br />
+<br />
+<br />
+<br />
+http://download.oracle.com/javaee/6/api/javax/persistence/OneToMany.html<br />
+<br />
+  @OneToMany(cascade=ALL, mappedBy="customer")<br />
+    public Set<Order> getOrders() { return orders; }<br />
+<br />
+<br />
+<br />
+the first is always "me", the second is "the other"<br />
+<br />
+<b>ManyToOne</b> means "there are many of me for one of them" -> hence I have only 1 of them, and he has a Set of me<br />
+<br />
+<b>OneToMany</b> means "there is one of me for many of them" -> hence I have a Set of them<br />
+<br />
+<br />
+http://download.oracle.com/javaee/6/api/javax/persistence/ManyToMany.html<br />
+<br />
+ @ManyToMany<br />
+    @JoinTable(name="CUST_PHONES")<br />
+    public Set<PhoneNumber> getPhones() { return phones; }<br />
+<br />
+<br />
+I have a Set of them, and they have a Set of me

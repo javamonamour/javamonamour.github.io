@@ -1,0 +1,17 @@
+---
+layout: post
+title: "The adapter will not process since it has been processed earlier"
+date: 2010-12-29T21:31:00.000+01:00
+permalink: /2010/12/adapter-will-not-process-since-it-has.html
+blogger_id: "4115102292730039382"
+tags: ["SOASuite"]
+---
+<pre name="code" class="brush: xml">
+<29-Dec-2010 20:27:12 o'clock WET> <Warning> <oracle.soa.adapter> <BEA-000000> <
+File Adapter PVPhase1 The adapter will not process [C:\acmepoc\myFiles\in\good2.txt] since it has been processed earlier>
+<29-Dec-2010 20:27:15 o'clock WET> <Warning> <oracle.soa.adapter> <BEA-000000> <
+File Adapter PVPhase1 The adapter has handled the poisoned file [C:
+\acmepoc\myFiles\in\good2.txt]>
+
+</pre><br />
+still investigating..... why the File Adapter doesn't want to process the same file at 5 minutes distance? There must be some parameter somewhere, but where?

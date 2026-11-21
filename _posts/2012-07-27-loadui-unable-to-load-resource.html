@@ -1,0 +1,91 @@
+---
+layout: post
+title: "loadui unable to load resource http://dl.javafx.com/1.3/javafx-rt.jnlp"
+date: 2012-07-27T10:55:00.000+02:00
+permalink: /2012/07/loadui-unable-to-load-resource.html
+blogger_id: "5569125793111568302"
+tags: ["loadui"]
+blogger_comments:
+  - author: "Eric Elzinga"
+    date: 2012-07-27
+    html: "Control Panel &gt; Java &gt; Network Settings. I think you either need to use direct connection or use proxy server over here. It worked for use to use one of these settings. Not sure which one it was"
+  - author: "vernetto"
+    date: 2012-09-18
+    html: "it worked! Thank you soooo much Eric, you are a Oracle Guardian angel!"
+  - author: "Anonymous"
+    date: 2015-12-17
+    html: "Thank you it helped me too"
+---
+loadui unable to load resource http://dl.javafx.com/1.3/javafx-rt.jnlp<br />
+<br />
+the wrapped exception is<br />
+<br />
+java.net.ConnectException: Connection timed out: connect<br />
+ at java.net.DualStackPlainSocketImpl.connect0(Native Method)<br />
+ at java.net.DualStackPlainSocketImpl.socketConnect(Unknown Source)<br />
+ at java.net.AbstractPlainSocketImpl.doConnect(Unknown Source)<br />
+ at java.net.AbstractPlainSocketImpl.connectToAddress(Unknown Source)<br />
+ at java.net.AbstractPlainSocketImpl.connect(Unknown Source)<br />
+ at java.net.PlainSocketImpl.connect(Unknown Source)<br />
+ at java.net.SocksSocketImpl.connect(Unknown Source)<br />
+ at java.net.Socket.connect(Unknown Source)<br />
+ at java.net.Socket.connect(Unknown Source)<br />
+ at sun.net.NetworkClient.doConnect(Unknown Source)<br />
+ at sun.net.www.http.HttpClient.openServer(Unknown Source)<br />
+ at sun.net.www.http.HttpClient.openServer(Unknown Source)<br />
+ at sun.net.www.http.HttpClient.<init>(Unknown Source)<br />
+ at sun.net.www.http.HttpClient.New(Unknown Source)<br />
+ at sun.net.www.http.HttpClient.New(Unknown Source)<br />
+ at sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(Unknown Source)<br />
+ at sun.net.www.protocol.http.HttpURLConnection.plainConnect(Unknown Source)<br />
+ at sun.net.www.protocol.http.HttpURLConnection.connect(Unknown Source)<br />
+ at com.sun.deploy.net.BasicHttpRequest.doRequest(Unknown Source)<br />
+ at com.sun.deploy.net.BasicHttpRequest.doRequest(Unknown Source)<br />
+ at com.sun.deploy.net.BasicHttpRequest.doGetRequest(Unknown Source)<br />
+ at com.sun.deploy.net.DownloadEngine.actionDownload(Unknown Source)<br />
+ at com.sun.deploy.net.DownloadEngine.getCacheEntry(Unknown Source)<br />
+ at com.sun.deploy.net.DownloadEngine.getCacheEntry(Unknown Source)<br />
+ at com.sun.deploy.net.DownloadEngine.getResourceCacheEntry(Unknown Source)<br />
+ at com.sun.deploy.net.DownloadEngine.getCachedFile(Unknown Source)<br />
+ at com.sun.javaws.LaunchDownload.downloadExtensionsHelper(Unknown Source)<br />
+ at com.sun.javaws.LaunchDownload.downloadExtensions(Unknown Source)<br />
+ at com.sun.javaws.Launcher.prepareLaunchFile(Unknown Source)<br />
+ at com.sun.javaws.Launcher.prepareAllResources(Unknown Source)<br />
+ at com.sun.javaws.Launcher.prepareToLaunch(Unknown Source)<br />
+ at com.sun.javaws.Launcher.prepareToLaunch(Unknown Source)<br />
+ at com.sun.javaws.Launcher.launch(Unknown Source)<br />
+ at com.sun.javaws.Main.launchApp(Unknown Source)<br />
+ at com.sun.javaws.Main.continueInSecureThread(Unknown Source)<br />
+ at com.sun.javaws.Main$1.run(Unknown Source)<br />
+ at java.lang.Thread.run(Unknown Source)<br />
+<br />
+<br />
+<br />
+The exception is<br />
+<br />
+<br />
+om.sun.deploy.net.FailedDownloadException: Unable to load resource: http://dl.javafx.com/1.3/javafx-rt.jnlp<br />
+ at com.sun.deploy.net.DownloadEngine.actionDownload(Unknown Source)<br />
+ at com.sun.deploy.net.DownloadEngine.getCacheEntry(Unknown Source)<br />
+ at com.sun.deploy.net.DownloadEngine.getCacheEntry(Unknown Source)<br />
+ at com.sun.deploy.net.DownloadEngine.getResourceCacheEntry(Unknown Source)<br />
+ at com.sun.deploy.net.DownloadEngine.getCachedFile(Unknown Source)<br />
+ at com.sun.javaws.LaunchDownload.downloadExtensionsHelper(Unknown Source)<br />
+ at com.sun.javaws.LaunchDownload.downloadExtensions(Unknown Source)<br />
+ at com.sun.javaws.Launcher.prepareLaunchFile(Unknown Source)<br />
+ at com.sun.javaws.Launcher.prepareAllResources(Unknown Source)<br />
+ at com.sun.javaws.Launcher.prepareToLaunch(Unknown Source)<br />
+ at com.sun.javaws.Launcher.prepareToLaunch(Unknown Source)<br />
+ at com.sun.javaws.Launcher.launch(Unknown Source)<br />
+ at com.sun.javaws.Main.launchApp(Unknown Source)<br />
+ at com.sun.javaws.Main.continueInSecureThread(Unknown Source)<br />
+ at com.sun.javaws.Main$1.run(Unknown Source)<br />
+ at java.lang.Thread.run(Unknown Source)<br />
+<br />
+<br />
+http://www.loadui.org/installing-loadUI/installation-troubleshooting.html<br />
+<br />
+<br />
+"The workaround for this is to first install JavaFX SDK 1.3.1 and the install loadUI on a different machine which has an Internet connection, and then copy the installation to the desired computer (the one without a connection). Finally, start loadUI with the loadUItest.bat file."<br />
+<br />
+still working on it.... how sad.... it must be because we are behind a proxy...

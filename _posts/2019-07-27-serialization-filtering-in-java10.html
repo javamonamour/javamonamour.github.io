@@ -1,0 +1,37 @@
+---
+layout: post
+title: "Serialization Filtering in Java10"
+date: 2019-07-27T12:00:00.002+02:00
+permalink: /2019/07/serialization-filtering-in-java10.html
+blogger_id: "8197586809255796828"
+---
+in WebLogic:<br />
+<br />
+<pre>
+Caused by: java.io.InvalidClassException: filter status: REJECTED
+     at java.io.ObjectInputStream.filterCheck(ObjectInputStream.java:1258)
+     at java.io.ObjectInputStream.readHandle(ObjectInputStream.java:1705)
+     at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1556)
+     at java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.java:2288)
+     at java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:2212)
+     at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:2070)
+
+Caused by: java.lang.StackOverflowError
+                at java.io.ObjectStreamClass$FieldReflector.getPrimFieldValues(ObjectStreamClass.java:2153)
+                at java.io.ObjectStreamClass.getPrimFieldValues(ObjectStreamClass.java:1390)
+                at java.io.ObjectOutputStream.defaultWriteFields(ObjectOutputStream.java:1532)
+                at java.io.ObjectOutputStream.defaultWriteObject(ObjectOutputStream.java:440)
+                at com.sun.org.apache.xerces.internal.dom.NodeImpl.writeObject(NodeImpl.java:2019)
+                at sun.reflect.GeneratedMethodAccessor2392.invoke(Unknown Source)
+
+</pre><br />
+Solution:<br />
+<br />
+-Dweblogic.oif.serialFilterMode=disable<br />
+<br />
+Also consider the other info here : <br />
+<br />
+<a href="https://docs.oracle.com/javase/10/core/serialization-filtering1.htm#JSCOR-GUID-91735293-E38E-4A81-85DC-719AFEB36026">https://docs.oracle.com/javase/10/core/serialization-filtering1.htm#JSCOR-GUID-91735293-E38E-4A81-85DC-719AFEB36026</a><br />
+<br />
+and the value of jdk.serialFilter Security property ($JAVA_HOME/lib/security/java.security )<br />
+

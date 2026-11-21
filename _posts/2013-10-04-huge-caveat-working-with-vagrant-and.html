@@ -1,0 +1,31 @@
+---
+layout: post
+title: "Huge caveat working with Vagrant and Puppet"
+date: 2013-10-04T16:01:00.002+02:00
+permalink: /2013/10/huge-caveat-working-with-vagrant-and.html
+blogger_id: "6539921405173182132"
+tags: ["puppet", "vagrant"]
+---
+Never, ever remove the content of the /tmp folder on your VirtualBox:
+
+<br/>
+I have done it today, and after getting a weird warning:
+<br/>
+
+<pre>
+
+[root@osb-vagrant tmp]# rm -rf *
+rm: cannot remove `vagrant-puppet/manifests': Device or resource busy
+rm: cannot remove `vagrant-puppet/modules-0': Device or resource busy
+
+
+</pre>
+
+<br/>
+I have discovered that all the puppet files on my HOST machine had been deleted...
+the Vagrant mapping between the Vagrantfile directory on the host, and the /tmp/vagrant-puppet folder on the guest, seems to work BOTH WAYS.
+
+<br/>
+So, just leave those folders alone. I know, it's painful.
+<br/><br/>
+

@@ -1,0 +1,14 @@
+---
+layout: post
+title: "java.lang.IllegalStateException: EMF has not been initialized yet!"
+date: 2011-02-03T08:39:00.002+01:00
+permalink: /2011/02/javalangillegalstateexception-emf-has.html
+blogger_id: "7598144401367183900"
+tags: ["JPA"]
+---
+have you remembered to setup your JTA Datasource in the persistence.xml ? Remember to provide the JNDI name for the DS, not the logical name.<br />
+<br />
+Is it pointing to a valid DS in WebLogic?<br />
+Probably the EntityManagerFactory didn't start because of invalid DS. Check the logs.<br />
+<br />
+Thanks Dimitri for pointing this out :o)

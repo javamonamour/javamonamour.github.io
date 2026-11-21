@@ -1,0 +1,66 @@
+---
+layout: post
+title: "How to find WebLogic classpath? How to compare the JARs in 2 installations?"
+date: 2012-04-07T16:15:00.001+02:00
+permalink: /2012/04/how-to-find-weblogic-classpath-how-to.html
+blogger_id: "3018387148000833628"
+tags: ["classpath", "weblogic"]
+---
+a) install XMing, run putty with X11 forwarding, run JConsole or VisualVM, connect to the WebLogic instance (you must find out the PID), look in System Properties java.class.path<br />
+<br />
+b) grep java.class.path in the logs<br />
+<br />
+c) if you have JRockit, use:<br />
+<br />
+jrcmd ${pid} print_properties | grep java.class.path | awk -F'=' '{print $2}'<br />
+<br />
+<br />
+<br />
+d) if you have Sun (Oracle?) run<br />
+<br />
+jinfo -sysprops ${pid} | grep java.class.path | awk -F'=' '{print $2}'<br />
+<br />
+(jinfo is pretty much equivalent to the great jrcmd command, <a href="http://docs.oracle.com/cd/E15289_01/doc.40/e15058/migrate.htm#i1005133">see here</a> )<br />
+<br />
+<br />
+see also <a href="/2010/09/sanity-check-on-weblogic-classpath.html">/2010/09/sanity-check-on-weblogic-classpath.html</a><br />
+<br />
+<br />
+To dump the JARs in the classpath:<br />
+<br />
+<br />
+<pre class="brush: java" name="code">pid=$1
+entries=`jinfo -sysprops ${pid} | grep java.class.path | awk -F'=' '{print $2}' | tr ':' '\n' | sort`
+entriesList=(${entries})
+for i in `seq 0 $((${#entriesList[@]}-1))`;
+do
+  entry=${entriesList[$i]}
+  if [ -f ${entry} ]
+    then ls -ltr ${entry}
+  fi
+done
+
+
+
+</pre>
+<br />
+To compare 2 installations:<br />
+<br />
+run this on both envs:<br />
+<br />
+cd /opt/oracle/fmw11_1_1_5/<br />
+find . -name *.jar | sort | xargs ls -ltr &gt; /tmp/alljars1.txt<br />
+<br />
+<br />
+<br />
+and then use BeyondCompare to compare the 2 alljars1.txt files...<br />
+<br />
+<br />
+Another way is witl WLST:<br />
+<br />
+connect(...)<br />
+serverRuntime()<br />
+ls()<br />
+look at ServerClasspath<br />
+<br />
+

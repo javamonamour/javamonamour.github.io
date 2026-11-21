@@ -1,0 +1,84 @@
+---
+layout: post
+title: "org.eclipse.persistence.indirection.IndirectSet locking "
+date: 2015-12-15T15:35:00.000+01:00
+permalink: /2015/12/orgeclipsepersistenceindirectionindirec.html
+blogger_id: "764807985482999454"
+tags: ["eclipselink"]
+---
+one has to be careful with Lazy loading of entities (i.e. INDIRECTION)
+<br/><br/>
+<a href="http://grepcode.com/file/repo1.maven.org/maven2/org.eclipse.persistence/eclipselink/2.5.1/org/eclipse/persistence/indirection/IndirectSet.java#IndirectSet.getDelegate%28%29">http://grepcode.com/file/repo1.maven.org/maven2/org.eclipse.persistence/eclipselink/2.5.1/org/eclipse/persistence/indirection/IndirectSet.java#IndirectSet.getDelegate%28%29</a>
+
+
+<br/><br/>
+
+in fact the getDelegate() code contains a synchronized clause, so one can easily end up in a series of blocked threads like the one below waiting on lock 0x0000000785157eb8 :
+<br/><br/>
+
+<pre>
+"[STUCK] ExecuteThread: '33' for queue: 'weblogic.kernel.Default (self-tuning)'" daemon prio=10 tid=0x00007f93100206f0 nid=0x17fc waiting for monitor entry [0x00007f9384ecb000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+ at org.eclipse.persistence.indirection.IndirectSet.getDelegate(IndirectSet.java:373)
+ - waiting to lock <0x0000000785157eb8> (a org.eclipse.persistence.indirection.IndirectSet)
+ at org.eclipse.persistence.indirection.IndirectSet.hashCode(IndirectSet.java:419)
+ at java.util.WeakHashMap.hash(WeakHashMap.java:365)
+ at java.util.WeakHashMap.getEntry(WeakHashMap.java:494)
+ at java.util.WeakHashMap.containsKey(WeakHashMap.java:485)
+ at org.apache.commons.lang.builder.ToStringStyle.isRegistered(ToStringStyle.java:162)
+ at org.apache.commons.lang.builder.ToStringStyle.appendInternal(ToStringStyle.java:461)
+ at org.apache.commons.lang.builder.ToStringStyle.append(ToStringStyle.java:435)
+ at org.apache.commons.lang.builder.ToStringBuilder.append(ToStringBuilder.java:851)
+ at org.apache.commons.lang.builder.ReflectionToStringBuilder.appendFieldsIn(ReflectionToStringBuilder.java:606)
+ at org.apache.commons.lang.builder.ReflectionToStringBuilder.toString(ReflectionToStringBuilder.java:765)
+ at org.apache.commons.lang.builder.ReflectionToStringBuilder.toString(ReflectionToStringBuilder.java:287)
+ at org.apache.commons.lang.builder.ReflectionToStringBuilder.toString(ReflectionToStringBuilder.java:153)
+
+
+
+"[STUCK] ExecuteThread: '50' for queue: 'weblogic.kernel.Default (self-tuning)'" daemon prio=10 tid=0x00007f931003e400 nid=0x2d37 runnable [0x00007f9371cf9000]
+   java.lang.Thread.State: TIMED_WAITING (parking)
+ at sun.misc.Unsafe.park(Native Method)
+ at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:349)
+ at com.lmax.disruptor.MultiProducerSequencer.next(MultiProducerSequencer.java:133)
+ at com.lmax.disruptor.MultiProducerSequencer.next(MultiProducerSequencer.java:102)
+ at com.lmax.disruptor.RingBuffer.next(RingBuffer.java:207)
+....
+ at org.eclipse.persistence.logging.JavaLog.internalLog(JavaLog.java:290)
+ at org.eclipse.persistence.logging.JavaLog.log(JavaLog.java:261)
+ at org.eclipse.persistence.internal.sessions.AbstractSession.log(AbstractSession.java:3491)
+ at org.eclipse.persistence.internal.sessions.AbstractSession.log(AbstractSession.java:4731)
+ at org.eclipse.persistence.internal.sessions.AbstractSession.log(AbstractSession.java:4705)
+ at org.eclipse.persistence.internal.sessions.AbstractSession.executeQuery(AbstractSession.java:1839)
+ at org.eclipse.persistence.internal.sessions.AbstractSession.executeQuery(AbstractSession.java:1786)
+ at org.eclipse.persistence.internal.indirection.QueryBasedValueHolder.instantiate(QueryBasedValueHolder.java:129)
+ at org.eclipse.persistence.internal.indirection.QueryBasedValueHolder.instantiate(QueryBasedValueHolder.java:116)
+ at org.eclipse.persistence.internal.indirection.DatabaseValueHolder.getValue(DatabaseValueHolder.java:89)
+ - locked <0x00000007811573d8> (a org.eclipse.persistence.internal.indirection.QueryBasedValueHolder)
+ at org.eclipse.persistence.internal.indirection.UnitOfWorkValueHolder.instantiateImpl(UnitOfWorkValueHolder.java:173)
+ at org.eclipse.persistence.internal.indirection.UnitOfWorkValueHolder.instantiate(UnitOfWorkValueHolder.java:234)
+ at org.eclipse.persistence.internal.indirection.DatabaseValueHolder.getValue(DatabaseValueHolder.java:89)
+ - locked <0x0000000785157ee8> (a org.eclipse.persistence.internal.indirection.UnitOfWorkQueryValueHolder)
+ at org.eclipse.persistence.indirection.IndirectSet.buildDelegate(IndirectSet.java:211)
+ at org.eclipse.persistence.indirection.IndirectSet.getDelegate(IndirectSet.java:375)
+ - locked <0x0000000785157eb8> (a org.eclipse.persistence.indirection.IndirectSet)
+ at org.eclipse.persistence.indirection.IndirectSet.hashCode(IndirectSet.java:419)
+ at java.util.WeakHashMap.hash(WeakHashMap.java:365)
+ at java.util.WeakHashMap.getEntry(WeakHashMap.java:494)
+ at java.util.WeakHashMap.containsKey(WeakHashMap.java:485)
+
+
+</pre>
+
+
+<br/><br/>
+
+My 2 cents: LAZY loading should NOT be really the default, unless you REALLY have performance issues (I know, EclipseLink site says the opposite). The effect of loading an object ANYWHERE in your code, while you are for instance in the middle of doing logging, can be really disruptive.
+
+<br/><br/>
+
+
+
+
+
+

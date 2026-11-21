@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Audit the content of a series of folders against a file "
+date: 2019-08-11T16:16:00.001+02:00
+permalink: /2019/08/audit-content-of-series-of-folders.html
+blogger_id: "286370846582116917"
+tags: ["bash"]
+---
+the audit.txt contains the list of original files:<br />
+<br />
+<pre>/media/sf_shared/bashtests/dirtoaudit/
+/media/sf_shared/bashtests/dirtoaudit/dir01
+/media/sf_shared/bashtests/dirtoaudit/dir01/file01_01.txt
+/media/sf_shared/bashtests/dirtoaudit/dir01/file02_01.txt
+/media/sf_shared/bashtests/dirtoaudit/dir02
+/media/sf_shared/bashtests/dirtoaudit/dir02/file01_02.txt
+/media/sf_shared/bashtests/dirtoaudit/dir02/file02_02.txt
+</pre><br />
+this script checks that in the folders<br />
+<br />
+<pre>/media/sf_shared/bashtests/dirtoaudit/
+/media/sf_shared/bashtests/dirtoaudit/dir01
+/media/sf_shared/bashtests/dirtoaudit/dir02
+</pre><br />
+there are no extra files or folders:<br />
+<br />
+<script src="https://gist.github.com/vernetto/44da501a763891c241f12a61fbc3d85d.js"></script><br />
+<br />
+<br />
+Of course this scales very poorly... I would never dream of writing complex logic in bash, unless I was absolutely forced<br />
+<br />
+<br />
+

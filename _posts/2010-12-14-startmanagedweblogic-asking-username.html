@@ -1,0 +1,25 @@
+---
+layout: post
+title: "startManagedWebLogic asking username and password"
+date: 2010-12-14T18:47:00.000+01:00
+permalink: /2010/12/startmanagedweblogic-asking-username.html
+blogger_id: "7673398175024609450"
+tags: ["boot.properties"]
+---
+you have many options to get rid of the annoyance,<br />
+probably the quickest is to put a file <b>boot.properties</b><br />
+with<br />
+username=weblogic<br />
+password=weblogic1<br />
+<br />
+in $DOMAIN_DIR$/servers/myserver/security<br />
+directory<br />
+<br />
+<br />
+at the next boot it should be encrypted by WLS<br />
+<br />
+<pre name="code" brush="class: xml">
+<Dec 14, 2010 5:40:05 PM GMT> <Notice> <Security> <BEA-090082> <Security initializing using security realm myrealm.>
+<Dec 14, 2010 5:40:05 PM GMT> <Notice> <Security> <BEA-090083> <Storing boot identity in the file: /exec/products/oradev/Middleware/user_projects/domains/soa_dev/servers/osb_server1/security/boot.properties>
+
+</pre>

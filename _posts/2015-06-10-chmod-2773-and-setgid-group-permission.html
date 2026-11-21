@@ -1,0 +1,29 @@
+---
+layout: post
+title: "chmod 2773 and setgid : group permission allowing other users to delete a file"
+date: 2015-06-10T10:43:00.002+02:00
+permalink: /2015/06/chmod-2773-and-setgid-group-permission.html
+blogger_id: "4076956995665136031"
+tags: ["setgid"]
+---
+If you find yourself unable to delete a file created by FTPS, because in the transfer the group ownership was set to a group different from the one of the local user....
+<br/><br/>
+then you might want to try setting the DIRECTORY permissions to 2773 (setting the setgid bit on group level): this should allow any user to DELETE (but not change, I guess) files in that folder.
+<br/><br/>
+
+<pre>
+mkdir pippo
+chmod 2773 pippo
+ls -ltrad pippo
+drwxrws-wx 2 pierluigi users 1024 Jun 10 10:27 pippo
+</pre>
+<br/><br/>
+
+notice the "s" in the permission group
+
+<br/><br/>
+
+See also <a href="http://docs.oracle.com/cd/E19683-01/816-4883/secfile-69/index.html">http://docs.oracle.com/cd/E19683-01/816-4883/secfile-69/index.html</a>
+<br/><br/>
+
+"When setgid permission is applied to a directory, files that were created in this directory belong to the group to which the directory belongs, not the group to which the creating process belongs. Any user who has write and execute permissions in the directory can create a file there. However, the file belongs to the group that owns the directory, not to the user's group ownership. "

@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Local OSB protocol is ACTUALLY local"
+date: 2011-12-29T03:57:00.000+01:00
+permalink: /2011/12/local-osb-protocol-is-actually-local.html
+blogger_id: "2646816868259094074"
+tags: ["OSB"]
+---
+It seems that LOCAL doesn’t load balance stuff..."Local" means "NOT Remote", so all calls are within the same JVM.<br />
+<br />
+I have done this test:<br />
+<br />
+CLIENT -> HTTP PS  deployed in cluster -> publish to LOCAL PS<br />
+<br />
+Client sends all requests to only 1 HTTP service on server ms1 of the cluster made by ms1,ms2.<br />
+<br />
+Only the LOCAL PS on the ms1 is invoked. ms2 shows no activity.<br />
+<br />
+What if instead of LOCAL protocol I use some remotable protocol like HTTP? Is Server Affinity going to kick in, so all requests will stay anyway local? I am too lazy to test this now... maybe one day...

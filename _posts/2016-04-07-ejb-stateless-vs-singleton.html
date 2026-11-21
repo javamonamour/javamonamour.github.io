@@ -1,0 +1,29 @@
+---
+layout: post
+title: "EJB : Stateless vs Singleton "
+date: 2016-04-07T10:52:00.002+02:00
+permalink: /2016/04/ejb-stateless-vs-singleton.html
+blogger_id: "3136170611248112654"
+tags: ["singleton"]
+---
+<a href="http://stackoverflow.com/questions/14464823/difference-between-stateless-and-singleton">http://stackoverflow.com/questions/14464823/difference-between-stateless-and-singleton</a> and in particular <a href="http://stackoverflow.com/a/14465200/651288">this answer</a> 
+
+<br/>
+<a href="http://docs.oracle.com/javaee/6/tutorial/doc/gipjg.html#gipmt">http://docs.oracle.com/javaee/6/tutorial/doc/gipjg.html#gipmt</a>
+<br/>
+
+The EXCELLENT book "Beginning EJB 3: Java EE 7 Edition" (that I highly recommend to buy) explains it very well:
+<br/>
+<pre>
+"Introduced in EJB 3.1, a singleton session bean is a session bean component that is instantiated only once per application. For an application, only one instance of a singleton session bean can ever exist. Once instantiated, a singleton session bean lives for the full duration of the application. The singleton session bean maintains its state between client invocations, but it cannot save that state after a container shutdown or crash. Similar to stateless and stateful session beans, the singleton session bean is comprised of a bean class and, optionally, one or more business interfaces."
+</pre>
+<br/>
+
+<br/>
+
+<a href="https://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html">https://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html</a>
+<br/>
+
+<a href="http://docs.oracle.com/javaee/6/api/javax/ejb/Stateless.html">http://docs.oracle.com/javaee/6/api/javax/ejb/Stateless.html</a>
+
+<br/>

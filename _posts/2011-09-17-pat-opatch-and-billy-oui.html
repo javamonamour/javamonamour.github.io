@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Pat O'Patch and Billy OUI"
+date: 2011-09-17T14:20:00.003+02:00
+permalink: /2011/09/pat-opatch-and-billy-oui.html
+blogger_id: "3479377835698572773"
+tags: ["opatch", "oui"]
+---
+OUI=Oracle Universal Installer<br />
+<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/B19306_01/em.102/b16227/toc.htm">http://download.oracle.com/docs/cd/B19306_01/em.102/b16227/toc.htm</a><br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/ad4e96b33341e469.jpg" imageanchor="1" style=""><img border="0" height="320" width="228" src="/images/a9d03f2311dd5e66.jpg" /></a></div><br />
+I am catching up with the OPatch utility - we old fat obsolete BEA guys are still dreaming of the old bsu days, but reality steps forward and either you evolve or you die.<br />
+<br />
+What we learn is that:<br />
+<br />
+- there is a opatch utility, actually many:<br />
+C:\Oracle2\Middleware\oracle_common\OPatch\opatch.bat<br />
+C:\Oracle2\Middleware\Oracle_OSB1\OPatch\opatch.bat<br />
+C:\Oracle2\Middleware\Oracle_SOA1\OPatch\opatch.bat<br />
+<br />
+- pick the one you like, I have tried C:\Oracle2\Middleware\Oracle_OSB1\.<br />
+You can try running it with<br />
+opatch <br />
+<br />
+and you get a great help screen.<br />
+You might have to do<br />
+set ORACLE_HOME=C:\Oracle2\Middleware\oracle_common<br />
+<br />
+or some other directory which contains a "oui" folder, otherwise you get a message<br />
+<br />
+"The Oracle Home C:\Oracle2\MIDDLE~1 is not OUI based home. Please give proper Oracle Home.<br />
+OPatch returns with error code = 1<br />
+<br />
+OPatch succeeded.<br />
+"<br />
+<br />
+which is a weird way to succeed.<br />
+<br />
+<br />
+- if you manage to make "opatch lsinventory" work on Windows 64 please call me, because I keep getting <br />
+<br />
+"java.lang.UnsatisfiedLinkError: Can't load library: C:/Oracle2/Middleware/Oracle_OSB1/oui/lib/win32/oraInstaller.dll<br />
+at java.lang.ClassLoader.loadLibrary(ClassLoader.java:1702)"<br />
+<br />
+I am sure I have messed up my installation.<br />
+<br />
+<br />
+- anyway there is a C:\Program Files\Oracle\Inventory\ContentsXML\inventory.xml which contains a list of all Oracle product Homes, mines are actually duplicated<br />
+<br />
+- Big Brother is watching you: C:\Oracle2\Middleware\Oracle_OSB1\cfgtoollogs\ contains a history of every command you issued for opatch (opatch_history.txt) and oui<br />
+<br />
+- What is your ARU_ID?  <br />
+Each platform is identified by a platform id: you can see it in inventory.xml and in oraclehomeproperties.xml

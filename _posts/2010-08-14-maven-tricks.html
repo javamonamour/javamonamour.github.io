@@ -1,0 +1,93 @@
+---
+layout: post
+title: "Maven sucks like hell"
+date: 2010-08-14T21:53:00.012+02:00
+permalink: /2010/08/maven-tricks.html
+blogger_id: "2461927008731091513"
+tags: ["maven", "mavensucks"]
+blogger_comments:
+  - author: "Luciano"
+    date: 2010-08-15
+    html: "I have been using succesfully Gradle on a large, complex project in the last 8 months and there is no come back.<br />Maven was never an option because of its excessive complexity and rigidness.<br />Gradle is a Groovy DSL for building software. Dependency management is based on Ivy and it is compatible with Maven repos."
+  - author: "vernetto"
+    date: 2010-09-21
+    html: "ha, in fact we discover that Maven 3 is going to be very much Groovy-like:<br /><br />http://www.wakaleo.com/blog/236-writing-your-pom-files-in-groovy-a-sneek-preview-of-maven-3s-polyglot-features<br /><br /><br />this *MIGHT* turn Maven into something usable by regular human beings."
+  - author: "vernetto"
+    date: 2010-10-08
+    html: "Maven 3.0 is showing some good will to come out of the darkness of the Middle Ages and open to project modeling formats which are not XML:<br /><br />http://www.infoq.com/news/2010/10/maven-30-released<br /><br />they talk about Polyglot Maven! So finally they do the right thing after they have tried everything else... Welcome to the new World ..."
+  - author: "Anonymous"
+    date: 2012-07-18
+    html: "I had to work with the maven3 and I share the opinion of the author. If you have a non-trivial multi-model Project differs from the pattern, the configuration of maven turn to hell. Maven looks good until you go to a standard well-known way. But one step to the side and idioms of maven no longer work. If you have any special features, this tool is not suitable. Maven is too relies on idioms not common mechanisms. Many things are implied, hardcoded and it&#39;s difficult to change."
+---
+IMHO Maven is CRAP, the underlying concept is good but the implementation is repulsive, with all the xml to be handcrafted. It should not be hard to create a DSL and a nice IDE, yet people get carried away by this XML junk and we spit blood juggling with confusing documentation and endless xml snippets.<br />
+<br />
+As here http://www.jumpingbean.co.za/blogs/mark/maven_problems says:<br />
+"All of this can make using maven very time consuming and frustrating. I  do think that maven is a good project but that it could be great if  managed correctly."<br />
+Simply said, my head and Maven&nbsp; Designer head are made in incompatible ways.<br />
+<br />
+Incidentally at office they had endless discussions on Maven vs Ant. I am not interested in choosing between a hard place and a rock: I want a modern tool to address my needs and get my stuff done in a breeze. <br />
+<br />
+Whoever asserts that you should build a complex project modeling or a complex procedural deployment script based on XML is simply UNHEALTHY.<br />
+<br />
+I have seen Maven "experts" struggle for hours even to get the basic done, and still their stuff breaks again and again. It's like if in Eclipse or NetBeans it would take me one day to create an empty EJB project. <br />
+<br />
+Creating the structure for a EAR with a ejb-client, a war, a ejb module and dependencies from other Java projects (jar) should be a matter of a few clicks or a command.... in Maven the maven-ear-plugin is very poorly designed, I have surfed for hours and searched several book for a clear example, in vain. And everything is a matter of copying and pasting XML.<br />
+<br />
+There is a decent plugin for Eclipse, with an extensive reference book:<br />
+<br />
+http://m2eclipse.sonatype.org/installing-m2eclipse.html<br />
+http://www.sonatype.com/books/m2eclipse-book/reference/<br />
+<br />
+This plugin seems to make Maven use POSSIBLE for a regular human being, without incurring in several nervous breakdowns. In fact, even this plugin has been designed without a proper specialized wizard for each project topology, so you are left alone to juggle in a myriad of options without a clear path to follow.<br />
+<br />
+Maven, even with the Eclipse plugin, is for the maven, not for the accidental user. There is nothing like 1-2-3-easy, unless you do the really basic stuff.<br />
+<br />
+I am simply trying to create a structure for an EAR with an EJB and a WAR and some dependencies from some Java projects.<br />
+With a NORMAL tool I would assume I can get it done with:<br />
+<br />
+<b>create EAR myEAR including WAR myWar, EJB myEJB depends on JAR myJAR1, myJAR2</b><br />
+<br />
+They give you only this http://svn.apache.org/viewvc/maven/plugins/trunk/maven-ear-plugin/src/test/resources/projects/  example, and it's your problem to recreate the entire directory structure. <br />
+<br />
+Instead of using and abusing XML, they should have designed a Domain Specific Language and integrate in Groovy.<br />
+<br />
+<a href="http://java.dzone.com/news/maven-great-idea-poor">Here more on why Maven sucks</a>.<br />
+<br />
+<br />
+Excellent tutorial:<br />
+http://maven.apache.org/guides/getting-started/index.html<br />
+<br />
++X turns on debugger<br />
+-e enables exception tracing<br />
+<br />
+In c:/apps/maven/conf/<b>settings.xml</b> you find several interesting properties, such as the local-repository and the proxy.<br />
+<br />
+mvn --version<br />
+<br />
+mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false<br />
+<br />
+cd my-app/<br />
+less pom.xml <br />
+mvn package<br />
+java -cp target/my-app-1.0-SNAPSHOT.jar com.mycompany.app.App<br />
+ls target/classes/<br />
+mvn test<br />
+mvn test-compile<br />
+<br />
+ls ~/.m2/repository<br />
+<br />
+to build offline:<br />
+mvn -o package<br />
+<br />
+mvn eclipse:eclipse<br />
+<br />
+${basedir}/src/main/resources<br />
+<br />
+mvn process-resources<br />
+<br />
+<span style="font-size: large;"><b>EAR PLUGIN</b></span><br />
+<br />
+http://maven.apache.org/plugins/maven-ear-plugin/<br />
+<br />
+This is how to create an ear:<br />
+http://agoncal.wordpress.com/2009/10/23/because-i-always-forget-how-to-use-maven-ear-plugin/

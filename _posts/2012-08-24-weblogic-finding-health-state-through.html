@@ -1,0 +1,316 @@
+---
+layout: post
+title: "WebLogic finding health state through JMX"
+date: 2012-08-24T18:36:00.011+02:00
+permalink: /2012/08/weblogic-finding-health-state-through.html
+blogger_id: "7383138191058907201"
+tags: ["JMX", "weblogic"]
+---
+<a href="http://middlewaremagic.com/weblogic/?p=2851">This post is excellent</a> and explains how to connect remotely (I don't like the static block thing).<br />
+<br />
+<a href="https://blogs.oracle.com/muraliveligeti/entry/monitor_jdbc_resources_via_jmx">This one covers</a> better the "Local" case.<br />
+<br />
+If you want to connect LOCALLY, things are <a href="http://docs.oracle.com/cd/E21764_01/web.1111/e13728/accesswls.htm">explained here</a>:<br />
+<br />
+"Make Local Connections to the Runtime MBean Server.<br />
+Local clients can access a WebLogic Server instance's Runtime MBean Server through the JNDI tree instead of constructing a JMXServiceURL object"<br />
+<br />
+The code is:<br />
+<pre>import javax.management.MBeanServer;
+....
+InitialContext ctx = new InitialContext();
+MBeanServer server = (MBeanServer)ctx.lookup("java:comp/env/jmx/runtime"); 
+</pre><br />
+<br />
+Javadoc of the MBeanServer here:<br />
+<a href="http://docs.oracle.com/javase/6/docs/api/javax/management/MBeanServer.html">http://docs.oracle.com/javase/6/docs/api/javax/management/MBeanServer.html</a><br />
+<br />
+<br />
+Here is the code for the "local" case (I have also removed the static initialization block):<br />
+<br />
+<br />
+<pre class="brush: java" name="code">package tests.monitoring;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+public class ServerHealthStateMonitorLocal {
+
+    private static MBeanServerConnection connection;
+    private static JMXConnector connector;
+    private static ObjectName service;
+    private static String combea = "com.bea:Name=";
+    private static String service1 = "DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean";
+
+
+    public static void initConnection() throws NamingException, MalformedObjectNameException, NullPointerException {
+ service = new ObjectName(combea + service1);
+ InitialContext ctx = new InitialContext();
+ MBeanServer server = (MBeanServer)ctx.lookup("java:comp/jmx/runtime");
+  
+ connection = server;
+ System.out.println("connection = " + connection);
+    }
+
+    public static ObjectName[] getServerRuntimes() throws Exception {
+ if (connection == null) {
+     System.out.println("null connection");
+ }
+ 
+ return (ObjectName[]) connection.getAttribute(service, "ServerRuntimes");
+    }
+
+    public void printNameAndState() throws Exception {
+ ObjectName arr[] = getServerRuntimes();
+ for (ObjectName temp : arr)
+     System.out.println("\n\t servers: " + temp);
+ ObjectName domain = (ObjectName) connection.getAttribute(service, "DomainConfiguration");
+ System.out.println("Domain: " + domain.toString());
+ ObjectName[] servers = (ObjectName[]) connection.getAttribute(domain, "Servers");
+ for (ObjectName server : servers) {
+     String aName = (String) connection.getAttribute(server, "Name");
+     try {
+  ObjectName ser = new ObjectName("com.bea:Name=" + aName + ",Location=" + aName + ",Type=ServerRuntime");
+  String serverState = (String) connection.getAttribute(ser, "State");
+  System.out.println("\n\t Server: " + aName + "\t State: " + serverState);
+  weblogic.health.HealthState serverHealthState = (weblogic.health.HealthState) connection.getAttribute(ser, "HealthState");
+  int hState = serverHealthState.getState();
+  if (hState == weblogic.health.HealthState.HEALTH_OK)
+      System.out.println("\t Server: " + aName + "\t State Health: HEALTH_OK");
+  if (hState == weblogic.health.HealthState.HEALTH_WARN)
+      System.out.println("\t Server: " + aName + "\t State Health: HEALTH_WARN");
+  if (hState == weblogic.health.HealthState.HEALTH_CRITICAL)
+      System.out.println("\t Server: " + aName + "\t State Health: HEALTH_CRITICAL");
+  if (hState == weblogic.health.HealthState.HEALTH_FAILED)
+      System.out.println("\t Server: " + aName + "\t State Health: HEALTH_FAILED");
+  if (hState == weblogic.health.HealthState.HEALTH_OVERLOADED)
+      System.out.println("\t Server: " + aName + "\t State Health: HEALTH_OVERLOADED");
+     } catch (javax.management.InstanceNotFoundException e) {
+  System.out.println("\n\t Server: " + aName + "\t State: SHUTDOWN (or Not Reachable)");
+     }
+ }
+    }
+
+    public static void main(String[] args) throws Exception {
+ printHealthStatus();
+    }
+    
+    public static void printHealthStatus() throws Exception {
+ ServerHealthStateMonitorLocal s = new ServerHealthStateMonitorLocal();
+ initConnection();
+ s.printNameAndState();
+ connector.close();
+    }
+
+}
+
+
+</pre><br />
+<br />
+<br />
+<a href="http://docs.oracle.com/cd/E28613_01/apirefs.1211/e24391/weblogic/health/HealthState.html">HealthState is described here</a>, and the meaning of the integer values is<br />
+<br />
+<pre>HEALTH_OK  0
+HEALTH_WARN  1
+HEALTH_CRITICAL  2
+HEALTH_FAILED  3
+HEALTH_OVERLOADED  4
+</pre><br />
+<br />
+<br />
+<br />
+<br />
+The first time I get:<br />
+<br />
+<i><br />
+<br />
+com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean<br />
+javax.management.InstanceNotFoundException: com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean<br />
+at com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.getMBean(DefaultMBeanServerInterceptor.java:1094)<br />
+at com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.getAttribute(DefaultMBeanServerInterceptor.java:662)<br />
+at com.sun.jmx.mbeanserver.JmxMBeanServer.getAttribute(JmxMBeanServer.java:638)<br />
+at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase$12.run(WLSMBeanServerInterceptorBase.java:326)<br />
+at java.security.AccessController.doPrivileged(Native Method)<br />
+at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase.getAttribute(WLSMBeanServerInterceptorBase.java:324)<br />
+at weblogic.management.mbeanservers.internal.JMXContextInterceptor.getAttribute(JMXContextInterceptor.java:157)<br />
+at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase$12.run(WLSMBeanServerInterceptorBase.java:326)<br />
+at java.security.AccessController.doPrivileged(Native Method)<br />
+at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase.getAttribute(WLSMBeanServerInterceptorBase.java:324)<br />
+at weblogic.management.mbeanservers.internal.SecurityInterceptor.getAttribute(SecurityInterceptor.java:299)<br />
+at weblogic.management.jmx.mbeanserver.WLSMBeanServer.getAttribute(WLSMBeanServer.java:279)<br />
+at tests.monitoring.ServerHealthStateMonitorLocal.getServerRuntimes(ServerHealthStateMonitorLocal.java:34)<br />
+<br />
+</i><br />
+<br />
+the connection is found, but the ObjectName<br />
+"DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean"  is not available in the MBeanServer<br />
+<br />
+the offending code is:<br />
+<br />
+return (ObjectName[]) connection.getAttribute(service, "ServerRuntimes");<br />
+<br />
+I try then in the Domain configuration to set "Platform MBean Server Enabled"<br />
+I restart the servers.<br />
+Still same error.<br />
+<br />
+<br />
+<br />
+Then I try:<br />
+<br />
+MBeanServer server = (MBeanServer)ctx.lookup("java:comp/jmx/runtime");<br />
+instead of<br />
+MBeanServer server = (MBeanServer)ctx.lookup("java:comp/env/jmx/runtime");<br />
+<br />
+and still the same error...<br />
+<br />
+The problem is that the Domain Runtime MBean Server is registered only on the Admin.... the code works on the Admin, but NOT on a Managed Server. <br />
+<br />
+The issue is that we want to be able to retrieve the Server Health even if the Admin is not available (besides, it's a pain to store the weblogic credentials for a local call...).<br />
+<br />
+Ok, my dear, then how do I get a reference to the ServerRuntime, if I don't have a reference of the DomainRuntime?<br />
+<br />
+<a href="http://docs.oracle.com/cd/E11035_01/wls100/wlsmbeanref/mbeans/RuntimeServiceMBean.html?skipReload=true#overview">Here they explain it</a>: <br />
+<br />
+you need a ObjectName "RuntimeService,Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean"<br />
+<br />
+"Provides an entry point for navigating the hierarchy of WebLogic Server runtime MBeans and active configuration MBeans for the current server."<br />
+<br />
+The utilization is quite rounbdaboutish and not at all intuitive, but here is something that definitely works:<br />
+<br />
+<pre name="code" class="brush: java">
+package tests.monitoring;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+import javax.naming.InitialContext;
+
+public class ServerHealthStateMonitorLocal {
+
+    public static MBeanServerConnection initConnection() throws Exception {
+ MBeanServerConnection connection;
+ System.out.println("initConnection");
+ InitialContext ctx = new InitialContext();
+ System.out.println("ctx");
+ try {
+     connection = (MBeanServer) ctx.lookup("java:comp/env/jmx/runtime");
+ }
+ catch (Exception e) {
+     e.printStackTrace();
+     try {
+  connection = (MBeanServer) ctx.lookup("java:comp/jmx/runtime");
+     }
+     catch (Exception e2) {
+  e2.printStackTrace();
+  throw e2;
+     }
+ }
+
+ System.out.println("connection=" + connection);
+ return connection;
+    }
+
+    private static ObjectName getServerRuntime(MBeanServerConnection connection, String aName) throws Exception {
+ System.out.println("getServerRuntime");
+ ObjectName serverObjectName = new ObjectName("com.bea:Name=" + aName + ",Type=ServerRuntime");
+ return (ObjectName) connection.getAttribute(serverObjectName, "ServerRuntime");
+    }
+
+
+    public static String getHealthOfThisServer() throws Exception {
+ ServerHealthStateMonitorLocal s = new ServerHealthStateMonitorLocal();
+ MBeanServerConnection connection = initConnection();
+ String serverName = System.getProperty("weblogic.Name");
+ return s.getHealthOfServer(serverName);
+    }
+
+    private String getHealthOfServer(String aName) throws Exception {
+ String result = "NOT_FOUND";
+ MBeanServerConnection connection = initConnection();
+ ObjectName ser = getServerRuntime(connection, aName);
+ String serverState = (String) connection.getAttribute(ser, "State");
+ result = serverState;
+ weblogic.health.HealthState serverHealthState = (weblogic.health.HealthState) connection.getAttribute(ser, "HealthState");
+ int hState = serverHealthState.getState();
+ result = result + "_" + hState;
+ return result;
+    }
+    
+    public static String getThisServerName() throws Exception {
+ ServerHealthStateMonitorLocal s = new ServerHealthStateMonitorLocal();
+ MBeanServerConnection connection = initConnection();
+ ObjectName runtimeService = new ObjectName("com.bea:Name=RuntimeService,Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean");
+ String managedServerName = (String) connection.getAttribute(runtimeService, "ServerName");
+ return managedServerName;
+ 
+ /*
+ ObjectName msServerRuntime = new ObjectName("com.bea:Name="+ managedServerName + ",Type=ServerRuntime");
+   administrationURL = (String) mBeanServer.getAttribute(msServerRuntime, "AdminServerHost");
+   adminPort = (Integer) mBeanServer.getAttribute(msServerRuntime, "AdminServerListenPort");
+   System.out.println(administrationURL + adminPort);
+ */  
+    } 
+    
+    public static String getThisServerState() throws Exception {
+ MBeanServerConnection connection = initConnection();
+ ObjectName runtimeService = new ObjectName("com.bea:Name=RuntimeService,Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean");
+ System.out.println("runtimeService=" + runtimeService);
+ ObjectName serverRT = (ObjectName) connection.getAttribute(runtimeService, "ServerRuntime");
+ System.out.println("serverRT=" + serverRT);
+ String serverState = (String) connection.getAttribute(serverRT, "State");
+ return serverState;
+    }
+
+    public static String getThisServerHealth() throws Exception {
+ MBeanServerConnection connection = initConnection();
+ ObjectName runtimeService = new ObjectName("com.bea:Name=RuntimeService,Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean");
+ String managedServerName = (String) connection.getAttribute(runtimeService, "ServerName");
+ ObjectName serverRT = new ObjectName("com.bea:Name=" + managedServerName + ",Type=ServerRuntime");
+ System.out.println("serverRT=" + serverRT);
+ weblogic.health.HealthState serverHealthState = (weblogic.health.HealthState) connection.getAttribute(serverRT, "HealthState");
+ return healthStateToString(serverHealthState.getState());
+    }
+    
+    private static String healthStateToString(int state) {
+ String result = "HEALTH_UNKNOWN";
+ switch (state) {
+ case 0:
+     result = "HEALTH_OK";
+     break;
+ case 1:
+     result = "HEALTH_WARN";
+     break;
+ case 2:
+     result = "HEALTH_CRITICAL";
+     break;
+ case 3:
+     result = "HEALTH_FAILED";
+     break;
+ case 4:
+     result = "HEALTH_OVERLOADED";
+     break;
+
+ default:
+     break;
+ }
+ return result;
+    }
+    
+    
+}
+
+
+</pre><br />
+<br />
+where:<br />
+<br />
+runtimeService=com.bea:Name=RuntimeService,Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean<br />
+serverRT=com.bea:Name=osbpl2ms1,Type=ServerRuntime<br />
+<br />
+<br />
+

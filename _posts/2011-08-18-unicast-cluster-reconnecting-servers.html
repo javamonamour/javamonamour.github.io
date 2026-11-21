@@ -1,0 +1,59 @@
+---
+layout: post
+title: "Unicast Cluster, reconnecting servers"
+date: 2011-08-18T00:47:00.000+02:00
+permalink: /2011/08/unicast-cluster-reconnecting-servers.html
+blogger_id: "7344609919517473129"
+tags: ["cluster"]
+---
+Create a cluster myCluster with 3 MS: ms1, ms2, ms3<br />
+Create a unicastChannel on the 3 MS to dedicate for the unicast communication.<br />
+<br />
+<i>#connect to NodeManager<br />
+nmConnect('weblogic', 'welcome1', 'localhost', '5556', 'osb_domain', 'C:/Oracle2/Middleware/user_projects/domains/osb_domain')<br />
+<br />
+#start ms1<br />
+nmStart('ms1')<br />
+#connect to ms1<br />
+connect('weblogic', 'welcome1', 't3://localhost:7011')<br />
+<br />
+cd('/ClusterRuntime/myCluster/')<br />
+ls()<br />
+</i><br />
+<br />
+you should get:<br />
+AliveServerCount=1<br />
+ServerNames=java.lang.String[ms1]<br />
+<br />
+Start ms2:<br />
+nmStart('ms2')<br />
+<br />
+ls()<br />
+<br />
+you should get:<br />
+AliveServerCount=2<br />
+ServerNames=java.lang.String[ms2,ms1]<br />
+<br />
+<br />
+nmKill('ms2')<br />
+<br />
+Successfully killed server ms2 ...<br />
+<br />
+ls<br />
+<br />
+AMAZING:<br />
+AliveServerCount=2<br />
+ServerNames=java.lang.String[ms2,ms1]<br />
+<br />
+<br />
+how can it be... we have just killed ms2!<br />
+<br />
+In fact, it takes some time for ms1 to notice that ms2 is dead. After some more seconds, you get<br />
+AliveServerCount=1<br />
+ServerNames=java.lang.String[ms1]<br />
+as it should be.<br />
+<br />
+<br />
+<br />
+<br />
+

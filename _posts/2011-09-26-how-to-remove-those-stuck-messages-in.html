@@ -1,0 +1,28 @@
+---
+layout: post
+title: "How to remove those stuck messages in a Distributed Topic"
+date: 2011-09-26T18:33:00.003+02:00
+permalink: /2011/09/how-to-remove-those-stuck-messages-in.html
+blogger_id: "6293771931926694523"
+tags: ["jms", "topic"]
+---
+If you have messages current in a Distributed Topic, and you can't persuade the consumers to consume them... and you can't delete them with WLST because there is a bug in the MBean... and you are too lazy to write a Java class...<br />
+<br />
+you can<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/365eb36d4cc96461.jpg" imageanchor="1"><img border="0" height="320px" src="/images/36abec4f7bfb7cf4.jpg" width="320px" /></a></div><br />
+<br />
+<br />
+shutdown all MS<br />
+<br />
+cd $DOMAIN_HOME/servers/yourServer/data/store/default<br />
+rm _WLS_YOURSERVER000000.DAT<br />
+<br />
+do the same for all MS<br />
+<br />
+restart<br />
+<br />
+the MS should recreate an empty store.<br />
+<br />
+This if your JMSServer was pointing to the default store.<br />
+If it uses a custome FileStore, delete it.

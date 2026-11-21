@@ -1,0 +1,50 @@
+---
+layout: post
+title: "bash scripts, success and failure"
+date: 2014-06-18T13:44:00.000+02:00
+permalink: /2014/06/bash-scripts-success-and-failure.html
+blogger_id: "537080694061338050"
+tags: ["bash"]
+---
+All this might be trivial, but it's good to have it written down somewhere. <br />
+<br />
+<br />
+false and true can be used to simulate a command which failed or succeeded(respectively)<br />
+<br />
+<b>false</b><br />
+<b>echo $?</b><br />
+<i>1</i><br />
+<b>true</b><br />
+<b>echo $?</b><br />
+<i>0</i><br />
+<br />
+You can use || to run a command only if the previous failed:<br />
+<br />
+<pre class="lang-sh prettyprint prettyprinted"><b><code><span class="pln">false </span><span class="pun">||</span><span class="pln"> echo </span><span class="str">"it failed"</span></code></b></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str"><i><code><span class="str">it failed</span></code></i> </span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str">
+</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><b><code><span class="pln">true </span><span class="pun">||</span><span class="pln"> echo </span><span class="str">"it didn't fail"</span></code></b></pre>
+<pre class="lang-sh prettyprint prettyprinted"><i><code><span class="str">(nothing is printed here) </span></code></i></pre>
+<pre class="lang-sh prettyprint prettyprinted"><b><code><span class="str">
+</span></code></b></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str">
+</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str">You can use &amp;&amp; to run a command only if the previous succeeded:</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><b><code><span class="pln">true </span><span class="pun">&amp;&amp;</span><span class="pln"> echo </span><span class="str">"It succeeded"</span></code></b></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str">It succeeded</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><b><code><span class="pln">false </span><span class="pun">&amp;&amp;</span><span class="pln"> echo </span><span class="str">"It succeeded"</span></code></b></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str"><i><code><span class="str">(nothing is printed here) </span></code></i>&nbsp;</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str">
+</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str">
+</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str">You can chain as many command as you want with &amp;&amp; and || (normally you do this only with &amp;&amp;).</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str">&nbsp;</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str"><b>set -e</b>  will make sure your script stops execution as soon as a command returns something != 0</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str">&nbsp;</span></code></pre>
+<pre class="lang-sh prettyprint prettyprinted"><code><span class="str">
+</span></code></pre>
+

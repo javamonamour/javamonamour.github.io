@@ -1,0 +1,98 @@
+---
+layout: post
+title: "OSB executing XQuery defined in an external file"
+date: 2011-07-06T17:28:00.003+02:00
+permalink: /2011/07/osb-executing-xquery-defined-in.html
+blogger_id: "2302402203575987552"
+tags: ["XQuery"]
+---
+Let's admit it, support for reusability of XQuery code is EXTREMELY limited in OSB. <br />
+One has to play some trick.<br />
+<br />
+One of them is using custom XPath function - defined in Java - and read and execute dynamically a XQuery, binding parameters dynamically.<br />
+<br />
+Example:<br />
+<br />
+This is the Java code:<br />
+<br />
+<pre name="code" class="brush: java">import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+
+
+static String BASE_DIR = "/path/to/config/osb/";
+
+public static XmlObject trainWithParams(XmlObject[] parameters, String[] name) throws Exception {
+String xquery = readFile(BASE_DIR + "train.xq"); 
+XmlOptions options = new XmlOptions();
+// see http://xmlbeans.apache.org/docs/2.2.0/reference/org/apache/xmlbeans/XmlOptions.html#setXqueryVariables%28java.util.Map%29
+Map<String, XmlObject> map = new HashMap<String, XmlObject>();
+for (int i = 0; i < name.length; i++) {
+   map.put(name[i], parameters[i]);
+  }
+  options.setXqueryVariables(map);
+  return runXQuery(xquery, options)[0];
+}
+
+
+private static XmlObject[] runXQuery(String xquery, XmlOptions options) {
+  XmlObject xmlObject = XmlObject.Factory.newInstance();
+  XmlObject[] results = xmlObject.execQuery(xquery, options);
+  return results;
+} 
+
+
+
+private static String readFile(String fFileName) throws Exception {
+  StringBuilder text = new StringBuilder();
+  String NL = System.getProperty("line.separator");
+  Scanner scanner = new Scanner(new FileInputStream(fFileName));
+  try {
+   while (scanner.hasNextLine()){
+    text.append(scanner.nextLine() + NL);
+   }
+  }
+  finally{
+   scanner.close();
+  }
+  return text.toString(); 
+}
+
+</pre>
+This is the entry in the osb-built-in.xml
+
+<pre name="code" class="brush: xml"><xpf:function>
+<xpf:name>trainWithParams</xpf:name>
+<xpf:comment>Run a XQuery function returning XmlObject, passing many parameters</xpf:comment>
+<xpf:namespaceURI>http://acme.com</xpf:namespaceURI>
+<xpf:className>com.acme.osb.XQueryExecutor</xpf:className>
+<xpf:method>org.apache.xmlbeans.XmlObject trainWithParams([Lorg.apache.xmlbeans.XmlObject;, [Ljava.lang.String;)</xpf:method>
+<xpf:isDeterministic>true</xpf:isDeterministic>
+<xpf:scope>Pipeline</xpf:scope>
+<xpf:scope>SplitJoin</xpf:scope>
+</xpf:function>        
+
+</pre><br />
+<br />
+<br />
+and this is how to invoke it from any XQuery context in OSB:<br />
+<br />
+return acmxk:trainWithParams(($Train), ('Train'))<br />
+<br />
+<br />
+You can chain multiple parameters:<br />
+<br />
+return acmxk:trainWithParams(($Train, $Bus), ('Train', 'Bus'))<br />
+<br />
+<br />
+<br />
+Of course you can pass the Xquery file name in the call itself, by adding an extra parameter to the signature.<br />
+<br />
+I am not sure if the XQuery will be recompiled every time, or it the XQuery engine keeps a cache. This mechanism exists in SQL engines, perhaps it's there also in XQuery engines.<br />
+<br />
+Also I don't know if this compiled statement caching is in place for all XQuery defined in OSB.

@@ -1,0 +1,42 @@
+---
+layout: post
+title: "XQuery to return a property value"
+date: 2012-01-22T10:29:00.001+01:00
+permalink: /2012/01/xquery-to-return-property-value.html
+blogger_id: "9047340640225627042"
+tags: ["OSB", "osb variables"]
+---
+Too often in OSB developers hardcode property values everywhere in the Message Flow.<br />
+This makes life difficult, especially if these are environment-dependent values.<br />
+<br />
+Waiting for Oracle to provide a decent way to externalize variables in a property file and read it from OSB (you can do that with a Custom XPath.... but the problem is that the property file would not be visible/editable from the OSB console, which is a pity...)...<br />
+you can use this approach:<br />
+<br />
+<pre name="code" class="brush: java">xquery version "1.0" encoding "Cp1252";
+
+declare namespace xf = "http://tempuri.org/OSBProject1/getProperty/";
+
+declare function xf:getProperty($propertyName as xs:string)
+    as xs:string {
+    let $properties := 
+    &lt;properties&gt;
+     &lt;stageErrorDirectory&gt;bla&lt;/stageErrorDirectory&gt;
+     &lt;targetErrorDirectory&gt;bla&lt;/targetErrorDirectory&gt;
+    &lt;/properties&gt;
+    
+    let $match := $properties//*[name()=$propertyName]
+    return
+    if ($match) then
+     $match/text()
+    else 
+     fn:error(xs:QName('IllegalArgument'), $propertyName)
+};
+
+declare variable $propertyName as xs:string external;
+
+xf:getProperty($propertyName)
+
+</pre><br />
+This code shows also 2 interesting things:<br />
+- how to find a node with a given element name (using *[name()='something'] )<br />
+- how to raise a well readable error message with fn:error()

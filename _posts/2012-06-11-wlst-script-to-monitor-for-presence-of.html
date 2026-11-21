@@ -1,0 +1,27 @@
+---
+layout: post
+title: "WLST script to monitor for the presence of files in a directory"
+date: 2012-06-11T21:28:00.000+02:00
+permalink: /2012/06/wlst-script-to-monitor-for-presence-of.html
+blogger_id: "8758798714767484226"
+tags: ["FileAdapter", "WLST"]
+---
+It will poll every second a directory, and write to a log file the name of all the files it can find...<br />
+<br />
+Very useful to monitor the behaviour of a File Adapter...<br />
+<br />
+<pre name="code" class="brush: java">#Checks at regular intervals for the presence of a file in a Directory
+import os
+import datetime
+import time
+
+dirToWatch = '/data/my/directory' 
+while 1 == 1 :
+     files = os.listdir(dirToWatch)
+     if len(files) > 0:
+        logfile = open("fileslog.log", "a")
+        logfile.write(str(datetime.datetime.now()) + " " + str(files) + "\n")
+        logfile.close()
+        time.sleep(1)
+
+</pre>

@@ -1,0 +1,46 @@
+---
+layout: post
+title: "git: merging versus rebasing"
+date: 2014-02-19T10:35:00.002+01:00
+permalink: /2014/02/git-merging-versus-rebasing.html
+blogger_id: "6791481635804900932"
+tags: ["git"]
+---
+I used to do:
+<br />
+<pre>(edit my files)
+git pull
+git add myfiles
+git commit -m "blablabla"
+git push
+</pre>
+<br />
+<br />
+and life was fine, until I was suggested to use rather:
+<br />
+<pre>(edit my files)
+git fetch
+git add myfiles
+git commit -m "blablabla"
+git rebase
+git push
+</pre>
+<br />
+the changes are:<br />
+<ul>
+<li>fetch instead of pull&nbsp;</li>
+<li>add the "rebase" step&nbsp;</li>
+</ul>
+<br />
+in alternative you can do:<br />
+<i>git pull --rebase&nbsp;</i><br />
+instead of<br />
+<i>git fetch + git rebase</i>
+
+<br /><br />
+Using "rebase" will generate a simpler history in the repository.
+<br /><br />
+<a href="http://git-scm.com/book/en/Git-Branching-Rebasing">All this is very well explained here.</a>
+
+<br /><br />
+

@@ -1,0 +1,20 @@
+---
+layout: post
+title: "SerialVersionUID"
+date: 2011-02-15T11:20:00.001+01:00
+permalink: /2011/02/serialversionuid.html
+blogger_id: "8470831999581558847"
+tags: ["serialVersionUID"]
+---
+<a href="http://www.javablogging.com/what-is-serialversionuid/">http://www.javablogging.com/what-is-serialversionuid/</a><br />
+<br />
+a simple and practical example on how it works.<br />
+<br />
+<a href="http://download.oracle.com/javase/1.5.0/docs/api/java/io/Serializable.html">http://download.oracle.com/javase/1.5.0/docs/api/java/io/Serializable.html</a> Javadocs say that "it is strongly recommended that all serializable classes explicitly declare serialVersionUID values"...<br />
+<br />
+<br />
+IMHO if you declare the serialVersionUID and don't change it when you modify the class, it's USELESS. So either you have an automated mechanism to change it every time the Class is checked in, otherwise simply DON'T DECLARE IT and let the JVM work a little harder. <br />
+<br />
+If this really becomes a performance issue (and you will discover it when you profile your application) then it will take you 10 minutes to add it to all your classes.<br />
+<br />
+Remember to add @SuppressWarnings("serial")

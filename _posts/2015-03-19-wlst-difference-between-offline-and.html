@@ -1,0 +1,67 @@
+---
+layout: post
+title: "WLST difference between offline and online"
+date: 2015-03-19T09:51:00.000+01:00
+permalink: /2015/03/wlst-difference-between-offline-and.html
+blogger_id: "2991061130597229045"
+tags: ["WLST"]
+---
+I have a WLST script written for ONLINE use, and I want to convert it into an OFFLINE script...
+
+It's mostly a philosophical issue, I believe it's awkward to CONFIGURE a domain while the domain's ADMIN is running, it's a stupid requirement to have to start the ADMIN.
+<br/><br/>
+
+Google finds these 2 links but they don't tell you much.<br/>
+
+<a href="https://docs.oracle.com/cd/E24329_01/web.1211/e24491/wlst_faq.htm#WLSTG243">https://docs.oracle.com/cd/E24329_01/web.1211/e24491/wlst_faq.htm#WLSTG243</a>
+<br/>
+<a href="http://wlstbyexamples.blogspot.ch/2010/01/wlst-offline-vs-wlst-online.html#.VQmoh0YzDOo">http://wlstbyexamples.blogspot.ch/2010/01/wlst-offline-vs-wlst-online.html#.VQmoh0YzDOo</a>
+
+
+<br/><br/>
+
+
+FIRST thing: you don't "connect" to a URL (t3..), but you readDomain("/path/to/mydomain'), and you don't "edit/startEdit" any longer.
+
+<br/><br/>
+You create(msname, 'Server') to create a server.... don't use cmo.createServer() !
+
+<br/><br/>
+
+You can cd('/Servers' + msname) and you will see it WITHOUT subdirectories (like ServerStart, SSL....)... this is NORMAL, as wlsf-offline reflects the structure of the config.xml that would be written, and the config.xml is a LAZY document, which doesn't specify the defaults.... so if a SSL option has not been yet customized, the whole folder will not appear.
+
+<br/><br/>
+So you will need to do "create(msname, 'SSL')" and "create(msname, 'ServerStart')" before you can cd('/Servers/' + msname + '/ServerStart') and do some set(property, value) commands...
+
+
+
+<br/><br/>
+
+
+
+The typical "create you will run are:
+<br/><br/>
+create(name, 'Server')
+<br/>
+create(name, 'ServerStart')
+<br/>
+create(name, 'SSL')
+<br/>
+create( name, 'Log')
+<br/>
+create( name, 'WebServer')
+
+<br/>
+create(name, 'DefaultFileStore')
+
+<br/>
+ create(name, 'DataSource')
+
+
+<br/>
+<br/>
+At the end, you "updateDomain()" to persist your changes.
+
+<br/><br/>
+
+

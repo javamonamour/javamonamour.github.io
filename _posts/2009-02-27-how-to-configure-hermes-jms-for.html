@@ -1,0 +1,79 @@
+---
+layout: post
+title: "How to configure Hermes JMS for Weblogic and Glassfish"
+date: 2009-02-27T19:19:00.001+01:00
+permalink: /2009/02/how-to-configure-hermes-jms-for.html
+blogger_id: "7108280777421140298"
+tags: ["hermes", "jms", "weblogic"]
+blogger_comments:
+  - author: "Atul Shinkar"
+    date: 2011-03-25
+    html: "Very nice article. Thanks for sharing :)"
+---
+it's a bit painful...<br />
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+<br />
+<div>
+create a session, (action/new/new session)</div>
+<div>
+in the Providers tab, right click, add group wl10 with library:&nbsp; <your_path_to><br /></your_path_to><br />
+<your_path_to>weblogic.jar</your_path_to><br />
+<your_path_to><span class="postbody">wlfullclient.jar</span> </your_path_to></div>
+<div>
+<br /></div>
+<div>
+for Connection Factory choose "hermes.JNDIConnectionFactory", loader wl10,</div>
+<div>
+<br /></div>
+<div>
+property:</div>
+<div>
+binding=javax/jms/QueueConnectionFactory</div>
+<div>
+initialContextFactory=weblogic.jndi.WLInitialContextFactory</div>
+<div>
+providerURL=t3://localhost:7001</div>
+<div>
+securityCredentials=yourpasswordhere</div>
+<div>
+<div>
+securityPrincipal=weblogic</div>
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+then click on "discover"....</div>
+<div>
+<br /></div>
+<div>
+I wish they had made it simpler, indeed...<br />
+<br />
+check out also this:<br />
+<a href="http://blogs.oracle.com/jamesbayer/2008/01/hermes_jms_open_source_jms_con.html">http://blogs.oracle.com/jamesbayer/2008/01/hermes_jms_open_source_jms_con.html</a><br />
+<br /></div>
+<div>
+it is wise to create a Context and point it to your server. Don't forget to set your initialContextFactory=weblogic.jndi.WLInitialContextFactory<br />
+and the loader to wl10 <br />
+<br />
+if you get an exception Cannot instantiate class: weblogic.jndi.WLInitialContextFactory&nbsp;  , see here<br />
+<a href="http://hermesjms.org/forum/viewtopic.php?f=12&amp;t=172">http://hermesjms.org/forum/viewtopic.php?f=12&amp;t=172</a><br />
+, most likely the Loader is not set.<br />
+<br />
+<br />
+For Glassfish, I have found these instructions:<br />
+<br />
+http://www.hermesjms.com/forum/viewtopic.php?f=25&amp;t=352<br />
+<br />
+but they probably apply to something different from Glassfish Enterprise Edition 3.0... googling around I understand that one should use com.sun.appserv.naming.S1ASCtxFactory as a Initial Context Factory,<br />
+but I could not find this class anywhere in the NetBeans and Glassfish jar files...<br />
+<br />
+<br />
+<br /></div>
+</div>
+</div>
+

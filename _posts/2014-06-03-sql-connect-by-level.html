@@ -1,0 +1,24 @@
+---
+layout: post
+title: "sql connect by level"
+date: 2014-06-03T10:45:00.003+02:00
+permalink: /2014/06/sql-connect-by-level.html
+blogger_id: "654293719748319734"
+tags: ["sql"]
+---
+Sometimes it's useful to generate in SQL a series of data responding to a certain criteria.
+<br/><br/>
+Like "the integers between 0 and N", or "the dates between today and 5 days ago"
+<br/><br/>
+You can do it with "connect by level":
+
+<br/><br/>
+<b>SELECT level from DUAL connect by level <= 10 ;</b>
+<br/>
+
+<br/>
+<b>SELECT TRUNC((sysdate-5 + (LEVEL))) AS DATES FROM DUAL connect by level <= ( sysdate-(sysdate-5) ) order by level;
+</b><br/>
+
+
+

@@ -1,0 +1,97 @@
+---
+layout: post
+title: "adding a timestamp to bash stdout"
+date: 2014-04-15T15:04:00.000+02:00
+permalink: /2014/04/adding-timestamp-to-bash-stdout.html
+blogger_id: "8005076022116735108"
+tags: ["bash"]
+---
+Assume a shell script writes without timestamp info:
+<br />
+<br />
+<b>myscript.sh</b>
+<br />
+<i>bla&nbsp;</i><br />
+<i>mumble</i><br />
+<br />
+how long it took to complete bla? and mumble? no clue. You could hack the script to add a timestamp for each echo, but that's not practical.
+
+Workaround:
+<br />
+<br />
+vi timestamp.sh
+<br />
+<br />
+<pre class="brush: bash">#! /bin/bash
+
+while read line
+do
+echo `date +"%Y%m%d-%H%M%S"` $line
+done
+
+</pre>
+<br />
+<br />
+<b>chmod 775 timestamp.sh
+</b><br />
+<br />
+now you can use it this way:
+<br />
+<br />
+myscript.sh | ./timestamp.sh
+<br />
+<br />
+<i>20140415-145529 bla
+<br />
+20140415-145529 mumble
+</i><br />
+<br />
+
+
+In alternative, you can also compile this c program:
+
+
+<pre class="brush: java">
+//gcc timestamplog.c -o timestamplog
+
+#include <stdio.h>
+#include <time.h>
+
+time_t now;
+struct tm  *ts;
+char buf[80];
+
+void printTime() {
+    now = time(NULL);
+    ts = localtime(&now);
+    strftime(buf, sizeof(buf), "%Y%m%d-%H%M%S  ", ts);
+    printf("%s", buf);
+}
+
+
+int main() {
+ int startLine = 1;
+ int ch;
+    while ((ch = getchar()) != EOF) {
+  if (startLine) {
+   printTime();
+   startLine = 0;
+  }
+  
+  if (ch == 10 || ch == 13) {
+      //putchar('\n');
+      putchar(ch);
+      startLine = 1;
+
+  } else {
+         putchar(ch);
+  }
+  fflush(stdout);
+    }
+
+    return 0;
+}
+
+
+</pre>
+

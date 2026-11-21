@@ -1,0 +1,134 @@
+---
+layout: post
+title: "Extracting data with SQL from WLI_QS_REPORT_DATA and WLI_QS_REPORT_ATTRIBUTE"
+date: 2012-04-13T11:30:00.003+02:00
+permalink: /2012/04/extracting-data-with-sql-from.html
+blogger_id: "1332315782990680995"
+tags: ["OSB", "readings"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2015-09-10
+    html: "it&#39;s fully possible that one is the time at which the message was generated, the other time time at which it was persisted."
+  - author: "Unknown"
+    date: 2015-09-10
+    html: "Hi, do you know the difference between these fields in the WLI_QS_REPORT_ATTRIBUTE table:<br /> db_timestamp and localhost_timestamp? I&#39;m seeing some strange behavior when using the reort service where the db_timestamp of a response message is older than that of a request message!"
+---
+describe <b>wli_qs_report_data</b><br />
+<pre>Name       Null     Type         
+---------- -------- ------------ 
+MSG_GUID   NOT NULL VARCHAR2(64) 
+DATA_TYPE           NUMBER(38)   
+ENCODING            VARCHAR2(24) 
+DATA_VALUE          BLOB         
+</pre><br />
+describe <b>wli_qs_report_attribute</b><br />
+<pre>Name                  Null     Type           
+--------------------- -------- -------------- 
+MSG_GUID              NOT NULL VARCHAR2(64)   
+DB_TIMESTAMP          NOT NULL DATE           
+LOCALHOST_TIMESTAMP   NOT NULL DATE           
+HOST_NAME             NOT NULL VARCHAR2(50)   
+STATE                 NOT NULL VARCHAR2(8)    
+NODE                           VARCHAR2(128)  
+PIPELINE_NAME                  VARCHAR2(128)  
+STAGE_NAME                     VARCHAR2(128)  
+INBOUND_SERVICE_NAME  NOT NULL VARCHAR2(256)  
+INBOUND_SERVICE_URI   NOT NULL VARCHAR2(128)  
+INBOUND_OPERATION              VARCHAR2(64)   
+OUTBOUND_SERVICE_NAME          VARCHAR2(256)  
+OUTBOUND_SERVICE_URI           VARCHAR2(256)  
+OUTBOUND_OPERATION             VARCHAR2(64)   
+MSG_LABELS                     VARCHAR2(2048) 
+ERROR_CODE                     VARCHAR2(64)   
+ERROR_REASON                   VARCHAR2(1024) 
+ERROR_DETAILS                  VARCHAR2(2048) 
+
+</pre><br />
+<br />
+if WLI_QS_REPORT_DATA.<b>DATA_TYPE</b> == 2 then DATA_VALUE contains XML<br />
+<br />
+if WLI_QS_REPORT_DATA.DATA_TYPE == 1 then DATA_VALUE contains String<br />
+<br />
+<b>MSG_GUID</b> is unique, and it joins the 2 tables (there is a PK_WLI_QS_REPORT_ATTRIBUTE and IX_WLI_QS_REPORT_DATA index on the tables, UNIQUE on MSG_GUID).<br />
+<br />
+If one of your labels is "InterfaceID=BLA", then this:<br />
+<br />
+select REGEXP_SUBSTR(MSG_LABELS, 'InterfaceID=[^;]+')  from wli_qs_report_attribute where MSG_GUID = 'uuid:7f9b72b69446518a:6207823d:13595beb079:-7e59';<br />
+<br />
+will return InterfaceID=BLA, and <br />
+<br />
+select REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'InterfaceID=[^;]+'), 'InterfaceID=', '')  from wli_qs_report_attribute where MSG_GUID = 'uuid:7f9b72b69446518a:6207823d:13595beb079:-7e59';<br />
+<br />
+will return BLA<br />
+<br />
+<br />
+So, putting it all together:<br />
+<br />
+select * from wli_qs_report_attribute where REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'InterfaceID=[^;]+'), 'InterfaceID=', '') = 'BLA';<br />
+<br />
+will return all the records of a given InterfaceID<br />
+<br />
+(of course <br />
+select * from wli_qs_report_attribute where MSG_LABELS like '%InterfaceID=BLA%';<br />
+would do the same)<br />
+<br />
+In our Reporting we have defined several labels:<br />
+InterfaceID=BLA<br />
+TechnicalMessageID=BLA^InputFileName.xml^ORIGIN^1330463665790<br />
+EventType=FileConsumed<br />
+PathOfService=GM_BLA/ProxyServices/BLA_File_PS<br />
+EventOccuredOn=2012-02-28T22:14:25.837+01:00<br />
+BusinessID=12345<br />
+<br />
+If I want to find all events of a given interface and of a given EventType within a given time range:<br />
+<br />
+<br />
+select * from wli_qs_report_attribute where REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'InterfaceID=[^;]+'), 'InterfaceID=', '') = 'BLA' and MSG_LABELS like '%EventType=FileConsumed%' and REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'EventOccuredOn=[^;]+'), 'EventOccuredOn=', '') >= '2012-02-28T22:14' and REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'EventOccuredOn=[^;]+'), 'EventOccuredOn=', '') <= '2012-02-28T23:14';
+
+
+and if I need to provide the value of each label as a different column:
+
+
+select 
+REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'InterfaceID=[^;]+'), 'InterfaceID=', '') as InterfaceID,
+REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'EventType=[^;]+'), 'EventType=', '') as EventType,
+REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'BusinessID=[^;]+'), 'BusinessID=', '') as BusinessID,
+REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'EventOccuredOn=[^;]+'), 'EventOccuredOn=', '') as EventOccuredOn,
+REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'TechnicalMessageID=[^;]+'), 'TechnicalMessageID=', '') as TechnicalMessageID
+from wli_qs_report_attribute where REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'InterfaceID=[^;]+'), 'InterfaceID=', '') = 'BLA' and MSG_LABELS like '%EventType=FileConsumed%' and REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'EventOccuredOn=[^;]+'), 'EventOccuredOn=', '') >= '2012-02-28T22:14' and REPLACE(REGEXP_SUBSTR(MSG_LABELS, 'EventOccuredOn=[^;]+'), 'EventOccuredOn=', '') <= '2012-02-28T23:14';
+
+
+creating a function will help you clean up the code:
+
+<pre><br />
+create or replace FUNCTION findLabelValue <br />
+(labels IN VARCHAR2, labelname IN VARCHAR2 )  return VARCHAR2<br />
+is <br />
+begin<br />
+return  REPLACE(REGEXP_SUBSTR(labels, labelname || '=[^;]+'), labelname || '=', '');<br />
+end; <br />
+<br />
+</pre><br />
+<br />
+With this, a sample query joining to events to determine the first and last even of a message processing is:<br />
+<br />
+<pre>
+select
+findlabelvalue(A.MSG_LABELS, 'InterfaceID') as InterfaceID,
+findlabelvalue(A.MSG_LABELS, 'BusinessID') as BusinessID,
+findlabelvalue(A.MSG_LABELS, 'EventType') as EventType1,
+findlabelvalue(A.MSG_LABELS, 'EventOccuredOn') as Event1OccuredOn,
+findlabelvalue(A.MSG_LABELS, 'EventType') as EventType2,
+findlabelvalue(A.MSG_LABELS, 'EventOccuredOn') as Event2OccuredOn,
+findlabelvalue(A.MSG_LABELS, 'TechnicalMessageID') as TechnicalMessageID
+
+from wli_qs_report_attribute A, wli_qs_report_attribute B
+where findlabelvalue(A.MSG_LABELS, 'InterfaceID') = 'Pippo'
+and A.MSG_LABELS like '%EventType=FileConsumed%'
+and findlabelvalue(A.MSG_LABELS, 'EventOccuredOn') >= '2012-02-28T22:14'
+and findlabelvalue(A.MSG_LABELS, 'EventOccuredOn') <= '2012-05-28T23:14'
+and findlabelvalue(A.MSG_LABELS, 'TechnicalMessageID') = findlabelvalue(B.MSG_LABELS, 'TechnicalMessageID')
+and B.MSG_LABELS like '%EventType=FTPFilePut%'
+;
+
+</pre>

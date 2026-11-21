@@ -1,0 +1,26 @@
+---
+layout: post
+title: "WebLogic SSL : Cipher not initialized"
+date: 2014-05-19T11:44:00.000+02:00
+permalink: /2014/05/weblogic-ssl-cipher-not-initialized.html
+blogger_id: "1238214917191326591"
+tags: ["ssl", "weblogic"]
+blogger_comments:
+  - author: "el_schalo"
+    date: 2014-06-25
+    html: "We have been completely on the wrong track until one of us foud your posting.<br />JavaMonAmour.org helped us with our OSB11.1.1.3/11.1.1.7 - now the third time already :)<br /><br />So THANKS A LOT - and keep on posting! :)"
+  - author: "Anonymous"
+    date: 2014-10-02
+    html: "We recently ran into this issue after applying an F5 load balancer hot fix 11.5.1 which included SSL fixes.<br /><br />So we did enable the WebLogic internal implementation with -Dweblogic.security.SSL.nojce=true as well as installed JCE in the JDK/JRE on the server where java agents were running that connected to Weblogic JMS."
+---
+you can fix it by adding "-Dweblogic.security.SSL.nojce=true" to the JAVA_OPTIONS in the DOMAIN_HOME/bin/setDomainEnv.sh (and restart all).
+<br/><br/>
+
+This flag is well explained in the Oracle Doc "What does "-Dweblogic.security.SSL.nojce=true" do? Does it make WLS less secure? (Doc ID 1299207.1)" .
+<br/><br/>
+
+My understanding is that some SSL implementation requires you to be able to handle a cipher which is <a href="http://en.wikipedia.org/wiki/FIPS_140-2">FIPS 140</a> compliant. Unless you have installed <a href="http://en.wikipedia.org/wiki/Java_Cryptography_Extension">JCE</a> , your second best bet is to use the WebLogic internal implementation - which by default is disabled. That's why you MUST explicitly enable it with this -Dweblogic.security.SSL.nojce=true.
+
+<br/><br/>
+
+

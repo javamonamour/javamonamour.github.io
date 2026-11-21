@@ -1,0 +1,19 @@
+---
+layout: post
+title: "java.sql.SQLException: ORA-01653: unable to extend table BLA by 8 in tablespace BLU"
+date: 2012-09-06T12:22:00.000+02:00
+permalink: /2012/09/javasqlsqlexception-ora-01653-unable-to.html
+blogger_id: "179748636313611536"
+tags: ["db"]
+---
+This query works like a breeze to find out the FAT tables:<br />
+<br />
+<a href="http://stackoverflow.com/questions/264914/how-do-i-calculate-tables-size-in-oracle">http://stackoverflow.com/questions/264914/how-do-i-calculate-tables-size-in-oracle</a><br />
+<br />
+<br />
+once you discover the FAT tables, run a <br />
+truncate table BLA;<br />
+<br />
+you might have to disable FK constraints (remember to reenable again)<br />
+<br />
+

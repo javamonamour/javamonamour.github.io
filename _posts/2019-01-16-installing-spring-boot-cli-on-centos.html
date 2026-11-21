@@ -1,0 +1,71 @@
+---
+layout: post
+title: "Installing spring boot CLI and spring cloud on centos"
+date: 2019-01-16T12:51:00.002+01:00
+permalink: /2019/01/installing-spring-boot-cli-on-centos.html
+blogger_id: "5382381781723538464"
+tags: ["cli", "springboot"]
+---
+wget http://repo.spring.io/release/org/springframework/boot/spring-boot-cli/2.1.2.RELEASE/spring-boot-cli-2.1.2.RELEASE-bin.zip<br />
+unzip spring-boot-cli-2.1.2.RELEASE-bin.zip<br />
+<br />
+vi .bash_profile<br />
+<br />
+export SPRING_HOME=/home/centos/spring-2.1.2.RELEASE/<br />
+PATH=$PATH:$SPRING_HOME<br />
+export PATH<br />
+<br />
+<br />
+<br />
+to test, type:<br />
+<br />
+spring version<br />
+<br />
+<i>Spring CLI v2.1.2.RELEASE</i><br />
+<br />
+See also https://gist.github.com/diegopacheco/7623d6da015f588e4f11bee17d483569<br />
+<br />
+<br />
+vi app.groovy<br />
+<br />
+@RestController<br />
+class WebApplication {<br />
+<br />
+@RequestMapping("/")<br />
+String home() {<br />
+"Hello World!"<br />
+}<br />
+<br />
+}<br />
+<br />
+<br />
+spring run app.groovy<br />
+curl http://localhost:8080/<br />
+<br />
+Now you can install Spring Cloud:<br />
+<br />
+spring install org.springframework.cloud:spring-cloud-cli:2.0.0.RELEASE<br />
+<br />
+<br />
+<br />
+spring cloud configserver<br />
+<br />
+I get<br />
+<br />
+Caused by: java.lang.NoSuchMethodError: org.springframework.cloud.launcher.cli.LauncherCommand$LauncherOptionHandler.option(Ljava/util/Collection;Ljava/lang/String;)Ljoptsimple/OptionSpecBuilder;<br />
+<br />
+<br />
+ridiculous....<br />
+see here <a href="https://github.com/spring-cloud/spring-cloud-cli/issues/80">https://github.com/spring-cloud/spring-cloud-cli/issues/80</a><br />
+<br />
+<br />
+If I install an older version of Spring CLI, it works:<br />
+http://repo.spring.io/release/org/springframework/boot/spring-boot-cli/2.0.0.RELEASE/spring-boot-cli-2.0.0.RELEASE-bin.zip<br />
+<br />
+<br />
+<br />
+More information on the Spring Cloud command here <a href="https://spring.io/blog/2016/11/02/introducing-the-spring-cloud-cli-launcher">https://spring.io/blog/2016/11/02/introducing-the-spring-cloud-cli-launcher</a><br />
+<br />
+<br />
+<br />
+

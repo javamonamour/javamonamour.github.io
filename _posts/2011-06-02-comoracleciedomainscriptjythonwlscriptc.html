@@ -1,0 +1,124 @@
+---
+layout: post
+title: "com.oracle.cie.domain.script.jython.WLScriptContext"
+date: 2011-06-02T17:19:00.000+02:00
+permalink: /2011/06/comoracleciedomainscriptjythonwlscriptc.html
+blogger_id: "2395974567361314284"
+tags: ["WLScriptContext"]
+blogger_comments:
+  - author: "Jesse"
+    date: 2015-01-23
+    html: "Thanks!"
+---
+the class is here:<br />
+C:\Oracle2\Middleware\modules\com.oracle.cie.config-wls_7.0.0.0.jar<br />
+<br />
+<br />
+and it's accessible in WLST with the predefined variable WLS<br />
+<br />
+here its interface:<br />
+<br />
+    public void setExecutor(ScriptExecutor executor)<br />
+<br />
+    public void setLogToStdOut(boolean logToStdOut)<br />
+<br />
+    public void setCommandExceptionHandler(CommandExceptionHandler handler)<br />
+<br />
+    public CommandExceptionHandler getCommandExceptionHandler()<br />
+<br />
+    public void setupForEmbeddedExecution()<br />
+<br />
+    public void setupForInstallationExecution()<br />
+<br />
+    public void setRuntimeEnv(InterpreterRuntimeEnv env)<br />
+<br />
+    public InterpreterRuntimeEnv getRuntimeEnv()<br />
+<br />
+    public void setParameter(String parameterName, String parameterValue)<br />
+<br />
+    public void setup(boolean batchMode)<br />
+<br />
+<br />
+    public void readTemplate(String file)<br />
+<br />
+    public void closeTemplate()<br />
+<br />
+    public void readDomain(String domainDir)<br />
+<br />
+    public void addTemplate(String templateFile)<br />
+<br />
+    public void updateDomain()<br />
+<br />
+    public void closeDomain()<br />
+<br />
+    public void createDomain(String domainTemplate, String domainDir, String user, String password)<br />
+<br />
+    public Object cd(String newDir)<br />
+<br />
+    public Object create(String value, String type)<br />
+<br />
+    public Object create(String name, String realType, String baseType)<br />
+<br />
+    public void setOption(String name, String value)<br />
+<br />
+    public void setOption(String name, boolean value)<br />
+<br />
+    public void writeTemplate(String file)<br />
+<br />
+    public String getAbsPwd()<br />
+<br />
+    public void assign(String sourceType, String sourceName, String destType, String destName)<br />
+<br />
+    public void unassign(String sourceType, String sourceName, String destType, String destName)<br />
+<br />
+    public void assignAll(String sourceType, String destType, String destName)<br />
+<br />
+    public void unassignAll(String sourceType, String destType, String destName)<br />
+<br />
+    public void validateConfig(String optionName)<br />
+<br />
+    public void setDistDestType(String jmsSystemResourceName, String destType)<br />
+<br />
+    public Object getCmo()<br />
+<br />
+    public Object get(String attrName)<br />
+<br />
+    public void set(String attrName, long value)<br />
+<br />
+    public void set(String attrName, Object value)<br />
+<br />
+    public void delete(String name, String type)<br />
+<br />
+    public Object find(String name, String type, String searchInstancesOnly)<br />
+<br />
+    public void loadDB(String DBVersion, String connectionPoolName)<br />
+<br />
+    public void loadDB(String DBVersion, String connectionPoolName, String category)<br />
+<br />
+    public Object retrieveObject(String objectKey)<br />
+<br />
+    public void storeObject(String key, Object value)<br />
+<br />
+    public Log getLog()<br />
+<br />
+    public void startRecording(String fileName)<br />
+<br />
+    public void record(String command)<br />
+<br />
+    public void stopRecording()<br />
+<br />
+    public void help(String topic)<br />
+<br />
+    public void dumpStack()<br />
+<br />
+    public void handleException(Exception ex, String commandName)<br />
+<br />
+    public void writeIniFile(String filePath)<br />
+<br />
+    public void setDomainFormat(String originalDomainFormat)<br />
+<br />
+    public void setShowLSResult(boolean show)<br />
+<br />
+    public Object lsDir(String dir, String returnMap, String returnType)<br />
+<br />
+    public void storeKeyStorePassword(String templateArray, String password)

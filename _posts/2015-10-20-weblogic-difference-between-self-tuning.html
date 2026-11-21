@@ -1,0 +1,43 @@
+---
+layout: post
+title: "WebLogic: difference between self-tuning-thread-pool-size-max and shared-capacity-for-work-managers"
+date: 2015-10-20T12:13:00.000+02:00
+permalink: /2015/10/weblogic-difference-between-self-tuning.html
+blogger_id: "6483518544762692525"
+---
+<b>self-tuning-thread-pool-size-max</b> 
+<br/><br/>
+
+<a href="https://docs.oracle.com/middleware/1212/wls/WLACH/pagehelp/Corecoreserverserverconfigtuningtitle.html">https://docs.oracle.com/middleware/1212/wls/WLACH/pagehelp/Corecoreserverserverconfigtuningtitle.html</a>
+
+<pre>
+Sets the maximum thread pool size of the self-tuning thread pool.
+
+The self-tuning thread pool starts with the default size of 1. It grows and shrinks automatically as required. Setting this attribute changes the default max pool size. The active thread count will never increase beyond this value. This value defines the maximum number of threads permitted in the server. Note that the server will add threads only if it improves throughput. Measurements are taken every 2 seconds and the decision to increase or decrease the thread count is based on the current throughput measurement versus past values.
+
+</pre>
+<br/><br/>
+<b>shared-capacity-for-work-managers</b>
+<br/><br/>
+<a href="https://docs.oracle.com/cd/E24329_01/web.1211/e24432/overload.htm#CNFGD148">https://docs.oracle.com/cd/E24329_01/web.1211/e24432/overload.htm#CNFGD148</a>
+<pre>
+In WebLogic Server, all requests, whether related to system administration or application activity—are processed by a single thread pool. An administrator can throttle the thread pool by defining a maximum queue length. Beyond the configured value, WebLogic Server will refuse requests, except for requests on administration channels.
+When the maximum number of enqueued requests is reached, WebLogic Server immediately starts rejecting:
+• Web application requests.
+• Non-transactional RMI requests with a low fair share, beginning with those with the lowest fair share.
+If the overload condition continues to persist, higher priority requests will start getting rejected, with the exception of JMS and transaction-related requests, for which overload management is provided by the JMS and the transaction manager.
+Throttle the thread pool by setting the Shared Capacity For Work Managers field in the Administration Console (see Environments > Servers > server_name > Configuration > Overload). The default value of this field is 65536.
+Work Managers and Thread Pool Throttling
+An administrator can configure Work Managers to manage the thread pool at a more granular level, for sets of requests that have similar performance, availability, or reliability requirements. A Work Manager can specify the maximum requests of a particular request class that can be queued. The maximum requests defined in a Work Manager works with the global thread pool value. The limit that is reached first is honored.
+</pre>
+
+<br/><br/>
+So, the first acts on the MAX NUMBER OF THREADS, the second on the MAX NUMBER OF REQUESTS WAITING IN A QUEUE.
+
+<br/><br/>
+
+My impression is that finding the right mix for your case might require some tests...
+
+<br/><br/>
+
+

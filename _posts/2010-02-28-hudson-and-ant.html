@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Hudson and Ant"
+date: 2010-02-28T15:09:00.000+01:00
+permalink: /2010/02/hudson-and-ant.html
+blogger_id: "4346545188562891567"
+tags: ["ant", "hudson"]
+---
+Ever tried to run unit tests from Ant inside Hudson, and gotten the infamous:<br />
+<br />
+<pre>Could not create task or type of type: junit</pre><pre>&nbsp;</pre><pre>?</pre><pre></pre><pre>There is a (pathetic, just like everything concerning Ant technology) workaround:</pre><pre></pre><pre>add </pre><pre></pre><pre><b><i>-lib /weblogic/bea10.3/tools/eclipse_pkgs/2.0/eclipse_3.3.2/eclipse/plugins/org.junit4_4.3.1/junit.jar&nbsp;</i></b></pre><pre>&nbsp;</pre><pre>before the list of targets you want to be run.</pre><pre></pre><pre>YAPPOS ! (yet another pathetic piece of shit)</pre><pre>&nbsp;</pre><pre>ALSO, don't forget to set your Java Otions to:</pre><pre>&nbsp;</pre><pre>-DLOCALCLASSPATH=/weblogic/bea10.3/tools/eclipse_pkgs/2.0/eclipse_3.3.2/eclipse/plugins/org.junit4_4.3.1/junit.jar</pre><pre></pre><pre>No wonder why people are migrating to .NET....&nbsp;</pre><pre>simple lack of any standardization in Java, everything turns into a complete hack.</pre><pre>&nbsp;</pre><pre>&nbsp;</pre><pre></pre><pre></pre><pre></pre>

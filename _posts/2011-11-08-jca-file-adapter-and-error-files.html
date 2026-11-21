@@ -1,0 +1,64 @@
+---
+layout: post
+title: "JCA File Adapter and Error files"
+date: 2011-11-08T21:35:00.002+01:00
+permalink: /2011/11/jca-file-adapter-and-error-files.html
+blogger_id: "5364430512188486068"
+tags: ["FileAdapter"]
+---
+Oracle implementation of the File Adapter is the class:<br />
+<b>oracle.tip.adapter.file.inbound.FileActivationSpec</b><br />
+<br />
+you customize the adapter in the .JCA file<br />
+<br />
+One of its parameters is <br />
+<br />
+<b>PhysicalErrorArchiveDirectory</b><br />
+<br />
+and <a href="http://download.oracle.com/docs/cd/E15523_01/integration.1111/e10226/bc_config.htm#CBDFEBGB">it is documented here</a><br />
+<br />
+For instance if you submit an empty file, the File Adapter will fail and move the file to the Error directory. In the logs I find:<br />
+<br />
+<br />
+&lt;Warning&gt; &lt;JCA_FRAMEWORK_AND_ADAPTER&gt; &lt;BEA-000000&gt; &lt;onReject: The resource adapter 'File Adapter' requested handling of a malformed inbound message. However, the following activation property has not been defined: '<b>rejectedMessageHandlers</b>'. Please define it and redeploy. Will use the default Rejection Directory file://jca\Read\rejectedMessages for now.&gt;<br />
+<br />
+&lt;Warning&gt; &lt;JCA_FRAMEWORK_AND_ADAPTER&gt; &lt;BEA-000000&gt; &lt;onReject: Sending invalid inbound message to Rejection Handler: &gt;<br />
+<br />
+<br />
+In case of error in the Proxy Service consuming the message, at proxy level you should set <b>jca.retry.count</b> and <b>jca.retry.interval</b><br />
+<br />
+&lt;jca:endpoint-properties&gt;<br />
+&lt;jca:endpoint-property&gt;<br />
+&lt;jca:name&gt;jca.retry.count&lt;/jca:name&gt;<br />
+&lt;jca:value&gt;3&lt;/jca:value&gt;<br />
+&lt;/jca:endpoint-property&gt;<br />
+&lt;jca:endpoint-property&gt;<br />
+&lt;jca:name&gt;jca.retry.interval&lt;/jca:name&gt;<br />
+&lt;jca:value&gt;40&lt;/jca:value&gt;<br />
+&lt;/jca:endpoint-property&gt;        <br />
+&lt;/jca:endpoint-properties&gt;<br />
+<br />
+with these settings, you will see these messages:<br />
+<br />
+<i>Failed to send message {C:\acme\ffmw\po\in\po000000002.dat} to Adapter Framework due to Retriable Exception, the worker will sleep for the configured retryInterval[40000] msecs</i><br />
+<br />
+<i>Retry Interval will be bounded to [30000] msecs since we're using a global processor thread pool and the current retryInterval is[40000] msecs<br />
+<br />
+Since Retry Interval is specified, the processor will disable for[30000] msecs to throttle</i><br />
+<br />
+40 seconds after, you get:<br />
+<br />
+<i>The adapter will not process [C:\acme\ffmw\po\in\po000000002.dat] since it has been processed earlier<br />
+<br />
+onReject: Sending invalid inbound message to Rejection Handler: <br />
+<br />
+Handing rejected message to DEFAULT rejection handler: file://jca\Read\rejectedMessages since none of the configured rejection handlers [] succeeded.<br />
+<br />
+Copying file :C:\acme\ffmw\po\in\po000000002.dat to user-defined archive directory for files with errors :C:\acme\ffmw\po\error<br />
+<br />
+The adapter has handled the poisoned file [C:\acme\ffmw\po\in\po000000002.dat]<br />
+<br />
+</i><br />
+<br />
+<br />
+So, only if you set the retry count the file will eventually be moved to the error directory also on "application" error triggered by the Proxy Service.

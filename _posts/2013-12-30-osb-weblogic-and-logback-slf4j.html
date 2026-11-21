@@ -1,0 +1,229 @@
+---
+layout: post
+title: "OSB, WebLogic and Logback / SLF4j"
+date: 2013-12-30T10:50:00.002+01:00
+permalink: /2013/12/osb-weblogic-and-logback-slf4j.html
+blogger_id: "6611272989626085611"
+tags: ["logback", "logging", "OSB"]
+---
+Being totally fed up with the OSB reporting provider, I am setting up logback.
+<br />
+Maven:
+<br />
+<pre class="brush: xml">&lt;dependency&gt;
+  &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+  &lt;artifactId&gt;logback-core&lt;/artifactId&gt;
+  &lt;version&gt;1.0.13&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+  &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+  &lt;artifactId&gt;logback-classic&lt;/artifactId&gt;
+  &lt;version&gt;1.0.13&lt;/version&gt;
+&lt;/dependency&gt;
+             
+&lt;dependency&gt;
+  &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;
+  &lt;artifactId&gt;logback-parent&lt;/artifactId&gt;
+  &lt;version&gt;1.0.13&lt;/version&gt;
+  &lt;type&gt;pom&lt;/type&gt;
+&lt;/dependency&gt;
+ 
+&lt;dependency&gt;
+    &lt;groupId&gt;org.slf4j&lt;/groupId&gt;
+    &lt;artifactId&gt;slf4j-api&lt;/artifactId&gt;
+    &lt;version&gt;1.7.5&lt;/version&gt;
+&lt;/dependency&gt;
+
+</pre>
+<br />
+<br />
+vi /opt/oracle/fmw11_1_1_5/wlserver_10.3/common/bin/commEnv.sh
+<br />
+<br />
+add this to WEBLOGIC_CLASSPATH:
+<br />
+<br />
+${CLASSPATHSEP}/opt/oracle/fmw11_1_1_5/wlserver_10.3/server/lib/slf4j-api-1.7.5.jar${CLASSPATHSEP}/opt/oracle/fmw11_1_1_5/wlserver_10.3/server/lib/logback-core-1.0.13.jar${CLASSPATHSEP}/opt/oracle/fmw11_1_1_5/wlserver_10.3/server/lib/logback-classic-1.0.13.jar
+<br />
+<br />
+and copy the JARs:
+<br />
+<br />
+cd /opt/oracle/fmw11_1_1_5/wlserver_10.3/server/lib/
+<br />
+<br />
+this only if you have Nexus, otherwise.... copy them manually:
+<br />
+<br />
+wget http://nexus.nespresso.com/service/local/repositories/adobe-ext/content/ch/qos/logback/logback-core/1.0.13/logback-core-1.0.13.jar
+<br />
+<br />
+wget http://nexus.nespresso.com/service/local/repositories/adobe-ext/content/ch/qos/logback/logback-classic/1.0.13/logback-classic-1.0.13.jar
+<br />
+<br />
+wget http://nexus.nespresso.com/service/local/repositories/adobe-ext/content/org/slf4j/slf4j-api/1.7.5/slf4j-api-1.7.5.jar
+<br />
+<br />
+vi /opt/oracle/domains/osbpl1do/config/osb/logback.xml
+<br />
+<br />
+<pre class="brush: xml">&lt;configuration debug="true" scan="true" scanPeriod="30 seconds"&gt;
+    &lt;jmxConfigurator /&gt;
+ 
+    &lt;property name="LOG_DIR" value="/opt/var/log/weblogic/server/" /&gt;
+ 
+    &lt;appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender"&gt;
+        &lt;!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder
+            by default --&gt;
+        &lt;encoder&gt;
+            &lt;pattern&gt;%d %-5level [%thread] %logger{36} - %msg%n
+            &lt;/pattern&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+ 
+    &lt;appender name="GM"
+        class="ch.qos.logback.core.rolling.RollingFileAppender"&gt;
+        &lt;file&gt;${LOG_DIR}GM.log&lt;/file&gt;
+            &lt;rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy"&gt;
+              &lt;fileNamePattern&gt;GM.%i.log.zip&lt;/fileNamePattern&gt;
+              &lt;minIndex&gt;1&lt;/minIndex&gt;
+              &lt;maxIndex&gt;10&lt;/maxIndex&gt;
+            &lt;/rollingPolicy&gt;
+            &lt;triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy"&gt;
+              &lt;maxFileSize&gt;50MB&lt;/maxFileSize&gt;
+            &lt;/triggeringPolicy&gt;
+            &lt;encoder&gt;
+                &lt;pattern&gt;%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+                &lt;/pattern&gt;
+            &lt;/encoder&gt;
+    &lt;/appender&gt;
+ 
+ 
+    &lt;logger name="POC_LOG4j" additivity="false" level="INFO"&gt;
+        &lt;appender-ref ref="GM" /&gt;
+    &lt;/logger&gt;
+ 
+    &lt;root level="DEBUG"&gt;
+        &lt;appender-ref ref="STDOUT" /&gt;
+    &lt;/root&gt;
+ 
+ 
+&lt;/configuration&gt;
+
+
+</pre>
+I provide a custom XPath to log :
+
+<br />
+<pre class="brush: java">package com.acme.osb.logging;
+import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+/**
+ * Used by OSB to report an Event
+ *
+ * @author NNVernetPI
+ *
+ */
+public class MessageTrackerSLF4J {
+    public static String logMessage(String technicalMessageid,
+            String businessId, String eventType, String interfaceName,
+            XmlObject payload) {
+        Logger projectLogger = LoggerFactory.getLogger(interfaceName);
+        StringBuilder sb = new StringBuilder();
+        if (projectLogger.isDebugEnabled()) {
+            sb.append(" ::InterfaceName::  ").append(interfaceName)
+                    .append(" ::Payload:: ").append(payload.xmlText())
+                    .append(" ::BusinessID::  ").append(businessId);
+        } else {
+            sb.append(" ::TechnicalMessageID::  ").append(technicalMessageid)
+                    .append(" ::BusinessID::  ").append(businessId)
+                    .append(" ::InterfaceName::  ").append(interfaceName)
+                    .append(" ::EventType::  ").append(eventType)
+                    .append(" ::ServerName:: ")
+                    .append(System.getProperty("weblogic.Name"));
+        }
+        projectLogger.info(sb.toString());
+        String logmessage = "Info Message Logged for:: " + interfaceName;
+        return logmessage;
+    }
+    public static String errorLogger(String technicalMessageid,
+            String businessId, String interfaceName, XmlObject payload,
+            String priority, XmlObject fault) {
+        Logger projectLogger = LoggerFactory.getLogger(interfaceName);
+        StringBuilder sb = new StringBuilder();
+        sb.append("::TechnicalMessageID::  ").append(technicalMessageid)
+                .append("  ::InterfaceName::  ").append(interfaceName)
+                .append("  ::BusinessID::  ").append(businessId)
+                .append(" ::Payload:: ").append(payload.xmlText())
+                .append(" ::Priority::  ").append(priority)
+                .append(" ::FaultDescription:: ").append(fault.xmlText())
+                .append(" ::ServerName:: ")
+                .append(System.getProperty("weblogic.Name"));
+        projectLogger.error(sb.toString());
+        String responseMessage = "Error Message Logged for:: " + interfaceName;
+        return responseMessage;
+    }
+}
+
+
+</pre>
+which I expose as XPath this way:
+
+<br />
+<pre class="brush: xml">  &lt;xpf:function&gt;
+            &lt;xpf:name&gt;LOG_SLF_errorLogger&lt;/xpf:name&gt;
+            &lt;xpf:comment&gt;logs an error&lt;/xpf:comment&gt;
+            &lt;xpf:namespaceURI&gt;http://www.acme.com/acme2/xquery/xquery-functions&lt;/xpf:namespaceURI&gt;
+            &lt;xpf:className&gt;com.acme.osb.logging.MessageTrackerSLF4J&lt;/xpf:className&gt;
+            &lt;xpf:method&gt;java.lang.String errorLogger(java.lang.String, java.lang.String, java.lang.String, org.apache.xmlbeans.XmlObject, java.lang.String, org.apache.xmlbeans.XmlObject)&lt;/xpf:method&gt;
+            &lt;xpf:isDeterministic&gt;false&lt;/xpf:isDeterministic&gt;
+            &lt;xpf:scope&gt;Pipeline&lt;/xpf:scope&gt;
+            &lt;xpf:scope&gt;SplitJoin&lt;/xpf:scope&gt;
+        &lt;/xpf:function&gt;     
+        
+  &lt;xpf:function&gt;
+            &lt;xpf:name&gt;LOG_SLF_messageTracker&lt;/xpf:name&gt;
+            &lt;xpf:comment&gt;logs an event&lt;/xpf:comment&gt;
+            &lt;xpf:namespaceURI&gt;http://www.acme.com/acme2/xquery/xquery-functions&lt;/xpf:namespaceURI&gt;
+            &lt;xpf:className&gt;com.acme.osb.logging.MessageTrackerSLF4J&lt;/xpf:className&gt;
+            &lt;xpf:method&gt;java.lang.String logMessage(java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.apache.xmlbeans.XmlObject)&lt;/xpf:method&gt;
+            &lt;xpf:isDeterministic&gt;false&lt;/xpf:isDeterministic&gt;
+            &lt;xpf:scope&gt;Pipeline&lt;/xpf:scope&gt;
+            &lt;xpf:scope&gt;SplitJoin&lt;/xpf:scope&gt;
+        &lt;/xpf:function&gt;        
+
+
+</pre>
+Since I have activated the jmxConfigurator, I can reload the logback.xml configuration file by connecting with JMX:
+<br />
+<br />
+jconsole -J-Djava.class.path=C:\Oracle\MIDDLE~1\JDK160~1\lib\jconsole.jar;C:\Oracle\MIDDLE~1\JDK160~1\lib\tools.jar;C:\Oracle\Middleware\wlserver_10.3\server\lib\wlfullclient.jar -J-Djmx.remote.protocol.provider.pkgs=weblogic.management.remote -debug
+<br />
+and connect as:<br />
+
+service:jmx:iiop://myserver.acme.com:8001/jndi/weblogic.management.mbeanservers.runtime
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/fc382ddaa98c9288.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/b31d24b38d81a807.png" />&nbsp;</a></div>
+
+<br /><br />
+The advantage is that I can also set programmatically the logger level for each logger, via JMX.
+<br /><br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/d877b86db438b0cb.png" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" src="/images/488bcfb8dd50b3e0.png" /></a></div>
+<br /><br />
+
+<a href="http://logback.qos.ch/apidocs/ch/qos/logback/classic/jmx/JMXConfigurator.html#setLoggerLevel%28java.lang.String,%20java.lang.String%29">see  here the doc, the first argument is the loggerName, the second is the level</a> 
+<br /><br />
+
+
+A note: reloadByFileName() requires the FULL PATH : /opt/oracle/domains/osbpl1do/config/osb/logback.xml
+
+<br /><br />
+
+
+
+
+

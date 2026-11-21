@@ -1,0 +1,40 @@
+---
+layout: post
+title: "TPTP, Java Profiling in Eclipse"
+date: 2011-03-14T16:51:00.002+01:00
+permalink: /2011/03/tptp-java-profiling-in-eclipse.html
+blogger_id: "7143935907973987364"
+tags: ["profiling", "TPTP"]
+---
+<a href="http://eclipse.org/tptp/home/downloads/">http://eclipse.org/tptp/home/downloads/</a><br />
+<br />
+Choose "Install new software":<br />
+Test and Performance Tools Platform Project (TPTP) - http://download.eclipse.org/tptp/updates/<br />
+<br />
+choose the latest (4.1.7)<br />
+<br />
+<br />
+After a couple of hours waiting, I get this error:<br />
+<br />
+<i>An error occurred while installing the items<br />
+session context was:(profile=epp.package.jee, phase=org.eclipse.equinox.internal.p2.engine.phases.Install, operand=null --> [R]org.eclipse.tptp.platform.jvmti.runtime 4.6.3.v201102041710, action=org.eclipse.equinox.internal.p2.touchpoint.eclipse.actions.ChmodAction).<br />
+The action chmod failed - file C:\eclipse\plugins\org.eclipse.tptp.platform.jvmti.runtime_4.6.3.v201102041710\agent_files\linux_ia32\libACCollector.so does not exist.</i><br />
+<br />
+<br />
+(and I am running on Windows XP 32!)<br />
+<br />
+<br />
+So, desperate, I try to install another profiler, JVM Monitor, <br />
+and I get:<br />
+<br />
+<i>Cannot complete the install because one or more required items could not be found.<br />
+Software currently installed: Groovy-Eclipse Feature 2.1.1.xx-20101215-2100-e36 (org.codehaus.groovy.eclipse.feature.feature.group 2.1.1.xx-20101215-2100-e36)<br />
+Missing requirement: JDT Core patch for Groovy-Eclipse plugin 2.1.1.xx-20101215-2100-e36 (org.codehaus.groovy.jdt.patch.feature.group 2.1.1.xx-20101215-2100-e36) requires 'org.eclipse.jdt.core [3.6.1.xx-20101215-2100-e36]' but it could not be found<br />
+Cannot satisfy dependency:<br />
+From: Groovy-Eclipse Feature 2.1.1.xx-20101215-2100-e36 (org.codehaus.groovy.eclipse.feature.feature.group 2.1.1.xx-20101215-2100-e36)<br />
+To: org.codehaus.groovy.jdt.patch.feature.group [2.1.1.xx-20101215-2100-e36]</i><br />
+<br />
+<br />
+(this apparently must be a bug)...<br />
+<br />
+Welcome to Eclipse World /:o(

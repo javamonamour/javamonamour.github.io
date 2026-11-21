@@ -1,0 +1,29 @@
+---
+layout: post
+title: "WebLogic starting in Production Mode instead of Development Mode"
+date: 2010-09-04T13:25:00.000+02:00
+permalink: /2010/09/weblogic-starting-in-production-mode.html
+blogger_id: "2663633402207273136"
+tags: ["production"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2010-10-04
+    html: "I have been through the same movie myself... :o)"
+  - author: "Unknown"
+    date: 2010-10-04
+    html: "THANKS A MILLION SIR, I tried basically setting all the flags to false too and spent hours reading oracle&#39;s pages and still can&#39;t make it work in development mode.  Your method worked, thank you so much.  It&#39;s so ridiculous that none of the official oracle pages point to the right solution!"
+---
+I have tried to set to "false" any "production" related flag in the various shell scripts (bin/setDomainEnv, startWebLogic.sh, bin/startWebLogic.sh)<br />
+<br />
+The flags are: DOMAIN_PRODUCTION_MODE, PRODUCTION_MODE, -DProductionModeEnabled=false<br />
+<br />
+All in vain, my WebLogic 11g starts in Production mode.<br />
+<br />
+At last, I set the value of production-mode-enabled to false in config/config.xml<br />
+<br />
+This seems to work. The "Production Mode" checkbox on the "Domain" configuration page in WebLogic console becomes unchecked.<br />
+The description says:<br />
+<br />
+"<span class="inlinehelp">Specifies whether all servers in this domain run in production mode. Once enabled, this can only be disabled in the admin server startup command line."</span><br />
+<br />
+<span class="inlinehelp">Well, anyway, editing the config.xml works. </span>

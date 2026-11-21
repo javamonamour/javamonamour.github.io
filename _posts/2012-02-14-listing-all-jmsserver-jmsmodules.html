@@ -1,0 +1,120 @@
+---
+layout: post
+title: "Listing all JMSServer, JMSModules, JMSDestinations with JNDI names in WebLogic"
+date: 2012-02-14T18:12:00.003+01:00
+permalink: /2012/02/listing-all-jmsserver-jmsmodules.html
+blogger_id: "6661178202276706099"
+tags: ["jms"]
+---
+Ever wanted to list jms queues in weblogic ?<br />
+<br />
+Thanks to Chris Vugrinec <a href="http://datalinks.nl/wordpress/">http://datalinks.nl/wordpress/</a><br />
+<br />
+<pre class="brush: java" name="code">package com.acme.jms;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Hashtable;
+
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
+import javax.naming.Context;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import weblogic.j2ee.descriptor.wl.QueueBean;
+import weblogic.management.configuration.DomainMBean;
+import weblogic.management.configuration.JMSConnectionFactoryMBean;
+import weblogic.management.configuration.JMSQueueMBean;
+import weblogic.management.configuration.JMSServerMBean;
+import weblogic.management.configuration.JMSSystemResourceMBean;
+import weblogic.management.j2ee.SessionBeanMBean;
+import weblogic.management.mbeans.custom.JMSSystemResource;
+import weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean;
+import weblogic.management.jmx.MBeanServerInvocationHandler;
+
+public class ConnectionBeaImpl {
+      
+    protected final Log logger = LogFactory.getLog(getClass());
+      
+    
+      private JMXConnector jmxConn = null;
+      DomainMBean domainMBean = null;
+      DomainRuntimeServiceMBean domainRuntimeServiceMBean = null;
+      SessionBeanMBean sessionManagementMBean = null;
+      
+      
+      public MBeanServerConnection openConnection(String hostname, int port, String username, String password) throws IOException,MalformedURLException {
+            JMXServiceURL serviceURL = new JMXServiceURL("t3", hostname, port, "/jndi/" + DomainRuntimeServiceMBean.MBEANSERVER_JNDI_NAME);
+            Hashtable<String,Object> h = new Hashtable<String,Object>();
+            h.put(Context.SECURITY_PRINCIPAL, username);
+            h.put(Context.SECURITY_CREDENTIALS, password);
+            h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, "weblogic.management.remote");
+            //h.put("jmx.remote.x.request.waiting.timeout", new Long(60000));
+            return JMXConnectorFactory.connect(serviceURL, h).getMBeanServerConnection();
+      }     
+
+
+      
+      public void closeConnection() {
+            try {
+                  jmxConn.close();
+            } catch (IOException ex) {
+                  logger.error("Exception in closing connection: "+ex.getMessage());
+            }finally{
+                  try{
+                        jmxConn.close();
+                  } catch (IOException ex) {
+                        logger.error("Exception in final stage of closing connection: "+ex.getMessage());
+                  }           
+            }
+      }
+      
+      
+      public static void main(String [] args){
+            
+            ConnectionBeaImpl x = new ConnectionBeaImpl();
+            try {
+                  MBeanServerConnection bco = x.openConnection("acme.com", 7001, "weblogic", "weblogic1");
+
+                  DomainRuntimeServiceMBean domainRuntimeServiceMBean = (DomainRuntimeServiceMBean) MBeanServerInvocationHandler.newProxyInstance(bco, new ObjectName(DomainRuntimeServiceMBean.OBJECT_NAME));        
+                  DomainMBean dem = domainRuntimeServiceMBean.getDomainConfiguration();
+                  JMSSystemResourceMBean[] jmsSRs = dem.getJMSSystemResources();
+                  
+                  JMSServerMBean[] jmsSvrs = dem.getJMSServers();
+                  for(JMSServerMBean jmsSvr : jmsSvrs){
+                        System.out.println("JMS Servername: "+jmsSvr.getName());
+                        
+                  }
+                  
+                  
+                  for(JMSSystemResourceMBean jmsSR : jmsSRs){
+                        System.err.println(jmsSR.getName());
+                        QueueBean[] qbeans = jmsSR.getJMSResource().getQueues();
+                        
+                        for(QueueBean qbean : qbeans){
+                             System.out.println("JNDI NAME: "+qbean.getJNDIName()+" queuename : "+qbean.getName());
+                        }
+                  }
+                  //ServerRuntimeMBean serverRtBean = domainConfigX.createServerRuntimeMBean(domain.getAdminserver());
+
+                  
+                  //Domain domain = domainFactoryX.getDomain(domainName);
+                  
+                  
+            } catch (Exception e) {
+                  // TODO Auto-generated catch block
+                  e.printStackTrace();
+            }
+      }
+
+}
+
+
+
+
+</pre>

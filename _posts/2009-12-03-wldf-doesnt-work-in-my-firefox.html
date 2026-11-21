@@ -1,0 +1,66 @@
+---
+layout: post
+title: "WLDF doesn't work in my Firefox, java.lang.NumberFormatException: For input string: \"0,18\""
+date: 2009-12-03T15:17:00.000+01:00
+permalink: /2009/12/wldf-doesnt-work-in-my-firefox.html
+blogger_id: "174810202194789453"
+---
+Java Plug-in 1.6.0_16<br />
+Utilisation de la version JRE 1.6.0_16-b01 Java HotSpot(TM) Client VM<br />
+Répertoire d'accueil de l'utilisateur = C:\Documents and Settings\ezdine_ould-mohamed<br />
+----------------------------------------------------<br />
+c:   effacer la fenêtre de la console<br />
+f:   finaliser les objets de la file d'attente de finalisation<br />
+g:   libérer la mémoire<br />
+h:   afficher ce message d'aide<br />
+l:   vider la liste des chargeurs de classes<br />
+m:   imprimer le relevé d'utilisation de la mémoire<br />
+o:   déclencher la consignation<br />
+q:   masquer la console<br />
+r:   recharger la configuration des politiques<br />
+s:   vider les propriétés système et déploiement<br />
+t:   vider la liste des threads<br />
+v:   vider la pile des threads<br />
+x:   effacer le cache de chargeurs de classes<br />
+0-5: fixer le niveau de traçage à <n><br />
+----------------------------------------------------<br />
+<br />
+<br />
+java.lang.NumberFormatException: For input string: "0,18"<br />
+ at sun.misc.FloatingDecimal.readJavaFormatString(Unknown Source)<br />
+ at java.lang.Double.parseDouble(Unknown Source)<br />
+ at com.bea.diagnostics.dashboard.WLDFSlider$LocalSlider.calcTransMin(WLDFSlider.java:99)<br />
+ at com.bea.diagnostics.dashboard.WLDFSlider$LocalSlider.setMinimum(WLDFSlider.java:94)<br />
+ at com.bea.diagnostics.dashboard.WLDFSlider.setMinimum(WLDFSlider.java:373)<br />
+ at com.bea.diagnostics.dashboard.GlobalPropPanel.<init>(GlobalPropPanel.java:75)<br />
+ at com.bea.diagnostics.dashboard.PropertyPanel$GlobalPropPanelWrapper.<init>(PropertyPanel.java:167)<br />
+ at com.bea.diagnostics.dashboard.PropertyPanel.<init>(PropertyPanel.java:49)<br />
+ at com.bea.diagnostics.dashboard.ChartPanel.addBrowsers(ChartPanel.java:678)<br />
+ at com.bea.diagnostics.dashboard.ChartPanel.execute(ChartPanel.java:532)<br />
+ at com.bea.diagnostics.dashboard.ChartPanel.<init>(ChartPanel.java:181)<br />
+ at com.bea.diagnostics.dashboard.ChartPanelApplet.init(ChartPanelApplet.java:25)<br />
+ at sun.plugin2.applet.Plugin2Manager$AppletExecutionRunnable.run(Unknown Source)<br />
+ at java.lang.Thread.run(Unknown Source)<br />
+java.lang.NullPointerException<br />
+ at com.bea.diagnostics.dashboard.ChartPanelApplet.start(ChartPanelApplet.java:40)<br />
+ at sun.plugin2.applet.Plugin2Manager$AppletExecutionRunnable.run(Unknown Source)<br />
+ at java.lang.Thread.run(Unknown Source)<br />
+Exception : java.lang.NullPointerException<br />
+<br />
+<br />
+http://forums.oracle.com/forums/thread.jspa?messageID=2965757<br />
+<br />
+<br />
+My problem was related to my pc language settings: I've solved it setting english language<br />
+This issue was related to a locale problem. It has been fixed in WLS 10.0 and will be back-ported to 9.2. <br />
+You can use : -Duser.language=en -Duser.region=US as JRE local param to force US setting.<br />
+<br />
+Windows Config Panel/Java => Java Configuration<br />
+Tab Java, Applet Java runtime, display.<br />
+Set "-Duser.language=en -Duser.region=US" in exécution param for your JRE<br />
+<br />
+Back to WSDF applet : It's work.<br />
+<br />
+<br />
+<br />
+The operation is a bit tricky, you must validate twice before the parameters are written permanently.

@@ -1,0 +1,40 @@
+---
+layout: post
+title: "rpm useful commands"
+date: 2019-08-10T19:44:00.000+02:00
+permalink: /2019/08/rpm-useful-commands.html
+blogger_id: "1197487098731830742"
+tags: ["rpm"]
+---
+list files installed by an INSTALLED rpm (for an UNINSTALLED rpm, add -p and provide full path to .rpm file):<br />
+<br />
+<b>rpm -ql nginx.x86_64</b><br />
+<br />
+or also (if the rpm is not installed yet)  <b>repoquery --list nginx.x86_64</b><br />
+<br />
+verify that rpm installed files have not been tampered<br />
+<br />
+<b>rpm -V nginx.x86_64</b><br />
+<br />
+display the postinstall and postuninstall scripts<br />
+<br />
+<b>rpm -q --scripts nginx.x86_64</b><br />
+<br />
+which rpm provides a given file:<br />
+<br />
+<b>rpm -q --whatprovides /usr/sbin/nginx</b><br />
+or also<br />
+<b>rpm -qf /usr/sbin/nginx</b><br />
+<br />
+for a REALLY verbose verification output:<br />
+<br />
+rpm -Vvv nginx.x86_64<br />
+<br />
+<br />
+<br />
+Ref:<br />
+<br />
+<a href="http://ftp.rpm.org/max-rpm/s1-rpm-verify-what-to-verify.html">http://ftp.rpm.org/max-rpm/s1-rpm-verify-what-to-verify.html</a><br />
+<br />
+<br />
+<a href="https://www.cyberciti.biz/howto/question/linux/linux-rpm-cheat-sheet.php">https://www.cyberciti.biz/howto/question/linux/linux-rpm-cheat-sheet.php</a> fantastic all-in-one rpm cheat sheet

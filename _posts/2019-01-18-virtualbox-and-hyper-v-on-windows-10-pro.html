@@ -1,0 +1,83 @@
+---
+layout: post
+title: "VirtualBox and Hyper-V on Windows 10 PRO"
+date: 2019-01-18T17:53:00.000+01:00
+permalink: /2019/01/virtualbox-and-hyper-v-on-windows-10-pro.html
+blogger_id: "6106459919001682357"
+tags: ["hyperv", "virtualbox"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2020-08-16
+    html: "@Ranz, yes it&#39;s tested and working fine"
+  - author: "Ranz"
+    date: 2020-08-16
+    html: "Great. Have you tested this yet?"
+  - author: "Chronos"
+    date: 2021-01-27
+    html: "Finally! This one was the best solution that i found in hundred ones. Worked for me, thank you very much!"
+---
+I have recently installed Windows PRO. During installation of Hyper-V, it duly warns you that you will no longer be able to use VirtualBox.  Which is true, because when I start a VM in VirtualBOx I get the message:<br />
+<br />
+<br />
+WHvCapabilityCodeHypervisorPresent is FALSE! Make sure you have enabled the 'Windows Hypervisor Platform' feature. (VERR_NEM_NOT_AVAILABLE).<br />
+VT-x is not available (VERR_VMX_NO_VMX).<br />
+<br />
+<br />
+Apparently all you need to do to re-enable VirtualBox is:<br />
+<br />
+<br />
+open CMD as Administrator<br />
+bcdedit /set hypervisorlaunchtype off<br />
+<br />
+reboot your machine<br />
+<br />
+To restore Hyper-V you simply run:<br />
+bcdedit /set hypervisorlaunchtype on<br />
+or<br />
+bcdedit /set hypervisorlaunchtype auto<br />
+<br />
+<br />
+I haven't tested yet but it should work IMHO<br />
+<br />
+<br />
+<br />
+bcdedit  is this <a href="https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/bcdedit-command-line-options">https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/bcdedit-command-line-options</a><br />
+<br />
+<pre>Windows Boot Manager
+--------------------
+identifier              {bootmgr}
+device                  partition=\Device\HarddiskVolume2
+path                    \EFI\Microsoft\Boot\bootmgfw.efi
+description             Windows Boot Manager
+locale                  fr-FR
+inherit                 {globalsettings}
+badmemoryaccess         Yes
+default                 {current}
+resumeobject            {b32f6aed-59a4-11e8-b3f7-b9390bbf0244}
+displayorder            {current}
+toolsdisplayorder       {memdiag}
+timeout                 30
+
+Windows Boot Loader
+-------------------
+identifier              {current}
+device                  partition=C:
+path                    \WINDOWS\system32\winload.efi
+description             Windows 10
+locale                  fr-FR
+inherit                 {bootloadersettings}
+recoverysequence        {b32f6aef-59a4-11e8-b3f7-b9390bbf0244}
+displaymessageoverride  Recovery
+recoveryenabled         Yes
+badmemoryaccess         Yes
+isolatedcontext         Yes
+allowedinmemorysettings 0x15000075
+osdevice                partition=C:
+systemroot              \WINDOWS
+resumeobject            {b32f6aed-59a4-11e8-b3f7-b9390bbf0244}
+nx                      OptIn
+bootmenupolicy          Standard
+hypervisorlaunchtype    Auto
+</pre><br />
+<br />
+

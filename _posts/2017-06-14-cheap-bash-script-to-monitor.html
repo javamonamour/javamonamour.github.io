@@ -1,0 +1,36 @@
+---
+layout: post
+title: "cheap bash script to monitor connections to an IP"
+date: 2017-06-14T12:22:00.002+02:00
+permalink: /2017/06/cheap-bash-script-to-monitor.html
+blogger_id: "8591432276343537002"
+tags: ["netstat"]
+---
+this will trace only connections in the SYN_SENT status ... if you get a SocketTimeoutException, the connection will never transition in the ESTABLISHED state, it will only wait in the SYS_SENT state until it times out...
+
+<br/>
+
+<pre>
+
+cat monitornet.sh
+
+while true
+do
+     lines=`netstat -an | grep YOURDESTINATIONIP | grep SYN`
+     sleep 0.1
+     if [ "$lines" ]; then
+         echo `date` $lines
+         echo "   "
+     fi
+done
+
+
+</pre>
+
+<br/><br/>
+
+Maybe running netstat 10 times a second will kill your server, so you better sleep a bit more 
+
+<br/><br/>
+
+

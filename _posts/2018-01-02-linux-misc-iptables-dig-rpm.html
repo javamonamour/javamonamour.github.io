@@ -1,0 +1,57 @@
+---
+layout: post
+title: "Linux misc (iptables, dig, rpm)"
+date: 2018-01-02T16:48:00.001+01:00
+permalink: /2018/01/linux-misc-iptables-dig-rpm.html
+blogger_id: "5467034399402124542"
+tags: ["iptables", "linux", "locale", "rpm"]
+---
+<b>echo $LANG</b><br />
+en_US.UTF-8<br />
+<br />
+<b>CTRL-SHIFT-U</b> allows you to enter the 4 letters for a Unicode character (eg 03bb is greek lambda)<br />
+<br />
+<b>localectl</b> <br />
+<br />
+System Locale: LANG=en_US.UTF-8<br />
+VC Keymap: it<br />
+X11 Layout: it,us<br />
+X11 Variant: ,<br />
+<br />
+to change locale:<br />
+<b>localectl set-locale LANG=fr_FR.utf8</b><br />
+<br />
+<b>cat /etc/locale.conf</b> <br />
+LANG="en_US.UTF-8"<br />
+<br />
+list all available language packs:<br />
+<b>yum langavailable</b><br />
+<br />
+list installed language packs:<br />
+<b>yum langlist</b><br />
+<br />
+<br />
+iptables tutorial instructions: <a href="https://www.howtogeek.com/177621/the-beginners-guide-to-iptables-the-linux-firewall/">https://www.howtogeek.com/177621/the-beginners-guide-to-iptables-the-linux-firewall/</a><br />
+<b><br />
+sudo iptables -L -v<br />
+sudo iptables -F<br />
+sudo cat /etc/sysconfig/iptables<br />
+</b><br />
+<br />
+network:<br />
+<b>dig<br />
+systemctl status firewalld<br />
+systemctl status NetworkManager</b><br />
+<br />
+<br />
+<b>history</b>: remove line numbers by adding to .bash_profile<br />
+HISTTIMEFORMAT="$(echo -e '\r\e[K')"<br />
+<br />
+#rpm list all packages<br />
+rpm -qa | grep ansible<br />
+#this installs 1.1 without removing 1.0 if exists<br />
+rpm -ivh some-package-1.1<br />
+#this updates (if existing) 1.0 to 1.1<br />
+rpm -Uvh some-package-1.1<br />
+<br />
+

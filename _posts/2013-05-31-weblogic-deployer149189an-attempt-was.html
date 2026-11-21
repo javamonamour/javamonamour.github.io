@@ -1,0 +1,17 @@
+---
+layout: post
+title: "WebLogic: [Deployer:149189]An attempt was made to execute the 'start' operation on an application named bla"
+date: 2013-05-31T18:27:00.001+02:00
+permalink: /2013/05/weblogic-deployer149189an-attempt-was.html
+blogger_id: "2152883962441434583"
+---
+just shut down all your servers - including admin.
+<br/><br/>
+
+then go to DOMAIN_HOME, run "find . -name bla -exec rm -rf {} \;"
+<br/><br/>
+
+then edit config/config.xml and remove manually the app-deployment entry for bla.
+
+<br/><br/>
+This should take care of it.

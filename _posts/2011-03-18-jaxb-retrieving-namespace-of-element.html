@@ -1,0 +1,13 @@
+---
+layout: post
+title: "JAXB, retrieving the Namespace of an element"
+date: 2011-03-18T15:18:00.000+01:00
+permalink: /2011/03/jaxb-retrieving-namespace-of-element.html
+blogger_id: "9055718414582500492"
+tags: ["jaxb", "namespace"]
+---
+I hate hardcoding namespaces in my code, so here is how to retrieve it from the JAXB annotated beans:<br />
+<br />
+<br />
+<i>ObjectFactory oj = new ObjectFactory();<br />
+String NAMESPACE = oj.createMyObject(oj.createMyObject()).getName().getNamespaceURI();</i>

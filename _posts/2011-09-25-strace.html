@@ -1,0 +1,154 @@
+---
+layout: post
+title: "Strace"
+date: 2011-09-25T11:43:00.001+02:00
+permalink: /2011/09/strace.html
+blogger_id: "2477844076535866439"
+tags: ["strace"]
+---
+<a href="http://linux.die.net/man/1/strace">http://linux.die.net/man/1/strace</a><br />
+<br />
+it's very interesting to use strace to trace all system calls in a process.<br />
+If you have strange error messages such as "permission denied" without further details, strace will allow you to get more info on what exactly was being executed at the time the error occurred.<br />
+<br />
+In this example, here is what is run when zipping a file<br />
+<br />
+<b>orauser@ubuntu:/tmp$ echo ciao &gt; ciao.txt<br />
+orauser@ubuntu:/tmp$ strace zip ciao.zip ciao.txt</b><br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/930cc75d27b7c5cc.gif" imageanchor="1"><img border="0" height="181" src="/images/728ccfe0938c3bb5.gif" width="200" /></a></div><br />
+<br />
+execve("/usr/bin/zip", ["zip", "ciao.zip", "ciao.txt"], [/* 41 vars */]) = 0<br />
+brk(0)                                  = 0x8f37000<br />
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)<br />
+mmap2(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb777a000<br />
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)<br />
+open("/etc/ld.so.cache", O_RDONLY)      = 3<br />
+fstat64(3, {st_mode=S_IFREG|0644, st_size=55536, ...}) = 0<br />
+mmap2(NULL, 55536, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb776c000<br />
+close(3)                                = 0<br />
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)<br />
+open("/lib/libbz2.so.1.0", O_RDONLY)    = 3<br />
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\0\20\0\0004\0\0\0"..., 512) = 512<br />
+fstat64(3, {st_mode=S_IFREG|0644, st_size=70036, ...}) = 0<br />
+mmap2(NULL, 68840, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0xc6c000<br />
+mmap2(0xc7b000, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0xf) = 0xc7b000<br />
+close(3)                                = 0<br />
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)<br />
+open("/lib/i386-linux-gnu/libc.so.6", O_RDONLY) = 3<br />
+read(3, "\177ELF\1\1\1\0\0\0\0\0\0\0\0\0\3\0\3\0\1\0\0\0\220o\1\0004\0\0\0"..., 512) = 512<br />
+fstat64(3, {st_mode=S_IFREG|0755, st_size=1434180, ...}) = 0<br />
+mmap2(NULL, 1444360, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x5f5000<br />
+mprotect(0x74f000, 4096, PROT_NONE)     = 0<br />
+mmap2(0x750000, 12288, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x15a) = 0x750000<br />
+mmap2(0x753000, 10760, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x753000<br />
+close(3)                                = 0<br />
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb776b000<br />
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb776a000<br />
+set_thread_area({entry_number:-1 -&gt; 6, base_addr:0xb776bb40, limit:1048575, seg_32bit:1, contents:0, read_exec_only:0, limit_in_pages:1, seg_not_present:0, useable:1}) = 0<br />
+mprotect(0x750000, 8192, PROT_READ)     = 0<br />
+mprotect(0xc7b000, 4096, PROT_READ)     = 0<br />
+mprotect(0x8073000, 4096, PROT_READ)    = 0<br />
+mprotect(0x949000, 4096, PROT_READ)     = 0<br />
+munmap(0xb776c000, 55536)               = 0<br />
+brk(0)                                  = 0x8f37000<br />
+brk(0x8f58000)                          = 0x8f58000<br />
+open("/usr/lib/locale/locale-archive", O_RDONLY|O_LARGEFILE) = 3<br />
+fstat64(3, {st_mode=S_IFREG|0644, st_size=8322432, ...}) = 0<br />
+mmap2(NULL, 2097152, PROT_READ, MAP_PRIVATE, 3, 0) = 0xb756a000<br />
+mmap2(NULL, 4096, PROT_READ, MAP_PRIVATE, 3, 0x2a1) = 0xb7779000<br />
+close(3)                                = 0<br />
+open("/etc/localtime", O_RDONLY)        = 3<br />
+fstat64(3, {st_mode=S_IFREG|0644, st_size=2819, ...}) = 0<br />
+fstat64(3, {st_mode=S_IFREG|0644, st_size=2819, ...}) = 0<br />
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7778000<br />
+read(3, "TZif2\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\4\0\0\0\4\0\0\0\0"..., 4096) = 2819<br />
+_llseek(3, -24, [2795], SEEK_CUR)       = 0<br />
+read(3, "\nPST8PDT,M3.2.0,M11.1.0\n", 4096) = 24<br />
+close(3)                                = 0<br />
+munmap(0xb7778000, 4096)                = 0<br />
+rt_sigaction(SIGINT, {0x804ab90, [INT], SA_RESTART}, {SIG_DFL, [], 0}, 8) = 0<br />
+rt_sigaction(SIGTERM, {0x804ab90, [TERM], SA_RESTART}, {SIG_DFL, [], 0}, 8) = 0<br />
+rt_sigaction(SIGABRT, {0x804ab90, [ABRT], SA_RESTART}, {SIG_DFL, [], 0}, 8) = 0<br />
+rt_sigaction(SIGBUS, {0x804ab90, [BUS], SA_RESTART}, {SIG_DFL, [], 0}, 8) = 0<br />
+rt_sigaction(SIGILL, {0x804ab90, [ILL], SA_RESTART}, {SIG_DFL, [], 0}, 8) = 0<br />
+rt_sigaction(SIGSEGV, {0x804ab90, [SEGV], SA_RESTART}, {SIG_DFL, [], 0}, 8) = 0<br />
+open("ciao.zip", O_RDONLY|O_LARGEFILE)  = -1 ENOENT (No such file or directory)<br />
+stat64("ciao.txt", {st_mode=S_IFREG|0644, st_size=5, ...}) = 0<br />
+time(NULL)                              = 1316294578<br />
+stat64("ciao.zip", 0x8076c40)           = -1 ENOENT (No such file or directory)<br />
+open("/usr/lib/i386-linux-gnu/gconv/gconv-modules.cache", O_RDONLY) = -1 ENOENT (No such file or directory)<br />
+open("/usr/lib/i386-linux-gnu/gconv/gconv-modules", O_RDONLY) = 3<br />
+fstat64(3, {st_mode=S_IFREG|0644, st_size=55868, ...}) = 0<br />
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7778000<br />
+read(3, "# GNU libc iconv configuration.\n"..., 4096) = 4096<br />
+read(3, "B1.002//\nalias\tJS//\t\t\tJUS_I.B1.0"..., 4096) = 4096<br />
+read(3, "59-3\t1\nmodule\tINTERNAL\t\tISO-8859"..., 4096) = 4096<br />
+read(3, "859-14//\nalias\tISO-IR-199//\t\tISO"..., 4096) = 4096<br />
+read(3, "CDIC-DK-NO-A//\tEBCDIC-DK-NO-A\t1\n"..., 4096) = 4096<br />
+read(3, "\t\tIBM281//\t\tIBM281\t\t1\n\n#\tfrom\t\t\t"..., 4096) = 4096<br />
+read(3, "\tIBM863\t\t1\n\n#\tfrom\t\t\tto\t\t\tmodule"..., 4096) = 4096<br />
+read(3, "\tmodule\t\tcost\nalias\tIBM-939//\t\tI"..., 4096) = 4096<br />
+read(3, "\t\t\tmodule\t\tcost\nalias\tEUCCN//\t\t\t"..., 4096) = 4096<br />
+read(3, "C_P27-1//\t\tINTERNAL\t\tIEC_P27-1\t1"..., 4096) = 4096<br />
+read(3, "\t\t\tmodule\t\tcost\nalias\tMACIS//\t\t\t"..., 4096) = 4096<br />
+read(3, "X0213\t1\nmodule\tINTERNAL\t\tShift_J"..., 4096) = 4096<br />
+read(3, "40//\t\tIBM1140//\nalias\tCP1140//\t\t"..., 4096) = 4096<br />
+read(3, "\nmodule\tINTERNAL\t\tIBM16804//\t\tIB"..., 4096) = 2620<br />
+read(3, "", 4096)                       = 0<br />
+close(3)                                = 0<br />
+munmap(0xb7778000, 4096)                = 0<br />
+time(NULL)                              = 1316294578<br />
+stat64("ciao.txt", {st_mode=S_IFREG|0644, st_size=5, ...}) = 0<br />
+stat64("/etc/localtime", {st_mode=S_IFREG|0644, st_size=2819, ...}) = 0<br />
+open("ciao.zip", O_WRONLY|O_CREAT|O_TRUNC|O_LARGEFILE, 0666) = 3<br />
+close(3)                                = 0<br />
+stat64("ciao.zip", {st_mode=S_IFREG|0644, st_size=0, ...}) = 0<br />
+unlink("ciao.zip")                      = 0<br />
+gettimeofday({1316294578, 909680}, NULL) = 0<br />
+getpid()                                = 6145<br />
+open("zijnRHbC", O_RDWR|O_CREAT|O_EXCL|O_LARGEFILE, 0600) = 3<br />
+fcntl64(3, F_GETFL)                     = 0x8002 (flags O_RDWR|O_LARGEFILE)<br />
+fstat64(3, {st_mode=S_IFREG|0600, st_size=0, ...}) = 0<br />
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7778000<br />
+_llseek(3, 0, [0], SEEK_CUR)            = 0<br />
+munmap(0xb7778000, 4096)                = 0<br />
+_llseek(3, 0, [0], SEEK_CUR)            = 0<br />
+_llseek(3, 0, [0], SEEK_SET)            = 0<br />
+fstat64(1, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 1), ...}) = 0<br />
+mmap2(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0xb7778000<br />
+write(1, "  adding: ciao.txt", 18  adding: ciao.txt)      = 18<br />
+stat64("ciao.txt", {st_mode=S_IFREG|0644, st_size=5, ...}) = 0<br />
+stat64("/etc/localtime", {st_mode=S_IFREG|0644, st_size=2819, ...}) = 0<br />
+stat64("ciao.txt", {st_mode=S_IFREG|0644, st_size=5, ...}) = 0<br />
+open("ciao.txt", O_RDONLY|O_LARGEFILE)  = 4<br />
+write(3, "PK\3\4\24\0\10\0\10\0\321r1?\0\0\0\0\0\0\0\0\5\0\0\0\10\0\34\0ci"..., 66) = 66<br />
+read(4, "ciao\n", 65536)                = 5<br />
+read(4, "", 65531)                      = 0<br />
+_llseek(3, 65, [65], SEEK_SET)          = 0<br />
+_llseek(3, 66, [66], SEEK_SET)          = 0<br />
+close(4)                                = 0<br />
+write(3, "ciao\n", 5)                   = 5<br />
+_llseek(3, 0, [0], SEEK_SET)            = 0<br />
+write(3, "PK\3\4\n\0\0\0\0\0\321r1?h};\25\5\0\0\0\5\0\0\0\10\0\34\0ci"..., 66) = 66<br />
+_llseek(3, 71, [71], SEEK_SET)          = 0<br />
+write(1, " (stored 0%)\n", 13 (stored 0%)<br />
+)          = 13<br />
+write(3, "PK\1\2\36\3\n\0\0\0\0\0\321r1?h};\25\5\0\0\0\5\0\0\0\10\0\30\0"..., 100) = 100<br />
+close(3)                                = 0<br />
+lstat64("ciao.zip", 0xbf961600)         = -1 ENOENT (No such file or directory)<br />
+rename("zijnRHbC", "ciao.zip")          = 0<br />
+chmod("ciao.zip", 0100644)              = 0<br />
+exit_group(0)                           = ?
+
+
+
+<br/><br/>
+
+If you want to know all the "open" commands, the do
+<br/><br/>
+<i>strace -e open youcommand</i>
+<br/><br/>
+
+
+

@@ -1,0 +1,303 @@
+---
+layout: post
+title: "Nice-to-activate Sun JVM flags for GC and ThreadDumps"
+date: 2011-09-14T00:03:00.005+02:00
+permalink: /2011/09/nice-to-activate-sun-jvm-flags-for-gc.html
+blogger_id: "2947681351805137588"
+tags: ["JVM"]
+---
+<b>-Xloggc:ms1gc.log</b><br />
+<br />
+<a href="http://stackoverflow.com/questions/1161647/how-to-redirect-verbose-garbage-collection-output-to-a-file">http://stackoverflow.com/questions/1161647/how-to-redirect-verbose-garbage-collection-output-to-a-file</a><br />
+<br />
+<br />
+<br />
+-Xloggc is like <b>-Xverbose:gc</b> but it logs in a separate file ms1gc.log<br />
+<br />
+It is safe to activate in production (unlike -Xprof  which is quite taxing)<br />
+<br />
+<br />
+This is a list of options for the JVM:<br />
+<br />
+<a href="http://download.oracle.com/javase/6/docs/technotes/tools/windows/java.html">http://download.oracle.com/javase/6/docs/technotes/tools/windows/java.html</a><br />
+<br />
+<br />
+Sample test of –Xloggc:<br />
+<br />
+<br />
+<br />
+cat DoNothing.java<br />
+<br />
+<br />
+<pre name="code" class="brush: java">public class DoNothing {
+
+   public static void main(String[] args) throws Exception {
+
+       for (;;) {
+
+           Thread.sleep(1000);
+           int zillion = 1000000;
+           // just wasting memory here
+           Object[] waste = new Object[zillion];
+           for (int i = 0; i < zillion; i++) {
+              waste[i] = new Object();
+           }
+
+          // yield CPU, don’t be greedy
+           System.out.println("I am just sleeping... how lovely....");
+       }
+   }
+}
+</pre>
+javac DoNothing.java
+
+java -Xloggc:mygc.log DoNothing
+
+ 
+
+cat mygc.log
+<pre>5.629: [GC 47048K->120K(187712K), 0.0045328 secs]
+
+9.769: [GC 47016K->128K(187712K), 0.0015663 secs]
+
+13.889: [GC 47024K->136K(187712K), 0.0011926 secs]
+
+18.009: [GC 47032K->136K(187712K), 0.0011626 secs]
+
+22.129: [GC 47032K->136K(178560K), 0.0056787 secs]
+
+26.259: [GC 47032K->136K(177408K), 0.0011921 secs]
+
+29.371: [GC 46792K->11618K(187584K), 0.4040244 secs]
+
+34.925: [GC 68450K->21588K(226688K), 0.3109225 secs]
+
+43.478: [GC 111764K->22196K(229824K), 0.1426002 secs]
+
+51.857: [GC 109907K->16082K(284544K), 0.0322680 secs]
+
+64.259: [GC 156772K->16082K(284672K), 0.1478636 secs]
+
+76.779: [GC 156772K->16082K(370560K), 0.0095127 secs]
+
+96.393: [GC 246994K->24276K(370816K), 0.3453224 secs]
+
+117.345: [GC 255188K->20740K(356672K), 0.0354717 secs]
+
+136.948: [GC 238833K->16082K(343040K), 0.0122887 secs]
+
+155.509: [GC 227101K->16082K(334464K), 0.0144088 secs]
+
+</pre>Be aware that every time the JVM is started the previous mygc.log is overwritten.
+
+
+The very ridiculous thing is that there is no readable timestamp associated with the GC event….how silly! The times are reported as milliseconds from the JVM start time!
+
+So when we interpret these results we should first determine the start time of the JVM (this should not be an issue…)
+
+
+<b>-XX:+PrintGCDetails -XX:+PrintGCDateStamps</b>
+
+I have tried both, and PrintGCDetails is supported on Itanium:
+
+<pre>5.665: [GC [PSYoungGen: 47048K->136K(57152K)] 47048K->136K(187712K), 0.0024533 secs]
+
+9.795: [GC [PSYoungGen: 47032K->128K(57152K)] 47032K->128K(187712K), 0.0010407 secs]
+
+13.926: [GC [PSYoungGen: 47024K->128K(57152K)] 47024K->128K(187712K), 0.0010135 secs]
+
+18.044: [GC [PSYoungGen: 47024K->128K(57152K)] 47024K->128K(187712K), 0.0010428 secs]
+
+22.165: [GC [PSYoungGen: 47024K->136K(48000K)] 47024K->136K(178560K), 0.0080463 secs]
+
+Heap
+
+ PSYoungGen      total 48000K, used 11948K [5dab0000, 61290000, 73000000)
+
+  eden space 47808K, 24% used [5dab0000,5e6390e0,60960000)
+
+  from space 192K, 70% used [60a90000,60ab2050,60ac0000)
+
+  to   space 192K, 0% used [61260000,61260000,61290000)
+
+ PSOldGen        total 130560K, used 0K [33000000, 3af80000, 5dab0000)
+
+  object space 130560K, 0% used [33000000,33000000,3af80000)
+
+ PSPermGen       total 16384K, used 1820K [2f000000, 30000000, 33000000)
+
+  object space 16384K, 11% used [2f000000,2f1c7168,30000000)
+
+
+</pre>but PrintGCDateStamps is NOT (:o( )
+
+
+Anyway XX options are not recommended for production system
+<p/>
+See here <a href="http://stackoverflow.com/questions/541832/know-of-any-java-garbage-collection-log-analysis-tools">http://stackoverflow.com/questions/541832/know-of-any-java-garbage-collection-log-analysis-tools</a>
+for a list of tools to analyze GC logs
+
+<p/>Here <a href="http://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html">http://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html</a>  a list of XX options
+
+<p/>
+I have also tested this flag:
+
+<b>-XX:+PrintConcurrentLocks</b>
+
+<br/> 
+
+and it prints in the threadDump very valuable information on the locks being held by each thread:
+
+<p/>
+Example:<br/>
+
+java -Xloggc:mygc.log -XX:+HeapDumpOnOutOfMemoryError -XX:+PrintConcurrentLocks -XX:+PrintGCTimeStamps DoNothing
+<p/> 
+
+I do a kill -3 on the PID, and I get this on the stdout:
+
+ 
+
+ 
+<pre>Full thread dump Java HotSpot(TM) Server VM (1.6.0.01 jinteg:06.07.08-04:50 IA64 mixed mode):
+
+"Low Memory Detector" daemon prio=5 tid=00459790 nid=12 lwp_id=644290 runnable [00000000..00000000]
+
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+        - None
+
+
+"CompilerThread1" daemon prio=9 tid=005e22e0 nid=10 lwp_id=644288 waiting on condition [00000000..2d7ff688]
+   java.lang.Thread.State: RUNNABLE
+ 
+
+   Locked ownable synchronizers:
+        - None
+
+"CompilerThread0" daemon prio=9 tid=005db1a0 nid=9 lwp_id=644287 waiting on condition [00000000..2dfff608]
+
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+        - None
+
+"Signal Dispatcher" daemon prio=9 tid=00459590 nid=8 lwp_id=644286 waiting on condition [00000000..00000000]
+
+   java.lang.Thread.State: RUNNABLE
+
+   Locked ownable synchronizers:
+
+        - None
+
+"Finalizer" daemon prio=8 tid=00459390 nid=7 lwp_id=644283 in Object.wait() [733c0000..733c0b90]
+
+   java.lang.Thread.State: WAITING (on object monitor)
+
+        at java.lang.Object.wait(Native Method)
+
+        - waiting on <612802c0> (a java.lang.ref.ReferenceQueue$Lock)
+
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:133)
+
+        - locked <612802c0> (a java.lang.ref.ReferenceQueue$Lock)
+
+        at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:149)
+
+        at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:197)
+
+ 
+
+   Locked ownable synchronizers:
+
+        - None
+
+ 
+
+"Reference Handler" daemon prio=10 tid=00459190 nid=6 lwp_id=644282 in Object.wait() [77540000..77540d10]
+
+   java.lang.Thread.State: WAITING (on object monitor)
+
+        at java.lang.Object.wait(Native Method)
+
+        - waiting on <61280350> (a java.lang.ref.Reference$Lock)
+
+        at java.lang.Object.wait(Object.java:485)
+
+        at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:123)
+
+        - locked <61280350> (a java.lang.ref.Reference$Lock)
+
+ 
+
+   Locked ownable synchronizers:
+
+        - None
+
+ 
+
+"main" prio=5 tid=00458f90 nid=1 lwp_id=-1 waiting on condition [7fffe000..7fffe798]
+
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+
+        at java.lang.Thread.sleep(Native Method)
+
+        at DoNothing.main(DoNothing.java:4)
+
+ 
+
+   Locked ownable synchronizers:
+
+        - None
+
+ 
+
+"VM Thread" prio=9 tid=005a7860 nid=5 lwp_id=644281 runnable
+
+ 
+
+"GC task thread#0 (ParallelGC)" prio=5 tid=004661f0 nid=3 lwp_id=644279 runnable
+
+ 
+
+"GC task thread#1 (ParallelGC)" prio=5 tid=00466410 nid=4 lwp_id=644280 runnable
+
+ 
+
+"VM Periodic Task Thread" prio=10 tid=005a7950 nid=11 lwp_id=644289 waiting on condition
+
+ 
+
+JNI global references: 585
+
+ 
+
+Heap
+
+ PSYoungGen      total 57152K, used 39278K [5dab0000, 61a70000, 73000000)
+
+  eden space 49024K, 79% used [5dab0000,600f3b38,60a90000)
+
+  from space 8128K, 1% used [61280000,612a0040,61a70000)
+
+  to   space 8128K, 0% used [60a90000,60a90000,61280000)
+
+ PSOldGen        total 130560K, used 0K [33000000, 3af80000, 5dab0000)
+
+  object space 130560K, 0% used [33000000,33000000,3af80000)
+
+ PSPermGen       total 16384K, used 1797K [2f000000, 30000000, 33000000)
+
+  object space 16384K, 10% used [2f000000,2f1c17d8,30000000)
+
+</pre>
+
+
+This option is the default on JRockit… priceless!
+
+
+<p/>Problem is that the XX options are not really recommended for production systems, so…
+
+<p/><br />
+“Options that are specified with -XX are not stable and are not recommended for casual use. These options are subject to change without notice. “

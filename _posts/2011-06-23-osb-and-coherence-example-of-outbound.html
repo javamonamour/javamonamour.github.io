@@ -1,0 +1,64 @@
+---
+layout: post
+title: "OSB and Coherence: example of $outbound when the cache is HIT (see tran:cache-originated)"
+date: 2011-06-23T16:55:00.003+02:00
+permalink: /2011/06/osb-and-coherence-example-of-outbound.html
+blogger_id: "3049977146134921610"
+---
+pay attention to cache-token and cache-originated<br />
+<br />
+<br />
+<pre name="code" class="brush: xml"><con:endpoint name="BusinessService$InterfacesBLA$InfraService$InfraServiceBLABS"
+xmlns:con="http://www.bea.com/wli/sb/context">
+  <con:service>
+    <con:operation>RetrievePtcarSummary</con:operation>
+  </con:service>
+  <con:transport>
+    <con:uri>http://acme.com:10204/webservice2/InfraService.svc</con:uri>
+    <con:mode>request-response</con:mode>
+    <con:qualityOfService>best-effort</con:qualityOfService>
+    <con:request xsi:type="http:HttpRequestMetaData"
+xmlns:http="http://www.bea.com/wli/sb/transports/http"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <tran:headers xsi:type="http:HttpRequestHeaders"
+xmlns:tran="http://www.bea.com/wli/sb/transports">
+        <http:Content-Type>text/xml</http:Content-Type>
+        <http:SOAPAction>"http://www.acme.com/RetrieveBlaSummary"</http:SOAPAction>
+      </tran:headers>
+      <tran:cache-token
+xmlns:tran="http://www.bea.com/wli/sb/transports">2011-06-22</tran:cache-token>
+    </con:request>
+    <con:response xsi:type="http:HttpResponseMetaData"
+xmlns:http="http://www.bea.com/wli/sb/transports/http"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <tran:headers xsi:type="http:HttpResponseHeaders"
+xmlns:tran="http://www.bea.com/wli/sb/transports">
+        <tran:user-header name="X-AspNet-Version" value="2.0.50727"/>
+        <tran:user-header name="X-Powered-By" value="ASP.NET"/>
+        <http:Cache-Control>private</http:Cache-Control>
+        <http:Connection>close</http:Connection>
+        <http:Content-Length>1395654</http:Content-Length>
+        <http:Content-Type>text/xml; charset=utf-8</http:Content-Type>
+        <http:Date>Thu, 23 Jun 2011 14:51:40 GMT</http:Date>
+        <http:Server>Microsoft-IIS/6.0</http:Server>
+      </tran:headers>
+      <tran:response-code
+xmlns:tran="http://www.bea.com/wli/sb/transports">0</tran:response-code>
+      <tran:response-message
+xmlns:tran="http://www.bea.com/wli/sb/transports">OK</tran:response-message>
+      <tran:encoding
+xmlns:tran="http://www.bea.com/wli/sb/transports">utf-8</tran:encoding>
+      <tran:cache-token
+xmlns:tran="http://www.bea.com/wli/sb/transports">2011-06-22</tran:cache-token>
+      <tran:cache-originated
+xmlns:tran="http://www.bea.com/wli/sb/transports">true</tran:cache-originated>
+      <http:http-response-code>200</http:http-response-code>
+    </con:response>
+  </con:transport>
+  <con:security>
+    <con:doOutboundWss>false</con:doOutboundWss>
+  </con:security>
+</con:endpoint> 
+
+
+</pre>

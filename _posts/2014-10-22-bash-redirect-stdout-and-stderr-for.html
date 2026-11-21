@@ -1,0 +1,50 @@
+---
+layout: post
+title: "bash: redirect stdout and stderr for a block of \"code\""
+date: 2014-10-22T13:15:00.002+02:00
+permalink: /2014/10/bash-redirect-stdout-and-stderr-for.html
+blogger_id: "8208464014328064023"
+tags: ["bash"]
+---
+(I was hesitant to call "code" a bash script, as it's mostly molasses of un-refactorable hieroglyphs)
+<br/><br/>
+<i>vi redirtest.sh</i>
+
+<br/>
+<pre>
+
+{
+plutti
+plitti
+} > plutti.log 2>&1
+
+{
+pippi
+} > pippi.log 2>&1
+
+
+{
+echo ciao
+} > ciao.txt
+
+{
+echo miao
+} > miao.txt
+
+
+
+</pre>
+
+
+The command "plutti" and "plitti" don't exist, so I will have an error "./redirtest.sh: line 2: plutti: command not found   ./redirtest.sh: line 2: plitti: command not found". 
+
+<br/>But only that block will be redirected to plutti.log. <br/>
+Same story for pippi.log: you have 2 separate error logs for the 2 blocks of code.
+<br/>
+
+So, not necessarily redirection has to be at the whole script level, or at the single statement level.... one can group several statements in a "try/catch" block, which is cool...IMHO at least, it gives more flexibility ...
+
+
+
+
+ 

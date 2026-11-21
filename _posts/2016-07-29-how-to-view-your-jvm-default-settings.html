@@ -1,0 +1,46 @@
+---
+layout: post
+title: "How to view your JVM default settings"
+date: 2016-07-29T11:40:00.002+02:00
+permalink: /2016/07/how-to-view-your-jvm-default-settings.html
+blogger_id: "1609003767190032087"
+tags: ["JVM"]
+blogger_comments:
+  - author: "Taimo Peelo"
+    date: 2016-08-08
+    html: "No need for <b>Test</b> class to exist, one can use -version switch or supply whatever (non-existing) class name to <i>java</i>, e.g.:<br /><br /><i><br />$ java -XX:+PrintCommandLineFlags -version<br><br />-XX:InitialHeapSize=194891840 -XX:MaxHeapSize=3118269440 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseParallelGC <br><br />java version &quot;1.8.0_101&quot;<br><br />Java(TM) SE Runtime Environment (build 1.8.0_101-b13)<br><br />Java HotSpot(TM) 64-Bit Server VM (build 25.101-b13, mixed mode)<br><br /></i><br /><br />For extra details, the <i>-XX:+PrintFlagsFinal</i> is also interesting flag :)"
+---
+
+<pre>
+
+cat Test.java 
+
+public class Test {
+   public static void main(String[] args) {
+        for (;;) {
+        }
+
+   } 
+
+}
+
+</pre>
+
+<br/>
+
+javac Test.java
+
+
+<br/>
+java -XX:+PrintCommandLineFlags Test
+
+<br/>
+
+you should get something like this:
+
+<br/>
+
+
+-XX:InitialHeapSize=67108864 -XX:MaxHeapSize=1073741824 -XX:+PrintCommandLineFlags -XX:+UseParallelGC
+
+

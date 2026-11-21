@@ -1,0 +1,21 @@
+---
+layout: post
+title: "Maven/Eclipse Horror Show"
+date: 2018-03-24T09:49:00.000+01:00
+permalink: /2018/03/maveneclipse-horror-show.html
+blogger_id: "9653068457077214"
+tags: ["eclipse", "maven"]
+---
+I have updated recently my Maven binaries, of course I forgot to change The "User Settings" property in Eclipse to point to the new location of the settings.xml.<br />
+<br />
+Of course Eclipse silently fails to report the issue (unless you go and open the Maven tab in Preferences)<br />
+<br />
+And all of a sudden nothing works and when I open my pom.xml I get this:<br />
+<br />
+Project build error: Non-resolvable parent POM for org.wildfly.quickstarts:quickstart-parent:13.0.0-SNAPSHOT: Could not transfer artifact org.jboss:jboss-parent:pom:25 from/to jboss-enterprise-maven-repository (https://maven.repository.redhat.com/ga/): NullPointerException and 'parent.relativePath' points at no local POM<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/ed079e8d5caba6b4.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/b07042f9bc20fee7.jpg" width="400" height="250" data-original-width="1280" data-original-height="800" /></a></div><br />
+Working with Maven and Eclipse I feel young again.... it feels like the 1985 - actually my Pascal compiler on Apple II was far more sophisticated that these modern products.<br />
+<br />
+<br />
+

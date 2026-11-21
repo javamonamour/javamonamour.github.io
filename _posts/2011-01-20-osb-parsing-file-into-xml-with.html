@@ -1,0 +1,19 @@
+---
+layout: post
+title: "OSB parsing a file into XML with FileAdapter: memory consumption"
+date: 2011-01-20T18:23:00.001+01:00
+permalink: /2011/01/osb-parsing-file-into-xml-with.html
+blogger_id: "2608751852267007174"
+tags: ["OSB", "xml"]
+blogger_comments:
+  - author: "Digital"
+    date: 2011-02-11
+    html: "I think you might be interested in how jvm works and how it decides when and how many memory should it obtain.<br />I mean its not necessarily osb needed 500 whole mb to parse that file into xml.<br />More on topic here:<br />http://www.oracle.com/technetwork/java/javase/gc-tuning-6-140523.html"
+---
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/18379c012e4c2b60.jpg" imageanchor="1" style=""><img border="0" height="78" width="320" src="/images/f277be7f8806b329.jpg" /></a></div><br />
+this is the behaviour of memory every time we parse a 5MB file into XML.<br />
+Basically 5MB of info generates a 500 MB spike in the heap memory - luckily garbage collected quite soon.<br />
+<br />
+A 10000% increase in memory occupation in not such a great idea.<br />
+<br />
+The believers that XML is the next best thing after sex should probably change their mind. And not in the sense that XML is better than sex.

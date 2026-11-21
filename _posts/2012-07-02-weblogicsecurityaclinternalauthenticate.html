@@ -1,0 +1,27 @@
+---
+layout: post
+title: "weblogic.security.acl.internal.AuthenticatedSubject  and weblogic.security.acl.internal.AuthenticatedUser"
+date: 2012-07-02T21:55:00.000+02:00
+permalink: /2012/07/weblogicsecurityaclinternalauthenticate.html
+blogger_id: "1847662269461123117"
+---
+today I had this REALLY weird error in Tomcat.... it turned out that having weblogic.jar AND wlfullclient.jar in the classpath is NOT good...<br />
+<br />
+<br />
+java.lang.ClassCastException: weblogic.security.acl.internal.AuthenticatedSubject cannot be cast to weblogic.security.acl.internal.AuthenticatedUser<br />
+ weblogic.common.internal.RMIBootServiceImpl_1035_WLStub.authenticate(Unknown Source)<br />
+ weblogic.security.acl.internal.RemoteAuthenticate$1.run(RemoteAuthenticate.java:72)<br />
+ weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)<br />
+ weblogic.security.service.SecurityManager.runAs(SecurityManager.java:146)<br />
+ weblogic.security.acl.internal.RemoteAuthenticate.authenticate(RemoteAuthenticate.java:68)<br />
+ weblogic.jndi.WLInitialContextFactoryDelegate.authenticateRemotely(WLInitialContextFactoryDelegate.java:747)<br />
+ weblogic.jndi.WLInitialContextFactoryDelegate.pushSubject(WLInitialContextFactoryDelegate.java:679)<br />
+ weblogic.jndi.WLInitialContextFactoryDelegate.newContext(WLInitialContextFactoryDelegate.java:469)<br />
+ weblogic.jndi.WLInitialContextFactoryDelegate.getInitialContext(WLInitialContextFactoryDelegate.java:376)<br />
+ weblogic.jndi.Environment.getContext(Environment.java:315)<br />
+ weblogic.jndi.Environment.getContext(Environment.java:285)<br />
+ weblogic.jndi.WLInitialContextFactory.getInitialContext(WLInitialContextFactory.java:117)<br />
+ javax.naming.spi.NamingManager.getInitialContext(NamingManager.java:667)<br />
+ javax.naming.InitialContext.getDefaultInitCtx(InitialContext.java:288)<br />
+ javax.naming.InitialContext.init(InitialContext.java:223)<br />
+ javax.naming.InitialContext.<init>(InitialContext.java:197)

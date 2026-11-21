@@ -1,0 +1,65 @@
+---
+layout: post
+title: "Parsing command line arguments in Spring etc"
+date: 2018-09-21T02:50:00.001+02:00
+permalink: /2018/09/parsing-command-line-arguments-in.html
+blogger_id: "5221752388758946419"
+tags: ["cli", "Spring"]
+---
+lots of frameworks are reported here:<br />
+<a href="https://stackoverflow.com/questions/367706/how-do-i-parse-command-line-arguments-in-java/">https://stackoverflow.com/questions/367706/how-do-i-parse-command-line-arguments-in-java/</a><br />
+<br />
+<br />
+but eventually I just want to do it using Spring classes<br />
+<br />
+<a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/core/env/SimpleCommandLinePropertySource.html">https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/core/env/SimpleCommandLinePropertySource.html</a> <br />
+<br />
+<a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/core/env/JOptCommandLinePropertySource.html">https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/core/env/JOptCommandLinePropertySource.html</a> <br />
+<br />
+The advantage in Spring is that you can directly bind the command line arguments to attributes, there is an example here <br />
+<br />
+<a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/core/env/CommandLinePropertySource.html">https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/core/env/CommandLinePropertySource.html</a><br />
+<br />
+<br />
+<br />
+A very simple example:<br />
+<br />
+<pre class="brush: java">package org.pierre.clidemo;
+
+import org.springframework.boot.SpringApplication;
+
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.SimpleCommandLinePropertySource;
+import org.springframework.boot.CommandLineRunner;
+
+
+@SpringBootApplication
+public class DemoApplication implements CommandLineRunner {
+
+ public static void main(String[] args) {
+  SpringApplication.run(DemoApplication.class, args);
+ }
+
+ @Override
+ public void run(String... args) throws Exception {
+  PropertySource ps = new SimpleCommandLinePropertySource(args);
+  // --file=pippo.txt --language=EN_TO_DE --firstOriginal=true
+  System.out.println("file=" + ps.getProperty("file"));
+  System.out.println("language=" + ps.getProperty("language"));
+  System.out.println("firstOriginal=" + ps.getProperty("firstOriginal"));
+ }
+}
+
+</pre><br />
+<br />
+and of course the JOptCommandLinePropertySource version is more robust...<br />
+<br />
+<br />
+Interesting also the <a href="https://projects.spring.io/spring-shell/">https://projects.spring.io/spring-shell/</a> project, but only to write CLI applications<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,49 @@
+---
+layout: post
+title: "Linux disk performance benchmark"
+date: 2012-04-13T23:34:00.000+02:00
+permalink: /2012/04/linux-disk-performance-benchmark.html
+blogger_id: "2467995889681169089"
+tags: ["performance"]
+---
+Suppose you have local and shared disks mounted on your box. You want to find out their relative performance, to assess for instance the performance loss in case you locate your WebLogic files (logs, filestores...) on one or the other.<br />
+<br />
+$ <b>df -kP</b><br />
+<br />
+Filesystem         1024-blocks      Used Available Capacity Mounted on<br />
+/dev/mapper/rootvg-rootlv   8125880   1953072   5753380      26% /<br />
+/dev/mapper/rootvg-optlv  30472188  24894656   4005004      87% /opt<br />
+/dev/mapper/rootvg-homelv   2031440   1939192         0     100% /home<br />
+/dev/mapper/rootvg-tmplv   3047184    161068   2728832       6% /tmp<br />
+/dev/mapper/rootvg-varlv   9141624    687588   7982244       8% /var<br />
+/dev/cciss/c0d0p1       497829     31487    440640       7% /boot<br />
+tmpfs                 12342596         0  12342596       0% /dev/shm<br />
+<br />
+<br />
+<br />
+$ <b><a href="http://en.wikipedia.org/wiki/Hdparm">/sbin/hdparm</a></b> /dev/mapper/rootvg-optlv<br />
+<br />
+/dev/mapper/rootvg-optlv: Permission denied<br />
+<br />
+(hdparm has to be run with root privileges!)<br />
+<br />
+<br />
+iostat<br />
+<pre>Linux 2.6.18-308.1.1.el5 (myhostname)         04/13/2012
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           2.03    0.01    0.20    0.01    0.00   97.76
+
+Device:            tps   Blk_read/s   Blk_wrtn/s   Blk_read   Blk_wrtn
+cciss/c0d0       10.14         8.85       305.48   16119821  556372354
+cciss/c0d0p1      0.00         0.00         0.00       2351        156
+cciss/c0d0p2     10.14         8.85       305.48   16117198  556372198
+dm-0              4.94         0.63        38.96    1148082   70960475
+dm-1             13.75         6.45       108.96   11742082  198439411
+dm-2              5.78         1.29        45.76    2341482   83332872
+dm-3              2.51         0.01        20.04      12186   36492920
+dm-4             11.49         0.48        91.77     871650  167146504
+dm-5              0.00         0.00         0.00       1072          0
+</pre><br />
+<br />
+You can also use <a href="http://www.cyberciti.biz/tips/linux-hard-drive-speed-benchmark-software-howto.html">Bonnie++</a>  but I don't want to install any module.

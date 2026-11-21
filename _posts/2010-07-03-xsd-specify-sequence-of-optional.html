@@ -1,0 +1,34 @@
+---
+layout: post
+title: "XSD, specify sequence of OPTIONAL elements in ANY order"
+date: 2010-07-03T14:18:00.006+02:00
+permalink: /2010/07/xsd-specify-sequence-of-optional.html
+blogger_id: "1859946352597862286"
+tags: ["xsd"]
+---
+<pre class="brush: xml" name="code">&lt;xs:element name="GEOMQFeed"&gt;
+ &lt;xs:complexType&gt;
+  &lt;<b>xs:all</b>&gt;
+   &lt;xs:element ref="HEADER" minOccurs="1" maxOccurs="1"/&gt;
+   &lt;xs:element ref="TAGA" <b>minOccurs="0"</b> maxOccurs="1"/&gt;
+   &lt;xs:element ref="TAGB" minOccurs="0" maxOccurs="1"/&gt;
+   &lt;xs:element ref="TAGC" minOccurs="0" maxOccurs="1"/&gt;
+  &lt;/xs:all&gt;
+ &lt;/xs:complexType&gt;
+&lt;/xs:element&gt;</pre><br />
+<br />
+<b>xs:all</b> allows you to specify TAGA,TAGB,TAGC as well as TAGC,TAGB as well as TAGB,TAGA.<br />
+HEADER is the only compulsory element<br />
+<br />
+The only problem, with xs:all, maxOccurs can be either 0 or 1!<br />
+<br />
+If you want maxOccurs to be unbounded, you will have to use some workaround, as explained here:<br />
+<a href="http://xsd.stylusstudio.com/2003Mar/post09004.htm">http://xsd.stylusstudio.com/2003Mar/post09004.htm</a><br />
+<br />
+The easiest one IMHO is to introduce a new type TAGAList defined as a unbounded sequence of TAGA. GEOMQFeed will be made by a xs:all of TAG?List. <br />
+Reality is that expressing a true arbitrary formal grammar in XSD is wishful thinking.<br />
+<br />
+<br />
+In other words..... with XSD you are only allowed to do what the XSD designers had in mind, not what you actually need :o(<br />
+<br />
+In future I will look into http://www.relaxng.org/&nbsp; which seems a more flexible language than XSD.

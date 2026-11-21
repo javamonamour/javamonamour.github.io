@@ -1,0 +1,61 @@
+---
+layout: post
+title: "Apache Commons ContextedException"
+date: 2017-11-05T21:20:00.001+01:00
+permalink: /2017/11/apache-commons-contextedexception.html
+blogger_id: "566501932862464741"
+tags: ["exceptions"]
+---
+<a href="https://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/exception/ContextedException.html">https://commons.apache.org/proper/commons-lang/apidocs/org/apache/commons/lang3/exception/ContextedException.html</a><br />
+<br />
+Developers often forget to attach context information to their exceptions. So one gets messages like "Unable to connect to server" and we don't know to which server and port the connection was attempted.<br />
+<br />
+Add this to your pom.xml<br />
+<br />
+<pre class="brush: xml">&lt;dependencies&gt;
+  &lt;!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 --&gt;
+  &lt;dependency&gt;
+   &lt;groupId&gt;org.apache.commons&lt;/groupId&gt;
+   &lt;artifactId&gt;commons-lang3&lt;/artifactId&gt;
+   &lt;version&gt;3.6&lt;/version&gt;
+  &lt;/dependency&gt;
+ &lt;/dependencies&gt;
+</pre><br />
+and this is the test code<br />
+<br />
+<pre class="brush: java">package pvexceptions;
+
+import org.apache.commons.lang3.exception.ContextedException;;
+
+public class PVExceptionGenerator {
+ public static void main(String[] args) {
+  try {
+   try {
+    int a = 1 / 0;
+   } catch (Throwable a) {
+    throw new ContextedException("something went wrong in division", a).addContextValue("customer", "Mario").addContextValue("custno", 1234);
+   }
+
+  } catch (Throwable t) {
+   t.printStackTrace();
+  }
+ }
+
+}
+
+</pre><br />
+<br />
+The output is:<br />
+<br />
+org.apache.commons.lang3.exception.ContextedException: something went wrong in division<br />
+Exception Context:<br />
+ [1:customer=Mario]<br />
+ [2:custno=1234]<br />
+---------------------------------<br />
+ at pvexceptions.PVExceptionGenerator.main(PVExceptionGenerator.java:11)<br />
+Caused by: java.lang.ArithmeticException: / by zero<br />
+ at pvexceptions.PVExceptionGenerator.main(PVExceptionGenerator.java:9)<br />
+<br />
+<br />
+<br />
+

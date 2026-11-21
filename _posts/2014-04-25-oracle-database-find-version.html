@@ -1,0 +1,25 @@
+---
+layout: post
+title: "oracle database find version"
+date: 2014-04-25T10:36:00.002+02:00
+permalink: /2014/04/oracle-database-find-version.html
+blogger_id: "1987026626398043770"
+tags: ["Oracle"]
+---
+When you open an SR with Oracle Support you must answer a lot of embarassing questions, like "Database/Version".
+<br/>
+
+Open a connection with SQLDeveloper and run <b>"SELECT * FROM V$VERSION;"</b>
+<br/>
+This is what you get:
+<br/>
+<pre>
+Oracle Database 11g Enterprise Edition Release 11.2.0.3.0 - 64bit Production
+PL/SQL Release 11.2.0.3.0 - Production
+"CORE 11.2.0.3.0 Production"
+TNS for IBM/AIX RISC System/6000: Version 11.2.0.3.0 - Production
+NLSRTL Version 11.2.0.3.0 - Production
+
+</pre>
+
+

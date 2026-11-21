@@ -1,0 +1,113 @@
+---
+layout: post
+title: "Swagger getting started"
+date: 2018-12-30T10:18:00.002+01:00
+permalink: /2018/12/swagger-getting-started.html
+blogger_id: "538691183721171688"
+tags: ["swagger"]
+---
+At first I tried to go to http://editor.swagger.io/ , generate the Maven project to generate a RestEasy-EAP server, build and deploy to Wildfly 12. <br />
+<br />
+There I got this error:<br />
+<br />
+<br />
+ERROR [org.jboss.as.controller.management-operation] (Controller Boot Thread) WFLYCTL0013: Operation (&quot;deploy&quot;) failed - address: ([(&quot;deployment&quot; =&gt; &quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war&quot;)]) - failure description: {<br />
+&quot;WFLYCTL0412: Required services that are not installed:&quot; =&gt; [<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;org.jboss.resteasy.plugins.server.servlet.Filter30Dispatcher\&quot;.START&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.faces.webapp.FacetTag\&quot;.START&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher\&quot;.START&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.jndiDependencyService&quot;,<br />
+&quot;jboss.naming.context.java.module.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0\&quot;.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0\&quot;.DefaultDataSource&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.servlet.jsp.jstl.tlv.ScriptFreeTLV\&quot;.START&quot;,<br />
+&quot;jboss.undertow.deployment.default-server.default-host./v2&quot;,<br />
+&quot;jboss.naming.context.java.jboss.datasources.ExampleDS&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;com.sun.faces.config.ConfigureListener\&quot;.START&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.servlet.jsp.jstl.tlv.PermittedTaglibsTLV\&quot;.START&quot;<br />
+],<br />
+&quot;WFLYCTL0180: Services with missing/unavailable dependencies&quot; =&gt; [<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher\&quot;.START is missing [jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.jndiDependencyService]&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.servlet.jsp.jstl.tlv.ScriptFreeTLV\&quot;.START is missing [jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.jndiDependencyService]&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.faces.webapp.FacetTag\&quot;.START is missing [jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.jndiDependencyService]&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.jndiDependencyService is missing [jboss.naming.context.java.module.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0\&quot;.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0\&quot;.DefaultDataSource]&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;org.jboss.resteasy.plugins.server.servlet.Filter30Dispatcher\&quot;.START is missing [jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.jndiDependencyService]&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.servlet.jsp.jstl.tlv.PermittedTaglibsTLV\&quot;.START is missing [jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.jndiDependencyService]&quot;,<br />
+&quot;jboss.undertow.deployment.default-server.default-host./v2 is missing [jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;com.sun.faces.config.ConfigureListener\&quot;.START, jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;org.jboss.resteasy.plugins.server.servlet.Filter30Dispatcher\&quot;.START, jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.servlet.jsp.jstl.tlv.ScriptFreeTLV\&quot;.START, jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.faces.webapp.FacetTag\&quot;.START, jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.servlet.jsp.jstl.tlv.PermittedTaglibsTLV\&quot;.START, jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher\&quot;.START]&quot;,<br />
+&quot;jboss.naming.context.java.module.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0\&quot;.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0\&quot;.DefaultDataSource is missing [jboss.naming.context.java.jboss.datasources.ExampleDS]&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;com.sun.faces.config.ConfigureListener\&quot;.START is missing [jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.jndiDependencyService]&quot;,<br />
+&quot;jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.deploymentCompleteService is missing [jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;com.sun.faces.config.ConfigureListener\&quot;.START, jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;org.jboss.resteasy.plugins.server.servlet.Filter30Dispatcher\&quot;.START, jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.servlet.jsp.jstl.tlv.ScriptFreeTLV\&quot;.START, jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.faces.webapp.FacetTag\&quot;.START, jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;javax.servlet.jsp.jstl.tlv.PermittedTaglibsTLV\&quot;.START, jboss.undertow.deployment.default-server.default-host./v2, jboss.deployment.unit.\&quot;swagger-jaxrs-resteasy-eap-server-1.0.0.war\&quot;.component.\&quot;org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher\&quot;.START]&quot;<br />
+]<br />
+}<br />
+<br />
+<br />
+<br />
+and the deployment fails. I felt discouraged and I turned to something simpler.<br />
+<br />
+First I will implement my own Rest Service:<br />
+<br />
+<a href="https://spring.io/guides/gs/rest-service/">https://spring.io/guides/gs/rest-service/</a><br />
+<br />
+then I run as http://localhost:8080/greeting<br />
+<br />
+Then I move to adding Swagger to this REST webapp https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api.<br />
+I add the SwaggerConfig class with the @EnableSwagger2 <br />
+<br />
+<pre class="brush: java">import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+@Configuration
+@EnableSwagger2
+public class SwaggerConfig {                                    
+    @Bean
+    public Docket api() { 
+        return new Docket(DocumentationType.SWAGGER_2)  
+          .select()                                  
+          .apis(RequestHandlerSelectors.any())              
+          .paths(PathSelectors.any())                          
+          .build();                                           
+    }
+}
+</pre><br />
+<br />
+<br />
+Here I see something comforting<br />
+<br />
+<br />
+s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped &quot;{[/greeting]}&quot; onto public org.springframework.gsrestservice.Greeting org.springframework.gsrestservice.GreetingController.greeting(java.lang.String)<br />
+s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped &quot;{[/swagger-resources/configuration/ui]}&quot; onto public org.springframework.http.ResponseEntity&lt;springfox.documentation.swagger.web.UiConfiguration&gt; springfox.documentation.swagger.web.ApiResourceController.uiConfiguration()<br />
+s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped &quot;{[/swagger-resources]}&quot; onto public org.springframework.http.ResponseEntity&lt;java.util.List&lt;springfox.documentation.swagger.web.SwaggerResource&gt;&gt; springfox.documentation.swagger.web.ApiResourceController.swaggerResources()<br />
+s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped &quot;{[/swagger-resources/configuration/security]}&quot; onto public org.springframework.http.ResponseEntity&lt;springfox.documentation.swagger.web.SecurityConfiguration&gt; springfox.documentation.swagger.web.ApiResourceController.securityConfiguration()<br />
+pertySourcedRequestMappingHandlerMapping : Mapped URL path [/v2/api-docs] onto method [public <br />
+<br />
+<br />
+so now the endpoints are:<br />
+<br />
+http://localhost:8080/greeting<br />
+<br />
+http://localhost:8080/swagger-resources/configuration/ui<br />
+<br />
+http://localhost:8080/swagger-resources/<br />
+<br />
+http://localhost:8080/swagger-resources/configuration/security<br />
+<br />
+http://localhost:8080/v2/api-docs<br />
+<br />
+<br />
+Then I add the io.springfox:springfox-swagger-ui:2.9.2 dependency<br />
+<br />
+and I get the Swagger-UI at http://localhost:8080/swagger-ui.html<br />
+<br />
+My code is available here <a href="https://github.com/vernetto/springbootrestswagger">https://github.com/vernetto/springbootrestswagger</a><br />
+<br />
+The Baeldung code is here <a href="https://github.com/eugenp/tutorials/tree/master/spring-security-rest">https://github.com/eugenp/tutorials/tree/master/spring-security-rest</a><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

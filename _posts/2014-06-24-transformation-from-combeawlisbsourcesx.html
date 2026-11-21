@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Transformation from com.bea.wli.sb.sources.XmlObjectSource to com.bea.wli.sb.sources.MessageContextSource is not supported"
+date: 2014-06-24T13:23:00.003+02:00
+permalink: /2014/06/transformation-from-combeawlisbsourcesx.html
+blogger_id: "3433601633481215738"
+tags: ["OSB"]
+---
+in OSB, when using a SOAP with Attachment in a Proxy with OWSM Policies, you get this error message:
+
+<br/><br/>
+Transformation from com.bea.wli.sb.sources.XmlObjectSource to com.bea.wli.sb.sources.MessageContextSource is not supported
+
+<br/><br/>
+
+This is described in Oracle DOC "Combined use of SOAP with Attachments and OWSM Policies now Supported in OSB 11.1.1.7 (Doc ID 1347447.1)".
+
+<br/><br/>
+The solution is: upgrade to OSB 11.1.1.7. Or give up attachments. Or give up OWSM. Ok don't tell me I am stupid because I already know.

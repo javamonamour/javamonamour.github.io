@@ -1,0 +1,107 @@
+---
+layout: post
+title: "WLST move JMS messages"
+date: 2011-09-27T03:42:00.000+02:00
+permalink: /2011/09/wlst-move-jms-messages.html
+blogger_id: "4019167817772836448"
+tags: ["jms"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2015-10-26
+    html: "Hi,<br /><br />when I use cmo.getMessages(&#39;&#39;,0) I get the below error:<br /><br />wls:/PRD_RD/serverRuntime/JMSRuntime/wls_server1.jms/JMSServers/DXService_JMSServer/Destinations/DX_SystemModule!AD_STORE&gt; cursor = cmo.getMessages(&#39;&#39;,0)<br />Traceback (innermost last):<br />  File &quot;&quot;, line 1, in ?<br />java.lang.UnsupportedOperationException: getMessages(String, Integer) not valid for class weblogic.jms.backend.BEDestinationRuntimeMBeanImpl<br />        at weblogic.jms.backend.BEMessageManagementRuntimeDelegate.getMessages(BEMessageManagementRuntimeDelegate.java:117)<br />        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)<br />        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)<br />        at java.lang.reflect.Method.invoke(Method.java:597)<br />        at weblogic.management.jmx.modelmbean.WLSModelMBean.invoke(WLSModelMBean.java:437)<br />        at com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.invoke(DefaultMBeanServerInterceptor.java:836)<br />        at com.sun.jmx.mbeanserver.JmxMBeanServer.invoke(JmxMBeanServer.java:761)<br />        at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase$16.run(WLSMBeanServerInterceptorBase.java:449)<br />        at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase.invoke(WLSMBeanServerInterceptorBase.java:447)<br />        at weblogic.management.mbeanservers.internal.JMXContextInterceptor.invoke(JMXContextInterceptor.java:263)<br />        at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase$16.run(WLSMBeanServerInterceptorBase.java:449)<br />        at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase.invoke(WLSMBeanServerInterceptorBase.java:447)<br />        at weblogic.management.mbeanservers.internal.SecurityInterceptor.invoke(SecurityInterceptor.java:444)<br />        at weblogic.management.jmx.mbeanserver.WLSMBeanServer.invoke(WLSMBeanServer.java:323)<br />        at weblogic.management.mbeanservers.internal.JMXConnectorSubjectForwarder$11$1.run(JMXConnectorSubjectForwarder.java:663)<br />        at weblogic.management.mbeanservers.internal.JMXConnectorSubjectForwarder$11.run(JMXConnectorSubjectForwarder.java:661)<br />        at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)<br />        at weblogic.management.mbeanservers.internal.JMXConnectorSubjectForwarder.invoke(JMXConnectorSubjectForwarder.java:654)<br />        at javax.management.remote.rmi.RMIConnectionImpl.doOperation(RMIConnectionImpl.java:1427)<br />        at javax.management.remote.rmi.RMIConnectionImpl.access$200(RMIConnectionImpl.java:72)<br />        at javax.management.remote.rmi.RMIConnectionImpl$PrivilegedOperation.run(RMIConnectionImpl.java:1265)<br />        at javax.management.remote.rmi.RMIConnectionImpl.doPrivilegedOperation(RMIConnectionImpl.java:1367)<br />        at javax.management.remote.rmi.RMIConnectionImpl.invoke(RMIConnectionImpl.java:788)<br />        at javax.management.remote.rmi.RMIConnectionImpl_WLSkel.invoke(Unknown Source)<br />        at weblogic.rmi.internal.BasicServerRef.invoke(BasicServerRef.java:668)<br />        at weblogic.rmi.internal.BasicServerRef.handleRequest(BasicServerRef.java:518)<br />        at weblogic.rmi.internal.wls.WLSExecuteRequest.run(WLSExecuteRequest.java:119)<br />        at weblogic.work.ExecuteThread.run(ExecuteThread.java:221)"
+  - author: "san"
+    date: 2018-02-05
+    html: "Hello<br />Thanks for script, I am getting below error could you please let me know how to resolve.<br />Issue is at line 8 not at line 24... <br /><br />Getting the traget...<br />No stack trace available.<br />Problem invoking WLST - Traceback (innermost last):<br />File &quot;/opt/oracle/fmw_12_2_1_2_0/wlserver/server/bin/moveQueuemessages.py&quot;,  line 8, in ?<br />File &quot;&quot;, line 168, in cd<br />File &quot;&quot;, line 553, in raiseWLSTException<br />WLSTException: Error cding to the MBean<br /><br />Thanks in advance"
+  - author: "vernetto"
+    date: 2018-02-06
+    html: "san, the best thing is to execute manually, line by line, the script, and interactively examine your MBean tree using ls() . Probably you are using a different name for the JMS server or other resources..."
+---
+Thanks to our friends of MiddleWare Magic:<br />
+<br />
+<a href="http://middlewaremagic.com/weblogic/?p=6765">http://middlewaremagic.com/weblogic/?p=6765</a><br />
+<br />
+that I will never praise enough...<br />
+<br />
+<pre name="code" class="brush: java">
+
+
+connect('weblogic', 'welcome1', 't3://pierrepc:7011')
+easeSyntax()
+serverRuntime()
+cd('/JMSRuntime/ms1.jms/JMSServers/jmsserver1/Destinations/MS1SystemModule!Q2')
+q2 = cmo
+cd('/JMSRuntime/ms1.jms/JMSServers/jmsserver1/Destinations/MS1SystemModule!Q1')
+q1 = cmo
+#THIS WILL MOVE MESSAGES
+q1.moveMessages('', q2.getDestinationInfo())
+</pre>
+
+
+
+<br/>
+
+To move messages in small chunks, rather than all in a go:
+
+
+<pre name="code" class="brush: java">
+
+from weblogic.jms.extensions import JMSMessageInfo
+connect('weblogic', 'weblogic1', 't3://acme.com:10001')  
+easeSyntax()
+serverRuntime()
+
+chunkSize = 25
+
+cd /JMSRuntime/osbpl1ms1.jms/JMSServers/CommonJmsServer1/Destinations/GM_StockDownloadJMSModule!CommonJmsServer1@StockDownloadReprocessQ
+sourceQueue = cmo
+cd /JMSRuntime/osbpl1ms1.jms/JMSServers/CommonJmsServer1/Destinations/GM_StockDownloadJMSModule!CommonJmsServer1@StockDownloadQ
+destinationQueue = cmo
+
+sourceCursor = sourceQueue.getMessages('', 0)
+sourceCursorSize = sourceQueue.getCursorSize(sourceCursor)
+print "there are", sourceCursorSize, "in source"
+
+sourceMessages = sourceQueue.getNext(sourceCursor, chunkSize )
+
+if sourceMessages != None:
+    for message in sourceMessages:
+        msgwithbody = JMSMessageInfo(message)
+        messageId = msgwithbody.getMessage().getJMSMessageID()
+        print 'Message ID           - ' + messageId
+        sourceQueue.moveMessages("JMSMessageID='" + messageId + "'", destinationQueue.getDestinationInfo())
+
+</pre>
+
+<br/><br/>
+
+Additional useful code:
+<br/><br/>
+
+#move messages to destination<br/>
+sourceQueue.moveMessages('', destinationQueue.getDestinationInfo())
+<br/><br/>
+#send them back to origin<br/>
+destinationQueue.moveMessages('', sourceQueue.getDestinationInfo())
+<br/><br/>
+
+Move a message based on a Selector  messageId = "some id":<br/><br/>
+
+sourceQueue.moveMessages("JMSMessageID='ID:&lt;64972.1369647706567.0>'", destinationQueue.getDestinationInfo())
+
+
+
+Funnily, if I run:<br/><br/>
+
+destinationQueue.importMessages(sourceMessages, True)
+I get an error message:
+<br/><br/>
+importMessages operation not supported with replaceOnly=true
+<br/><br/>
+
+
+See also <a href="http://weblogicserver.blogspot.com/2010/07/using-wlst-script-to-list-messages-from.html?_sm_au_=iVVmZBV2WBRm0Dfr">http://weblogicserver.blogspot.com/2010/07/using-wlst-script-to-list-messages-from.html?_sm_au_=iVVmZBV2WBRm0Dfr</a> for  excellent coding examples.
+
+
+
+
+

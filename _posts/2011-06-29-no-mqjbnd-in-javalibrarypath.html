@@ -1,0 +1,8 @@
+---
+layout: post
+title: "no mqjbnd in java.library.path"
+date: 2011-06-29T21:46:00.001+02:00
+permalink: /2011/06/no-mqjbnd-in-javalibrarypath.html
+blogger_id: "5266473556215446461"
+---
+this error occurs only if you use BINDINGS mode to connect to QueueManager running on the same box. If you use TCP, no Native Library is required.<b><br><br>no mqjbnd in java.library.path</b><br><br>copy mqjbnd.dll, mqjexitstub02.dll and PgmIpLayer.dll to c:/eclipse directory (or anywhere in your System property java.library.path, do a System.out.println(System.getProperty(&quot;java.library.path&quot;))  to find out...  )<br>   <br><b>mqjbnd.dll: Can&#39;t find dependent libraries</b><br><br>just install locally MQ<br><br><br> 

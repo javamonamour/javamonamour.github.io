@@ -1,0 +1,39 @@
+---
+layout: post
+title: "FML and MFL"
+date: 2010-05-19T09:41:00.000+02:00
+permalink: /2010/05/fml-and-mfl.html
+blogger_id: "6739558568378153955"
+tags: ["fml", "mfl"]
+---
+When working with Tuxedo one gets confused between FML and FML.<br />
+<br />
+<br />
+The way I understand it is that:<br />
+<br />
+FML is a data format standard proprietary to Tuxedo.<br />
+MFL is a METADATA about an arbitrary binary data format.<br />
+<br />
+<br />
+<br />
+<span style="font-size: large;"><b>FML</b></span><br />
+<br />
+<a href="http://en.wikipedia.org/wiki/Tuxedo_%28software%29">http://en.wikipedia.org/wiki/Tuxedo_%28software%29</a><br />
+<br />
+Flexible buffer formats<br />
+<br />
+Tuxedo applications can utilize a variety of message formats depending upon the type of data that is to be passed. One of the most popular formats is the FML buffer format which is much like a binary XML or ASN.1 format. FML buffers can contain an arbitrary number of named fields of arbitrary type. Fields can be repeated and nested. As it is a self describing binary format, the processing of fields incurs very little overhead in comparison to the parsing necessary to support something like XML. VIEW buffers are essentially records, C structures, or COBOL copybooks. A VIEW buffer has an external description which allows Tuxedo to access the fields within it if necessary for things like data dependent routing. Other buffer formats include XML, CARRAY (opaque binary data), STRING, and MBSTRING (a string buffer containing multibyte characters.) Tuxedo can automatically and transparently convert FML buffers to and from XML buffers.<br />
+<br />
+There is also support for user-developed buffer types (for example JamFlex buffers defined by Tuxedo version of Panther RAD toolset).<br />
+<br />
+<br />
+<br />
+<span style="font-size: large;"><b>MFL</b></span><br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E13171_01/alsb/docs25/consolehelp/mfls.html">http://download.oracle.com/docs/cd/E13171_01/alsb/docs25/consolehelp/mfls.html</a><br />
+<br />
+A Message Format Language (MFL) document is a specialized XML document used to describe the layout of binary data. It is a BEA proprietary language used to define rules to transform formatted binary data into XML data. An MFL document conforms to the mfl.dtd, which includes elements and attributes used to describe each field of data, as well as groupings of fields (groups), repetition, and aggregation. <br />
+<br />
+When you create a business services or proxy services of Messaging Service type, you can select MFL types as the request message type or the response message type of the service. <br />
+<br />
+You use BEA Format Builder to create MFLs. When you define the hierarchy of a binary record, the layout of fields, and the grouping of fields and groups, the information is saved as an MFL document that can then be used to perform run-time translations. An MFL document can also be used in Format Builder to generate the corresponding DTD that describes its content model. To learn how to use the Format Builder, see the Format Builder Online Help.

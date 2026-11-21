@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Import an existing Private Key (.key file) into a JKS store"
+date: 2013-08-28T16:39:00.001+02:00
+permalink: /2013/08/import-existing-private-key-key-file.html
+blogger_id: "4831132053207346786"
+tags: ["jks", "keytool"]
+---
+Sounds easy but it's not. I have an existing .key (private key) and .crt file (certificate for public key) and I want to import them into a JKS.
+
+<br/><br/>
+
+<a href="http://stackoverflow.com/questions/906402/importing-an-existing-x509-certificate-and-private-key-in-java-keystore-to-use-i
+">http://stackoverflow.com/questions/906402/importing-an-existing-x509-certificate-and-private-key-in-java-keystore-to-use-i
+</a>
+
+<br/><br/>
+The only way seems to go through an intermediate pkcs12 store, to be imported later in the JKS. So much fuss for a simple operation which should be natively supported.
+
+<br/><br/>
+
+<a href="http://cunning.sharp.fm/2008/06/importing_private_keys_into_a.html">http://cunning.sharp.fm/2008/06/importing_private_keys_into_a.html</a>
+
+<br/><br/>
+
+In fact, puppet JAVA_JKS module does this:
+
+<br/><br/>
+openssl pkcs12 -export -passout stdin -in /home/soa/jkstest/source/acme.com.crt -inkey /home/soa/jkstest/source/acme.com.key -name test4acme.com
+<br/><br/>
+
+
+when you ask him to import .crt and .key into a keystore:
+<br/><br/>
+<pre>
+    java_ks { "${nesoa2env}acme.com" :
+        ensure       => latest,
+        certificate  => "${certsFolder}acme.com.crt",
+        private_key  => "${certsFolder}acme.com.key", 
+        target       => "${targetJKS}",
+        password     => "${identityPassword}",
+        trustcacerts => false,
+    }
+
+</pre>
+
+

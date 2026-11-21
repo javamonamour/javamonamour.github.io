@@ -1,0 +1,37 @@
+---
+layout: post
+title: "XMLBeans, I can be so stupid..."
+date: 2010-05-04T18:47:00.000+02:00
+permalink: /2010/05/xmlbeans-i-can-i-be-so-stupid.html
+blogger_id: "5492527045534434868"
+tags: ["xmlbeans"]
+blogger_comments:
+  - author: "jg"
+    date: 2015-11-05
+    html: "Thanks, this was actually very helpful!"
+---
+while doing this<br />
+<br />
+XmlObject xmlObject = XmlObject.Factory.parse("emp.xsd");<br />
+<br />
+I am getting this<br />
+<br />
+Exception in thread "Main Thread" org.apache.xmlbeans.XmlException: error: Unexpected element: CDATA<br />
+&nbsp;&nbsp;&nbsp; at org.apache.xmlbeans.impl.store.Locale$SaxLoader.load(Locale.java:3486)<br />
+&nbsp;&nbsp;&nbsp; at org.apache.xmlbeans.impl.store.Locale.parse(Locale.java:712)<br />
+&nbsp;&nbsp;&nbsp; at org.apache.xmlbeans.impl.store.Locale.parseToXmlObject(Locale.java:696)<br />
+&nbsp;&nbsp;&nbsp; at org.apache.xmlbeans.impl.store.Locale.parseToXmlObject(Locale.java:683)<br />
+&nbsp;&nbsp;&nbsp; at org.apache.xmlbeans.impl.schema.SchemaTypeLoaderBase.parse(SchemaTypeLoaderBase.java:208)<br />
+&nbsp;&nbsp;&nbsp; at org.apache.xmlbeans.XmlObject$Factory.parse(XmlObject.java:580)<br />
+&nbsp;&nbsp;&nbsp; at com.acme.xquerygenerator.XSDParser.main(XSDParser.java:8)<br />
+Caused by: org.xml.sax.SAXParseException: Unexpected element: CDATA<br />
+&nbsp;&nbsp;&nbsp; at org.apache.xmlbeans.impl.piccolo.xml.Piccolo.reportFatalError(Piccolo.java:1038)<br />
+&nbsp;&nbsp;&nbsp; at org.apache.xmlbeans.impl.piccolo.xml.Piccolo.parse(Piccolo.java:723)<br />
+&nbsp;&nbsp;&nbsp; at org.apache.xmlbeans.impl.store.Locale$SaxLoader.load(Locale.java:3454)<br />
+&nbsp;&nbsp;&nbsp; ... 6 more<br />
+<br />
+and, of course, the answer is that I should do this:<br />
+<br />
+XmlObject xmlObject = XmlObject.Factory.parse(new File("emp.xsd"));<br />
+<br />
+I am simply too stupid to survive.

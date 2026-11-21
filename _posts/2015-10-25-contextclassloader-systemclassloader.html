@@ -1,0 +1,87 @@
+---
+layout: post
+title: "ContextClassLoader, SystemClassLoader,  CurrentClassLoader"
+date: 2015-10-25T11:31:00.000+01:00
+permalink: /2015/10/contextclassloader-systemclassloader.html
+blogger_id: "7200840889977209193"
+tags: ["classloaders"]
+---
+If you run this code as a Java Application (no JEE container):
+<br/><br/>
+<pre class="brush: java">
+public class BootstrapCLTest {
+    public static void main(String[] args) {
+ BootstrapCLTest bootstrapCLTest = new BootstrapCLTest();
+ bootstrapCLTest.go();
+    }
+
+    private void go() {
+
+ System.out.println("1 " + String.class.getClassLoader());
+ System.out.println("2 " + ClassLoader.getSystemClassLoader ());
+ System.out.println("3 " + this.getClass().getClassLoader());
+ System.out.println("4 " + Thread.currentThread().getContextClassLoader());
+ System.out.println("5 " + Thread.currentThread().getContextClassLoader().getParent());
+ System.out.println("6 " + Thread.currentThread().getContextClassLoader().getParent().getParent());
+    }
+
+}
+
+</pre>
+<br/><br/>
+you get this (parentesis are mine):
+<br/><br/>
+<pre>
+1 null (=bootstrap CL)
+2 sun.misc.Launcher$AppClassLoader@1bd06bf (=application CL)
+3 sun.misc.Launcher$AppClassLoader@1bd06bf (=application CL)
+4 sun.misc.Launcher$AppClassLoader@1bd06bf (=application CL)
+5 sun.misc.Launcher$ExtClassLoader@1061299 (=extension CL)
+6 null (=bootstrap CL)
+</pre>
+<br/><br/>
+that is, in this simple case the SystemClassLoader == ApplicationClassLoader == ContextClassLoader
+<br/><br/>
+The first null is because the String class is loaded by the Bootstrap classloader, which is NOT represented as a ClassLoader object. The Bootstrap will then load the Extension CL, who in turn loads the Application CL.
+<br/><br/>
+Running a similar code in a JSP is more interesting, because here the JEE container (WebLogic in this case) will add its own CL:
+<br/><br/>
+<pre class="brush: java">
+ System.out.println("1 " + String.class.getClassLoader());
+ System.out.println("2 " + ClassLoader.getSystemClassLoader ());
+ System.out.println("3 " + this.getClass().getClassLoader());
+ System.out.println("4 " + Thread.currentThread().getContextClassLoader());
+ System.out.println("5 " + Thread.currentThread().getContextClassLoader().getParent());
+ System.out.println("6 " + Thread.currentThread().getContextClassLoader().getParent().getParent());
+ System.out.println("7 " + Thread.currentThread().getContextClassLoader().getParent().getParent().getParent());
+ System.out.println("8 " + Thread.currentThread().getContextClassLoader().getParent().getParent().getParent().getParent());
+ System.out.println("9 " + Thread.currentThread().getContextClassLoader().getParent().getParent().getParent().getParent().getParent());
+ System.out.println("10 " + Thread.currentThread().getContextClassLoader().getParent().getParent().getParent().getParent().getParent().getParent());
+</pre>
+<br/><br/>
+
+the result is:
+<br/><br/>
+<pre>
+1 null
+2 sun.misc.Launcher$AppClassLoader@fc5b01
+3 weblogic.servlet.jsp.JspClassLoader@1bfdb6f finder: weblogic.utils.classloaders.CodeGenClassFinder@137e701 annotation:
+4 weblogic.utils.classloaders.ChangeAwareClassLoader@1cc3dd4 finder: weblogic.utils.classloaders.CodeGenClassFinder@11f2691 annotation: _auto_generated_ear_@CLTestWeb
+5 weblogic.utils.classloaders.FilteringClassLoader@1d16e3 finder: weblogic.utils.classloaders.CodeGenClassFinder@1c9a7b5 annotation: _auto_generated_ear_@CLTestWeb
+6 weblogic.utils.classloaders.GenericClassLoader@ceb98d finder: weblogic.utils.classloaders.CodeGenClassFinder@217181 annotation: _auto_generated_ear_@
+7 weblogic.utils.classloaders.FilteringClassLoader@1a308be finder: weblogic.utils.classloaders.CodeGenClassFinder@92f8f0 annotation:
+8 weblogic.utils.classloaders.GenericClassLoader@1865594 finder: weblogic.utils.classloaders.CodeGenClassFinder@fcfe6b annotation:
+9 sun.misc.Launcher$AppClassLoader@fc5b01
+10 sun.misc.Launcher$ExtClassLoader@1353d27
+
+</pre>
+
+that is, WebLogic inserts 2 layers of GenericClassLoader or ChangeAwareClassLoader plus FilteringClassLoader between the War Application and the System Classloader.
+
+
+<br/><br/>
+
+See also <a href="/2015/09/playing-with-cat-and-classloaders.html">/2015/09/playing-with-cat-and-classloaders.html</a>
+
+<br/><br/>
+

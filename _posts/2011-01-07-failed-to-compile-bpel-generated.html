@@ -1,0 +1,194 @@
+---
+layout: post
+title: "Failed to compile bpel generated classes"
+date: 2011-01-07T13:20:00.002+01:00
+permalink: /2011/01/failed-to-compile-bpel-generated.html
+blogger_id: "4465144910037621528"
+tags: ["BPEL"]
+---
+<i><br />
+<br />
+Error(38,37): Failed to compile bpel generated classes.<br />
+failure to compile the generated BPEL classes for BPEL process "BPELProcess3" of composite "default/PVPreactivationPhase2!1.0"<br />
+The class path setting is incorrect.<br />
+Ensure that the class path is set correctly. If this happens on the server side, verify that the custom classes or jars which this BPEL process is depending on are deployed correctly. Also verify that the run time is using the same release/version.<br />
+</i><br />
+<br />
+<a href="http://forums.oracle.com/forums/thread.jspa?threadID=950504">here</a> some other people facing a similar issue<br />
+<br />
+I do this:<br />
+<br />
+<b>ant -verbose -f ant-sca-compile.xml -Dscac.input=C:/<br />
+JDeveloper/mywork/PVPreactivation/PVPreactivationPhase2/composite.xml</b><br />
+<br />
+<br />
+the classpath is a monster:<br />
+<br />
+<br />
+C:\JDeveloper\mywork\PVPreactivation\PVPreactivationPhase2\SCA-INF\classes<br />
+C:\Oracle1\Middleware\jdeveloper\bin<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\fabric-url-handler_11.1.1.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.client_11.1.1\oracle.bpm.bpm-services.interface.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.client_11.1.1\oracle.bpm.web-resources.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.project_11.1.1\oracle.bpm.project.catalog.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.project_11.1.1\oracle.bpm.project.compile.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.project_11.1.1\oracle.bpm.project.io.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.project_11.1.1\oracle.bpm.project.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.project_11.1.1\oracle.bpm.project.model.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle-bpm.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.analytics.actions.ejb.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.analytics.common.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.analytics.dashboard.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.analytics.measurement.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.analytics.persistence.ejb.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.boot.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.bpm-services.implementation.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.bpm-services.internal.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.bpmobject.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.bpmobject.runtime.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.compiler.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.compiler.xpath.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.core.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.fdi.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.fusion.repository.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.fusion.sca.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.fusion.scac.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.fusion.soa.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.lib.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.metadata.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.papi.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.parser.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.pml.service.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.runtime.bpmn-engine.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.runtime.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.vfilesystem.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.xml.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.rules_11.1.1\rl.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.rules_11.1.1\rulesdk2.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.bpel_11.1.1\orabpel-common.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.bpel_11.1.1\orabpel-thirdparty.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.bpel_11.1.1\orabpel-validator.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.bpel_11.1.1\orabpel.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.fabric_11.1.1\fabric-runtime.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.fabric_11.1.1\soa-infra-tools.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.fabric_11.1.1\testfwk-xbeans.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.mediator_11.1.1\mediator_client.jar<br />
+C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.workflow_11.1.1\bpm-services.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\builtin_serialization.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\core_services_client.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\jaxm.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\jaxrpc.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\saaj.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\security-ng.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\security2-ng.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\security_providers_client.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\taxonomy_client_v3.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\uddiclient_api_v3.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\uddiclient_core.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\wasp.jar<br />
+C:\Oracle1\Middleware\jdeveloper\uddi\lib\wsdl2uddi_client_v3.jar<br />
+C:\Oracle1\Middleware\modules\com.bea.core.apache.commons.collections_3.2.0.jar<br />
+C:\Oracle1\Middleware\modules\com.bea.core.apache.commons.lang_2.1.0.jar<br />
+C:\Oracle1\Middleware\modules\com.bea.core.weblogic.workmanager_1.8.0.0.jar<br />
+C:\Oracle1\Middleware\modules\com.bea.core.xml.xmlbeans_2.2.0.0.jar<br />
+C:\Oracle1\Middleware\modules\javax.management.j2ee_1.0.jar<br />
+C:\Oracle1\Middleware\modules\javax.servlet_1.0.0.0_2-5.jar<br />
+C:\Oracle1\Middleware\modules\javax.xml.rpc_1.2.1.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\commonj.sdo_2.1.0.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.adf.model_11.1.1\adfbcsvc-share.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.adf.model_11.1.1\adfm.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.adf.share.ca_11.1.1\adf-share-base.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.adf.share.ca_11.1.1\adf-share-ca.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.adf.share_11.1.1\adf-share-support.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.adf.share_11.1.1\adflogginghandler.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.adf.share_11.1.1\jsp-el-api.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.bali.share_11.1.1\share.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.classloader_11.1.1.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.dms_11.1.1\dms.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.fabriccommon_11.1.1\fabric-common.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.http_client_11.1.1.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.javacache_11.1.1\cache.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.jmx_11.1.1\jmxframework.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.jmx_11.1.1\jmxspi.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.logging-utils_11.1.1.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.mds_11.1.1\mdsrt.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.mds_11.1.1\oramds.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.nlsrtl_11.1.0\orai18n-mapping.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.odl_11.1.1\ojdl.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.ucp_11.1.0.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.webservices_11.1.1\orawsdl.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.webservices_11.1.1\wsclient.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.wsm.common_11.1.1\wsm-policy-core.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.wsm.common_11.1.1\wsm-secpol.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.xdk_11.1.0\xml.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.xdk_11.1.0\xmlparserv2.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\oracle.xmlef_11.1.1\xmlef.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\org.apache.commons.beanutils_1.6.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\org.apache.commons.digester_1.8.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\org.apache.commons.logging_1.0.4.jar<br />
+C:\Oracle1\Middleware\oracle_common\modules\org.springframework_2.0.jar<br />
+C:\Oracle1\Middleware\oracle_common\soa\modules\oracle.soa.mgmt_11.1.1\soa-infra-mgmt.jar<br />
+C:\Oracle1\Middleware\oracle_common\webservices\wsclient_extended.jar<br />
+C:\Oracle1\Middleware\wlserver_10.3\server\ext\jdbc\oracle\11g\ojdbc5.jar<br />
+C:\Oracle1\Middleware\wlserver_10.3\server\lib\wldb2.jar<br />
+C:\Oracle1\Middleware\wlserver_10.3\server\lib\wlsqlserver.jar<br />
+C:\Program Files\Java\jdk1.6.0_21\lib\tools.jar<br />
+C:\apps\ant\lib\ant-antlr.jar<br />
+C:\apps\ant\lib\ant-apache-bcel.jar<br />
+C:\apps\ant\lib\ant-apache-bsf.jar<br />
+C:\apps\ant\lib\ant-apache-log4j.jar<br />
+C:\apps\ant\lib\ant-apache-oro.jar<br />
+C:\apps\ant\lib\ant-apache-regexp.jar<br />
+C:\apps\ant\lib\ant-apache-resolver.jar<br />
+C:\apps\ant\lib\ant-apache-xalan2.jar<br />
+C:\apps\ant\lib\ant-commons-logging.jar<br />
+C:\apps\ant\lib\ant-commons-net.jar<br />
+C:\apps\ant\lib\ant-jai.jar<br />
+C:\apps\ant\lib\ant-javamail.jar<br />
+C:\apps\ant\lib\ant-jdepend.jar<br />
+C:\apps\ant\lib\ant-jmf.jar<br />
+C:\apps\ant\lib\ant-jsch.jar<br />
+C:\apps\ant\lib\ant-junit.jar<br />
+C:\apps\ant\lib\ant-launcher.jar<br />
+C:\apps\ant\lib\ant-netrexx.jar<br />
+C:\apps\ant\lib\ant-nodeps.jar<br />
+C:\apps\ant\lib\ant-swing.jar<br />
+C:\apps\ant\lib\ant-testutil.jar<br />
+C:\apps\ant\lib\ant.jar<br />
+C:\bea11\jdk160_18\bin<br />
+<br />
+<br />
+<br />
+the error message suggests to open C:\Users\pierre\AppData\Local\Temp\out.err<br />
+<br />
+there I find only:<br />
+<br />
+<i><br />
+WARNING: CubeProcessor.compileGeneratedClasses() classpath is: C:\JDeveloper\mywork\PVPreactivation\PVPreactivationPhase2\SCA-INF\classes;C:\JDeveloper\mywork\PVPreactivation\PVPreactivationPhase2\SCA-INF\gen-classes;C:\Oracle1\Middleware\jdeveloper\..\oracle_common\modules\commonj.sdo_2.1.0.jar;C:\Oracle1\Middleware\jdeveloper\..\oracle_common\modules\oracle.fabriccommon_11.1.1\fabric-common.jar;C:\Oracle1\Middleware\jdeveloper\..\oracle_common\modules\oracle.xdk_11.1.0\xmlparserv2.jar;C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.bpel_11.1.1\orabpel-common.jar;C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.bpel_11.1.1\orabpel-exts.jar;C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.bpel_11.1.1\orabpel-thirdparty.jar;C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.bpel_11.1.1\orabpel-validator.jar;C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.bpel_11.1.1\orabpel.jar;C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.fabric_11.1.1\fabric-client.jar;C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.fabric_11.1.1\fabric-ext.jar;C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.fabric_11.1.1\fabric-runtime.jar;C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.fabric_11.1.1\oracle.soa.fabric.jar;C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.fabric_11.1.1\soa-infra-tools.jar;C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.ext_11.1.1\classes/;C:\Oracle1\Middleware\jdeveloper\..\oracle_common\soa\modules\oracle.soa.mgmt_11.1.1\soa-infra-mgmt.jar</i><br />
+<br />
+<br />
+and in the same directory, in out.xml, I find:<br />
+<br />
+<br />
+<pre name="code" class="brush: xml"><?xml version = '1.0' encoding = 'UTF-8'?>
+<faults>
+   <fault>
+      <severity>FATAL_ERROR</severity>
+      <loc>/ns:composite/ns:component[@name='PreactivateLine']</loc>
+      <line>38</line>
+      <col>37</col>
+      <file/>
+      <msg>
+         <![CDATA[Failed to compile bpel generated classes.
+failure to compile the generated BPEL classes for BPEL process "BPELProcess3" of composite "default/PVPreactivationPhase2!1.0"
+The class path setting is incorrect.
+Ensure that the class path is set correctly. If this happens on the server side, verify that the custom classes or jars which this BPEL process is depending on are deployed correctly. Also verify that the run time is using the same release/version. 
+]]>
+      </msg>
+   </Fault>
+</Faults>
+
+</pre><br />
+<br />
+<br />
+but in fact only in the stdout of the ant console you can find the actual cause of error (a missing variable in a Java scriptlet). Fix the Java Scriptlet compilation problem and the error will go away.

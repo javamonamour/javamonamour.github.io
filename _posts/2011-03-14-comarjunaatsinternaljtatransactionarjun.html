@@ -1,0 +1,66 @@
+---
+layout: post
+title: "com.arjuna.ats.internal.jta.transaction.arjunacore.inactive"
+date: 2011-03-14T11:36:00.001+01:00
+permalink: /2011/03/comarjunaatsinternaljtatransactionarjun.html
+blogger_id: "8196649691282407861"
+tags: ["arjuna", "jboss", "JPA"]
+---
+Arjuna is the JBoss transaction manager<br />
+<br />
+<a href="http://management-platform.blogspot.com/2008/11/transaction-timeouts-and-ejb3jpa.html">http://management-platform.blogspot.com/2008/11/transaction-timeouts-and-ejb3jpa.html<br />
+</a><br />
+<br />
+the entire stacktrace is:<br />
+<br />
+11:13:43,774 WARN  [arjLoggerI18N] [com.arjuna.ats.arjuna.coordinator.BasicActio<br />
+n_58] - <b>Abort of action id a647bde:4e9:4d7de8ef:30 invoked while multiple threads active within it</b>.<br />
+11:13:43,790 WARN  [arjLoggerI18N] [com.arjuna.ats.arjuna.coordinator.CheckedAct<br />
+ion_2] - CheckedAction::check - atomic action a647bde:4e9:4d7de8ef:30 <b>aborting with 1 threads active!</b><br />
+11:13:44,274 WARN  [arjLoggerI18N] [com.arjuna.ats.arjuna.coordinator.BasicActio<br />
+n_40] - Abort called on already aborted atomic action a647bde:4e9:4d7de8ef:30<br />
+11:13:44,337 FATAL [TechnicalExceptionHandler] Technical exception [7b2b91d6-ab3<br />
+f-4cb6-9bc1-3ae8302d44c5] occured:<br />
+java.lang.IllegalStateException: [com.arjuna.ats.internal.jta.transaction.arjuna<br />
+core.inactive] [<b>com.arjuna.ats.internal.jta.transaction.arjunacore.inactive] The<br />
+transaction is not active!</b><br />
+at com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionImple.c<br />
+ommitAndDisassociate(TransactionImple.java:1379)<br />
+at com.arjuna.ats.internal.jta.transaction.arjunacore.BaseTransaction.co<br />
+mmit(BaseTransaction.java:135)<br />
+at com.arjuna.ats.jbossatx.BaseTransactionManagerDelegate.commit(BaseTra<br />
+nsactionManagerDelegate.java:87)<br />
+at org.jboss.aspects.tx.TxPolicy.endTransaction(TxPolicy.java:175)<br />
+at org.jboss.aspects.tx.TxPolicy.invokeInOurTx(TxPolicy.java:87)<br />
+at org.jboss.aspects.tx.TxInterceptor$Required.invoke(TxInterceptor.java<br />
+:191)<br />
+at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.<br />
+java:101)<br />
+at org.jboss.aspects.tx.TxPropagationInterceptor.invoke(TxPropagationInt<br />
+erceptor.java:95)<br />
+at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.<br />
+java:101)<br />
+at org.jboss.ejb3.stateless.StatelessInstanceInterceptor.invoke(Stateles<br />
+sInstanceInterceptor.java:62)<br />
+at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.<br />
+java:101)<br />
+at org.jboss.aspects.security.AuthenticationInterceptor.invoke(Authentic<br />
+ationInterceptor.java:77)<br />
+at org.jboss.ejb3.security.Ejb3AuthenticationInterceptor.invoke(Ejb3Auth<br />
+enticationInterceptor.java:110)<br />
+at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.<br />
+java:101)<br />
+at org.jboss.ejb3.ENCPropagationInterceptor.invoke(ENCPropagationInterce<br />
+ptor.java:46)<br />
+at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.<br />
+java:101)<br />
+at org.jboss.ejb3.asynchronous.AsynchronousInterceptor.invoke(Asynchrono<br />
+usInterceptor.java:106)<br />
+at org.jboss.aop.joinpoint.MethodInvocation.invokeNext(MethodInvocation.<br />
+java:101)<br />
+at org.jboss.ejb3.stateless.StatelessContainer.localInvoke(StatelessCont<br />
+ainer.java:240)<br />
+at org.jboss.ejb3.stateless.StatelessContainer.localInvoke(StatelessCont<br />
+ainer.java:210)<br />
+at org.jboss.ejb3.stateless.StatelessLocalProxy.invoke(StatelessLocalPro<br />
+xy.java:84)

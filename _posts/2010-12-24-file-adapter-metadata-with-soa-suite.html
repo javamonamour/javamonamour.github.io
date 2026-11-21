@@ -1,0 +1,45 @@
+---
+layout: post
+title: "File Adapter metadata with SOA Suite"
+date: 2010-12-24T18:34:00.005+01:00
+permalink: /2010/12/file-adapter-metadata-with-soa-suite.html
+blogger_id: "6951351490833089208"
+tags: ["FileAdapter"]
+---
+<pre class="brush: xml" name="code"><message>
+
+<properties>
+
+<property name="jca.file.LastModifiedTime" value="1293041258635">
+<property name="tracking.compositeInstanceId" value="100010">
+<property name="tracking.ecid" value="0000IoKDw^SEsHyN067i6F1D4mP^0003jf">
+<property name="jca.file.Batch" value="ANEBI1sOGBsykuvL47jBeXWRSEZSFpLfDa8h1-1BHRQ.">
+<property name="tracking.conversationId" value="HZv8a-BJr01ArB3GpxtefYJS917rFCZRxtJUMwQSG0w.">
+<property name="jca.file.Size" value="704">
+<property name="jca.file.FileName" value="good2.txt">
+<property name="jca.file.CreationTime" value="0">
+<property name="jca.file.BatchIndex" value="1">
+<property name="jca.file.Directory" value="C:\acmepoc\myFiles\in">
+
+</property>
+
+<parts>
+<part name="body">
+</part>
+
+</parts>
+
+</message>
+
+</pre><br />
+( the bloody blog keeps messing up with this XML.... I thought that by 2010 these technical issues would not be there any more....)<br />
+<br />
+You can easily get the filename from the properties, in Mediator go to "ASSIGN VALUES" and you will find how to copy Properties to the Expression output....<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/8bd863ebc96987ff.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="207" src="/images/2af2cca08d68a140.png" width="320" /></a></div><br />
+You might also copy the property to the same property in Mediator and then pass it around... see <a href="http://forums.oracle.com/forums/thread.jspa?threadID=1074709&tstart=58">here</a><br />
+<br />
+<br />
+You might get this warning:<br />
+<br />
+Warning: Assigning property/constant "$in.property.jca.file.FileName" to element "$out.payload/imp1:PreactivationFile/imp1:PreactivationLines/imp1:lotInformation/imp1:fileName". Please make sure target is single leaf node, otherwise non-leaf node will contain only string value which may generate non-valid xml as per the xsd.

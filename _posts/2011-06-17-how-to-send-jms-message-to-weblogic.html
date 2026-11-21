@@ -1,0 +1,106 @@
+---
+layout: post
+title: "Java send JMS: how to send a jms message to WebLogic"
+date: 2011-06-17T17:53:00.002+02:00
+permalink: /2011/06/how-to-send-jms-message-to-weblogic.html
+blogger_id: "9018889118884663618"
+---
+<div class="gmail_quote">package com.acme.jms;<br />
+<br />
+<br />
+import java.util.Hashtable;<br />
+<br />
+import javax.jms.Message;<br />
+import javax.jms.Queue;<br />
+import javax.jms.QueueConnection;<br />
+import javax.jms.QueueConnectionFactory;<br />
+import javax.jms.QueueSender;<br />
+import javax.jms.QueueSession;<br />
+import javax.jms.Session;<br />
+import javax.naming.Context;<br />
+import javax.naming.InitialContext;<br />
+<br />
+public class SendJmsMessageHeaderProperties {<br />
+    public static void main( String[] args ) throws Exception {<br />
+        QueueConnection queueCon = null;<br />
+        try {<br />
+            // get the initial context, refer to your app server docs for this<br />
+            Hashtable&lt;String, String&gt; ht = new Hashtable&lt;String, String&gt;();<br />
+            ht.put(Context.INITIAL_CONTEXT_FACTORY, &quot;weblogic.jndi.WLInitialContextFactory&quot;);<br />
+            ht.put(Context.PROVIDER_URL, &quot;t3://<a href="http://iinfblockbcl003.msnet.railb.be:7009" target="_blank">localhost:7001</a>&quot;);        <br />
+            Context ctx = new InitialContext(ht);<br />
+<br />
+            // get the connection factory, and open a connection<br />
+            QueueConnectionFactory qcf = (QueueConnectionFactory) ctx.lookup( &quot;weblogic/jms/XAConnectionFactory&quot; );<br />
+            queueCon = qcf.createQueueConnection();<br />
+<br />
+            // create queue session off the connection<br />
+            QueueSession queueSession = queueCon.createQueueSession( false, Session.AUTO_ACKNOWLEDGE );<br />
+<br />
+            // get handle on queue, create a sender and send the message<br />
+            Queue queue = (Queue) ctx.lookup( &quot;RudyInQueue&quot; );<br />
+            QueueSender sender = queueSession.createSender( queue );<br />
+<br />
+            Message msg = queueSession.createTextMessage( &quot;&lt;Hello&gt;I am a pig&lt;/Hello&gt;&quot; );<br />
+<br />
+            sender.send( msg );<br />
+<br />
+            System.out.println( &quot;sent the message&quot; );<br />
+        }<br />
+        finally {<br />
+            // close the queue connection<br />
+            if( queueCon != null ) {<br />
+                queueCon.close();<br />
+            }<br />
+        }<br />
+    }<br />
+}<br />
+<br />
+<br />
+here is the CLASSPATH:<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;<br />
+&lt;classpath&gt;<br />
+    &lt;classpathentry kind=&quot;src&quot; path=&quot;src&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;con&quot; path=&quot;org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6&quot;&gt;<br />
+        &lt;attributes&gt;<br />
+            &lt;attribute name=&quot;owner.project.facets&quot; value=&quot;java&quot;/&gt;<br />
+        &lt;/attributes&gt;<br />
+    &lt;/classpathentry&gt;<br />
+    &lt;classpathentry kind=&quot;con&quot; path=&quot;org.eclipse.jst.j2ee.internal.module.container&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/javax.jms_1.1.1.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/weblogic.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.weblogic.security.identity_1.1.2.1.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.weblogic.workmanager_1.9.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.weblogic.workmanager.ja_1.9.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.transaction_2.7.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.weblogic.rmi.client.ja_1.8.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.weblogic.rmi.client_1.8.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.weblogic.security.wls_1.0.0.0_6-1-0-0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.utils.full_1.9.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.weblogic.security_1.0.0.0_6-1-0-0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/wlclient.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.utils.classloaders_1.8.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.management.core_2.8.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.descriptor_1.9.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.logging_1.8.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.timers_1.7.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.weblogic.socket.api_1.2.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.weblogic.security.digest_1.0.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.weblogic.lifecycle_1.4.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.store_1.7.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.common.security.api_1.0.0.0_6-1-0-0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.utils.wrapper_1.4.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.messaging.kernel_1.8.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.bea.core.utils.expressions_1.4.0.0.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;output&quot; path=&quot;build/classes&quot;/&gt;<br />
+&lt;/classpath&gt;<br />
+<font color="#888888"> <br />
+<br />
+<br />
+<br />
+</font></div>

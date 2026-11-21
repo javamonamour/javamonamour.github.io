@@ -1,0 +1,62 @@
+---
+layout: post
+title: "OSB. chunked transfer encoding"
+date: 2013-03-12T14:45:00.000+01:00
+permalink: /2013/03/osb-chunked-transfer-encoding.html
+blogger_id: "8299296406745521754"
+tags: ["OSB", "soapui"]
+---
+Sendin a request to SOAPUI in automated (testrunner) way, we can see:<br />
+<br />
+<i>Accept-Encoding : gzip,deflate&nbsp;</i><br />
+<br />
+the response comes back with<br />
+<br />
+<i>Response Headers: Transfer-Encoding : chunked</i>
+<br />
+<br />
+For explanations, see <a href="http://en.wikipedia.org/wiki/HTTP_compression#Client.2FServer_compression_scheme_negotiation">http://en.wikipedia.org/wiki/HTTP_compression#Client.2FServer_compression_scheme_negotiation</a><br />
+<br />
+and <a href="http://en.wikipedia.org/wiki/Chunked_transfer_encoding">http://en.wikipedia.org/wiki/Chunked_transfer_encoding</a>&nbsp; <br />
+<br />
+<i>"HTTP servers sometimes use <a href="http://en.wikipedia.org/wiki/Data_compression" title="Data compression">compression</a> (<a href="http://en.wikipedia.org/wiki/Gzip" title="Gzip">gzip</a>) or <a class="mw-redirect" href="http://en.wikipedia.org/wiki/Deflate" title="Deflate">deflate</a>
+ methods to optimize transmission. How both chunked and gzip encoding 
+interact is dictated by the two-staged encoding of HTTP: first the 
+content stream is encoded as (<tt>Content-Encoding: gzip</tt>), after which the resulting byte stream is encoded for transfer using another encoder (<tt>Transfer-Encoding: chunked</tt>).
+ This means that in case both compression and chunked encoding are 
+enabled, the chunk encoding itself is not compressed, and the data in 
+each chunk should not be compressed individually. The remote endpoint 
+can decode the incoming stream by first decoding it with the 
+Transfer-Encoding, followed by the specified Content-Encoding."</i><br />
+<br />
+How can this "chunked" happen?<br />
+<br />
+Is there any HTTP Business Service along the path?<br />
+If yes, we should check if it has got <b>Chunked Streaming Mode disabled</b>:<br />
+<br />
+<a href="http://docs.oracle.com/cd/E17904_01/doc.1111/e15866/transports.htm">http://docs.oracle.com/cd/E17904_01/doc.1111/e15866/transports.htm</a><br />
+<br />
+<i>"Use Chunked Streaming Mode Select this option if you want to use HTTP chunked transfer encoding to send messages.</i><br />
+<br />
+<i>Note: Do not use chunked streaming with if you use the Follow HTTP Redirects option. Redirection and authentication cannot be handled automatically in chunked mode."</i>
+<br />
+<br />
+Also check that  Chunking Threshold is disabled in SOAPUI :<br />
+<a href="http://www.soapui.org/Working-with-soapUI/preferences.html">http://www.soapui.org/Working-with-soapUI/preferences.html</a>
+<br />
+<br />
+More on the topic:<br />
+<br />
+<a href="http://blog.ipnweb.com/2012/09/use-chunked-streaming-mode-in-osb-11g.html">http://blog.ipnweb.com/2012/09/use-chunked-streaming-mode-in-osb-11g.html</a>
+<br />
+<br />
+<i>Understanding Chunked Streaming&nbsp; </i><br />
+<br />
+<i>Oracle documentation states that the Chunked Streaming Mode property should be selected "if you want to use HTTP chunked transfer encoding to send messages." You normally want to enable chunked streaming if possible (with my problem above, it is not possible).
+</i><br />
+<br />
+<i>Chunked transfer encoding is an HTTP 1.1 specification, and allows clients to parse dynamic data immediately after the first chunk is read. Note that the Oracle documentation also states not to enable chunked streaming if you use the Follow HTTP Redirects option, as redirection and authentication cannot be handled automatically in chunked mode.
+</i><br />
+<i><br /></i>
+<br />
+<br />

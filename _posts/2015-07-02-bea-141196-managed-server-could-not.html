@@ -1,0 +1,75 @@
+---
+layout: post
+title: "BEA-141196 The managed server could not update the configuration files during the registration with the deployment service"
+date: 2015-07-02T11:19:00.000+02:00
+permalink: /2015/07/bea-141196-managed-server-could-not.html
+blogger_id: "8407109884044430798"
+tags: ["weblogic"]
+---
+<pre class="brush: xml">
+
+
+&lt;Jul 2, 2015 10:31:52 AM CEST> &lt;Error> &lt;Management> &lt;BEA-141196> &lt;The managed server could not update the configuration files during the registration with the deployment service. The update failed due to an exception:
+weblogic.management.DeploymentException: Exception occured while copying files
+        at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.doUpdate(DataUpdate.java:307)
+        at weblogic.deploy.internal.targetserver.datamanagement.ConfigDataUpdate.doUpdate(ConfigDataUpdate.java:102)
+        at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.update(DataUpdate.java:72)
+        at weblogic.deploy.internal.targetserver.datamanagement.Data.commitDataUpdate(Data.java:118)
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.updateFiles(RuntimeAccessDeploymentReceiverService.java:880)
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.handleRegistrationResponse(RuntimeAccessDeploymentReceiverService.java:728)
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.registerHandler(RuntimeAccessDeploymentReceiverService.java:699)
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.start(RuntimeAccessDeploymentReceiverService.java:169)
+        at weblogic.t3.srvr.ServerServicesManager.startService(ServerServicesManager.java:462)
+        at weblogic.t3.srvr.ServerServicesManager.startInStandbyState(ServerServicesManager.java:167)
+        at weblogic.t3.srvr.T3Srvr.initializeStandby(T3Srvr.java:881)
+        at weblogic.t3.srvr.T3Srvr.startup(T3Srvr.java:568)
+        at weblogic.t3.srvr.T3Srvr.run(T3Srvr.java:469)
+        at weblogic.Server.main(Server.java:71)
+Caused By: java.io.FileNotFoundException: /acme/appsrv/domains/pippodomain/config/pref/preferences.xml (Permission denied)
+        at java.io.FileOutputStream.open(Native Method)
+        at java.io.FileOutputStream.&lt;init>(FileOutputStream.java:194)
+        at java.io.FileOutputStream.&lt;init>(FileOutputStream.java:145)
+        at weblogic.utils.FileUtils.writeToFile(FileUtils.java:115)
+        at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.copy(DataUpdate.java:265)
+        at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.copyOrExtractTo(DataUpdate.java:202)
+        at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.updateLocalData(DataUpdate.java:168)
+        at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.doUpdate(DataUpdate.java:299)
+        at weblogic.deploy.internal.targetserver.datamanagement.ConfigDataUpdate.doUpdate(ConfigDataUpdate.java:102)
+        at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.update(DataUpdate.java:72)
+        at weblogic.deploy.internal.targetserver.datamanagement.Data.commitDataUpdate(Data.java:118)
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.updateFiles(RuntimeAccessDeploymentReceiverService.java:880)
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.handleRegistrationResponse(RuntimeAccessDeploymentReceiverService.java:728)
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.registerHandler(RuntimeAccessDeploymentReceiverService.java:699)
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.start(RuntimeAccessDeploymentReceiverService.java:169)
+        at weblogic.t3.srvr.ServerServicesManager.startService(ServerServicesManager.java:462)
+        at weblogic.t3.srvr.ServerServicesManager.startInStandbyState(ServerServicesManager.java:167)
+        at weblogic.t3.srvr.T3Srvr.initializeStandby(T3Srvr.java:881)
+        at weblogic.t3.srvr.T3Srvr.startup(T3Srvr.java:568)
+        at weblogic.t3.srvr.T3Srvr.run(T3Srvr.java:469)
+        at weblogic.Server.main(Server.java:71)
+
+
+</pre>
+
+
+<br/><br/>
+
+If you look in Oracle Support, you get a Document "Error Starting WebLogic Server: BEA-141196: The managed server could not update the configuration files during the registration with the deployment service (Doc ID 1461960.1)" advising to change the rights of those files/folders to be updated.
+<br/><br/>
+In our case the reality was MUCH more diabolical: the managed server was contacting the ADMIN of ANOTHER DOMAIN which was mistakenly configured to run on the same box with the same admin port.... so the WRONG admin was updating the configuration of the Managed Server, even if it was belonging to a different domain.
+
+<br/><br/>
+So the solution is just to make sure that each domain runs with unique ports. It's a bit crazy that the Managed Server was accepting communication with a different domain...
+
+
+
+
+
+
+
+
+
+
+
+
+

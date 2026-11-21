@@ -1,0 +1,31 @@
+---
+layout: post
+title: "OSR: org.idoox.wasp.WaspInternalException: java.lang.RuntimeException: Updates to config files not supported"
+date: 2010-12-03T14:43:00.001+01:00
+permalink: /2010/12/osr-orgidooxwaspwaspinternalexception.html
+blogger_id: "4978126184643755012"
+tags: ["OSR"]
+---
+I get a <br />
+<br />
+<i>Error 500--Internal Server Error <br />
+org.idoox.wasp.WaspInternalException: java.lang.RuntimeException: Updates to config files not supported<br />
+</i><br />
+<br />
+after installation of OSR, <br />
+when I hit <br />
+<a href="http://localhost:7001/registry/uddi/web">http://localhost:7001/registry/uddi/web</a><br />
+<br />
+<br />
+After restart, I get <br />
+<br />
+<br />
+<i>java.lang.LinkageError: loader constraint violation in interface itable initialization: when resolving method "com.idoox.wsdl.DefinitionImpl.getMessage(Ljavax/xml/namespace/QName;)Ljavax/wsdl/Message;" the class loader (instance of weblogic/utils/classloaders/ChangeAwareClassLoader) of the current class, com/idoox/wsdl/DefinitionImpl, and the class loader (instance of sun/misc/Launcher$AppClassLoader) for interface javax/wsdl/Definition have different Class objects for the type javax/xml/namespace/QName used in the signature<br />
+at com.idoox.wsdl.factory.WSDLFactoryImpl.newDefinition(WSDLFactoryImpl.java:60)<br />
+</i><br />
+<br />
+<br />
+It turns out that<br />
+<a href="http://forums.oracle.com/forums/thread.jspa?threadID=952237">http://forums.oracle.com/forums/thread.jspa?threadID=952237</a><br />
+<br />
+you should not install OSR in a WLS instance that has SOA Suite stuff deployed to it.... choose an EMPTY WLS server....I will do that as soon as I find time...

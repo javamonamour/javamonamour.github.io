@@ -1,0 +1,124 @@
+---
+layout: post
+title: "Puppet instant weblogic installation module in 30 seconds"
+date: 2013-11-12T04:47:00.000+01:00
+permalink: /2013/11/puppet-instant-weblogic-installation.html
+blogger_id: "5490386497818064357"
+tags: ["puppet", "weblogic"]
+---
+<br/><br/>
+
+<pre class="brush: java">
+
+define weblogic($user = 'soa') {
+
+  $optpath = '/opt'
+  $nmPort = '5556'
+  $oracle_home = "${optpath}/oracle"
+  $user_home = '/home/'
+  $bea_home = "${oracle_home}/fmw11_1_1_5"
+  $java_home = "/${optpath}/oracle/java"
+  $java_home_target = '/usr/lib/jvm/jre-1.6.0-sun.x86_64/bin/java'
+  $software_home = '/opt/oracle/software'
+
+  group { 'soa' :
+    ensure => 'present',
+  }
+
+
+  user { 'soa':
+    ensure     => 'present',
+    gid        => 'soa',
+    home       => "/${user_home}/soa",
+    password   => 'changeme',
+    managehome => true,
+  }
+
+ 
+  # create /home/soa?/.bashrc
+
+  file { "/${user_home}/${user}/.bashrc":
+    ensure  => present,
+    content => template('weblogic/bashrc.erb'),
+    require => User["${user}"],
+    owner   => "${user}",
+  }
+
+
+  file { "${optpath}":
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755'
+  }
+
+ 
+
+  file { ["${software_home}"]:
+    ensure  => 'directory',
+    owner   => 'soa',
+    require => User['soa'],
+  }
+
+ 
+
+  file { "${java_home}":
+    ensure => link,
+    target => "${java_home_target}"
+  }
+
+ 
+
+  file { ["${oracle_home}", "${bea_home}"]:
+    ensure  => 'directory',
+    owner   => "${user}",
+    require => User["${user}"],
+  }
+
+ 
+
+  file { ["${optpath}/var/", "${optpath}/var/log/", "${optpath}/var/log/weblogic/", "${optpath}/var/log/weblogic/server",
+          "${optpath}/var/log/weblogic/nodemanager", "${optpath}/var/log/weblogic/scripts"]:
+    ensure  => directory,
+    owner   => $user,
+    require => User[$user],
+  }
+
+
+  # download WebLogic jars
+
+  file { 'wls1035_generic.jar':
+ ensure => present,
+ source => 'puppet:///modules/weblogic/wls1035_generic.jar',
+        target => "${software_home}/wls1035_generic.jar",
+  }
+
+  file { "${software_home}/silent_${user}.xml":
+    ensure  => present,
+    content => template('weblogic/silent.xml.erb'),
+    require => File["${oracle_home}"]
+  }
+
+
+  # execute silent installation
+  exec { 'weblo-silent-install':
+    command => "java -d64 -jar wls1035_generic.jar -mode=silent -silent_xml=silent_${user}.xml",
+    cwd     => "${software_home}",
+    path    => '/usr/bin:/bin',
+    creates => "${bea_home}/registry.xml",
+    require => [Nexus::Download['wls1035_generic.jar'], File["${software_home}/silent_${user}.xml"], ],
+
+  }
+
+}
+
+</pre>
+
+<br/><br/><br/>
+
+all you need to do is to provide a silent.xml.erb and a bashrc.erb in the templates folder, plus the wls1035_generic.jar file in the files folder of the same weblogic module.
+<br/><br/>
+
+It might not be elegant but it's really simple and it works.
+<br/><br/>
+

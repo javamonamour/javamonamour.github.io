@@ -1,0 +1,76 @@
+---
+layout: post
+title: "Servlet: \"Spy\" failed to preload on startup in Web application: \"dms.war\""
+date: 2013-05-29T14:53:00.000+02:00
+permalink: /2013/05/servlet-spy-failed-to-preload-on.html
+blogger_id: "2765481522854021507"
+---
+Strange case today:<br />
+<br />
+
+Newly created domain, Admin starting with "DMS Application" in failed state, logs show:
+<br /><br />
+<pre>
+&lt;29.May.2013 11:48:26 AM CEST> &lt;Error> &lt;HTTP> &lt;BEA-101216> &lt;Servlet: "Spy" failed to preload on startup in Web application: "dms.war".
+java.lang.IllegalArgumentException: config=oracle.dms.config.DumpConfig@41755a16 logDir=null agency=oracle.dms.reporter.SpyAgency@7f6d7bec dmsTimer=java.util.concurrent.ScheduledThreadPoolExecutor@6ce3044f
+ at oracle.dms.impl.producer.Dumper.&lt;init>(Dumper.java:100)
+ at oracle.dms.app.DomainInitializer.init(DomainInitializer.java:151)
+ at oracle.dms.app.BaseInitializer.getInitializer(BaseInitializer.java:360)
+ at oracle.dms.app.DmsSpy.init(DmsSpy.java:210)
+ at weblogic.servlet.internal.StubSecurityHelper$ServletInitAction.run(StubSecurityHelper.java:283)
+ at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:321)
+ at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:120)
+ at weblogic.servlet.internal.StubSecurityHelper.createServlet(StubSecurityHelper.java:64)
+ at weblogic.servlet.internal.StubLifecycleHelper.createOneInstance(StubLifecycleHelper.java:58)
+ at weblogic.servlet.internal.StubLifecycleHelper.&lt;init>(StubLifecycleHelper.java:48)
+ at weblogic.servlet.internal.ServletStubImpl.prepareServlet(ServletStubImpl.java:539)
+ at weblogic.servlet.internal.WebAppServletContext.preloadServlet(WebAppServletContext.java:1985)
+ at weblogic.servlet.internal.WebAppServletContext.loadServletsOnStartup(WebAppServletContext.java:1959)
+ at weblogic.servlet.internal.WebAppServletContext.preloadResources(WebAppServletContext.java:1878)
+ at weblogic.servlet.internal.WebAppServletContext.start(WebAppServletContext.java:3153)
+ at weblogic.servlet.internal.WebAppModule.startContexts(WebAppModule.java:1508)
+ at weblogic.servlet.internal.WebAppModule.start(WebAppModule.java:482)
+ at weblogic.application.internal.flow.ModuleStateDriver$3.next(ModuleStateDriver.java:425)
+ at weblogic.application.utils.StateMachineDriver.nextState(StateMachineDriver.java:52)
+ at weblogic.application.internal.flow.ModuleStateDriver.start(ModuleStateDriver.java:119)
+ at weblogic.application.internal.flow.ScopedModuleDriver.start(ScopedModuleDriver.java:200)
+ at weblogic.application.internal.flow.ModuleListenerInvoker.start(ModuleListenerInvoker.java:247)
+ at weblogic.application.internal.flow.ModuleStateDriver$3.next(ModuleStateDriver.java:425)
+ at weblogic.application.utils.StateMachineDriver.nextState(StateMachineDriver.java:52)
+ at weblogic.application.internal.flow.ModuleStateDriver.start(ModuleStateDriver.java:119)
+ at weblogic.application.internal.flow.StartModulesFlow.activate(StartModulesFlow.java:27)
+ at weblogic.application.internal.BaseDeployment$2.next(BaseDeployment.java:636)
+ at weblogic.application.utils.StateMachineDriver.nextState(StateMachineDriver.java:52)
+ at weblogic.application.internal.BaseDeployment.activate(BaseDeployment.java:205)
+ at weblogic.application.internal.SingleModuleDeployment.activate(SingleModuleDeployment.java:43)
+ at weblogic.application.internal.DeploymentStateChecker.activate(DeploymentStateChecker.java:161)
+ at weblogic.deploy.internal.targetserver.AppContainerInvoker.activate(AppContainerInvoker.java:79)
+ at weblogic.deploy.internal.targetserver.BasicDeployment.activate(BasicDeployment.java:184)
+ at weblogic.deploy.internal.targetserver.BasicDeployment.activateFromServerLifecycle(BasicDeployment.java:361)
+ at weblogic.management.deploy.internal.DeploymentAdapter$1.doActivate(DeploymentAdapter.java:51)
+ at weblogic.management.deploy.internal.DeploymentAdapter.activate(DeploymentAdapter.java:200)
+ at weblogic.management.deploy.internal.AppTransition$2.transitionApp(AppTransition.java:30)
+ at weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)
+ at weblogic.management.deploy.internal.ConfiguredDeployments.activate(ConfiguredDeployments.java:169)
+ at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:123)
+ at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:180)
+ at weblogic.management.deploy.internal.DeploymentServerService.start(DeploymentServerService.java:96)
+ at weblogic.t3.srvr.SubsystemRequest.run(SubsystemRequest.java:64)
+ at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+ at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+> 
+
+</pre>
+
+<br/><br/>
+
+After digging into the code, we discovered that setting in the Java properties a -Doracle.server.log.dir=/path/to/a/valid/directory fixed the issue.
+
+<br/><br/>
+
+Still investigating what is the trouble. We checked that -Doracle.server.config.dir and -Doracle.domain.config.dir are present, /opt/oracle/fmw11_1_1_5/oracle_common/modules/oracle.dms_11.1.1/dms.war is OK, and that dms_config.xml is OK
+
+
+
+
+

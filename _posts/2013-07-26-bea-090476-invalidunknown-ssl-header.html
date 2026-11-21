@@ -1,0 +1,41 @@
+---
+layout: post
+title: "BEA-090476 Invalid/unknown SSL header was received from peer during SSL handshake"
+date: 2013-07-26T16:01:00.001+02:00
+permalink: /2013/07/bea-090476-invalidunknown-ssl-header.html
+blogger_id: "4759314062471663504"
+tags: ["ssl"]
+blogger_comments:
+  - author: "Chris"
+    date: 2016-10-12
+    html: "I was trying to get a WebLogic 10.3 server running Java 6 (121) to use TLS v1.1 and 1.2.  Your suggested options for using Sun SSL did the trick.  Thanks for the post."
+---
+We get this "BEA-090476 Invalid/unknown SSL header was received from peer during SSL handshake"
+warning when the monitoring system polls WLS with HTTP.
+<br/><br/>
+You must check if your client supports TLS 1.0 and SSL 3.0 - which is the version recognized by WebLogic 10.3.5
+
+<br/><br/>
+
+Look at Oracle support document Doc ID 1372247.1, or Doc ID 1548475.1 / BUG - 16363439. Weblogic Certicom SSL implementation does not support protocol versions greater than TLS1.0, but it now falls back to TLS1.0 when it receives a later version in the SSL handshake.
+<br/><br/>
+
+You can edit setEnv.sh and add these JAVA_OPTIONS:
+
+ -Dssl.debug=true -Dweblogic.StdoutDebugEnabled=true -Dweblogic.security.SSL.verbose=true -Djavax.net.debug=all
+
+<br/><br/>
+
+You can also try to use Sun SSL
+
+<pre>
+-Djava.protocol.handler.pkgs=com.sun.net.ssl.internal.www.protocol
+-Dssl.SocketFactory.provider=com.sun.net.ssl.internal.SSLSocketFactoryImpl
+-DUseSunHttpHandler=true
+-Dweblogic.wsee.client.ssl.usejdk=true 
+
+</pre>
+
+and if you are really desperate, disable "SSLRejection Logging Enabled" is server configuration / General / SSL.
+
+<br/><br/>

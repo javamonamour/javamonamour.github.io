@@ -1,0 +1,37 @@
+---
+layout: post
+title: "WebSockets client-server example"
+date: 2017-12-06T22:46:00.001+01:00
+permalink: /2017/12/websockets-client-server-example.html
+blogger_id: "409017302603874880"
+tags: ["websockets"]
+---
+Server-side:<br />
+<br />
+annotate a  POJO with <a href="https://docs.oracle.com/javaee/7/api/javax/websocket/server/ServerEndpoint.html">javax.websocket.server.ServerEndpoint</a><br />
+<br />
+A method annotated with <a href="https://docs.oracle.com/javaee/7/api/javax/websocket/OnOpen.html">javax.websocket.OnOpen</a> will handle the creation of a <a href="https://docs.oracle.com/javaee/7/api/javax/websocket/Session.html">javax.websocket.Session</a><br />
+<br />
+Another method handles the reception of a message, it's annotated with <a href="https://docs.oracle.com/javaee/7/api/javax/websocket/OnMessage.html">javax.websocket.OnMessage</a> <br />
+<br />
+<br />
+Client-side:<br />
+<br />
+You have to extend <a href="https://docs.oracle.com/javaee/7/api/javax/websocket/Endpoint.html">javax.websocket.Endpoint</a><br />
+and override the method onOpen(Session session, EndpointConfig config), where you add to the Session a <a href="https://docs.oracle.com/javaee/7/api/javax/websocket/MessageHandler.Whole.html">MessageHandler.Whole</a> to implement a onMessage() . This Endpoint just handles the Message but not the session.<br />
+<br />
+To create a session, connect to the Server: ContainerProvider.getWebSocketContainer().connectToServer(this.endpoint, new URI("ws://server:port/contextroot/serviceuri"))<br />
+<br />
+<br />
+Client and server are here<br />
+<br />
+<a href="https://github.com/vernetto/JavaMonAmour/tree/master/pvabwebsocketsserver">https://github.com/vernetto/JavaMonAmour/tree/master/pvabwebsocketsserver</a><br />
+<br />
+<a href="https://github.com/vernetto/JavaMonAmour/tree/master/pvabwebsocketsclient">https://github.com/vernetto/JavaMonAmour/tree/master/pvabwebsocketsclient</a><br />
+<br />
+<br />
+Here the explanation by the Great Adam Bien <br />
+<br />
+<iframe width="800" height="600" src="https://www.youtube.com/embed/X2R_Iyga88E" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe><br />
+<br />
+

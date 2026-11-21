@@ -1,0 +1,32 @@
+---
+layout: post
+title: "ORA-12705: Cannot access NLS data files or invalid environment specified"
+date: 2013-04-26T12:58:00.001+02:00
+permalink: /2013/04/ora-12705-cannot-access-nls-data-files.html
+blogger_id: "3599281052445404947"
+tags: ["oracledb"]
+---
+I was trying to use TOAD to connect to Oracle DB. Normally I use SQLDeveloper. I understand TOAD is more powerful, but I don't like its UI and I have only the FREE version.<br />
+
+<a href="http://stackoverflow.com/questions/6835995/ora-12705-cannot-access-nls-data-files-or-invalid-environment-specified">Here</a>  it suggests to run regedit and rename NLS_LANG into NLS_LANG_X under any occurrence of the key in HKEY_LOCAL_MACHINE\SOFTWARE\ORACLE. I found several occurrences and replaced them all. <br />
+<br />
+It didn't work.<br />
+<br />
+<br />
+Then I tried changing the Oracle Installed Client to XE and it worked<br />
+
+<a href="/images/dc9176ce2d429713.jpg" imageanchor="1"><img border="0" src="/images/d95afe9b0650990c.jpg" /></a>
+
+<br />
+
+See also <a href="http://www.dba-oracle.com/t_ora_12705_resolution.htm">http://www.dba-oracle.com/t_ora_12705_resolution.htm</a>
+
+<br />
+
+All this royally sucks. Meaningless error message without any context information.
+<br />
+
+
+Anyway I wanted to run TOAD for the "data compare" diff utility between 2 schemas, but it's available only in the commercial version.<br />
+
+

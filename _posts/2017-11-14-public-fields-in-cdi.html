@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Public fields in CDI"
+date: 2017-11-14T20:33:00.002+01:00
+permalink: /2017/11/public-fields-in-cdi.html
+blogger_id: "8187866164009550265"
+tags: ["cdi"]
+---
+in CDI one can't have a PUBLIC attribute in a RequestScoped variable:<br />
+<br />
+<pre class="brush: java">
+@Named
+@RequestScoped
+public class EventViewBean implements Serializable {
+
+    @Produces
+    public List&lt;Meal> meals;
+
+    public void setMeals(List&lt;Meal> meals) {
+ this.meals = meals;
+    }
+
+    public List&lt;Meal> getMeals() {
+  return meals;
+    }
+
+}
+</pre><br />
+otherwise you get this error:<br />
+<br />
+WELD-000075  Normal scoped managed bean implementation class has a public field<br />
+<br />
+To fix the issue, just remove the "public" in "public List&lt;Meal> meals;" and don't ask questions... it's all too sad... just smile and say yes.

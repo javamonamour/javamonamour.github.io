@@ -1,0 +1,29 @@
+---
+layout: post
+title: "MDB message selector with @ActivationConfigProperty annotation"
+date: 2011-03-24T13:30:00.000+01:00
+permalink: /2011/03/mdb-message-selector-with.html
+blogger_id: "3130476352389085364"
+tags: ["mdb"]
+---
+for the MDB:<br />
+<br />
+@MessageDriven(activationConfig = { <br />
+    @ActivationConfigProperty(propertyName="messagingType", propertyValue="javax.jms.MessageListener"),<br />
+       @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),<br />
+       @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/YOURQUEUENAME"),<br />
+       @ActivationConfigProperty(propertyName = "messageSelector", propertyValue = "MESSAGE_TYPE = 'MESSAGE_TYPE_IMPORT_BLA'")<br />
+     }, <br />
+     mappedName = "YOURMDBNAME")<br />
+<br />
+<br />
+<br />
+<br />
+and in your code when you produce the Message:<br />
+<br />
+TextMessage message = session.createTextMessage();<br />
+message.setText(messageText);<br />
+    message.setStringProperty("MESSAGE_TYPE", "MESSAGE_TYPE_IMPORT_BLA");<br />
+<br />
+<br />
+(you can use an enum for message types...)

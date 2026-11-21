@@ -1,0 +1,203 @@
+---
+layout: post
+title: "osb, logback, logstash, grok and elasticsearch, putting it all together"
+date: 2014-01-08T19:10:00.000+01:00
+permalink: /2014/01/osb-logback-logstash-grok-and.html
+blogger_id: "1634341258025104321"
+tags: ["elasticsearch", "logback", "OSB"]
+blogger_comments:
+  - author: "Ma Sói"
+    date: 2018-06-16
+    html: "Tối ưu elasticsearch như thế nào<br /><a href=\"https://itculy.blogspot.com/2018/06/elasticsearch-cac-thong-so-cau-hinh-bo-sung-tunning-elasticsearch.html\" rel=\"nofollow\">elasticsearch tunning</a>"
+---
+the Java class that I invoke with a custom XPath to trace events :
+<br/>
+<ul>
+<li>
+"interface" is like "service/operation"
+</li>
+<li>
+"eventtype" is like "FileConsumed", "JMSMessageConsumed", "WSInvoked" 
+</li>
+<li>
+TechnicalMessageID and BusinessID are usinque identifiers for the request/payload
+</li>
+<li>
+ServerName is the WebLogic managed server
+</li>
+<li>
+Priority is P1... P5 in case of error
+</li>
+<li>
+Payload is the actual request... it's traced only if level is "DEBUG"
+</li>
+<li>
+Fault is the error description
+</li>
+</ul>
+
+
+
+<pre class="brush: java">
+package com.acme.osb.logging;
+
+import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Used by OSB to report an Event
+ * 
+ * @author NNVernetPI
+ * 
+ */
+
+public class MessageTrackerSLF4J {
+
+ public static String logMessage(String technicalMessageid,
+   String businessId, String eventType, String interfaceName,
+   XmlObject payload) {
+
+  Logger projectLogger = LoggerFactory.getLogger(interfaceName);
+
+  if (projectLogger.isDebugEnabled()) {
+   projectLogger.info(" ::InterfaceName:: {} ::EventType:: {} ::TechnicalMessageID:: {} ::BusinessID:: {} ::ServerName:: {} ::Priority:: {} ::Payload:: {} ::Fault:: {}", 
+     interfaceName, eventType, technicalMessageid, businessId, System.getProperty("weblogic.Name"), "NONE", payload != null ? payload.xmlText().replaceAll("\\r\\n|\\r|\\n", " ") : "NONE", "NONE");
+
+  } else {
+   projectLogger.info(" ::InterfaceName:: {} ::EventType:: {} ::TechnicalMessageID:: {} ::BusinessID:: {} ::ServerName:: {} ::Priority:: {} ::Payload:: {} ::Fault:: {}", 
+     interfaceName, eventType, technicalMessageid, businessId, System.getProperty("weblogic.Name"), "NONE", "NONE", "NONE");
+  }
+
+  String logmessage = "Info Message Logged for:: " + interfaceName;
+  return logmessage;
+ }
+
+ public static String errorLogger(String technicalMessageid,
+   String businessId, String interfaceName, XmlObject payload,
+   String priority, XmlObject fault) {
+
+  Logger projectLogger = LoggerFactory.getLogger(interfaceName);
+
+  projectLogger.error(" ::InterfaceName:: {} ::EventType:: {} ::TechnicalMessageID:: {} ::BusinessID:: {} ::ServerName:: {} ::Priority:: {} ::Payload:: {} ::Fault:: {}", 
+    interfaceName, "ERROR", technicalMessageid, businessId, System.getProperty("weblogic.Name"), priority, payload != null ? payload.xmlText().replaceAll("\\r\\n|\\r|\\n", " ") : "NONE", fault != null ? fault.xmlText().replaceAll("\\r\\n|\\r|\\n", " ") : "NONE");
+
+  String responseMessage = "Error Message Logged for:: " + interfaceName;
+  return responseMessage;
+ }
+
+}
+
+
+</pre>
+<br/>
+
+To make my parsing easier, I have decided to remove all newlines from payload and fault, so as to have a single line per event in the logs. <br/>
+<br/>
+You can also <a href="http://logstash.net/docs/1.3.2/codecs/multiline">deal with multiline with this codec</a>.
+
+<br/><br/>
+For a valid message, logback will log:
+<br/>
+
+#### 2014-01-08 18:04:01,980 INFO [[ACTIVE] ExecuteThread: '3' for queue: 'weblogic.kernel.Default (self-tuning)'] -  ::InterfaceName:: ProdDeclAven ::EventType:: FileConsumed ::TechnicalMessageID:: ProdDeclAven^BAD_TST_PDA_REV.xml^AVE^1389200641480 ::BusinessID:: 000000000006741320_00376401092900001530 ::ServerName:: osbdev1ms1 ::Priority:: NONE ::Payload:: NONE ::Fault:: NONE ####
+
+
+
+<br/><br/>
+
+logback.xml file:
+
+<pre class="brush: xml">
+&lt;?xml version="1.0" ?>
+&lt;configuration debug="true" scan="true" scanPeriod="30 seconds">
+ &lt;jmxConfigurator/>
+ &lt;property name="LOG_DIR" value="/opt/var/log/weblogic/server/"/>
+ &lt;appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
+  &lt;encoder>
+   &lt;pattern>
+    #### %date{ISO8601} %level [%thread] - %msg ####%n            
+   &lt;/pattern>
+  &lt;/encoder>
+ &lt;/appender>
+ &lt;appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="MyService">
+  &lt;file>
+   ${LOG_DIR}acmeMyService.log
+  &lt;/file>
+  &lt;rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+   &lt;fileNamePattern>
+    acmeMyService.%i.log.zip
+   &lt;/fileNamePattern>
+   &lt;minIndex>
+    1
+   &lt;/minIndex>
+   &lt;maxIndex>
+    10
+   &lt;/maxIndex>
+  &lt;/rollingPolicy>
+  &lt;triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+   &lt;maxFileSize>
+    50MB
+   &lt;/maxFileSize>
+  &lt;/triggeringPolicy>
+  &lt;encoder>
+   &lt;pattern>
+    #### %date{ISO8601} %level [%thread] - %msg ####%n                
+   &lt;/pattern>
+  &lt;/encoder>
+ &lt;/appender>
+
+ &lt;logger additivity="false" level="INFO" name="MyService_PSDB_RoutingService">
+  &lt;appender-ref ref="MyService"/>
+ &lt;/logger>
+
+ &lt;root level="DEBUG">
+  &lt;appender-ref ref="ALL"/>
+ &lt;/root>
+&lt;/configuration>
+
+
+
+</pre>
+
+<br/><br/>
+esgrok.conf will be
+<br/><br/>
+<pre class="brush: java">
+input {
+  file {
+    path => "/opt/var/log/weblogic/server/nesoa2*.log"
+  }
+
+}
+filter {
+  grok {
+    match => [ "message", "#### %{TIMESTAMP_ISO8601:timestamp} %{WORD:level} \[\[%{WORD:threadstatus}\] %{GREEDYDATA:threadname}\] -  ::InterfaceName:: %{WORD:interfacename} ::EventType:: %{WORD:eventtype} ::TechnicalMessageID:: %{GREEDYDATA:technicalmessageid} ::BusinessID:: %{GREEDYDATA:businessid} ::ServerName:: %{WORD:servername} ::Priority:: %{WORD:priority} ::Payload:: %{GREEDYDATA:payload} ::Fault:: %{GREEDYDATA:fault} ####" ]
+  }
+}
+
+output {
+  elasticsearch {
+    embedded => true
+  }
+}
+
+</pre>
+
+<br/><br/>
+
+Preparing the grok match regexp was very time consuming. Using <a href="http://grokdebug.herokuapp.com/">http://grokdebug.herokuapp.com/</a> the grok debugger was essential. It worked for me only on Chrome, not on Firefox.
+<br/><br/>
+<a href="https://github.com/logstash/logstash/blob/master/patterns/grok-patterns">Priceless also the list of grok patterns</a>.
+<br/>
+<br/>
+Run with <b>nohup java -jar logstash-1.3.2-flatjar.jar agent -f esgrok.conf -- web > logstash.log 2>&1 &</b>
+
+<br/>
+The result is impressive.
+<br/>
+Happy Kibana to you!
+
+<br/>
+
+

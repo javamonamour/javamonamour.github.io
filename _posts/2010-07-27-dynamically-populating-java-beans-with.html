@@ -1,0 +1,13 @@
+---
+layout: post
+title: "Dynamically Populating Java Beans with some data"
+date: 2010-07-27T14:18:00.005+02:00
+permalink: /2010/07/dynamically-populating-java-beans-with.html
+blogger_id: "2895705515045914332"
+tags: ["javabean", "populate"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2013-05-29
+    html: "There is jPopulator that can do that easily :<br /><br />https://github.com/benas/jPopulator<br /><br />Hope it helps."
+---
+Very often one needs to populate a bean with some dummy data. It's EXTREMELY boring to do it manually.<br /><br />This is only the first cut of a utility to do it in an automated way:<br /><br /><pre><br /><br />TAGD result = new TAGD();<br /><br />Map<?, ?> properties = BeanUtils.describe(result);<br /><br />for (Object property : properties.keySet()) {<br /><br />  BeanUtils.setProperty(result, property.toString(), property.toString());<br /><br />}<br /><br />return result;<br /><br /></pre><br /><br />This works only if you have only strings in the bean.<br /><br />BeanUtils is from Apache Commons.

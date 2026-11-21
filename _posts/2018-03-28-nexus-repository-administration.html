@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Nexus repository administration automation"
+date: 2018-03-28T12:30:00.001+02:00
+permalink: /2018/03/nexus-repository-administration.html
+blogger_id: "1908167921308733494"
+tags: ["nexus"]
+---
+On the whole, it doesn't seem Sonatype is taking it very seriously. As usual, documentation is scattered everywhere, some automation tools exist but who knows if they are even supported.  I think most users simply do everything manually in the Nexus web console :o((((<br />
+<br />
+<a href="http://localhost:8081/swagger-ui">http://localhost:8081/swagger-ui</a>  was working in 3.5 , now in 3.9 you must enter  http://localhost:8081/swagger-ui/#/   (see <a href="https://issues.sonatype.org/browse/NEXUS-13948">https://issues.sonatype.org/browse/NEXUS-13948</a> )<br />
+<br />
+If you want to automate the creation of repositories, swagger exposes you only "list repos" http://localhost:8081/swagger-ui/#!/repositories/getRepositories<br />
+<br />
+Interesting articles :<br />
+<br />
+<a href="https://dzone.com/articles/automated-setup-of-a-repository-manager">https://dzone.com/articles/automated-setup-of-a-repository-manager</a><br />
+<br />
+<a href="https://help.sonatype.com/repomanager3/rest-and-integration-api">https://help.sonatype.com/repomanager3/rest-and-integration-api</a><br />
+<br />
+Generic nexus-cli to manage Nexus in Groovy scripts <a href="https://github.com/RiotGamesMinions/nexus_cli">https://github.com/RiotGamesMinions/nexus_cli</a><br />
+<br />
+Interesting nexus-cli to manage Docker images in Nexus <a href="https://github.com/mlabouardy/nexus-cli">https://github.com/mlabouardy/nexus-cli</a><br />
+<br />
+

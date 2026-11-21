@@ -1,0 +1,79 @@
+---
+layout: post
+title: "Poor man's version of FindClasses"
+date: 2016-12-30T17:52:00.002+01:00
+permalink: /2016/12/poor-mans-version-of-findclasses_30.html
+blogger_id: "6071032163139802671"
+tags: ["jar", "jarfind"]
+---
+We already spoke <a href="/2009/10/find-classes-in-unix-or-windows.html">here</a> on how to find a class in an ocean of JAR files.
+
+<br/><br/>
+
+ 
+
+Here is a brutally simple utility to write all the JAR contents to a file:
+
+<br/><br/>
+
+<pre class="brush: java">
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+public class FindClasses {
+ static boolean DEBUG = true;
+ static String rootFolder = &quot;C:\\Apps\\Pippo\\&quot;;
+ static List&lt;File&gt; jarFiles = new ArrayList&lt;File&gt;();
+ public static void main(String[] args) throws Throwable {
+  Path outputFilePath = Paths.get(&quot;allfilesPippo.out&quot;);
+  BufferedWriter writer = Files.newBufferedWriter(outputFilePath);
+  File rootFolderDir = new File(rootFolder);
+  scan(rootFolderDir);
+  System.out.println(&quot;END SCAN&quot;);
+  if (DEBUG) {
+   for (File jar : jarFiles) {
+    System.out.println(jar.getAbsolutePath());
+   }
+  }
+
+  for (File jar : jarFiles) {
+   writer.write(&quot;BEGIN JAR: &quot; + jar.getAbsolutePath() + &quot;\n&quot;);
+   ZipFile zipFile = new ZipFile(jar);
+   Enumeration&lt;? extends ZipEntry&gt; entries = zipFile.entries();
+   while (entries.hasMoreElements()) {
+    ZipEntry entry = entries.nextElement();
+    writer.write(entry.getName() + &quot;\n&quot;);
+   }
+
+   zipFile.close();
+   writer.write(&quot;END JAR: &quot; + jar.getAbsolutePath() + &quot;\n\n&quot;);
+  }
+  writer.close();
+ }
+ private static void scan(File folderToScan) {
+  if (DEBUG)
+   System.out.println(&quot;scanning &quot; + folderToScan.getAbsolutePath());
+  for (File file : folderToScan.listFiles()) {
+   if (file.isDirectory()) {
+    scan(file);
+   } else {
+    if (file.getName().toLowerCase().endsWith(&quot;.jar&quot;)) {
+     jarFiles.add(file);
+    }
+   }
+  }
+ }
+} 
+
+ 
+
+</pre>

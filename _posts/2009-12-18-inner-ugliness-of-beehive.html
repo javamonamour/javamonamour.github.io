@@ -1,0 +1,50 @@
+---
+layout: post
+title: "The inner ugliness of beehive"
+date: 2009-12-18T18:11:00.000+01:00
+permalink: /2009/12/inner-ugliness-of-beehive.html
+blogger_id: "8722612411109596176"
+---
+when using WLI, lots of threads are in wait on a classloading: <br />
+<br />
+<br />
+[ACTIVE] ExecuteThread: '186' for queue: 'weblogic.kernel.Default (self-tuning)'<br />
+&nbsp;&nbsp; weblogic.utils.classloaders.ChangeAwareClassLoader.loadClass(String)<br />
+&nbsp;&nbsp; org.apache.beehive.netui.pageflow.internal.DefaultReloadableClassHandler.loadClass(String)<br />
+&nbsp;&nbsp; org.apache.beehive.netui.pageflow.FlowControllerFactory.getFlowControllerClass(String)<br />
+&nbsp;&nbsp; org.apache.beehive.netui.pageflow.PageFlowRequestProcessor.getFlowController(RequestContext, String)<br />
+&nbsp;&nbsp; org.apache.beehive.netui.pageflow.PageFlowRequestProcessor.processInternal(HttpServletRequest, HttpServletResponse)<br />
+&nbsp;&nbsp; org.apache.beehive.netui.pageflow.PageFlowRequestProcessor.process(HttpServletRequest, HttpServletResponse)<br />
+&nbsp;&nbsp; org.apache.beehive.netui.pageflow.AutoRegisterActionServlet.process(HttpServletRequest, HttpServletResponse)<br />
+&nbsp;&nbsp; org.apache.beehive.netui.pageflow.PageFlowActionServlet.process(HttpServletRequest, HttpServletResponse)<br />
+&nbsp;&nbsp; org.apache.struts.action.ActionServlet.doPost(HttpServletRequest, HttpServletResponse)<br />
+&nbsp;&nbsp; javax.servlet.http.HttpServlet.service(HttpServletRequest, HttpServletResponse)<br />
+<br />
+this is the source:<br />
+<br />
+<pre><a href="http://svn.apache.org/repos/asf/beehive/trunk/netui/src/pageflow/org/apache/beehive/netui/pageflow/FlowControllerFactory.java" title="http://svn.apache.org/repos/asf/beehive/trunk/netui/src/pageflow/org/apache/beehive/netui/pageflow/FlowControllerFactory.java">http://svn.apache.org/repos/asf/beehive/trunk/netui/src/pageflow/org/apache/beehive/netui/pageflow/FlowControllerFactory.java</a></pre><pre>&nbsp;</pre><pre><pre>private transient ReloadableClassHandler _rch;
+</pre></pre><pre>/**
+     * Get a FlowController class.  By default, this loads the class using the thread context class loader.
+     * 
+     * @param className the name of the {@link FlowController} class to load.
+     * @return the loaded {@link FlowController} class.
+     * @throws ClassNotFoundException if the requested class could not be found.
+     */
+    public Class getFlowControllerClass( String className )
+        throws ClassNotFoundException
+    {
+<strong>        return _rch.loadClass( className );
+</strong>    }
+
+</pre><pre><span class="602285914-18122009">ReloadableClassHandler :</span></pre><pre><span class="602285914-18122009">&nbsp;</span></pre><pre><span class="602285914-18122009"><a href="http://svn.apache.org/repos/asf/beehive/trunk/netui/src/pageflow/org/apache/beehive/netui/pageflow/internal/DefaultReloadableClassHandler.java" title="http://svn.apache.org/repos/asf/beehive/trunk/netui/src/pageflow/org/apache/beehive/netui/pageflow/internal/DefaultReloadableClassHandler.java">http://svn.apache.org/repos/asf/beehive/trunk/netui/src/pageflow/org/apache/beehive/netui/pageflow/internal/DefaultReloadableClassHandler.java</a></span></pre><pre><span class="602285914-18122009"><pre>public Class loadClass( String className )
+        throws ClassNotFoundException
+    {
+        if ( _pageFlowClassLoader != null )
+        {
+            synchronized ( this )
+            {
+               <strong> return Class.forName(className, false, _pageFlowClassLoader);</strong>
+            }
+        }
+        
+        return Class.forName(className, false, DiscoveryUtils.getClassLoader());</pre><pre>}</pre><pre></pre><pre></pre></span></pre><pre><span class="602285914-18122009"><span class="602285914-18122009"><span class="602285914-18122009">ReloadableClassHandler has also a </span></span></span></pre><pre><span class="602285914-18122009"><pre>public Class <strong>loadCachedClass</strong>( String className )</pre><pre></pre></span></pre><pre><span class="602285914-18122009">which would save us from Class.forName (highly deprecated for performance reasons....)</span></pre><pre><span class="602285914-18122009"></span>&nbsp;</pre><pre>I think a patch is needed, or some sort of hack...</pre><pre></pre><pre>Beehive is a loser, it has not been touched since 2006....</pre><pre>&nbsp;</pre><pre></pre>

@@ -1,0 +1,89 @@
+---
+layout: post
+title: "Creating Alert Recovery with Hyperic HQApi"
+date: 2012-05-06T10:33:00.006+02:00
+permalink: /2012/05/creating-alert-recovery-with-hyperic.html
+blogger_id: "5903682031247652934"
+tags: ["hyperic"]
+---
+Some doc on the <a href="http://support.hyperic.com/display/DOC/ui-Alert.Condition">Alert Condition topic</a><br />
+<br />
+In general, you should setup two AlertDefinitions, a [Down] and a [Fixed - Down] wchich recovers [Down]:<br />
+<br />
+<b>[Down]</b> <br />
+If Condition:  JMS Destination Availability = 0.0%<br />
+Enable Action(s):  Each time conditions are met.<br />
+Generate one alert and then disable alert definition until fixed <br />
+<br />
+and<br />
+<br />
+<b>[Fixed - Down] </b><br />
+If Condition:  JMS Destination Availability = 100.0%<br />
+<b>Recovery Alert</b>:  for [Down]<br />
+Enable Action(s):  Each time conditions are met. <br />
+<br />
+<br />
+The AlertDefinitions are:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;AlertDefinition mtime="1336300002609" ctime="1336300002609" id="10737" name="[Down]" description="" priority="2" enabled="true" active="true" frequency="0" count="0" range="0" willRecover="true" notifyFiltered="false" controlFiltered="false">
+        &lt;Resource id="12469" name="/tmp/hyperictestdir"/>
+        &lt;AlertCondition required="true" type="1" thresholdValue="0.0" thresholdComparator="=" thresholdMetric="Availability"/>
+    &lt;/AlertDefinition>
+    &lt;AlertDefinition mtime="1336300075132" ctime="1336300075132" id="10738" name="[Fixed- Down]" description="" priority="2" enabled="true" active="true" frequency="0" count="0" range="0" willRecover="false" notifyFiltered="false" controlFiltered="false">
+        &lt;Resource id="12469" name="/tmp/hyperictestdir"/>
+        &lt;AlertCondition required="true" type="1" thresholdValue="1.0" thresholdComparator="=" thresholdMetric="Availability"/>
+        &lt;AlertCondition required="true" type="5" recover="[Down]" recoverId="10737"/>
+    &lt;/AlertDefinition>
+
+
+</pre><br />
+The bit "Generate one alert and then disable alert definition until fixed" correspond to the attribute "willRecover=true" in the [Down] alert.<br />
+<br />
+If you create an alert whenever a FileServerDirectory (or any other resource) goes DOWN, you will get alerts all the time until you fix it. You might want to have the alert triggered only once, and then another UP alert when it's fixed.<br />
+<br />
+In the first scenario, you do:<br />
+<pre name="code" class="brush: java">Resource res = .... (retrieve or create the resource, can be a platform, a server or a service)
+String name = "my first alert";
+// create the AlertDefinition
+AlertDefinition alertDefinition = new AlertDefinition();
+alertDefinition.setName(name);
+alertDefinition.setDescription(name);
+alertDefinition.setPriority(AlertPriority.MEDIUM.getPriority());
+alertDefinition.setActive(true);
+alertDefinition.setWillRecover(true);
+
+// assign the AlertDefinition to the Resource
+alertDefinition.setResource(res);
+alertDefinition.setEnabled(true);
+
+// create the AlertCondition
+AlertCondition thresholdCondition0 = AlertDefinitionBuilder.createThresholdCondition(true, ALERT_METRIC_AVAILABILITY, AlertComparator.EQUALS, 0.0);
+
+// assign the AlertCondition to the AlertDefinition 
+alertDefinition.getAlertCondition().add(thresholdCondition0);
+
+List<alertdefinition> definitions = new ArrayList<alertdefinition>();
+definitions.add(alertDefinition);
+
+AlertDefinitionsResponse response = api.syncAlertDefinitions(definitions);
+</pre><br />
+So far it works, but you will get an alert a minute (depending on your aggregation time)<br />
+<br />
+To enable recovery, you must also:<br />
+<br />
+<i><br />
+AlertDefinition recoveryDefinition = .... create another AlertDefinition<br />
+AlertCondition recoveryCondition = AlertDefinitionBuilder.createRecoveryCondition(true, alertDefinition);<br />
+AlertCondition thresholdCondition100 = AlertDefinitionBuilder.createThresholdCondition(true, ALERT_METRIC_AVAILABILITY, AlertComparator.EQUALS, 1.0);<br />
+recoveryDefinition.getAlertCondition().add(thresholdCondition100);<br />
+recoveryDefinition.getAlertCondition().add(recoveryCondition);<br />
+</i><br />
+<br />
+and add also this recoveryDefinition to the List of AlertDefinition to sync:<br />
+<br />
+<i><br />
+definitions.add(recoveryDefinition);<br />
+AlertDefinitionsResponse response = api.syncAlertDefinitions(definitions);<br />
+</i><br />
+<br />
+This way you have 2 Alerts for the same resource, one triggers on DOWN and the other on UP to automatically fix the DOWN alert.

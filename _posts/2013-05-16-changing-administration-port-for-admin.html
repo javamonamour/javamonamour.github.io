@@ -1,0 +1,91 @@
+---
+layout: post
+title: "Changing administration port for the admin to SSL"
+date: 2013-05-16T15:54:00.001+02:00
+permalink: /2013/05/changing-administration-port-for-admin.html
+blogger_id: "7974840837100243306"
+tags: ["ssl"]
+---
+This WLST changes the admin's Adminstration port to 9002 <br />
+<br />
+cd('/')<br />cmo.setExalogicOptimizationsEnabled(false)<br />cmo.setAdministrationPort(9002)<br />cmo.setClusterConstraintsEnabled(false)<br />cmo.setGuardianEnabled(false)<br />cmo.setAdministrationPortEnabled(true)<br />
+<br />
+(in the domain tab of the console, it's "SSL Listen Port Enabled" = true)<br />
+<br />
+The only issue it that you should first shut down all managed servers. Then apply the change. otherwise you get the error "Cannot dynamically enable adminstration port on Managed servers when they are running"
+<br /><br />
+
+<a href="http://docs.oracle.com/cd/E28280_01/apirefs.1111/e13952/taskhelp/domainconfig/EnableTheDomainwideAdministrationPort.html">http://docs.oracle.com/cd/E28280_01/apirefs.1111/e13952/taskhelp/domainconfig/EnableTheDomainwideAdministrationPort.html
+</a><br />
+<br />
+Once you enable this Administrative port, all attempts to connect to the old port will fail with "Console/Management requests or requests with <require-admin-traffic> specified to 'true' can only be made through an administration channel"
+
+
+<br /><br />
+After that, connecting with WLST can be problematic using t3s:
+
+
+<br /><br />
+
+
+
+on WLST side:
+<br /><br />
+
+javax.net.ssl.SSLKeyException: [Security:090542]Certificate chain received from hqchnesoa104.acme.com - 10.11.5.190 was not trusted causing SSL handshake failure. Check the certificate chain to determine if it should be trusted or not. If it should be trusted, then update the client trusted CA configuration to trust the CA certificate that signed the peer certificate chain. If you are connecting to a WLS server that is using demo certificates (the default WLS server behavior), and you want this client to trust demo certificates, then specify -Dweblogic.security.TrustKeyStore=DemoTrust on the command line for this client.; No available router to destination]
+<br /><br />
+
+on WebLogic Admin side:
+<br /><br />
+
+####&lt;May 16, 2013 6:01:07 PM CEST> &lt;Warning> &lt;Security> &lt;hqchnesoa104> &lt;osbpl1as> &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;9455361429c2e897:4bba59a7:13eae0910e1:-8000-000000000000001f> &lt;1368720067334> &lt;BEA-090482> &lt;BAD_CERTIFICATE alert was received from acme.com - 10.11.5.190. Check the peer to determine why it rejected the certificate chain (trusted CA configuration, hostname verification). SSL debug tracing may be required to determine the exact reason the certificate was rejected.>
+
+<br /><br />
+
+connect('weblogic', 'weblogic1', 't3s://acme.com:9003')
+
+<br /><br />
+
+<a href="http://weblogic-wonders.com/weblogic/2010/03/03/ssl-exceptions-in-admin-server-and-node-manager/">http://weblogic-wonders.com/weblogic/2010/03/03/ssl-exceptions-in-admin-server-and-node-manager/</a>
+
+<br /><br />
+
+I finally found how to make it work:
+<br /><br />
+
+java -Dweblogic.security.TrustKeyStore=DemoTrust -Dssl.debug=true -Dweblogic.security.SSL.ignoreHostnameVerification=true -Dweblogic.security.SSL.enforceConstraints=off weblogic.WLST
+
+<br /><br />
+
+but you should rather consult Oracle Support Doc 
+<br /><br />
+"How to Enable the WebLogic Server Administration Port for WLST [ID 1511115.1]"
+<br />
+or also the <a href="http://docs.oracle.com/cd/E21764_01/web.1111/e13715/wlst_faq.htm">WLST FAQ</a> 
+<br />
+<pre>
+
+With the enabled Administration port, communication with SSL requires the keystore be configured. For example:
+
+-Dweblogic.security.SSL.ignoreHostnameVerification=true 
+-Dweblogic.security.TrustKeyStore=CustomTrust 
+-Dweblogic.security.CustomTrustKeyStoreFileName=C:\oracle\Middleware\924\weblogic92\server\lib\DemoTrust.jks 
+-Dweblogic.security.CustomTrustKeyStorePassPhrase=DemoTrustKeyStorePassPhrase 
+-Dweblogic.security.CustomTrustKeyStoreType=JKS
+
+</pre>
+
+<br /><br />
+
+The above Java properties can be set in the <b>WLST_PROPERTIES</b> system property, since the wlst.sh command runs like this:
+
+<pre>
+
+JVM_ARGS="-Dprod.props.file='${WL_HOME}'/.product.properties ${WLST_PROPERTIES} ${JVM_D64} ${MEM_ARGS} ${CONFIG_JVM_ARGS}"
+
+eval '"${JAVA_HOME}/bin/java"' ${JVM_ARGS} weblogic.WLST '"$@"'
+
+</pre>
+
+
+

@@ -1,0 +1,16 @@
+---
+layout: post
+title: "Oracle Drop Database"
+date: 2011-01-21T12:04:00.002+01:00
+permalink: /2011/01/oracle-drop-database.html
+blogger_id: "9025061674603269888"
+tags: ["db"]
+---
+this should do the job:<br />
+<br />
+<i>sqlplus "sys as sysdba"<br />
+shutdown abort;<br />
+startup mount exclusive restrict; <br />
+drop database;<br />
+exit<br />
+</i>

@@ -1,0 +1,135 @@
+---
+layout: post
+title: "OSB JEJB, exposing a OSB Proxy Service Message Flow as a EJB"
+date: 2010-06-09T19:40:00.022+02:00
+permalink: /2010/06/osb11-jejb-exposing-osb-proxy-service.html
+blogger_id: "1705566391402228167"
+tags: ["jejb", "osb11"]
+---
+Manual is here <br />
+<a href="http://download.oracle.com/docs/cd/E14571_01/doc.1111/e15866/jejb.htm#OSBDV1036">http://download.oracle.com/docs/cd/E14571_01/doc.1111/e15866/jejb.htm#OSBDV1036</a><br />
+<br />
+Further elaboration on this topic is available here:<br />
+<br />
+<a href="http://biemond.blogspot.com/2010/06/jejb-transport-and-manipulating-java.html">http://biemond.blogspot.com/2010/06/jejb-transport-and-manipulating-java.html</a><br />
+<br />
+If you create a Proxy Service as "Transport Typed Service", your only option  is JEJB.<br />
+<br />
+With Business Service you have EJB, JEJB and FLOW.<br />
+<br />
+You should write the Interface:<br />
+<br />
+package com.acme.jejb;<br />
+<br />
+public interface EmployeeService {<br />
+&nbsp;&nbsp;&nbsp; EmployeeResponse fireEmployee(Employee emp);<br />
+}<br />
+<br />
+<br />
+and the Employee and EmployeeResponse classes (omitted for clarity).<br />
+You package this in a <b>Client Jar</b> and use it in the definition of the PS. No implementation is required, since the Service will be the OSB Message Flow itself.<br />
+<br />
+The nasty surprise it that you cannot test the PS from the Console, it says "<b>the service is not testable</b> since all its operations require Java arguments".<br />
+<br />
+Yet if you go to the WebLogic Console, Deployments, you will see a <b>new EJB module</b><br />
+_JEJB_ALSB_1276103248594 deployed in a <b>EAR</b>:<br />
+<br />
+C:\ bea11\ user_projects\ domains\ osbdomain\ sbgen\ alsb_jejb_transport\ _JEJB_ALSB_1276103248594\ build\ dist\ _JEJB_ALSB_1276103248594. ear<br />
+<br />
+with a <b>Deployment Plan</b><br />
+<br />
+C:\ bea11\ user_projects\ domains\ osbdomain\ osb\ config\ plan\ Plan-_JEJB_ALSB_1276103248594. ear. xml<br />
+<br />
+and inside the EAR you have a Jar containing the Interface you specified in the service.<br />
+<br />
+Inside you find also the Stateless Session Bean generated for you by OSB:<br />
+<br />
+<br />
+<br />
+<span style="font-size: x-small;"><i>import <b>com.bea.wli.sb.transports.jejb.gen.inb.BaseInboundEJBHelper</b>;</i></span><br />
+<span style="font-size: x-small;"><i><br />
+</i></span><br />
+<span style="font-size: x-small;"><i>import javax.ejb.Stateless;</i></span><br />
+<span style="font-size: x-small;"><i>import javax.ejb.TransactionAttribute;</i></span><br />
+<span style="font-size: x-small;"><i>import javax.ejb.TransactionManagement;</i></span><br />
+<span style="font-size: x-small;"><i>import javax.ejb.TransactionManagementType;</i></span><br />
+<span style="font-size: x-small;"><i>import javax.ejb.TransactionAttributeType;</i></span><br />
+<span style="font-size: x-small;"><i>import javax.ejb.Remote;</i></span><br />
+<span style="font-size: x-small;"><i><br />
+</i></span><br />
+<span style="font-size: x-small;"><i>@Stateless(mappedName="EMPPS")</i></span><br />
+<span style="font-size: x-small;"><i>@Remote</i></span><br />
+<span style="font-size: x-small;"><i>@TransactionManagement(value=TransactionManagementType.CONTAINER)</i></span><br />
+<span style="font-size: x-small;"><i>public class CoherenceEJBProject_EMPPSBean extends BaseInboundEJBHelper implements com.acme.jejb.EmployeeService{</i></span><br />
+<span style="font-size: x-small;"><i><br />
+</i></span><br />
+<span style="font-size: x-small;"><i>private final String targetNS = "http://www.openuri.org/";</i></span><br />
+<span style="font-size: x-small;"><i><br />
+</i></span><br />
+<span style="font-size: x-small;"><i>@TransactionAttribute(value=TransactionAttributeType.SUPPORTS)</i></span><br />
+<span style="font-size: x-small;"><i>public  com.acme.jejb.EmployeeResponse  fireEmployee(</i></span><br />
+<span style="font-size: x-small;"><i>com.acme.jejb.Employee arg0          )</i></span><br />
+<span style="font-size: x-small;"><i>{</i></span><br />
+<span style="font-size: x-small;"><i>Object[] paramValues = new Object[1];</i></span><br />
+<span style="font-size: x-small;"><i>Class[] paramClasses = new Class[1];</i></span><br />
+<span style="font-size: x-small;"><i>String[] paramNames  = new String[1];</i></span><br />
+<span style="font-size: x-small;"><i>// copy parameter values and classes into their arrays</i></span><br />
+<span style="font-size: x-small;"><i>paramValues[0] = arg0;</i></span><br />
+<span style="font-size: x-small;"><i>paramClasses[0] = com.acme.jejb.Employee.class;</i></span><br />
+<span style="font-size: x-small;"><i>paramNames[0] = "arg0";</i></span><br />
+<span style="font-size: x-small;"><i>// call the pipeline</i></span><br />
+<span style="font-size: x-small;"><i>try {</i></span><br />
+<span style="font-size: x-small;"><i>return (com.acme.jejb.EmployeeResponse) callPipeline("ProxyService$CoherenceEJBProject$EMPPS", "Archive$CoherenceEJBProject$employee", "fireEmployee", paramClasses,</i></span><br />
+<span style="font-size: x-small;"><i>paramValues, paramNames, true, targetNS, "com.acme.jejb.EmployeeResponse",</i></span><br />
+<span style="font-size: x-small;"><i>"Supports", true,</i></span><br />
+<span style="font-size: x-small;"><i>false);</i></span><br />
+<span style="font-size: x-small;"><i><br />
+</i></span><br />
+<span style="font-size: x-small;"><i>} catch (Error e) {</i></span><br />
+<span style="font-size: x-small;"><i>throw e;</i></span><br />
+<span style="font-size: x-small;"><i>} catch (RuntimeException e) {</i></span><br />
+<span style="font-size: x-small;"><i>throw e;</i></span><br />
+<span style="font-size: x-small;"><i>} catch (java.lang.reflect.InvocationTargetException e) {</i></span><br />
+<span style="font-size: x-small;"><i>Throwable t = e.getTargetException();</i></span><br />
+<span style="font-size: x-small;"><i>if (t instanceof Error) throw ((Error) t);</i></span><br />
+<span style="font-size: x-small;"><i>if (t instanceof RuntimeException) throw ((RuntimeException) t);</i></span><br />
+<span style="font-size: x-small;"><i>// check each declared exception</i></span><br />
+<span style="font-size: x-small;"><i>// obscure checked exception thrown as wrapped - ERROR! </i></span><br />
+<span style="font-size: x-small;"><i>throw new RuntimeException("Unsupported checked exception thrown wrapped", t);</i></span><br />
+<span style="font-size: x-small;"><i>}</i></span><br />
+<span style="font-size: x-small;"><i>} // end fireEmployee method definition</i></span><br />
+<span style="font-size: x-small;"><i>} // end CoherenceEJBProject_EMPPS class definition</i></span><br />
+<br />
+<br />
+Incidentally, com.bea.wli.sb.transports.jejb.gen.inb.BaseInboundEJBHelper is in<br />
+C:\bea11\Oracle_OSB11\lib\transports\<b>jejb_transport.jar</b><br />
+<br />
+<br />
+Besides, some <b>configuration </b>is made available in<br />
+<br />
+C:\bea11\user_projects\domains\osbdomain\osb\config\core\YOUR_OSB_PROJECT<br />
+<br />
+in an XML fragment which contains the configuration of the PS (nothing particularly exciting).<br />
+<br />
+<br />
+At this point most likely you will notice the exception:<br />
+<br />
+java.lang.NoClassDefFoundError: com/bea/wli/sb/transports/jejb/gen/inb/BaseInboundEJBHelper<br />
+<br />
+YET the component seems to be deployed OK.<br />
+<br />
+<br />
+The <b>JNDI Tree</b> will contain these entries:<br />
+<br />
+_JEJB_ALSB_1276103248594CoherenceEJBProject_EMPPS_jarCoherenceEJBProject_EMPPSEJB_EmployeeService<br />
+<br />
+and<br />
+<br />
+_JEJB_ALSB_1276103248594CoherenceEJBProject_EMPPS_jarCoherenceEJBProject_EMPPSEJB_Home<br />
+<br />
+<br />
+weblogic.ejb.container.internal.StatelessEJBHomeImpl_1033_WLStub<br />
+<br />
+and now how shall I cast the JNDI lookup and make a remote call? I don't have the Remote interfaces here...<br />
+<br />
+WIP

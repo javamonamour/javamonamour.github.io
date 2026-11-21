@@ -1,0 +1,76 @@
+---
+layout: post
+title: "bash: run su passing parameters"
+date: 2015-03-30T13:04:00.002+02:00
+permalink: /2015/03/bash-run-su-passing-parameters.html
+blogger_id: "4861131934011917132"
+tags: ["su"]
+---
+if you decide to switch to another user to run some commands, remember that whatever variable you have defined so far will NOT be passed to the other user.
+<br/><br/>
+
+<pre>
+message="fanculo"
+echo $message
+fanculo
+su - wls
+echo $message
+(nothing will be displayed, as "message" is not defined for wls)
+
+</pre>
+
+
+<br/><br/>
+
+This of course is a HPITA (aka RPITA) for someone who writes shell scripts.
+
+<br/><br/>
+You can use the "su -p" to pass the whole environment, but then there are some side effects:
+
+<pre>
+su -p - wls
+su: ignore --preserve-environment, it's mutually exclusive to --login.
+
+
+</pre>
+
+(the "-" options is same as "--login")
+
+<br/><br/>
+
+<pre>
+su -p wls
+bash: /root/.bashrc: Permission denied
+
+
+</pre>
+
+
+
+<br/><br/>
+
+
+
+I found it cleaner and easier to simply run the command I have to run with the "-c" option, so that variable substitution takes place in the "right" (root) context:
+
+<pre>
+softwareFolder=/software
+scriptFolder=/wlinstall
+
+....
+
+su - wls -c "export JAVA_VENDOR=Sun;export JAVA_HOME=/usr/java/jdk1.7.0_55/;java -d64 -Xmx1024m -Djava.io.tmpdir=/opt/oracle/temp -jar ${softwareFolder}/wls1036_generic.jar -mode=silent -silent_xml=${scriptFolder}/weblogic_silent_install.xml"
+
+
+</pre>
+
+
+<br/><br/>
+this way softwareFolder and scriptFolder are both defined and I don't have to reinitialize them for the wls user...
+
+
+<br/><br/>
+
+
+
+

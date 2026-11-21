@@ -1,0 +1,128 @@
+---
+layout: post
+title: "WebLogic, dramatic reduction of TLS sessions creation by rejectClientInitiatedRenegotiation"
+date: 2019-08-14T19:58:00.001+02:00
+permalink: /2019/08/weblogic-dramatic-reduction-of-tls.html
+blogger_id: "6005703790592969844"
+tags: ["renegotiation", "tls", "weblogic"]
+---
+why the TLS Sessions are constantly invalidated, removed from cache and recreated, discovering that it's WLS SSLConfigUtils.configureClientInitSecureRenegotiation() who initiates this:<br />
+<br />
+<pre>at sun.security.ssl.SSLSessionContextImpl.remove(SSLSessionContextImpl.java:132)
+
+at sun.security.ssl.SSLSessionImpl.invalidate(SSLSessionImpl.java:673)
+
+at weblogic.socket.utils.SSLConfigUtils.configureClientInitSecureRenegotiation(SSLConfigUtils.java:27)
+
+at weblogic.socket.JSSEFilterImpl.doHandshake(JSSEFilterImpl.java:135)
+
+at weblogic.socket.JSSEFilterImpl.isMessageComplete(JSSEFilterImpl.java:354)
+
+at weblogic.socket.SocketMuxer.readReadySocketOnce(SocketMuxer.java:976)
+
+at weblogic.socket.SocketMuxer.readReadySocket(SocketMuxer.java:917)
+
+at weblogic.socket.NIOSocketMuxer.process(NIOSocketMuxer.java:599)
+
+at weblogic.socket.NIOSocketMuxer.processSockets(NIOSocketMuxer.java:563)
+
+at weblogic.socket.SocketReaderRequest.run(SocketReaderRequest.java:30)
+
+at weblogic.socket.SocketReaderRequest.execute(SocketReaderRequest.java:43)
+
+at weblogic.kernel.ExecuteThread.execute(ExecuteThread.java:147)
+
+at weblogic.kernel.ExecuteThread.run(ExecuteThread.java:119)
+</pre> <br />
+<br />
+the code responsible is:<br />
+<br />
+ <br />
+<pre>public static void configureClientInitSecureRenegotiation(SSLEngine sslEngine, boolean clientInitSecureRenegotiation)
+
+ {
+
+   if (!IS_JDK_CLIENT_INIT_SECURE_RENEGOTIATION_PROPERTY_SET)
+
+   {
+
+     if ((sslEngine != null) && (!sslEngine.getUseClientMode()))
+
+     {
+
+       if (!clientInitSecureRenegotiation) {
+
+         sslEngine.getSession().invalidate();
+
+       }
+
+       sslEngine.setEnableSessionCreation(clientInitSecureRenegotiation);
+
+       if (isLoggable()) {
+
+         SocketLogger.logDebug(clientInitSecureRenegotiation ? "Enabled" : "Disabled TLS client initiated secure renegotiation.");
+
+       }
+
+     }
+
+   }
+
+   else if (isLoggable()) {
+
+     SocketLogger.logDebug("TLS client initiated secure renegotiation setting is configured with -Djdk.tls.rejectClientInitiatedRenegotiation");
+
+   }
+
+ }
+</pre> <br />
+<br />
+so the invalidate() is called only if !clientInitSecureRenegotiation , but it appears that clientInitSecureRenegotiation=isClientInitSecureRenegotiationAccepted  is always FALSE<br />
+<br />
+ <br />
+<br />
+ <br />
+<br />
+in JSSESocketFactory:<br />
+<pre>
+  JSSEFilterImpl getJSSEFilterImpl(Socket connectedSocket, String host, int port)
+
+    throws IOException
+
+  {
+
+    SSLEngine sslEngine = getSSLEngine(host, port);
+
+    return new JSSEFilterImpl(connectedSocket, sslEngine, true);
+
+  }
+</pre><br />
+in JSSEFilterImpl:<br />
+<br />
+<pre>public JSSEFilterImpl(Socket sock, SSLEngine engine, boolean clientMode)
+
+    throws IOException
+
+  {
+
+    this(sock, engine, clientMode, false);  // parameter 4 is isClientInitSecureRenegotiationAccepted, THIS IS ALWAYS FALSE, and clientMode is always TRUE
+
+  }
+
+   
+
+  public JSSEFilterImpl(Socket sock, SSLEngine engine, boolean clientMode, boolean isClientInitSecureRenegotiationAccepted)  // this constructor is ultimately invoked
+
+    throws IOException
+
+  {
+
+</pre><br />
+so the only way to avoid session invalidation is by having IS_JDK_CLIENT_INIT_SECURE_RENEGOTIATION_PROPERTY_SET=false, that is by setting -Djdk.tls.rejectClientInitiatedRenegotiation=false (true or false doesn't seem to matter, as long as the variable is set)<br />
+<br />
+<br />
+Thanks to Carlo for the excellent analysis.<br />
+<br />
+<br />
+ <br />
+

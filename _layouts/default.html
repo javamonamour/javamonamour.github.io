@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% seo %}
+{% feed_meta %}
+<link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="site-title" href="/">{{ site.title }}</a>
+  <nav><a href="/archive.html">Archive</a> <a href="/labels.html">Labels</a> <a href="/feeds/posts/default.xml">RSS</a></nav>
+</header>
+<div class="wrap">
+  <main>{{ content }}</main>
+  <aside>
+    <h3>Top labels</h3>
+    <p class="cloud">{% assign top = site.data.labels | sort: "count" | reverse %}{% for l in top limit: 40 %}<a href="/search/label/{{ l.slug }}">{{ l.name }}</a> <small>({{ l.count }})</small> {% endfor %}</p>
+    <p><a href="/labels.html">All {{ site.data.labels.size }} labels &raquo;</a></p>
+  </aside>
+</div>
+<footer>&copy; Pierre Vernetto &middot; {{ site.posts.size }} posts</footer>
+</body>
+</html>

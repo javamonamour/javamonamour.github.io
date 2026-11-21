@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Oracle DB check contraints based on regular expression"
+date: 2014-08-11T15:59:00.003+02:00
+permalink: /2014/08/oracle-db-check-contraints-based-on.html
+blogger_id: "645225873121629981"
+tags: ["oracledb"]
+---
+It's good to know that for "check constraint" you can use any arbitrary regular expression <a href="http://docs.oracle.com/cd/E11882_01/server.112/e17118/conditions007.htm#SQLRF52150">http://docs.oracle.com/cd/E11882_01/server.112/e17118/conditions007.htm#SQLRF52150</a> .
+
+<br />
+<br />
+Example:
+<br />
+<br />
+<pre class="brush: java">create table PIPPO (name varchar2 (32));
+alter table PIPPO add constraint check_name check (REGEXP_LIKE(name,'bi|bo|ba','c')); 
+</pre>
+<br />
+<br />
+If you try inserting some crap you get:
+<br />
+<br />
+<pre class="brush: java">Error starting at line 5 in command:
+INSERT INTO "CMDBUSER"."PIPPO" (NAME) VALUES ('bu')
+Error report:
+SQL Error: ORA-02290: check constraint (CMDBUSER.CHECK_NAME) violated
+02290. 00000 -  "check constraint (%s.%s) violated"
+*Cause:    The values being inserted do not satisfy the named check
+           
+*Action:   do not insert values that violate the constraint.
+</pre>
+<br />
+<br />
+If you get something like this below it means that your regex is bad or that the last parameter of REGEXP_LIKE is not legal (e.g. if you enter it UPPER CASE instead of lower case):
+<br />
+<br />
+<pre class="brush: java">INSERT INTO "CMDBUSER"."PIPPO" (NAME) VALUES ('bu')
+ORA-01760: illegal argument for function
+ORA-06512: at line 1
+</pre>
+

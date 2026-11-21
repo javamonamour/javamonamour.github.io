@@ -1,0 +1,120 @@
+---
+layout: post
+title: "OSB: error handling, fault"
+date: 2010-07-04T10:16:00.013+02:00
+permalink: /2010/07/osb-error-handling-fault.html
+blogger_id: "8723007885442895790"
+tags: ["fault", "osb11"]
+---
+First read the posts <a href="http://jvzoggel.wordpress.com/2011/07/28/custom-soap-faults-osb/">of my friend Jan</a> and <a href="http://www.xenta.nl/blog/2010/07/17/oracle-service-bus-11g-handling-soap-faults/">of Eric Elzinga</a> (whom I have never had the pleasure to meet).<br />
+<br />
+Here <a href="/2010/04/soap-fault-in-osb.html">/2010/04/soap-fault-in-osb.html</a> I have taken some notes.<br />
+<br />
+Here a full explanation on the topic:<br />
+<a href="http://download.oracle.com/docs/cd/E14571_01/doc.1111/e15867/modelingmessageflow.htm#i1040168">http://download.oracle.com/docs/cd/E14571_01/doc.1111/e15867/modelingmessageflow.htm#i1040168</a><br />
+<br />
+<br />
+When a fault is handled in the fault handler, you have this:<br />
+<br />
+$body<br />
+<br />
+<pre class="brush: xml" name="code">&lt;env:Body xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"&gt;
+ &lt;env:Fault&gt;
+  &lt;faultcode&gt;env:Server&lt;/faultcode&gt;
+  &lt;faultstring/&gt;
+  &lt;detail&gt;
+   &lt;java:CacheStateException xmlns:java="java:com.acme.cache.commons"&gt;
+    &lt;java:CacheName&gt;geo-data-geographic-area&lt;/java:CacheName&gt;
+    &lt;java:Status&gt;Not initialized&lt;/java:Status&gt;
+   &lt;/java:CacheStateException&gt;
+  &lt;/detail&gt;
+ &lt;/env:Fault&gt;
+&lt;/env:Body&gt;
+</pre><br />
+<br />
+$fault<br />
+<br />
+<pre class="brush: xml" name="code">&lt;con:fault xmlns:con="http://www.bea.com/wli/sb/context"&gt;
+ &lt;con:errorCode&gt;BEA-380001&lt;/con:errorCode&gt;
+ &lt;con:location&gt;
+  &lt;con:node&gt;RouteNodeToEJBBS&lt;/con:node&gt;
+  &lt;con:path&gt;response-pipeline&lt;/con:path&gt;
+ &lt;/con:location&gt;
+&lt;/con:fault&gt;
+</pre><br />
+Not necessarily "reason" and "details" are populated! Details should be retrieved from the $body variable. Reason is nowhere to be found.<br />
+<br />
+(see also here <a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/context.html#wp1051816">http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/context.html#wp1051816</a> for $fault definition)<br />
+<br />
+<br />
+To access individual info in the fault: <br />
+$fault/ctx:errorCode/text()<br />
+<br />
+Error codes are here http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/consolehelp/errorcodes.html<br />
+<br />
+NB:<br />
+the <b>body </b>uses the namespace <a href="http://schemas.xmlsoap.org/soap/envelope/">http://schemas.xmlsoap.org/soap/envelope/</a><br />
+here <b>http://schemas.xmlsoap.org/soap/envelope/</b> you can find  the XSD for the env:Fault<br />
+<br />
+the <b>fault </b>uses the namespace http://www.bea.com/wli/sb/context<br />
+<br />
+<br />
+<br />
+If you terminate the Error Handler with "<b>Reply with failure</b>", you return a <b>HTTP 500</b> status. In SOAPUI, in the response panel click in RAW, you will see "HTTP/1.1 500 Internal Server Error".<br />
+<br />
+The ambiguity is that if you get a <b>fault internal to OSB</b> - rather than from an external service - the $body doesn't contain the fault, but rather the original request message. In this case the $fault will contain the info required:<br />
+<br />
+<pre class="brush: xml" name="code">&lt;con:fault xmlns:con="http://www.bea.com/wli/sb/context"&gt;
+ &lt;con:errorCode&gt;BEA-382513&lt;/con:errorCode&gt;
+ &lt;con:reason&gt;OSB Replace action failed updating variable "body": Error parsing XML: {err}XP0006: "text '
+      '": bad value for type element {http://www.acme.com/schema/GeoServicePS/v1}getLocationsByLocationIds { {http://www.w3.
+org/2001/XMLSchema}anyType }&lt;/con:reason&gt;
+ &lt;con:location&gt;
+  &lt;con:node&gt;RouteNodeToEJBBS&lt;/con:node&gt;
+  &lt;con:path&gt;request-pipeline&lt;/con:path&gt;
+ &lt;/con:location&gt;
+&lt;/con:fault&gt;
+</pre><br />
+The rule for a "universal error handler" could be:<br />
+merge whatever information comes from $body (if it's a env:Fault) and from $fault, to build a meaningful env:Fault object to return to the caller with a HTTP 500 status.<br />
+<br />
+<br />
+This can be used to merge env:Fault and ctx:fault into a meaningful env:Fault:<br />
+<br />
+<pre class="brush: java" name="code">xquery version "1.0" encoding "Cp1252";
+xquery version "1.0" encoding "Cp1252";
+(:: pragma  parameter="$theBody" type="xs:anyType" ::)
+(:: pragma  parameter="$theFault" type="xs:anyType" ::)
+(:: pragma  type="xs:anyType" ::)
+
+declare namespace xf = "http://tempuri.org/GEO_OSB_MARIA_EJBProxyProject/XQ/generateFault/";
+declare namespace env = "http://schemas.xmlsoap.org/soap/envelope/";
+declare namespace con = "http://www.bea.com/wli/sb/context";
+
+declare function xf:generateFault($theBody as element(*),
+    $theFault as element(*))
+    as element(*) {
+  <env:body xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+   <env:fault>
+    <faultcode>{fn:concat($theBody/env:Fault/faultcode/text(), ' ', $theFault/con:errorCode/text())}</faultcode>
+    <faultstring>{fn:concat($theBody/env:Fault/faultstring/text(), ' ' , $theFault/con:reason/text())}</faultstring>
+    <faultactor></faultactor>
+    <detail>{$theBody/env:Fault/detail/*} { $theFault/con:location} </detail>
+   </env:fault>
+  </env:body>
+  
+};
+
+declare variable $theBody as element(*) external;
+declare variable $theFault as element(*) external;
+
+xf:generateFault($theBody, $theFault)&nbsp;</pre><br />
+<br />
+<br />
+Using Axis2 as a client, during unmarshalling of the response Axis will generate a <b>org.apache.axis2.AxisFault</b> Java exception upon reception of a env:Fault in the body;<br />
+reason, code and details are populated.<br />
+This is optional and can be disabled.<br />
+All this takes place in Axis2 kernel, org.apache.axis2.util.Utils.getInboundFaultFromMessageContext(...)<br />
+<br />
+<br />
+When unittesting for SOAP Fault, assert that an AxisFault exception is generated.

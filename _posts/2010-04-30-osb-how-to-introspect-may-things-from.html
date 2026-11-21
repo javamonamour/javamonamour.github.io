@@ -1,0 +1,38 @@
+---
+layout: post
+title: "OSB: how to introspect many things from the inbound request"
+date: 2010-04-30T16:36:00.000+02:00
+permalink: /2010/04/osb-how-to-introspect-may-things-from.html
+blogger_id: "5143221726315068680"
+tags: ["OSB"]
+---
+<b>$inbound/ctx:transport/ctx:uri/text()&nbsp;</b> will give you the proxy URI, that is /OSB_Project_1/Proxy_Service_1<br />
+<br />
+$inbound contains this info: <br />
+<br />
+<br />
+&lt;con:<b>endpoint </b>name="ProxyService$OSB Project 1$Proxy Service 1" xmlns:<b>con</b>="<b>http://www.bea.com/wli/sb/context</b>"&gt;<br />
+&nbsp; &lt;con:<b>service</b>/&gt;<br />
+&nbsp; &lt;con:<b>transport</b>&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:<b>uri</b>&gt;/OSB_Project_1/Proxy_Service_1&lt;/con:uri&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:mode&gt;request-response&lt;/con:mode&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:qualityOfService&gt;best-effort&lt;/con:qualityOfService&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:request xsi:type="http:HttpRequestMetaData" xmlns:http="http://www.bea.com/wli/sb/transports/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;tran:headers xsi:type="http:HttpRequestHeaders" xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;http:Content-Type&gt;text/xml; charset=utf-8&lt;/http:Content-Type&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/tran:headers&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;tran:encoding xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;utf-8&lt;/tran:encoding&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/con:request&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:response xsi:type="http:HttpResponseMetaData" xmlns:http="http://www.bea.com/wli/sb/transports/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;tran:headers xsi:type="http:HttpResponseHeaders" xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;http:Content-Type&gt;text/xml&lt;/http:Content-Type&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/tran:headers&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;tran:response-code xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;0&lt;/tran:response-code&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/con:response&gt;<br />
+&nbsp; &lt;/con:transport&gt;<br />
+&nbsp; &lt;con:security&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:transportClient&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;con:<b>username</b>&gt;&lt;anonymous&gt;&lt;/con:username&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/con:transportClient&gt;<br />
+&nbsp; &lt;/con:security&gt;<br />
+&lt;/con:endpoint&gt;

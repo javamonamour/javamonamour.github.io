@@ -1,0 +1,54 @@
+---
+layout: post
+title: "ConcurrentHashMap and MultiValueMap - a Map with multiple values per key"
+date: 2012-07-14T13:11:00.004+02:00
+permalink: /2012/07/concurrenthashmap-and-multivaluemap-map.html
+blogger_id: "4735761054384553725"
+tags: ["collections"]
+---
+a <a href="http://docs.oracle.com/javase/6/docs/api/java/util/concurrent/ConcurrentHashMap.html">ConcurrentHashMap</a> can only associate 1 value to 1 key:<br />
+<br />
+map.put("a", "bla");<br />
+map.put("a", "blu");<br />
+map.get("a") will return only "blu".<br />
+<br />
+If I want map.get("a") to return ("bla", "blu") I must use a <a href="http://commons.apache.org/collections/apidocs/org/apache/commons/collections/map/MultiValueMap.html">MultiValueMap</a> to decorate a ConcurrentHashMap<br />
+<br />
+or you can use a Google Collections (<a href="http://code.google.com/p/guava-libraries/">Guava</a>) <a href="http://google-collections.googlecode.com/svn/trunk/javadoc/com/google/common/collect/Multimap.html">Multimap</a> such as a <a href="http://google-collections.googlecode.com/svn/trunk/javadoc/com/google/common/collect/ArrayListMultimap.html">ArrayListMultimap</a><br />
+<br />
+<br />
+Otherwise, if like me you like brewing your own framework, you can decorate yourself a ConcurrentHashmap:<br />
+<br />
+<br />
+<pre name="code" class="brush: java">
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.xmlbeans.XmlObject;
+
+public class ArrayListMultimap {
+
+ private ConcurrentHashMap&lt;String, List<XmlObject>> theMap = new ConcurrentHashMap&lt;String, List&lt;XmlObject>>();
+ 
+ public static ArrayListMultimap create(int i, int j) {
+  return new ArrayListMultimap();
+ }
+ 
+ public List&lt;XmlObject> put(String key, XmlObject value) {
+  List&lt;XmlObject> previousvalue = (List&lt;XmlObject>)theMap.get(key);
+  if (previousvalue == null) {
+   previousvalue = new ArrayList&lt;XmlObject>();
+   previousvalue.add(value);
+   theMap.put(key, previousvalue);
+  }
+  return previousvalue;
+ }
+
+ public int size() {
+  return theMap.size();
+ }
+
+}
+
+</pre>

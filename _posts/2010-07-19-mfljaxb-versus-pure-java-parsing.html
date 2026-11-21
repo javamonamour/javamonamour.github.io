@@ -1,0 +1,25 @@
+---
+layout: post
+title: "MFL+JAXB versus pure Java parsing"
+date: 2010-07-19T19:43:00.016+02:00
+permalink: /2010/07/mfljaxb-versus-pure-java-parsing.html
+blogger_id: "8947617560384764861"
+tags: ["jaxb", "mfl", "parsers"]
+---
+<b>Disclaimer: &nbsp; this test was done in Eclipse using WLXT. The test proves to be INCREDIBLY slower compared to running the same MFL transformation inside OSB. In fact, inside OSB reading 418 binary files (5 KB each) and writing them in XML format took roughly 8 seconds - a LOT better than the 155 seconds using WLST.</b><br />
+<b>I am curious now to understand where lies the HUGE difference in performance of the Format Builder libraries when run in OSB and in Eclipse.</b><br />
+<br />
+Morale: don't benchmark MFL using a out of container test.<br />
+<br />
+I have 417 files containing "binary" messages, fixed length fields, to be parsed into Java objects. Each file is some 5 KB each. Total some 2 MB.<br />
+<br />
+Doing the transformation:<br />
+Binary -&gt; XML (with <b>MFL</b>) followed by <br />
+XML -&gt; Java (with <b>JAXB</b>)<br />
+<br />
+inside Eclipse takes a whopping <b>157 seconds</b>, out of which 101 in MFL and 56 in JAXB.<br />
+The same transformation run on a OSB proxy service takes some 5 seconds (!!!).<br />
+<br />
+Doing the transformation Binary -&gt; Java directly in <b>Java </b>takes<b> 3.5 seconds</b>  - that is some <span style="font-size: large;">50 times faster</span>. I assume the memory garbage produced would be also immensely lower by parsing directly in Java.<br />
+<br />
+The Java parser took 4 hours to build and test. MFL took 2 hours to make and 2 hours to troubleshoot.

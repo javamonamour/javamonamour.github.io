@@ -1,0 +1,50 @@
+---
+layout: post
+title: "weblogic change admin port number"
+date: 2013-04-24T11:25:00.002+02:00
+permalink: /2013/04/weblogic-change-admin-port-number.html
+blogger_id: "7664527586479535998"
+---
+change these files:
+<br/><br/>
+$DOMAIN_HOME/bin/stopWebLogic.sh<br/>
+$DOMAIN_HOME/bin/stopManagedWebLogic.sh<br/>
+$DOMAIN_HOME/bin/startManagedWebLogic.sh<br/>
+$DOMAIN_HOME/config/backup_config1.xml<br/>
+$DOMAIN_HOME/config/backup_config.xml<br/>
+$DOMAIN_HOME/config/fmwconfig/servers/osbpl1as/applications/em/META-INF/emoms.properties.jmxori<br/>
+$DOMAIN_HOME/config/fmwconfig/servers/osbpl1as/applications/em/META-INF/emoms.properties<br/>
+$DOMAIN_HOME/config/config.xml<br/>
+$DOMAIN_HOME/init-info/startscript.xml<br/>
+$DOMAIN_HOME/init-info/tokenValue.properties<br/>
+$DOMAIN_HOME/servers/domain_bak/config_prev/config.xml<br/>
+$DOMAIN_HOME/servers/osbpl1ms1/data/nodemanager/startup.properties<br/>
+$DOMAIN_HOME/servers/osbpl1ms2/data/nodemanager/startup.properties<br/>
+
+
+
+
+$DOMAIN_HOME/servers/osbpl1as/data/nodemanager/osbpl1as.url<br/>
+$DOMAIN_HOME/servers/osbpl1as/data/ldap/conf/replicas.prop<br/>
+$DOMAIN_HOME/sysman/state/targets.xml<br/>
+
+
+<br/><br/>
+
+and also:
+<br/><br/>
+rm -rf $DOMAIN_HOME/servers/osbpl1as/tmp/<br/>
+rm $DOMAIN_HOME/servers/osbpl1as/data/store/default/_WLS_OSBPL1AS000000.DAT<br/>
+
+
+
+MAYBE it works by simply change a couple of shell scripts and "Listen Port:" in the console. Surely updating the "Listen Port" with the console doesn't update the start and stop scripts.
+<br/><br/>
+
+
+
+My idea is that, to be on the safe side, one had better recreate the domain.
+<br/><br/>
+
+Surely, changing managed server port is easier.<br/><br/>
+

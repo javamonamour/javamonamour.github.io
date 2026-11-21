@@ -1,0 +1,62 @@
+---
+layout: post
+title: "XQuery to change the local name of an element"
+date: 2010-05-17T08:54:00.000+02:00
+permalink: /2010/05/xquery-to-change-local-name-of-element.html
+blogger_id: "4656959117014014983"
+tags: ["XQuery"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2011-05-20
+    html: "now I remember: I needed to rename the element into something that I could decide DYNAMICALLY.... unfortunately the OSB &quot;rename&quot; action forces you to hardcode the &quot;target&quot; name, you cannot pass it as a variable... that&#39;s why I needed to do it with a XQuery!"
+  - author: "vernetto"
+    date: 2011-05-20
+    html: "true, I have done <br /><br />define user defined namespace dbac=&quot;http://com/acme/dbaccess&quot;<br /><br />rename ./dbac:updateCompany in variable $body to localname updateCompanyBla<br /><br />and it works like a charm.<br /><br />The problem is when you must perform the same operation inside XQuery... I try to manipulate payloads inside XQuery as much as I can, leaving my message flow to the bare minimum..."
+  - author: "Anonymous"
+    date: 2011-05-20
+    html: "Or on the OSB, simply use a rename action - it can rename elements and even inject namespaces."
+---
+returning to the problem of changing operation in a body, that is turning:<br />
+<br />
+<dbac:>&lt;dbac:<b>insertCompany </b>xmlns:dbac="http://com/acme/dbaccess"&gt;<br />
+&nbsp; &lt;dbac:company xmlns:java="java:com.acme.dbaccess"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:CreationDate&gt;3&lt;/java:CreationDate&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:Id&gt;10&lt;/java:Id&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:Name&gt;string&lt;/java:Name&gt;<br />
+&nbsp; &lt;/dbac:company&gt;<br />
+&lt;/dbac:<b>insertCompany</b>&gt;</dbac:><br />
+<br />
+<br />
+into<br />
+<br />
+<dbac:>&lt;dbac:<b>updateCompany </b>xmlns:dbac="http://com/acme/dbaccess"&gt;<br />
+&nbsp; &lt;dbac:company xmlns:java="java:com.acme.dbaccess"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:CreationDate&gt;3&lt;/java:CreationDate&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:Id&gt;10&lt;/java:Id&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:Name&gt;string&lt;/java:Name&gt;<br />
+&nbsp; &lt;/dbac:company&gt;<br />
+&lt;/dbac:</dbac:><b>update</b><dbac:><b>Company</b>&gt;</dbac:><br />
+<br />
+<br />
+of course one way would be to turn all the payload into a String, do a <b>fn:replace</b>(thestring, oldoperation, newoperation) and then turning it back into a element(*); but it's very unsafe as it replaces everything.<br />
+<br />
+There is a reliable way using this XQuery:<br />
+<br />
+<br />
+declare namespace functx = "http://www.functx.com";<br />
+declare namespace dbac = "http://com/acme/dbaccess";<br />
+<br />
+<i>declare function functx:replace-beginning </i><br />
+<i>&nbsp; ( $arg as element(*), $name as xs:string,$newName as xs:string)&nbsp; as element() {</i><br />
+<i>&nbsp;&nbsp;&nbsp; if (fn:ends-with(string(<b>node-name</b>($arg)), $name) = xs:boolean('true')) then</i><br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp; <b>element{$newName}</b>{$arg/node()}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i><br />
+<i>&nbsp;&nbsp;&nbsp; else</i><br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp; <error>Error Message</error></i><br />
+<i>&nbsp;} ;</i><br />
+<br />
+declare variable $arg as element(*) external;<br />
+declare variable $name as xs:string external;<br />
+declare variable $newName as xs:string external;<br />
+functx:replace-beginning($arg, $name, $newName)<br />
+<br />
+This is an excellent demonstration of how to instantiate a node (element($newName)} and insert into it portion of the old element.

@@ -1,0 +1,64 @@
+---
+layout: post
+title: "Xml Parsing, tools, strategies and alternatives"
+date: 2018-04-06T23:17:00.000+02:00
+permalink: /2018/04/xml-parsing-tools-strategies-and.html
+blogger_id: "2718119346104909148"
+tags: ["xjc"]
+---
+<h1>JAXB</h1><br />
+<br />
+If you have an xsd, you can generate the @javax.xml.bind.annotation.XmlRootElement annotated Java POJOs with xjc: <br />
+<a href="https://docs.oracle.com/javase/8/docs/technotes/tools/unix/xjc.html">https://docs.oracle.com/javase/8/docs/technotes/tools/unix/xjc.html</a>  <br />
+example: <br />
+<pre>cd D:\pierre\wildfly-11.0.0.CR1\docs\schema
+
+xjc .\wildfly-config_5_0.xsd -d D:\pierre\workspaceneon\PVXmlParser\src\
+</pre><br />
+<br />
+Here an example to PARSE an xml file <a href="https://www.javacodegeeks.com/2013/02/jaxb-tutorial-getting-started.html">https://www.javacodegeeks.com/2013/02/jaxb-tutorial-getting-started.html</a>  <br />
+<br />
+Here the <a href="https://docs.oracle.com/javase/8/docs/api/javax/xml/bind/Unmarshaller.html">https://docs.oracle.com/javase/8/docs/api/javax/xml/bind/Unmarshaller.html</a>   <br />
+<br />
+To generate an XSD from existing XML, try <a href="http://www.thaiopensource.com/relaxng/trang-manual.html">http://www.thaiopensource.com/relaxng/trang-manual.html</a>  (a bit old tool...)  <br />
+<br />
+<pre class="brush: java">package org.pierre.jbossconf;
+
+import java.io.File;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
+import jboss.domain._5.Server;
+
+
+public class XmlParser {
+ public static void main(String[] args) throws JAXBException {
+  JAXBContext jaxbContext = JAXBContext.newInstance(Server.class);
+  Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+  File standaloneXmlFile = new File("D:\\pierre\\wildfly-11.0.0.CR1\\standalone\\configuration\\standalone.xml");
+  Server server = (Server)jaxbUnmarshaller.unmarshal(standaloneXmlFile);
+  server.getProfile().getAny().forEach((item) -> {System.out.println(item);}); 
+ }
+
+}
+
+</pre><br />
+<br />
+in my case, parsing fails because of missing tokes substitution "Not a number: ${jboss.socket.binding.port-offset:0}"  <br />
+<br />
+these variables are present in thee standalone.xml file: <br />
+<pre>jboss.deployment.scanner.rollback.on.failure
+prop.remoting-connector.read.timeout
+jboss.home.dir
+jboss.bind.address
+jboss.bind.address.management
+jboss.bind.address
+jboss.socket.binding.port-offset
+jboss.management.http.port
+jboss.management.https.port
+jboss.ajp.port
+jboss.http.port
+jboss.https.port
+</pre>

@@ -1,0 +1,28 @@
+---
+layout: post
+title: "Same classloader for EJB and WAR"
+date: 2016-01-15T10:29:00.002+01:00
+permalink: /2016/01/same-classloader-for-ejb-and-war.html
+blogger_id: "5113066863620741595"
+tags: ["classloaders"]
+---
+<a href="https://docs.oracle.com/middleware/1212/wls/WLPRG/classloading.htm#WLPRG293">https://docs.oracle.com/middleware/1212/wls/WLPRG/classloading.htm#WLPRG293</a>
+<br/><br/>
+you can alter the weblogic-application.xml with this
+<br/><br/>
+<pre class="brush: xml">
+&lt;classloader-structure&gt; 
+    &lt;module-ref&gt; 
+       &lt;module-uri&gt;ejb1.jar&lt;/module-uri&gt; 
+    &lt;/module-ref&gt;
+    &lt;module-ref&gt; 
+       &lt;module-uri&gt;web1.war&lt;/module-uri&gt; 
+    &lt;/module-ref&gt;
+ &lt;/classloader-structure&gt; 
+</pre>
+
+<br/><br/>
+
+
+however it's recommended to either put your shared classes in APP-INF/lib, or remove circular dependencies if any
+

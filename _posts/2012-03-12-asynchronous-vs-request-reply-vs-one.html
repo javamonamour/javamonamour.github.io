@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Asynchronous vs Request-Reply vs One Way"
+date: 2012-03-12T18:28:00.002+01:00
+permalink: /2012/03/asynchronous-vs-request-reply-vs-one.html
+blogger_id: "3359119611277375185"
+tags: ["patterns", "SOA"]
+---
+<b>Definition of Asynchronous:</b><br />
+<br />
+<a href="http://www.w3.org/TR/xmlp-scenarios/#DS17">http://www.w3.org/TR/xmlp-scenarios/#DS17</a><br />
+<br />
+"A sender sends a message asynchronously to a receiver expecting some response at a later time. The sender tags the request with an identifier allowing the response to be correlated with the originating request. The sender may also tag the message with an identifier for another service (other than the originating sender) which will be the recipient of the response. "<br />
+<br />
+<b><br />
+Definition of Fire and Forget (aka One Way Message, Request-Only)</b><br />
+<br />
+<br />
+<a href="http://www.w3.org/TR/xmlp-scenarios/#S1">http://www.w3.org/TR/xmlp-scenarios/#S1</a><br />
+<br />
+"A sender wishes to send an unacknowledged message to a single receiver"<br />
+<br />
+Under certain interpretations, the Fire and Forget is a subcase of Asynchronous - without callback.<br />
+<br />
+<br />
+<b>Definition of Request-Reply</b><br />
+<br />
+<a href="http://www.w3.org/TR/xmlp-scenarios/#S3">http://www.w3.org/TR/xmlp-scenarios/#S3</a><br />
+<br />
+Unlike popular belief, Request-Reply doesn't necessarily means the reply is sent back in the same thread. One can have a Asynchronous Request-Reply scenario.

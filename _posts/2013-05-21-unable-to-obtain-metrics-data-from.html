@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Unable to obtain metrics data from the server"
+date: 2013-05-21T16:40:00.001+02:00
+permalink: /2013/05/unable-to-obtain-metrics-data-from.html
+blogger_id: "7777040173321022848"
+tags: ["OSB"]
+---
+In a OSB cluster, the application "<img alt="" border="0" src="http://hqchnesoa104.nespresso.com:9001/console/images/spacer.gif" style="height: 1px;" width="0" /><img alt="" border="0" src="http://hqchnesoa104.nespresso.com:9001/console/images/spacer.gif" style="height: 1px;" width="0" /><span title="ALSB Cluster Singleton Marker Application, Level 1, 1 of 1">ALSB Cluster Singleton Marker Application" is deployed only on ms1. This marker application tells on which server the Metrics Aggregator for OSB console should run.</span><br />
+<span title="ALSB Cluster Singleton Marker Application, Level 1, 1 of 1"><br /></span>
+<span title="ALSB Cluster Singleton Marker Application, Level 1, 1 of 1">If you start only ms2, you will get the message "Unable to obtain metrics data from the server", because no Aggregator is running. Not a big deal. As soon as you start ms1, the metrics will be available and the warning will go away.</span>

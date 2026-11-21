@@ -1,0 +1,68 @@
+---
+layout: post
+title: "weblogic.unicast.HttpPing in Unicast clusters"
+date: 2011-08-18T23:05:00.006+02:00
+permalink: /2011/08/weblogicunicasthttpping-in-unicast.html
+blogger_id: "8719881660515098343"
+tags: ["unicast"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2011-08-25
+    html: "so far we are only using a dedicated unicast channel (cluster-broadcast), and we are not using the weblogic.unicast.HttpPing option either....<br /><br />Unfortunately the issue is impossible to reproduce, it only occurs every few days randomly.<br /><br />I will also open a SR for this; in the worse case you can try Multicast cluster, I never had issues with that."
+  - author: "skies"
+    date: 2011-08-25
+    html: "Hi I tried the option -Dhttp.keepAlive=false after going through the Sun documentation for Networking in order to get rid of the IOException: java.io.EOFException, but it never worked for me and I had to remove the members from the cluster and run it as a non-cluster unit. Were you able to find any solution for this? I might have to open a case with Oracle to see whats happening"
+---
+If you have the impression that your Cluster Members are vanishing from the cluster and have difficulty joining it back, read this:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E21764_01/doc.1111/e15731/weblogic_server_issues.htm#CIHEAFDH">http://download.oracle.com/docs/cd/E21764_01/doc.1111/e15731/weblogic_server_issues.htm#CIHEAFDH</a><br />
+<br />
+<i>9.4.1 Threads Are Blocked on Cluster Messaging in Unicast Mode<br />
+<br />
+When using Unicast mode for cluster communication, many threads are blocked on cluster messaging, which may result in cluster members having difficulty sending heartbeat messages. In this situation, some cluster members drop out from the cluster and may take some time to rejoin the cluster.<br />
+<br />
+Workaround<br />
+<br />
+Set the following system property to resolve this issue:<br />
+<br />
+-Dweblogic.unicast.HttpPing=true</i><br />
+<br />
+<br />
+<br />
+If any member of the cluster is down, you will see:<br />
+<br />
+####&lt;21-Aug-2011 12:36:30 o'clock BST&gt; &lt;debug&gt; &lt;unicastmessaging&gt; &lt;pierrepc&gt; &lt;ms1&gt; &lt;Timer-2&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;&gt; &lt;1313926590111&gt; &lt;BEA-000000&gt; &lt;[HttpPingRoutine] HttpPing Caught IOException: java.net.SocketException: Socket Closed&gt; <br />
+<br />
+<br />
+These messages follow the ping attempts:<br />
+<br />
+####&lt;21-Aug-2011 12:39:27 o'clock BST&gt; &lt;Debug&gt; &lt;UnicastMessaging&gt; &lt;pierrepc&gt; &lt;ms1&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1313926767511&gt; &lt;BEA-000000&gt; &lt;[UnicastFragmentSocket] sending ' server ms1, id=1313926767511' to local group&gt; <br />
+####&lt;21-Aug-2011 12:39:27 o'clock BST&gt; &lt;Debug&gt; &lt;UnicastMessaging&gt; &lt;pierrepc&gt; &lt;ms1&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1313926767511&gt; &lt;BEA-000000&gt; &lt;[Group] [LocalGroup [[ms1]]] we are the seniormost. Send message to group&gt; <br />
+####&lt;21-Aug-2011 12:39:27 o'clock BST&gt; &lt;Debug&gt; &lt;UnicastMessaging&gt; &lt;pierrepc&gt; &lt;ms1&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1313926767512&gt; &lt;BEA-000000&gt; &lt;[Group] [LocalGroup [[ms1]]] we are the seniormost. Send message to group&gt; <br />
+<br />
+The SocketException will go away once you start all members of the cluster.<br />
+<br />
+<br />
+if you get this:<br />
+<br />
+<br />
+####&lt;21-Aug-2011 13:11:59 o'clock BST&gt; &lt;Warning&gt; &lt;Socket&gt; &lt;pierrepc&gt; &lt;ms1&gt; &lt;ExecuteThread: '2' for queue: 'weblogic.socket.Muxer'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1313928719011&gt; &lt;BEA-000442&gt; &lt;Connection attempt was rejected because the incoming protocol is not enabled on channel "unicastChannel".&gt; <br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12839_01/apirefs.1111/e14397/Socket.html">here is what they say</a> : enable the protocol on the channel<br />
+<br />
+<br />
+<br />
+And if you get this:<br />
+<br />
+<br />
+####&lt;21-Aug-2011 13:12:05 o'clock BST&gt; &lt;Debug&gt; &lt;UnicastMessaging&gt; &lt;pierrepc&gt; &lt;ms1&gt; &lt;Timer-2&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;&gt; &lt;1313928725736&gt; &lt;BEA-000000&gt; &lt;[HttpPingRoutine] HttpPing Caught IOException: java.io.EOFException: Response contained no data&gt; <br />
+<br />
+<br />
+then you might try this (<a href="http://danielrathinam.blogspot.com/2009/06/httpconnections-errors-in-weblogic-1001.html">as suggested here</a>): -Dhttp.keepAlive=false  (it didn't work for me :o( )<br />
+<br />
+Here <a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/issues/known_resolved.html">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/issues/known_resolved.html</a> they mention that in pre 10.3 versions of WebLogic the cluster gets in trouble when you suspend one of the Managed Servers. This is known as CR370084, yet the workaround of setting -Dweblogic.unicast.HttpPing=true is recommended only for test environments.<br />
+<br />
+<br />
+<br />
+<br />
+

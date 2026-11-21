@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Dynamic HTTP endpoint creation in OSB"
+date: 2013-07-03T14:52:00.002+02:00
+permalink: /2013/07/dynamic-http-endpoint-creation-in-osb.html
+blogger_id: "4850937767195860665"
+tags: ["OSB"]
+---
+When you create a OSB HTTP service, no war is deployed to WebLogic.<br />
+The kernelEar (XBus Kernel) application contains a WebCreatorModuleFactory which - through a WebCreatorModule - will register your endpoint to a dummy httpTransport.war web application  - this httpTransport.war is strictly empty.<br />
+<br />
+In the deployment monitoring page, you will see all these endpoints as sources by httpTransport.war:<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/14d4ea3d87541bfa.jpg" imageanchor="1" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img border="0" src="/images/14d4ea3d87541bfa.jpg" /></a></div>
+<br />
+<br />
+
+The internal implementation of a HTTP service is based on a weblogic.servlet.internal.WebAppModule
+
+

@@ -1,0 +1,130 @@
+---
+layout: post
+title: "Installing Openshift Origin on your CentOS 7 VM"
+date: 2017-09-28T21:57:00.002+02:00
+permalink: /2017/09/installing-openshift-origin-on-your.html
+blogger_id: "2860304421276958571"
+tags: ["openshift"]
+---
+sudo yum install centos-release-openshift-origin<br />
+<br />
+sudo yum install wget git net-tools bind-utils iptables-services bridge-utils bash-completion origin-clients<br />
+<br />
+sudo oc cluster up<br />
+<br />
+at this point, you get a terrifying <br />
+<br />
+<pre>-- Checking Docker daemon configuration ... FAIL
+   Error: did not detect an --insecure-registry argument on the Docker daemon
+   Solution:
+
+     Ensure that the Docker daemon is running with the following argument:
+      --insecure-registry 172.30.0.0/16
+
+</pre><br />
+<br />
+after some googling, I start with :<br />
+<br />
+sudo oc cluster up --skip-registry-check=true<br />
+<br />
+<pre>Starting OpenShift using openshift/origin:v3.6.0 ...
+OpenShift server started.
+
+The server is accessible via web console at:
+    https://127.0.0.1:8443
+
+You are logged in as:
+    User:     developer
+    Password: <any value>
+
+To login as administrator:
+    oc login -u system:admin
+
+</pre><br />
+I open the console at https://127.0.0.1:8443  (add security exception) and login with system/admin<br />
+<br />
+go to overview<br />
+<br />
+If you see an error in the logs "Could not resolve host: github.com", you are screwed ! <br />
+Haha no, just "sudo systemctl restart docker" , then "oc start-build --from-build=yourbuildid" <br />
+<br />
+<br />
+<br />
+<br />
+create a new project, java, wildfly, copy git url, create project pvproject01<br />
+<br />
+oc login https://127.0.0.1:8443<br />
+<br />
+system/admin<br />
+<br />
+oc project pvproject01<br />
+<br />
+oc status<br />
+<br />
+<br />
+<br />
+<br />
+If you get this<br />
+<br />
+<pre>[centos@localhost ~]$ oc cluster up --skip-registry-check=true 
+-- Checking OpenShift client ... OK
+-- Checking Docker client ... OK
+-- Checking Docker version ... FAIL
+   Error: Minor number must not contain leading zeroes "09"
+
+</pre><br />
+it simply means that OpenShift developers are morons, and you have to wait the next release 1.5 for a fix. What a pathetic mess.<br />
+<br />
+<br />
+<br />
+I have also followed these instructions <a href="https://fedoramagazine.org/experimenting-docker-openshift/">https://fedoramagazine.org/experimenting-docker-openshift/</a> and they seem to work:<br />
+<br />
+(at the beginning I am troubleshooting VirtualBox guest additions, which is also a good thing to record)<br />
+<br />
+<i><br />
+   1  sudo shutdown now<br />
+    2  cd /run/media/centos/VBOXADDITIONS_5.1.30_118389/<br />
+    3  ls<br />
+    4  sudo ./autorun.sh <br />
+    5  less /var/log/VBoxGuestAdditions.log<br />
+    6  less /var/log/vboxadd-install.log<br />
+    7  sudo ./autorun.sh <br />
+    8  sudo reboot now<br />
+    9  less /var/log/vboxadd-install.log<br />
+   10  sudo yum update<br />
+   11  ping google.com<br />
+   12  sudo vi /etc/sysconfig/network-scripts/ifcfg-enp0s3 <br />
+   13  sudo reboot now<br />
+   14  sudo yum update<br />
+   15  cd /run/media/centos/VBOXADDITIONS_5.1.30_118389<br />
+   16  sudo ./autorun.sh <br />
+   17  yum install kernel-devel gcc make patch<br />
+   18  sudo yum install kernel-devel gcc make patch<br />
+   19  sudo reboot now<br />
+   20  cd /run/media/centos/VBOXADDITIONS_5.1.30_118389<br />
+   21  sudo ./autorun.sh <br />
+   22  sudo reboot now<br />
+   23  sudo shutdown now<br />
+   24  sudo yum install docker<br />
+   25  sudo systemctl enable docker<br />
+   26  sudo yum install origin docker-registry<br />
+   27  vi /etc/sysconfig/docker<br />
+   28  sudo vi /etc/sysconfig/docker<br />
+   29  sudo systemctl daemon-reload<br />
+   30  sudo systemctl restart docker<br />
+   31  sudo systemctl status docker<br />
+   32  sudo oc cluster up<br />
+   33  cd<br />
+   41  sudo ln -s /home/centos/oc /usr/sbin/oc<br />
+   43  sudo oc cluster up<br />
+   44  sudo oc login -u system:admin<br />
+   45  sudo shutdown now<br />
+   46  sudo oc cluster up<br />
+<br />
+</i><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

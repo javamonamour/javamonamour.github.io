@@ -1,0 +1,57 @@
+---
+layout: post
+title: "Puppet file recurse"
+date: 2014-03-24T13:08:00.000+01:00
+permalink: /2014/03/puppet-file-recurse.html
+blogger_id: "1764738121737251776"
+tags: ["puppet"]
+---
+to purge or not to purge?
+<br/>
+to recurse or not to recurse?
+<br/>
+I have a bunch of files in a mymodule/files/myfiles folder inside the puppet module mymodule. I need to copy them to a target folder. I don't want to specify the INDIVIDUAL files, so I want to use the "recurse" option.
+<br/><br/>
+This will do absolutely NOTHING:
+<br/><br/>
+<pre>
+  file { '/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/wlst/modules/' :
+    source  => "puppet:///modules/mymodule/myfiles/",
+  }
+</pre>
+
+
+<br/><br/>
+This will change mode to ALL files under /opt/oracle/fmw11_1_1_5/wlserver_10.3/common/wlst/modules/ (including subdirectories), but will NOT remove them:
+<br/><br/>
+<pre>
+  file { '/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/wlst/modules/' :
+    source  => "puppet:///modules/mymodule/myfiles/",
+    recurse => true
+  }
+</pre>
+<br/><br/>
+
+This will remove any file which is not in the source, but subdirectories will remain:
+<br/><br/>
+<pre>
+  file { '/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/wlst/modules/' :
+    source  => "puppet:///modules/mymodule/myfiles/",
+    recurse => true,
+    purge => true,
+  }
+</pre>
+<br/><br/>
+
+This is the least-impacting: it will not change existing files, and will just copy the files in source:
+<pre>
+  file { '/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/wlst/modules/' :
+    source  => "puppet:///modules/mymodule/myfiles/",
+    recurse => remote
+  }
+</pre>
+ 
+<br/><br/>
+
+
+

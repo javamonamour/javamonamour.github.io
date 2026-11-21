@@ -1,0 +1,64 @@
+---
+layout: post
+title: "Expect, su, ssh and sudo "
+date: 2012-11-04T05:13:00.000+01:00
+permalink: /2012/11/expect-su-ssh-and-sudo.html
+blogger_id: "1000227308743874259"
+tags: ["expect"]
+---
+in my relentless quest to automate remote execution of scripts, at last a working example:
+<br/><br/>
+
+this is to execute the following commands run from host1:<br/>
+<i>
+ssh pvernet@host2<br/>
+(enter automatically the pvernet password on host2)<br/>
+sudo su - soa <br/>
+(enter automatically the pvernet password on host2)<br/>
+touch /home/soa/pippo.txt 2> /tmp/errors.txt<br/>
+exit<br/>
+exit<br/>
+</i>
+
+<br/><br/>
+(at the end you should return to host1, that's why I have 2 exit)
+
+
+
+<br/><br/>
+this is the file tryagain.expect:
+<br/>
+<pre name="code" class="brush: java">
+
+#!/usr/bin/expect
+log_user 1
+set timeout 5
+set user "pvernet"
+set host "host2"
+set pass "mypassword"
+spawn ssh -q ${user}@${host}
+expect "assword"
+send "$pass\r\n"
+expect "${user}@"
+send "sudo su - soa\r\n"
+expect "assword"
+send "$pass\r\n"
+expect "soa@"
+send "touch /home/soa/pippo.txt 2> /tmp/errors.txt\r\n"
+expect "host2"
+send "exit\r\n"
+expect "host2"
+send "exit\r\n"
+interact
+
+</pre>
+
+
+
+<br/><br/>
+run this with:<br/>
+expect -f tryagain.expect<br/>
+<br/><br/>
+
+PRICELESS TIP: add "exp_internal 1" to debug the Expect dialog with the controlled process.<br/><br/>
+

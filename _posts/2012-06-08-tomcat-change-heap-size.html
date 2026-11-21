@@ -1,0 +1,14 @@
+---
+layout: post
+title: "Tomcat change heap size"
+date: 2012-06-08T22:12:00.000+02:00
+permalink: /2012/06/tomcat-change-heap-size.html
+blogger_id: "380208623687682276"
+tags: ["tomcat"]
+---
+<i>cd /home/soa/software/apache-tomcat-7.0.27/bin<br />
+vi catalina.sh</i><br />
+<br />
+just before "if [ -z "$LOGGING_MANAGER" ]; then" insert:<br />
+<i><br />
+JAVA_OPTS="$JAVA_OPTS -Xms536m -Xmx736m -XX:NewSize=256m -XX:MaxNewSize=256m -XX:PermSize=256m -XX:MaxPermSize=256m"</i>

@@ -1,0 +1,32 @@
+---
+layout: post
+title: "ORA-01654: unable to extend index in tablespace SYSTEM"
+date: 2012-06-30T23:55:00.000+02:00
+permalink: /2012/06/ora-01654-unable-to-extend-index-in.html
+blogger_id: "1173669715049978913"
+tags: ["oracledb"]
+---
+Run this:<br />
+<br />
+select db.FILE_NAME, db.AUTOEXTENSIBLE, db.INCREMENT_BY, db.USER_BLOCKS,<br />
+t.INITIAL_EXTENT, t.NEXT_EXTENT, t.EXTENT_MANAGEMENT<br />
+FROM dba_data_files db, dba_tablespaces t<br />
+where db.TABLESPACE_NAME = t.TABLESPACE_NAME;<br />
+<br />
+<br />
+I get this:<br />
+<br />
+"FILE_NAME" "AUTOEXTENSIBLE" "INCREMENT_BY" "USER_BLOCKS" "INITIAL_EXTENT" "NEXT_EXTENT" "EXTENT_MANAGEMENT"<br />
+"C:\ORACLEXE\ORADATA\XE\USERS.DBF" "YES" 1280 12792 65536  "LOCAL"<br />
+"C:\ORACLEXE\ORADATA\XE\SYSAUX.DBF" "YES" 1280 61432 65536  "LOCAL"<br />
+"C:\ORACLEXE\ORADATA\XE\UNDO.DBF" "YES" 640 52472 65536  "LOCAL"<br />
+"C:\ORACLEXE\ORADATA\XE\SYSTEM.DBF" "YES" 1280 76792 65536  "LOCAL"<br />
+<br />
+<br />
+So I do<br />
+alter database datafile 'C:\ORACLEXE\ORADATA\XE\SYSTEM.DBF' resize 3500M;<br />
+<br />
+( on Widows, the max filesize must be 4GB, I guess)<br />
+<br />
+and you get a confirmation<br />
+"database datafile 'C:\ORACLEXE\ORADATA\XE\SYSTEM.DBF' altered."

@@ -1,0 +1,24 @@
+---
+layout: post
+title: "OSB, Eclipse and Axis2"
+date: 2010-05-22T21:35:00.001+02:00
+permalink: /2010/05/osb11-eclipse-and-axis2.html
+blogger_id: "8559115796770081820"
+tags: ["Axis2"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2010-05-23
+    html: "well, either Java will address this kind of issues and soon, or it will keep losing market share and Java programmers will have to learn how to milk cows. As simple as that. Companies cannot afford paying developers to waste days troubleshooting classpath and library issues. Libraries should be plug-verify-and-play. I do not settle for anything less than perfect."
+---
+If you plan to use Axis2 as a runtime for Web Services clients, remember that you should download axis2-1.4.1, and not the latest release, otherwise you will get :<br />
+<br />
+<br />
+<b>java.lang.NoClassDefFoundError: org/apache/http/HttpResponseFactory</b><br />
+&nbsp;&nbsp;&nbsp; at org.apache.axis2.transport.http.SimpleHTTPServer.init(SimpleHTTPServer.java:116)<br />
+&nbsp;&nbsp;&nbsp; at org.apache.axis2.engine.ListenerManager.init(ListenerManager.java:74)<br />
+&nbsp;&nbsp;&nbsp; at org.apache.axis2.context.ConfigurationContext.getListenerManager(ConfigurationContext.java:692)<br />
+&nbsp;&nbsp;&nbsp; at org.apache.axis2.client.ServiceClient.configureServiceClient(ServiceClient.java:163)<br />
+&nbsp;&nbsp;&nbsp; at org.apache.axis2.client.ServiceClient.<init>(ServiceClient.java:143)</init><br />
+<br />
+<br />
+All this is very sad. There is never a bloody compatibility check in Java classes and Jars... all the time you must discover which version goes with which by trial and error, exceptions and painful googling for explanations.... I would expect in 2010 a mature language like Java would enforce a standardization on library compatibility...

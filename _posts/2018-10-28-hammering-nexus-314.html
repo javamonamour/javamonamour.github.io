@@ -1,0 +1,210 @@
+---
+layout: post
+title: "Hammering Nexus 3.14"
+date: 2018-10-28T16:49:00.000+01:00
+permalink: /2018/10/hammering-nexus-314.html
+blogger_id: "5089343548135738894"
+tags: ["nexus"]
+---
+first, create an entry in your settings.xml for mvn to be able to authenticate in nexus<br />
+<br />
+&lt;server><br />
+&lt;id>nexus&lt;/id><br />
+&lt;username>admin&lt;/username><br />
+&lt;password>admin123&lt;/password><br />
+&lt;/server><br />
+<br />
+then write this testnexus.sh script:<br />
+<br />
+<pre class="brush: bash">NEXUSHOME=/home/centos/nexus314
+NEXUSLOG=$NEXUSHOME/sonatype-work/nexus3/log/nexus.log
+rm $NEXUSLOG
+
+cd $NEXUSHOME/nexus-3.14.0-04/bin
+
+for i in `seq 1 1000`;
+do
+ echo "Iteration number " $i
+ #make sure nexus is not running before you start it
+ ./nexus stop
+ ./nexus start
+ while [ ! -f $NEXUSLOG ] ;
+ do
+  sleep 2
+ done
+ 
+ echo "logfile found"
+ tail -f $NEXUSLOG | while read LOGLINE
+ do
+  [[ "$LOGLINE" == *"Started Sonatype Nexus OSS 3.14.0-04"* ]] && pkill -P $$ tail
+ done
+ #now that it's up, let's wait for some time
+ 
+ echo "nexus started"
+ NEXUSPID=`ps -e -o pid,command | grep org.sonatype.nexus.karaf.NexusMain | grep -v grep | awk '{print $1}'`
+ echo NEXUSPID = $NEXUSPID
+ #wait for a random time before we kill
+ sleep $[ ( $RANDOM % 100 )  + 10 ]
+ ps -ef | grep nexus
+ echo killing $NEXUSPID
+ kill -9 $NEXUSPID
+ mv $NEXUSLOG  ${NEXUSLOG}.${i}
+done
+
+</pre><br />
+and here the 2 scripts to upload continuously stuff to nexus<br />
+<br />
+testnexusupload1.sh<br />
+<br />
+<pre class="brush: bash">NEXUSHOME=/home/centos/nexus314
+
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-beanutils/commons-beanutils/1.9.2/commons-beanutils-1.9.2.pom
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-beanutils/commons-beanutils/1.9.2/commons-beanutils-1.9.2.jar
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-beanutils/commons-beanutils/1.9.2/commons-beanutils-1.9.2.md5
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-beanutils/commons-beanutils/1.9.2/commons-beanutils-1.9.2.sha1
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-beanutils/commons-beanutils/1.9.2/commons-beanutils-1.9.2.pom.sha1
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-beanutils/commons-beanutils/1.9.2/commons-beanutils-1.9.2.pom.md5
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-beanutils/commons-beanutils/1.9.2/commons-beanutils-1.9.2.jar.sha1
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-beanutils/commons-beanutils/1.9.2/commons-beanutils-1.9.2.jar.md5
+
+
+mvn deploy:deploy-file -DgroupId=commons-beanutils -DartifactId=commons-beanutils -Dversion=1.9.2 -DgeneratePom=true -Dpackaging=jar -DrepositoryId=nexus -Durl=http://localhost:8081/repository/maven-releases -Dfile=$NEXUSHOME/nexus-3.14.0-04/system/commons-beanutils/commons-beanutils/1.9.2/commons-beanutils-1.9.2.jar
+
+</pre><br />
+testnexusupload2.sh<br />
+<br />
+<pre class="brush: bash">NEXUSHOME=/home/centos/nexus314
+
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-codec/commons-codec/1.10/commons-codec-1.10.pom
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-codec/commons-codec/1.10/commons-codec-1.10.jar
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-codec/commons-codec/1.10/commons-codec-1.10.md5
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-codec/commons-codec/1.10/commons-codec-1.10.sha1
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-codec/commons-codec/1.10/commons-codec-1.10.pom.sha1
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-codec/commons-codec/1.10/commons-codec-1.10.pom.md5
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-codec/commons-codec/1.10/commons-codec-1.10.jar.sha1
+curl -X DELETE -u admin:admin123 http://localhost:8081/repository/maven-releases/commons-codec/commons-codec/1.10/commons-codec-1.10.jar.md5
+
+
+mvn deploy:deploy-file -DgroupId=commons-codec -DartifactId=commons-codec -Dversion=1.10 -DgeneratePom=true -Dpackaging=jar -DrepositoryId=nexus -Durl=http://localhost:8081/repository/maven-releases -Dfile=$NEXUSHOME/nexus-3.14.0-04/system/commons-codec/commons-codec/1.10/commons-codec-1.10.jar
+
+</pre><br />
+testnexusupload3.sh  (this will create always new jars)<br />
+<br />
+<pre class="brush: bash">NEXUSHOME=/home/centos/nexus314
+for i in `seq 1 1000000`;
+do
+ mvn deploy:deploy-file -DgroupId=commons-beanutils -DartifactId=commons-beanutils -Dversion=1.10.${i} -DgeneratePom=true -Dpackaging=jar -DrepositoryId=nexus -Durl=http://localhost:8081/repository/maven-releases -Dfile=$NEXUSHOME/nexus-3.14.0-04/system/commons-beanutils/commons-beanutils/1.9.2/commons-beanutils-1.9.2.jar
+
+ sleep 2
+done
+
+</pre><br />
+<br />
+<br />
+nohup ./testnexusupload1.sh > ./testnexusupload1.log 2>&1  &<br />
+nohup ./testnexusupload2.sh > ./testnexusupload2.log 2>&1 &<br />
+nohup ./testnexusupload3.sh > ./testnexusupload3.log 2>&1 &<br />
+<br />
+or <br />
+<br />
+setsid ./testnexusupload1.sh > ./testnexusupload1.log 2>&1 &<br />
+setsid ./testnexusupload2.sh > ./testnexusupload2.log 2>&1 &<br />
+setsid ./testnexusupload3.sh > ./testnexusupload3.log 2>&1 &<br />
+<br />
+<br />
+This way with a continuous cycle of restarts I can test the stability of the repository. <br />
+If the DB or shards are corrupted we will find out...<br />
+<br />
+<br />
+<br />
+In fact, after some iteration I keep getting this error at startup:<br />
+<br />
+<br />
+<i><br />
+<br />
+2018-10-28 19:04:49,571+0100 INFO  [elasticsearch[C1896386-DD1B2DA2-9E77236C-5051BC20-E1D39AE4][clusterService#updateTask][T#1]]  *SYSTEM org.elasticsearch.cluster.metadata - [C1896386-DD1B2DA2-9E77236C-5051BC20-E1D39AE4] [2e9a1e67e8a325bcd6ee9f6790ff6c769e791d56] creating index, cause [api], templates [], shards [1]/[0], mappings [component]<br />
+2018-10-28 19:04:49,955+0100 INFO  [elasticsearch[C1896386-DD1B2DA2-9E77236C-5051BC20-E1D39AE4][clusterService#updateTask][T#1]]  *SYSTEM org.elasticsearch.cluster.routing.allocation - [C1896386-DD1B2DA2-9E77236C-5051BC20-E1D39AE4] Cluster health status changed from [RED] to [GREEN] (reason: [shards started [[2e9a1e67e8a325bcd6ee9f6790ff6c769e791d56][0]] ...]).<br />
+2018-10-28 19:04:50,065+0100 INFO  [quartz-2-thread-1]  *SYSTEM org.sonatype.nexus.repository.search.SearchFacetImpl - Rebuilding index of repository maven-central<br />
+2018-10-28 19:04:50,501+0100 INFO  [elasticsearch[C1896386-DD1B2DA2-9E77236C-5051BC20-E1D39AE4][clusterService#updateTask][T#1]]  *SYSTEM org.elasticsearch.cluster.metadata - [C1896386-DD1B2DA2-9E77236C-5051BC20-E1D39AE4] [73ae44bc066b6a7a33b4435641d8229b9b66495a] creating index, cause [api], templates [], shards [1]/[0], mappings [component]<br />
+2018-10-28 19:04:50,943+0100 ERROR [Thread-44 &lt;command&gt;sql.select from component where bucket = :bucket&lt;/command&gt;]  *SYSTEM com.orientechnologies.orient.core.storage.impl.local.paginated.OLocalPaginatedStorage - Exception `32DA9B7B` in storage `plocal:/home/centos/nexus314/sonatype-work/nexus3/db/component`: 2.2.36 (build d3beb772c02098ceaea89779a7afd4b7305d3788, branch 2.2.x)<br />
+com.orientechnologies.orient.core.exception.OCommandExecutionException: Error on execution of command: sql.select from component where bucket = :bucket<br />
+DB name=&quot;component&quot;<br />
+at com.orientechnologies.orient.core.storage.impl.local.OAbstractPaginatedStorage.executeCommand(OAbstractPaginatedStorage.java:3421)<br />
+at com.orientechnologies.orient.core.storage.impl.local.OAbstractPaginatedStorage.command(OAbstractPaginatedStorage.java:3318)<br />
+at com.orientechnologies.orient.core.sql.query.OSQLQuery.run(OSQLQuery.java:78)<br />
+at com.orientechnologies.orient.core.sql.query.OSQLAsynchQuery.run(OSQLAsynchQuery.java:74)<br />
+at com.orientechnologies.orient.core.query.OQueryAbstract.execute(OQueryAbstract.java:33)<br />
+at com.orientechnologies.orient.core.sql.query.OSQLNonBlockingQuery$1.run(OSQLNonBlockingQuery.java:283)<br />
+at java.lang.Thread.run(Thread.java:748)<br />
+Caused by: java.lang.NullPointerException: null<br />
+at com.orientechnologies.orient.core.serialization.serializer.binary.impl.index.OCompositeKeySerializer.deserializeFromByteBufferObject(OCompositeKeySerializer.java:347)<br />
+at com.orientechnologies.orient.core.serialization.serializer.binary.impl.index.OCompositeKeySerializer.deserializeFromByteBufferObject(OCompositeKeySerializer.java:46)<br />
+at com.orientechnologies.orient.core.storage.impl.local.paginated.base.ODurablePage.deserializeFromDirectMemory(ODurablePage.java:166)<br />
+at com.orientechnologies.orient.core.index.sbtree.local.OSBTreeBucket.getKey(OSBTreeBucket.java:266)<br />
+at com.orientechnologies.orient.core.index.sbtree.local.OSBTreeBucket.find(OSBTreeBucket.java:134)<br />
+at com.orientechnologies.orient.core.index.sbtree.local.OSBTree.findBucket(OSBTree.java:1679)<br />
+at com.orientechnologies.orient.core.index.sbtree.local.OSBTree.access$2800(OSBTree.java:69)<br />
+at com.orientechnologies.orient.core.index.sbtree.local.OSBTree$OSBTreeCursorForward.next(OSBTree.java:1991)<br />
+at com.orientechnologies.orient.core.index.engine.OSBTreeIndexEngine$OSBTreeIndexCursor.nextEntry(OSBTreeIndexEngine.java:271)<br />
+at com.orientechnologies.orient.core.index.OIndexAbstractCursor.hasNext(OIndexAbstractCursor.java:83)<br />
+at com.orientechnologies.orient.core.index.OIndexChangesWrapper.hasNext(OIndexChangesWrapper.java:138)<br />
+at com.orientechnologies.orient.core.sql.OCommandExecutorSQLSelect.serialIterator(OCommandExecutorSQLSelect.java:1636)<br />
+at com.orientechnologies.orient.core.sql.OCommandExecutorSQLSelect.fetchFromTarget(OCommandExecutorSQLSelect.java:1585)<br />
+at com.orientechnologies.orient.core.sql.OCommandExecutorSQLSelect.fetchValuesFromIndexCursor(OCommandExecutorSQLSelect.java:2466)<br />
+at com.orientechnologies.orient.core.sql.OCommandExecutorSQLSelect.searchForIndexes(OCommandExecutorSQLSelect.java:2280)<br />
+at com.orientechnologies.orient.core.sql.OCommandExecutorSQLSelect.searchInClasses(OCommandExecutorSQLSelect.java:1017)<br />
+at com.orientechnologies.orient.core.sql.OCommandExecutorSQLResultsetAbstract.assignTarget(OCommandExecutorSQLResultsetAbstract.java:203)<br />
+at com.orientechnologies.orient.core.sql.OCommandExecutorSQLSelect.assignTarget(OCommandExecutorSQLSelect.java:527)<br />
+at com.orientechnologies.orient.core.sql.OCommandExecutorSQLSelect.executeSearch(OCommandExecutorSQLSelect.java:509)<br />
+at com.orientechnologies.orient.core.sql.OCommandExecutorSQLSelect.execute(OCommandExecutorSQLSelect.java:485)<br />
+at com.orientechnologies.orient.core.sql.OCommandExecutorSQLDelegate.execute(OCommandExecutorSQLDelegate.java:70)<br />
+at com.orientechnologies.orient.core.storage.impl.local.OAbstractPaginatedStorage.executeCommand(OAbstractPaginatedStorage.java:3400)<br />
+... 6 common frames omitted<br />
+<br />
+<br />
+</i><br />
+<br />
+<br />
+<br />
+This seems a known issue with a workaround/solution <br />
+<br />
+<br />
+<a href="https://issues.sonatype.org/browse/NEXUS-18036">https://issues.sonatype.org/browse/NEXUS-18036</a><br />
+<br />
+<b>java -jar ./nexus-3.14.0-04/lib/support/nexus-orient-console.jar<br />
+<br />
+connect plocal:/home/centos/nexus314/sonatype-work/nexus3/db/component/ admin admin </b><br />
+<br />
+Disconnecting from the database [null]...OK<br />
+Connecting to database [plocal:/home/centos/nexus314/sonatype-work/nexus3/db/component/] with user 'admin'...<br />
+2018-10-28 23:42:11:147 WARNI {db=component} Storage 'component' was not closed properly. Will try to recover from write ahead log... [OLocalPaginatedStorage]<br />
+2018-10-28 23:42:11:192 WARNI {db=component} Record com.orientechnologies.orient.core.storage.impl.local.paginated.wal.OCheckpointEndRecord{lsn=LSN{segment=105, position=52}} will be skipped during data restore [OLocalPaginatedStorage]<br />
+2018-10-28 23:42:11:247 WARNI {db=component} Record OFuzzyCheckpointStartRecord{lsn=LSN{segment=105, position=59}} com.orientechnologies.orient.core.storage.impl.local.paginated.wal.OFuzzyCheckpointStartRecord{lsn=null, previousCheckpoint=LSN{segment=105, position=28}} will be skipped during data restore [OLocalPaginatedStorage]<br />
+2018-10-28 23:42:11:248 WARNI {db=component} Record com.orientechnologies.orient.core.storage.impl.local.paginated.wal.OFuzzyCheckpointEndRecord{lsn=LSN{segment=105, position=99}} will be skipped during data restore [OLocalPaginatedStorage]OK<br />
+<br />
+<br />
+<br />
+<b>repair database --fix-links </b><br />
+<br />
+Repairing database...<br />
+- Removing broken links...<br />
+-- Done! Fixed links: 2, modified documents: 2<br />
+Repair database complete (0 errors)<br />
+<br />
+<br />
+<b>rebuild index *</b><br />
+<br />
+<br />
+Rebuilding index(es)...<br />
+Rebuilt index(es). Found 4354 link(s) in 36.727001 sec(s).<br />
+<br />
+<br />
+Index(es) rebuilt successfully<br />
+<br />
+<br />
+<b>disconnect<br />
+exit <b></b></b><br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,46 @@
+---
+layout: post
+title: "maven-release-plugin quirks... maven hell as usual"
+date: 2013-10-28T10:16:00.001+01:00
+permalink: /2013/10/maven-release-plugin-quirks-maven-hell.html
+blogger_id: "8541146642186029490"
+tags: ["maven"]
+---
+<pre>
+
+27-Oct-2013 10:51:49       [exec] [ERROR] Failed to execute goal 
+org.apache.maven.plugins:maven-release-plugin:2.0:prepare (default-cli) 
+on project OSBJavaCustomXPaths: Cannot prepare the release because you have local modifications :
+27-Oct-2013 10:51:49       [exec] [ERROR] [build-number.txt:unknown]
+27-Oct-2013 10:51:49       [exec] [ERROR] -> [Help 1]
+27-Oct-2013 10:51:49       [exec] [ERROR]
+27-Oct-2013 10:51:49       [exec] [ERROR] To see the full stack trace of the errors, 
+re-run Maven with the -e switch.
+27-Oct-2013 10:51:49       [exec] [ERROR] Re-run Maven using the -X switch to 
+enable full debug logging.
+27-Oct-2013 10:51:49       [exec] [ERROR]
+27-Oct-2013 10:51:49       [exec] [ERROR] For more information about the errors and possible solutions,
+ please read the following articles:
+27-Oct-2013 10:51:49       [exec] [ERROR] [Help 1] 
+http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+27-Oct-2013 10:51:49  
+27-Oct-2013 10:51:49  BUILD FAILED
+
+</pre>
+
+<br/><br/>
+
+look no further: just add this SVN properties to your project root (trunk) folder:
+
+<pre>
+svn:ignore
+
+target
+build-number.txt
+</pre>
+
+
+<br/>
+The local modifications thing is just BS, ignore it.
+<br/>
+

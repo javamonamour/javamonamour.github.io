@@ -1,0 +1,17 @@
+---
+layout: post
+title: "DataSet annotation in Unitils"
+date: 2011-02-17T13:50:00.000+01:00
+permalink: /2011/02/dataset-annotation-in-unitils.html
+blogger_id: "2609998734100534159"
+tags: ["DataSet", "unitils"]
+---
+a cool feature is to initialize the DB before each test.<br />
+<br />
+Since most data are common to all tests, it pays to factor them out to a shared DataSet (xml file)<br />
+<br />
+Unitils supports this feature and this is the syntax:<br />
+<br />
+@DataSet(value={"one.xml","two.xml"})<br />
+<br />
+<a href="http://www.unitils.org/apidocs/org/unitils/dbunit/annotation/DataSet.html">http://www.unitils.org/apidocs/org/unitils/dbunit/annotation/DataSet.html</a>

@@ -1,0 +1,56 @@
+---
+layout: post
+title: "LoggingLastResource "
+date: 2017-03-20T18:02:00.001+01:00
+permalink: /2017/03/logginglastresource.html
+blogger_id: "7438785360527493926"
+tags: ["llr"]
+---
+If you use a LoggingLastResource Datasource, you must specify a table with the tag jdbcllr-table-name in config.xml.
+<br/><br/>
+We did that and we got
+<br/><br/>
+"javax.transaction.SystemException: Failed to call registerLoggingResourceTransactions() weblogic.transaction.loggingresource.LoggingResourceException: weblogic.transaction.loggingresource.LoggingResourceException: java.sql.SQLException: JDBC LLR, table verify failed for table 'WL_LLR_PIPPO_7436', failed to create table"
+<br/><br/>
+
+I have enabled the flags
+
+<br/><br/>
+
+
+
+-Dweblogic.debug.DebugJDBCSQL=true -Dweblogic.log.StdoutSeverity=Debug -Dweblogic.StdoutDebugEnabled=true 
+<br/><br/>
+
+and discovered this
+<br/><br/>
+<pre>
+[weblogic.jdbc.wrapper.Statement_oracle_jdbc_driver_OracleStatementWrapper@4] 
+executeUpdate(CREATE TABLE WL_LLR_PIPPO_7436 (XIDSTR VARCHAR(40) NOT NULL PRIMARY KEY, POOLNAMESTR VARCHAR(64), RECORDSTR VARCHAR(1000))) 
+throws java.sql.SQLSyntaxErrorException: ORA-01031: insufficient privileges
+
+        at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:450)
+        at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:399)
+        at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1059)
+        at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:522)
+        at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:257)
+        at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:587)
+        at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:210)
+        at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:30)
+        at oracle.jdbc.driver.T4CStatement.executeForRows(T4CStatement.java:931)
+        at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1150)
+        at oracle.jdbc.driver.OracleStatement.executeUpdateInternal(OracleStatement.java:1707)
+        at oracle.jdbc.driver.OracleStatement.executeUpdate(OracleStatement.java:1670)
+        at oracle.jdbc.driver.OracleStatementWrapper.executeUpdate(OracleStatementWrapper.java:310)
+        at weblogic.jdbc.wrapper.Statement.executeUpdate(Statement.java:535)
+        at weblogic.jdbc.wrapper.JTSLoggableResourceTable.createTable(JTSLoggableResourceTable.java:234)
+        at weblogic.jdbc.wrapper.JTSLoggableResourceTable.findOrCreateTable(JTSLoggableResourceTable.java:287)
+        at weblogic.jdbc.wrapper.JTSLoggableResourceImpl.findOrCreateBackingTable(JTSLoggableResourceImpl.java:530)
+
+
+</pre>
+
+<br/><br/>
+
+so you can simply ask the DBA to create the table, or grant you CREATE TABLE privileges.
+

@@ -1,0 +1,68 @@
+---
+layout: post
+title: "Spring Boot 2 and Primefaces 6..... JoinFaces"
+date: 2018-05-26T06:41:00.001+02:00
+permalink: /2018/05/spring-boot-2-and-primefaces-6-joinfaces.html
+blogger_id: "7599749718462203587"
+tags: ["joinfaces", "primefaces", "springboot"]
+---
+<a href="http://joinfaces.org/">http://joinfaces.org/</a>  and <a href="https://github.com/joinfaces/joinfaces">https://github.com/joinfaces/joinfaces</a><br />
+<br />
+Their started app is https://joinfaces-example.herokuapp.com/starter.jsf admin is persapiens/123)<br />
+<br />
+git clone https://github.com/joinfaces/joinfaces-maven-jar-example.git<br />
+cd joinfaces-maven-jar-example<br />
+mvn clean install<br />
+(there are some test errors.... ignore them)<br />
+<br />
+java -jar target/joinfaces-example-3.2.1-SNAPSHOT.jar<br />
+<br />
+http://localhost:8080/starter.jsf<br />
+<br />
+<br />
+Unfortunately they use a parent pom....<a href="https://stackoverflow.com/a/39160571/651288">in Maven you can use only 1 parent pom</a> (another reason to HATE MAVEN who is BROKEN BY DESIGN).... so if your application is already based on a parent pom, you are royally screwed.<br />
+<br />
+Problem is, when I generate a project from Spring Boot Starters, the parent pom is:<br />
+<br />
+<pre class="brush: xml">&lt;parent&gt;
+ &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+ &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+ &lt;version&gt;2.0.2.RELEASE&lt;/version&gt;
+ &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
+&lt;/parent&gt;
+</pre><br />
+<br />
+while using joinfaces it's <br />
+<br />
+<br />
+<pre class="brush: xml">&lt;parent&gt;
+        &lt;groupId&gt;org.joinfaces&lt;/groupId&gt;
+        &lt;artifactId&gt;joinfaces-parent&lt;/artifactId&gt;
+        &lt;version&gt;3.2.1&lt;/version&gt;
+        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;
+    &lt;/parent&gt;
+</pre><br />
+<br />
+you can clearly see from http://central.maven.org/maven2/org/joinfaces/joinfaces-parent/3.2.1/joinfaces-parent-3.2.1.pom  that joinfaces includes all these dependencies http://central.maven.org/maven2/org/joinfaces/joinfaces-dependencies/3.2.1/joinfaces-dependencies-3.2.1.pom which entail also a parent:<br />
+<br />
+<pre class="brush: xml">&lt;parent&gt;
+ &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+ &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+ &lt;version&gt;2.0.2.RELEASE&lt;/version&gt;
+ &lt;relativePath/&gt;
+ &lt;!-- lookup parent from repository --&gt;
+&lt;/parent&gt;
+</pre><br />
+No doubt, they have sorted out for you a massive dependency tree, saving a lot of time.<br />
+<br />
+When I see such massive dependency tree, the question arises, why the Java world in 2018 is so ridiculously complicated and only getting worse. Please stop proliferation, focus on consolidation.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

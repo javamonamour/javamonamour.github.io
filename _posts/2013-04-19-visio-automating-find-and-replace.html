@@ -1,0 +1,31 @@
+---
+layout: post
+title: "VISIO: automating find and replace"
+date: 2013-04-19T12:27:00.001+02:00
+permalink: /2013/04/visio-automating-find-and-replace.html
+blogger_id: "4335265842064183356"
+tags: ["visio"]
+---
+We have several environment that are structurally the same, and they differ only for some configuration values.
+<br/>
+Maintaining a separate VISIO diagram for each of them is a nightmare.
+<br/>
+One should have a template and populate it dynamically.<br/>
+Linking shapes to a Datasource is an option, but it seems quite complicated to me.<br/>
+I have tried exporting to XML (.vdx file), changing the XML with a find/replace, and reimporting, but VISIO fails to import the modified file :<br/>
+
+<i>The shape contains a text property row element that is not referenced from the shape's text. Visio has ignored the element</i>
+
+
+<br/><br/>
+
+Finally I found that exporting to SVG file, doing the Find&Replace and importing again works pretty well. The only caveat is that VISIO tends to break text in multiple separate tags, so you should avoid defining labels like ${domainNumber} or even ___domainNumber; I chose for labels the format zzzdomainNumber.
+
+
+<br/><br/>
+
+I am using VISIO 2007. Maybe in VISIO 2010 the XML is less touchy.
+
+
+
+

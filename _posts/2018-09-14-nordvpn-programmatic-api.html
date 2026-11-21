@@ -1,0 +1,73 @@
+---
+layout: post
+title: "NordVPN programmatic API"
+date: 2018-09-14T04:06:00.005+02:00
+permalink: /2018/09/nordvpn-programmatic-api.html
+blogger_id: "2338648103466746279"
+tags: ["nordapi"]
+---
+<a href="https://github.com/jjangsangy/nordvpn/blob/master/nordvpn/api.py">https://github.com/jjangsangy/nordvpn/blob/master/nordvpn/api.py</a><br />
+<br />
+'address': '/user/address',<br />
+'config': '/files/zipv2',<br />
+'nameserver': '/dns/smart',<br />
+'server': '/server',<br />
+'stats': '/server/stats',<br />
+'user': '/user/databytoken'<br />
+<br />
+<br />
+list of all NordVPN servers:<br />
+<br />
+<a href="https://api.nordvpn.com/server">https://api.nordvpn.com/server</a>  <br />
+<br />
+0 <br />
+id 98288<br />
+ip_address "103.236.151.2"<br />
+search_keywords []<br />
+categories […]<br />
+name "Indonesia #2"<br />
+domain "id2.nordvpn.com"<br />
+price 0<br />
+flag "ID"<br />
+country "Indonesia"<br />
+location <br />
+lat -6.174444<br />
+long 106.829444<br />
+load 55<br />
+features <br />
+ikev2 true<br />
+openvpn_udp true<br />
+openvpn_tcp true<br />
+socks true<br />
+proxy true<br />
+pptp false<br />
+l2tp false<br />
+openvpn_xor_udp false<br />
+openvpn_xor_tcp false<br />
+proxy_cybersec true<br />
+proxy_ssl true<br />
+proxy_ssl_cybersec true<br />
+<br />
+<br />
+<br />
+return my current IP<br />
+<a href="https://api.nordvpn.com/user/address">https://api.nordvpn.com/user/address</a>  <br />
+<br />
+<br />
+<a href="https://api.nordvpn.com/files/zipv2">https://api.nordvpn.com/files/zipv2</a>  downloads a config.zip file (some 20 MB) full of .ovpn files, for each server, with PKI key to connect to the server<br />
+<br />
+<br />
+<a href="https://api.nordvpn.com/dns/smart">https://api.nordvpn.com/dns/smart</a>  returns a list of IPs, probably of the NordVPN dns server<br />
+<br />
+<br />
+<a href="https://api.nordvpn.com/user/databytoken">https://api.nordvpn.com/user/databytoken</a> <br />
+<br />
+<br />
+<a href="https://bitbucket.org/nordial/nordapi/overview">https://bitbucket.org/nordial/nordapi/overview</a> here you find how to login into API :<br />
+<br />
+<a href="https://bitbucket.org/nordial/nordapi/raw/dd4e918e84b66a7842cbbf2262ad4019ead2e877/nordtoy.py">https://bitbucket.org/nordial/nordapi/raw/dd4e918e84b66a7842cbbf2262ad4019ead2e877/nordtoy.py</a><br />
+<br />
+<br />
+<br />
+<br />
+<br />

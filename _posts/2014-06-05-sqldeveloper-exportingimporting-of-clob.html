@@ -1,0 +1,24 @@
+---
+layout: post
+title: "SQLDeveloper: exporting/importing of CLOB data (XML)"
+date: 2014-06-05T11:55:00.000+02:00
+permalink: /2014/06/sqldeveloper-exportingimporting-of-clob.html
+blogger_id: "3678360114058439638"
+tags: ["sqldeveloper"]
+---
+Ok, I know that SQLDeveloper should not be the tool for this job, but it's so convenient, readily available and flexible.<br />
+<br />
+<br />
+One can export to a SQL INSERT file, but the CLOB is not exported.
+<br />
+One can use TEXT export to a TSV file, but if the XML contains quotes, you are screwed. 
+<br />
+One can use XML export, it's perfect because each field is wrapped in a CDATA, but when importing it fails with a "there are no readers registered for the xml data type" (what??? then why do you offer me a XML export if you can't import???)
+<br />
+
+<br/>
+I find the XML format very convenient, so I think I will write a Python script to import it to a DB.
+<br/><br/>
+<a href="http://www.thatjeffsmith.com/archive/2012/08/using-oracle-sql-developer-to-setup-sqlloader-runs/">Here I read </a>that the XML reader is in the pipe for Oracle to develop.... the issue is that I will probably retire sooner that that.
+
+

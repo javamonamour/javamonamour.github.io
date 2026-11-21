@@ -1,0 +1,46 @@
+---
+layout: post
+title: "BEA-090487: The peer is rejecting the certificate chain as being untrusted or incomplete"
+date: 2014-07-04T11:57:00.001+02:00
+permalink: /2014/07/bea-090487-peer-is-rejecting.html
+blogger_id: "1012245628790509892"
+---
+I see some errors like:
+<br/><br/>
+<i>
+
+BEA-090487: UNKNOWN_CA alert received from 1.1.1.1 . The peer is rejecting the certificate chain as being untrusted or incomplete
+
+</i>
+
+<br/><br/>
+
+
+The doc says:
+<br/><br/>
+
+<i>
+
+ Warning: UNKNOWN_CA alert received from peer. The peer is rejecting the certificate chain as being untrusted or incomplete.
+<br/><br/>
+Description<br/>
+ The certificate chain was not trusted by the peer.
+<br/><br/>
+Cause<br/>
+ The peer is not configured to trust the CA that signed the certificate chain.
+<br/><br/>
+Action<br/>
+ Review the certificate chain and the peer trusted CA configuration to determine whether the peer should be trusting the certificate chain or whether a new certificate chain is required that is trusted by the peer.
+<br/><br/>
+</i>
+
+
+<br/><br/>
+
+From the HTTP access logs, I discovered that someone hit our HTTP service with a browser which was not trusting our certificate... so the solution is simply add a security exception in the browser.
+
+<br/><br/>
+
+
+
+

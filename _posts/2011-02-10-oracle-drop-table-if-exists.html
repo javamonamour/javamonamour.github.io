@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Oracle: drop table if exists"
+date: 2011-02-10T11:37:00.000+01:00
+permalink: /2011/02/oracle-drop-table-if-exists.html
+blogger_id: "1946853740139021603"
+tags: ["db", "drop"]
+---
+something quite annoying in Oracle is that if you do<br />
+<br />
+<i>drop table MYTABLE;</i><br />
+<br />
+and the table doesn't exist, you get an error.<br />
+<br />
+A workaround can be:<br />
+<br />
+BEGIN<br />
+    EXECUTE IMMEDIATE 'DROP TABLE MYTABLE';<br />
+    EXCEPTION WHEN OTHERS THEN NULL;<br />
+END;

@@ -1,0 +1,39 @@
+---
+layout: post
+title: "SLF4J caveat on formatting"
+date: 2022-08-10T14:01:00.003+02:00
+permalink: /2022/08/slf4j-caveat-on-formatting.html
+blogger_id: "1867919835580337644"
+blogger_comments:
+  - author: "vernetto"
+    date: 2022-08-23
+    html: "Trendoffice SK9248 Pro"
+---
+this will simply log NOTHING: in log.info(), the first parameter if it's a String it should be a formatting string, like "{}" .... if there is no format, nothing is logged.
+
+
+<pre class="brush: java" name="code"> 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.List;
+
+
+public class TestClass {
+    public static void main(String[] args) {
+        TestClass testClass = new TestClass();
+        testClass.test();
+    }
+
+    public void test() {
+        System.out.println(this.getClass().toString());
+        Logger log = LoggerFactory.getLogger(this.getClass());
+        List&lt;String> responses = Arrays.asList("pippo", "pluto");
+        log.info("", responses);
+
+    }
+}
+</pre>
+      
+          

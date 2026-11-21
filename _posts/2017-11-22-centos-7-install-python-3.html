@@ -1,0 +1,35 @@
+---
+layout: post
+title: "CentOS 7 install Python 3"
+date: 2017-11-22T06:01:00.001+01:00
+permalink: /2017/11/centos-7-install-python-3.html
+blogger_id: "4693422610165569354"
+tags: ["centos", "python"]
+---
+CentOS 7 comes with some old version of Python 2 - which is going EOL in a couple of years.<br />
+<br />
+Also, Django recommends Python 3 <a href="https://www.djangoproject.com/download/">https://www.djangoproject.com/download/</a><br />
+<br />
+#this will probably install a new version of docker, and you will likely lose all your containers !!!<br />
+sudo yum -y update<br />
+#better to reboot now<br />
+<br />
+sudo yum -y install https://centos7.iuscommunity.org/ius-release.rpm<br />
+<br />
+sudo yum -y install python36u<br />
+<br />
+#check if installed<br />
+python3.6 -V<br />
+<br />
+#beware! old python is still installed, if you run "python" you get the 2 version<br />
+<br />
+<a href="https://www.digitalocean.com/community/tutorials/how-to-install-python-3-and-set-up-a-local-programming-environment-on-centos-7">https://www.digitalocean.com/community/tutorials/how-to-install-python-3-and-set-up-a-local-programming-environment-on-centos-7</a><br />
+<br />
+<br />
+<a href="https://www.djangoproject.com/download/">https://www.djangoproject.com/download/</a><br />
+<br />
+sudo yum -y install python36u-pip<br />
+<br />
+<br />
+<br />
+

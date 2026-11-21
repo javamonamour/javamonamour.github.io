@@ -1,0 +1,126 @@
+---
+layout: post
+title: "WLST to create machines"
+date: 2014-02-14T10:43:00.001+01:00
+permalink: /2014/02/wlst-to-create-machines.html
+blogger_id: "8884419574361025010"
+tags: ["WLST"]
+---
+run wlst, and stay in offline mode.
+I read the domain "osbpl1do", which has already 1 machine, and I want to add an extra machine.
+<br />
+<pre>readDomain('/opt/oracle/domains/osbpl1do')
+cd('AnyMachine')
+ls()
+</pre>
+and here I see a single instance of the previous machine.
+<br />
+Now I will add the second machine:
+
+<br />
+<pre>cd('/')
+MACHINENAME='pippomachine'
+create(MACHINENAME, 'UnixMachine')
+</pre>
+<br />
+I get this: 
+<br />
+<i>Error: create() failed. Do dumpStack() to see details.</i>
+<br />
+I do dumpStack():
+<br />
+<i>com.oracle.cie.domain.script.jython.WLSTException: java.lang.ArrayIndexOutOfBoundsException: 2</i>
+<br />
+<br />
+however, if I do 
+<br />
+<pre>cd('AnyMachine')
+ls()
+</pre>
+<br />
+I see the new machine listed. However, I see a duplicate entry for the previously existing machine.
+I do then:
+<br />
+<pre>updateDomain()
+</pre>
+<br />
+and I restart the servers.
+I verify that the "machine" tag is created in config.xml.
+<br />
+I have no clue what is going on...
+
+
+I do the same with WLST online:
+<br />
+<pre>connect(...)
+cd('Machines')
+ls()
+</pre>
+and I see the previous machine
+
+<br />
+<pre>edit()
+startEdit()
+cd('Machines')
+MACHINENAME='pippomachine'
+create(MACHINENAME, 'UnixMachine')
+</pre>
+and I get success:
+
+<i>MBean type UnixMachine with name pippomachine has been created successfully.</i>
+
+<br />
+<pre>save()
+activate()
+</pre>
+and all is fine.
+<br />
+<br />
+<br />
+However, if I create a brand new domain without machines:
+<br />
+<pre>createDomain('/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/domains/wls.jar', '/opt/oracle/domains/pippodomain', 'weblogic', 'weblogic1')
+
+readDomain( '/opt/oracle/domains/pippodomain')
+MACHINENAME='pippomachine'
+create(MACHINENAME, 'UnixMachine')
+updateDomain()
+closeDomain()
+</pre>
+and here again all is fine.
+But is I read again the same domain, and try to create a pippomachine2, again I get ArrayOutOfBoundException. HOWEVER, the machine is correctly added to the config.xml.
+
+<br />
+<br />
+<br />
+CONCLUSION:
+<br />
+<br />
+it seems that WLST offline fails to behave properly when there is already 1 machine present. However this specific ArrayOutOfBoundException MAYBE can be ignored, since APPARENTLY the configuration is updated. 
+<br />
+If you are confused, so am I.
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/35f6de4dec4c4eb2.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/6aa434328f3fe41f.jpg" /></a></div>
+<br />
+<br />
+<i>In Oracle Support I found "Run pasteConfig.sh on Unix, WLST command setName() throw ArrayIndexOutOfBoundsException (Doc ID 1547420.1)"</i>
+<br />
+<br />
+<i>"This issue was caused by internal Bug 10221694 ( SETNAME FOR MACHINE OF TYPE "UNIX MACHINE" IS THROWING ARRAYINDEXOUTOFBOUNDSEXCEPTION) and Bug 9728926 (CREATE UNIXMACHINE IN WLST OFFLINE DOESN'T WORK PROPERLY)"</i>
+
+
+<br />
+<br />
+so at least we know that there IS an issue and we are not totally stupid.
+<br />
+<br />
+
+For patch informations, look into "WLSTException When Configuring Whole Server Migration In WLST Offline Mode (Doc ID 1463127.1)"
+
+<br />
+<br />
+
+

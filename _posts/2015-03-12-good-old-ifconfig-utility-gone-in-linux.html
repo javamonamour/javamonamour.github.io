@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Good old ifconfig utility gone in Linux 7"
+date: 2015-03-12T14:57:00.001+01:00
+permalink: /2015/03/good-old-ifconfig-utility-gone-in-linux.html
+blogger_id: "7797693738320896642"
+tags: ["ifconfig"]
+---
+I knew that ifconfig was deprecated in favor of ip, but it was quite a shock: good old /sbin/ifconfig utility is no longer there AT ALL.... I guess all those old shell scripts relying on it will have to be thrown away... 
+<br/><br/>
+just use "ip addr show"
+<br/><br/>
+This guide http://www.tecmint.com/ip-command-examples/ provides a good set of equivalent commands... and of course the <a href="http://linux.die.net/man/8/ip">IP map page</a> <br/><br/>
+<br/><br/>
+It seems however reasonable to install a compatibility version of ifconfig <a href="http://www.unixmen.com/ifconfig-command-found-centos-7-minimal-installation-quick-tip-fix/">http://www.unixmen.com/ifconfig-command-found-centos-7-minimal-installation-quick-tip-fix/</a>  in case you really have scripts relying on it.
+
+<br/><br/>
+Read also this comparison article <a href="https://www.tty1.net/blog/2010/ifconfig-ip-comparison_en.html">https://www.tty1.net/blog/2010/ifconfig-ip-comparison_en.html</a>
+<br/><br/>
+
+Farewell, ifconfig.... we'll miss you....
+
+
+<br/><br/>
+<br/><br/>
+
+For instance, to add an ip you do: 
+<br/><br/>
+
+ip addr add dev eth0 192.168.6.10
+<br/><br/>
+ip route add default via 192.168.6.1
+<br/><br/>
+service network restart
+<br/><br/>
+
+simple, no?
+<br/><br/>
+
+Ah if you want to specify netmask, look no further, you need to provide <b>the IP in CIDR format</b> (here <a href="https://kb.wisc.edu/ns/page.php?id=3493">https://kb.wisc.edu/ns/page.php?id=3493</a> a priceless conversion table, for instance CIDR notation for netmask 255.255.255.0 is /24) 
+
+<br/><br/>
+
+Things get more and more complicated....ifconfig syntax was definitely simpler...

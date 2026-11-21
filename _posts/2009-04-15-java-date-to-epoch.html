@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Java Date to Epoch"
+date: 2009-04-15T17:12:00.000+02:00
+permalink: /2009/04/java-date-to-epoch.html
+blogger_id: "5239071413451372656"
+---
+import java.text.ParseException;<br />import java.text.SimpleDateFormat;<br />import java.util.Calendar;<br />import java.util.Date;<br />import java.util.GregorianCalendar;<br /><br />public class DateConverter {<br /> public static void main(String[] args) throws ParseException {<br />  SimpleDateFormat df = (SimpleDateFormat) SimpleDateFormat.getInstance();<br />  df.applyPattern("yyyy MMM dd HH:mm:ss");<br />  Date date = df.parse("2009 Apr 14 16:46:23");<br />  System.out.println(date);<br />  Calendar cal = new GregorianCalendar();<br />  cal.setTime(date);<br />  System.out.println(cal.getTimeInMillis());<br /> }<br />}

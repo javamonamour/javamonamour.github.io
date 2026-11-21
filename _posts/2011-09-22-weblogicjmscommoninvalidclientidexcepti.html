@@ -1,0 +1,28 @@
+---
+layout: post
+title: "weblogic.jms.common.InvalidClientIDException"
+date: 2011-09-22T15:39:00.000+02:00
+permalink: /2011/09/weblogicjmscommoninvalidclientidexcepti.html
+blogger_id: "5095580959403310064"
+tags: ["topic"]
+---
+This is what you get when you try to create 2 TopicConnection with the same ClientID:<br />
+<br />
+<br />
+<b>Exception in thread "main" weblogic.jms.common.InvalidClientIDException: Client id, PVTEST_ID, is in use.  The reason for rejection is "The JNDI name weblogic.jms.connection.clientid.PVTEST_ID was found, and was bound to an object of type weblogic.jms.frontend.FEClientIDSingularAggregatable : FEClientIDSingularAggregatable(SingularAggregatable(<3366864250607130900.1>:672):PVTEST_ID)"<br />
+</b>        <br />
+<br />
+at weblogic.jms.dispatcher.DispatcherAdapter.convertToJMSExceptionAndThrow(DispatcherAdapter.java:110)<br />
+        at weblogic.jms.dispatcher.DispatcherAdapter.dispatchSync(DispatcherAdapter.java:45)<br />
+        at weblogic.jms.client.JMSConnection.setClientID(JMSConnection.java:632)<br />
+        at weblogic.jms.client.WLConnectionImpl.setClientID(WLConnectionImpl.java:602)<br />
+        at durablesubscribers.Main.main(Main.java:46)<br />
+<br />
+This is the offending code, at line 46:<br />
+<br />
+TopicConnectionFactory qcf = (TopicConnectionFactory) ctx.lookup( "cf.epos.ho.01.nonXA.01" );<br />
+System.out.println("createTopicConnection");<br />
+topicConnection = qcf.createTopicConnection();<br />
+// must specify, otherwise you get an IllegalStateException<br />
+<b>topicConnection.setClientID("PVTEST_ID");<br />
+</b>

@@ -1,0 +1,39 @@
+---
+layout: post
+title: "systemctl start service on boot with specific user"
+date: 2018-05-28T15:57:00.002+02:00
+permalink: /2018/05/systemctl-start-service-on-boot-with.html
+blogger_id: "4377301141871910554"
+tags: ["systemctl"]
+---
+see <a href="https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units">https://www.digitalocean.com/community/tutorials/how-to-use-systemctl-to-manage-systemd-services-and-units</a><br />
+<br />
+<br />
+sudo vi /etc/systemd/system/ms.service<br />
+<br />
+<pre>[Unit]
+Description=myservice
+
+[Service]
+User=myuser
+ExecStart=/bin/bash /path/to/script/ms.sh start
+ExecStop=/bin/bash /path/to/script/ms.sh stop
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+</pre><br />
+<br />
+sudo chmod 744 /etc/systemd/system/ms.service<br />
+<br />
+sudo systemctl enable ms.service<br />
+<br />
+(this should give you "Created symlink from /etc/systemd/system/multi-user.target.wants/ms.service to /etc/systemd/system/ms.service." )<br />
+<br />
+How to troubleshoot? <a href="https://www.certdepot.net/systemd-service-debugging-tips/">https://www.certdepot.net/systemd-service-debugging-tips/</a><br />
+<br />
+<br />
+systemctl start ms<br />
+systemctl status ms<br />
+journalctl -u ms<br />
+

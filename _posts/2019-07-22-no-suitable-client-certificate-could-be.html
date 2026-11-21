@@ -1,0 +1,23 @@
+---
+layout: post
+title: "No suitable client certificate could be found - continuing without client authentication"
+date: 2019-07-22T20:22:00.002+02:00
+permalink: /2019/07/no-suitable-client-certificate-could-be.html
+blogger_id: "1852732483861431748"
+tags: ["ssl", "tls"]
+---
+"No suitable client certificate could be found - continuing without client authentication"<br />
+<br />
+1) are you specifying the password for the keystore?<br />
+<br />
+2) are you providing a full certificate chain ? ( chain [0] , chain [1], chain [2] until the Root CA)<br />
+<br />
+3) server specified issuers different from the one of the client certificate?<br />
+<br />
+4) server specified ciphers not matching the one of the certificate?<br />
+<br />
+5) (this is same as 2) whole certificate chain not in keystore (see <a href="https://stackoverflow.com/questions/9299133/why-doesnt-java-send-the-client-certificate-during-ssl-handshake">https://stackoverflow.com/questions/9299133/why-doesnt-java-send-the-client-certificate-during-ssl-handshake</a> )<br />
+<br />
+<br />
+<br />
+Here the code <a href="https://github.com/frohoff/jdk8u-jdk/blob/master/src/share/classes/sun/security/ssl/ClientHandshaker.java">https://github.com/frohoff/jdk8u-jdk/blob/master/src/share/classes/sun/security/ssl/ClientHandshaker.java</a>   , as you see it's totally pathetic and at the same message correspond completely different scenarios.

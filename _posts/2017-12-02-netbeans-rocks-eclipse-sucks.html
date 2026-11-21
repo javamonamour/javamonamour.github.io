@@ -1,0 +1,46 @@
+---
+layout: post
+title: "Netbeans rocks, Eclipse sucks"
+date: 2017-12-02T11:12:00.000+01:00
+permalink: /2017/12/netbeans-rocks-eclipse-sucks.html
+blogger_id: "235557304991464786"
+tags: ["eclipse", "jsf", "netbeans", "primefaces"]
+---
+With Eclipse, setting up a simple Web Application with JSF and deploying it to Wildfly is a long, frustrating struggle.<br />
+<br />
+With Netbeans, it takes 10 seconds.<br />
+<br />
+File / New Project, Java Web / Web Application, project name "WebApplication1", server : select Wildfly server, Java EE Version: Java EE 7 Web, context path: /WebApplication1, Frameworks: select JavaServer Faces, in the components tab select Primefaces (the first time iyou haveto wait 10 seconds while it fetches the dependencies "JSF library Primefaces not setup correctly..." ) <br />
+<br />
+Right click on the Project, Run... it will open http://localhost:8080/WebApplication1/ and you are ready to go.<br />
+<br />
+<br />
+What Netbeans generates is:<br />
+<br />
+<br />
+<script src="https://gist.github.com/vernetto/65eb2b491d3009bcb27315c04ca823f7.js"></script><br />
+<br />
+<script src="https://gist.github.com/vernetto/f0c76dfc1c6dd64f7c6e4243a624d0cd.js"></script><br />
+<br />
+<br />
+BEWARE: to run on Wildfly 11, you should change the version of primefaces in pom.xml from 5.0 to 6.0, otherwise you get an error "wildfly This page calls for XML namespace http://primefaces.org/ui declared with prefix p but no taglibrary exists for that namespace"<br />
+<br />
+The only issue I had with Netbeans 8.2 is that it's not compatible with Java 9, I had to edit netbeans.conf and change netbeans_jdkhome to point to JDK 8.<br />
+<br />
+Incidentally, check out this AWESOME video on how to generate a Primefaces crud application from Entities with Netbeans<br />
+<br />
+<a href="https://netbeans.org/kb/docs/javaee/maven-primefaces-screencast.html">https://netbeans.org/kb/docs/javaee/maven-primefaces-screencast.html</a><br />
+<br />
+You can simply forget that with Eclipse. A Total Eclipse of the Heart<br />
+<br />
+<iframe width="800" height="600" src="https://www.youtube.com/embed/z_NdBiLlVl8" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe><br />
+<br />
+"every now and then I fall apart<br />
+I don't know what to do and I am always in the dark<br />
+There is nothing I can do, a total Eclipse of the heart<br />
+Once upon a time there was light in my life" <br />
+<br />
+hahaha<br />
+<br />
+<br />
+

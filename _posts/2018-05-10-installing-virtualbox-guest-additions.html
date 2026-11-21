@@ -1,0 +1,27 @@
+---
+layout: post
+title: "Installing VirtualBox Guest Additions on Centos7"
+date: 2018-05-10T14:51:00.001+02:00
+permalink: /2018/05/installing-virtualbox-guest-additions.html
+blogger_id: "4836908873196923520"
+tags: ["centos", "guestadditions", "virtualbox"]
+---
+Apparently in latest VB releases the Guest Additions have to be built directly on the image.<br />
+<br />
+This of course is a pain, because OOTB the Centos7 image doesn't contain the development tools. SO you get a message like "building the main Guest Additions module Failed"<br />
+<br />
+<br />
+https://unix.stackexchange.com/questions/37866/how-to-solve-building-the-main-guest-additions-module-failed<br />
+<br />
+<br />
+this fixed the problem:<br />
+<br />
+sudo yum install gcc kernel-devel-$(uname -r)<br />
+<br />
+sudo su -<br />
+cd /run/media/centos/VBox_GAs_5.2.12/<br />
+./autorun.sh<br />
+<br />
+<br />
+<br />
+

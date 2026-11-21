@@ -1,0 +1,52 @@
+---
+layout: post
+title: "End of my 3.2 years contract on a OSB integration project.... lesson learned."
+date: 2015-01-03T21:02:00.004+01:00
+permalink: /2015/01/end-of-my-32-years-contract-on-osb.html
+blogger_id: "6054857783296298396"
+blogger_comments:
+  - author: "Anonymous"
+    date: 2015-04-17
+    html: "Hello,<br /><br />I&#39;m working on an WLS/OSB/BPEL project, ans we are thinking of reworking our automation tool.<br /><br />For now we are using Jenkins ans tons of Shell/WLST plus properties files.<br /><br />We are thinking about Jenkins + Ansible.<br />But we always have tons of properties files ans filters per environment.<br /><br />What do you mean by CMDB ? Can you give me some samples ?<br /><br />Thank you for all your advices."
+---
+1) from day 1, get a <b>wiki</b>. NOTHING should simply be documented in emails. Just write all technical info in a wiki and distribute the link to the wiki. We used Confluence wiki: it's simply fantastic. Same goes for documents: just attach them to a wiki page and circulate the link.
+
+<br/><br/>
+2) from day 1, store all configuration in a <b>CMDB</b>. Forget stinky property files or yaml or xml: you need a real relational DB.
+I had countless discussion on this topic with people who wanted all into property files... forget it, real life is different.
+<br/><br/>
+
+3) enforce the rule that ALL code should be subject to <b>code reviews</b>. Some people were allowed to run loose on the ground and work separately from the rest of the team, and their work turned into a maintenance nightmare, because it was not adhering to the standards. It cost us a fortune to fix the issues once in production.
+
+<br/><br/>
+4) use <b>GIT </b>(we were using stash) rather than SVN: the learning curve is steeper, but you get so much more out of it
+
+<br/><br/>
+5) have <b>fun </b>in the project. Fun really helps making everybody life better. Avoid being harsh with people - it generally only makes things worse. Just talk to people calmly, try to understand the underlying issues. Of course there are a few bastards - usually they are only a tiny minority - who simply don't want to work: either ignore them, or ask management to fire them, but don't get mad.
+
+<br/><br/>
+
+6) <b>don't do the work that other people are supposed to do</b>. You will get exhausted, and finally you will not do the work that YOU are supposed to do. And eventually management will not even notice your extra effort. Just flag issues, assign tasks and carry on.
+
+<br/><br/>
+
+7) <b>automation </b>is excellent, but some things are simply too intrinsically complex or variable to be automated. Learn to accept that some stuff will simply HAVE to be done manually. Automation comes with a cost, so learn to balance cost and benefits.
+
+<br/><br/>
+
+8) <b>keep it simple</b>. Some tools like Java allow you to make complex things in a reliable way, some others (like Puppet) not. If you use primitive tools, do primitive stuff.
+
+<br/><br/>
+
+9) <b>JIRA</b> is great. Use it. Don't abuse it. JIRA is a tool, not an end in itself. You are paid to make things work in Production, that's all what matters.
+<br/><br/>
+
+10) there are a hundred different methodologies to slaughter <b>post-it</b> against a wall and inebriate yourself with SCRUM ideology. Usually none of all this actually solves a problem. If you are unlucky enough to fall in an Agile-fanatic community, just smile and say yes.
+<br/><br/>
+
+11) avoid by all means <b>MEETINGS</b>. 99% of the issues can be solved with a phone call. If a meeting is still REALLY required, send an invite with an agenda of points to discuss, a link to a wiki, and after the meeting circulate the minutes. Any discussion who is not strictly on the agenda should be vigorously quelched.
+<br/><br/>
+12) a limited amount of technical books (electronic format) can be beneficial, to create a common culture and promote continuous education.
+
+
+

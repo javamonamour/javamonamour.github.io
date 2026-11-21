@@ -1,0 +1,19 @@
+---
+layout: post
+title: "WebLogic portal generating lot of info into the diagnostic framework store file WLS_DIAGNOSTICS000000.DAT"
+date: 2009-11-24T11:47:00.000+01:00
+permalink: /2009/11/weblogic-portal-generating-lot-of-info.html
+blogger_id: "4330815368134196305"
+---
+<span id="main" style="visibility: visible;"><span id="search" style="visibility: visible;"><i>WLS_DIAGNOSTICS000000</i>.<i>DAT</i></span></span><br />
+<br />
+try using:<br />
+<br />
+-Dcom.bea.wlw.netui.disableInstrumentation=true<br />
+-D_Offline_FileDataArchive=true<br />
+<br />
+<br />
+in your startup command, especially of the admin<br />
+<br />
+it seems to be a "best practice"<br />
+<a href="http://forums.oracle.com/forums/thread.jspa?messageID=3302556&amp;#3302556">http://forums.oracle.com/forums/thread.jspa?messageID=3302556&amp;#3302556</a>

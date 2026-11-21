@@ -1,0 +1,70 @@
+---
+layout: post
+title: "Triggers in Oracle DB"
+date: 2013-03-05T18:59:00.001+01:00
+permalink: /2013/03/triggers-in-oracle-db.html
+blogger_id: "1902761970309110792"
+tags: ["oracledb", "trigger"]
+---
+<pre>
+CREATE TABLE "PVTEST" 
+( "PVNAME" VARCHAR2(20 BYTE)
+) ;
+
+
+CREATE TABLE "PVLOG" 
+( "PVSUMMARY" VARCHAR2(20 BYTE)
+) ;
+
+
+CREATE OR REPLACE TRIGGER PVTEST_TRIGGER
+  BEFORE DELETE OR INSERT OR UPDATE ON PVTEST
+  FOR EACH ROW
+
+BEGIN
+  insert into PVLOG (PVSUMMARY) values ('pippo');
+END;
+
+
+
+</pre>
+
+<br/><br/>
+
+With this trigger, and modification will generate an extra entry in the PVLOG table. 
+<br/><br/>
+Now I want to distinguish the operation being done:
+
+<br/><br/>
+<pre>
+CREATE OR REPLACE TRIGGER PVTEST_TRIGGER
+  BEFORE DELETE OR INSERT OR UPDATE ON PVTEST
+  FOR EACH ROW
+
+BEGIN
+  IF DELETING then
+    insert into PVLOG (PVSUMMARY) values ('DELETING');
+  END IF; 
+  IF INSERTING  then
+    insert into PVLOG (PVSUMMARY) values ('INSERTING');
+  END IF; 
+  IF UPDATING  then
+    insert into PVLOG (PVSUMMARY) values ('UPDATING ');
+  END IF; 
+  
+END;
+/
+
+</pre>
+
+
+in the case of an UPDATE, you have the 2 variables :OLD and :NEW pointing to the old and new record.
+
+<br/><br/>
+
+The real pity is that there doesn't seem to be a way to declare a trigger for ANY table in the schema, and retrieving the table being affected with a :TABLE variable. You can define SCHEMA TRIGGERS, but they cannot be defined to catch INSERT DELETE UPDATE events.
+
+
+
+
+

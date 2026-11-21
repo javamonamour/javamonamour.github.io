@@ -1,0 +1,61 @@
+---
+layout: post
+title: "OSB and the Test Message Pattern"
+date: 2011-07-15T10:33:00.005+02:00
+permalink: /2011/07/osb-and-test-message-pattern.html
+blogger_id: "6781048173935940078"
+tags: ["headers"]
+---
+I want to be able to treat differently "test" messages from "normal" messages, so as to be able to monitor my application without disrupting the normal business.<br />
+<br />
+Headers are very good at this.<br />
+<br />
+In my test Java client:<br />
+<br />
+HttpPost httppost = new HttpPost(FACADE_URL);<br />
+httppost.addHeader("ORIGIN", "TEST");<br />
+<br />
+In my Facade Proxy Service, enable "get all headers".<br />
+<br />
+<br />
+log $inbound: <br />
+<br />
+<pre name="code" class="brush: xml"><con:endpoint xmlns:con="http://www.bea.com/wli/sb/context">
+  <con:transport>
+    <con:request xsi:type="http:HttpRequestMetaData" xmlns:http="http://www.bea.com/wli/sb/transports/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <tran:headers xsi:type="http:HttpRequestHeaders" xmlns:tran="http://www.bea.com/wli/sb/transports">
+        <tran:user-header name="ORIGIN" value="TEST"/>
+        <http:Connection>Keep-Alive</http:Connection>
+        <http:Content-Length>102</http:Content-Length>
+        <http:Content-Type>text/plain; charset=ISO-8859-1</http:Content-Type>
+        <http:Host>acme.com:7009</http:Host>
+        <http:User-Agent>Apache-HttpClient/4.1.1 (java 1.5)</http:User-Agent>
+      </tran:headers>
+    </con:request>
+  </con:transport>
+  <con:security>
+    <con:transportClient>
+      <con:username>&lt;anonymous></con:username>
+    </con:transportClient>
+  </con:security>
+</con:endpoint>>
+
+</pre><br />
+<br />
+The problem is how to propagate the headers to other Proxies (http or local).<br />
+<br />
+Use "Set Transport Headers for outbound Destination" with the option "Pass all Headers through Pipeline" to copy the headers to the destination.<br />
+When you route to a LOCAL Proxy Service, the header changes slightly, it uses xsi:type="loc:LocalRequestHeaders" instead of xsi:type="http:HttpRequestHeaders" :<br />
+<br />
+<pre name="code" class="brush: xml"><tran:headers xsi:type="loc:LocalRequestHeaders" xmlns:tran="http://www.bea.com/wli/sb/transports">
+        <tran:user-header name="ORIGIN" value="TEST"/>
+        <tran:user-header name="Content-Type" value="text/xml; charset=utf-8"/>
+      </tran:headers>
+
+</pre><br />
+You can extract the header with <br />
+<br />
+$inbound1//tran:user-header[@name="ORIGIN"]<br />
+<br />
+<br />
+see <a href="http://forums.oracle.com/forums/thread.jspa?threadID=2153298&tstart=165">here</a> for a discussion on the topic, and <a href="http://download.oracle.com/docs/cd/E13171_01/alsb/docs30/userguide/modelingmessageflow.html">here</a> for OSB documentation.

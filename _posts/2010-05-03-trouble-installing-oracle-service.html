@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Trouble installing Oracle Service Registry"
+date: 2010-05-03T16:26:00.000+02:00
+permalink: /2010/05/trouble-installing-oracle-service.html
+blogger_id: "603084557806363154"
+tags: ["OSR"]
+blogger_comments:
+  - author: "bijan"
+    date: 2011-04-07
+    html: "the problem through installation of OSR11[x] in which is associated by database.xml file.is nothing but version incompatibility just try to install oracle 11g r2 your problem surely will be over."
+---
+&nbsp;&nbsp;&nbsp;&nbsp; [java] BUILD FAILED<br />
+&nbsp;&nbsp;&nbsp;&nbsp; [java] C:\oracle\middleware\registry111\etc\setup\database.xml:737: The following error occurred while executing this line:<br />
+&nbsp;&nbsp;&nbsp;&nbsp; [java] C:\oracle\middleware\registry111\etc\setup\database.xml:350: The following error occurred while executing this line:<br />
+&nbsp;&nbsp;&nbsp;&nbsp; [java] C:\oracle\middleware\registry111\etc\setup\database.xml:411: The following error occurred while executing this line:<br />
+&nbsp;&nbsp;&nbsp;&nbsp; [java] C:\oracle\middleware\registry111\etc\setup\database.xml:207: The following error occurred while executing this line:<br />
+&nbsp;&nbsp;&nbsp;&nbsp; [java] C:\oracle\middleware\registry111\etc\db\oracle\installOracleDB.xml:120: The following error occurred while executing this line:<br />
+&nbsp;&nbsp;&nbsp;&nbsp; [java] C:\oracle\middleware\registry111\etc\db\oracle\installOracleDB.xml:133: The following error occurred while executing this line:<br />
+&nbsp;&nbsp;&nbsp;&nbsp; [java] C:\oracle\middleware\registry111\etc\db\oracle\installOracleDB.xml:147: Java returned: 1<br />
+<br />
+<br />
+Most likely you have entered a wrong database name, or unexisting user.... the bloody installation script will never give you the REAL reason, otherwise your life would be too simple.<br />
+<br />
+If you use OracleXE, remember that the DATABASE is XE (and not the default ORCL), and that you should created manually the UDDIUSER user and grant it all privileges, I am not sure the installation script will create it for you.

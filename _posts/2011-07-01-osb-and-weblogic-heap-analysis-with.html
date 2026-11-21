@@ -1,0 +1,28 @@
+---
+layout: post
+title: "OSB and WebLogic heap analysis with Eclipse Memory Analyzer Tool"
+date: 2011-07-01T12:36:00.003+02:00
+permalink: /2011/07/osb-and-weblogic-heap-analysis-with.html
+blogger_id: "916003101339251740"
+tags: ["visualvm"]
+---
+<a href="http://eclipse.org/mat/downloads.php" target="_blank">http://eclipse.org/mat/downloads.php</a><br />
+<br />
+<br />
+With VisualVM, connect to your server, click on &quot;heap dump&quot; (Monitor tab) and create a file /tmp/heapdump-1309515329556.hprof<br />
+<br />
+copy it to your local machine<br />
+<br />
+Open MAT<br />
+click on &quot;Open a Heap Dump&quot; (it will take some time)<br />
+<br />
+you can run the &quot;leak suspect report&quot;<br />
+<br />
+For instance it finds out immediately the huge &quot;memory leak&quot; due to my cached XmlObjects in a Java static HashMap:<br />
+<br />
+<p>One instance of  <b>&quot;com.bea.wli.sb.stages.functions.CustomXPathFunctionManagerImpl&quot;</b> loaded  by <b>&quot;sun.misc.Launcher$AppClassLoader @ 0x781d06da8&quot;</b> occupies  <b>262,272,104 (36.15%)</b> bytes. The memory is accumulated in one instance of  <b>&quot;java.util.HashMap$Entry[]&quot;</b> loaded by <b>&quot;&lt;system class  loader&gt;&quot;</b>.<br />
+<br />
+<b>Keywords</b><br />
+sun.misc.Launcher$AppClassLoader @  0x781d06da8<br />
+java.util.HashMap$Entry[]<br />
+com.bea.wli.sb.stages.functions.CustomXPathFunctionManagerImpl</p><p>

@@ -1,0 +1,155 @@
+---
+layout: post
+title: "ORA-01882: timezone region not found"
+date: 2014-11-05T18:06:00.001+01:00
+permalink: /2014/11/ora-01882-timezone-region-not-found.html
+blogger_id: "8997437736111686210"
+tags: ["oracledb", "weblogic"]
+---
+After applying package update on Linux RHEL, we get on all Datasources:
+
+<br/><br/>
+ORA-01882: timezone region not found
+<br/><br/>
+
+First let's determine on which timezone our server is:
+
+<br/><br/>
+grep "ZONE=" /etc/sysconfig/clock<br/><br/>
+ZONE="Europe/Zurich"
+<br/><br/>
+let's open a connection to our DB and check:
+<br/><br/>
+SELECT *  FROM V$TIMEZONE_NAMES where TZNAME = 'Europe/Zurich';
+<br/><br/>
+Europe/Zurich LMT<br/><br/>
+Europe/Zurich BMT<br/><br/>
+Europe/Zurich CET<br/><br/>
+Europe/Zurich CEST<br/><br/>
+<br/><br/>
+
+I think CET is pretty decent...
+
+<br/><br/>
+I can fix the issue in 2 ways:
+<br/><br/>
+
+either I do "export TZ=CET" in my "soa" Linux user profile (.bashrc)
+
+<br/><br/>
+
+or I set the property in DOMAIN_HOME/bin/setDomainEnv.sh
+<br/><br/>
+-Duser.timezone=CET
+<br/><br/>
+
+
+Either will work.
+<br/><br/>
+
+Small test harness:
+<br/><br/>
+cat DBPing.java
+<pre class="brush: java">
+
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DBPing {
+        public static void main(String[] args) throws ClassNotFoundException, SQLException {
+                Class.forName("oracle.jdbc.driver.OracleDriver");
+                System.out.println("length " + args.length);
+                String user = args[0];
+                String password = args[1];
+                String url = args[2];
+                String now = new java.util.Date().toString();
+                System.out.println(now + " user= " + user + " password=" + password + " url=" + url);
+                java.sql.Connection conn = DriverManager.getConnection(url, user, password);
+                System.out.println("ok");
+        }
+}
+
+</pre>
+<br/><br/>
+
+javac DBPing.java
+
+<br/><br/>
+java -cp /opt/oracle/fmw11_1_1_5/wlserver_10.3/server/lib/ojdbc6.jar:. DBPing acme ********** jdbc:oracle:thin:@mydb.acme.com:1551/s_gr00
+<br/><br/>
+<pre>
+length 3
+Wed Nov 05 15:41:24 CET 2014 user= acme password=bla
+url=jdbc:oracle:thin:@mydb.acme.com:1551/s_gr00
+Exception in thread "main" java.sql.SQLException: ORA-00604: error occurred at recursive SQL level 1
+ORA-01882: timezone region not found
+
+        at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:440)
+        at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:389)
+        at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:382)
+        at oracle.jdbc.driver.T4CTTIfun.processError(T4CTTIfun.java:573)
+        at oracle.jdbc.driver.T4CTTIoauthenticate.processError(T4CTTIoauthenticate.java:431)
+        at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:445)
+        at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:191)
+        at oracle.jdbc.driver.T4CTTIoauthenticate.doOAUTH(T4CTTIoauthenticate.java:366)
+        at oracle.jdbc.driver.T4CTTIoauthenticate.doOAUTH(T4CTTIoauthenticate.java:752)
+        at oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:366)
+        at oracle.jdbc.driver.PhysicalConnection.<init>(PhysicalConnection.java:538)
+        at oracle.jdbc.driver.T4CConnection.<init>(T4CConnection.java:228)
+        at oracle.jdbc.driver.T4CDriverExtension.getConnection(T4CDriverExtension.java:32)
+        at oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:521)
+        at java.sql.DriverManager.getConnection(DriverManager.java:582)
+        at java.sql.DriverManager.getConnection(DriverManager.java:185)
+        at DBPing.main(DBPing.java:13)
+</pre>
+<br/><br/>
+
+second edition:
+<br/><br/>
+<pre class="brush: java">
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.TimeZone;
+
+public class DBPing {
+        public static void main(String[] args) throws ClassNotFoundException, SQLException {
+                TimeZone timeZone = TimeZone.getTimeZone("Europe/Zurich");
+                TimeZone.setDefault(timeZone);
+                Class.forName("oracle.jdbc.driver.OracleDriver");
+                System.out.println("length " + args.length);
+                String user = args[0];
+                String password = args[1];
+                String url = args[2];
+                String now = new java.util.Date().toString();
+                System.out.println(now + " user= " + user + " password=" + password + " url=" + url);
+                java.sql.Connection conn = DriverManager.getConnection(url, user, password);
+                System.out.println("ok");
+        }
+}
+
+
+</pre>
+
+<br/><br/>
+
+by setting the timezone we fix the error...
+<br/><br/>
+
+Setting "oracle.jdbc.timezoneAsRegion=false" in the WebLogic Datasource properties also does the job. This probably is the least impact solution, as it affects only the DB...
+
+<pre>
+CONNECTION_PROPERTY_TIMEZONE_AS_REGION
+
+static final java.lang.String CONNECTION_PROPERTY_TIMEZONE_AS_REGION
+
+Use JVM default timezone as specified rather than convert to a GMT offset. Default is true. 
+
+</pre>
+
+
+
+
+
+
+

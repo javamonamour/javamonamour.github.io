@@ -1,0 +1,27 @@
+---
+layout: post
+title: "XSL transformation: source parts or variables are either simple type or complex type, thus cannot be used to create mapper file"
+date: 2011-01-27T12:38:00.000+01:00
+permalink: /2011/01/xsl-transformation-source-parts-or.html
+blogger_id: "1510023085665508201"
+tags: ["SOASuite", "xsl"]
+---
+some hint on this <a href="http://forums.oracle.com/forums/thread.jspa?threadID=2136606&tstart=135">here</a><br />
+<br />
+<br />
+I was trying to use a variable<br />
+variable name="currentLine" type="ns1:Preactivation"<br />
+<br />
+with ns1:Preactivation defined in a XSD. This is not accepted (don't ask me why,<br />
+SOA has reasons that the reason itself doesn't have).<br />
+<br />
+If you change a WSDL and add an element of that type:<br />
+xs:element name="Preactivation" type="Preactivation"<br />
+<br />
+and you declare the variable as of "element" type:<br />
+<br />
+variable name="currentLine" element="ns1:Preactivation"<br />
+<br />
+then the XSL mapping is happy to accept it.<br />
+<br />
+WARNING: if you change the File Adapter that generated that WSDL, your element will be gone....

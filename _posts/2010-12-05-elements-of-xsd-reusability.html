@@ -1,0 +1,53 @@
+---
+layout: post
+title: "Elements of XSD reusability"
+date: 2010-12-05T22:01:00.004+01:00
+permalink: /2010/12/elements-of-xsd-reusability.html
+blogger_id: "193217988673964842"
+tags: ["xsd"]
+---
+If you define a type in a XSD:<br />
+<br />
+<br />
+myxsd1.xds:<br />
+<pre name="code" class="brush: xml"><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  targetNamespace="lillo">
+ <xs:complexType name="PV1Type">
+  <xs:sequence>
+   <xs:element name="pippo" type="xs:string"/>
+  </xs:sequence>
+ </xs:complexType>
+</xs:schema>
+
+</pre><br />
+<br />
+you can reuse this type definition in another XSD:<br />
+<br />
+<br />
+myxsd2.xds:<br />
+<pre name="code" class="brush: xml"><xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"  xmlns:ns1="lillo">
+        <xs:import namespace="lillo" schemaLocation="myxsd1.xsd"/>
+ <xs:element name="PVElementAgain2" type="ns1:PV1Type"/>
+
+</xs:schema>
+
+</pre><br />
+<br />
+The key is the "xs:import" statement with the association to the same namespace as in the targetNamespace used for the myxsd1.xds.<br />
+<br />
+What I really don't like in XSD is the habit of defining a type as an element:<br />
+<br />
+xs:element ... xs:complexType<br />
+<br />
+this is plain stupid since you cannot reuse this type definition.<br />
+<br />
+<br />
+I mean, once you have defined an element A as of complexType sequence bla,<br />
+you cannot define an element B saying "make it just like element A".<br />
+<br />
+The only way to reuse it is by including an object of type A inside the object B using the "ref" construct:<br />
+<br />
+xs:element name="PVElement3" ... xs:complexType ... xs:sequence... xs:element ref="PVElement2"<br />
+<br />
+This is like going back a century in the art of programming.<br />
+<br />
+I keep wondering what the Fathers of XML had smoked when they got together to define the Foundation of the Second Biggest Blunder of the Century - the First being HTML.

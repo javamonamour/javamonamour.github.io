@@ -1,0 +1,26 @@
+---
+layout: post
+title: "OSB, side effects of caching Xqueries"
+date: 2011-07-07T13:36:00.001+02:00
+permalink: /2011/07/osb-side-effects-of-caching-xqueries.html
+blogger_id: "7323512693445446235"
+tags: ["OSB", "XQuery"]
+---
+One instance of "<b>com.bea.wli.config.derivedcache.DerivedCache</b>" loaded by "sun.misc.Launcher$AppClassLoader @ 0x7812ef450" occupies 1,090,992,792 (72.62%) bytes. The memory is accumulated in one instance of "<b>weblogic.xml.query.xdbcimpl.XQueryPreparedStatementImpl</b>" loaded by "sun.misc.Launcher$AppClassLoader @ 0x7812ef450".<br />
+<br />
+<br />
+apparently, OSB internally "precompiles" and caches XQuery, which sound pretty reasonable for performance issues.<br />
+<br />
+The side effect is that, if your XQuery is nothing but a huge XML, the format by which this XML is saved in memory is very inefficient.<br />
+<br />
+Our XQuery was simply returning a 10k elements XML, each element being 1K, so a total of 10M on file.<br />
+<br />
+This XQuery ends up taking 1GB of memory, and the performance of my server drops dramatically because very less RAM is available afterwards.<br />
+<br />
+If took a heap dump and Eclipse MAT to discover that.<br />
+<br />
+I think in future we will do a Java Callout returning the content of a file, and converting it to XmlObject with fn-bea:inlinedXML() - that should not put anything in a Cache!<br />
+<br />
+updates: in the custom XPath I read a xml file (. path is relative to user.dir = domain home), using XmlObject.parse(File), and returing XmlObject to OSB.... it works very well without any caching side effect.<br />
+<br />
+This inspires me an interesting pattern: in my Mock Service, I use the unique ID of the request to identify a specific XML file on disk (eg id=408 retrieves file train408.xml). This will enable us to easily serve different data for different IDs.

@@ -1,0 +1,41 @@
+---
+layout: post
+title: "Xlib: PuTTY X11 proxy: wrong authorisation protocol attempted"
+date: 2012-04-28T11:45:00.003+02:00
+permalink: /2012/04/xlib-putty-x11-proxy-wrong.html
+blogger_id: "6545753134018206233"
+tags: ["putty", "X11"]
+---
+I log into myserver as user “myuser”, then “sudo su – soa”; I have X11 forwarding enable on Putty, and XMing running on my laptop.<br />
+I run <br />
+/opt/oracle/java/bin/jvisualvm<br />
+and I get:<br />
+<br />
+Xlib: connection to "localhost:10.0" refused by server<br />
+Xlib: PuTTY X11 proxy: wrong authorisation protocol attempted<br />
+<br />
+googling for the message I find:<br />
+<br />
+http://froebe.net/blog/2008/11/14/getting-xlib-putty-x11-proxy-wrong-authentication-protocol-attempted-i-have-the-answer/<br />
+<br />
+I try to<br />
+cat /etc/ssh/sshd_config<br />
+but I get<br />
+cat: /etc/ssh/sshd_config: Permission denied<br />
+<br />
+I go back as myuser and I do<br />
+xauth list<br />
+myserver/unix:10  MIT-MAGIC-COOKIE-1  8ea792a81074c62518d53789faf9558d<br />
+<br />
+then I “sudo su – soa” again and I do<br />
+<b>xauth add myserver/unix:10  MIT-MAGIC-COOKIE-1  8ea792a81074c62518d53789faf9558d</b><br />
+<i>xauth:  creating new authority file /home/soa/.Xauthority</i><br />
+<br />
+I run again<br />
+/opt/oracle/java/bin/jvisualvm<br />
+<br />
+and it works! Thank you Jason!!!<br />
+<br />
+Useful links:<br />
+<br />
+<a href="http://en.wikipedia.org/wiki/X_Window_authorization">For info on .Xauthority</a>

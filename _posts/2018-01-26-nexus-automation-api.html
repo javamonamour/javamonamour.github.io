@@ -1,0 +1,188 @@
+---
+layout: post
+title: "Nexus automation API"
+date: 2018-01-26T12:21:00.002+01:00
+permalink: /2018/01/nexus-automation-api.html
+blogger_id: "4047971831453367776"
+tags: ["nexus"]
+---
+The Nexus documentation and examples are horribly fragmentary and scattered - I have rarely seen a such popular product being under-documented in this chaotic way.<br />
+<br />
+Since 3.3 there is a Swagger-UI interface <a href="http://blog.sonatype.com/nexus-repository-new-beta-rest-api-for-content">http://blog.sonatype.com/nexus-repository-new-beta-rest-api-for-content</a>  not available in 2.14 .  Try for instance <a href="http://nexus-nodejs/swagger-ui/#!/assets/getAssets">http://nexus-nodejs/swagger-ui/#!/assets/getAssets</a> (replace nexus-nodejs with your own URL) <br />
+<br />
+A quite explanatory article on REST API (including the /nexus/service/local/ vs /nexus/service/siesta story) is <a href="http://www.sonatype.org/nexus/2015/01/26/learn-the-nexus-rest-api-automating-sonatype-nexus/">http://www.sonatype.org/nexus/2015/01/26/learn-the-nexus-rest-api-automating-sonatype-nexus/</a><br />
+<br />
+One can always generate a Java Client from Swagger <a href="http://www.baeldung.com/spring-boot-rest-client-swagger-codegen">http://www.baeldung.com/spring-boot-rest-client-swagger-codegen</a>  or also <a href="https://github.com/swagger-api/swagger-codegen">https://github.com/swagger-api/swagger-codegen</a><br />
+<br />
+Apparently Nexus chose Groovy as a language for automation <a href="https://help.sonatype.com/display/NXRM3/Writing+Scripts">https://help.sonatype.com/display/NXRM3/Writing+Scripts</a><br />
+<br />
+<h1>REST syntax</h1><br />
+To discover the syntax of the REST calls (with JSON payload) Nexus recommends simply ("request espionage") to use Developer Tools (F12 in IE, CTRL-SHIFT-I in Chrome and Firefox), go to Network tab, start capturing and execute manually some commands in the Administration UI.<br />
+<br />
+This for instance is how to "whitelist" (pre-approve) use of a xml-apis:xml-apis:1.3.04 (GAV) component in the provisioned repository "approved_from_central" : <br />
+<br />
+<pre>Request POST /service/local/procurement/resolutions/approved_from_central HTTP/1.1
+X-Nexus-UI true
+Accept application/json,application/vnd.siesta-error-v1+json,application/vnd.siesta-validation-errors-v1+json
+Content-Type application/json
+X-Requested-With XMLHttpRequest
+Referer http://nexusserver/
+Accept-Language de-CH
+Accept-Encoding gzip, deflate
+User-Agent Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; Ypkch32; rv:11.0) like Gecko
+Host nexusserver
+Content-Length 170
+Connection Keep-Alive
+Cache-Control no-cache
+Cookie NXSESSIONID=e2265c85-f82b-45ce-a889-f6964cdaa214
+
+Request Body 
+{"data":{"artifactCoordinate":{"groupId":"xml-apis","artifactId":"xml-apis","version":"1.3.04"},"properties":[{"key":"isApproved","value":"true"}],"ruleTypeId":"simple"}}
+
+</pre><br />
+<br />
+<br />
+Return code is HTTP 201 (created)<br />
+<br />
+<br />
+In 2.14 you can get the whole list of APIs by logging in as admin, on the left menu click on Administration, Plugin Console, click on "Nexus Core API (Restlet 1.x Plugin)" (Provides Nexus Core REST API) and click on the Documentation link <a href="http://nexusserver/nexus-restlet1x-plugin/default/docs/index.html">http://nexusserver/nexus-restlet1x-plugin/default/docs/index.html</a><br />
+<br />
+<br />
+This video seems the only serious attempt to document the REST API<br />
+<br />
+<iframe width="800" height="600" src="https://www.youtube.com/embed/fanZkgy0coI" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe><br />
+<br />
+<br />
+Other useful commands:<br />
+<br />
+#get the status of repository (the -u option is not necessary!)<br />
+curl -u admin:admin123  http://nexusserver/service/local/status <br />
+<br />
+curl -X GET -u admin:admin123  http://nexusserver/service/local/users <br />
+<br />
+#get list of all repositories, in xml format<br />
+curl http://nexusserver/service/local/all_repositories <br />
+<br />
+#get list of all assets with "arquillian" in the name<br />
+curl http://nexusserver/service/local/data_index?q=arquillian<br />
+<br />
+curl -i -H "Accept: application/xml" -H "Content-Type: application/xml" -X POST -v -trace-ascii -d "@repository-definition.xml" -u admin:admin123 http://nexusserver/service/local/repositories<br />
+<br />
+<br />
+See the curl documentation here <a href="https://curl.haxx.se/docs/manpage.html#-d">https://curl.haxx.se/docs/manpage.html#-d</a><br />
+<br />
+<br />
+<br />
+There are several github repositories:<br />
+<br />
+<a href="https://github.com/sonatype/nexus-book-examples/tree/nexus-3.x">https://github.com/sonatype/nexus-book-examples/tree/nexus-3.x</a><br />
+<br />
+<br />
+git clone https://github.com/sonatype/nexus-book-examples.git<br />
+cd nexus-book-examples/<br />
+git branch -a<br />
+* master<br />
+remotes/origin/HEAD -> origin/master<br />
+remotes/origin/NEXUS-14940-deprecate-service-siesta<br />
+remotes/origin/master<br />
+remotes/origin/nexus-3.x<br />
+git checkout -b nexus-3.x origin/nexus-3.x<br />
+<br />
+<br />
+then open this in your firefox:<br />
+file:///home/centos/nexus-book-examples/scripting/apidocs/index.html<br />
+<br />
+<br />
+The source code is available in <a href="https://github.com/sonatype/nexus-public">https://github.com/sonatype/nexus-public</a>  under <br />
+plugins/nexus-script-plugin :<br />
+<a href="https://github.com/sonatype/nexus-public/blob/master/plugins/nexus-script-plugin/src/main/java/org/sonatype/nexus/script/plugin/RepositoryApi.java">https://github.com/sonatype/nexus-public/blob/master/plugins/nexus-script-plugin/src/main/java/org/sonatype/nexus/script/plugin/RepositoryApi.java</a><br />
+<br />
+<br />
+To parse XML in Python: <a href="https://docs.python.org/2/library/xml.etree.elementtree.html">https://docs.python.org/2/library/xml.etree.elementtree.html</a><br />
+<br />
+To make curl requests (POST, GET) in Python: <a href="http://docs.python-requests.org/en/master/">http://docs.python-requests.org/en/master/<br />
+</a><br />
+<br />
+<br />
+<br />
+<h2>Example with Nexus PRO 2.14</h2><br />
+cat allowartifact.json <br />
+{"data":{"artifactCoordinate":{"groupId":"xml-apis","artifactId":"xml-apis","version":"1.3.04"},"properties":[{"key":"isApproved","value":"true"}],"ruleTypeId":"simple"}}<br />
+<br />
+<br />
+curl -i -H "Accept: application/json" -H "Content-Type: application/json"  -X POST -v -trace-ascii -d "@allowartifact.json" -u admin:admin123 http://nexusserver/service/local/procurement/resolutions/approved_from_central <br />
+<br />
+<pre>* About to connect() to nexusserver port 80 (#0)
+*   Trying 44.55.66.77... connected
+* Connected to nexusserver (44.55.66.77) port 80 (#0)
+* Server auth using Basic with user 'admin'
+&gt; POST /service/local/procurement/resolutions/approved_from_central HTTP/1.1
+&gt; Authorization: Basic YWRteee6cG9qqqV4dXM=
+&gt; User-Agent: curl/7.19.7 (x86_64-redhat-linux-gnu) libcurl/7.19.7 NSS/3.27.1 zlib/1.2.3 libidn/1.18 libssh2/1.4.2
+&gt; Host: nexusserver
+&gt; Accept: application/json
+&gt; Content-Type: application/json
+&gt; Content-Length: 170
+&gt; 
+&lt; HTTP/1.1 201 Created
+HTTP/1.1 201 Created
+&lt; Date: Fri, 26 Jan 2018 13:15:17 GMT
+Date: Fri, 26 Jan 2018 13:15:17 GMT
+&lt; Server: Nexus/2.14.5-02 Noelios-Restlet-Engine/1.1.6-SONATYPE-5348-V8
+Server: Nexus/2.14.5-02 Noelios-Restlet-Engine/1.1.6-SONATYPE-5348-V8
+&lt; X-Frame-Options: SAMEORIGIN
+X-Frame-Options: SAMEORIGIN
+&lt; X-Content-Type-Options: nosniff
+X-Content-Type-Options: nosniff
+&lt; Content-Type: application/json; charset=UTF-8
+Content-Type: application/json; charset=UTF-8
+&lt; Content-Length: 191
+Content-Length: 191
+&lt; Cache-Control: no-store, no-cache, must-revalidate, max-age=1, private, proxy-revalidate
+Cache-Control: no-store, no-cache, must-revalidate, max-age=1, private, proxy-revalidate
+&lt; Expires: Fri, 26 Jan 2018 13:15:17 GMT
+Expires: Fri, 26 Jan 2018 13:15:17 GMT
+&lt; Pragma: no-cache
+Pragma: no-cache
+&lt; Connection: close
+Connection: close
+
+&lt; 
+* Closing connection #0
+{"data":{"id":"655124ddf28eb","artifactCoordinate":{"groupId":"xml-apis","artifactId":"xml-apis","version":"1.3.04"},"ruleTypeId":"simple","properties":[{"key":"isApproved","value":"true"}]}}
+
+</pre><br />
+and this inserts into nexusserver/conf/procurement.xml :<br />
+<br />
+<br />
+<pre class="brush: xml">&lt;procuredArtifacts>
+ &lt;procuredArtifact>
+   &lt;id>655124ddf28eb&lt;/id>
+   &lt;type>simple&lt;/type>
+   &lt;groupId>xml-apis&lt;/groupId>
+   &lt;artifactId>xml-apis&lt;/artifactId>
+   &lt;version>1.3.04&lt;/version>
+   &lt;ruleProperties>
+  &lt;ruleProperty>
+    &lt;key>isApproved&lt;/key>
+    &lt;value>true&lt;/value>
+  &lt;/ruleProperty>
+   &lt;/ruleProperties>
+ &lt;/procuredArtifact>
+&lt;/procuredArtifacts>
+</pre><br />
+<br />
+<br />
+<h1>sample CURL calls</h1><br />
+#add -H "Accept: application/json"  to get in JSON format, otherwise it defaults to XML<br />
+#get pom of an artifact<br />
+curl "http://nexus-java/service/local/artifact/maven?g=xml-apis&a=xml-apis&v=1.3.04&r=central"<br />
+#get all repos<br />
+curl http://nexus-java/service/local/all_repositories<br />
+#get all components of a given group<br />
+curl -H "Accept: application/xml"  http://nexus-java/service/local/lucene/search?g=xml-apis<br />
+<br />
+<br />
+See the documentation of the lucene indexer <a href="https://repository.sonatype.org/nexus-indexer-lucene-plugin/default/docs/path__lucene_search.html">https://repository.sonatype.org/nexus-indexer-lucene-plugin/default/docs/path__lucene_search.html</a><br />
+<br />
+

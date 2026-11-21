@@ -1,0 +1,72 @@
+---
+layout: post
+title: "JDeveloper and HttpClient to test a OSB \"any XML\" service"
+date: 2010-12-07T14:42:00.003+01:00
+permalink: /2010/12/jdeveloper-and-httpclient-to-test-osb.html
+blogger_id: "7327936115538585546"
+tags: ["httpclient", "JDeveloper"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2010-12-08
+    html: "Hello Damien,<br />if the Proxy Service is a &quot;Any XML&quot;, no WSDL is associated to it...<br />if I am wrong please correct me.<br /><br />actually the POST works without the &quot;sbresource?PROXY&quot; directive.... can you tell me more about this &quot;sbresource?PROXY&quot; thingie?<br /><br />thanks!"
+  - author: "Anonymous"
+    date: 2010-12-08
+    html: "Hi <br /><br />I think the url will need to include sbresource?PROXY directive in order to call the proxy service from a http client. Also doers the proxy service not require a WSDL service?"
+  - author: "vernetto"
+    date: 2010-12-09
+    html: "actually I have tried:<br /><br />http://localhost:7001/sbresource?PROXY/CreateOrder/PS/CreateOrderPS<br /><br />and I get <br /><br />java.io.IOException: This service is not associated to a wsdl<br /><br /><br />since it&#39;s a &quot;Any XML&quot; service....<br /><br /><br />Anyway it&#39;s interesting that you can retrieve those entities through a HTTP GET, nice one Damien!"
+  - author: "Anonymous"
+    date: 2010-12-09
+    html: "Hi Perluigi,<br /><br />Apologies the sbresource?PROXY is used the url for accessing the WSDL of the proxy service as desribed here  -http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/configuringandusingservices.html<br /><br />This would be required if the proxy service was based on a WSDL and you needed to test via SOAPUI, XMLSPY etc"
+---
+I want to code some Unit Tests for a Pure XML service.<br />
+SOAPUI doesn't seem to have any support for such services (maybe?).<br />
+<br />
+So I will code something in Java. Actually I might do it in Groovy.<br />
+<br />
+HttpClient is deployed 3 times (!!!) with SOASuite and JDev:<br />
+<br />
+C:\Oracle1\Middleware\jdeveloper\communications\modules\oracle.sdp.client_11.1.1\commons-httpclient-3.1.jar<br />
+<br />
+C:\Oracle1\Middleware\jdeveloper\ide\lib\commons-httpclient-3.1.jar<br />
+<br />
+C:\Oracle1\Middleware\Oracle_SOA1\soa\modules\commons-httpclient-3.1.jar<br />
+<br />
+In reality httpclient 3 is a legacy code and one is encouraged to upgrade to 4<br />
+<a href="http://hc.apache.org/downloads.cgi">http://hc.apache.org/downloads.cgi</a><br />
+<br />
+(download both core and httpclient jars)<br />
+<a href="http://mirrors.kahuki.com/apache//httpcomponents/httpclient/binary/httpcomponents-client-4.0.3-bin-with-dependencies.tar.gz">here</a> is the link with the dependencies.<br />
+<br />
+<br />
+<a href="/2009/09/httpclient-40.html">Here</a> a quick tutorial.<br />
+<br />
+Bear in mind that even if you post a XML to a "Any XML" service, OSB will still wrap it into a soapenv:Body element....<br />
+<br />
+<pre name="code" class="brush: xml"><soapenv:Body xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"/>
+
+</pre><br />
+so if you want to grab the payload you should get the XPath "./*" of variable $body...<br />
+using the XPath "." will return you an object of type Body.<br />
+<br />
+<br />
+Here is the harness:<br />
+<br />
+<pre name="code" class="brush: java">DefaultHttpClient httpclient = new DefaultHttpClient();
+HttpPost request = new HttpPost("http://localhost:7001/CreateOrder/PS/CreateOrderPS");
+HttpEntity httpEntity = new FileEntity(new File("C:\\JDeveloper\\mywork\\ACME_POC\\CreateOrderTest\\resources\\createorderpayload.xml"), "text/html");
+request.setEntity(httpEntity);
+HttpResponse response = httpclient.execute(request);
+System.out.println(response.getStatusLine().getStatusCode());
+</pre><br />
+and of course the status should be 200<br />
+If it's 500 you might have a fault (e.g. validation error)<br />
+<br />
+<br />
+Here for my reference are the available sbresource queries:<br />
+<br />
+* http://host:port/sbresource?WSDL/project/...wsdlname<br />
+* http://host:port/sbresource?POLICY/project/...policyname<br />
+* http://host:port/sbresource?MFL/project/...mflname<br />
+* http://host:port/sbresource?SCHEMA/project/...schemaname<br />
+* http://host:port/sbresource?PROXY/project/...proxyname

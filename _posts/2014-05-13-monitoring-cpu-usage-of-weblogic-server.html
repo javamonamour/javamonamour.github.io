@@ -1,0 +1,26 @@
+---
+layout: post
+title: "Monitoring CPU usage of a WebLogic server over time"
+date: 2014-05-13T14:32:00.002+02:00
+permalink: /2014/05/monitoring-cpu-usage-of-weblogic-server.html
+blogger_id: "4865190933189913761"
+tags: ["linux"]
+---
+you can either use top, where PID is the Managed Server's processid:
+<br/>
+<pre>top -b -p $PID</pre>
+<br/>
+or ps:
+<br/>
+<pre>ps -p $PID  -o %cpu | tail -n +2</pre>
+
+<br/><br/>
+
+
+Unfortunately collectd doesn't seem to be able to collect CPU usage for a specific user or PID.
+
+<br/><br/>
+
+
+
+

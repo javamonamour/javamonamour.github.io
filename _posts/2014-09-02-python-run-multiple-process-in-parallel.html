@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Python: run multiple processes in parallel and wait for completion"
+date: 2014-09-02T11:28:00.001+02:00
+permalink: /2014/09/python-run-multiple-process-in-parallel.html
+blogger_id: "6385246451303974203"
+tags: ["python"]
+---
+This code is quite minimalistic but it works really well. It employs a very old API which is compatible with Pythong 2.1 (WLST very old version of Python....)
+
+
+<br />
+<br />
+<pre class="brush: java">from sets import Set
+
+processes = Set()
+
+for command in commandlistlist:
+    print "running", command
+    processes.add(os.popen(command)) 
+
+#wait until all processes have completed
+for proc in processes:
+    proc.read()
+
+
+</pre>
+<br />
+<br />

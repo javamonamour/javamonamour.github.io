@@ -1,0 +1,20 @@
+---
+layout: post
+title: "ORA-04031 and the shared pool"
+date: 2012-10-02T17:34:00.001+02:00
+permalink: /2012/10/ora-04031-and-shared-pool.html
+blogger_id: "2300987504519554606"
+---
+We often get this kind of error: <br />
+<br />
+BEA-001129 Received exception while creating connection for pool "PIPPODataSourceASIA": ORA-04031: unable to allocate 32 byt<bea -001129="-001129"><received 32="32" allocate="allocate" atasourceasia="atasourceasia" br="br" byt="byt" connection="connection" creating="creating" exception="exception" for="for" ora-04031:="ora-04031:" pool="pool" to="to" unable="unable" while="while">es of shared memory ("shared pool","DATABASESYS","trigger inform","kglhin: temp")<br />osbpr1do.log00252:ORA-04031: unable to allocate 32 bytes of shared memory ("shared pool","select name,password,datats#...","sql area","tmp")</received></bea><br />
+<br />
+the SQL statement changes, but the "shared pool" is always the same.<br />
+<br />
+First we need to understand what a "shared pool" is:<br />
+<br />
+<a href="http://www.dba-oracle.com/concepts/shared_pool_concepts.htm">http://www.dba-oracle.com/concepts/shared_pool_concepts.htm</a><br />
+<br />
+the "shared pool" is part of the <a href="http://en.wikipedia.org/wiki/Oracle_Database#System_Global_Area">http://en.wikipedia.org/wiki/Oracle_Database#System_Global_Area</a><br />
+<br />
+It turns out that the DB parameters had to be tuned. No settings on WebLogic side can fix the issue.

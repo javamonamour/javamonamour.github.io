@@ -1,0 +1,124 @@
+---
+layout: post
+title: "Puppet 3.2 graph and cycles"
+date: 2013-09-22T15:45:00.003+02:00
+permalink: /2013/09/puppet-32-graph-and-cycles.html
+blogger_id: "7311980031332883863"
+tags: ["graphs", "puppet"]
+---
+<a href="https://www.quantcast.com/inside-quantcast/2013/01/how-to-avoid-graph-loops-in-puppet-so-that-you-can-avoid-graph-loops-in-puppet/">Awesome article on this topic.</a>
+
+<br/><br/>
+To generate a graph, simply type this:
+<br/>
+puppet apply --modulepath=/tmp/vagrant-puppet/modules-0/ osb-vagrant.pp --noop --graph
+
+<br/><br/>
+In case (it happens often!) you have a dependency cycle ( A -> B -> A ), you will get the dreaded message:
+<br/><br/>
+<pre>
+
+[root@osb-vagrant manifests]# puppet apply --modulepath=/tmp/vagrant-puppet/modules-0/ osb-vagrant.pp --noop --graph
+err: Could not apply complete catalog: Found 1 dependency cycle:
+(File[/etc/sudoers.d/nesoav2] => Class[Nesoav2::Sudo] => File[/etc/sudoers.d/nesoav2])
+Cycle graph written to /var/opt/lib/pe-puppet/state/graphs/cycles.dot.
+notice: Finished catalog run in 0.32 seconds
+</pre>
+
+<br/><br/>
+This is new compared to previous editions. Previously the whole resource graph was generated, 
+now only the cycle is written to the file - making investigation a lot easier.
+
+<br/><br/>
+
+How do I generate graphs?
+<br/>
+<pre>
+ puppet --configprint confdir
+
+/etc/puppetlabs/puppet
+
+vi /etc/puppetlabs/puppet/puppet.conf
+
+[main]
+    vardir = /var/opt/lib/pe-puppet
+    logdir = /var/log/pe-puppet
+    rundir = /var/run/pe-puppet
+    modulepath = /etc/puppetlabs/puppet/modules:/opt/puppet/share/puppet/modules
+    user = pe-puppet
+    group = pe-puppet
+    archive_files = true
+    archive_file_server = puppet.acme.com
+
+[agent]
+    certname = localhost.localdomain
+    server = puppet.acme.com
+    report = true
+    classfile = $vardir/classes.txt
+    localconfig = $vardir/localconfig
+    graph = true
+    pluginsync = true
+
+
+</pre>
+<br/>
+note the "graph = true " in the agent section of puppet.conf file.
+<br/><br/>
+
+To check the directory where the graph files will be written:
+
+<pre>
+puppet --configprint graphdir
+/var/opt/lib/pe-puppet/state/graphs
+
+
+ ls -ltr /var/opt/lib/pe-puppet/state/graphs
+total 120
+-rw-r--r-- 1 root root 28078 Sep 21 22:20 resources.dot
+-rw-r--r-- 1 root root 26513 Sep 21 22:20 relationships.dot
+-rw-r--r-- 1 root root 54997 Sep 21 22:20 expanded_relationships.dot
+-rw-r--r-- 1 root root   147 Sep 21 22:20 cycles.dot
+
+</pre>
+<br/><br/>
+so all these files will be generated every time I run "puppet apply"
+<br/><br/>
+
+just run "dot -Tpng resources.dot -o resources.png" to generate the image. (don't forget the -o, otherwise hell will break loose on your PC)
+
+<br/>
+
+This is what you get:
+<br/>
+
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/2076b2430d26d0fa.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/bf90690f54fd9fcb.png" /></a></div>
+
+
+in my case, the mistake was that I have 2 classes "sudo" in 2 different module 
+<br/>
+<pre>
+class nesoav2::sudo {
+  file { '/etc/sudoers.d/nesoav2':
+    source => "puppet:///nesoav2/sudo_nesoav2",
+    owner => root,
+    group => root,
+    mode => 0440,
+    require => Class["sudo"]
+  }
+}
+
+</pre>
+
+and if you don't specify the other module (package) name in Class["sudo"], the class will try to import itself. This is really a beginner's error in Puppet, like having a class extending itself (try that in Java and the IDE will immediately tell you.... Puppet's IDE is simply dumb).
+
+<br/>
+
+If you generate the WHOLE graph "dot -Tpng expanded_relationships.dot -o expanded_relationships.png" it's really way too complex. One should have the option of plotting only the nodes related to a specific resource....
+
+<br/>These are all the commands:<br/>
+dot -Tpng expanded_relationships.dot -o expanded_relationships.png<br/>
+dot -Tpng relationships.dot -o relationships.png<br/>
+dot -Tpng resources.dot -o resources.png<br/>
+<br/><br/>
+
+<a href="http://spin.atomicobject.com/2011/12/29/puppet-gephi-visualizing-infrastructure-as-code/">I read here</a> that a much better way of examining the graphs is to import the .dot file into <a href="https://gephi.org/users/download/">Gephi</a>

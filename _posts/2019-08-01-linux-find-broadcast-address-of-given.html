@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Linux. find broadcast address of a given network interface"
+date: 2019-08-01T21:31:00.001+02:00
+permalink: /2019/08/linux-find-broadcast-address-of-given.html
+blogger_id: "2127911253229810415"
+tags: ["ip"]
+---
+It's grotesque how in 2019 we still have to rely on primitive, ambiguous tools like grep and awk to extract information from a linux command<br />
+<br />
+This is what I could came up to "find broadcast address of a given network interface":<br />
+<br />
+ip a s dev docker0 | grep "inet.*brd" |  awk '{print $4}'<br />
+<br />
+<br />
+To subtract 1 from IP (see <a href="https://www.unix.com/shell-programming-and-scripting/260568-bash-subtract-fourth-octet-ip-1-a.html">here</a> ):<br />
+<br />
+<pre>cat checkip.ksh
+echo "Enter ip:"
+read IP_val
+awk -F"/" -vvalip="$IP_val" '{if($NF==valip){split($1, A,".");A[4]-=1;VAL=A[1] OFS A[2] OFS A[3] OFS A[4]}} END{print VAL}' OFS="." ip_list
+</pre><br />
+<br />
+<br />
+It's a mad world.<br />
+<br />
+The broadcast address is  always (?) the highest IP in the subnet range: <br />
+<pre>Network: 172.25.1.64/26
+Broadcast: 172.25.1.127
+HostMin: 172.25.1.65
+HostMax: 172.25.1.126
+Hosts/Net: 62
+</pre><br />
+and the gateway will be (broadcast-1) = 172.25.1.126<br />
+<br />
+To find out what the default gateway is:<br />
+cat /etc/sysconfig/network<br />
+<br />
+initialization scripts in /etc/sysconfig/network-scripts/ifcfg-*<br />
+<br />
+<br />
+<br />
+<a href="https://en.wikipedia.org/wiki/Broadcast_address">https://en.wikipedia.org/wiki/Broadcast_address</a>

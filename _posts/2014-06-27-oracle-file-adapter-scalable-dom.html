@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Oracle File Adapter Scalable DOM"
+date: 2014-06-27T08:42:00.001+02:00
+permalink: /2014/06/oracle-file-adapter-scalable-dom.html
+blogger_id: "4071184787066731492"
+tags: ["OSB", "streaming"]
+---
+I have tried to activate streaming parsing of an xml file with OSB:<br />
+<br />
+<br />
+this consists in replacing oracle.tip.adapter.file.inbound.FileActivationSpec with oracle.tip.adapter.file.inbound.ScalableFileActivationSpec, and enabling streaming parsing on the File poller Proxy Service.
+I also set MaxFileAge to 5, to avoid picking up a file before it's completely copied to the Input folder.
+<br />
+<br />
+I put a SMALL (3 kb file) document 608-12.xml in the input folder, and I get:
+
+<br />
+<br />
+<pre>Generic Error caught while translating inbound file  in streaming mode  : 608-12.xml
+java.lang.NullPointerException
+        at oracle.tip.adapter.file.inbound.InboundTranslatorDelegate.xlate(InboundTranslatorDelegate.java:295)
+        at oracle.tip.adapter.file.inbound.InboundTranslatorDelegate.doXlate(InboundTranslatorDelegate.java:121)
+        at oracle.tip.adapter.file.inbound.ProcessorDelegate.doXlate(ProcessorDelegate.java:388)
+        at oracle.tip.adapter.file.inbound.ProcessorDelegate.process(ProcessorDelegate.java:174)
+        at oracle.tip.adapter.file.inbound.ProcessWork.run(ProcessWork.java:349)
+        at weblogic.work.ContextWrap.run(ContextWrap.java:41)
+        at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+&gt;
+
+</pre>
+<br />
+<br />
+According to Oracle Support KB, this should happen only for HUUUGE documents and in old versions of OSB (we use 11.1.1.5).
+Related thread on the forum, reporting the same issue, are unanswered.
+<br />
+<br />
+I am afraid we shall not use this streaming option for the time being.
+<br />
+<br />
+See also&nbsp;<a href="https://community.oracle.com/thread/2195895">https://community.oracle.com/thread/2195895</a>&nbsp;(discussion archived without solution...)

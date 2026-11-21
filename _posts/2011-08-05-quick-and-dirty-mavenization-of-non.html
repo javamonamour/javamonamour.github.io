@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Quick and dirty mavenization of a non-Maven project with plenty of JARs"
+date: 2011-08-05T18:38:00.003+02:00
+permalink: /2011/08/quick-and-dirty-mavenization-of-non.html
+blogger_id: "6681354673970347950"
+tags: ["maven", "mavensucks"]
+---
+Problem is: I have lots of JARs which I cannot express as dependency. <br />
+I know that including JARs in SVN is BAD, BUT...<br />
+I know that using scope=system in Maven is BAD, BUT...<br />
+<br />
+<br />
+Following <a href="http://stackoverflow.com/questions/364114/can-i-add-jars-to-maven-2-build-classpath-without-installing-them">this link</a><br />
+<br />
+I write this tool to generate me the dependencies:<br />
+<br />
+<pre name="code" class="brush: java">import java.io.File;
+
+
+public class PrintPOM {
+ public static void main(String[] args) {
+  File dir = new File("C:\\pierre\\maventests\\GUFunctionalTests\\lib");
+  for (File file : dir.listFiles()) {
+   if (file.getName().endsWith(".jar")) {
+    System.out.println("<dependency>");
+    System.out.println("<groupid>mylibs</groupId>");
+    System.out.println("<artifactid>" + file.getName() + "</artifactId>");
+    System.out.println("<version>1.0</version>");
+    System.out.println("<scope>system</scope>");
+    System.out.println("<systempath>${project.basedir}/lib/" + file.getName() + "</systemPath>");
+    System.out.println("</dependency>");
+   }
+  }
+
+ }
+}
+
+</pre><br />
+and I stick the result in my pom.xml (its POM, not PORN, you dirty man)<br />
+<br />
+<a href="http://maven.apache.org/pom.html">Here the POM documentation page</a>, priceless!

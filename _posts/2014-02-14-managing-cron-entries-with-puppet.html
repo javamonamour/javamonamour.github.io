@@ -1,0 +1,71 @@
+---
+layout: post
+title: "managing cron entries with Puppet"
+date: 2014-02-14T15:04:00.001+01:00
+permalink: /2014/02/managing-cron-entries-with-puppet.html
+blogger_id: "4255780986804704601"
+tags: ["puppet"]
+---
+Puppet has a <a href="http://docs.puppetlabs.com/references/latest/type.html#cron">predefined type cron</a>. Which is very cool. The only issue is that we don't want to hardcode cron stuff in any pp manifest, since each node has to be configured in a different way.
+
+<br />
+This is where hiera comes in handy. I personally dislike hiera, and in general all repositories of information which are not bound to a tightly validating schema and which don't natively lend themselves to being queried with a query language. Anyway this is another story.
+<br />
+This is the Puppet class:
+<br />
+<pre>class acme::crontab ($acme_crontab_entries = hiera('acme_crontab_entries', {})) {
+  create_resources(cron, $acme_crontab_entries)
+}
+</pre>
+<br />
+and in your &lt;hostname&gt;.yaml file enter:
+<br />
+<pre>acme_crontab_entries :
+  logrotate:
+    command : '/usr/sbin/logrotate'
+    user    : 'soa'
+    hour    : '2'
+    minute  : '0'    
+
+</pre>
+<br />
+<br />
+I can't think of anything simpler.
+
+<br />
+NOTA BENE:
+<br />
+<pre>hiera('acme_crontab_entries', {})
+</pre>
+<br />
+the empty hash {} is needed so that, if a &lt;hostname&gt;.yaml doesn't define the acme_crontab_entries variable, you don't get the message
+<br />
+<i>Could not find data item acme_crontab_entries in any Hiera data file and no default supplied at /tmp/vagrant-puppet/modules-0/acme/manifests/crontab.pp:6 on node osb-vagrant.acme.com
+</i>
+
+<br /><br />
+However this is a bit of abuse of hiera.... hiera should contain minimal configuration information, letting the Puppet modules to handle the details.
+<br /><br />
+A more structured approach is to define in hiera only a boolean flag determining is a given cron entry is needed on a specific server: "acme_install_logrotate_service : true" , and then in your init.pp you do:
+<br /><br />
+<pre>
+$acme_install_logrotate_service = hiera('acme_install_logrotate_service', false)
+if $acme_install_logrotate_service {
+  class {'acme::logrotateservices': }
+}
+</pre>
+
+and the class logrotateservices contains the Puppet statement: 
+<pre>
+cron { logrotate:
+  command => "/usr/sbin/logrotate",
+  user    => root,
+  hour    => ['2-4'],
+  minute  => '*/10'
+}
+</pre>
+
+
+<br /><br />
+
+

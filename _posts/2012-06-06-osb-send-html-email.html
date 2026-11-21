@@ -1,0 +1,39 @@
+---
+layout: post
+title: "OSB send html email"
+date: 2012-06-06T10:58:00.000+02:00
+permalink: /2012/06/osb-send-html-email.html
+blogger_id: "5429353017841112323"
+---
+<a href="https://blogs.oracle.com/mneelapu/entry/how_to_serve_html_through_osb">Ok this is what you hit in google</a><br />
+<br />
+I have tried and it's simple:<br />
+<br />
+create a Business Service<br />
+<br />
+Service Type: Messaging Service<br />
+Request Message Type  : text<br />
+Protocol  : email<br />
+Endpoint URI: mailto:pippo@pappo.com<br />
+SMTP Server  : mysmtpserver<br />
+<br />
+<br />
+you can test the BS:<br />
+<br />
+&lt;html><br />
+&lt;body><br />
+&lt;b>ciao bello&lt;/b><br />
+&lt;i>ciao bello&lt;/i><br />
+&lt;/body><br />
+&lt;/html><br />
+<br />
+as long as you specify well formed HTML it should not pose any XML validation problem.<br />
+<br />
+and make sure in the Transport Headers part you specify<br />
+<br />
+Content-Type: text/html<br />
+<br />
+<br />
+If you go through a Proxy Service, it ca take care of that for you, but the problem is that it seems to precede it with a "xml" header:<br />
+<br />
+&lt;?xml version="1.0" encoding="ISO-8859-1"?> &lt;html> &lt;body> &lt;b>ciao bello&lt;/b> &lt;i>ciao bello&lt;/i> &lt;/body> &lt;/html>

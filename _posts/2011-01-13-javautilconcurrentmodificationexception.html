@@ -1,0 +1,32 @@
+---
+layout: post
+title: "java.util.ConcurrentModificationException"
+date: 2011-01-13T00:00:00.001+01:00
+permalink: /2011/01/javautilconcurrentmodificationexception.html
+blogger_id: "8483289571487226923"
+tags: ["collections"]
+blogger_comments:
+  - author: "Reiner Saddey"
+    date: 2012-10-09
+    html: "for (Iterator&lt;PreactivationCallbackTask&gt; i = tasks.iterator(); i.hasNext(); ) {<br /><br />PreactivationCallbackTask task = i.next();<br />....<br />i.remove(); // :-)<br />}"
+---
+I get this while iterating on a collection (a regular java.lang.Vector) and at the same time changing it: <br />
+<br />
+for (PreactivationCallbackTask task : tasks) {<br />
+    ....<br />
+    tasks.remove(task);  // changing the collection while you iterate is not allowed<br />
+}<br />
+<br />
+<br />
+I get this:<br />
+<br />
+java.util.ConcurrentModificationException<br />
+at java.util.AbstractList$Itr.checkForComodification(AbstractList.java:372)<br />
+at java.util.AbstractList$Itr.next(AbstractList.java:343)<br />
+<br />
+<br />
+<a href="http://download.oracle.com/javase/1.5.0/docs/api/java/util/ConcurrentModificationException.html">here</a> the javadoc for java.util.ConcurrentModificationException<br />
+<br />
+The only way out is to change the collection OUTSIDE the for loop.<br />
+<br />
+<a href="http://nerddawg.blogspot.com/2004/09/concurrent-modification-of-collections.html">This</a> post provides an excellent explanation.

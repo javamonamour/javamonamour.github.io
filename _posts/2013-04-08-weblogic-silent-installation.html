@@ -1,0 +1,698 @@
+---
+layout: post
+title: "WebLogic silent installation"
+date: 2013-04-08T13:41:00.002+02:00
+permalink: /2013/04/weblogic-silent-installation.html
+blogger_id: "1399200906712884021"
+tags: ["weblogic"]
+---
+the command is: <br />
+java -d64 -jar /opt3/oracle/software/wls1035_generic.jar -mode=silent -silent_xml=silent.xml
+
+<br />
+<br />
+first I try with the <a href="http://docs.oracle.com/cd/E21764_01/doc.1111/e14142/silent.htm#g1084534">file provided on Oracle site </a> :
+
+<br />
+<pre class="brush: xml" name="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+   &lt;bea-installer&gt; 
+     &lt;input-fields&gt;
+       &lt;data-value name="BEAHOME" value="/opt3/oracle/fmw11_1_1_5" /&gt;
+       &lt;data-value name="WLS_INSTALL_DIR" value="/opt3/oracle/fmw11_1_1_5/wlserver_10.3" /&gt;
+       &lt;data-value name="COMPONENT_PATHS"
+        value="WebLogic Server/Core Application Server|WebLogic Server
+/Administration Console|WebLogic Server/Configuration Wizard and Upgrade 
+Framework|WebLogic Server/Web 2.0 HTTP Pub-Sub Server|WebLogic Server/WebLogic 
+JDBC Drivers|WebLogic Server/Third Party JDBC Drivers|WebLogic Server
+/WebLogic Server Clients|WebLogic Server/WebLogic Web Server Plugins
+|WebLogic Server/UDDI and Xquery Support|WebLogic Server/Server Examples|Oracle Coherence/Coherence Product Files" /&gt;
+       &lt;data-value name="NODEMGR_PORT" value="5558" /&gt;
+       &lt;data-value name="INSTALL_SHORTCUT_IN_ALL_USERS_FOLDER" value="no"/&gt;    
+    &lt;data-value name="LOCAL_JVMS" value="/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64"/&gt;
+    
+ 
+   &lt;/input-fields&gt; 
+&lt;/bea-installer&gt;
+
+</pre>
+<br />
+and it fails with 
+
+<br />
+"The local BEA product registry is corrupted. Please select another Middleware Home or contact Oracle Support":
+
+<br />
+<br />
+then I use this:
+<br />
+<pre class="brush: xml" name="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+   &lt;bea-installer&gt;
+     &lt;input-fields&gt;
+       &lt;data-value name="BEAHOME" value="/opt3/oracle/fmw11_1_1_5" /&gt;
+       &lt;data-value name="WLS_INSTALL_DIR" value="/opt3/oracle/fmw11_1_1_5/wlserver_10.3" /&gt;
+       &lt;data-value name="COMPONENT_PATHS"
+value="WebLogic Server/Core Application Server|WebLogic Server/Administration Console|WebLogic Server/Configuration Wizard and Upgrade Framework|WebLogic Server/Web 2.0 HTTP Pub-Sub Server|WebLogic Server/WebLogic JDBC Drivers|WebLogic Server/Third Party JDBC Drivers|WebLogic Server/WebLogic Server Clients|WebLogic Server/WebLogic Web Server Plugins|WebLogic Server/UDDI and Xquery Support|WebLogic Server/Server Examples"/&gt;
+       &lt;data-value name="NODEMGR_PORT" value="5558" /&gt;
+       &lt;data-value name="INSTALL_SHORTCUT_IN_ALL_USERS_FOLDER" value="no"/&gt;
+    &lt;data-value name="LOCAL_JVMS" value="/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64"/&gt;
+   &lt;/input-fields&gt;
+&lt;/bea-installer&gt;
+</pre>
+<br />
+and I get this:<br />
+<br />
+<pre>Extracting 0%....................................................................................................100%
+Apr 8, 2013 1:31:27 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: read template from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/domains/wls.jar"
+Apr 8, 2013 1:31:28 PM [THREAD: runScript] com.oracle.cie.domain.template.catalog.impl.ComponentsXMLConverter loadComponentsXML
+INFO: /opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/lib/components.xml does not contain component elements and will be skipped
+Apr 8, 2013 1:31:28 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No config-groups.xml found in template
+Apr 8, 2013 1:31:28 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No template-database.xml found in template
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Adding top-level component reference: WebLogic Server version 10.3.5.0
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Setting symbol for component WebLogic Server version 10.3.5.0 to WebLogic_Server_10.3.5.0_wlserver_10.3_ORACLE_HOME
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: read template from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/domains/wls.jar"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option CreateStartMenu to "false"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option CreateStartMenu to "false"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option OverwriteDomain to "true"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option OverwriteDomain to "true"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option JavaHome to "/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option JavaHome to "/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: find Server "AdminServer" as obj0
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: find Server "AdminServer" as obj0
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj0 attribute Name to "examplesServer"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj0 attribute Name to "examplesServer"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: find User "weblogic" as obj1
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: find User "weblogic" as obj1
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj1 attribute Password to "********"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj1 attribute Password to "********"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:29 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: write Domain to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/wl_server"
+Apr 8, 2013 1:31:30 PM [THREAD: runScript] com.oracle.cie.domain.DomainChecker validateServerListenPortsInternal
+INFO: ListenPort internal Validation result= [null]
+Apr 8, 2013 1:31:30 PM [THREAD: runScript] com.oracle.cie.domain.DomainChecker validateServerListenPortsExternal
+INFO: ListenPort external Validation result= [null]
+Apr 8, 2013 1:31:31 PM [THREAD: Thread-5] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:31 PM [THREAD: Thread-5] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:32 PM [THREAD: Thread-5] com.oracle.cie.domain.DomainRegistryWrapper getDomainRegistryWrapper
+INFO: need to initialize domainRegistrydocument object
+Apr 8, 2013 1:31:32 PM [THREAD: Thread-5] com.oracle.cie.domain.DomainGenerator generate
+INFO: Domain Generation Successful!
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: write Domain to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/wl_server"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: close template
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: close template
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/wl_server"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/wl_server"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option ReplaceDuplicates to "false"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option ReplaceDuplicates to "false"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option AppDir to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option AppDir to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option CreateStartMenu to "false"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option CreateStartMenu to "false"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: add template /opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/applications/wls_default.jar to domain
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No config-groups.xml found in template
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No template-database.xml found in template
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Adding top-level component reference: WebLogic Server version 10.3.5.0
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Setting symbol for component WebLogic Server version 10.3.5.0 to WebLogic_Server_10.3.5.0_wlserver_10.3_ORACLE_HOME
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: add template /opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/applications/wls_default.jar to domain
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:32 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: update domain
+Apr 8, 2013 1:31:33 PM [THREAD: Thread-6] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:33 PM [THREAD: Thread-6] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:35 PM [THREAD: Thread-6] com.oracle.cie.domain.TemplateImporter generate
+INFO: Domain Extension Successful!
+Apr 8, 2013 1:31:35 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: close template
+Apr 8, 2013 1:31:35 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: close template
+Apr 8, 2013 1:31:35 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/wl_server"
+Apr 8, 2013 1:31:35 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:35 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:35 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/wl_server"
+Apr 8, 2013 1:31:35 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: update domain
+Apr 8, 2013 1:31:35 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: close template
+Apr 8, 2013 1:31:35 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: close template
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/wl_server"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/wl_server"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: find Server "examplesServer" as obj2
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: find Server "examplesServer" as obj2
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: create Server!SSL "examplesServer!examplesServer" as obj3
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: create Server!SSL "examplesServer!examplesServer" as obj3
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj3 attribute Enabled to "true"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj3 attribute Enabled to "true"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option ReplaceDuplicates to "false"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option ReplaceDuplicates to "false"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option AppDir to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option AppDir to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: add template /opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/applications/wls_examples.jar to domain
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No config-groups.xml found in template
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No template-database.xml found in template
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Adding top-level component reference: WebLogic Server version 10.3.5.0
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Setting symbol for component WebLogic Server version 10.3.5.0 to WebLogic_Server_10.3.5.0_wlserver_10.3_ORACLE_HOME
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: add template /opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/applications/wls_examples.jar to domain
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: unassign JdbcSystemResource "examples-oracleXA" from Target "examplesServer"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: unassign JdbcSystemResource "examples-oracleXA" from Target "examplesServer"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:36 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: update domain
+Apr 8, 2013 1:31:38 PM [THREAD: Thread-7] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:PoolList on type:class com.oracle.cie.domain.xml.configxbmap.impl.JDBCMultiPoolTypeImpl
+Apr 8, 2013 1:31:38 PM [THREAD: Thread-7] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:38 PM [THREAD: Thread-7] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:39 PM [THREAD: Thread-7] com.oracle.cie.domain.TemplateImporter generate
+INFO: Domain Extension Successful!
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: close template
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: close template
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/wl_server"
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/wl_server"
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: update domain
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: close template
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: close template
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: read template from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/domains/wls.jar"
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No config-groups.xml found in template
+Apr 8, 2013 1:31:39 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No template-database.xml found in template
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Setting symbol for component WebLogic Server version 10.3.5.0 to WebLogic_Server_10.3.5.0_wlserver_10.3_ORACLE_HOME
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: read template from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/domains/wls.jar"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option CreateStartMenu to "false"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option CreateStartMenu to "false"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option OverwriteDomain to "true"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option OverwriteDomain to "true"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option JavaHome to "/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option JavaHome to "/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: find Server "AdminServer" as obj4
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: find Server "AdminServer" as obj4
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj4 attribute Name to "MedRecServer"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj4 attribute Name to "MedRecServer"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj4 attribute ListenPort to "7011"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj4 attribute ListenPort to "7011"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: create Server!SSL "MedRecServer!MedRecServer" as obj5
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: create Server!SSL "MedRecServer!MedRecServer" as obj5
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj5 attribute Enabled to "true"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj5 attribute Enabled to "true"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj5 attribute ListenPort to "7012"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj5 attribute ListenPort to "7012"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: find User "weblogic" as obj6
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: find User "weblogic" as obj6
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj6 attribute Password to "********"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj6 attribute Password to "********"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: write Domain to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.DomainChecker validateServerListenPortsInternal
+INFO: ListenPort internal Validation result= [null]
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.DomainChecker validateServerListenPortsExternal
+INFO: ListenPort external Validation result= [null]
+Apr 8, 2013 1:31:40 PM [THREAD: Thread-8] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:40 PM [THREAD: Thread-8] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:40 PM [THREAD: Thread-8] com.oracle.cie.domain.DomainGenerator generate
+INFO: Domain Generation Successful!
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: write Domain to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: close template
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: close template
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec"
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:40 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec"
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option ReplaceDuplicates to "false"
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option ReplaceDuplicates to "false"
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option AppDir to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/server/medrec"
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option AppDir to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/server/medrec"
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: add template /opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/applications/medrec.jar to domain
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No config-groups.xml found in template
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No template-database.xml found in template
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Adding top-level component reference: WebLogic Server version 10.3.5.0
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Setting symbol for component WebLogic Server version 10.3.5.0 to WebLogic_Server_10.3.5.0_wlserver_10.3_ORACLE_HOME
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: add template /opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/applications/medrec.jar to domain
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:41 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: update domain
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: find Server "MedRecServer" as obj7
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: find Server "MedRecServer" as obj7
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj7 attribute ListenAddress to "hqchnesoa104"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj7 attribute ListenAddress to "hqchnesoa104"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: create Server!SSL "MedRecServer!MedRecServer" as obj8
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: create Server!SSL "MedRecServer!MedRecServer" as obj8
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj8 attribute Enabled to "true"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj8 attribute Enabled to "true"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: create Server!NetworkAccessPoint "MedRecServer!MedRec Local Network Channel" as obj9
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: create Server!NetworkAccessPoint "MedRecServer!MedRec Local Network Channel" as obj9
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj9 attribute ListenAddress to "localhost"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj9 attribute ListenAddress to "localhost"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj9 attribute PublicAddress to "localhost"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj9 attribute PublicAddress to "localhost"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj9 attribute PublicPort to "7011"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj9 attribute PublicPort to "7011"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj9 attribute ListenPort to "7011"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj9 attribute ListenPort to "7011"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj9 attribute TunnelingEnabled to "true"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj9 attribute TunnelingEnabled to "true"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj9 attribute TwoWaySSLEnabled to "true"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj9 attribute TwoWaySSLEnabled to "true"
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:42 PM [THREAD: Thread-9] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:43 PM [THREAD: Thread-9] com.oracle.cie.domain.TemplateImporter generate
+INFO: Domain Extension Successful!
+Apr 8, 2013 1:31:43 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: close template
+Apr 8, 2013 1:31:43 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: close template
+Apr 8, 2013 1:31:43 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec"
+Apr 8, 2013 1:31:43 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:43 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:43 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec"
+Apr 8, 2013 1:31:43 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: update domain
+Apr 8, 2013 1:31:43 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: close template
+Apr 8, 2013 1:31:43 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: close template
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: read template from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/domains/wls.jar"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No config-groups.xml found in template
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No template-database.xml found in template
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Setting symbol for component WebLogic Server version 10.3.5.0 to WebLogic_Server_10.3.5.0_wlserver_10.3_ORACLE_HOME
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: read template from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/domains/wls.jar"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option CreateStartMenu to "false"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option CreateStartMenu to "false"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option OverwriteDomain to "true"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option OverwriteDomain to "true"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option JavaHome to "/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option JavaHome to "/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: find Server "AdminServer" as obj10
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: find Server "AdminServer" as obj10
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj10 attribute Name to "MedRecServer"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj10 attribute Name to "MedRecServer"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj10 attribute ListenPort to "7011"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj10 attribute ListenPort to "7011"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: create Server!SSL "MedRecServer!MedRecServer" as obj11
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: create Server!SSL "MedRecServer!MedRecServer" as obj11
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj11 attribute Enabled to "true"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj11 attribute Enabled to "true"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj11 attribute ListenPort to "7012"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj11 attribute ListenPort to "7012"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: find User "weblogic" as obj12
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: find User "weblogic" as obj12
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj12 attribute Password to "********"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj12 attribute Password to "********"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: write Domain to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec-spring"
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.DomainChecker validateServerListenPortsInternal
+INFO: ListenPort internal Validation result= [null]
+Apr 8, 2013 1:31:45 PM [THREAD: runScript] com.oracle.cie.domain.DomainChecker validateServerListenPortsExternal
+INFO: ListenPort external Validation result= [null]
+Apr 8, 2013 1:31:45 PM [THREAD: Thread-12] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:45 PM [THREAD: Thread-12] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:45 PM [THREAD: Thread-12] com.oracle.cie.domain.DomainGenerator generate
+INFO: Domain Generation Successful!
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: write Domain to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec-spring"
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: close template
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: close template
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec-spring"
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec-spring"
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option ReplaceDuplicates to "false"
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option ReplaceDuplicates to "false"
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option AppDir to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/server/medrec-spring"
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option AppDir to "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/server/medrec-spring"
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set config option BackupFiles to "false"
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: add template /opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/applications/medrec-spring.jar to domain
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No config-groups.xml found in template
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.WLSTemplateBuilder parseTemplate
+INFO: No template-database.xml found in template
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Adding top-level component reference: WebLogic Server version 10.3.5.0
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.AbstractTemplate mapComponentSymbols
+INFO: Setting symbol for component WebLogic Server version 10.3.5.0 to WebLogic_Server_10.3.5.0_wlserver_10.3_ORACLE_HOME
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: add template /opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/applications/medrec-spring.jar to domain
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: validateConfig "KeyStorePasswords"
+Apr 8, 2013 1:31:46 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: update domain
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: find Server "MedRecServer" as obj13
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: find Server "MedRecServer" as obj13
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj13 attribute ListenAddress to "hqchnesoa104"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj13 attribute ListenAddress to "hqchnesoa104"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: create Server!SSL "MedRecServer!MedRecServer" as obj14
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: create Server!SSL "MedRecServer!MedRecServer" as obj14
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj14 attribute Enabled to "true"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj14 attribute Enabled to "true"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: create Server!NetworkAccessPoint "MedRecServer!MedRec Local Network Channel" as obj15
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: create Server!NetworkAccessPoint "MedRecServer!MedRec Local Network Channel" as obj15
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj15 attribute ListenAddress to "localhost"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj15 attribute ListenAddress to "localhost"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj15 attribute PublicAddress to "localhost"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj15 attribute PublicAddress to "localhost"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj15 attribute PublicPort to "7011"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj15 attribute PublicPort to "7011"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj15 attribute ListenPort to "7011"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj15 attribute ListenPort to "7011"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj15 attribute TunnelingEnabled to "true"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj15 attribute TunnelingEnabled to "true"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: set obj15 attribute TwoWaySSLEnabled to "true"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: set obj15 attribute TwoWaySSLEnabled to "true"
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:46 PM [THREAD: Thread-13] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:47 PM [THREAD: Thread-13] com.oracle.cie.domain.TemplateImporter generate
+INFO: Domain Extension Successful!
+Apr 8, 2013 1:31:47 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: close template
+Apr 8, 2013 1:31:47 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: close template
+Apr 8, 2013 1:31:47 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec-spring"
+Apr 8, 2013 1:31:47 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultAuthenticatorTypeImpl
+Apr 8, 2013 1:31:47 PM [THREAD: runScript] com.oracle.cie.domain.aspect.XBeanConfigAspect selfGetValue
+WARNING: Unable to locate property:CredentialEncrypted on type:class com.oracle.cie.domain.xml.configxb.impl.DefaultIdentityAsserterTypeImpl
+Apr 8, 2013 1:31:47 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: read domain from "/opt3/oracle/fmw11_1_1_5/wlserver_10.3/samples/domains/medrec-spring"
+Apr 8, 2013 1:31:47 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: update domain
+Apr 8, 2013 1:31:47 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: close template
+Apr 8, 2013 1:31:47 PM [THREAD: runScript] com.oracle.cie.domain.script.ScriptExecutor output
+INFO: succeed: close template
+
+
+</pre>
+<br />
+(several WARNING)
+<br />
+<br />
+If you run the procedure twice, the second time it will say
+<br />
+<br />
+At least one component must be selected.
+<br />
+<br />
+so to repeat the installation you must first rm -rf /opt3/oracle/fmw11_1_1_5
+<br />
+<br />
+
+I am not exactly excited about the accuracy of the documentation.
+
+<br/>
+
+As a last attempt, I try this:<br/>
+
+<pre class="brush: xml" name="code">
+
+&lt;?xml version="1.0" encoding="UTF-8"?>
+   &lt;bea-installer>
+     &lt;input-fields>
+       &lt;data-value name="BEAHOME" value="/opt3/oracle/fmw11_1_1_5" />
+       &lt;data-value name="WLS_INSTALL_DIR" value="/opt3/oracle/fmw11_1_1_5/wlserver_10.3" />
+       &lt;data-value name="COMPONENT_PATHS"
+value="WebLogic Server/Core Application Server|WebLogic Server/Administration Console|WebLogic Server/Configuration Wizard and Upgrade Framework|WebLogic Server/Web 2.0 HTTP Pub-Sub Server|WebLogic Server/WebLogic JDBC Drivers|WebLogic Server/Third Party JDBC Drivers|WebLogic Server/WebLogic Server Clients|WebLogic Server/WebLogic Web Server Plugins|WebLogic Server/UDDI and Xquery Support|Oracle Coherence/Coherence Product Files|Oracle Coherence/Coherence Examples"/>
+       &lt;data-value name="NODEMGR_PORT" value="5558" />
+       &lt;data-value name="INSTALL_SHORTCUT_IN_ALL_USERS_FOLDER" value="no"/>
+    &lt;data-value name="LOCAL_JVMS" value="/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64"/>
+
+
+   &lt;/input-fields>
+&lt;/bea-installer>
+
+</pre>
+
+<br/>
+and it works beautifully, creating also coherence folder and giving no warning.
+
+

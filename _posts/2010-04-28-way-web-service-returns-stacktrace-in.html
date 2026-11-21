@@ -1,0 +1,55 @@
+---
+layout: post
+title: "The way a Weblogic Web Service returns a Stacktrace in a SOAP Fault"
+date: 2010-04-28T10:57:00.001+02:00
+permalink: /2010/04/way-web-service-returns-stacktrace-in.html
+blogger_id: "3118625583488324485"
+tags: ["soap fault"]
+blogger_comments:
+  - author: "metatech"
+    date: 2011-08-16
+    html: "If you wish to add the remote WebLogic stack trace to the &quot;caused by&quot; of your local exception, here is how to do :<br /><br />catch (SOAPFaultException e) {<br />SOAPFault f = e.getFault();<br />Detail newDetail = f.getDetail();<br />if (newDetail != null) {<br />Iterator entries = newDetail.getDetailEntries();<br />while ( entries.hasNext() ) {<br />DetailEntry newEntry = (DetailEntry)entries.next();<br />String value = newEntry.getValue();<br />e.getCause().initCause(new IllegalArgumentException(value));<br />}<br />Throwable remoteException = e.getCause();      <br />e.printStackTrace();<br />}"
+---
+&lt;env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"&gt;<br />
+&nbsp; &lt;env:Header /&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;env:Body&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;env:<b>Fault</b>&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<b>faultcode</b>&gt;env:Server&lt;/faultcode&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<b>faultstring</b>&gt;Failed to invoke end component com.pierre.ws.PierreWS (POJO), operation=generateFault1<br />
+-&gt; Failed to invoke method<br />
+-&gt; ciao1<br />
+&lt;/faultstring&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<b>detail</b>&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<b>bea_fault:stacktrace</b> xmlns:bea_fault="http://www.bea.com/servers/wls70/webservice/fault/1.0.0"&gt;java.lang.Exception: ciao1<br />
+&nbsp;&nbsp;&nbsp; at com.pierre.ws.PierreWS.generateFault1(PierreWS.java:18)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)<br />
+&nbsp;&nbsp;&nbsp; at java.lang.reflect.Method.invoke(Method.java:597)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.component.pojo.JavaClassComponent.invoke(JavaClassComponent.java:112)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.ws.dispatch.server.ComponentHandler.handleRequest(ComponentHandler.java:84)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.handler.HandlerIterator.handleRequest(HandlerIterator.java:141)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.ws.dispatch.server.ServerDispatcher.dispatch(ServerDispatcher.java:114)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.ws.WsSkel.invoke(WsSkel.java:80)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.server.servlet.SoapProcessor.handlePost(SoapProcessor.java:66)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.server.servlet.SoapProcessor.process(SoapProcessor.java:44)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.server.servlet.BaseWSServlet$AuthorizedInvoke.run(BaseWSServlet.java:285)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.wsee.server.servlet.BaseWSServlet.service(BaseWSServlet.java:169)<br />
+&nbsp;&nbsp;&nbsp; at javax.servlet.http.HttpServlet.service(HttpServlet.java:820)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.servlet.internal.StubSecurityHelper$ServletServiceAction.run(StubSecurityHelper.java:227)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.servlet.internal.StubSecurityHelper.invokeServlet(StubSecurityHelper.java:125)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:292)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:175)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.servlet.internal.WebAppServletContext$ServletInvocationAction.run(WebAppServletContext.java:3498)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:321)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.security.service.SecurityManager.runAs(Unknown Source)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.servlet.internal.WebAppServletContext.securedExecute(WebAppServletContext.java:2180)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.servlet.internal.WebAppServletContext.execute(WebAppServletContext.java:2086)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.servlet.internal.ServletRequestImpl.run(ServletRequestImpl.java:1406)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.work.ExecuteThread.run(ExecuteThread.java:173)<br />
+&lt;/bea_fault:stacktrace&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/detail&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/env:Fault&gt;<br />
+&nbsp; &lt;/env:Body&gt;<br />
+&nbsp; &lt;/env:Envelope&gt;

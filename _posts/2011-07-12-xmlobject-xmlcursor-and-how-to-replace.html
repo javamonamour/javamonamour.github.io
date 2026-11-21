@@ -1,0 +1,50 @@
+---
+layout: post
+title: "XmlObject, XmlCursor and how to replace XPath with \"hardcoded\" queries"
+date: 2011-07-12T19:34:00.000+02:00
+permalink: /2011/07/xmlobject-xmlcursor-and-how-to-replace.html
+blogger_id: "3289136710479787034"
+tags: ["xmlcursor"]
+---
+I was under the impression that a given XPath search was too slow, so I implemented the same search in Java.<br />
+<br />
+It's not that difficult.<br />
+The main tools are:<br />
+<br />
+a XmlCursor:<br />
+<br />
+<i>XmlCursor cursor = xmlObject.newCursor();</i><br />
+<br />
+moving to first element inside a node:<br />
+<br />
+<i>cursor.toFirstChild();</i><br />
+<br />
+moving to a child identified by its QName:<br />
+<br />
+<i>static QName qnameLongNames = new QName("http://acme.com", "LongNames");<br />
+boolean found1 = cursor.toChild(qnameLongNames);<br />
+</i><br />
+<br />
+eventually using an index if there are multiple elements with same QName:<br />
+<br />
+<i>int count = 0;<br />
+boolean found1 = cursor.toChild(qnameLongNames, count);<br />
+</i><br />
+<br />
+saving a cursor for later use:<br />
+<i><br />
+cursor.push();<br />
+...do some other navigation with the cursor....<br />
+cursor.pop();<br />
+</i><br />
+<br />
+<br />
+get the text of an element:<br />
+<br />
+<i>cursor.getTextValue();</i><br />
+<br />
+move to adjacent sibling:<br />
+<br />
+<i>cursor.toNextSibling();</i><br />
+<br />
+With this, you can achieve a lot, and at amazing speed.

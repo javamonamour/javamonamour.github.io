@@ -1,0 +1,26 @@
+---
+layout: post
+title: "Configuration error while reading domain directory"
+date: 2013-07-05T18:28:00.001+02:00
+permalink: /2013/07/configuration-error-while-reading.html
+blogger_id: "5205863414620663797"
+tags: ["nodemanager", "weblogic"]
+---
+<br />
+<br />
+Error occured while performing nmConnect : Cannot connect to Node Manager. : Configuration error while reading domain directory<br />
+<br />
+Solution: locate all nm_password.properties in your domains, and enter<br />
+<br />
+username=bla<br />
+password=bla<br />
+<br />
+where bla/bla correspond to your nodemanager username - typically weblogic_n - not to WLS username <br />
+<br />
+Also, make sure your nodemanager.domains file contain the entry<br />
+<br />
+domainname=domainpath<br />
+<br />
+<br />
+see also <a href="/2011/08/nmconnect-weblogicnodemanagernmexceptio.html">/2011/08/nmconnect-weblogicnodemanagernmexceptio.html</a><br />
+<br />

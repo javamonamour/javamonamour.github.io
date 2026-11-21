@@ -1,0 +1,56 @@
+---
+layout: post
+title: "OSB FAQ"
+date: 2013-08-19T09:17:00.005+02:00
+permalink: /2013/08/osb-faq.html
+blogger_id: "2392469499464961979"
+tags: ["OSB"]
+---
+Just a collection of useful links on less-understood topics
+<br/><br/>
+
+<b>what is a SB protocol in OSB?</b>
+<br/><br/>
+(this was copied from Oracle Forum:) 
+SB transport is primarily used for invocations between different OSB instances where transaction propagation is required.
+eg In an organization, two department use OSB for hosting their services. Finance services are hosted on OSB_Fin domain and Marketing services are hosted on OSB_Mar domain. If there is an requirement for transactional communication between the proxies of these two service then it would be ideal to use SB transport. 
+Also can also be used for routing to local proxies (SB business service without a JNDI provider) and in that case SB transport is optimized for RMI.
+<br/><br/>
+_______________
+<br/><br/>
+<b>how do I use client certificates to secure a HTTP Proxy?</b>
+<br/><br/>
+see this excellent tutorial http://www.middlewareguru.com/mw/?p=425 and http://www.middlewareguru.com/mw/?p=459#more-459
+<br/><br/>
+and a must-read on TLS http://www.infoq.com/articles/HTTPS-Connection-Jeff-Moser
+<br/><br/>
+_______________
+<br/><br/>
+<b>should I enable "Transaction Required" in a Proxy?</b>
+<br/><br/>
+see explanation here: http://docs.oracle.com/cd/E14571_01/doc.1111/e15866/ui_ref.htm
+<br/><br/>
+Most likely yes, unless you want to set explicitly "Quality Of Service=exactly once" for every Service Callout or Route operation
+<br/><br/>
+for an excellent coverage of Transactions in OSB, read http://atheek.wordpress.com/2011/04/21/transaction-handling-within-osb/
+<br/><br/>
+_______________
+<br/><br/>
+
+<b>in a JMS Business Service, what is the "Response Queue" for?</b>
+<br/><br/>
+a BS can handle synchronous calls to external services using 2 JMS queues (one to send the request, the other to receive the response) as channels.
+correlation of the 2 messages is done commonly through JMSCorrelationID
+<br/><br/>
+____________
+<br/><br/>
+<b>in a JMS Proxy Service, what is the "Same Transaction For Response" option for?</b>
+<br/><br/>
+look at this excellent video http://www.youtube.com/watch?v=KtUXaXeoUVU
+<iframe width="420" height="315" src="//www.youtube.com/embed/KtUXaXeoUVU" frameborder="0" allowfullscreen></iframe>
+<br/><br/>
+<b>and the "Is Response Required " ?</b>
+
+<br/><br/>
+
+

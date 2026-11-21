@@ -1,0 +1,53 @@
+---
+layout: post
+title: "OWSM policies: username is not preserved upon import of OSB project in Eclipse"
+date: 2013-09-17T18:26:00.002+02:00
+permalink: /2013/09/owsm-policies-username-is-not-preserved.html
+blogger_id: "1312595003626697516"
+tags: ["OWSM"]
+---
+I am not sure this restriction is documented. I have searched in Oracle Support and I could only find this:
+<br/>
+<b>Import Policies in OWSM 11g Using a User without Admin Rights (Doc ID 1208863.1)</b>
+<br/>
+
+<i>"Is it possible to import policies in OWSM 11g using a User who does not have Administrative rights?"</i>
+<br/>
+"One potential option is to map the logical role "policy.Updater" defined in the WSM-PM EJB application to a group that the User belongs to.
+<br/>
+By default, the logical role "policy.Updater" is mapped to the "Administrators" group.
+"
+<br/>
+
+but this refers to the user you use to log into sbconsole, not to the user you attach to a policy.
+
+
+See also <a href="http://docs.oracle.com/cd/E25178_01/web.1111/b32511/managing.htm#CEGHCGEB">http://docs.oracle.com/cd/E25178_01/web.1111/b32511/managing.htm#CEGHCGEB</a> :
+<br/>
+
+
+
+We discovered that Eclipse doesn't import the tag access-control-policies which is created when you edit the oracle/wss11_username_token_with_message_protection_service_policy in the Acces Control tab:
+
+<br/>
+<pre>
+  &lt;ser:coreEntry isProxy="true" isEnabled="true" isTracingEnabled="true">
+    &lt;ser:security>
+      &lt;con5:inboundWss processWssHeader="false"/>
+      &lt;con5:access-control-policies>
+        &lt;con5:transport-level-policy xsi:type="con6:ProviderPolicyContainerType" xmlns:con6="http://www.bea.com/wli/sb/security/accesscontrol/config">
+          &lt;con6:policy provider-id="XACMLAuthorizer">
+            &lt;con6:policy-expression>Usr(pippo)|Usr(pluto)&lt;/con6:policy-expression>
+          &lt;/con6:policy>
+        &lt;/con5:transport-level-policy>
+      &lt;/con5:access-control-policies>
+    &lt;/ser:security>
+</pre>
+
+
+<br/>
+
+The only workaround is to open the .proxy file with a text editor and PASTE manually the access-control-policies tag. It's a bit sad.
+
+
+

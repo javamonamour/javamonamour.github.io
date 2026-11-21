@@ -1,0 +1,51 @@
+---
+layout: post
+title: "Instructions to install, configure and run XMing on putty"
+date: 2010-11-30T18:11:00.001+01:00
+permalink: /2010/11/instructions-to-install-configure-and.html
+blogger_id: "7404846736922115369"
+tags: ["putty", "X11", "xming"]
+blogger_comments:
+  - author: "Felipe"
+    date: 2015-05-04
+    html: "THANK YOU MAN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+---
+first of all, make sure there connectivity from your server to your laptop:<br />
+log into your server and ping your laptop!<br />
+<br />
+<br />
+download:<br />
+http://sourceforge.net/projects/xming/<br />
+<br />
+execute Xming-6-9-0-31-setup.exe<br />
+<br />
+full installation (choose all defaults)<br />
+<br />
+launch XMing<br />
+<br />
+allow access to all networks<br />
+<br />
+you should see an icon of the XMing XServer 3.0 service in the bottom right<br />
+<br />
+<br />
+open file X0.hosts in the XMing installation  folder and add the IP of your target server (example 11.36.32.93)<br />
+<br />
+restart XMing<br />
+<br />
+create a putty connection and tick "Connection/SSH/X11/Enable X11 Forwarding"<br />
+login to your server (example 11.36.32.93)<br />
+<br />
+export DISPLAY=11.192.1.41:0<br />
+(10.192.1.41 is your IP, you can find it with ipconfig and look at LAN IP)<br />
+<br />
+to test, run "xclock" in putty<br />
+<br />
+in case of problems, right-click on the XMing icon and "view log"<br />
+<br />
+<br />
+This error:<br />
+<br />
+Xlib: connection to "11.192.1.41:0.0" refused by server<br />
+Xlib: No protocol specified<br />
+<br />
+means that you haven't added the server's IP in X0.hosts

@@ -1,0 +1,40 @@
+---
+layout: post
+title: "Fixing a currupt  (or corrupted? ) USB drive"
+date: 2017-10-06T19:08:00.002+02:00
+permalink: /2017/10/fixing-currupt-usb-drive.html
+blogger_id: "4395058100644898950"
+tags: ["usb"]
+---
+I open (in Windows) the disk management tool, and I keep getting this message when trying to format the USB drive:<br />
+<br />
+usb drive windows cannot format the volume because the volume is offline <br />
+<br />
+this video explain how to "brutally fix" the USB drive:<br />
+<br />
+<iframe width="854" height="480" src="https://www.youtube.com/embed/beDLlMWK8VQ" frameborder="0" allowfullscreen></iframe><br />
+<br />
+<br />
+run diskpart in admin mode<br />
+<br />
+list disk<br />
+<br />
+select disk N (N depends on your system)<br />
+<br />
+list partition <br />
+<br />
+select partition M (M depends on your system)<br />
+<br />
+delete partition override<br />
+<br />
+<br />
+All this happened because I was preparing a USB drive to boot Centos 7 as per https://wiki.centos.org/HowTos/InstallFromUSBkey and using the https://sourceforge.net/projects/win32diskimager/ win32diskimager ... apparently I have stopped it while it was writing, and this corrupted the USB disk.... scary...<br />
+<br />
+<br />
+<br />
+<br />
+Here a useful list of commands.... priceless.... <a href="https://commandwindows.com/diskpart.htm">https://commandwindows.com/diskpart.htm</a> much better than the Disk Management UI tool <br />
+<br />
+<br />
+<br />
+

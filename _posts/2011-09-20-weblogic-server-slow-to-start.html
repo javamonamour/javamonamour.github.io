@@ -1,0 +1,21 @@
+---
+layout: post
+title: "WebLogic server slow to start"
+date: 2011-09-20T22:16:00.004+02:00
+permalink: /2011/09/weblogic-server-slow-to-start.html
+blogger_id: "1947930616060884791"
+tags: ["slow"]
+---
+If it hangs on<br />
+"Waiting to synchronize with other running members of mycluster"<br />
+<br />
+check for instance:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E13222_01/wls/docs100/schemaref/config/http.www.bea.com.ns.weblogic.920.domain/types/clustertype.member-warmup-timeout-seconds.html">member-warmup-timeout-seconds</a><br />
+<br />
+maybe the cluster is slow to startup<br />
+<br />
+On Unix, try using the property<br />
+"-Djava.security.egd=file:///dev/./urandom"<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/21a6715f999d03fb.jpg" imageanchor="1"><img border="0" src="/images/21a6715f999d03fb.jpg" /></a></div>

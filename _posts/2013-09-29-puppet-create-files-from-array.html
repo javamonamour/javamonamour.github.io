@@ -1,0 +1,84 @@
+---
+layout: post
+title: "Puppet: create files from Array"
+date: 2013-09-29T14:30:00.001+02:00
+permalink: /2013/09/puppet-create-files-from-array.html
+blogger_id: "2614350935055371445"
+tags: ["puppet"]
+---
+Suppose I have such entry in a yaml file.
+<br/>
+<pre>
+certificatefiles:
+   - Cert1.cer
+   - Cert2.cer
+</pre>
+
+<br/>
+
+and I have all those *.cer files in mymodule/certs/ folder in Puppet.
+<br/>
+
+I cannot do:
+
+<br/>
+<pre>
+mycertificates = hiera('certificatefiles')
+
+for mycertificate in $mycertificates :
+    file {"/opt/oracle/certs/${mycertificate}":
+       ensure => present,
+       source => "puppet:///modules/mymodule/certs/${name}",
+    }
+</pre>
+
+
+<br/>
+
+because if would be too intuitive and simple, and Puppet bans whatever is fluent and simple. Iterations are not supported, because Puppet believes Iterations are a bad concept (who need iterations by the way, when you can hardcode and copy/paste to death?).
+<br/>
+<br/>
+
+
+This is the VERY ELEGANT Puppet approach (very intuitive, it took me days to figure it out):
+
+
+<pre>
+define create_certificate_file($target_folder) {
+  
+  file { "${name}":
+    ensure  => present,
+    path    => "${target_folder}/${name}",
+    source  => "puppet:///modules/mymodule/certs/${name}",
+  }
+}
+
+mycertificates = hiera('certificatefiles')
+
+create_certificate_file {$mycertificates :
+    target_folder => '/opt/oracle/certs/',
+}
+
+
+</pre>
+<br/>
+
+$mycertificates  is an ARRAY, and Puppet has decided that whenever you invoke a define passing an array in the "name" field, it means implicitly that you want to repeat the define for each element of the array.
+<br/>
+
+BE VERY CAREFUL not to write <br/>
+invoke  create_certificate_file {"${mycertificates}":
+<br/>
+
+this would transform your array into a String "Cert1.cerCert2.cer" which defeats the purpose.
+<br/>
+
+<br/>
+
+I hope this will save hours of frustration to the next poor beast falling victim to Puppet DSL.
+
+<br/>
+
+PS incidentally, who needs Types? Life is good when you can implicitly convert an Array into a String, and waste hours troubleshooting the issue.... who need Objects and Classes? let's represent everything with a String and Hashmaps... let's be FLEXIBLE like molassa and spaghetti.
+
+

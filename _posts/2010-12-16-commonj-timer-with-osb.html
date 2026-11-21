@@ -1,0 +1,63 @@
+---
+layout: post
+title: "CommonJ timer with OSB, SOA Suite, SOA Scheduler"
+date: 2010-12-16T22:51:00.013+01:00
+permalink: /2010/12/commonj-timer-with-osb.html
+blogger_id: "387371313860321588"
+tags: ["scheduler", "timer"]
+blogger_comments:
+  - author: "Matt"
+    date: 2012-07-12
+    html: "Rubicon Red provide an out of the box <a href=\"http://www.rubiconred.com/scheduler\" rel=\"nofollow\">scheduler </a> for the Oracle SOA Suite, enabling you to schedule:<br /><br />- Execution of a synchronous web service<br />- Execution of one way or two way asynchronous web service<br />- Publication of an EDN event to the SOA Suite Event Delivery Network<br /><br />See <a href=\"http://www.rubiconred.com/scheduler\" rel=\"nofollow\">http://www.rubiconred.com/scheduler</a> for further details"
+---
+an excellent document on SOA Scheduler here:<br />
+<br />
+<a href="http://www.oracle.com/technetwork/middleware/soasuite/learnmore/soascheduler-186798.pdf">http://www.oracle.com/technetwork/middleware/soasuite/learnmore/soascheduler-186798.pdf<br />
+</a><br />
+<br />
+I have tested it and it works beautifully! You can specify the cron parameters in a single place. Of course it can be improved but it's a good starting point.<br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn-history/r27/trunk/SOAScheduler/SOAScheduler.jar">Here</a> the code (I hope Robert Baumgartner doesn't mind).<br />
+I feel it would be better to have the Scheduler post an EDN event using <br />
+oracle.integration.platform.blocks.event.SendEvent and wake up a Mediator instance,<br />
+rather than synchronously invoke the WS to trigger the BPEL process.<br />
+<br />
+This SendEvent class is in C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.fabric_11.1.1\fabric-runtime.jar<br />
+Unfortunately it looks like the only way to use it is by invoking its main(...) procedure after having set the System properties with: dbconn,dbuser, dbpass, eventName, eventBody,event  parameters. Internally it uses a SAQRemoteBusinessEventConnectionFactory and a BusinessEventBuilder. All this make it a bit complicated to generate events programmatically.<br />
+<br />
+<br />
+here is CommonJ doc:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/commonj/commonj.html">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/commonj/commonj.html</a>  with coverage of "cluster-wide" timers.<br />
+<br />
+<br />
+Here the excellent tutorial by James Bayer:<br />
+<a href="http://blogs.oracle.com/jamesbayer/2007/11/weblogic_scheduling_a_polling.html">http://blogs.oracle.com/jamesbayer/2007/11/weblogic_scheduling_a_polling.html</a><br />
+<br />
+and more here:<br />
+<a href="http://blogs.oracle.com/jamesbayer/2009/04/a_simple_job_scheduler_example.html">http://blogs.oracle.com/jamesbayer/2009/04/a_simple_job_scheduler_example.html</a><br />
+<br />
+<br />
+and a very nice tutorial on CommonJ TimerManager here <br />
+<a href="http://middlewaremagic.com/weblogic/?p=987">http://middlewaremagic.com/weblogic/?p=987</a><br />
+<br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn-history/r26/trunk/OSBTimer/OSBTimerWeb.war">here</a> the code<br />
+<br />
+<br />
+Other alternatives:<br />
+<br />
+EJB 3.0 Timer: <br />
+<a href="http://www.javabeat.net/articles/3-ejb-30-timer-services-an-overview-1.html">http://www.javabeat.net/articles/3-ejb-30-timer-services-an-overview-1.html</a><br />
+<br />
+more specifically in a cluster:<br />
+<a href="http://shaoxiongyang.blogspot.com/2010/10/how-to-use-ejb-3-timer-in-weblogic-10.html">http://shaoxiongyang.blogspot.com/2010/10/how-to-use-ejb-3-timer-in-weblogic-10.html</a><br />
+<br />
+<br />
+I really feel a pain comparing the SOA Suite support for scheduling with the one offered by Apache Camel:<br />
+<a href="http://camel.apache.org/quartz.html">http://camel.apache.org/quartz.html</a><br />
+<br />
+<br />
+<br />
+(17-Jan-2011) I discover there is a PICK activity in BPEL allowing you to schedule a BPEL process at given interval. This is most likely the simplest solution:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/B31017_01/integrate.1013/b28981/events.htm#CHDECBGD">http://download.oracle.com/docs/cd/B31017_01/integrate.1013/b28981/events.htm#CHDECBGD<br />
+</a>

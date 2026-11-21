@@ -1,0 +1,123 @@
+---
+layout: post
+title: "WLST browsing deployed Applications : OSB EJBs"
+date: 2012-04-19T18:48:00.001+02:00
+permalink: /2012/04/wlst-browsing-deployed-applications.html
+blogger_id: "5264392590791907853"
+tags: ["WLST"]
+---
+<b>connect('weblogic', 'weblogic1', 't3://acme102.acme.com:7101')<br />
+easeSyntax()<br />
+cd AppDeployments<br />
+ls</b><br />
+<br />
+<i><br />
+dr--   ALDSP Transport Provider<br />
+dr--   ALSB Cluster Singleton Marker Application<br />
+dr--   ALSB Coherence Cache Provider<br />
+dr--   ALSB Domain Singleton Marker Application<br />
+dr--   ALSB Framework Starter Application<br />
+dr--   ALSB Logging<br />
+dr--   ALSB Publish<br />
+dr--   ALSB Resource<br />
+dr--   ALSB Routing<br />
+dr--   ALSB Subscription Listener<br />
+dr--   ALSB Test Framework<br />
+dr--   ALSB Transform<br />
+dr--   ALSB UDDI Manager<br />
+dr--   ALSB WSIL<br />
+dr--   AqAdapter<br />
+dr--   BPEL 10g Transport Provider<br />
+dr--   DMS Application#11.1.1.1.0<br />
+dr--   DatalinksPocs-Project1-context-root<br />
+dr--   DbAdapter<br />
+dr--   EJB Transport Provider<br />
+dr--   Email Transport Provider<br />
+dr--   FLOW Transport Provider<br />
+dr--   FMW Welcome Page Application#11.1.0.0.0<br />
+dr--   File Transport Provider<br />
+dr--   FileAdapter<br />
+dr--   Ftp Transport Provider<br />
+dr--   FtpAdapter<br />
+dr--   JCA Transport Provider<br />
+dr--   JEJB Transport Provider<br />
+dr--   JMS Reporting Provider<br />
+dr--   JmsAdapter<br />
+dr--   MQ Transport Provider<br />
+dr--   MQSeriesAdapter<br />
+dr--   Message Reporting Purger<br />
+dr--   OracleAppsAdapter<br />
+dr--   OracleBamAdapter<br />
+dr--   SB Transport Provider<br />
+dr--   SFTP Transport Provider<br />
+dr--   SOA-DIRECT Transport Provider<br />
+dr--   ServiceBus_Console<br />
+dr--   SocketAdapter<br />
+dr--   Tuxedo Transport Provider<br />
+dr--   WS Transport Async Applcation<br />
+dr--   WS Transport Provider<br />
+dr--   XBus Kernel<br />
+dr--   _ALSB_1329599716508<br />
+dr--   _ALSB_1329599717744<br />
+dr--   _ALSB_1329599717858<br />
+dr--   _ALSB_1329599717944<br />
+dr--   _ALSB_1329754384502<br />
+dr--   _ALSB_1329824947023<br />
+dr--   _ALSB_1329888150254<br />
+dr--   _ALSB_1330332828977<br />
+dr--   _ALSB_1330332829084<br />
+dr--   _ALSB_1330333576280<br />
+dr--   _ALSB_1330333576386<br />
+dr--   _ALSB_1330463663134<br />
+dr--   _ALSB_1331647120095<br />
+dr--   _ALSB_1331708084330<br />
+dr--   _ALSB_1332091161130<br />
+dr--   _ALSB_1333024471355<br />
+dr--   _ALSB_1333969392746<br />
+dr--   _ALSB_1334249766371<br />
+dr--   _ALSB_1334333217358<br />
+dr--   _ALSB_1334608617083<br />
+dr--   _ALSB_1334670601508<br />
+dr--   wsil-wls<br />
+</i><br />
+<br />
+<b>cd _ALSB_1329599716508<br />
+ls</b><br />
+<br />
+<i><br />
+dr--   SubDeployments<br />
+dr--   Targets<br />
+<br />
+-r--   AbsoluteInstallDir                           null<br />
+-r--   AbsolutePlanDir                              /opt/oracle/domains/osbdv2do/osb/config/plan<br />
+-r--   AbsolutePlanPath                             /opt/oracle/domains/osbdv2do/osb/config/plan/Pla<br />
+n-_ALSB_1329599716508.ear.xml<br />
+-r--   AbsoluteSourcePath                           /opt/oracle/domains/osbdv2do/sbgen/_ALSB_1329599<br />
+716508.ear<br />
+-r--   ApplicationIdentifier                        _ALSB_1329599716508<br />
+-r--   ApplicationName                              _ALSB_1329599716508<br />
+-r--   CompatibilityName                            null<br />
+-r--   DeploymentOrder                              100<br />
+-r--   DeploymentPlan                               [B@185b08b<br />
+-r--   DeploymentPlanExternalDescriptors            null<br />
+-r--   DeploymentPrincipalName                      null<br />
+-r--   InstallDir                                   null<br />
+-r--   ModuleType                                   ear<br />
+-r--   Name                                         _ALSB_1329599716508<br />
+-r--   Notes                                        null<br />
+-r--   PlanDir                                      osb/config/plan<br />
+-r--   PlanPath                                     Plan-_ALSB_1329599716508.ear.xml<br />
+-r--   SecurityDDModel                              DDOnly<br />
+-r--   SourcePath                                   sbgen/_ALSB_1329599716508.ear<br />
+-r--   StagingMode                                  stage<br />
+-r--   Type                                         AppDeployment<br />
+-r--   ValidateDDSecurityData                       false<br />
+-r--   VersionIdentifier                            null<br />
+<br />
+-r-x   freezeCurrentValue                           Void : String(attributeName)<br />
+-r-x   isSet                                        Boolean : String(propertyName)<br />
+-r-x   unSet                                        Void : String(propertyName)<br />
+</i><br />
+<br />
+<br />
+see also <a href="/2011/10/osb-how-mdb-proxy-service-in.html">/2011/10/osb-how-mdb-proxy-service-in.html</a>

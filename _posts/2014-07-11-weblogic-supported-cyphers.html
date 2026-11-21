@@ -1,0 +1,39 @@
+---
+layout: post
+title: "WebLogic supported Cyphers"
+date: 2014-07-11T13:07:00.000+02:00
+permalink: /2014/07/weblogic-supported-cyphers.html
+blogger_id: "2692925469439429424"
+tags: ["security", "ssl", "tls", "weblogic"]
+---
+The list of the possible strong cyphers not that long:
+<br/><br/>
+<pre>
+AES256-GCM-SHA384      TLSv1.2 Kx=RSA      Au=RSA  Enc=AESGCM(256) Mac=AEAD
+
+AES256-SHA256                TLSv1.2 Kx=RSA     Au=RSA  Enc=AES(256)  Mac=SHA256
+
+AES128-GCM-SHA256      TLSv1.2 Kx=RSA      Au=RSA  Enc=AESGCM(128) Mac=AEAD
+
+AES128-SHA256                TLSv1.2 Kx=RSA     Au=RSA  Enc=AES(128)  Mac=SHA256
+
+AES256-SHA                       SSLv3 Kx=RSA       Au=RSA  Enc=AES(256)  Mac=SHA1
+
+DES-CBC3-SHA                  SSLv3 Kx=RSA      Au=RSA  Enc=3DES(168) Mac=SHA1
+
+AES128-SHA                       SSLv3 Kx=RSA      Au=RSA  Enc=AES(128)  Mac=SHA1
+</pre>
+
+<br/><br/>
+
+and they are all supported by most popular Content Delivery appliances.
+<br/><br/>
+According to <a href="http://docs.oracle.com/cd/E23943_01/web.1111/e13749/weblogicserver.htm#ADMRF270">Oracle doc</a>, WebLogic supports SSL3 and TLS1, you can restrict the protocols with the 2 properties weblogic.security.SSL.protocolVersion and weblogic.security.SSL.minimumProtocolVersion (funnily it seems that the property value is spelled slightly differently in the 2 properties)
+
+<br/><br/>
+Interestingly <a href="http://docs.oracle.com/cd/E24329_01/web.1211/e24422/ssl.htm#CHDHHDHD">it seems that</a> support for TLS version > 1.0 is available only with Java 7.<br/><br/>
+So if you run on Java 6 the only option available is using SSL3.
+<br/><br/>
+WebLogic these days supports only the "JSSE-based SSL implementation", and the <a href="http://docs.oracle.com/cd/E24329_01/web.1211/e24422/ssl.htm#CHDJCGJJ">Cypher Suites are listed here for Java 6 and Java 7</a>
+
+

@@ -1,0 +1,49 @@
+---
+layout: post
+title: "VirtualBox: Running a 64 bit host RHEL OS on a 32 bit Windows machine"
+date: 2013-09-22T11:17:00.000+02:00
+permalink: /2013/09/virtualbox-running-64-bit-host-rhel-os.html
+blogger_id: "5235702732769532290"
+tags: ["virtualbox", "windowssucks"]
+---
+My VBOX is a
+<pre>
+facter | more
+
+architecture => x86_64
+hardwareisa => x86_64
+hardwaremodel => x86_64
+kernelrelease => 2.6.32-279.el6.x86_64
+kernelversion => 2.6.32
+
+processor0 => Intel(R) Core(TM) i5-3437U CPU @ 1.90GHz
+
+</pre>
+
+so it clearly expects a 64 bit OS and 64 bit Processor.
+
+<br/><br/>
+My CPU is clearly up to the task, but the host OS is clearly not (Windows 7 32 bit)
+<br/><br/>
+
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/b9426ec5280dcd9c.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/035da55eab6d7e16.png" /></a></div>
+
+<br/><br/>
+
+
+Contrary to popular belief, it can be made to work, as long as you are allowed to enable VT-D hardware virtualization in your BIOS (most likely you will have to provide a password).
+<br/><br/>
+
+This is documented here <a href="http://www.virtualbox.org/manual/ch03.html">http://www.virtualbox.org/manual/ch03.html</a> and here <a href="http://www.virtualbox.org/manual/ch10.html#hwvirt">http://www.virtualbox.org/manual/ch10.html#hwvirt</a>. 
+
+<br/><br/>
+
+I have managed to make it work on my laptop, but it has crashed several times with a BLUE SCREEN OF DEATH. This seems to happen whenever I hibernate my computer while the Vistual Machine is up and running. 
+
+<br/><br/>
+
+Once more I really regret having to use a Windows guest OS to work... 
+
+<br/><br/>
+
+

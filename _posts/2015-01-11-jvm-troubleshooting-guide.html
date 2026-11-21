@@ -1,0 +1,30 @@
+---
+layout: post
+title: "JVM Troubleshooting Guide"
+date: 2015-01-11T16:27:00.000+01:00
+permalink: /2015/01/jvm-troubleshooting-guide.html
+blogger_id: "5734716303248388558"
+tags: ["JVM", "performance"]
+---
+I am going through a couple of interesting documents:
+<br />
+<br />
+This one contains many word of wisdom about strategic approach to parametrization of the JVM...
+<br />
+<br />
+<a href="http://www.javacodegeeks.com/wp-content/uploads/2013/06/JVM_Troubleshooting_Guide.pdf">http://www.javacodegeeks.com/wp-content/uploads/2013/06/JVM_Troubleshooting_Guide.pdf</a>
+
+<br />
+<br />
+for instance it's valuable the advice to distinguish applications where mostly short-lived object are created (most Service Bus applications are like that) from Applications which keep long lived objects - for instance HTTP sessions. In the first case, you should adjust the Heap to give more space to the Young generation space. In the second case, give more space to the Tenured space. 
+<br />
+<br />
+<br />
+<br />
+This document also contains valuable tips and tools:
+<br />
+<br />
+<a href="http://docs.oracle.com/javase/7/docs/webnotes/tsg/TSG-VM/html/toc.html">http://docs.oracle.com/javase/7/docs/webnotes/tsg/TSG-VM/html/toc.html</a>
+
+<br />
+<br />

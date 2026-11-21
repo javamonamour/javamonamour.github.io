@@ -1,0 +1,111 @@
+---
+layout: post
+title: "Git feature branch"
+date: 2014-08-20T09:48:00.001+02:00
+permalink: /2014/08/git-feature-branch.html
+blogger_id: "8028886625572608388"
+tags: ["git"]
+---
+More and more we are using "feature branch" rather than committing directly to master.
+<br/><br/>
+
+<a href="http://martinfowler.com/bliki/FeatureBranch.html">http://martinfowler.com/bliki/FeatureBranch.html</a>
+<br /><br />
+First, let's verify on which branch we are:
+<br />
+<b>git checkout</b><br />
+Your branch is up-to-date with 'origin/master'.<br />
+<br />
+and which branches are available in the current repo:
+<br />
+<b>git branch</b><br />
+* master<br />
+<br />
+it doesn't hurt to explicitly make sure we are on master:
+<br />
+<b>git checkout master</b><br />
+Already on 'master'<br />
+Your branch is up-to-date with 'origin/master'.<br />
+<br />
+<br />
+
+and if needed, let's get the latest from the central repo:
+<br /><br />
+<b>git pull --rebase</b>
+<br /><br />
+we can now create a branch:
+<br /><br />
+<b>git checkout -b feature/pippo</b>
+<br /><br />
+and make sure the branch is actually created:
+<br /><br />
+<b>git branch</b><br />
+* feature/pippo<br />
+  master<br />
+
+<br /><br />
+since I am paranoid, I again switch to this new branch:
+<br /><br />
+<b>git checkout feature/pippo</b><br />
+Already on 'feature/pippo'<br />
+<br /><br />
+
+I create a file:
+<br /><br />
+<b>echo ciao > ciao.txt</b>
+<br /><br />
+
+and 
+<br /><br />
+<b>git add ciao.txt</b>
+<br /><br />
+
+and commit
+<br /><br />
+<b>git commit -m "added ciao"</b>
+
+<br /><br />
+
+if you switch to "master", ciao.txt disappears, because it's only in the "feature/pippo" branch:
+<br /><br />
+<b>git checkout master</b>
+<br /><br />
+ciao.txt is gone!
+<br /><br />
+<b>git checkout feature/pippo</b>
+<br /><br />
+ciao.txt is there again!
+<br /><br /><br /><br />
+Now we need to push the branch to the central repo:
+<br /><br />
+<b>git push</b><br />
+fatal: The current branch feature/pippo has no upstream branch.<br />
+To push the current branch and set the remote as upstream, use<br />
+<br />
+    git push --set-upstream origin feature/pippo<br />
+<br /><br />
+you can simply do:<br />
+<b>git push -u origin HEAD</b><br />
+
+<pre>
+Counting objects: 6, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 273 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+To ssh://git@stash.acme.com:7999/gs/playgroup.git
+ * [new branch]      HEAD -> feature/pippo
+Branch feature/pippo set up to track remote branch feature/pippo from origin.
+</pre>
+
+
+
+<br /><br />
+
+How to promote to master the changes in "feature/pippo" ? With a pull request, followed by a code review and a test! 
+In github or stash you can create the pull request using the UI. This is a very cool and organized way to include changes to the master branch in a controlled, "atomic" way - a whole branch is a unit of changes that can be excluded as a whole if needed.
+<br /><br />
+
+
+
+

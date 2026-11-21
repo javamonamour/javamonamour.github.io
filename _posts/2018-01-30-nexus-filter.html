@@ -1,0 +1,152 @@
+---
+layout: post
+title: "Nexus filter"
+date: 2018-01-30T20:03:00.000+01:00
+permalink: /2018/01/nexus-filter.html
+blogger_id: "3503420890653668539"
+tags: ["nexus"]
+---
+<a href="https://hub.docker.com/r/sonatype/nexus/">https://hub.docker.com/r/sonatype/nexus/</a><br />
+<br />
+docker pull sonatype/nexus<br />
+<br />
+docker run -d -p 8081:8081 --name nexus2 sonatype/nexus:oss<br />
+<br />
+http://localhost:8081/nexus/  login as admin/admin123<br />
+<br />
+curl http://localhost:8081/nexus/service/local/status<br />
+<br />
+<br />
+in your maven /home/centos/apache-maven-3.5.0/conf/settings.xml place this for Nexus 3:<br />
+<br />
+&lt;mirror><br />
+&lt;id>nexus&lt;/id><br />
+&lt;mirrorOf>*&lt;/mirrorOf><br />
+&lt;url>http://localhost:8081/repository/maven-public/&lt;/url><br />
+&lt;/mirror><br />
+<br />
+or this for Nexus 2:<br />
+<br />
+&lt;mirror><br />
+&lt;id>nexus&lt;/id><br />
+&lt;mirrorOf>*&lt;/mirrorOf><br />
+&lt;url>http://localhost:8081/nexus/content/repositories/central/&lt;/url><br />
+&lt;/mirror><br />
+<br />
+<br />
+<br />
+See also <a href="/2017/10/maven-to-repository-protocol.html">/2017/10/maven-to-repository-protocol.html</a><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+"qtp1715998167-55" #55 prio=5 os_prio=0 tid=0x00007f63a5431000 nid=0x3d runnable [0x00007f636f1f2000]<br />
+java.lang.Thread.State: RUNNABLE<br />
+at org.sonatype.nexus.proxy.storage.remote.httpclient.HttpClientRemoteStorage.doExecuteRequest(HttpClientRemoteStorage.java:546)<br />
+at org.sonatype.nexus.proxy.storage.remote.httpclient.HttpClientRemoteStorage.executeRequest(HttpClientRemoteStorage.java:521)<br />
+at org.sonatype.nexus.proxy.storage.remote.httpclient.HttpClientRemoteStorage.retrieveItem(HttpClientRemoteStorage.java:216)<br />
+at org.sonatype.nexus.proxy.maven.ChecksumContentValidator.doRetrieveChecksumItem(ChecksumContentValidator.java:191)<br />
+at org.sonatype.nexus.proxy.maven.ChecksumContentValidator.doRetrieveSHA1(ChecksumContentValidator.java:162)<br />
+at org.sonatype.nexus.proxy.maven.ChecksumContentValidator.retrieveRemoteHash(ChecksumContentValidator.java:131)<br />
+at org.sonatype.nexus.proxy.maven.AbstractChecksumContentValidator.isRemoteItemContentValid(AbstractChecksumContentValidator.java:54)<br />
+at org.sonatype.nexus.proxy.repository.AbstractProxyRepository.doValidateRemoteItemContent(AbstractProxyRepository.java:1293)<br />
+at org.sonatype.nexus.proxy.repository.AbstractProxyRepository.doRetrieveRemoteItem(AbstractProxyRepository.java:1424)<br />
+at org.sonatype.nexus.proxy.repository.AbstractProxyRepository.doRetrieveItem0(AbstractProxyRepository.java:1151)<br />
+at org.sonatype.nexus.proxy.repository.AbstractProxyRepository.doRetrieveItem(AbstractProxyRepository.java:1034)<br />
+at org.sonatype.nexus.proxy.maven.AbstractMavenRepository.doRetrieveItem(AbstractMavenRepository.java:398)<br />
+at org.sonatype.nexus.proxy.maven.maven2.M2Repository.doRetrieveItem(M2Repository.java:398)<br />
+at org.sonatype.nexus.proxy.repository.AbstractRepository.retrieveItem(AbstractRepository.java:760)<br />
+at org.sonatype.nexus.proxy.repository.AbstractRepository.retrieveItem(AbstractRepository.java:592)<br />
+at org.sonatype.nexus.proxy.router.DefaultRepositoryRouter.retrieveItem(DefaultRepositoryRouter.java:155)<br />
+at org.sonatype.nexus.content.internal.ContentServlet.doGet(ContentServlet.java:386)<br />
+at org.sonatype.nexus.content.internal.ContentServlet.service(ContentServlet.java:352)<br />
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:848)<br />
+at com.google.inject.servlet.ServletDefinition.doServiceImpl(ServletDefinition.java:297)<br />
+at com.google.inject.servlet.ServletDefinition.doService(ServletDefinition.java:281)<br />
+at com.google.inject.servlet.ServletDefinition.service(ServletDefinition.java:186)<br />
+at com.google.inject.servlet.AbstractServletPipeline.service(AbstractServletPipeline.java:65)<br />
+at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:85)<br />
+at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:112)<br />
+at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)<br />
+at com.google.inject.servlet.AbstractFilterPipeline.dispatch(AbstractFilterPipeline.java:100)<br />
+at org.sonatype.nexus.web.internal.NexusGuiceFilter$MultiFilterChain.doFilter(NexusGuiceFilter.java:82)<br />
+at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:89)<br />
+at com.google.inject.servlet.AbstractFilterPipeline.dispatch(AbstractFilterPipeline.java:100)<br />
+at org.sonatype.nexus.web.internal.NexusGuiceFilter$MultiFilterChain.doFilter(NexusGuiceFilter.java:82)<br />
+at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:89)<br />
+at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:61)<br />
+at org.apache.shiro.web.servlet.AdviceFilter.executeChain(AdviceFilter.java:108)<br />
+at org.apache.shiro.web.servlet.AdviceFilter.doFilterInternal(AdviceFilter.java:137)<br />
+at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)<br />
+at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:66)<br />
+at org.apache.shiro.web.servlet.AdviceFilter.executeChain(AdviceFilter.java:108)<br />
+at org.apache.shiro.web.servlet.AdviceFilter.doFilterInternal(AdviceFilter.java:137)<br />
+at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)<br />
+at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:66)<br />
+at org.apache.shiro.web.servlet.AdviceFilter.executeChain(AdviceFilter.java:108)<br />
+at org.apache.shiro.web.servlet.AdviceFilter.doFilterInternal(AdviceFilter.java:137)<br />
+at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)<br />
+at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:66)<br />
+at org.apache.shiro.web.servlet.AbstractShiroFilter.executeChain(AbstractShiroFilter.java:449)<br />
+at org.sonatype.nexus.web.internal.SecurityFilter.executeChain(SecurityFilter.java:90)<br />
+at org.apache.shiro.web.servlet.AbstractShiroFilter$1.call(AbstractShiroFilter.java:365)<br />
+at org.apache.shiro.subject.support.SubjectCallable.doCall(SubjectCallable.java:90)<br />
+at org.apache.shiro.subject.support.SubjectCallable.call(SubjectCallable.java:83)<br />
+at org.apache.shiro.subject.support.DelegatingSubject.execute(DelegatingSubject.java:383)<br />
+at org.apache.shiro.web.servlet.AbstractShiroFilter.doFilterInternal(AbstractShiroFilter.java:362)<br />
+at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)<br />
+at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)<br />
+at com.google.inject.servlet.AbstractFilterPipeline.dispatch(AbstractFilterPipeline.java:100)<br />
+at org.sonatype.nexus.web.internal.NexusGuiceFilter$MultiFilterChain.doFilter(NexusGuiceFilter.java:82)<br />
+at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:89)<br />
+at com.yammer.metrics.web.WebappMetricsFilter.doFilter(WebappMetricsFilter.java:76)<br />
+at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)<br />
+at org.sonatype.nexus.web.internal.CommonHeadersFilter.doFilter(CommonHeadersFilter.java:69)<br />
+at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)<br />
+at org.sonatype.nexus.web.internal.ErrorPageFilter.doFilter(ErrorPageFilter.java:71)<br />
+at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)<br />
+at org.sonatype.nexus.web.internal.BaseUrlHolderFilter.doFilter(BaseUrlHolderFilter.java:66)<br />
+at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)<br />
+at org.sonatype.nexus.web.internal.HeaderPatternFilter.doFilter(HeaderPatternFilter.java:96)<br />
+at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)<br />
+at com.google.inject.servlet.AbstractFilterPipeline.dispatch(AbstractFilterPipeline.java:100)<br />
+at org.sonatype.nexus.web.internal.NexusGuiceFilter$MultiFilterChain.doFilter(NexusGuiceFilter.java:82)<br />
+at org.sonatype.nexus.web.internal.NexusGuiceFilter$MultiFilterPipeline.dispatch(NexusGuiceFilter.java:56)<br />
+at com.google.inject.servlet.GuiceFilter$1.call(GuiceFilter.java:133)<br />
+at com.google.inject.servlet.GuiceFilter$1.call(GuiceFilter.java:130)<br />
+at com.google.inject.servlet.GuiceFilter$Context.call(GuiceFilter.java:203)<br />
+- locked <0x00000000f60f7878> (a com.google.inject.servlet.GuiceFilter$Context)<br />
+at com.google.inject.servlet.GuiceFilter.doFilter(GuiceFilter.java:130)<br />
+at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1476)<br />
+at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:501)<br />
+at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:137)<br />
+at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:557)<br />
+at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:231)<br />
+at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1086)<br />
+at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:429)<br />
+at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:193)<br />
+at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1020)<br />
+at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:135)<br />
+at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)<br />
+at com.yammer.metrics.jetty.InstrumentedHandler.handle(InstrumentedHandler.java:200)<br />
+at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:154)<br />
+at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:116)<br />
+at org.eclipse.jetty.server.Server.handle(Server.java:370)<br />
+at org.eclipse.jetty.server.AbstractHttpConnection.handleRequest(AbstractHttpConnection.java:494)<br />
+at org.eclipse.jetty.server.AbstractHttpConnection.headerComplete(AbstractHttpConnection.java:971)<br />
+at org.eclipse.jetty.server.AbstractHttpConnection$RequestHandler.headerComplete(AbstractHttpConnection.java:1033)<br />
+at org.eclipse.jetty.http.HttpParser.parseNext(HttpParser.java:644)<br />
+at org.eclipse.jetty.http.HttpParser.parseAvailable(HttpParser.java:235)<br />
+at org.eclipse.jetty.server.AsyncHttpConnection.handle(AsyncHttpConnection.java:82)<br />
+at org.eclipse.jetty.io.nio.SelectChannelEndPoint.handle(SelectChannelEndPoint.java:696)<br />
+at org.eclipse.jetty.io.nio.SelectChannelEndPoint$1.run(SelectChannelEndPoint.java:53)<br />
+at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:608)<br />
+at org.eclipse.jetty.util.thread.QueuedThreadPool$3.run(QueuedThreadPool.java:543)<br />
+at java.lang.Thread.run(Thread.java:748)<br />
+<br />
+<br />
+https://github.com/cstamas/nexus-core-ng/blob/master/nexus/nexus-proxy/src/main/java/org/sonatype/nexus/proxy/router/DefaultRepositoryRouter.java<br />
+<br />
+

@@ -1,0 +1,19 @@
+---
+layout: post
+title: "WebLogic: moving JMS filestores around"
+date: 2014-09-03T15:29:00.001+02:00
+permalink: /2014/09/weblogic-moving-jms-filestores-around.html
+blogger_id: "12129287480469265"
+tags: ["jms", "weblogic"]
+---
+If a domain dies, and the filestores contain precious JMS messages still to be processed, how do you handle this?
+<br/><br/>
+There is a "<a href="http://docs.oracle.com/cd/E17904_01/web.1111/e13701/store.htm#i1149754">filestore export</a>" utility, but sadly it doesn't have an equivalent "import" functionality.
+
+<br/><br/>
+
+We just made a silly experiment - silly because this is a total hack and unsupported by Oracle, yet it seems to work.
+<br/><br/>
+Shutdown both source and destination Managed servers. Physically replace the destination .DAT filestore  with the source filestore (each managed server has its own filestore....so you have to make this operation for all filestores=managed servers) . Start the destination server. By miracle the JMS messages appear on the destination server. Of course you lose all the previous content of the destination filestore...
+<br/><br/>
+

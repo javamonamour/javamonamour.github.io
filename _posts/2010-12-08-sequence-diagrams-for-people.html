@@ -1,0 +1,41 @@
+---
+layout: post
+title: "Sequence Diagrams for The People"
+date: 2010-12-08T23:36:00.004+01:00
+permalink: /2010/12/sequence-diagrams-for-people.html
+blogger_id: "2073295332297492921"
+tags: ["sequence diagrams"]
+---
+this tool is really cool, it creates accurate SDs in a matter of seconds...<br />
+<br />
+<a href="http://sdedit.sourceforge.net/example/index.html">http://sdedit.sourceforge.net/example/index.html</a><br />
+<br />
+Great job Herr Markus Strauch !<br />
+<br />
+Here is a sample script:<br />
+<br />
+<i>crm:CRM[a]</i><br />
+<i>osb:OSB[a]</i><br />
+<i>hdt:HDT[a]</i><br />
+<i><br />
+</i><br />
+<i>*1 crm</i><br />
+<i>CRM requests creation</i><br />
+<i>of a Company/Person account</i><br />
+<i>*1</i><br />
+<i>crm:osb.H_REQ_CLIENT()</i><br />
+<i><br />
+</i><br />
+<i>[c:alt nodeLevel IS NOT defined]</i><br />
+<i>osb:hdt.ciaoScemo()</i><br />
+<i>--[else]</i><br />
+<i>osb:nothing to do</i><br />
+<i>[/c]</i><br />
+<i><br />
+</i><br />
+<i>osb:hdt.hello()</i><br />
+<br />
+and here is the SD originated:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/d96a37f8bb50a80c.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="325" src="/images/99243484aea19339.png" width="400" /></a></div><br />
+Sweet and simple.

@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Small Groovy Script to filter a file"
+date: 2011-02-13T22:14:00.001+01:00
+permalink: /2011/02/small-groovy-script-to-filter-file.html
+blogger_id: "8649765191635673019"
+tags: ["groovy"]
+---
+Groovy makes life sooo easy...<br />
+<br />
+this small script prints only lines who do not start with file:///<br />
+<br />
+I know it's much simpler in grep, but try doing something more complex with grep and awk and you will waste the entire day...<br />
+<br />
+<br />
+<pre name="code" class="brush: java">package com.pierre
+
+datafile = new File('C:/pierre/download/myfile.txt') 
+outdatafile = new File('C:/pierre/download/myfile.txt.out')
+PrintWriter pw = new PrintWriter(outdatafile)
+
+datafile.eachLine{ 
+ line -> 
+ if (!line.startsWith("file:///")) {
+  pw.write(line)
+  pw.write("\n") 
+ } 
+}
+</pre>

@@ -1,0 +1,41 @@
+---
+layout: post
+title: "JDK maven Nexus and HTTPS"
+date: 2019-05-06T16:56:00.000+02:00
+permalink: /2019/05/jdk-maven-nexus-and-https.html
+blogger_id: "7576561508098376567"
+tags: ["cacerts", "maven", "nexus", "PKI", "ssl"]
+---
+If your Nexus repository uses certificates signed by your own Root CA, chances are that a JDK doesn't trust them.<br />
+<br />
+Then when you run <br />
+<br />
+mvn package<br />
+<br />
+you get<br />
+<br />
+<br />
+sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: <br />
+unable to find valid certification path to requested target<br />
+<br />
+<br />
+Go to your JAVA_HOME\jre\lib\security folder, where the cacerts file is located, and issue<br />
+<br />
+keytool -list -v -keystore cacerts<br />
+<br />
+enter "changeit" as password<br />
+<br />
+this shold tell you all your trusted CAs<br />
+<br />
+You should import your own CA certificate to into this keystore.<br />
+<br />
+<br />
+I have tried also setting:<br />
+<br />
+<br />
+set MAVEN_OPTS="-Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true"<br />
+<br />
+but it disn't work for me.<br />
+<br />
+<br />
+

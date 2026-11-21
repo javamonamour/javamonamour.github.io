@@ -1,0 +1,33 @@
+---
+layout: post
+title: "WLST script to change target to all deployments in a domain"
+date: 2010-06-05T12:47:00.002+02:00
+permalink: /2010/06/wlst-script-to-change-target-to-all.html
+blogger_id: "3797245710544284539"
+tags: ["WLST"]
+---
+instead of <b>AdminServer</b> write the name of your target server.<br />
+<br />
+<pre name="code" class="brush: java">#Script to change target of all modules in a WL domain
+#@Author Pierluigi Vernetto
+#@Date 2010-06-04
+
+connect('weblogic', 'weblogic0', 't3://localhost:7001')
+edit()
+startEdit()
+
+cd('AppDeployments')
+y=ls(returnMap='true')
+
+for i in y :
+&nbsp; print i
+&nbsp; cd(i)
+&nbsp; print(cmo)
+&nbsp; set('Targets',jarray.array([ObjectName('com.bea:Name=<b>AdminServer</b>,Type=Server')], ObjectName)) 
+&nbsp; cd('..')
+
+
+save()
+activate()
+
+</pre>

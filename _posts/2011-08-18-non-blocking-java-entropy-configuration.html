@@ -1,0 +1,31 @@
+---
+layout: post
+title: "NON-BLOCKING java entropy configuration"
+date: 2011-08-18T21:15:00.000+02:00
+permalink: /2011/08/non-blocking-java-entropy-configuration.html
+blogger_id: "7665409424408378442"
+tags: ["urandom"]
+---
+Today these lines caught my attention in the WL MS log:<br />
+<br />
+####<17-Aug-2011 22:53:41 o'clock BST> <Info> <Management> <pierrepc> <ms1> <[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <> <1313618021317> <BEA-141278> <Java entropy configuration is: System property "java.security.egd= null"; JRE's java.security file property <b>"securerandom.source= file:/dev/urandom"; Blocking Config= false; </b> JDK version= 1.6.0_22; Operating System= Windows 7.> <br />
+####<17-Aug-2011 22:53:41 o'clock BST> <Info> <Management> <pierrepc> <ms1> <[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'> <<WLS Kernel>> <> <> <1313618021319> <BEA-141280> <<b>Detected NON-BLOCKING java entropy configuration. This setting will provide the best performance on machines with few sources of entropy, but is less secure than a blocking entropy configuration</b>.> <br />
+<br />
+<br />
+Random number generation - necessary to the encryption framework - can be a source of slowness in WebLogic startup<br />
+<a href="http://www.itonguard.com/20090313/weblogic-starts-slow/">http://www.itonguard.com/20090313/weblogic-starts-slow/</a><br />
+<br />
+so it's better to keep an eye on this setting.<br />
+<br />
+See here <a href="http://download.oracle.com/javase/1.4.2/docs/guide/security/jaas/JAASRefGuide.html#AppendixA">http://download.oracle.com/javase/1.4.2/docs/guide/security/jaas/JAASRefGuide.html#AppendixA</a><br />
+<br />
+<i>"# The entropy gathering device is described as a URL and can <br />
+# also be specified with the property "java.security.egd". For example,<br />
+#   -Djava.security.egd=file:/dev/urandom<br />
+# Specifying this property will override the securerandom.source setting."<br />
+<br />
+</i><br />
+<br />
+See also <a href="/2010/02/devrandom-and-devurandom.html">this post of mine</a> (I am getting old, I keep repeating the same stuff over and over!)<br />
+<br />
+

@@ -1,0 +1,13 @@
+---
+layout: post
+title: "OSB transaction required"
+date: 2013-08-22T09:32:00.001+02:00
+permalink: /2013/08/osb-transaction-required.html
+blogger_id: "4870409977909773189"
+---
+The advantage of setting "transaction required" for your Proxies is that the incoming request will be starting a transaction and set the default &lt;con:qualityOfService>exactly-once&lt;/con:qualityOfService> , instead of &lt;con:qualityOfService>best-effort&lt;/con:qualityOfService>. You can examine the $inbound you will find this setting.
+
+<br/><br/>
+
+Subsequent Publish or Route will use this same Quality Of Service, instead of the default which is "best-effort".
+

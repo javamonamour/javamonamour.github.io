@@ -1,0 +1,36 @@
+---
+layout: post
+title: "CDI in IntelliJ Java Enterprise projects"
+date: 2019-05-10T15:54:00.000+02:00
+permalink: /2019/05/cdi-in-intellij-java-enterprise-projects.html
+blogger_id: "6390854747230520961"
+tags: ["cdi", "intellij"]
+---
+I was following this <a href="https://www.jetbrains.com/help/idea/creating-and-running-your-first-java-ee-application.html">https://www.jetbrains.com/help/idea/creating-and-running-your-first-java-ee-application.html</a> tutorial to deploy a Primefaces application to Wildfly 16, but I kept getting an error<br />
+<br />
+<br />
+unable to find cdi beanmanager<br />
+<br />
+I have tried adding Maven support and adding  the dependency <br />
+<br />
+    &lt;dependencies&gt;<br />
+<br />
+        &lt;dependency&gt;<br />
+            &lt;groupId&gt;javax.enterprise&lt;/groupId&gt;<br />
+            &lt;artifactId&gt;cdi-api&lt;/artifactId&gt;<br />
+            &lt;version&gt;1.2&lt;/version&gt;<br />
+        &lt;/dependency&gt;<br />
+<br />
+    &lt;/dependencies&gt;<br />
+<br />
+<br />
+to no avail. <br />
+<br />
+Funnily, setting webapp version="2.3" instead of version="4.0" in web.xml fixes the problem.<br />
+<br />
+<br />
+Then I added CDI support as shown here:<br />
+<br />
+<a href="https://www.jetbrains.com/help/idea/context-and-dependency-injection-cdi.html">https://www.jetbrains.com/help/idea/context-and-dependency-injection-cdi.html</a><br />
+<br />
+and using version="4.0" and things are working.

@@ -1,0 +1,71 @@
+---
+layout: post
+title: "etcd"
+date: 2017-12-22T05:35:00.000+01:00
+permalink: /2017/12/etcd.html
+blogger_id: "4604859099241352587"
+tags: ["etcd"]
+---
+What is etcd ? <a href="https://en.wikipedia.org/wiki/Container_Linux_by_CoreOS#ETCD">https://en.wikipedia.org/wiki/Container_Linux_by_CoreOS#ETCD</a><br />
+<br />
+Who is CoreOS ? <a href="https://en.wikipedia.org/wiki/Container_Linux_by_CoreOS#CoreOS">https://en.wikipedia.org/wiki/Container_Linux_by_CoreOS#CoreOS</a>   and <a href="https://coreos.com/">https://coreos.com/</a><br />
+<br />
+<br />
+<br />
+sudo yum install etcd<br />
+<br />
+<b>etcdctl</b> <br />
+<br />
+<b>etcdctl get pippo</b><br />
+Error:  client: etcd cluster is unavailable or misconfigured; error #0: dial tcp 127.0.0.1:2379: getsockopt: connection refused<br />
+; error #1: malformed HTTP response "\x15\x03\x01\x00\x02\x02"<br />
+<br />
+error #0: dial tcp 127.0.0.1:2379: getsockopt: connection refused<br />
+error #1: malformed HTTP response "\x15\x03\x01\x00\x02\x02"<br />
+<br />
+<br />
+<b>systemctl start etcd</b><br />
+<br />
+<b>etcdctl get pippo</b><br />
+Error:  100: Key not found (/pippo) [3]<br />
+<br />
+<b>etcdctl set /example/key pippo</b><br />
+pippo<br />
+<b>etcdctl get /example/key </b><br />
+pippo<br />
+<b>etcdctl ls /</b><br />
+/example<br />
+<b>etcdctl ls /example</b><br />
+/example/key<br />
+<b>etcdctl ls /example/key</b><br />
+/example/key<br />
+<br />
+<b>netstat -an | grep 4001</b><br />
+you will see 143 entries (!!!) (use | wc -l to count)<br />
+<br />
+<b>netstat -an | grep 2379</b><br />
+here the HTTP service is running<br />
+<br />
+curl -LsS http://127.0.0.1:2379/v2/keys <br />
+{"action":"get","node":{"dir":true,"nodes":[{"key":"/example","dir":true,"modifiedIndex":4,"createdIndex":4}]}}<br />
+<br />
+<br />
+#to get help<br />
+<b>etcd -h</b><br />
+<br />
+for instance:<br />
+<b>etcd --version</b><br />
+etcd Version: 3.2.9<br />
+Git SHA: f1d7dd8<br />
+Go Version: go1.8.3<br />
+Go OS/Arch: linux/amd64<br />
+<br />
+<br />
+More basic examples here <a href="https://coreos.com/etcd/docs/latest/getting-started-with-etcd.html">https://coreos.com/etcd/docs/latest/getting-started-with-etcd.html</a><br />
+<br />
+<br />
+As usual, great tutorial on "clustering nodes with etcd"  by DigitalOcean:<br />
+<a href="https://www.digitalocean.com/community/tutorials/how-to-use-etcdctl-and-etcd-coreos-s-distributed-key-value-store">https://www.digitalocean.com/community/tutorials/how-to-use-etcdctl-and-etcd-coreos-s-distributed-key-value-store</a> and <a href="https://discovery.etcd.io">https://discovery.etcd.io</a><br />
+and <a href="https://coreos.com/etcd/docs/latest/op-guide/clustering.html">https://coreos.com/etcd/docs/latest/op-guide/clustering.html</a><br />
+<br />
+

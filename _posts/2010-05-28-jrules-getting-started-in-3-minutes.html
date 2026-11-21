@@ -1,0 +1,92 @@
+---
+layout: post
+title: "JRules: Getting Started in 3 minutes (aka JRules for Dummies)"
+date: 2010-05-28T09:51:00.000+02:00
+permalink: /2010/05/jrules-getting-started-in-3-minutes.html
+blogger_id: "965521181977622355"
+tags: ["jrules"]
+---
+Installation is easy, anyway here<br />
+<a href="http://www.jaceklaskowski.pl/docs/GettingStartedWithIBMWebSphereILOGJRules7.0.2Trial-installation.pdf">http://www.jaceklaskowski.pl/docs/GettingStartedWithIBMWebSphereILOGJRules7.0.2Trial-installation.pdf</a><br />
+<br />
+you have some instructions.<br />
+<br />
+After you complete installation, run&nbsp; IBM WebSphere ILOG JRules V7.0.2/Samples Console<br />
+<br />
+It will take a couple of minutes to start Tomcat. When you see<br />
+28-05-2010 09:36:15 org.apache.catalina.startup.Catalina start<br />
+INFO: Server startup in 138229 ms<br />
+<br />
+open a browser,  <b>Rule Team Server</b> console is:<br />
+<a href="http://localhost:8080/teamserver">http://localhost:8080/teamserver</a><br />
+rtsUser1/rtsUser1<br />
+rtsConfig/rtsConfig<br />
+rtsAdmin/rtsAdmin<br />
+<br />
+<br />
+and <b>Rule Execution Server</b> console is:<br />
+<a href="http://localhost:8080/res">http://localhost:8080/res</a><br />
+resAdmin/resAdmin<br />
+resMonitor/resMonitor<br />
+resDeployer/resDeployer<br />
+<br />
+Some acronyms:<br />
+ILR = ILOG Rule Language<br />
+XU = Execution Unit<br />
+XOM = XML Object Model<br />
+<br />
+<br />
+Now, in Eclipse Studio right click, new Rule Project, select Hello World Rule Project. I will call it JRulesPVHelloWorld.<br />
+Right click, export Ruleset Archive, ruleProject=/JRulesPVHelloWorld, save to C:\temp\greetings.jar<br />
+<br />
+<br />
+This will create a IRL, META-INF and RESOURCES directories, with some irl etc files:<br />
+<br />
+<br />
+main-rfl.irl file:<br />
+<br />
+flowtask main {<br />
+&nbsp; property mainflowtask = true;<br />
+&nbsp; body {<br />
+&nbsp;&nbsp;&nbsp; main#helloworld;<br />
+&nbsp; }<br />
+};<br />
+<br />
+ruletask main#helloworld {<br />
+&nbsp; algorithm = default;<br />
+&nbsp; ordering = dynamic;<br />
+&nbsp; body {<br />
+&nbsp;&nbsp;&nbsp; helloworld.*<br />
+&nbsp; }<br />
+};<br />
+<br />
+<br />
+<br />
+greetings-brl.irl file:<br />
+<br />
+package helloworld {<br />
+&nbsp;&nbsp; rule greetings {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; property status = "new";<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; when {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; IlrContext() from ?context;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; evaluate (helloworld.Clock.currentTime.compareTo(new ilog.rules.brl.Time(ilog.rules.brl.IlrDateUtil.getLocalTime(1970, 0, 1, 0, 0, 0, 0, 1))) &lt; 0);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } then {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ilog.rules.brl.System.printMessage("Good morning!");<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } else {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ilog.rules.brl.System.printMessage("Good afternoon!");<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp; }<br />
+}<br />
+<br />
+plus a descriptor file with all the BOM and XOM and METADATA. The b2x files contain some horrendous XML to map Java code into functions that JRules engine can use.... XML! Mothers, keep your childer home, XML is around!<br />
+<br />
+<br />
+Anyway.... log into http://localhost:8080/res , add RuleApp (I call it PVRuleApp), add Ruleset, I call it PVGreetingsRuleset, and choose as archive the JAR exported from Eclipse...<br />
+<br />
+<br />
+Click on the WSDL, copy the URL, open SoapUI, create a new project and give it the WSDL url.... and off you go, you are ready to invoke the rule via WS!<br />
+<br />
+<br />
+Here you can find a more complete presentation, including how to pass parameters to a Ruleset<br />
+<br />
+<object style="height: 344px; width: 425px"><param name="movie" value="http://www.youtube.com/v/yw8zWQEODkk"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><embed src="http://www.youtube.com/v/yw8zWQEODkk" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="425" height="344"></embed></object>

@@ -1,0 +1,20 @@
+---
+layout: post
+title: "OSB, how to get the equivalent of System.currentTimeMillis()"
+date: 2011-12-01T13:29:00.001+01:00
+permalink: /2011/12/osb-how-to-get-equivalent-of.html
+blogger_id: "8051234755933826046"
+tags: ["OSB"]
+blogger_comments:
+  - author: "Luis"
+    date: 2012-01-27
+    html: "Hi Master<br /><br />Thanks for the post. <br />Just a small improvement to avoid decimal values:<br /><b>xs:integer((fn:current-dateTime() - xs:dateTime(&quot;1970-01-01T00:00:00-00:00&quot;)) div xdt:dayTimeDuration(&quot;PT0.001S&quot;))<br /></b><br />Thanks"
+---
+try:<br />
+<br />
+(fn:current-dateTime() - xs:dateTime("1970-01-01T00:00:00-00:00")) div xdt:dayTimeDuration("PT0.001S")<br />
+<br />
+(thanks <a href="http://aestasit.com/">to Luciano</a> for this) <br />
+<br />
+<br />
+or do a Custom XPath returning System.currentTimeMillis() from Java.

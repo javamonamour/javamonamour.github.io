@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Handy settings for your Unix environment"
+date: 2011-09-19T17:26:00.000+02:00
+permalink: /2011/09/handy-settings-for-your-unix.html
+blogger_id: "1694506210108313772"
+tags: ["hp-ux", "unix"]
+---
+very few things are as frustrating as having to work on a Unix Shell which doesn't have autocomplete and history retrieve enabled, or the backspace.<br />
+<br />
+Here are the settings:<br />
+<br />
+stty erase ^?  # backspace here<br />
+set -o emacs<br />
+alias __A=$(print '\0020') # ^P = up = previous command<br />
+alias __B=$(print '\0016') # ^N = down = next command<br />
+alias __C=$(print '\0006') # ^F = right = forward a character<br />
+alias __D=$(print '\0002') # ^B = left = back a character<br />
+alias __H=$(print '\0001') # ^A = home = beginning of line<br />
+<br />
+I am still looking for autocompletion, my shell is /sbin/sh<br />
+<br />
+<br />
+And remember that ESC-ESC enables autocompletion in HP-UX - like TAB in Linux

@@ -1,0 +1,61 @@
+---
+layout: post
+title: "XML validation: fail-slow and capture all the errors"
+date: 2011-02-28T18:15:00.003+01:00
+permalink: /2011/02/xml-validation-fail-slow-and-capture.html
+blogger_id: "1349936422708600431"
+tags: ["xmlvalidation"]
+---
+see here for the whole story:<br />
+<br />
+<a href="http://www.ibm.com/developerworks/xml/library/x-javaxmlvalidapi.html">http://www.ibm.com/developerworks/xml/library/x-javaxmlvalidapi.html</a><br />
+<br />
+Validating a XML document capturing ALL the validation errors is a bit roundabouthish:<br />
+<br />
+first you must create a ErrorHandler:<br />
+<br />
+<pre name="code" class="brush: java">public static class XMLValidationErrorHandler implements ErrorHandler {
+  List<validationerror> errors = new ArrayList<validationerror>();
+
+  public void warning(SAXParseException ex) {
+   errors.add(new ValidationError(ex.getLocalizedMessage()));
+   logger.error("ErrorHandler warning " + ex.getLocalizedMessage());
+  }
+
+  public void error(SAXParseException ex) {
+   errors.add(new ValidationError(ex.getLocalizedMessage()));
+   logger.error("ErrorHandler error " + ex.getLocalizedMessage());
+  }
+
+  public void fatalError(SAXParseException ex) {
+   errors.add(new ValidationError(ex.getLocalizedMessage()));
+   logger.error("ErrorHandler fatalError " + ex.getLocalizedMessage());
+  }
+
+  public List<validationerror> getErrors() {
+   return errors;
+  }
+ } 
+
+</pre><br />
+<br />
+<br />
+<br />
+and then assign it to the unmarshaller:<br />
+<pre name="code" class="brush: java">List<validationerror> errors = new ArrayList<validationerror>();
+byte[] bytes = xmlAsString.getBytes();
+ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+Source paramSource = new StreamSource(bais);
+
+Schema schema = unmarshaller.getSchema(); 
+Validator validator = schema.newValidator();
+
+XMLValidationErrorHandler errorHandler = new XMLValidationErrorHandler();
+validator.setErrorHandler(errorHandler);
+
+validator.validate(paramSource);
+errors = errorHandler.getErrors();
+
+</pre><br />
+<br />
+I really feel that things should be easier than that...

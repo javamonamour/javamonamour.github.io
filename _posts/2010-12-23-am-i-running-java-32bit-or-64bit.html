@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Am I running Java 32bit or 64bit?"
+date: 2010-12-23T20:59:00.001+01:00
+permalink: /2010/12/am-i-running-java-32bit-or-64bit.html
+blogger_id: "2453649624876395895"
+tags: ["java64bit"]
+---
+in doubt, run<br />
+<br />
+java -version<br />
+<br />
+for 32bit, it should tell you nothing:<br />
+<br />
+<pre>java version "1.6.0_18"
+Java(TM) SE Runtime Environment (build 1.6.0_18-b07)
+Java HotSpot(TM) Client VM (build 16.0-b13, mixed mode)
+</pre><br />
+for 64bit, you should get an explicit message:<br />
+<br />
+<pre>java version "1.6.0_15"
+Java(TM) SE Runtime Environment (build 1.6.0_15-b03)
+Java HotSpot(TM) <b>64-Bit</b> Server VM (build 14.1-b02, mixed mode)
+</pre>

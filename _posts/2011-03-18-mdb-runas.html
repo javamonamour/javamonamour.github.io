@@ -1,0 +1,32 @@
+---
+layout: post
+title: "MDB RunAs"
+date: 2011-03-18T12:42:00.000+01:00
+permalink: /2011/03/mdb-runas.html
+blogger_id: "7260252806639524264"
+tags: ["runas"]
+---
+If you get a <br />
+<b>"No valid security context for the caller identity"</b><br />
+<br />
+<br />
+when your MDB is run, you can either annotate it with:<br />
+<br />
+<a href="http://download.oracle.com/javaee/5/api/javax/annotation/security/RunAs.html">http://download.oracle.com/javaee/5/api/javax/annotation/security/RunAs.html</a><br />
+<br />
+<br />
+or, on JBoss, with<br />
+<br />
+http://docs.jboss.org/ejb3/embedded/api/org/jboss/annotation/security/RunAsPrincipal.html<br />
+<br />
+otherwise you can:<br />
+<br />
+<i>InitialContext ic = new InitialContext();<br />
+SessionContext sc = (SessionContext) ic.lookup("java:comp/EJBContext");<br />
+Principal p = sc.getCallerPrincipal();</i><br />
+<br />
+(you can also use @Resource and have the container inject the EJBContext)<br />
+<br />
+but this will not allow you to change principal on the go...<br />
+<br />
+<a href="http://download.oracle.com/javase/1.4.2/docs/api/java/security/Principal.html">here</a> the Principal javadoc

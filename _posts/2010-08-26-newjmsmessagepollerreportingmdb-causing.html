@@ -1,0 +1,65 @@
+---
+layout: post
+title: "NewJMSMessagePoller.ReportingMDB causing tx rollback for timeout"
+date: 2010-08-26T15:37:00.003+02:00
+permalink: /2010/08/newjmsmessagepollerreportingmdb-causing.html
+blogger_id: "2704100246520281017"
+blogger_comments:
+  - author: "dinjog"
+    date: 2011-04-08
+    html: "This comment has been removed by the author."
+---
+NewJMSMessagePoller.ReportingMDB ? In doubt, I untarget JMS Reporting Provider and Message Reporting Purger.<br />
+<br />
+<br />
+<br />
+<pre>####<aug 12:00:16="" 2010="" 26,="" am="" utc=""> <error> <ejb> <scrbxlpdefrm613> <dev3osblabms1> &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tun
+ing)'&gt; &lt;<anonymous>&gt; &lt;&gt; &lt;7f52c101a04e4ebd:-564cb206:12aaa480612:-7fe8-0000000000000129&gt; &lt;1282780816350&gt; <bea-010026> <exception commit="" during="" occurred="" of="" tra="">
+nsaction Xid=BEA1-1627D2EB148FC1B950DB(388951180),Status=Rolled back. [Reason=weblogic.transaction.internal.TimedOutException: Transaction has timed out when
+&nbsp;making request to XAResource 'WLStore_dev3OsbLABDomain_WseeFileStore_auto_1'.],numRepliesOwedMe=0,numRepliesOwedOthers=0,seconds since begin=31,seconds left
+=30,XAServerResourceInfo[WLStore_dev3OsbLABDomain_WseeFileStore_auto_1]=(ServerResourceInfo[WLStore_dev3OsbLABDomain_WseeFileStore_auto_1]=(state=rolledback,
+assigned=dev3OsbLABMs1),xar=WLStore_dev3OsbLABDomain_WseeFileStore_auto_1457582409,re-Registered = false),XAServerResourceInfo[MQParserDataSource_dev3OsbLABD
+omain]=(ServerResourceInfo[MQParserDataSource_dev3OsbLABDomain]=(state=rolledback,assigned=dev3OsbLABMs1),xar=MQParserDataSource,re-Registered = false),SCInf
+o[dev3OsbLABDomain+dev3OsbLABMs1]=(state=rolledback),local properties=({weblogic.jdbc.jta.MQParserDataSource=[ No XAConnection is attached to this TxInfo ]})
+,OwnerTransactionManager=ServerTM[ServerCoordinatorDescriptor=(CoordinatorURL=dev3OsbLABMs1+osb.dev3.acme.net:8311+dev3OsbLABDomain+t3+, XAResource
+s={eis/tibjms/Queue, eis/activemq/Queue, WLStore_dev3OsbLABDomain__WLS_dev3OsbLABMs1, eis/AQ/aqSample, MQParserDataSource_dev3OsbLABDomain, eis/fioranomq/Top
+ic, eis/jbossmq/Queue, WLStore_dev3OsbLABDomain_MQGEOFileStore, eis/Apps/Apps, DBConnectionREFData_dev3OsbLABDomain, eis/webspheremq/Queue, WSATGatewayRM_dev
+3OsbLABMs1_dev3OsbLABDomain, eis/aqjms/Queue, WLStore_dev3OsbLABDomain_WseeJaxwsFileStore_auto_1, eis/pramati/Queue, DBConnectionACME_dev3OsbLABDomain, eis/
+tibjms/Topic, eis/tibjmsDirect/Queue, eis/wls/Queue, WLStore_dev3OsbLABDomain_WseeFileStore_auto_1, WLStore_dev3OsbLABDomain_FileStore_auto_1, eis/tibjmsDire
+ct/Topic, eis/wls/Topic, eis/sunmq/Queue, eis/aqjms/Topic},NonXAResources={})],CoordinatorURL=dev3OsbLABMs1+osb.dev3.acme.net:8311+dev3OsbLABDomain
++t3+): weblogic.transaction.RollbackException: Transaction has timed out when making request to XAResource 'WLStore_dev3OsbLABDomain_WseeFileStore_auto_1'.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.transaction.internal.TransactionImpl.throwRollbackException(TransactionImpl.java:1871)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.transaction.internal.ServerTransactionImpl.internalCommit(ServerTransactionImpl.java:330)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.transaction.internal.ServerTransactionImpl.commit(ServerTransactionImpl.java:225)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.ejb.container.internal.MDListener.onMessage(MDListener.java:327)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.ejb.container.internal.MDListener.onMessage(MDListener.java:327)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.client.JMSSession.onMessage(JMSSession.java:4659)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.client.JMSSession.execute(JMSSession.java:4345)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.client.JMSSession.executeMessage(JMSSession.java:3822)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.client.JMSSession.access$000(JMSSession.java:115)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.client.JMSSession$UseForRunnable.run(JMSSession.java:5170)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.work.ExecuteThread.run(ExecuteThread.java:173)
+Caused by: weblogic.transaction.internal.TimedOutException: Transaction has timed out when making request to XAResource 'WLStore_dev3OsbLABDomain_WseeFileStore_auto_1'.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.transaction.internal.XAResourceDescriptor.startResourceUse(XAResourceDescriptor.java:675)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.transaction.internal.XAServerResourceInfo.prepare(XAServerResourceInfo.java:1323)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.transaction.internal.XAServerResourceInfo.prepare(XAServerResourceInfo.java:510)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.transaction.internal.ServerSCInfo.startPrepare(ServerSCInfo.java:371)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.transaction.internal.ServerTransactionImpl.localPrepare(ServerTransactionImpl.java:2578)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.transaction.internal.ServerTransactionImpl.globalPrepare(ServerTransactionImpl.java:2225)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.transaction.internal.ServerTransactionImpl.internalCommit(ServerTransactionImpl.java:264)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.transaction.internal.ServerTransactionImpl.commit(ServerTransactionImpl.java:224)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.ejb.container.internal.MDListener.execute(MDListener.java:500)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.ejb.container.internal.MDListener.transactionalOnMessage(MDListener.java:371)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.ejb.container.internal.MDListener.onMessage(MDListener.java:327)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.client.JMSSession.onMessage(JMSSession.java:4659)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.client.JMSSession.execute(JMSSession.java:4345)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.client.JMSSession.executeMessage(JMSSession.java:3821)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ... 5 more
+.&gt; 
+</exception></bea-010026></anonymous></dev3osblabms1></scrbxlpdefrm613></ejb></error></aug>
+
+</pre><br />
+<br />
+WTF?

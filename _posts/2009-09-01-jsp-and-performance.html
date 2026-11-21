@@ -1,0 +1,8 @@
+---
+layout: post
+title: "JSP and performance"
+date: 2009-09-01T16:30:00.000+02:00
+permalink: /2009/09/jsp-and-performance.html
+blogger_id: "7173276622694304749"
+---
+http://jojovedder.blogspot.com/2009/05/slow-weblogic-response-jsp-and-servlet.html<br /><br /><br />http://e-docs.bea.com/wls/docs81/jsp/reference.html<br /><br />&lt;jsp-descriptor&gt;<br /><br />&lt;jsp-param&gt;<br /><br />&lt;param-name&gt;precompile&lt;/param-name&gt;<br /><br />&lt;param-value&gt;false&lt;/param-value&gt;<br /><br />&lt;/jsp-param&gt;<br /><br />&lt;jsp-param&gt;<br /><br />&lt;param-name&gt;pageCheckSeconds&lt;/param-name&gt;<br /><br />&lt;param-value&gt;-1&lt;/param-value&gt;<br /><br />&lt;/jsp-param&gt;<br /><br />&lt;/jsp-descriptor&gt;<br /><br />When optimizing for speed, increase pageCheckSeconds to 10, 20 or 30+ seconds by determining how many times your JSPs will change during the day and setting the parameter appropriately.<br /><br /><br /><br />there is a similar setting for servlets and resources

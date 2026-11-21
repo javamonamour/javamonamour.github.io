@@ -1,0 +1,134 @@
+---
+layout: post
+title: "fstab and UUID for device identification, docker and friends"
+date: 2019-06-16T10:28:00.001+02:00
+permalink: /2019/06/fstab-and-uuid-for-device-identification.html
+blogger_id: "8715026499295122581"
+tags: ["fstab", "linux"]
+---
+<a href="https://help.ubuntu.com/community/Fstab">https://help.ubuntu.com/community/Fstab</a><br />
+<br />
+on my VirtualBox Centos7:<br />
+<br />
+<b>cat /etc/fstab </b><br />
+<br />
+/dev/mapper/cl-root     /                       xfs     defaults        0 0<br />
+UUID=<b>70139d85-209e-4997-9d06-af6659221021</b> /boot                   xfs     defaults        0 0<br />
+/dev/mapper/cl-swap     swap                    swap    defaults        0 0<br />
+<br />
+this is: <br />
+[Device] [Mount Point] [File System Type] [Options] [Dump] [Pass]<br />
+<br />
+<br />
+<b>ls -l /dev/disk/by-uuid/</b><br />
+total 0<br />
+lrwxrwxrwx. 1 root root  9 Jun 14 17:41 2019-05-13-13-58-35-65 -> ../../sr0<br />
+lrwxrwxrwx. 1 root root 10 Jun 14 17:41 27882150-dbcf-44a5-8461-a7e16020ee6f -> ../../dm-1<br />
+lrwxrwxrwx. 1 root root 10 Jun 14 17:41 <b>70139d85-209e-4997-9d06-af6659221021</b> -> ../../sda1<br />
+lrwxrwxrwx. 1 root root 10 Jun 14 17:41 96e9a0f9-2b77-4cfc-be6e-f4c982e57123 -> ../../dm-0<br />
+lrwxrwxrwx. 1 root root 10 Jun 15 19:08 fdad3ac1-1c70-4371-8f9e-72ab7f0167df -> ../../dm-3<br />
+<br />
+<br />
+<b>blkid</b><br />
+/dev/sr0: UUID="2019-05-13-13-58-35-65" LABEL="VBox_GAs_6.0.8" TYPE="iso9660" <br />
+<br />
+<br />
+on the host VM:<br />
+<br />
+<b>mount | sort</b><br />
+<br />
+<pre>cgroup on /sys/fs/cgroup/blkio type cgroup (rw,nosuid,nodev,noexec,relatime,blkio)
+cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (rw,nosuid,nodev,noexec,relatime,cpuacct,cpu)
+cgroup on /sys/fs/cgroup/cpuset type cgroup (rw,nosuid,nodev,noexec,relatime,cpuset)
+cgroup on /sys/fs/cgroup/devices type cgroup (rw,nosuid,nodev,noexec,relatime,devices)
+cgroup on /sys/fs/cgroup/freezer type cgroup (rw,nosuid,nodev,noexec,relatime,freezer)
+cgroup on /sys/fs/cgroup/hugetlb type cgroup (rw,nosuid,nodev,noexec,relatime,hugetlb)
+cgroup on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory)
+cgroup on /sys/fs/cgroup/net_cls,net_prio type cgroup (rw,nosuid,nodev,noexec,relatime,net_prio,net_cls)
+cgroup on /sys/fs/cgroup/perf_event type cgroup (rw,nosuid,nodev,noexec,relatime,perf_event)
+cgroup on /sys/fs/cgroup/pids type cgroup (rw,nosuid,nodev,noexec,relatime,pids)
+cgroup on /sys/fs/cgroup/systemd type cgroup (rw,nosuid,nodev,noexec,relatime,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd)
+configfs on /sys/kernel/config type configfs (rw,relatime)
+debugfs on /sys/kernel/debug type debugfs (rw,relatime)
+/dev/mapper/cl-root on / type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
+/dev/mapper/docker-253:0-34242903-3869b9e3d61005155d7ce7222280b67d4c034537b462d76016409d74c39c403b on /var/lib/docker/devicemapper/mnt/3869b9e3d61005155d7ce7222280b67d4c034537b462d76016409d74c39c403b type xfs (rw,relatime,seclabel,nouuid,attr2,inode64,logbsize=64k,sunit=128,swidth=128,noquota)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,seclabel,gid=5,mode=620,ptmxmode=000)
+/dev/sda1 on /boot type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
+/dev/sr0 on /run/media/centos/VBox_GAs_6.0.8 type iso9660 (ro,nosuid,nodev,relatime,uid=1000,gid=1000,iocharset=utf8,mode=0400,dmode=0500,uhelper=udisks2)
+devtmpfs on /dev type devtmpfs (rw,nosuid,seclabel,size=3989408k,nr_inodes=997352,mode=755)
+fusectl on /sys/fs/fuse/connections type fusectl (rw,relatime)
+gvfsd-fuse on /run/user/1000/gvfs type fuse.gvfsd-fuse (rw,nosuid,nodev,relatime,user_id=1000,group_id=1000)
+hugetlbfs on /dev/hugepages type hugetlbfs (rw,relatime,seclabel)
+mqueue on /dev/mqueue type mqueue (rw,relatime,seclabel)
+nfsd on /proc/fs/nfsd type nfsd (rw,relatime)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+proc on /run/docker/netns/9c46943f17e7 type proc (rw,nosuid,nodev,noexec,relatime)
+pstore on /sys/fs/pstore type pstore (rw,nosuid,nodev,noexec,relatime)
+securityfs on /sys/kernel/security type securityfs (rw,nosuid,nodev,noexec,relatime)
+selinuxfs on /sys/fs/selinux type selinuxfs (rw,relatime)
+shm on /var/lib/docker/containers/55284026cd2880cf08c45e66754fcf8011c9cf3227f1564022afad7807cbee27/mounts/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,seclabel,size=65536k)
+sunrpc on /var/lib/nfs/rpc_pipefs type rpc_pipefs (rw,relatime)
+sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime,seclabel)
+systemd-1 on /proc/sys/fs/binfmt_misc type autofs (rw,relatime,fd=31,pgrp=1,timeout=0,minproto=5,maxproto=5,direct,pipe_ino=13854)
+tmpfs on /dev/shm type tmpfs (rw,nosuid,nodev,seclabel)
+tmpfs on /run type tmpfs (rw,nosuid,nodev,seclabel,mode=755)
+tmpfs on /run/user/1000 type tmpfs (rw,nosuid,nodev,relatime,seclabel,size=801028k,mode=700,uid=1000,gid=1000)
+tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,seclabel,mode=755)
+
+</pre><br />
+on the docker centos7 container:<br />
+<br />
+<b>mount | sort</b><br />
+<br />
+<pre>/dev/mapper/cl-root on /etc/hostname type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
+/dev/mapper/cl-root on /etc/hosts type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
+/dev/mapper/cl-root on /etc/resolv.conf type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
+/dev/mapper/docker-253:0-34242903-3869b9e3d61005155d7ce7222280b67d4c034537b462d76016409d74c39c403b on / type xfs (rw,relatime,seclabel,nouuid,attr2,inode64,logbsize=64k,sunit=128,swidth=128,noquota)
+cgroup on /sys/fs/cgroup/blkio type cgroup (ro,nosuid,nodev,noexec,relatime,blkio)
+cgroup on /sys/fs/cgroup/cpu,cpuacct type cgroup (ro,nosuid,nodev,noexec,relatime,cpuacct,cpu)
+cgroup on /sys/fs/cgroup/cpuset type cgroup (ro,nosuid,nodev,noexec,relatime,cpuset)
+cgroup on /sys/fs/cgroup/devices type cgroup (ro,nosuid,nodev,noexec,relatime,devices)
+cgroup on /sys/fs/cgroup/freezer type cgroup (ro,nosuid,nodev,noexec,relatime,freezer)
+cgroup on /sys/fs/cgroup/hugetlb type cgroup (ro,nosuid,nodev,noexec,relatime,hugetlb)
+cgroup on /sys/fs/cgroup/memory type cgroup (ro,nosuid,nodev,noexec,relatime,memory)
+cgroup on /sys/fs/cgroup/net_cls,net_prio type cgroup (ro,nosuid,nodev,noexec,relatime,net_prio,net_cls)
+cgroup on /sys/fs/cgroup/perf_event type cgroup (ro,nosuid,nodev,noexec,relatime,perf_event)
+cgroup on /sys/fs/cgroup/pids type cgroup (ro,nosuid,nodev,noexec,relatime,pids)
+cgroup on /sys/fs/cgroup/systemd type cgroup (ro,nosuid,nodev,noexec,relatime,xattr,release_agent=/usr/lib/systemd/systemd-cgroups-agent,name=systemd)
+devpts on /dev/console type devpts (rw,nosuid,noexec,relatime,seclabel,gid=5,mode=620,ptmxmode=666)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,seclabel,gid=5,mode=620,ptmxmode=666)
+mqueue on /dev/mqueue type mqueue (rw,nosuid,nodev,noexec,relatime,seclabel)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+proc on /proc/bus type proc (ro,relatime)
+proc on /proc/fs type proc (ro,relatime)
+proc on /proc/irq type proc (ro,relatime)
+proc on /proc/sys type proc (ro,relatime)
+proc on /proc/sysrq-trigger type proc (ro,relatime)
+shm on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,seclabel,size=65536k)
+sysfs on /sys type sysfs (ro,nosuid,nodev,noexec,relatime,seclabel)
+tmpfs on /dev type tmpfs (rw,nosuid,seclabel,size=65536k,mode=755)
+tmpfs on /proc/acpi type tmpfs (ro,relatime,seclabel)
+tmpfs on /proc/asound type tmpfs (ro,relatime,seclabel)
+tmpfs on /proc/kcore type tmpfs (rw,nosuid,seclabel,size=65536k,mode=755)
+tmpfs on /proc/keys type tmpfs (rw,nosuid,seclabel,size=65536k,mode=755)
+tmpfs on /proc/sched_debug type tmpfs (rw,nosuid,seclabel,size=65536k,mode=755)
+tmpfs on /proc/scsi type tmpfs (ro,relatime,seclabel)
+tmpfs on /proc/timer_list type tmpfs (rw,nosuid,seclabel,size=65536k,mode=755)
+tmpfs on /proc/timer_stats type tmpfs (rw,nosuid,seclabel,size=65536k,mode=755)
+tmpfs on /sys/firmware type tmpfs (ro,relatime,seclabel)
+tmpfs on /sys/fs/cgroup type tmpfs (ro,nosuid,nodev,noexec,relatime,seclabel,mode=755)
+</pre><br />
+<br />
+one can notice lot of differences in the VM and the container mounts, notably all the cgroup in docker are ro while in vm they are rw. Some mounts "/dev/mapper/cl-root on /etc/*" in docker <br />
+<br />
+<br />
+What is tmpfs? <a href="https://en.wikipedia.org/wiki/Tmpfs">https://en.wikipedia.org/wiki/Tmpfs</a><br />
+<br />
+What is xfs?  <a href="https://en.wikipedia.org/wiki/XFS">https://en.wikipedia.org/wiki/XFS</a><br />
+<br />
+What is FUSE (fusectl) ? <a href="https://en.wikipedia.org/wiki/Filesystem_in_Userspace#Examples">https://en.wikipedia.org/wiki/Filesystem_in_Userspace#Examples</a><br />
+<br />
+<br />
+<br />
+<br />
+

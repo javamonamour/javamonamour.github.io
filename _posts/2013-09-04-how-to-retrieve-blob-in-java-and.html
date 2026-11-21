@@ -1,0 +1,62 @@
+---
+layout: post
+title: "How to retrieve a BLOB in Java and display as XML"
+date: 2013-09-04T10:40:00.001+02:00
+permalink: /2013/09/how-to-retrieve-blob-in-java-and.html
+blogger_id: "2515957459598537513"
+tags: ["blob"]
+---
+<a href="/2013/07/how-to-retrieve-blob-and-write-it-to.html">see also this on WLST</a>
+
+
+<pre name="code" class="brush: java">
+
+
+public class DBConn {
+
+    public static String getBlobData(String driver, String url, String username, String password, String sqlQuery) throws Exception {
+ String result = "";
+ Class.forName(driver);
+ Connection conn = DriverManager.getConnection(url, username, password);
+ try {
+     Statement stmt = conn.createStatement();
+     try {
+  ResultSet rset = stmt.executeQuery(sqlQuery);
+  try {
+      rset.next();
+      java.sql.Blob blob = (java.sql.Blob) rset.getBlob(1);
+      if (blob != null) {
+   byte[] bdata = blob.getBytes(1, (int) blob.length());
+   String text = new String(bdata);
+   text = text.replace("<", "&lt;");
+   result = text;
+      } else {
+   result = "empty body";
+      }
+
+  } finally {
+      try {
+   rset.close();
+      } catch (Exception e) {
+   e.printStackTrace();
+      }
+  }
+     } finally {
+  try {
+      stmt.close();
+  } catch (Exception e) {
+      e.printStackTrace();
+  }
+     }
+ } finally {
+     try {
+  conn.close();
+     } catch (Exception e) {
+  e.printStackTrace();
+     }
+ }
+ return result;
+    }
+
+}
+</pre>

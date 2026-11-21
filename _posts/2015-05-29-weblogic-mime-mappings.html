@@ -1,0 +1,62 @@
+---
+layout: post
+title: "WebLogic mime mappings"
+date: 2015-05-29T07:54:00.002+02:00
+permalink: /2015/05/weblogic-mime-mappings.html
+blogger_id: "5446582081906650209"
+tags: ["mime"]
+blogger_comments:
+  - author: "Michael"
+    date: 2016-03-31
+    html: "... and we needed additional mappings for jpeg, gif and png extensions.  (All necessitated for IE and Chrome after we added X-Content-Type-Options: nosniff header)."
+  - author: "Michael"
+    date: 2016-03-31
+    html: "Thanks for the helpful post.  I used the web.xml approach, since I was more confident that I knew what I was doing there, but I hadn&#39;t thought of editing the file until you suggested it.  Just in case someone else down the road needs a concrete example, here are the mappings I added to our web.xml file:<br /><br />&lt;mime-mapping&gt;<br />    &lt;extension&gt;css&lt;/extension&gt;<br />    &lt;mime-type&gt;text/css&lt;/mime-type&gt;<br />    &lt;/mime-mapping&gt;<br />    &lt;mime-mapping&gt;<br />    &lt;extension&gt;js&lt;/extension&gt;<br />    &lt;mime-type&gt;text/javascript&lt;/mime-type&gt;<br />    &lt;/mime-mapping&gt;<br />    &lt;mime-mapping&gt;<br />    &lt;extension&gt;XML&lt;/extension&gt;<br />    &lt;mime-type&gt;text/xml&lt;/mime-type&gt;<br />    &lt;/mime-mapping&gt;"
+---
+To configure mime-mappings in WebLogic, you have 2 ways.
+<br/>
+One is to configure the whole domain, with a mimemappings.properties file.
+<br/>
+This is the entry in config.xml (you can do it in console, domain, webapplications):
+<br/>
+<pre class="brush: xml">
+
+ &lt;web-app-container>
+    &lt;x-powered-by-header-level>NONE&lt;/x-powered-by-header-level>
+    &lt;mime-mapping-file>./config/mimemappings.properties&lt;/mime-mapping-file>
+  &lt;/web-app-container>
+</pre>
+<br/><br/>
+<pre>
+Mime Mapping File 
+
+Returns the name of the file containing mime-mappings for the domain.
+
+Format of the file should be: extension=mime-type
+
+Example:
+htm=text/html
+gif=image/gif
+jpg=image/jpeg
+
+If this file does not exist, WebLogic Server uses an implicit mime-mapping set of mappings defined in weblogic.utils.http.HttpConstants (DEFAULT_MIME_MAPPINGS). To remove a mapping defined in implicit map just set it to blank.
+
+MBean Attribute:
+WebAppContainerMBean.MimeMappingFile
+
+
+</pre>
+
+<br/><br/>
+
+
+The other way is to create a mime-mapping entry in <a href="http://docs.oracle.com/cd/E12839_01/web.1111/e13712/web_xml.htm#WBAPP533">your web application's  web.xml</a>
+<br/><br/>
+For a general presentation of IE11 and Mime: 
+<a href="https://msdn.microsoft.com/en-us/library/ms775148%28v=vs.85%29.aspx">https://msdn.microsoft.com/en-us/library/ms775148%28v=vs.85%29.aspx</a>
+<br/><br/>
+Remember also the default-mime-type attribute in weblogic.xml. "This element allows the user to specify the default mime type for a content-type for which the extension is not mapped."
+<br/><br/>
+
+
+

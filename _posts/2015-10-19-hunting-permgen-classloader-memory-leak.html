@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Hunting the Permgen classloader memory leak"
+date: 2015-10-19T14:15:00.003+02:00
+permalink: /2015/10/hunting-permgen-classloader-memory-leak.html
+blogger_id: "929201636295916368"
+tags: ["eclipsemat", "OutOfMemory", "permgen"]
+---
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/9ba154388a4cc32b.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/bbf0a53f43e51718.jpg" /></a></div>
+
+In the past I have hunted several Memory leaks, but never a permgen leak. This is a totally different beast and there is considerably less literature and supportive tools than for heap leaks. Here some documents really worth reading:
+<br /><br />
+
+<a href="http://frankkieviet.blogspot.se/2006/10/classloader-leaks-dreaded-permgen-space.html">http://frankkieviet.blogspot.se/2006/10/classloader-leaks-dreaded-permgen-space.html</a><br />
+<br />
+<a href="http://frankkieviet.blogspot.it/2006/10/how-to-fix-dreaded-permgen-space.html">http://frankkieviet.blogspot.it/2006/10/how-to-fix-dreaded-permgen-space.html</a><br />
+<br />
+<a href="http://java.jiderhamn.se/2011/12/11/classloader-leaks-i-how-to-find-classloader-leaks-with-eclipse-memory-analyser-mat/#finding_the_leak">http://java.jiderhamn.se/2011/12/11/classloader-leaks-i-how-to-find-classloader-leaks-with-eclipse-memory-analyser-mat/#finding_the_leak</a>
+
+<br /><br />
+<a href="http://zeroturnaround.com/rebellabs/rjc201/">http://zeroturnaround.com/rebellabs/rjc201/</a>
+<br />
+<br />
+
+This one is a really awesome tutorial from the basics to the advanced: 
+<a href="http://zeroturnaround.com/rebellabs/rebel-labs-tutorial-do-you-really-get-classloaders/">http://zeroturnaround.com/rebellabs/rebel-labs-tutorial-do-you-really-get-classloaders/</a>
+
+<br /><br />
+<a href="https://sites.google.com/site/eclipsebiz/The-Unknown-Generation-Perm">
+https://sites.google.com/site/eclipsebiz/The-Unknown-Generation-Perm</a>
+
+

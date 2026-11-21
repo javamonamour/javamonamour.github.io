@@ -1,0 +1,22 @@
+---
+layout: post
+title: "weblogic.management.provider.EditFailedException: Can not undo unactivated changes while an activate changes operation is still in progress"
+date: 2013-04-24T17:09:00.001+02:00
+permalink: /2013/04/weblogicmanagementprovidereditfailedexc.html
+blogger_id: "5085268788016839038"
+tags: ["weblogic"]
+---
+I was desperately trying to activate some changes, and it keeps failing. Then I undo the changes, and I get this:
+<br/><br/>
+
+
+"weblogic.management.provider.EditFailedException: Can not undo unactivated changes while an activate changes operation is still in progress"
+
+<p/><p/>
+
+Workaround:<p/>
+cd /opt/oracle/domains/osbpl1do/pending<br/>
+rm -rf *<br/>
+<p/>
+
+and restart all. That should clean up the mess.<p/>

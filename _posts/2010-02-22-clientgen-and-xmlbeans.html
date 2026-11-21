@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Clientgen and XMLBeans"
+date: 2010-02-22T15:39:00.000+01:00
+permalink: /2010/02/clientgen-and-xmlbeans.html
+blogger_id: "9032322633914250988"
+tags: ["clientgen", "xmlbeans"]
+---
+I was using clientgen to generate a Java Client for our WLI processes, and I was getting very frustrated at having all the Data Types&nbsp; generated as JAXB-annotated POJOs - which is not particularly advantageous when you already have the same Data Types in the project as XMLBeans object.<br />
+I am particularly fond of XMLBeans and I don't see why I should switch to another technology.<br />
+<br />
+Well, it turns out that there is a UNDOCUMENTED (at least in 9.2) flag to have clientgen use XMLBeans:<br />
+<br />
+http://forums.oracle.com/forums/thread.jspa?messageID=3008420<br />
+<br />
+<br />
+&lt;clientgen<br />
+wsdl="SimpleClientImplService.wsdl"<br />
+destDir="${clientclasses.dir}"<br />
+JaxRPCWrappedArrayStyle="false"<br />
+<span style="font-size: large;"><b>typeFamily="XMLBEANS_APACHE"</b></span><br />
+packageName="some.pagage"&gt;<br />
+&lt;/clientgen&gt;<br />
+<br />
+<br />
+Some more documentation here:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/webserv_ref/anttasks.html#wp1039270">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/webserv_ref/anttasks.html#wp1039270</a><br />
+<br />
+thanks to Luciano Fiandesio for bringing this to my attention.<br />
+<br />
+<br />
+Anyway I have tried to make XMLBeans work inside Weblogic Workshop, no way, always NoClassDefFoundError even if I set correctly the classpath, I give up and go back to JAXB.

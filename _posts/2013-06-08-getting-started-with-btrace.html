@@ -1,0 +1,138 @@
+---
+layout: post
+title: "Getting started with Btrace"
+date: 2013-06-08T22:16:00.000+02:00
+permalink: /2013/06/getting-started-with-btrace.html
+blogger_id: "3926849032285357468"
+tags: ["btrace"]
+---
+User Guide: <a href="https://kenai.com/projects/btrace/pages/UserGuide">https://kenai.com/projects/btrace/pages/UserGuide</a>
+<br/><br/>
+Download binaries here: <br/>
+<a href="https://github.com/jbachorik/btrace/releases/tag/v1.3.3">https://github.com/jbachorik/btrace/releases/tag/v1.3.3</a>
+
+<br/><br/>
+
+Java class under test:<br/>
+
+BTraceTest.java:<br/>
+
+<pre class="brush: java">
+public class BTraceTest {
+    public static void main(String[] args) throws Exception {
+        for (int i = 0; i < 1000000; i++) {
+             Thread.sleep(1000);
+             doSomething();
+        }
+    }
+
+    public static void doSomething() {
+        System.out.println("something");
+    }
+
+}
+
+
+
+</pre>
+
+<br/><br/>
+
+Btrace profiling class:
+
+Btrace1.java:<br/>
+
+<pre class="brush: java">
+import com.sun.btrace.annotations.*;
+import static com.sun.btrace.BTraceUtils.*;
+import java.lang.reflect.Field;
+
+@BTrace public class Btrace1 {
+  @OnMethod(
+    clazz="BTraceTest",
+    method="doSomething"
+  )
+  public static void onDoSomething() {
+      println("got it");
+  }
+}
+
+</pre>
+
+<br/><br/>
+
+compile it:
+<br/>
+./btracec -classpath . ./Btrace1.java
+<br/>
+run it:<br/>
+./btrace -classpath . 24160 ./Btrace1.class
+<br/>
+where 24160 is the PID of the BTraceTest java application
+<br/>
+
+
+It works! It's great!
+<br/>
+
+
+
+A slightly more advanced example using Class parameters:
+
+<br/><br/>
+<pre class="brush: java">
+public class BTraceTest {
+    public static void main(String[] args) throws Exception {
+        for (int i = 0; i < 1000000; i++) {
+             Thread.sleep(1000);
+    BTraceParam param = new BTraceParam();
+    param.name = "hello " + i;
+             doSomething(param);
+        }
+    }
+
+    public static void doSomething(BTraceParam param) {
+        System.out.println("something" + param.name);
+    }
+
+}
+
+
+
+public class BTraceParam {
+ String name;
+}
+
+
+
+import com.sun.btrace.annotations.*;
+import static com.sun.btrace.BTraceUtils.*;
+import com.sun.btrace.AnyType;
+import java.lang.reflect.Field;
+
+@BTrace public class Btrace1 {
+  @OnMethod(
+    clazz="BTraceTest",
+    method="doSomething"
+  )
+
+  public static void anyDoSomething(@ProbeClassName String pcn, @ProbeMethodName String pmn, AnyType[] args) {
+ println(pcn);
+ println(pmn);
+ printArray(args);
+  }
+}
+
+</pre>
+
+<br/><br/>
+
+
+this way you can print the value also of any parameter !
+
+
+<br/><br/>
+
+To print the stacktrace (very useful!) use jstack();
+<br/><br/>
+

@@ -1,0 +1,53 @@
+---
+layout: post
+title: "First impressions on Puppet"
+date: 2013-04-28T09:59:00.002+02:00
+permalink: /2013/04/first-impressions-on-puppet.html
+blogger_id: "4354890905008906087"
+tags: ["puppet"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2013-04-29
+    html: "It looks like Blogger borked the link to the Puppet testing tool. Here it is:<br /><br />https://github.com/aestasit/puppet-unit"
+  - author: "Anonymous"
+    date: 2013-04-29
+    html: "As a developer, I found Puppet a relatively simple tool to automate the provisioning of packages on an operating system. The learning curve is a bit steep as the material available on the Internet is not always update and sometime lacks quality. Furthermore, Puppet requires some system administration skills before using it to build complex manifests. <br /><br />The DSL that comes with Puppet covers most of the needs required to configure a server with packages and configuration files. If the basic modules are not enough, building a custom module is not difficult. There are literally hundreds of modules floating around from which you can look for &quot;inspiration&quot;. Unfortunately the majority of these tools have been developed with little eye for quality and they hide bugs and problems. That bring us to the main problem I had with Puppet: it&#39;s very hard to test a Puppet manifests and modules. I don&#39;t like to compromise on testing but I felt that with Puppet I had to, because I couldn&#39;t find a viable and sane tool for testing. We ended up writing our own test tool, based on Groovy and JUnit. The testing tool is now open-sourced and  you can find it here:<br /><br /><a src=\"https://github.com/aestasit/puppet-unit\" rel=\"nofollow\">Puppet Unit</a> "
+---
+More often, the first impression you have of someone is the right one.
+<br/><br/>
+I like Puppet. Allow me to draw a parallel between Puppet - declarative language to build infrastructure - and Maven - declarative language to build software.
+<br/><br/>
+Well, structurally Puppet is MUCH more likeable than Maven, because unlike Maven - big garble of cacovisual XML - it's well structured an modular, and it's based on a true DSL and programming language.
+<br/><br/>
+
+However some strong perplexity:
+<br/><br/>
+
+Why Ruby? First, Ruby is a niche language used mainly by Web Developers. And it's not even the most popular, PHP wins by 7 to 1 <a href="https://www.udemy.com/blog/modern-language-wars/">https://www.udemy.com/blog/modern-language-wars/</a>
+
+<br/><br/>
+
+Has Puppet/Ruby a strong support for Object Oriented modelling ? Not really: it uses "class" in a sense which is more like a "macro" definition - you can't extend nor encapsulate, you don't have a Constructor....
+<br/><br/>
+Has Puppet/Ruby a strong type checking mechanism, and a sound variable declaration check? No way, developing Puppet modules leaves a lot to the eyes of the developer to check if variables are not misspelled, and even using Geppetto as a IDE still leaves you with a lot of responsibility.
+<br/><br/>
+Does Geppetto/Ruby/Puppet support refactoring patterns? Not really, you must do a lot manually.
+<br/><br/>
+Probably more to come.
+<br/><br/>
+So, one more I have the sensation that Puppet is a great idea, developed probably by some smart guy in a garage, and then by a twist of good luck it became mainstream (this is one of those phenomena like JUnit Maven and Ant, who started as poorly designed hacks to solve one issue and then became extremely popular just for lack of a better free alternative).
+<br/><br/>
+But it's far from being a thoroughly designed, omni comprehensive, rock-solid tool.
+<br/><br/>
+<br/><br/>
+However, again, I have full sympathy and I am tremendously enjoying learning it. If I compare this feeling with the first sight visceral hatred I had for Maven, we are on a good path.
+
+<br/>
+<br/>
+
+Anyway.... <a href="http://c2.com/cgi/wiki?WhyWeHateRuby">RUBY SUCKS</a>
+<br/>
+<br/>
+
+
+

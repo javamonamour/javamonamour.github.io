@@ -1,0 +1,65 @@
+---
+layout: post
+title: "WLST and JMS"
+date: 2010-08-28T11:25:00.003+02:00
+permalink: /2010/08/wlst-and-jms.html
+blogger_id: "8152707461641824263"
+tags: ["jms", "WLST"]
+blogger_comments:
+  - author: "Pavan Devarakonda [PD]"
+    date: 2010-09-03
+    html: "Thankyou very much for your refernce comment on my blog."
+---
+I found this wonderful script (thank you to my Indian friends for sharing)<br />
+<br />
+<a href="http://wlstbyexamples.blogspot.com/2009/11/jms-monitoring-using-wlst.html">http://wlstbyexamples.blogspot.com/2009/11/jms-monitoring-using-wlst.html</a><br />
+<br />
+This post<br />
+<a href="http://unni-at-work.blogspot.com/2010/02/use-userconfigfile-for-connecting-to.html">http://unni-at-work.blogspot.com/2010/02/use-userconfigfile-for-connecting-to.html</a><br />
+<br />
+again maintained by an Indian, explains how to create a userconfig file<br />
+<br />
+East or West, India is the best :o)<br />
+<br />
+<br />
+To make a long story short:<br />
+<br />
+<i>wlst.sh</i><br />
+<i>connect('${wlusername}', '${wlpw}', 't3://${wlhostname}:${port}')</i><br />
+<i>storeUserConfig('PVWebLogicConfig.properties',&nbsp; 'PVWebLogicKey.properties')</i><br />
+<i>exit()</i><br />
+<br />
+<br />
+you get a lovely warning:<br />
+<br />
+<i>Creating the key file can reduce the security of your system if it is not kept in a secured location after it is created. Do you want to create the key file? y or n</i><br />
+<br />
+<br />
+and a lovely confirmation:<br />
+<br />
+<i>The username and password that were used for this WebLogic Server connection are stored in PVWebLogicConfig.properties and PVWebLogicKey.properties.</i><br />
+<br />
+<br />
+Lovely!<br />
+<br />
+<br />
+After that, you can connect by doing this:<br />
+<br />
+<br />
+<br />
+<i>connect(userConfigFile='PVWebLogicConfig.properties',userKeyFile='PVWebLogicKey.properties',url='t3://${wlhostname}:${port}')</i><br />
+<br />
+<br />
+<br />
+Remember that to explore the JMSDestinationRuntime you must connect to the MS, not to the Admin:<br />
+<br />
+connect('bla', 'bla', 't3://hostname:port_of_ms')<br />
+<br />
+jmsdestlist =  home.getMBeansByType('JMSDestinationRuntime')<br />
+<br />
+<br />
+if you want to navigate to them, you should do:<br />
+serverRuntime()<br />
+cd('JMSRuntime/dev3OsbLABMs1.jms/JMSServers/myJmsServer_1/Destinations/MQGEOSystemModule!myJmsServer_1@MQGEOQueue')<br />
+<br />
+print cmo.getMessagesCurrentCount()

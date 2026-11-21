@@ -1,0 +1,25 @@
+---
+layout: post
+title: "yum install blocked by yum-updatesd-he"
+date: 2013-06-23T15:28:00.000+02:00
+permalink: /2013/06/yum-install-blocked-by-yum-updatesd-he.html
+blogger_id: "303172215928609750"
+tags: ["yum"]
+---
+I was doing<br/>
+
+yum install graphviz<br/>
+
+and got the message<br/>
+
+"Another app is currently holding the yum lock; waiting for it to exit...   The other application is: yum-updatesd-he"
+<br/><br/>
+This:<br/>
+rm -rf /var/run/yum.pid
+<br/><br/>
+
+did the trick and let me proceed.
+
+
+
+

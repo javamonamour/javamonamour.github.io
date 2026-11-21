@@ -1,0 +1,35 @@
+---
+layout: post
+title: "WebLogic: how to find JDBCDriver version for oracle.jdbc.OracleDriver"
+date: 2013-09-18T17:28:00.001+02:00
+permalink: /2013/09/weblogic-how-to-find-jdbcdriver-version.html
+blogger_id: "4617761725576338806"
+tags: ["jdbc", "weblogic"]
+---
+<a href="http://www.oracledistilled.com/java/determine-jdbc-driver-version/">These ways</a> don't use the ACTUAL driver being used by WebLogic.<br />
+<br />
+You can simply run WLST, connect(....) to a Managed Server,
+<br />
+<pre>
+serverRuntime()
+cd ('/JDBCServiceRuntime/' + msname + '/JDBCDataSourceRuntimeMBeans/' + dsname)
+ls()
+</pre>
+<br />
+and you will see interesting stuff:
+<br />
+<pre>
+-r--   DatabaseProductName                          Oracle
+-r--   DatabaseProductVersion                       Oracle Database 11g Enterprise Edition Release 11.2.0.3.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+-r--   DeploymentState                              2
+-r--   DriverName                                   Oracle JDBC driver
+-r--   DriverVersion                                11.2.0.2.0
+
+</pre>
+
+
+<br /><br />
+PS: interestingly, OracleDriver contains a public static final String getDriverVersion()<br />
+<br />
+

@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Difference between NoClassDefFoundError and ClassNotFoundException"
+date: 2009-10-21T11:12:00.000+02:00
+permalink: /2009/10/difference-between-noclassdeffounderror.html
+blogger_id: "8183227222673109861"
+---
+<a href="http://java.sun.com/j2se/1.5.0/docs/api/java/lang/NoClassDefFoundError.html">http://java.sun.com/j2se/1.5.0/docs/api/java/lang/NoClassDefFoundError.html</a><br /><br />"The searched-for class definition existed when the currently executing class was compiled, but the definition can no longer be found. "<br /><br /><br /><a href="http://java.sun.com/j2se/1.5.0/docs/api/java/lang/ClassNotFoundException.html">http://java.sun.com/j2se/1.5.0/docs/api/java/lang/ClassNotFoundException.html</a><br /><br />"but no definition for the class with the specified name could be found. "<br /><br /><br />The explanation given by the javadocs is very misleading.<br />In reality, NoClassDefFoundError is thrown when the class CAN be found, but there was an exception in the static initializers. The naming strategy chosen by Sun is VERY misleading... one tries to fix the classpath, while the problem is in the class definition itself.

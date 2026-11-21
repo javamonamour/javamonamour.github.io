@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Long battle against Malware"
+date: 2011-04-28T18:38:00.004+02:00
+permalink: /2011/04/long-battle-against-malaware.html
+blogger_id: "6765623074437825990"
+tags: ["trojan", "virus"]
+---
+Yesterday I have VERY STUPIDLY tried to install a dodgy JPEG editor downloaded from some dodgy site..... (IDIOT ME!)....  <br />
+I was counting on my registered AVG antivirus to protect me....<br />
+the malware pierced AVG like a hot knife the butter.<br />
+<br />
+Here the consequences:<br />
+<br />
+- My Web Search plugin installed on IE and Firefox<br />
+- every browser was using as a proxy <b>127.0.0.1:57152</b> (even if you removet it, every 5 seconds it's set again)<br />
+- a fake <b>DWM.EXE</b> * 32 process was being spawned every 5 seconds, even if I killed the whole process tree it comes back<br />
+- a fake <b>CSRSS.EXE</b> * 32 as above<br />
+- a fake <b>CONHOST.EXE</b> as above<br />
+- a fake <b>SVCHOST.EXE</b> as above<br />
+<br />
+(in your task manager, processes, right click on the process and use "locate folder" to identify if the EXE is in c:\Windows\System32 or somewhere else.<br />
+<br />
+I bought <b>Lavasoft Ad-Aware</b>, with runtime protection: it could identify that something dodgy was going on, but could not eradicate it completely.<br />
+<br />
+I also run <b>MalwareBytes</b> anti malware, which identified some stuff.<br />
+<br />
+Finally I killed all the dodgy processes, deleted all the dodgy EXE files, cleaned up all the dodgy Registry entries (see here http://www.threatexpert.com/report.aspx?md5=9d94b6111ce550c0e999d2deba07b018 for a non exhaustive list), and now everything SEEMS to be back to normal. <br />
+<a href="http://vil.nai.com/vil/content/v_361930.htm">Here</a> a good description of this Trojan.<br />
+<br />
+I am really amazed how easily Windows 7 64 Bit Security is pierced.<br />
+<br />
+I will immediately resize my partition, install Ubuntu and use Windows 7 only if really needed.

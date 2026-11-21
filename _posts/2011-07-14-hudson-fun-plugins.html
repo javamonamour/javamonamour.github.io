@@ -1,0 +1,31 @@
+---
+layout: post
+title: "Hudson Fun Plugins"
+date: 2011-07-14T20:04:00.000+02:00
+permalink: /2011/07/hudson-fun-plugins.html
+blogger_id: "9104417564613020929"
+tags: ["cruisecontrol", "hudson"]
+---
+I have installed the following plugins, just for fun:<br />
+<br />
+Hudson Speaks! Plugin <a href="http://wiki.hudson-ci.org/display/HUDSON/Hudson+Speaks!+Plugin">http://wiki.hudson-ci.org/display/HUDSON/Hudson+Speaks!+Plugin</a>  (first, you must go to the /configure page and test if your server supports sound... unfortunately it doesn't support remote notification on another server...)<br />
+<br />
+Hudson Sounds plugin<br />
+<br />
+Radiator View Plugin <a href="http://wiki.hudson-ci.org/display/HUDSON/Radiator+View+Plugin">http://wiki.hudson-ci.org/display/HUDSON/Radiator+View+Plugin</a><br />
+<br />
+To enable the Radiator View, click on myViews and add a view of type "Radiator"<br />
+(even if you are blind you will see if your build failed)<br />
+<br />
+<br />
+<br />
+For sound and tray monitoring, you can still use the CruiseControl trick:<br />
+<br />
+"An alternative to this is to use the CCTray app that comes with CruiseControl.NET and have it monitor your Hudson server. You can set this up on a shared machine or on individual developer machines. To have CCTray monitor Hudson, set it up to monitor a custom URL that looks like http://hudsonserver:hudsonport/hudsonpath/cc.xml<br />
+<br />
+Basically, appending cc.xml to almost any Hudson URL (project, view, etc.) will return an XML document that CCTray can parse. You can then use CCTray to play .wav files, speak, or even control X10 devices.<br />
+<br />
+CCTray is available at <a href="http://sourceforge.net/projects/ccnet/files/">http://sourceforge.net/projects/ccnet/files/</a>"<br />
+<br />
+<br />
+I will do it first thing tomorrow...

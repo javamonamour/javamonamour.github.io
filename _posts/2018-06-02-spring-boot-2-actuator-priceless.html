@@ -1,0 +1,72 @@
+---
+layout: post
+title: "Spring Boot 2 actuator ... priceless!"
+date: 2018-06-02T20:42:00.000+02:00
+permalink: /2018/06/spring-boot-2-actuator-priceless.html
+blogger_id: "4193830720622621352"
+tags: ["actuator", "springboot"]
+---
+in application.properties, add this<br />
+<br />
+management.endpoints.web.exposure.include=*<br />
+management.endpoint.shutdown.enabled=true<br />
+<br />
+<br />
+and restart. hit this:<br />
+<br />
+<a href="http://localhost:8080/actuator/beans">http://localhost:8080/actuator/beans</a><br />
+<br />
+You can see the definition of all the Spring beans<br />
+<br />
+<br />
+Tutorial here <a href="http://www.baeldung.com/spring-boot-actuators">http://www.baeldung.com/spring-boot-actuators</a><br />
+<br />
+<br />
+<a href="http://localhost:8080/actuator/auditevents">http://localhost:8080/actuator/auditevents</a><br />
+<br />
+<a href="http://localhost:8080/actuator/conditions">http://localhost:8080/actuator/conditions</a><br />
+<br />
+<a href="http://localhost:8080/actuator/configprops">http://localhost:8080/actuator/configprops</a><br />
+<br />
+<a href="http://localhost:8080/actuator/env">http://localhost:8080/actuator/env</a><br />
+<br />
+<a href="http://localhost:8080/actuator/flyway">http://localhost:8080/actuator/flyway</a> (fail)<br />
+<br />
+<a href="http://localhost:8080/actuator/health">http://localhost:8080/actuator/health</a><br />
+<br />
+<a href="http://localhost:8080/actuator/heapdump">http://localhost:8080/actuator/heapdump</a> , this will save a file heapdump, rename it to heapdump.hprof, then open it with Eclipse Memory Analyzer Tool (MemoryAnalyzer.exe on Windows)<br />
+<br />
+<a href="http://localhost:8080/actuator/info">http://localhost:8080/actuator/info</a><br />
+<br />
+<a href="http://localhost:8080/actuator/liquibase">http://localhost:8080/actuator/liquibase</a> (fail)<br />
+<br />
+<a href="http://localhost:8080/actuator/logfile">http://localhost:8080/actuator/logfile</a> <br />
+<br />
+<br />
+<a href="http://localhost:8080/actuator/loggers">http://localhost:8080/actuator/loggers</a><br />
+<br />
+<a href="http://localhost:8080/actuator/threaddump">http://localhost:8080/actuator/threaddump</a><br />
+<br />
+<a href="http://localhost:8080/actuator/metrics">http://localhost:8080/actuator/metrics</a><br />
+<br />
+<a href="http://localhost:8080/actuator/metrics/jvm.memory.max">http://localhost:8080/actuator/metrics/jvm.memory.max</a><br />
+<br />
+<a href="http://localhost:8080/actuator/scheduledtasks">http://localhost:8080/actuator/scheduledtasks</a><br />
+<br />
+<a href="http://localhost:8080/actuator/httptrace">http://localhost:8080/actuator/httptrace</a><br />
+<br />
+<a href="http://localhost:8080/actuator/mappings">http://localhost:8080/actuator/mappings</a><br />
+<br />
+<a href="http://localhost:8080/actuator/prometheus">http://localhost:8080/actuator/prometheus</a> (fail)<br />
+<br />
+<br />
+<a href="http://localhost:8080/actuator/sessions">http://localhost:8080/actuator/sessions</a> (fail)<br />
+<br />
+<a href="http://localhost:8080/actuator/shutdown">http://localhost:8080/actuator/shutdown</a> (fail)<br />
+<br />
+<a href="http://localhost:8080/actuator/jolokia">http://localhost:8080/actuator/jolokia</a> (fail)<br />
+<br />
+<br />
+<br />
+<br />
+

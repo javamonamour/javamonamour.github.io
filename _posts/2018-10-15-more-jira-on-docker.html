@@ -1,0 +1,59 @@
+---
+layout: post
+title: "More JIRA on Docker"
+date: 2018-10-15T09:51:00.000+02:00
+permalink: /2018/10/more-jira-on-docker.html
+blogger_id: "2604567298315270603"
+tags: ["docker", "JIRA"]
+---
+See also /2017/11/jira-on-docker-and-integration-with.html<br />
+<br />
+<br />
+docker run -d -p 8080:8080 cptactionhank/atlassian-jira:7.7.0 <br />
+<br />
+<br />
+I need to install netstat, but I have no root access (root pw is not given), so I do:<br />
+<br />
+docker exec -ti --user root elastic_agnesi /bin/sh<br />
+<br />
+and I get this strange error:<br />
+<br />
+<i>OCI runtime exec failed: exec failed: container_linux.go:348: starting container process caused "chdir to cwd (\"/var/atlassian/jira\") set in config.json failed: permission denied": unknown</i><br />
+<br />
+<br />
+woorkaround: <br />
+<br />
+docker exec -ti elastic_agnesi /bin/sh<br />
+chmod 777 .<br />
+chmod 777 ..<br />
+exit<br />
+<br />
+and try again connecting as root.... I have no idea why, but this time it works.... <br />
+<br />
+Then as root do<br />
+<br />
+apt install net-tools<br />
+<br />
+Then I discover that only tcp (not tcp6) ports are available, because the image doesn't support IPv6 : "cat /proc/net/if_inet6" returns nothing.<br />
+<br />
+Now I start my webhook intercepting application with IPv4<br />
+<br />
+java -Djava.net.preferIPv4Stack=true -jar bla.jar<br />
+<br />
+before:<br />
+<br />
+[centos@localhost ~]$ netstat -an | grep 8090<br />
+tcp6       0      0 :::8090                 :::*                    LISTEN    <br />
+<br />
+after:<br />
+<br />
+[centos@localhost ~]$ netstat -an | grep 8090<br />
+tcp        0      0 0.0.0.0:8090            0.0.0.0:*               LISTEN     <br />
+<br />
+but still curl -X POST http://localhost:8090/greeting  is not working... I am giving up and will install JIRA directly on host.... <br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

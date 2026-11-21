@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Specifying javac debug flags in Maven"
+date: 2015-07-01T13:55:00.002+02:00
+permalink: /2015/07/specifying-javac-debug-flags-in-maven.html
+blogger_id: "932185646194831816"
+tags: ["mavensucks"]
+---
+If you have the disgrace of using Maven in your project, you might be also unhappy about the fact that javac compilation is done using the standard debug flags
+<br/><br/>
+<a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javac.html">http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javac.html</a>
+<br/><br/>
+
+-g:{keyword list} 
+<br/><br/>
+<pre>
+source Source file debugging information
+lines Line number debugging information
+vars Local variable debugging information
+</pre>
+<br/><br/>
+so passing -g:{source,lines,vars} activates the MAXIMUM debug info in the compiled classes.
+
+
+<br/><br/>
+
+Hew to pass these flags using maven is explained here <a href="http://stackoverflow.com/questions/14920921/how-to-pass-j-options-to-javac-through-maven">http://stackoverflow.com/questions/14920921/how-to-pass-j-options-to-javac-through-maven</a> , i.e. just add to your pom.xml this splendid XML and try not to puke for XML indigestion:
+
+<br/><br/>
+<pre class="brush: xml">
+&lt;plugin>
+    &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+    &lt;artifactId>maven-compiler-plugin&lt;/artifactId>
+    &lt;configuration>
+        &lt;compilerArgument>-J-g:{source,lines,vars}&lt;/compilerArgument>
+    &lt;/configuration>
+&lt;/plugin>
+</pre>

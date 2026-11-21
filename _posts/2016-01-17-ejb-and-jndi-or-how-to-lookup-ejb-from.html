@@ -1,0 +1,142 @@
+---
+layout: post
+title: "EJB and JNDI, or how to lookup a EJB from a JSP"
+date: 2016-01-17T18:00:00.001+01:00
+permalink: /2016/01/ejb-and-jndi-or-how-to-lookup-ejb-from.html
+blogger_id: "5603646021506803449"
+tags: ["ejb", "JNDI"]
+---
+<pre class="brush: java">
+
+package ejb3.bean;
+
+import javax.ejb.LocalBean;
+import javax.ejb.Stateless;
+
+@Stateless(mappedName = "HelloEjb")
+@LocalBean
+public class HelloEjb implements HelloEjbRemote, HelloEjbLocal {
+
+ public HelloEjb() {
+ }
+
+ public String printHello(String name) {
+  return "Hello " + name;
+ }
+
+}
+
+
+
+package ejb3.bean;
+
+import javax.ejb.Remote;
+
+@Remote
+public interface HelloEjbRemote {
+ String printHello(String name);
+}
+
+
+package ejb3.bean;
+
+import javax.ejb.Local;
+
+@Local
+public interface HelloEjbLocal {
+ String printHello(String name);
+}
+
+
+</pre>
+<br/><br/>
+
+
+The <a href="https://docs.oracle.com/javaee/6/api/javax/ejb/LocalBean.html">LocalBean</a> means a <a href="http://stackoverflow.com/a/7729969/651288">no-interface view</a> .
+
+<br/><br/>
+
+This is what I find in JNDI tree:
+<i> 
+<br/><br/>
+<b>Binding Name:</b> HelloEjb#ejb3.bean.HelloEjbRemote  (this is from @Remote)
+<br/>
+Class: com.sun.proxy.$Proxy208
+<br/><br/><br/>
+<b>Binding Name:</b> java:global.PVHelloEJBEAR.PVHelloEJB.HelloEjb!ejb3.bean.HelloEjb (this is from @LocalBean )
+<br/>
+Class: ejb3.bean.HelloEjb_n3seu_NoIntfViewImpl
+<br/><br/><br/>
+<b>Binding Name:</b> java:global.PVHelloEJBEAR.PVHelloEJB.HelloEjb!ejb3.bean.HelloEjbLocal (this is from @Local)
+
+<br/>
+Class: ejb3.bean.HelloEjb_n3seu_HelloEjbLocalImpl
+
+<br/><br/><br/>
+
+<b>Binding Name:</b> java:global.PVHelloEJBEAR.PVHelloEJB.HelloEjb!ejb3.bean.HelloEjbRemote (this is from @Remote again)
+<br/>
+Class: com.sun.proxy.$Proxy208
+<br/><br/><br/>
+</i>
+<br/>
+where PVHelloEJBEAR.PVHelloEJB.HelloEjb are respectively: application name (from application.xml), ejb module name (from application.xml), ejb name (mappedName)
+<br/>
+To lookup the EJB interface from a JSP:
+<br/>
+<pre>
+HelloEjbRemote helloEjb = (HelloEjbRemote) context.lookup("HelloEjb#ejb3.bean.HelloEjbRemote");
+</pre>
+<br/>
+or (it works also in a servlet) if the JSP is in a WAR the same EAR as the EJB module you can use the no-interface @LocalBean trick :
+<br/>
+<pre>
+@EJB
+private HelloEjb helloEjb;
+</pre>
+<br/><br/>
+
+If you provide a @EJB in the JSP/Servlet without having a @LocalBean annotation, you get this error:
+<br/>
+<pre>
+Module named 'PVHelloEJBEAR' failed to redeploy. See Error Log view for more detail.
+weblogic.management.DeploymentException: weblogic.application.naming.ReferenceResolutionException: [J2EE:160200]Error resolving ejb-ref "ejb3.bean.HelloEjb3Servlet/helloEjb" from module "PVHelloWAR.war" of application "PVHelloEJBEAR". The ejb-ref does not have an ejb-link and the JNDI name of the target bean has not been specified. Attempts to automatically link the ejb-ref to its target bean failed because no EJBs in the application were found to implement the "ejb3.bean.HelloEjb" interface. Link or map this ejb-ref to its target EJB and ensure the interfaces declared in the ejb-ref are correct.
+Exception received from deployment driver. See Error Log view for more detail.
+
+</pre>
+<br/><br/>
+
+This is the documentation of @EJB : <a href="https://docs.oracle.com/javaee/6/api/javax/ejb/EJB.html">https://docs.oracle.com/javaee/6/api/javax/ejb/EJB.html</a>
+<br/><br/>
+So if from your Servlet/JSP you want to access a REMOTE EJB (i.e. without LocalBean) you must change your @EJB lookup to:
+<br/>
+<pre>
+@EJB(lookup="HelloEjb#ejb3.bean.HelloEjbRemote")
+private HelloEjbRemote helloEjb;
+</pre>
+
+<br/><br/>
+or using the @Local interface:
+<pre>
+@EJB
+private HelloEjbLocal helloEjb;
+</pre>
+
+
+
+
+<br/><br/>
+
+Sample project available:
+<br/>
+<pre>
+git clone https://github.com/vernetto/JavaMonAmour
+cd JavaMonAmour\jeesamples\HelloEJB
+</pre>
+<br/><br/>
+
+If you wonder about Portable JNDI Syntax, <a href="https://docs.oracle.com/cd/E19226-01/820-7627/girgn/index.html">have a look here</a>.
+
+
+
+

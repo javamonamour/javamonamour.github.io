@@ -1,0 +1,12 @@
+---
+layout: post
+title: "OSB: how to clean a variable from empty elements and attributes"
+date: 2012-07-15T01:33:00.000+02:00
+permalink: /2012/07/osb-how-to-clean-variable-from-empty.html
+blogger_id: "4475938404022841653"
+tags: ["OSB"]
+---
+often the result of a transformation is to create empty non-mandatory elements and variables.<br />
+if you are bothered by them, run this:<br />
+<br />
+delete path //*[not(node()) and not(.//@*)] in variable myvar

@@ -1,0 +1,15 @@
+---
+layout: post
+title: "JDeveloper, SOA Suite, File Adapter, Native Format Builder: Unable to generate native format"
+date: 2010-12-21T13:52:00.001+01:00
+permalink: /2010/12/jdeveloper-soa-suite-file-adapter.html
+blogger_id: "669963345837975660"
+tags: ["JDeveloper", "NFB"]
+---
+Still investigating the issue.... how frustrating....wasted one hour on this....<br />
+<br />
+I was unimpressed by the MFL in Eclipse/OSB spitting NullPointerException when the input data contains "invalid" characters, but now NFB is also putting my patience at test....<br />
+<br />
+It turned out that, when you let the wizard decide the field names and types, it leaves the last one undefined - in case it was empty in the sample file. If you manually set the type to string. the wizard is able to complete successfully. What a great error handling!<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/08d53d475a7f1da3.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="150" src="/images/6fb8b9db3bd1aac7.png" width="320" /></a></div>

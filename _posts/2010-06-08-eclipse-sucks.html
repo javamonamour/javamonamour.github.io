@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Eclipse sucks"
+date: 2010-06-08T22:53:00.001+02:00
+permalink: /2010/06/eclipse-sucks.html
+blogger_id: "3072396622033107565"
+tags: ["eclipse"]
+---
+Well, let's say it could be more reliable.<br />
+<br />
+I have a EJB Project, where I depend on some libraries developed by a colleague.<br />
+My colleague changes package of class from a.b.MyClass to acme.a.b.MyClass and gives me the new libraries.<br />
+I correct my code, do a clean build, export the EAR and deploy. At activation, I get a ClassNotFoundException a.b.MyClass.&nbsp;&nbsp; WTF??? I am sure I have refactored everything!<br />
+<br />
+I shutdown Eclipse and restart... I repeat the clean build, I delete the tmp, stage and cache directories on the WebLogic server, I even create a new domain.... always the same problem.<br />
+<br />
+At last, I create a new EJB project and copy into it the EJB classes. This time it works.<br />
+<br />
+So my guess it that even a CLEAN build doesn't really clean everything...<br />
+the message is: when you see something weird in Eclipse, don't think of something wrong that YOU might have done.... think first that Eclipse might be playing some trick on you.<br />
+<br />
+I am seriously wishing that Oracle embraces NetBeans.... in a previous life I have used IntelliJ Idea, never been happier.

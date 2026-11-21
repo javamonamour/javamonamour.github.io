@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Troubleshooting a \"server down\" or a \"filesystem full\""
+date: 2012-05-19T11:31:00.000+02:00
+permalink: /2012/05/troubleshooting-server-down-or.html
+blogger_id: "4592514416442504252"
+tags: ["hyperic", "linux"]
+---
+Server myserver down:<br />
+<b>ping myserver<br />
+ssh myuser@myserver</b><br />
+<br />
+check if Hyperic monitoring agent is running:<br />
+<b>ps -eaf|grep agent|grep java|grep -v grep</b><br />
+<br />
+For a file system full or about to be full:<br />
+<br />
+df –k<br />
+cd filesystemName<br />
+du 2> /dev/null | sort -nr | cut -f2- | xargs du -hs 2> /dev/null | more<br />
+<br />
+(see http://serverfault.com/questions/62411/how-can-i-sort-du-h-output-by-size)

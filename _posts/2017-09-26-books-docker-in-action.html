@@ -1,0 +1,173 @@
+---
+layout: post
+title: "Books: Docker in Action"
+date: 2017-09-26T03:58:00.000+02:00
+permalink: /2017/09/books-docker-in-action.html
+blogger_id: "7486289226923870422"
+tags: ["books", "docker"]
+---
+<a href="https://www.manning.com/books/docker-in-action" imageanchor="1"><img border="0" data-original-height="332" data-original-width="265" height="400" src="/images/b9c5586eb9e2a6c3.jpg" width="319" /></a><br />
+<br />
+It's an excellent book, highly recommended,  Jeff Nickoloff is a great author.<br />
+<br />
+Here some notes from the exercises<br />
+<br />
+<pre>docker run dockerinaction/hello_world
+
+docker help
+</pre><br />
+<i><br />
+Usage: docker COMMAND<br />
+<br />
+A self-sufficient runtime for containers<br />
+<br />
+Options:<br />
+--config string      Location of client config files (default "/home/centos/.docker")<br />
+-D, --debug              Enable debug mode<br />
+--help               Print usage<br />
+-H, --host list          Daemon socket(s) to connect to<br />
+-l, --log-level string   Set the logging level ("debug"|"info"|"warn"|"error"|"fatal") (default "info")<br />
+--tls                Use TLS; implied by --tlsverify<br />
+--tlscacert string   Trust certs signed only by this CA (default "/home/centos/.docker/ca.pem")<br />
+--tlscert string     Path to TLS certificate file (default "/home/centos/.docker/cert.pem")<br />
+--tlskey string      Path to TLS key file (default "/home/centos/.docker/key.pem")<br />
+--tlsverify          Use TLS and verify the remote<br />
+-v, --version            Print version information and quit<br />
+<br />
+Management Commands:<br />
+config      Manage Docker configs<br />
+container   Manage containers<br />
+image       Manage images<br />
+network     Manage networks<br />
+node        Manage Swarm nodes<br />
+plugin      Manage plugins<br />
+secret      Manage Docker secrets<br />
+service     Manage services<br />
+stack       Manage Docker stacks<br />
+swarm       Manage Swarm<br />
+system      Manage Docker<br />
+volume      Manage volumes<br />
+<br />
+Commands:<br />
+attach      Attach local standard input, output, and error streams to a running container<br />
+build       Build an image from a Dockerfile<br />
+commit      Create a new image from a container's changes<br />
+cp          Copy files/folders between a container and the local filesystem<br />
+create      Create a new container<br />
+diff        Inspect changes to files or directories on a container's filesystem<br />
+events      Get real time events from the server<br />
+exec        Run a command in a running container<br />
+export      Export a container's filesystem as a tar archive<br />
+history     Show the history of an image<br />
+images      List images<br />
+import      Import the contents from a tarball to create a filesystem image<br />
+info        Display system-wide information<br />
+inspect     Return low-level information on Docker objects<br />
+kill        Kill one or more running containers<br />
+load        Load an image from a tar archive or STDIN<br />
+login       Log in to a Docker registry<br />
+logout      Log out from a Docker registry<br />
+logs        Fetch the logs of a container<br />
+pause       Pause all processes within one or more containers<br />
+port        List port mappings or a specific mapping for the container<br />
+ps          List containers<br />
+pull        Pull an image or a repository from a registry<br />
+push        Push an image or a repository to a registry<br />
+rename      Rename a container<br />
+restart     Restart one or more containers<br />
+rm          Remove one or more containers<br />
+rmi         Remove one or more images<br />
+run         Run a command in a new container<br />
+save        Save one or more images to a tar archive (streamed to STDOUT by default)<br />
+search      Search the Docker Hub for images<br />
+start       Start one or more stopped containers<br />
+stats       Display a live stream of container(s) resource usage statistics<br />
+stop        Stop one or more running containers<br />
+tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE<br />
+top         Display the running processes of a container<br />
+unpause     Unpause all processes within one or more containers<br />
+update      Update configuration of one or more containers<br />
+version     Show the Docker version information<br />
+wait        Block until one or more containers stop, then print their exit codes<br />
+<br />
+Run 'docker COMMAND --help' for more information on a command.<br />
+<br />
+</i><br />
+<br />
+<br />
+<br />
+<br />
+interesting demo of <b>Portainer</b> <a href="https://portainer.io/overview.html#demo">https://portainer.io/overview.html#demo</a> , I have installed and run locally to manage my environment<br />
+<br />
+<pre>docker run --detach --name web nginx:latest
+
+docker run --interactive --tty --link web:web --name web_test busybox:latest /bin/sh
+
+wget -O - http://web:80/
+
+exit
+(CTRL-P CTRL-Q to run interactively a process and then detach)
+
+#this example is WRONG in the book!
+docker run -d --name mailer dockerinaction/ch2_mailer
+
+docker run -it --name agent --link web:insideweb --link mailer:insidemailer dockerinaction/ch2_agent
+
+#connect to a running instance in interactive mode
+docker start -i "CID"
+
+docker restart web
+docker restart mailer
+docker restart agent
+
+docker run -d --name namespaceA busybox:latest /bin/sh -c "sleep 30000"
+docker run -d --name namespaceB busybox:latest /bin/sh -c "nc -l -p 0.0.0.0:80"
+
+docker exec namespaceA ps
+docker exec namespaceB ps
+
+#creating a conflict by NOT using namespaces
+docker run -d --name webConflict nginx:latest
+docker logs webConflict
+docker exec webConflict nginx -g 'daemon off;'
+
+#avoiding conflicts by using namespaces
+docker run -d --name webA nginx:latest
+docker logs webA
+docker run -d --name webB nginx:latest
+docker logs webB
+
+
+docker rename webA webPippo
+
+#create is like run, but it's created in stopped state
+CID=$(docker create nginx)
+echo $CID
+
+docker create --cidfile /tmp/web.cid nginx
+
+#running 3 containers linked to each other - in reverse order
+MAILER_CID=$(docker run -d dockerinaction/ch2_mailer)
+WEB_CID=$(docker run -d nginx)
+AGENT_CID=$(docker run -d --link $WEB_CID:insideweb --link $MAILER_CID:insidemailer dockerinaction/ch2_agent)
+
+#check status of container
+docker inspect $CID
+
+
+docker search postgres
+
+
+docker pull busybox:latest
+docker save -o myfile.tar busybox:latest
+docker rmi busybox
+docker load -i myfile.tar
+
+
+
+
+</pre><br />
+<br />
+<br />
+<br />
+

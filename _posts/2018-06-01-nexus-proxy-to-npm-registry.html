@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Nexus proxy to npm registry"
+date: 2018-06-01T12:40:00.000+02:00
+permalink: /2018/06/nexus-proxy-to-npm-registry.html
+blogger_id: "4931190704649222557"
+tags: ["nexus", "nodejs", "npm"]
+---
+<a href="https://nodejs.org/en/">https://nodejs.org/en/</a><br />
+<a href="https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-a-centos-7-server">https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-a-centos-7-server</a><br />
+<br />
+<br />
+Install node.js<br />
+<br />
+cd ~<br />
+wget http://nodejs.org/dist/v0.10.30/node-v0.10.30-linux-x64.tar.gz<br />
+sudo tar --strip-components 1 -xzvf node-v* -C /usr/local<br />
+node --version<br />
+npm<br />
+<br />
+<a href="https://help.sonatype.com/repomanager3/node-packaged-modules-and-npm-registries">https://help.sonatype.com/repomanager3/node-packaged-modules-and-npm-registries</a><br />
+<br />
+In nexus 3, create a Proxy NPM repo pointing to https://registry.npmjs.org  and called npm-all<br />
+<br />
+<br />
+npm config set registry http://localhost:8081/repository/npm-all/<br />
+npm install --save-dev babel-loader babel-core babel-preset-env webpack<br />
+<br />
+<br />
+it works! I only get this error<br />
+<br />
+<pre>engine p-try@1.0.0: wanted: {"node":">=4"} (current: {"node":"0.10.30","npm":"1.4.21"})
+npm ERR! Error: Package 'webassemblyjs-ast' not found : repository/npm-all/webassemblyjs/ast
+npm ERR!     at RegClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:300:14)
+npm ERR!     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:238:65)
+npm ERR!     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:123:22)
+npm ERR!     at Request.emit (events.js:98:17)
+npm ERR!     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:893:14)
+npm ERR!     at Request.emit (events.js:117:20)
+npm ERR!     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:844:12)
+npm ERR!     at IncomingMessage.emit (events.js:117:20)
+npm ERR!     at _stream_readable.js:938:16
+npm ERR!     at process._tickCallback (node.js:419:13)
+npm ERR! If you need help, you may report this *entire* log,
+npm ERR! including the npm and node versions, at:
+npm ERR!     <http://github.com/npm/npm/issues>
+
+
+</pre><br />
+<br />
+<br />
+to clean npm local repository, use "npm cache clean"<br />
+<br />
+<br />
+

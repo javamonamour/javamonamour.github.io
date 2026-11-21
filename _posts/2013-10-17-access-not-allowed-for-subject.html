@@ -1,0 +1,117 @@
+---
+layout: post
+title: "Access not allowed for subject: principals on ResourceType: JMSDestinationRuntime Action: execute, Target: getMessages"
+date: 2013-10-17T17:44:00.001+02:00
+permalink: /2013/10/access-not-allowed-for-subject.html
+blogger_id: "8097036380559235007"
+tags: ["jms"]
+---
+Not anybody can view the messages in a plain vanilla JMS queue in WebLogic. By default only Administrators can.
+
+<br />
+/
+
+<br />
+<pre>cd('/SecurityConfiguration/mydomain/Realms/myrealm')
+cmo.setDelegateMBeanAuthorization(true)&nbsp;</pre>
+
+<br />
+(this requires immediate restart>
+<br />
+
+Changes to XACMLAuthorizer to add a policy to JMSDestinationRuntimeMBean invoke operation is not recorded by the WLS console, unfortunately, so I will have to study how to script it.
+<br /><br />
+
+
+see Oracle Doc "WebLogic Server: Error When Attempting to View JMS Messages in Admin Console: Access not allowed for subject (Doc ID 1327324.1)":
+<br />
+<pre>Please go to Security Realms -&gt; <security realm=""> -&gt; Configuration -&gt; General.
+
+    Please check the "Use Authorization Providers to Protect JMX Access" parameter.
+    Go to "Roles and Policies" -&gt; Realm Policies.
+    In the Policy table, select "JMX Policy Editor."
+    Select "Global Scope" and click Next.
+    From MBean Types, select "weblogic.management.runtime."
+    Select "JMSDestinationRuntimeMBean" and click next.
+    In Attributes and Operations, select "Operations: Permission to Invoke."
+    Click on "Create Policy" button and save.
+    Click on "Add Condition" and select "User/Group" in "Predicate List." Click next.
+    Type username (USER)/Group, and click Add. Click Finish.
+    Reboot the server and login using the user you just created.
+
+</security></pre>
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/8cd415016cc00e65.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="584" src="/images/a12e40a7896ee261.png" width="640" /></a></div>
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/8c067385ad8754f1.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="470" src="/images/7240318459f747fd.png" width="640" /></a></div>
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/54bef5910d064a47.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="481" src="/images/38018f795737c22a.png" width="640" /></a></div>
+<br />
+
+
+In fact it's better to combine these 2 rules: group = IntegrationOperators OR Administrators, so that weblogic user can still see the JMS messages. 
+
+<br/>
+The resulting policy added to XACMLAuthorizer.dat is:
+<br/>
+<pre name="code" class="brush: xml">
+&lt;Policy PolicyId="urn:bea:xacml:2.0:entitlement:resource:type@E@Fjmx@G@M@Ooperation@Einvoke@M@Oapplication@E@M@OmbeanType@Eweblogic.management.runtime.JMSDestinationRuntimeMBean" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">&lt;Description>Grp(IntegrationOperators)&lt;/Description>&lt;Target>&lt;Resources>&lt;Resource>&lt;ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">type=&lt;jmx&gt;, operation=invoke, application=, mbeanType=weblogic.management.runtime.JMSDestinationRuntimeMBean&lt;/AttributeValue>&lt;ResourceAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:resource:resource-ancestor-or-self" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>&lt;/ResourceMatch>&lt;/Resource>&lt;/Resources>&lt;/Target>&lt;Rule RuleId="primary-rule" Effect="Permit">&lt;Condition>&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">IntegrationOperators&lt;/AttributeValue>&lt;SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:group" DataType="http://www.w3.org/2001/XMLSchema#string"/>&lt;/Apply>&lt;/Condition>&lt;/Rule>&lt;Rule RuleId="deny-rule" Effect="Deny">&lt;/Rule>&lt;/Policy>
+</pre>
+<br/><br/>
+
+An extra entry will be added to the file:<br/>
+<pre name="code" class="brush: xml">
+&lt;WLSMetaData PolicyId="urn:bea:xacml:2.0:entitlement:resource:type@E@Fjmx@G@M@Ooperation@Einvoke@M@Oapplication@E@M@OmbeanType@Eweblogic.management.runtime.JMSDestinationRuntimeMBean" Status="3">&lt;WLSPolicyInfo wlsCreatorInfo="mbean"/>
+</pre>
+<br/><br/>
+
+
+The relative WLST is:
+
+
+<pre name="code" class="brush: java">
+
+def allowJMSAccessForGroup(domainName):
+    try:
+        print "applying JMS access policy for domain", domainName
+        policy = '&lt;Policy PolicyId="urn:bea:xacml:2.0:entitlement:resource:type@E@Fjmx@G@M@Ooperation@Einvoke@M@Oapplication@E@M@OmbeanType@Eweblogic.management.runtime.JMSDestinationRuntimeMBean" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">&lt;Description>Grp(IntegrationOperators)&lt;/Description>&lt;Target>&lt;Resources>&lt;Resource>&lt;ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">type=&lt;jmx&gt;, operation=invoke, application=, mbeanType=weblogic.management.runtime.JMSDestinationRuntimeMBean&lt;/AttributeValue>&lt;ResourceAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:resource:resource-ancestor-or-self" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>&lt;/ResourceMatch>&lt;/Resource>&lt;/Resources>&lt;/Target>&lt;Rule RuleId="primary-rule" Effect="Permit">&lt;Condition>&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">IntegrationOperators&lt;/AttributeValue>&lt;SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:group" DataType="http://www.w3.org/2001/XMLSchema#string"/>&lt;/Apply>&lt;/Condition>&lt;/Rule>&lt;Rule RuleId="deny-rule" Effect="Deny">&lt;/Rule>&lt;/Policy>'
+        print "applying policy", policy.replace("&lt;", "&amp;lt;") #the second one is ampersand followed by lt;
+        print "cd('/SecurityConfiguration/' + domainName + '/DefaultRealm/myrealm/Authorizers/XACMLAuthorizer')"
+        cd('/SecurityConfiguration/' + domainName + '/DefaultRealm/myrealm/Authorizers/XACMLAuthorizer')
+        cmo.addPolicy(policy)
+        print "done applying policy"
+        return True
+    except Exception, inst:
+        print inst
+        print sys.exc_info()[0]
+        dumpStack()
+        sys.stderr.write("unable to apply JMS access policy for domain " + domainName)
+        return False
+
+  
+serverConfig()
+allowJMSAccessForGroup(domain)
+  
+</pre>
+<br/>
+(no edit() statement is necessary to apply this change)
+<br/>
+
+BE VERY CAREFUL; authorization information is cached in WebLogic console, so to see the effect of this change it's saver to logout and login again.
+
+<br/>
+
+If you get a <a href="http://docs.oracle.com/cd/E13222_01/wls/docs92/wlsmbeanref/mbeans/XACMLAuthorizerMBean.html?skipReload=true#addPolicy">"weblogic.management.utils.AlreadyExistsException: Policy with matching ID and version already exists in store"</a> don't worry, it's all right. Just check that the policy is in place.
+
+<br/>
+Be aware that for old versions of WebLogic there are several bugs:<br/>
+Bug 8912918<br/>
+Bug 9764721<br/>
+Bug 11778631<br/>
+
+so make sure you apply the patches.
+
+

@@ -1,0 +1,39 @@
+---
+layout: post
+title: "Gitlab on Docker"
+date: 2018-04-29T09:51:00.000+02:00
+permalink: /2018/04/gitlab-on-docker.html
+blogger_id: "4638997878936214077"
+tags: ["docker", "git", "gitlab"]
+---
+you can install directly https://about.gitlab.com/installation/#centos-7  (to uninstall: sudo gitlab-ctl stop && sudo gitlab-ctl uninstall && sudo systemctl stop gitlab-runsvdir.service && sudo systemctl disable gitlab-runsvdir.service )<br />
+<br />
+<br />
+but it's wiser to simply run a docker image:<br />
+<br />
+https://docs.gitlab.com/omnibus/docker/<br />
+<br />
+<br />
+sudo docker run --detach     --hostname gitlab.example.com     --publish 7443:443 --publish 7080:80 --publish 7022:22     --name gitlab     --restart always     --volume /srv/gitlab/config:/etc/gitlab     --volume /srv/gitlab/logs:/var/log/gitlab     --volume /srv/gitlab/data:/var/opt/gitlab     gitlab/gitlab-ce:latest<br />
+<br />
+(I had to change 22 to 2222, since it was already used)<br />
+<br />
+for SELinux (you can disable by sudo vi /etc/selinux/config, then set disabled and reboot... check with sestatus):<br />
+sudo docker run --detach --hostname gitlab.example.com --publish 443:443 --publish 80:80 --publish 22:22 --name gitlab --restart always --volume /srv/gitlab/config:/etc/gitlab:Z --volume /srv/gitlab/logs:/var/log/gitlab:Z --volume /srv/gitlab/data:/var/opt/gitlab:Z gitlab/gitlab-ce:latest<br />
+<br />
+<br />
+<br />
+then http://127.0.0.1:7080  , give your admin password and register for a new user vernetto<br />
+<br />
+create project vernetto, make it public, create repository pippo, then clone it from bash terminal<br />
+git clone http://localhost:7080/vernetto/pippo.git<br />
+cd pippo/<br />
+touch README.md<br />
+git add README.md<br />
+git commit -m "add README"<br />
+git push -u origin master<br />
+git remote -v<br />
+origin http://localhost:7080/vernetto/pippo.git (fetch)<br />
+origin http://localhost:7080/vernetto/pippo.git (push)<br />
+<br />
+

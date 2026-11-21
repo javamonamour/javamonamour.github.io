@@ -1,0 +1,32 @@
+---
+layout: post
+title: "HTTP/1.1 502 Bad Gateway"
+date: 2016-04-03T20:40:00.001+02:00
+permalink: /2016/04/http11-502-bad-gateway.html
+blogger_id: "1464386918412191239"
+tags: ["http"]
+---
+<pre>
+com.sun.xml.ws.client.ClientTransportException: HTTP transport error: java.io.IOException: Unable to tunnel through proxy. 
+Proxy returns "HTTP/1.1 502 Bad Gateway" HTTP transport error: 
+java.io.IOException: Unable to tunnel through proxy. Proxy returns "HTTP/1.1 502 Bad Gateway" at 
+com.sun.xml.ws.transport.http.client.HttpClientTransport.getOutput(HttpClientTransport.java:141) at 
+com.sun.xml.ws.transport.http.client.HttpTransportPipe.process(HttpTransportPipe.java:187) at 
+com.sun.xml.ws.transport.http.client.HttpTransportPipe.processRequest(HttpTransportPipe.java:124) at 
+com.sun.xml.ws.transport.DeferredTransportPipe.processRequest(DeferredTransportPipe.java:118) at 
+com.sun.xml.ws.api.pipe.Fiber.__doRun(Fiber.java:866) at 
+com.sun.xml.ws.api.pipe.Fiber._doRun(Fiber.java:815) at 
+com.sun.xml.ws.api.pipe.Fiber.doRun(Fiber.java:778) at 
+com.sun.xml.ws.api.pipe.Fiber.runSync(Fiber.java:680) at 
+com.sun.xml.ws.client.Stub.process(Stub.java:272) at 
+com.sun.xml.ws.client.sei.SEIStub.doProcess(SEIStub.java:153) at 
+com.sun.xml.ws.client.sei.SyncMethodHandler.invoke(SyncMethodHandler.java:115) at 
+com.sun.xml.ws.client.sei.SyncMethodHandler.invoke(SyncMethodHandler.java:95) at 
+com.sun.xml.ws.client.sei.SEIStub.invoke(SEIStub.java:136) 
+
+</pre>
+
+<br/><br/>
+It's not clear what is causing this problem...
+<br/><br/>
+

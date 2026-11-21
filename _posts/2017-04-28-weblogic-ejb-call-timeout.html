@@ -1,0 +1,117 @@
+---
+layout: post
+title: "WebLogic EJB call timeout"
+date: 2017-04-28T11:53:00.002+02:00
+permalink: /2017/04/weblogic-ejb-call-timeout.html
+blogger_id: "3508704742682472327"
+tags: ["ejb", "ejbclient"]
+---
+If you get often this type of stuck threads:
+
+<pre class="brush: xml">
+
+&quot;[STUCK] ExecuteThread: '170' for queue: 'weblogic.kernel.Default (self-tuning)'&quot; daemon prio=10 tid=0x00002b4f841f1b20 nid=0x5763 in Object.wait() [0x00002b4f8c842000]
+   java.lang.Thread.State: WAITING (on object monitor)
+ at java.lang.Object.wait(Native Method)
+ - waiting on &lt;0x0000000776826778&gt; (a weblogic.rjvm.ResponseImpl)
+ at weblogic.rjvm.ResponseImpl.waitForData(ResponseImpl.java:90)
+ - locked &lt;0x0000000776826778&gt; (a weblogic.rjvm.ResponseImpl)
+ at weblogic.rjvm.ResponseImpl.getTxContext(ResponseImpl.java:130)
+ at weblogic.rjvm.BasicOutboundRequest.sendReceive(BasicOutboundRequest.java:110)
+ at weblogic.rmi.internal.BasicRemoteRef.invoke(BasicRemoteRef.java:222)
+
+
+</pre>
+
+you might want to set these 2 parameters (this for WLS 10.3.6 )
+
+<br/>
+-Dweblogic.rmi.clientTimeout=valueInMilliseconds
+<br/>
+
+
+weblogic.jndi.requestTimeout=valueInMilliseconds
+<br/>
+<br/>
+The reason of that WAITING is that there is a synchronized block followed by an Object.wait(timeout):
+<br/><br/>
+
+<pre class="brush: java">
+  private void waitForData()
+  {
+    int i = 0;
+    synchronized (this)
+    {
+      long l1 = this.timeout;
+      while (!isAvailable()) {
+        try
+        {
+          int j = 0;
+          long l2 = System.currentTimeMillis();
+          wait(l1);
+          if (this.timeout > 0)
+          {
+            long l3 = System.currentTimeMillis() - l2;
+            if (l3 >= l1) {
+              j = 1;
+            } else {
+              l1 -= l3;
+            }
+          }
+          if ((!isAvailable()) && (j != 0))
+          {
+            this.t = new RequestTimeoutException("RJVM response from '" + this.rjvm + "' for '" + (this.md != null ? this.md.toString() : "null") + "' timed out after: " + this.timeout + "ms.");
+            
+            i = 1;
+          }
+        }
+        catch (InterruptedException localInterruptedException) {}
+      }
+    }
+    if (i != 0) {
+      this.rjvm.removePendingResponse(this.id);
+    }
+  }
+
+</pre>
+
+See also:
+<br/>
+
+Oracle Support doc "JNDI Thread Stuck" (Doc ID 1482310.1)
+
+<br/>
+For alternative ways to specify timeouts in WLS 12 , see <a href="https://docs.oracle.com/middleware/1212/wls/WLRMI/rmi_api.htm#WLRMI251">https://docs.oracle.com/middleware/1212/wls/WLRMI/rmi_api.htm#WLRMI251</a>
+
+<br/>
+In WLS 10, <a href="https://docs.oracle.com/cd/E11035_01/wls100/ejb/DDreference-ejb-jar.html#wp1362824">https://docs.oracle.com/cd/E11035_01/wls100/ejb/DDreference-ejb-jar.html#wp1362824</a>  use remote-client-timeout in your weblogic.ejb-jar.xml
+
+<br/>
+
+
+The Timeout event will cause a RequestTimeoutException which is a IOException :
+
+<a href="http://docs.oracle.com/cd/E57014_01/wls/WLAPI/weblogic/rmi/extensions/RequestTimeoutException.html">http://docs.oracle.com/cd/E57014_01/wls/WLAPI/weblogic/rmi/extensions/RequestTimeoutException.html</a>
+
+
+
+See also Oracle Support article "How to configure timeout for an EJB Client (Doc ID 943282.1)" <br/>
+<br/>
+in a nutshell: <br/>
+-Dweblogic.rmi.clientTimeout=timeoutinmilliseconds   sets the timeout on the client (consumer) side
+<br/>
+
+remote-client-timeout in weblogic-ejb-jar.xml sets the timeout on the server (provider) side.
+<br/>
+
+
+
+
+
+ 
+
+
+
+
+
+

@@ -1,0 +1,31 @@
+---
+layout: post
+title: "OSB: Publish WSDL to UDDI"
+date: 2013-11-23T15:28:00.001+01:00
+permalink: /2013/11/osb-publish-wsdl-to-uddi.html
+blogger_id: "7631553290717861945"
+tags: ["osb11"]
+---
+In OSB11 (Eclipse 3.5.3) if you right click on a WSDL you get<br />
+Web Services / Publish WSDL File<br />
+<br />
+You choose "Publish this Web Service to the Unit Test UDDI Registry.<br />
+<br />
+If you have not registered any UDDI Registry, you get this error message:<br />
+<br />
+IWAB0363E No UDDI registry available<br />
+<br />
+Do solve the problem, go to<br />
+http://ws.apache.org/juddi/releases.html<br />
+<br />
+there is a 3.0.2,<br />
+download it, unzip it, deploy juddiv3-war-3.0.2.war to WebLogic.<br />
+<br />
+<br />
+<br />
+in Eclipse do New , Other, enter UDDI and select "UDDI Registry".<br />
+You must create it inside a Oracle Service Bus Configuration project.<br />
+<br />
+<br />
+<br />
+On Java side, you can use http://uddi4j.sourceforge.net/doc.html&nbsp; UDDI4J to invoke the UDDI services.

@@ -1,0 +1,83 @@
+---
+layout: post
+title: "Experimenting with Date/Timestamp conversions with Oracle PL/SQL"
+date: 2012-09-17T17:00:00.001+02:00
+permalink: /2012/09/experimenting-with-datetimestamp.html
+blogger_id: "308994923281478456"
+tags: ["oracledb"]
+---
+<b>select CURRENT_TIMESTAMP from dual;</b><br />
+<br />
+this returns 17-SEP-12 12.23.25.893927000 PM EUROPE/BERLIN<br />
+(with millisecond and TimeZone)<br />
+<br />
+What is the difference between CURRENT_TIMESTAMP and SYSTIMESTAMP ?<br />
+select CURRENT_TIMESTAMP - SYSTIMESTAMP from dual;<br />
+<br />
+0 0:0:0.000017<br />
+<br />
+basically NONE.<br />
+<br />
+____________<br />
+<br />
+<br />
+How to convert a String such as <br />
+value = '2012-09-11 04:11:41.606+02:00'<br />
+to a Timestamp:<br />
+<br />
+<b>cast(to_timestamp_tz(value , 'YYYY-MM-DD hh24:mi:ss,FF3TZH:TZM') as TIMESTAMP)</b><br />
+<br />
+____________<br />
+<br />
+<br />
+you can do maths with TIMESTAMP:<br />
+<br />
+select CURRENT_TIMESTAMP - cast(to_timestamp_tz('2012-09-11 04:11:41.606+02:00' , 'YYYY-MM-DD hh24:mi:ss,FF3TZH:TZM') as TIMESTAMP) from dual;<br />
+<br />
+returns<br />
+<br />
+6 9:8:17.379691<br />
+<br />
+which is a TIME INTERVAL, not a number.<br />
+How to covert a TIME INTERVAL to a NUMBER?<br />
+<br />
+<br />
+______________________<br />
+<br />
+select TO_NUMBER(CURRENT_TIMESTAMP) from dual;<br />
+<br />
+doesn't work, you get ORA-01722: invalid number<br />
+<br />
+____________<br />
+<br />
+<br />
+This function works pretty well to get the EPOCH ( it returns a decimal number representing the SECONDS, if you want the MILLISECONDS as in the Java getCurrentTimeMillis() you should multiply by 1000 and truncate)<br />
+<br />
+create or replace<br />
+FUNCTION MY_EPOCH<br />
+(<br />
+time1 TIMESTAMP<br />
+)<br />
+<br />
+RETURN number  <br />
+<br />
+AS <br />
+sec NUMBER;<br />
+firstofjan70 timestamp;<br />
+<br />
+BEGIN<br />
+<br />
+firstofjan70 := timestamp '1970-01-01 00:00:00 +00:00';<br />
+<br />
+select<br />
+      extract(day from (time1 - firstofjan70 ))*86400+<br />
+      extract(hour from (time1 - firstofjan70))*3600+<br />
+      extract(minute from (time1 - firstofjan70))*60+<br />
+      extract(second from (time1 - firstofjan70)) <br />
+      into sec<br />
+from dual;<br />
+<br />
+RETURN sec;<br />
+<br />
+<br />
+

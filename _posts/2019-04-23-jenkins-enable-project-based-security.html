@@ -1,0 +1,23 @@
+---
+layout: post
+title: "Jenkins enable project based security"
+date: 2019-04-23T10:59:00.001+02:00
+permalink: /2019/04/jenkins-enable-project-based-security.html
+blogger_id: "2651073612521158244"
+tags: ["jenkins"]
+---
+Sometimes you share a Jenkins instance amongst several projects (IMHO this is bad practice, each project should have its own Jenkins to minimize interference)<br />
+<br />
+This is how to do it (copied from <a href="https://stackoverflow.com/questions/32111825/jenkins-how-to-set-authorization-on-project-basis">https://stackoverflow.com/questions/32111825/jenkins-how-to-set-authorization-on-project-basis</a> )<br />
+<br />
+<br />
+a) make sure Matrix Authorization Strategy Plugin  is installed (Manage Jenkins/Manage Plugins/Installed Plugins)<br />
+<br />
+b) "Manage Jenkins", "Configure Global Security", add the target user to the "Project-based Matrix Authorization Strategy ",<br />
+add the target user with permissions "Overall/Read and Job/Read"<br />
+<br />
+c) on the main page, select the target project, "Enable project-based security", add the target user and on the right, click on the "grant all permissions" button<br />
+<br />
+at this point the user has login and can administer the target project, but only view other projects.<br />
+<br />
+Jenkins would be a much better tool if all these configuration operations could be easily scriptable. Nowadays it's just a huge clickodrome and very awkward to manage, you have to wade through zillion of configuration pages and unless you are really experienced it's sometimes frustrating ... you don't even have a "search" functionality for configuration options, you have to remember all locations by heart... 

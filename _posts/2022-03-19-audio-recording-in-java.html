@@ -1,0 +1,58 @@
+---
+layout: post
+title: "Audio recording in Java"
+date: 2022-03-19T10:51:00.002+01:00
+permalink: /2022/03/audio-recording-in-java.html
+blogger_id: "3966510558327542074"
+---
+<a href="https://www.baeldung.com/java-sound-api-capture-mic">This Baeldung post</a> explains clearly how to record from a microphone (source code available in github) .
+
+But it doesn't explain how to record from the headset. In my case I need to record not the mic but the sound played by a video being played.
+
+<a href="https://docs.oracle.com/javase/tutorial/sound/sampled-overview.html">This trail</a>  explains very well the Sound API.
+
+
+This is how to print all the available Mixer devices on your System:
+
+<pre class="brush: java" name="code"> 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Mixer;
+
+public class DetectSystem {
+    public static void main(String[] args) {
+        System.out.println("DETECTING MIXERS");
+        Mixer.Info[] mixerInfos = AudioSystem.getMixerInfo();
+        for (Mixer.Info mixerInfo : mixerInfos) {
+            System.out.println(mixerInfo);
+        }
+    }
+}
+</pre>
+
+and on my system the output is:
+
+<pre>
+DETECTING MIXERS
+Primary Sound Driver, version Unknown Version
+Headset Earphone (Plantronics C720-M), version Unknown Version
+Speakers (Realtek High Definition Audio), version Unknown Version
+Primary Sound Capture Driver, version Unknown Version
+Headset Microphone (Plantronics, version Unknown Version
+Microphone (Realtek High Defini, version Unknown Version
+Port Headset Earphone (Plantronics C, version 0.83
+Port Speakers (Realtek High Definiti, version 10.0
+Port Headset Microphone (Plantronics, version 0.83
+Port Microphone (Realtek High Defini, version 10.0
+</pre>
+
+
+
+
+<a href="https://www.tabnine.com/code/java/methods/javax.sound.sampled.Mixer/getSourceLineInfo">Here</a> a  nice collection of snippets.
+
+
+Here my github repo https://github.com/vernetto/screencapture.git
+
+
+
+

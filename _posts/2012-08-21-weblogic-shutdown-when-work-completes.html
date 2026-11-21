@@ -1,0 +1,33 @@
+---
+layout: post
+title: "WebLogic shutdown when work completes"
+date: 2012-08-21T15:46:00.000+02:00
+permalink: /2012/08/weblogic-shutdown-when-work-completes.html
+blogger_id: "2700286063626653798"
+tags: ["WLST"]
+---
+If you go to Control-Shutdown-when work completes<br />
+<br />
+status is <b>SUSPENDING</b> for 15 minutes...<br />
+<br />
+so I do "force shutdown now" and shortly after WLS dies and status becomes <b>FORCE_SHUTTING_DOWN</b>.<br />
+<br />
+<a href="http://docs.oracle.com/cd/E21764_01/web.1111/e13813/reference.htm#WLSTC454">With WLST you can do shutdown</a> :<br />
+<br />
+shutdown('${SERVER_NAME}','Server', ignoreSessions='true', timeOut=120, force='true')<br />
+<br />
+<br />
+Official doc:<br />
+<br />
+<a href="http://docs.oracle.com/cd/E21764_01/web.1111/e13708/server_life.htm#START217">http://docs.oracle.com/cd/E21764_01/web.1111/e13708/server_life.htm#START217<br />
+</a><br />
+<br />
+<br />
+Why WLS doesn't exit the SUSPENDING status? My theory is that there are active threads for the FileAdapter and DbAdapter poller.<br />
+So how to do a graceful shutdown?<br />
+I would propose a <a href="http://docs.oracle.com/cd/E14571_01/web.1111/e13813/reference.htm#i1060281">WLST SUSPEND</a> followed by a FORCE SHUTDOWN.<br />
+<br />
+<br />
+<br />
+<br />
+

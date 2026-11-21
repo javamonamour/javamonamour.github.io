@@ -1,0 +1,29 @@
+---
+layout: post
+title: "WebLogic 11 clientgen and Java Client for a WebLogic Web Service"
+date: 2010-06-11T10:12:00.004+02:00
+permalink: /2010/06/weblogic-11-clientgen-and-java-client.html
+blogger_id: "7815590754311449037"
+tags: ["Axis2", "clientgen", "wsdl2java"]
+---
+after having added tons of JARs to the classpath, I still get this error message:<br />
+<br />
+java.lang.IllegalAccessError: tried to access class weblogic/wsee/jaxws/WLSContainer$WLSContainerResolver$1 from class weblogic/wsee/jaxws/WLSContainer$WLSContainerResolver<br />
+<br />
+I give up hopes on clientgen.&nbsp; I will simply use Axis2 libraries.<br />
+<br />
+<br />
+<a href="http://ws.apache.org/axis2/1_1_1/userguide-creatingclients.html">http://ws.apache.org/axis2/1_1_1/userguide-creatingclients.html</a><br />
+<br />
+to get the xmlbeans data binding just run:<br />
+<br />
+cd C:\apps\axis2-1.5.1\bin<br />
+<b>wsdl2java</b>.bat <b>-d xmlbeans</b> -uri C:/temp/GEOOSBService.WSDL<br />
+<br />
+Remember first to set AXIS2_HOME to C:\apps\axis2-1.5.1<br />
+<br />
+actually the advantage of using <b>Axis databinding</b> option (no -d xmlbeans, use the default) is that you have only 2 Java files to use:<br />
+GeoOsbServiceCallbackHandler.java and<br />
+GeoOsbServiceStub.java<br />
+<br />
+I like simplicity!

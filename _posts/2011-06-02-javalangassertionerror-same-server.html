@@ -1,0 +1,51 @@
+---
+layout: post
+title: "java.lang.AssertionError: Same server added twice?"
+date: 2011-06-02T15:05:00.000+02:00
+permalink: /2011/06/javalangassertionerror-same-server.html
+blogger_id: "6755336709917526898"
+tags: ["UDDEntity"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2012-06-26
+    html: "no updates sir... when working with JMS, just do one step at a time and activate... if you try to do everything in one session, most likely it will throw some weird error..."
+  - author: "ParaGone"
+    date: 2012-06-26
+    html: "This comment has been removed by the author."
+---
+I was trying to create a Uniformely Distributed Topic, and at the moment I activate the changes I get:<br />
+<br />
+the entire stacktrace is:<br />
+<br />
+Caused by: java.lang.AssertionError: Same server added twice?<br />
+<br />
+ at weblogic.jms.backend.udd.SyntheticDDBean.addMember(SyntheticDDBean.java:68)<br />
+ at weblogic.jms.backend.udd.UDDEntity.addMember(UDDEntity.java:203)<br />
+ at weblogic.jms.backend.udd.UDDEntity.reconcileAddedMembers(UDDEntity.java:1050)<br />
+ at weblogic.jms.backend.udd.UDDEntity.reconcileTargets(UDDEntity.java:1111)<br />
+ at weblogic.jms.backend.udd.UDDEntity.broadcastChangeToAllUDDs(UDDEntity.java:928)<br />
+ at weblogic.jms.backend.udd.UDDEntity.activateLocalJMSServer(UDDEntity.java:963)<br />
+ at weblogic.jms.deployer.BEAdminHandler.activate(BEAdminHandler.java:226)<br />
+ at weblogic.management.utils.GenericManagedService.activateDeployment(GenericManagedService.java:239)<br />
+ at weblogic.management.utils.GenericServiceManager.activateDeployment(GenericServiceManager.java:131)<br />
+ at weblogic.management.internal.DeploymentHandlerHome.invokeHandlers(DeploymentHandlerHome.java:632)<br />
+ at weblogic.management.internal.DeploymentHandlerHome.access$400(DeploymentHandlerHome.java:67)<br />
+ at weblogic.management.internal.DeploymentHandlerHome$1.activateUpdate(DeploymentHandlerHome.java:187)<br />
+ at weblogic.descriptor.internal.DescriptorImpl$Update.activate(DescriptorImpl.java:491)<br />
+ at weblogic.descriptor.internal.DescriptorImpl.activateUpdate(DescriptorImpl.java:230)<br />
+ at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService$1.run(RuntimeAccessDeploymentReceiverService.java:362)<br />
+ at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:321)<br />
+ at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:120)<br />
+ at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.commit(RuntimeAccessDeploymentReceiverService.java:357)<br />
+<br />
+<br />
+<br />
+What is a UDDEntity? And a UDD? Is it a Uniformely Distributed Destination?<br />
+And a SyntheticDDBean?<br />
+<br />
+<br />
+Anyway, I remove the "use default targeting" and explicitly use a Subdeployment, and I get this error message:<br />
+<br />
+activateUpdate() called without first calling prepareUpdate() <br />
+<br />
+Yet despite the errors everything seems to be activated correctly... weird...

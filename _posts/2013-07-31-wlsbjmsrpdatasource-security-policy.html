@@ -1,0 +1,36 @@
+---
+layout: post
+title: "wlsbjmsrpDataSource security policy: role must be ALSBSystem or Admin"
+date: 2013-07-31T19:03:00.002+02:00
+permalink: /2013/07/wlsbjmsrpdatasource-security-policy.html
+blogger_id: "1954304599652109535"
+tags: ["OSB"]
+---
+A Monitoring WebApplication has to do a JNDI lookup for all Datasources in a WebLogic domain.
+<br/><br/>
+
+For wlsbjmsrpDataSource only I get this error message:
+
+<pre>
+User &lt;anonymous> does not have permission on wlsbjmsrpDataSource to perform lookup operation.
+</pre>
+
+Looking in the JNDI tree of the server, I notice that only wlsbjmsrpDataSource has a security policy associated, to allow access only to ALSBSystem or Admin roles. All other Datasources are allowed to everyone.
+<br/><br/>
+
+I open the ear: 
+/opt/oracle/fmw11_1_1_5/osb/lib/common/jmsreportprovider.ear
+<br/><br/>
+and peeping in the ejb-jar.xml I see
+
+<br/><br/>
+ejb-jar/enterprise-beans/message-driven/security-identity/run-as/role-name = ALSBSystem
+<br/><br/>
+
+and also in weblogic-ejb-jar.xml we have:
+<br/><br/>
+weblogic-ejb-jar/weblogic-enterprise-bean/run-as-principal-name = alsb-system-user
+
+
+
+

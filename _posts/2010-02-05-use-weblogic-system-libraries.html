@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Use WebLogic System Libraries"
+date: 2010-02-05T01:17:00.000+01:00
+permalink: /2010/02/use-weblogic-system-libraries.html
+blogger_id: "1216092075541244794"
+---
+If in your code you need to refer to WebLogic libraries, don't add to the Java Build Path a direct reference to weblogic.jar and the other modules, but rather add "Weblogic System libraries".<br />
+<br />
+If you get a message<br />
+<br />
+<i>'Weblogic System libraries can only be used with projects that target a weblogic server runtime'</i><br />
+<br />
+you should add a Targeted Runtime to your project.<br />
+<br />
+A Java Project doesn't support this, so you should rather create a Utility Project.<br />
+A Utility Project allows you also to add jpd-jar System Library, if you need to develop utilities on WLI. <br />
+<br />
+Unfortunately Workshop doesn't let you morph a Project of a Type A into a Project of Type B.... bummer!<br />
+You might try morphing by hand editing the .project and .classpath files =:o( .

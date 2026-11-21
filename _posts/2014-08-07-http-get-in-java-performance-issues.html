@@ -1,0 +1,46 @@
+---
+layout: post
+title: "HTTP GET in Java, performance issues"
+date: 2014-08-07T17:29:00.000+02:00
+permalink: /2014/08/http-get-in-java-performance-issues.html
+blogger_id: "1993345852554933052"
+tags: ["java", "network"]
+---
+My first version was:
+
+<br/><br/>
+
+<pre class="brush: java">
+import java.net.*;
+
+URL url = new URL(theURL);
+BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+String wholeInput = "";
+String inputLine = null;
+while ((inputLine = in.readLine()) != null) 
+
+{ wholeInput += inputLine; }
+
+</pre>
+
+<br/><br/>
+
+The above code proved to be EXTREMELY slow. The below version is MUCH faster:
+
+<br/><br/>
+
+
+<pre class="brush: java">
+URL url = new URL(theURL);
+HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+conn.setRequestMethod("GET");
+BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+String wholeInput = "";
+String inputLine = null;
+while ((inputLine = in.readLine()) != null) 
+ { wholeInput += inputLine; }
+in.close(); 
+</pre>
+
+
+

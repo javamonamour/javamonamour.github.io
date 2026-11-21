@@ -1,0 +1,48 @@
+---
+layout: post
+title: "BEA-000386 LDAP file (maybe) corrupted"
+date: 2011-11-22T11:55:00.000+01:00
+permalink: /2011/11/bea-000386-ldap-file-maybe-corrupted.html
+blogger_id: "4710409654912456350"
+tags: ["LDAP"]
+---
+We had some OutOfMemory errors in our server, and finally - after fixing the memory problems - we were unable to start the Admin because of this problem:<br />
+<br />
+####&lt;Nov 21, 2011 1:12:20 PM CET&gt; &lt;Critical&gt; &lt;WebLogicServer&gt; &lt;hqchnesoa102&gt; &lt;osbdv1as&gt; &lt;main&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1321877540974&gt; &lt;BEA-000386&gt; &lt;Server subsystem failed. Reason: java.lang.NumberFormatException: null<br />
+java.lang.NumberFormatException: null<br />
+        at java.lang.Integer.parseInt(Integer.java:417)<br />
+        at java.lang.Integer.&lt;init&gt;(Integer.java:660)<br />
+        at com.octetstring.vde.replication.Replication.initAgreements(Replication.java:146)<br />
+        at com.octetstring.vde.replication.Replication.init(Replication.java:87)<br />
+        at weblogic.ldap.EmbeddedLDAP.initReplication(EmbeddedLDAP.java:1304)<br />
+        at weblogic.ldap.EmbeddedLDAP.start(EmbeddedLDAP.java:344)<br />
+        at weblogic.t3.srvr.SubsystemRequest.run(SubsystemRequest.java:64)<br />
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)<br />
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)<br />
+&gt;<br />
+<br />
+<br />
+moving the AdminServer/data/LDAP directory to a LDAP_BACKUP and restarting the server solved the problem. Of course we lost all the users.<br />
+<br />
+I assume that the LDIF files simply get occasionally corrupted upon OOM. This is quite annoying. <br />
+<br />
+<a href="http://onlineappsdba.com/index.php/2010/08/16/error-while-starting-weblogic-server-javalangnumberformatexception-null/">Further digging</a> showed that the file $DOMAIN_HOME/servers/AdminServer/data/ldap/conf/replicas.prop  was empty, while it should contain something like this:<br />
+<br />
+<br />
+#Generated property file<br />
+#Mon Nov 21 13:38:21 CET 2011<br />
+replica.num=1<br />
+replica.0.name=osbdv1ms1<br />
+replica.0.base=dc\=osbdv1do<br />
+replica.0.port=8001<br />
+replica.0.hostname=soa102.acme.com<br />
+replica.0.masterurl=ldap\://soa102.acme.com\:7001/<br />
+replica.0.masterid=osbdv1as<br />
+replica.0.secure=0<br />
+replica.0.binddn=cn\=Admin<br />
+replica.0.consumerid=osbdv1ms1<br />
+<br />
+<br />
+How the file managed to get nuked, it's anybody's guess.<br />
+<br />
+The message is: keep a backup of the AdminServer/data directory...

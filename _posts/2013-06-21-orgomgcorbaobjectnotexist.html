@@ -1,0 +1,50 @@
+---
+layout: post
+title: "org.omg.CORBA.OBJECT_NOT_EXIST"
+date: 2013-06-21T17:09:00.001+02:00
+permalink: /2013/06/orgomgcorbaobjectnotexist.html
+blogger_id: "4477912394553104499"
+tags: ["IIOP", "weblogic"]
+---
+<pre>
+
+####&lt;Jun 19, 2013 2:17:38 PM CEST> &lt;Warning> &lt;RMI> &lt;hqchnesoa108> &lt;osbpr1as> &lt;[ACTIVE] ExecuteThread: '14' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;465bebdd30aa6335:3ab6711e:13f5b98936f:-8000-000000000000794c> &lt;1371644258776> &lt;BEA-080005> &lt;Exception thrown by rmi server: sending exception
+ org.omg.CORBA.OBJECT_NOT_EXIST: No such oid: 481  vmcid: OMG  minor code: 1  completed: No.
+org.omg.CORBA.OBJECT_NOT_EXIST: No such oid: 481  vmcid: OMG  minor code: 1  completed: No
+        at weblogic.iiop.EndPointImpl.replyNoSuchObject(EndPointImpl.java:446)
+        at weblogic.iiop.EndPointImpl.handleIncomingRequest(EndPointImpl.java:853)
+        at weblogic.iiop.EndPointImpl.processMessage(EndPointImpl.java:508)
+        at weblogic.iiop.EndPointImpl.processFragment(EndPointImpl.java:652)
+        at weblogic.iiop.EndPointImpl.processMessage(EndPointImpl.java:550)
+        at weblogic.iiop.EndPointImpl.handleMessage(EndPointImpl.java:500)
+        at weblogic.iiop.EndPointImpl.dispatch(EndPointImpl.java:324)
+        at weblogic.iiop.ConnectionManager.dispatch(ConnectionManager.java:126)
+        at weblogic.iiop.MuxableSocketIIOP.dispatch(MuxableSocketIIOP.java:302)
+        at weblogic.socket.BaseAbstractMuxableSocket.dispatch(BaseAbstractMuxableSocket.java:298)
+        at weblogic.socket.SocketMuxer.readReadySocketOnce(SocketMuxer.java:950)
+        at weblogic.socket.SocketMuxer.readReadySocket(SocketMuxer.java:898)
+        at weblogic.socket.PosixSocketMuxer.processSockets(PosixSocketMuxer.java:130)
+        at weblogic.socket.SocketReaderRequest.run(SocketReaderRequest.java:29)
+        at weblogic.socket.SocketReaderRequest.execute(SocketReaderRequest.java:42)
+        at weblogic.kernel.ExecuteThread.execute(ExecuteThread.java:145)
+        at weblogic.kernel.ExecuteThread.run(ExecuteThread.java:117)
+
+</pre>
+
+<br/><br/>
+
+This started to happen on the Admin server after a network hiccup which requested a restart of the MS 1,2,3,4 in sparse order, some before and some after the Admin.
+
+<br/><br/>
+
+
+Try enabling all the debugIIOP flags, <br/><br/>
+-Dweblogic.debug.DebugIIOPDetail=true<br/>
+-Dweblogic.debug.DebugIIOPMarshal=true<br/>
+-Dweblogic.debug.DebugIIOPTransport=true<br/>
+<br/>
+and setting the System Property -Dweblogic.kernel.debug=true and restart the server.
+
+<br/><br/>
+
+

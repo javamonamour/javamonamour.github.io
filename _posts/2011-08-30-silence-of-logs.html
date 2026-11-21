@@ -1,0 +1,93 @@
+---
+layout: post
+title: "The Silence of the Logs"
+date: 2011-08-30T22:29:00.002+02:00
+permalink: /2011/08/silence-of-logs.html
+blogger_id: "9166472690471015152"
+tags: ["log"]
+---
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/483b555f827ccec5.jpg" imageanchor="1" style=""><img border="0" height="320" width="269" src="/images/dd91c4756887fb15.jpg" /></a></div><br />
+Having noticed that an application server occasionally freezes, with dire consequences for the stability of the cluster, I set out to compute the longest pauses in the logs, using this indicator as a "freezing marker".<br />
+Here is the Java "script", it parses all logs in a directory, and for each log it prints the longest period without any activity in the log.<br />
+Enjoy.<br />
+<br />
+<br />
+<pre name="code" class="brush: java">package com.pierre.loggrepper;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
+
+
+public class WebLogicLogGrepper {
+	/** reads "Aug 28, 2011 8:02:45 PM" */
+
+	DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy h:mm:ss aaaa");
+	String previousTimeString = null;
+	long previousTime = 0;
+	String topTimeString = "";
+	long topDiff = 0;
+
+	public static void main(String[] args) throws Exception {
+
+		String DIR = "/home/oracle/Downloads/Temp-MSLogs/1/ms1logs/";
+		File dir = new File(DIR);
+		for (File file : dir.listFiles()) {
+			if (file.getName().startsWith("eposprd_ManagedServer")) {
+				WebLogicLogGrepper webLogicLogGrepper = new WebLogicLogGrepper();
+				webLogicLogGrepper.run(file.getAbsolutePath());
+			}
+		}
+
+
+	}
+
+	public void run(String filename) throws Exception {
+		FileInputStream fis = new FileInputStream(filename);
+		BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+
+		String line = null; 
+
+		while ((line = br.readLine()) != null ) {
+			if (line.startsWith("####<")) {
+				String currentTimeString = line.substring(5, 29);
+				long currentTime = getTimeFromString(currentTimeString);
+				if (previousTimeString == null) {
+					previousTimeString = currentTimeString;
+					previousTime = currentTime;
+				}
+				else {
+					long timeDiff = currentTime - previousTime;
+					if ( timeDiff > topDiff ) {
+						topDiff = timeDiff;
+						topTimeString = previousTimeString;
+					}
+					previousTime = currentTime;
+					previousTimeString = currentTimeString;
+				}
+
+			}
+		}
+		System.out.println("topDiff=" + topDiff + " topTimeString=" + topTimeString);
+	}
+
+	/**
+	 * Receives a "Aug 28, 2011 8:02:45 PM" and returns its Epoch
+	 * @param timeAsString
+	 * @return
+	 * @throws Exception 
+	 */
+	public long getTimeFromString(String source) throws Exception {
+		return formatter.parse(source).getTime();
+	}
+
+
+
+}
+
+</pre><br />
+

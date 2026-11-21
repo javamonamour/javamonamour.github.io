@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Python, show methods for a class, and type of an object"
+date: 2013-07-22T12:10:00.001+02:00
+permalink: /2013/07/python-show-methods-for-class-and-type.html
+blogger_id: "1004000942532443428"
+---
+use "inspect", "type" and __class__
+<br/><br/>
+here an example:
+<br/><br/>
+<pre>
+from xml.dom import minidom
+aproxy='someps.proxy'
+xmldoc = minidom.parse(aproxy)
+route=xmldoc.getElementsByTagNameNS("http://www.bea.com/wli/sb/stages/publish/config", 'route')[0]
+
+print type(route)
+&lt;type 'instance'>
+
+print route.__class__
+xml.dom.minidom.Element
+
+import inspect
+inspect.getmembers(route, predicate=inspect.ismethod)
+ 
+</pre>
+
+[('__init__', &lt;method Element.__init__ of Element instance 2>), ('__nonzero__', &lt;method Element.__nonzero__ of Element instance 2>), ('__repr__', &lt;method Element.__repr__ of Element instance 2>), ('_call_user_data_handler', &lt;method Element._call_user_data_handler of Element instance 2>), ('_get_attributes', &lt;method Element._get_attributes of Element instance 2>), ('_get_childNodes', &lt;method Element._get_childNodes of Element instance 2>), ('_get_firstChild', &lt;method Element._get_firstChild of Element instance 2>), ('_get_lastChild', &lt;method Element._get_lastChild of Element instance 2>), ('_get_localName', &lt;method Element._get_localName of Element instance 2>), ('_get_tagName', &lt;method Element._get_tagName of Element instance 2>), ('appendChild', &lt;method Element.appendChild of Element instance 2>), ('cloneNode', &lt;method Element.cloneNode of Element instance 2>), ('getAttribute', &lt;method Element.getAttribute of Element instance 2>), ('getAttributeNS', &lt;method Element.getAttributeNS of Element instance 2>), ('getAttributeNode', &lt;method Element.getAttributeNode of Element instance 2>), ('getAttributeNodeNS', &lt;method Element.getAttributeNodeNS of Element instance 2>), ('getElementsByTagName', &lt;method Element.getElementsByTagName of Element instance 2>), ('getElementsByTagNameNS', &lt;method Element.getElementsByTagNameNS of Element instance 2>), ('getInterface', &lt;method Element.getInterface of Element instance 2>), ('getUserData', &lt;method Element.getUserData of Element instance 2>), ('hasAttribute', &lt;method Element.hasAttribute of Element instance 2>), ('hasAttributeNS', &lt;method Element.hasAttributeNS of Element instance 2>), ('hasAttributes', &lt;method Element.hasAttributes of Element instance 2>), ('hasChildNodes', &lt;method Element.hasChildNodes of Element instance 2>), ('insertBefore', &lt;method Element.insertBefore of Element instance 2>), ('isSameNode', &lt;method Element.isSameNode of Element instance 2>), ('isSupported', &lt;method Element.isSupported of Element instance 2>), ('normalize', &lt;method Element.normalize of Element instance 2>), ('removeAttribute', &lt;method Element.removeAttribute of Element instance 2>), ('removeAttributeNS', &lt;method Element.removeAttributeNS of Element instance 2>), ('removeAttributeNode', &lt;method Element.removeAttributeNode of Element instance 2>), ('removeAttributeNodeNS', &lt;method Element.removeAttributeNode of Element instance 2>), ('removeChild', &lt;method Element.removeChild of Element instance 2>), ('replaceChild', &lt;method Element.replaceChild of Element instance 2>), ('setAttribute', &lt;method Element.setAttribute of Element instance 2>), ('setAttributeNS', &lt;method Element.setAttributeNS of Element instance 2>), ('setAttributeNode', &lt;method Element.setAttributeNode of Element instance 2>), ('setAttributeNodeNS', &lt;method Element.setAttributeNode of Element instance 2>), ('setIdAttribute', &lt;method Element.setIdAttribute of Element instance 2>), ('setIdAttributeNS', &lt;method Element.setIdAttributeNS of Element instance 2>), ('setIdAttributeNode', &lt;method Element.setIdAttributeNode of Element instance 2>), ('setUserData', &lt;method Element.setUserData of Element instance 2>), ('toprettyxml', &lt;method Element.toprettyxml of Element instance 2>), ('toxml', &lt;method Element.toxml of Element instance 2>), ('unlink', &lt;method Element.unlink of Element instance 2>), ('writexml', &lt;method Element.writexml of Element instance 2>)]
+
+
+
+
+
+

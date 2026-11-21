@@ -1,0 +1,34 @@
+---
+layout: post
+title: "eclipse Deploy projects as compressed archives"
+date: 2017-11-18T13:36:00.002+01:00
+permalink: /2017/11/eclipse-deploy-projects-as-compressed.html
+blogger_id: "7347932263105014994"
+tags: ["eclipse", "wildfly"]
+---
+After the N-th time I got the error<br />
+<br />
+Error renaming BLA<br />
+This may be caused by your server's temporary deploy directory being on a different filesystem than the final destination<br />
+<br />
+see this SO post <a href="https://stackoverflow.com/questions/26487574/jboss-tools-deploy-error-this-may-be-caused-by-your-servers-temporary-deploy-d">https://stackoverflow.com/questions/26487574/jboss-tools-deploy-error-this-may-be-caused-by-your-servers-temporary-deploy-d</a><br />
+<br />
+while deploying from Eclipse to a Wildfly 11, I have searched everywhere and the only option that seems to work is to "Deploy projects as compressed archives"<br />
+<br />
+Double click on the server (in the Servers tab)<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/ea56ced57ed3f83d.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="842" data-original-width="1561" height="346" src="/images/e66a6448059765df.jpg" width="640" /></a></div><br />
+<br />
+at this point, the deployment is just a .war, the exploded directory format is not enabled.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/1d1b8c51c111368b.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="202" data-original-width="526" height="246" src="/images/c8d18c758507a29e.jpg" width="640" /></a></div><br />
+All this is simply pathetic.... Eclipse is a huge failure... it should simply be rewritten from scratch.<br />
+<br />
+<br />
+PS someone says that deleting the workspace's .metadata folder can fix it... I haven't tried it yet.<br />
+<br />
+Incidentally, deploying as compressed WAR seems to break Keycloak integration... maybe just an impression... Keycloak seems to break silently sometimes...<br />
+<br />
+<br />
+

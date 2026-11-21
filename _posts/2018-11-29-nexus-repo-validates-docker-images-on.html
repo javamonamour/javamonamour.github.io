@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Nexus repo validates Docker images on production.cloudflare.docker.com"
+date: 2018-11-29T15:29:00.001+01:00
+permalink: /2018/11/nexus-repo-validates-docker-images-on.html
+blogger_id: "2392592879930735193"
+tags: ["docker", "nexus"]
+---
+In Nexus logs I find a lot of calls to production.cloudflare.docker.com:<br />
+<br />
+<br />
+<i><br />
+2018-11-05 14:13:43,416+0100 DEBUG [qtp72695066-56]  ADV org.sonatype.nexus.httpclient.outbound - https://production.cloudflare.docker.com/registry-v2/docker/registry/v2/blobs/sha256/4f/4fe2ade4980c2dda4fc95858ebb981489baec8c1e4bd282ab1c3560be8ff9bde/data?verify=1541426623-n%2BHbbRXN3Rr4k6Bxofrsv6tRVFw%3D > GET /registry-v2/docker/registry/v2/blobs/sha256/4f/4fe2ade4980c2dda4fc95858ebb981489baec8c1e4bd282ab1c3560be8ff9bde/data?verify=1541426623-n%2BHbbRXN3Rr4k6Bxofrsv6tRVFw%3D HTTP/1.1<br />
+2018-11-05 14:13:43,416+0100 DEBUG [qtp72695066-56]  ADV org.sonatype.nexus.internal.httpclient.SharedHttpClientConnectionManager - Connection request: [route: {tls}->http://ourproxy:8080->https://production.cloudflare.docker.com:443][total kept alive: 1; route allocated: 0 of 20; total allocated: 3 of 200]<br />
+2018-11-05 14:13:43,417+0100 DEBUG [qtp72695066-56]  ADV org.sonatype.nexus.internal.httpclient.SharedHttpClientConnectionManager - Connection leased: [id: 18][route: {tls}->http://ourproxy:8080->https://production.cloudflare.docker.com:443][total kept alive: 1; route allocated: 1 of 20; total allocated: 4 of 200]<br />
+2018-11-05 14:13:43,475+0100 DEBUG [qtp72695066-4467]  ADV org.sonatype.nexus.httpclient.outbound - https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/alpine:pull < HTTP/1.1 200 OK @ 129.8 ms
+2018-11-05 14:13:43,475+0100 DEBUG [qtp72695066-4467]  ADV org.sonatype.nexus.repository.docker.internal.DockerProxyFacetImpl - Response: HttpResponseProxy{HTTP/1.1 200 OK [Content-Type: application/json, Date: Mon, 05 Nov 2018 13:13:43 GMT, Transfer-Encoding: chunked, Strict-Transport-Security: max-age=31536000, Connection: Keep-Alive] ResponseEntityProxy{[Content-Type: application/json,Chunked: true]}}
+
+</i><br />
+<br />
+we access internet via a Proxy Server ourproxy, which doesn't whitelist production.cloudflare.docker.com<br />
+<br />
+each of them creates a file in $NEXUS_DATA/tmp/docker-content-validation-failures with an "access denied" message from ourproxy <br />
+<br />
+Here <a href="https://forums.docker.com/t/corporate-firewall-remote-error-tls-handshake-failure/52965">https://forums.docker.com/t/corporate-firewall-remote-error-tls-handshake-failure/52965</a>  they say we should also whitelist  production.cloudflare.docker.com<br />
+<br />
+I have no idea if the "docker pull" will fail, or if this "validation" can be disabled...<br />
+<br />
+<br />
+<br />
+<br />
+See also <a href="https://support.sonatype.com/hc/en-us/articles/115015442847-Whitelisting-Docker-Hub-Hosts-for-Firewalls-and-HTTP-Proxy-Servers">https://support.sonatype.com/hc/en-us/articles/115015442847-Whitelisting-Docker-Hub-Hosts-for-Firewalls-and-HTTP-Proxy-Servers</a>

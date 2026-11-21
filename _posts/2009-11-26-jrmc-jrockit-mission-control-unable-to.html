@@ -1,0 +1,63 @@
+---
+layout: post
+title: "JRMC JRockit mission control, unable to connect console"
+date: 2009-11-26T16:34:00.005+01:00
+permalink: /2009/11/jrmc-jrockit-mission-control-unable-to.html
+blogger_id: "8035445826869902572"
+tags: ["jrmc"]
+---
+still investigating on this problem, most likely I have not set -Xmanagement when running the WebLogic server... Thanks to the developers for the immense clarity of the error message.<br />
+<br />
+Oh yes of course, you should change your startWebLogic.cmd adding<br />
+set JAVA_OPTIONS=%JAVA_OPTIONS%  -Xmanagement:ssl=false,authenticate=false,port=<b>7099</b><br />
+<br />
+once you restart weblogic, you should see this:<br />
+[INFO ][mgmnt&nbsp; ] Remote JMX connector started at address esp50ws112345:<b>7099</b><br />
+[INFO ][mgmnt&nbsp; ] Local JMX connector started<br />
+<br />
+Of course make sure you specify 7099 (and NOT 7001) in the JRMC client new connection parameters.<br />
+<br />
+<br />
+This was the original error message:<br />
+<br />
+Could not open Management Console for frparmat01.acme.dns:8765.<br />
+&nbsp; com.jrockit.mc.rjmx.ConnectionException: Failed to retrieve RMIServer stub: javax.naming.CommunicationException [Root exception is java.rmi.ConnectIOException: error during JRMP connection establishment; nested exception is: <br />
+&nbsp;&nbsp;&nbsp; java.io.EOFException]<br />
+&nbsp;&nbsp;&nbsp; com.jrockit.mc.rjmx.ConnectionException: Failed to retrieve RMIServer stub: javax.naming.CommunicationException [Root exception is java.rmi.ConnectIOException: error during JRMP connection establishment; nested exception is: <br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; java.io.EOFException]<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.jrockit.mc.rjmx.ConnectionManager.connect(ConnectionManager.java:63)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.jrockit.mc.console.ui.actions.StartConsole$1.preConnect(StartConsole.java:38)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.jrockit.mc.browser.utils.PreConnectJob.run(PreConnectJob.java:74)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)<br />
+&nbsp;&nbsp;&nbsp; Caused by: java.io.IOException: Failed to retrieve RMIServer stub: javax.naming.CommunicationException [Root exception is java.rmi.ConnectIOException: error during JRMP connection establishment; nested exception is: <br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; java.io.EOFException]<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at javax.management.remote.rmi.RMIConnector.connect(RMIConnector.java:317)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at javax.management.remote.rmi.RMIConnector.connect(RMIConnector.java:229)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.jrockit.mc.rjmx.internal.RJMXConnection.setupServer(RJMXConnection.java:537)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.jrockit.mc.rjmx.internal.RJMXConnection.connect(RJMXConnection.java:144)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.jrockit.mc.rjmx.internal.RJMXConnectorModel.establishConnection(RJMXConnectorModel.java:111)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.jrockit.mc.rjmx.internal.RJMXConnectorModel.connect(RJMXConnectorModel.java:154)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.jrockit.mc.rjmx.ConnectionManager.innerConnect(ConnectionManager.java:95)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.jrockit.mc.rjmx.ConnectionManager.connect(ConnectionManager.java:61)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ... 3 more<br />
+&nbsp;&nbsp;&nbsp; Caused by: javax.naming.CommunicationException [Root exception is java.rmi.ConnectIOException: error during JRMP connection establishment; nested exception is: <br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; java.io.EOFException]<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.sun.jndi.rmi.registry.RegistryContext.lookup(RegistryContext.java:97)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.sun.jndi.toolkit.url.GenericURLContext.lookup(GenericURLContext.java:185)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at javax.naming.InitialContext.lookup(InitialContext.java:351)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at javax.management.remote.rmi.RMIConnector.findRMIServerJNDI(RMIConnector.java:1817)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at javax.management.remote.rmi.RMIConnector.findRMIServer(RMIConnector.java:1787)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at javax.management.remote.rmi.RMIConnector.connect(RMIConnector.java:259)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ... 10 more<br />
+&nbsp;&nbsp;&nbsp; Caused by: java.rmi.ConnectIOException: error during JRMP connection establishment; nested exception is: <br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; java.io.EOFException<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at sun.rmi.transport.tcp.TCPChannel.createConnection(TCPChannel.java:273)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at sun.rmi.transport.tcp.TCPChannel.newConnection(TCPChannel.java:171)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at sun.rmi.server.UnicastRef.newCall(UnicastRef.java:306)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at sun.rmi.registry.RegistryImpl_Stub.lookup(Unknown Source)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at com.sun.jndi.rmi.registry.RegistryContext.lookup(RegistryContext.java:93)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ... 15 more<br />
+&nbsp;&nbsp;&nbsp; Caused by: java.io.EOFException<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at java.io.DataInputStream.readByte(DataInputStream.java:243)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; at sun.rmi.transport.tcp.TCPChannel.createConnection(TCPChannel.java:215)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ... 19 more

@@ -1,0 +1,9 @@
+---
+layout: post
+title: "Fedora updates"
+date: 2010-08-04T19:48:00.003+02:00
+permalink: /2010/08/fedora-updates.html
+blogger_id: "4905883894374153451"
+tags: ["fedora"]
+---
+<pre class="bash" face="monospace"><span style="font-weight: bold;">Flash Player:</span><br /><br />yum <span style="color: rgb(194, 12, 185); font-weight: bold;">install</span> flash-plugin nspluginwrapper alsa-plugins-pulseaudio libcurl<br /><br /><br /><span style="font-weight: bold;">Wine:</span><br /><br />yum upgrade<br />yum --enablerepo=updates-testing upgrade wine<br />yum install wine<br /><br /><span style="font-weight: bold;">SqlDeveloper:</span><br /><br />rpm -Uhv sqldeveloper-2.1.1.64.45-1.noarch.rpm<br /><br /><br /><br /><span style="font-weight: bold;">DNS:</span><br /><br />vi /etc/resolv.conf<br /><br />domain localdomain<br />search localdomain<br />nameserver 192.168.232.2<br /><br /><br /><br /></pre>

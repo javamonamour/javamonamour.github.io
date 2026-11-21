@@ -1,0 +1,156 @@
+---
+layout: post
+title: "WebLogic: avoiding anonymous user calls"
+date: 2017-06-10T16:34:00.000+02:00
+permalink: /2017/06/weblogic-avoiding-anonymous-user-calls.html
+blogger_id: "4669709861510269833"
+tags: ["security", "weblogic"]
+---
+<h1>Servlet or JSP initialization</h1>
+
+<br/>
+
+
+
+weblogic.xml 
+<br/>
+<pre class="brush: xml">
+
+&lt;servlet-descriptor&gt;
+       &lt;servlet-name&gt;MyServletName&lt;/servlet-name&gt;
+       &lt;init-as-principal-name&gt;MySERVLET.INIT.USER&lt;/init-as-principal-name&gt;
+   &lt;/servlet-descriptor&gt;
+
+</pre>
+
+<br/>
+Where MyServletName needs to be replaced with the name of your Servlet, as declared in the web.xml file. 
+
+
+
+<br/><br/>
+
+
+<h1>ServletContextListener</h1>
+
+
+<br/>
+
+config.xml
+
+<br/>
+<pre class="brush: xml">
+  &lt;app-deployment&gt;
+    &lt;name&gt;myapp&lt;/name&gt;
+    &lt;target&gt;webInitServer&lt;/target&gt;
+    &lt;source-path&gt;./deploy/presear&lt;/source-path&gt;
+    &lt;deployment-principal-name&gt;MY.DEPLOYMENT.PRINCIPAL&lt;/deployment-principal-name&gt;
+    &lt;security-dd-model&gt;Advanced&lt;/security-dd-model&gt;
+    &lt;staging-mode&gt;nostage&lt;/staging-mode&gt;
+  &lt;/app-deployment&gt;
+
+</pre>
+<br/><br/>
+
+<h1>EJB create method</h1>
+
+<br/>
+
+weblogic-ejb-jar.xml
+
+
+
+
+<br/>
+
+<pre class="brush: xml">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;weblogic-ejb-jar xmlns=&quot;http://www.bea.com/ns/weblogic/90&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://www.bea.com/ns/weblogic/90 http://www.bea.com/ns/weblogic/910/weblogic-ejb-jar.xsd&quot;&gt;
+  &lt;weblogic-enterprise-bean&gt;
+    &lt;ejb-name&gt;MyEJB&lt;/ejb-name&gt;
+    &lt;stateless-session-descriptor&gt;
+      &lt;business-interface-jndi-name-map&gt;
+        &lt;business-remote&gt;acme.ejb.test.MyEJB&lt;/business-remote&gt;
+        &lt;jndi-name&gt;pippo&lt;/jndi-name&gt;
+      &lt;/business-interface-jndi-name-map&gt;
+      &lt;pool&gt;
+        &lt;max-beans-in-free-pool&gt;5&lt;/max-beans-in-free-pool&gt;
+        &lt;initial-beans-in-free-pool&gt;1&lt;/initial-beans-in-free-pool&gt;
+      &lt;/pool&gt;
+       &lt;stateless-bean-is-clusterable&gt;True&lt;/stateless-bean-is-clusterable&gt;
+      &lt;/stateless-clustering&gt;
+    &lt;/stateless-session-descriptor&gt;
+    &lt;create-as-principal-name&gt;MY.EJB.CREATE.PRINCIPAL&lt;/create-as-principal-name&gt;
+&lt;/weblogic-ejb-jar&gt;
+
+</pre>
+
+
+<br/>
+
+
+<br/>
+
+
+<h1>EJB timer</h1>
+
+<br/>
+ejb-jar.xml
+
+<br/>
+
+
+<pre class="brush: xml">
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;ejb-jar id=&quot;ejb-jar&quot; 
+ xmlns=&quot;http://java.sun.com/xml/ns/javaee&quot; version=&quot;3.0&quot;
+ xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+ xsi:schemaLocation=&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd&quot;&gt;
+  &lt;enterprise-beans&gt;
+    &lt;session&gt;
+      &lt;ejb-name&gt;CDRTimer&lt;/ejb-name&gt;
+      &lt;ejb-class&gt;acme.ejb.timer.test.CDRTimerBean&lt;/ejb-class&gt;
+      &lt;session-type&gt;Stateless&lt;/session-type&gt;
+      &lt;security-identity&gt;
+        &lt;run-as&gt;
+          &lt;role-name&gt;TimerExecutor&lt;/role-name&gt;
+        &lt;/run-as&gt;
+      &lt;/security-identity&gt;
+    &lt;/session&gt;
+  &lt;/enterprise-beans&gt;
+  &lt;assembly-descriptor&gt;
+    &lt;security-role&gt;
+      &lt;description&gt;&lt;/description&gt;
+      &lt;role-name&gt;TimerExecutor&lt;/role-name&gt;
+    &lt;/security-role&gt;
+  &lt;/assembly-descriptor&gt;
+  &lt;ejb-client-jar&gt;CDRTimerEJBclientjar.jar&lt;/ejb-client-jar&gt;
+&lt;/ejb-jar&gt;
+
+
+</pre>
+
+<br/>
+weblogic-ejb-jar.xml
+<br/>
+
+<pre class="brush: xml">
+
+  &lt;run-as-role-assignment&gt;
+    &lt;role-name&gt;TimerExecutor&lt;/role-name&gt;
+    &lt;run-as-principal-name&gt;CDRTIMER.RUN.PRINCIPAL.NAME&lt;/run-as-principal-name&gt;
+  &lt;/run-as-role-assignment&gt;
+
+
+</pre>
+<br/><br/>
+
+
+
+<br/>
+
+<br/>
+
+
+

@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Got minus one from a read call"
+date: 2011-01-19T15:35:00.001+01:00
+permalink: /2011/01/got-minus-one-from-read-call.html
+blogger_id: "350695061348744410"
+tags: ["db"]
+---
+weblogic.common.resourcepool.ResourceDeadException: 0:weblogic.common.ResourceException: Could not create pool connection. The DBMS driver exception was: Got minus one from a read call<br />
+<br />
+<a href="http://forums.oracle.com/forums/thread.jspa?threadID=431151">here</a> <br />
+they suggest:<br />
+<br />
+<i>I also had this kind of error. I suppose that the root cause was the leak of available sessions on the oracle side. My glassfish server had 400-connection jdbc pool size and Oracle 10g had following parameters:<br />
+processes = 420<br />
+sessions = 467<br />
+transactions = 514<br />
+Every request to the DB failed with "IO Exception: Got minus one from a read call".<br />
+Increasing Oracle values (processes = 450; sessions = 500; transactions = 550) fixed the problem.<br />
+</i>

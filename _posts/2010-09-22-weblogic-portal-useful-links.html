@@ -1,0 +1,68 @@
+---
+layout: post
+title: "WebLogic Portal, useful links"
+date: 2010-09-22T10:57:00.004+02:00
+permalink: /2010/09/weblogic-portal-useful-links.html
+blogger_id: "3849599515095370345"
+tags: ["beehive", "portal"]
+---
+Some concepts here: <br />
+<a href="http://ananthkannan.blogspot.com/2009/08/weblogic-portal-interview-questions.html">http://ananthkannan.blogspot.com/2009/08/weblogic-portal-interview-questions.html</a><br />
+more advanced stuff: <br />
+<a href="http://ananthkannan.blogspot.com/2010/01/weblogic-portal-interview-questions.html">http://ananthkannan.blogspot.com/2010/01/weblogic-portal-interview-questions.html</a><br />
+<br />
+Tutorial:<br />
+<a href="http://download.oracle.com/docs/cd/E13155_01/wlp/docs103/tutorials/setup_dev_env.html#wp1007062">http://download.oracle.com/docs/cd/E13155_01/wlp/docs103/tutorials/setup_dev_env.html#wp1007062</a><br />
+<br />
+<br />
+Portal development guide:<br />
+<a href="http://download.oracle.com/docs/cd/E13155_01/wlp/docs103/portals/index.html">http://download.oracle.com/docs/cd/E13155_01/wlp/docs103/portals/index.html</a><br />
+<br />
+On Beehive, Pollinate, Struts:<br />
+(Beehive has not been updated since 2006 :o( )<br />
+<a href="http://beehive.apache.org/docs/1.0.2/">http://beehive.apache.org/docs/1.0.2/</a><br />
+<br />
+and the "attic" page, suggesting what to use instead of Beehive (essentially Spring Web Flow, Spring Beans and Axis2):<br />
+<a href="http://attic.apache.org/projects/beehive.html">http://attic.apache.org/projects/beehive.html</a><br />
+<br />
+Some interesting musing here:<br />
+<a href="http://www.ibm.com/developerworks/opensource/library/os-beehive/">http://www.ibm.com/developerworks/opensource/library/os-beehive/</a><br />
+<br />
+<br />
+<br />
+<br />
+On SSO and IdentityAsserter:<br />
+<a href="http://peterlaird.blogspot.com/2007/01/implementing-single-sign-on-sso-with.html">http://peterlaird.blogspot.com/2007/01/implementing-single-sign-on-sso-with.html</a><br />
+<br />
+<br />
+The structure of a .portal file:<br />
+<br />
+<br />
+<pre>root
+  desktop
+    lookAndFeel
+      titlebarButtonOrder
+    shell
+      head
+      body
+        header
+        book
+          singleLevelMenu
+          content
+            page
+        footer
+
+</pre><br />
+In other words:<br />
+a <b>portal</b> contains a <b>desktop</b>, which has a <b>header</b>, a <b>footer</b>, one or more <b>books</b>, and each book can have multiple <b>pages</b><br />
+<br />
+Here <a href="http://download.oracle.com/docs/cd/E13155_01/wlp/docs103/portals/intro_to_portal_dev.html">http://download.oracle.com/docs/cd/E13155_01/wlp/docs103/portals/intro_to_portal_dev.html</a> an excellent explanation of these elements.<br />
+<br />
+<br />
+WEB-INF/netuix-config.xml contains important settings:<br />
+<br />
+....to be continued ...<br />
+<br />
+<br />
+<br />
+How do I feel while editing a Portal? A voice inside me screams "these operations should be scripted!!! Why am I clicking away on a WebApp to customize a WebApp?". To be investigated: how do you provide a DSL to create and customize a Portal?

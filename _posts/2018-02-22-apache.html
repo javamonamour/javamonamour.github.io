@@ -1,0 +1,50 @@
+---
+layout: post
+title: "Apache!"
+date: 2018-02-22T22:23:00.000+01:00
+permalink: /2018/02/apache.html
+blogger_id: "805728715884113119"
+tags: ["apache"]
+---
+Docs <a href="http://httpd.apache.org/docs/2.4/">http://httpd.apache.org/docs/2.4/</a><br />
+<br />
+Docker image <a href="https://hub.docker.com/_/httpd/">https://hub.docker.com/_/httpd/</a><br />
+<br />
+mkdir myapp<br />
+cd myapp<br />
+docker run -dit --name my-apache-app -p 8080:80 httpd:2.4<br />
+<br />
+http://localhost:8080/index.html  should display "it works"<br />
+<br />
+<br />
+To install on Centos7:<br />
+sudo yum update<br />
+sudo yum install httpd<br />
+sudo systemctl start httpd.service<br />
+sudo systemctl enable httpd.service<br />
+<br />
+and configuration file is /etc/httpd/conf/httpd.conf, files in /var/www/html/<br />
+sudo chmod 777 /var/www/html/<br />
+vi /var/www/html/index.html<br />
+http://localhost:80<br />
+<br />
+Directives docs <a href="http://httpd.apache.org/docs/2.4/mod/directives.html">http://httpd.apache.org/docs/2.4/mod/directives.html</a><br />
+<br />
+Virtualhost directive <a href="http://httpd.apache.org/docs/2.4/mod/core.html#virtualhost">http://httpd.apache.org/docs/2.4/mod/core.html#virtualhost</a><br />
+<br />
+<br />
+<br />
+Interesting article on Nginx vs Apache <a href="https://poweruphosting.com/blog/apache-vs-nginx/">https://poweruphosting.com/blog/apache-vs-nginx/</a><br />
+<br />
+<br />
+To debug:<br />
+/usr/sbin/httpd -t<br />
+/usr/sbin/httpd -t -f /u01/app/mware/httpd/conf/jboss.conf<br />
+/usr/sbin/httpd -e debug<br />
+/usr/sbin/httpd -M<br />
+/usr/sbin/httpd -S (Priceless! to dump current configuration)<br />
+<br />
+<br />
+<br />
+<br />
+

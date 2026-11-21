@@ -1,0 +1,21 @@
+---
+layout: post
+title: "OSB:  Reading Java System Property"
+date: 2012-05-04T16:08:00.001+02:00
+permalink: /2012/05/osb-reading-java-system-property.html
+blogger_id: "1124190285812969323"
+tags: ["OSB", "xslt"]
+---
+Apparently in some versions of XSLT it's possible to read System Properties with a function system-property(propertyName)<br />
+<br />
+<a href="http://www.java2s.com/Tutorial/XML/0100__XSLT-stylesheet/GettingJavasystempropertieswithsystemproperty.htm">http://www.java2s.com/Tutorial/XML/0100__XSLT-stylesheet/GettingJavasystempropertieswithsystemproperty.htm</a><br />
+<br />
+<a href="http://www.java2s.com/Tutorial/XML/0100__XSLT-stylesheet/Getsystempropertywithsystempropertyfunction.htm">http://www.java2s.com/Tutorial/XML/0100__XSLT-stylesheet/Getsystempropertywithsystempropertyfunction.htm</a><br />
+<br />
+but in OSB only the second example ('xsl.version') works. If you try to provide 'weblogic.Name' you get:<br />
+<br />
+<br />
+java.lang.RuntimeException: Invalid argument type 'weblogic.Name' in call to 'system-property()'<br />
+<br />
+<br />
+Unfortunately in XQuery there is no "system-property" function, so you only have Java as an option (callout or custom xpath). Bummer.

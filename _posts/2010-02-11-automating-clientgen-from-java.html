@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Automating clientgen from Java"
+date: 2010-02-11T09:46:00.000+01:00
+permalink: /2010/02/automating-clientgen-from-java.html
+blogger_id: "8539540053366755466"
+tags: ["clientgen", "webservices"]
+---
+package com.acme.integration.tools;<br />
+<br />
+import java.io.File;<br />
+import java.util.List;<br />
+<br />
+import weblogic.wsee.tools.WsBuildException;<br />
+import weblogic.wsee.tools.clientgen.jaxws.ClientGenImpl;<br />
+<br />
+public class ClientGenTool {<br />
+&nbsp;&nbsp;&nbsp; public final static String wls_hostname = "10.10.10.20";<br />
+&nbsp;&nbsp;&nbsp; public final static String wls_port = "7001";<br />
+&nbsp;&nbsp;&nbsp; public final static String process_name = "/processes/GetPrepaidAccountBalanceProcess";<br />
+&nbsp;&nbsp;&nbsp; public final static String clientclass_dir = "output/clientclass"; <br />
+&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; public static void main(String[] args) throws WsBuildException {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ClientGenTool clientGenTool = new ClientGenTool();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; clientGenTool.clientgen();<br />
+&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; public void clientgen() throws WsBuildException {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; String wsdl = "http://" + wls_hostname + ":" + wls_port + "/ACME_INTEG_WEB" + process_name + ".jpd?WSDL";<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; System.out.println("using wsdl " + wsdl);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; File destDir = new File(clientclass_dir);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; String packageName = "examples.webservices" + process_name.replace("/", ".");<br />
+<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ClientGenImpl cgi = new ClientGenImpl();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; cgi.setWsdl(wsdl);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; cgi.setDestDir(destDir);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; cgi.setPackageName(packageName);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; cgi.execute();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp; <br />
+}<br />
+<br />
+this will generate the client classes.... it makes our life a lot easier when you have hundreds of Web Services to test....<br />
+<br />
+remember to add tools.jar to the classpath, otherwise the javac compiler will not work.

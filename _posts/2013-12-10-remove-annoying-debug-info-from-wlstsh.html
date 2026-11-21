@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Remove annoying debug info from wlst.sh"
+date: 2013-12-10T16:11:00.001+01:00
+permalink: /2013/12/remove-annoying-debug-info-from-wlstsh.html
+blogger_id: "2252702745235406482"
+tags: ["WLST"]
+---
+I normally run /opt/oracle/fmw11_1_1_5/osb/common/bin/wlst.sh for all WLST commands. 
+<br/><br/>
+This print a page of debug information (mostly, twice the CLASSPATH and once the PATH. 
+<br/>
+It's a lot of unneeded info which clutters the logs.<br/>
+<br/>
+The script will invoke in sequence:
+<pre>
+/opt/oracle/fmw11_1_1_5/osb/common/bin/setHomeDirs.sh
+/opt/oracle/fmw11_1_1_5/utils/config/10.3/setHomeDirs.sh
+/opt/oracle/fmw11_1_1_5/oracle_common/common/bin/wlst.sh
+</pre>
+<br/>
+...
+<br/>
+and plenty of other scripts, but finally it will call /opt/oracle/fmw11_1_1_5/wlserver_10.3/common/bin/wlst.sh
+<br/>
+it's interesting that we have 4 wlst.sh scripts:
+<pre>
+/opt/oracle/fmw11_1_1_5/oracle_common/common/bin/wlst.sh
+/opt/oracle/fmw11_1_1_5/osb/common/bin/wlst.sh
+/opt/oracle/fmw11_1_1_5/osb/harvester/wlst.sh
+/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/bin/wlst.sh
+</pre>
+
+<br/>
+
+One echo is in /opt/oracle/fmw11_1_1_5/wlserver_10.3/common/bin/wlst.sh
+<br/>
+The other echo CLASSPATH=$CLASSPATH statement is in
+<br/>
+/opt/oracle/fmw11_1_1_5/wlserver_10.3/server/bin/setWLSEnv.sh
+<br/>
+
+
+

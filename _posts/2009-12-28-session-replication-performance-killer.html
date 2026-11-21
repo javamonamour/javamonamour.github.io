@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Session replication - a performance killer"
+date: 2009-12-28T13:19:00.000+01:00
+permalink: /2009/12/session-replication-performance-killer.html
+blogger_id: "661154145757415332"
+---
+watch out for values in&nbsp; Weblogic.xml and application.xml (the global EAR settings override the WAR default settings which is "memory")<br />
+<br />
+Weblogic.xml<br />
+&nbsp;&nbsp;&nbsp;<param-name>PersistentStoreType</param-name>&nbsp;&nbsp;&nbsp;<param-value>replicated_if_clustered</param-value><br />
+the values can be<br />
+<ul class="smallindent"><li type="square"><div class="table"><span>memory</span>—Disables persistent session storage.<br />
+</div></li>
+</ul><ul class="smallindent"><a href="" name="1036972"></a>
+<li type="square"><div class="table"><span>file</span>—Uses file-based persistence (See also <span>PersistentStoreDir</span>, above).<br />
+</div></li>
+</ul><ul class="smallindent"><a href="" name="1036973"></a>
+<li type="square"><div class="table"><span>jdbc</span>—Uses a database to store persistent sessions. (see also <span>PersistentStorePool</span>, above).<br />
+</div></li>
+</ul><ul class="smallindent"><a href="" name="1036974"></a>
+<li type="square"><div class="table"><span>replicated</span>—Same as <span>memory</span>, but session data is replicated across the clustered servers.<br />
+</div></li>
+</ul><ul class="smallindent"><a href="" name="1036975"></a>
+<li type="square"><div class="table">cookie—All session data is stored in a cookie in the user's browser.<br />
+</div></li>
+</ul><ul class="smallindent"><a href="" name="1038303"></a>
+<li type="square"><div class="table">replicated_if_clustered—If the Web application is deployed on a clustered server, the in-effect <span>PersistentStoreType</span> will be replicated. Otherwise, <span>memory</span> is the default.<br />
+</div></li>
+</ul>

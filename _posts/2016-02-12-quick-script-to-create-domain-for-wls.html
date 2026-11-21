@@ -1,0 +1,76 @@
+---
+layout: post
+title: "Quick script to create a domain for WLS 12.2.1"
+date: 2016-02-12T09:30:00.001+01:00
+permalink: /2016/02/quick-script-to-create-domain-for-wls.html
+blogger_id: "8190598587067920737"
+tags: ["WLST"]
+---
+in selectTemplate(), make sure you specify the right version for the WLS distribution you are installing, otherwise you get the error "60708: Found no templates with Basic WebLogic Server Domain name and 12.2.1.0 version"
+
+<br/><br/>
+
+
+<pre class="brush: java">
+
+# https://docs.oracle.com/middleware/1221/wls/WLSTC/reference.htm#WLSTC3772
+# Use selectTemplate followed by loadTemplates in place of readTemplate.
+
+HOSTNAME='myhost.mydomain.com'
+LISTENPORT=7012
+SSLLISTENPORT=7022
+JAVAHOME='/usr/java/jdk1.8.0_65'
+DOMAINHOME='/opt/oracle/fmw1221/user_projects/domains/mydomain'
+
+selectTemplate('Basic WebLogic Server Domain','12.2.1.2')
+loadTemplates()
+
+#readTemplate is deprecated
+#readTemplate('/opt/oracle/fmw1221/wlserver/common/templates/wls/wls.jar') 
+
+# Admin Server SSL and Non-SSL
+print('Creating Server - Admin Server')
+cd('Servers/AdminServer')
+set('ListenAddress', HOSTNAME)
+set('ListenPort', LISTENPORT)
+
+create('AdminServer','SSL')
+cd('SSL/AdminServer')
+set('Enabled', 'True')
+set('ListenPort', SSLLISTENPORT)
+
+# Security
+print('Creating Password')
+cd('/')
+cd('Security/base_domain/User/weblogic')
+set('Password', 'Welcome1')
+#cmo.setPassword('Welcome1')
+
+# Start Up
+print('Setting StartUp Options')
+# Setting the JDK home. Change the path to your installed JDK for weblogic
+setOption('JavaHome', JAVAHOME)
+setOption('OverwriteDomain', 'true')
+
+# Create Domain to File System
+print('Writing Domain To File System')
+# Change the path to your domain accordingly
+writeDomain(DOMAINHOME)
+closeTemplate()
+
+# Read the Created Domain
+print('Reading the Domain from In Offline Mode')
+readDomain(DOMAINHOME)
+
+# updating the changes
+print('Finalizing the changes')
+updateDomain()
+closeDomain()
+
+# Exiting
+print('Exiting...')
+exit()
+
+
+</pre>
+

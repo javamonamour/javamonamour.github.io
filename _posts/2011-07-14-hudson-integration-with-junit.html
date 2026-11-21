@@ -1,0 +1,79 @@
+---
+layout: post
+title: "Hudson integration with JUnit"
+date: 2011-07-14T17:44:00.003+02:00
+permalink: /2011/07/hudson-integration-with-junit.html
+blogger_id: "17501437666143090"
+tags: ["hudson", "junit"]
+---
+my ANT build.xml :<br />
+<br />
+<br />
+<pre name="code" class="brush: xml"><project default="all">
+
+  <path id="classpath.base">
+      <fileset dir="lib">
+           <include name="*.jar"/>
+      </fileset>
+  </path>
+
+
+  <target name="test">
+    <junit printsummary="true">
+      <classpath refid="classpath.base" />
+      <formatter type="brief" usefile="false" />
+      <test name="com.acme.gu.ft.GUFT" outfile="junitout/GUFT">
+          <formatter type="xml"/>
+      </test>
+    </junit>
+
+    <junitreport todir="/home/a087/.hudson/jobs/GUFT/workspace/reports">
+<fileset dir="./junitout">
+    <include name="GUFT*.xml"/>
+  </fileset>
+  <report format="frames" todir="./report/html"/>
+    </junitreport>
+  </target>
+
+
+ <target name="all" depends="test" />
+</project>
+
+
+</pre><br />
+<br />
+Once I configure Hudson with a valid ANT installation, running the test produces a <br />
+<b>junitreport </b>under the /home/a087/.hudson  (hudson's home dir)<br />
+<br />
+In fact the "Publish JUnit test result report " Hudson option accepts the parameter<br />
+"Test report XMLs" with the notation **/reports/*.xml relative to the /home/a087/.hudson directory!  (it took some time to figure out)<br />
+<br />
+The TESTS-TestSuites.xml file produced contains aggregate info on all the tests run:<br />
+<br />
+<pre name="code" class="brush: xml"><testsuites>
+  <testsuite errors="0" failures="0" hostname="acme.com" id="0" name="GUFT" package="com.acme.gu.ft" tests="1" time="2.186" timestamp="2011-07-14T15:31:02">
+      <properties>
+      </properties>
+
+      <testcase classname="com.ictra.gu.ft.GUFT" name="testETA" time="2.074" />
+
+....
+
+  </testsuite>
+</testsuites>
+
+
+</pre><br />
+<br />
+And it happily appears on the "Test Result" tab<br />
+<br />
+<br />
+If you get<br />
+<i>Fingerprinting not enabled on this build. Test aggregation requires fingerprinting</i><br />
+<br />
+in Post-build Actions, enable "Record fingerprints of files to track usage "<br />
+and enter **/reports/*.xml in "Files to fingerprint"<br />
+<br />
+<br />
+<br />
+<a href="http://ant.apache.org/manual/Tasks/junitreport.html">More on TESTS-TestSuites.xml and JUnitReport</a>

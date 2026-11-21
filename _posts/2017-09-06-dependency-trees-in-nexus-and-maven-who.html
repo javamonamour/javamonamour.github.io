@@ -1,0 +1,28 @@
+---
+layout: post
+title: "Dependency trees in Nexus and Maven: who uses what ?"
+date: 2017-09-06T09:05:00.000+02:00
+permalink: /2017/09/dependency-trees-in-nexus-and-maven-who.html
+blogger_id: "6114397533413963000"
+tags: ["maven", "nexus"]
+---
+Nexus plugin to display who uses a given artifact <a href="https://github.com/saleemshafi/nexus-artifact-usage-plugin">https://github.com/saleemshafi/nexus-artifact-usage-plugin</a> (apparently the same info is built-in in Apache Archiva <a href="https://stackoverflow.com/questions/19392236/who-is-using-my-maven-artifact">https://stackoverflow.com/questions/19392236/who-is-using-my-maven-artifact</a> ). As suggested in SO, you should build a über-POM containing all your projects, then generate the dependency tree.
+
+<br/><br/>
+Useful commands:
+<br/><br/>
+mvn dependency:tree -DoutputType=graphml -DoutputFile=dependency.graphml
+<br/><br/>
+
+(use also --debug in case of errors)
+
+<br/><br/>
+
+Here the documentation on <b>Dependency Management</b> in Maven <a href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html</a> 
+<br/><br/>
+
+<b>Transitive Dependencies</b>
+<br/><br/>
+
+
+

@@ -1,0 +1,63 @@
+---
+layout: post
+title: "Git, configuring SSH on Windows"
+date: 2014-08-20T17:57:00.000+02:00
+permalink: /2014/08/git-configuring-ssh-on-windows.html
+blogger_id: "5631382678405727013"
+tags: ["git", "windows"]
+blogger_comments:
+  - author: "Unknown"
+    date: 2015-02-08
+    html: "Thanks a lot dude !!! It helped me to make working SCP via jenkins"
+---
+a great feature of git ssh is that, when it fails, you are left with very vague error messages that can point to 1000s of different causes. It could hardly stink more. Really only for the expert.
+
+
+<br />
+<br />
+<br />
+<table align="center" cellpadding="0" cellspacing="0" class="tr-caption-container" style="margin-left: auto; margin-right: auto; text-align: center;"><tbody>
+<tr><td style="text-align: center;"><a href="/images/615cae5c3ecd5695.jpg" imageanchor="1" style="margin-left: auto; margin-right: auto;"><img border="0" src="/images/5fc6e8babe946d8a.jpg" height="299" width="400" /></a></td></tr>
+<tr><td class="tr-caption" style="text-align: center;">git and ssh, two skunks</td></tr>
+</tbody></table>
+<br />
+<br />
+<br />
+c:\pierre&gt;<b>git clone </b>ssh://git@stash.acme.com:7999/pup/puppet-pippov2.git<br />
+<i>Cloning into 'puppet-pippov2'...</i><br />
+<i><b>Could not create directory '/c/WINDOWS/system32/config/systemprofile/.ssh'.</b></i><br />
+<i>The authenticity of host '[stash.acme.com]:7999 ([10.56.8.198]:7999)' can't be established.</i><br />
+<i>RSA key fingerprint is fb:09:c7:a7:79:07:99:35:3a:88:51:18:59:a6:8e:75.</i><br />
+<i>Are you sure you want to continue connecting (yes/no)? yes</i><br />
+<i>Failed to add the host to the list of known hosts (/c/WINDOWS/system32/config/systemprofile/.ssh/known_hosts).</i><br />
+<i>Permission denied (publickey).</i><br />
+<i>fatal: Could not read from remote repository.</i><br />
+<i><br /></i>
+<i>Please make sure you have the correct access rights</i><br />
+<i>and the repository exists.</i><br />
+<br />
+<br />
+I really have no clue where this systemprofile is coming from... must be some Windows default...
+<br />
+<br />
+c:\pierre&gt;echo %userprofile%<br />
+C:\Users\Pierluigi<br />
+<br />
+c:\pierre&gt;echo %HOME%<br />
+C:\WINDOWS\system32\config\systemprofile<br />
+<br />
+<br />
+Aha, see: the %HOME% variable is set to something WRONG.
+
+<br />
+I tried EXPLICITLY setting the %HOME% variable as a SYSTEM environment property (not a USER.... it didn't work....):
+<br />
+c:\pierre\vagrant&gt;echo %HOME%<br />
+C:\Users\Pierluigi\<br />
+<br />
+Now it all works. It can create the known_hosts file.
+
+<br />
+Windows stinks.
+
+

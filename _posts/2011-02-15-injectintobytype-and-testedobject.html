@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Unitils: @InjectIntoByType and @TestedObject"
+date: 2011-02-15T16:06:00.003+01:00
+permalink: /2011/02/injectintobytype-and-testedobject.html
+blogger_id: "5493504556409111289"
+tags: ["InjectIntoByType", "unitils"]
+---
+@TestedObject<br />
+AlertService alertService = new AlertService();<br />
+<br />
+@InjectIntoByType(target="alertService")<br />
+Mock<schedulerservice> mockSchedulerService;<br />
+@InjectIntoByType(target="alertService")<br />
+Mock<messageservice> mockMessageService;<br />
+<br />
+the target="alertService" is not required, since there is only one TestedObject.<br />
+<br />
+instead of passing the Mock objects in the AlertService constructor, we can simply inject them using InjectIntoByType.<br />
+<br />
+What I love is that no XML is required. XML sucks because it's too loosely connected with code.<br />
+<br />
+See AlertServiceAnnotatedTest in <a href="http://javatoolsforweblogic.googlecode.com/files/TestUnitilsV2.zip">http://javatoolsforweblogic.googlecode.com/files/TestUnitilsV2.zip</a>  for a working example.<br />
+<br />
+Again, it's a pain to get all the required jars in the classpath... welcome to Java world :o(

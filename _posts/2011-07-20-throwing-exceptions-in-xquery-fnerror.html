@@ -1,0 +1,66 @@
+---
+layout: post
+title: "Throwing exceptions in XQuery - fn:error()"
+date: 2011-07-20T12:03:00.002+02:00
+permalink: /2011/07/throwing-exceptions-in-xquery-fnerror.html
+blogger_id: "6796869352571739457"
+tags: ["fn:error", "XQuery"]
+---
+Generating proper error messages is the foundation for a well maintainable application.<br />
+<br />
+One should embed proper assertions in XQuery, using fn:error()<br />
+<br />
+See chapter 3 in here <a href="http://www.w3.org/TR/xpath-functions/">http://www.w3.org/TR/xpath-functions/</a> <br />
+<br />
+A (dummy)example is here:<br />
+<br />
+xquery version "1.0" encoding "Cp1252";<br />
+(:: pragma  parameter="$anyType1" type="xs:anyType" ::)<br />
+(:: pragma  type="xs:anyType" ::)<br />
+<br />
+declare namespace xf = "http://tempuri.org/PVTests/raiseTest/";<br />
+<br />
+declare function xf:raiseTest($anyType1 as element(*))<br />
+as element(*) {<br />
+if ($anyType1/id/text() = 23) then <br />
+fn:error(xs:QName('localnameblablabla'), '23 is not a good id')<br />
+else <bla/><br />
+};<br />
+<br />
+declare variable $anyType1 as element(*) external;<br />
+<br />
+xf:raiseTest($anyType1)<br />
+<br />
+<br />
+and you test it with<br />
+<br />
+<pre name="code" class="brush: xml"><?xml version="1.0"?>
+<ns0:anyType xmlns:ns0="http://www.w3.org/2001/XMLSchema">
+<id>23</id>
+</ns0:anyType>
+
+</pre><br />
+<br />
+In OSB only the xs:QName($someString) constructor is supported, and the someString must be the localname (don't use a http://acme.com/errorcode1234 style, it will raise an exception)<br />
+although the normal QName constructor supports all possible variations:<br />
+<br />
+<a href="http://download.oracle.com/javase/1.5.0/docs/api/javax/xml/namespace/QName.html#QName%28java.lang.String,%20java.lang.String,%20java.lang.String%29">http://download.oracle.com/javase/1.5.0/docs/api/javax/xml/namespace/QName.html#QName%28java.lang.String,%20java.lang.String,%20java.lang.String%29</a><br />
+<br />
+<br />
+Your error handler will receive a fault:<br />
+<br />
+weblogic.xml.query.exceptions.XQueryUserException: line 1, column 1: localnameblablabla: 23 is not a good id:<br />
+<br />
+<br />
+&lt;con:fault   xmlns:con="http://www.bea.com/wli/sb/context"&gt;<br />
+ &lt;con:errorCode&gt;BEA-382510&lt;/con:errorCode&gt;<br />
+ &lt;con:reason&gt;<br />
+ OSB Assign action failed updating variable "bla": weblogic.xml.query.exceptions.XQueryUserException: line 1, column 1: localnameblablabla: 23 is not a good id<br />
+ &lt;/con:reason&gt;<br />
+ &lt;con:location&gt;<br />
+ &lt;con:node&gt;PipelinePairNode1&lt;/con:node&gt;<br />
+ &lt;con:pipeline&gt;PipelinePairNode1_request&lt;/con:pipeline&gt;<br />
+ &lt;con:stage&gt;stage1&lt;/con:stage&gt;<br />
+ &lt;con:path&gt;request-pipeline&lt;/con:path&gt;<br />
+ &lt;/con:location&gt;<br />
+ &lt;/con:fault&gt;

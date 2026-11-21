@@ -1,0 +1,110 @@
+---
+layout: post
+title: "Jenkins Pipeline and OWASP dependency check"
+date: 2018-05-19T02:43:00.002+02:00
+permalink: /2018/05/jenkins-pipeline-and-owasp-dependency.html
+blogger_id: "5726747117625194822"
+tags: ["jenkins", "maven", "owasp"]
+---
+a) in Jenkins, configure a M3 instance in your "Global Tools" configuration section<br />
+<br />
+b) make sure you have installed the OWASP dependency check plugin<br />
+<br />
+c) create a Pipeline Jenkins project, name "owasptest", and simply paste this pipeline (it's a copy from the sample built-in "github and maven" pipeline):<br />
+<br />
+<pre class="brush: java">node {
+   def mvnHome
+   stage('Preparation') { // for display purposes
+      // Get some code from a GitHub repository
+      git 'https://github.com/jglick/simple-maven-project-with-tests.git'
+      // Get the Maven tool.
+      // ** NOTE: This 'M3' Maven tool must be configured
+      // **       in the global configuration.           
+      mvnHome = tool 'M3'
+   }
+   stage('Build') {
+      // Run the maven build
+      if (isUnix()) {
+         sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
+      } else {
+         bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean package/)
+      }
+   }
+   stage('Results') {
+      junit '**/target/surefire-reports/TEST-*.xml'
+      archive 'target/*.jar'
+   }
+     stage("Dependency Check") {
+    dependencyCheckAnalyzer datadir: 'dependency-check-data', isFailOnErrorDisabled: true, hintsFile: '', includeCsvReports: false, includeHtmlReports: false, includeJsonReports: false, isAutoupdateDisabled: false, outdir: '', scanpath: '', skipOnScmChange: false, skipOnUpstreamChange: false, suppressionFile: '', zipExtensions: ''
+
+    dependencyCheckPublisher canComputeNew: false, defaultEncoding: '', healthy: '', pattern: '', unHealthy: ''
+
+    archiveArtifacts allowEmptyArchive: true, artifacts: '**/dependency-check-report.xml', onlyIfSuccessful: true
+  }
+  
+}
+
+</pre><br />
+<br />
+and leave "Use Groovy Sandbox" checked<br />
+<br />
+<br />
+<br />
+<br />
+Building jar: /home/centos/.jenkins/workspace/owasptest/target/simple-maven-project-with-tests-1.0-SNAPSHOT.jar<br />
+<br />
+[DependencyCheck] Executing Dependency-Check with the following options:<br />
+[DependencyCheck]  -name = owasptest<br />
+[DependencyCheck]  -scanPath = /home/centos/.jenkins/workspace/owasptest<br />
+[DependencyCheck]  -outputDirectory = /home/centos/.jenkins/workspace/owasptest<br />
+[DependencyCheck]  -dataDirectory = /home/centos/.jenkins/workspace/owasptest/dependency-check-data<br />
+[DependencyCheck]  -dataMirroringType = none<br />
+[DependencyCheck]  -isQuickQueryTimestampEnabled = true<br />
+[DependencyCheck]  -jarAnalyzerEnabled = true<br />
+[DependencyCheck]  -nodePackageAnalyzerEnabled = true<br />
+[DependencyCheck]  -nspAnalyzerEnabled = true<br />
+[DependencyCheck]  -composerLockAnalyzerEnabled = true<br />
+[DependencyCheck]  -pythonDistributionAnalyzerEnabled = true<br />
+[DependencyCheck]  -pythonPackageAnalyzerEnabled = true<br />
+[DependencyCheck]  -rubyBundlerAuditAnalyzerEnabled = false<br />
+[DependencyCheck]  -rubyGemAnalyzerEnabled = true<br />
+[DependencyCheck]  -cocoaPodsAnalyzerEnabled = true<br />
+[DependencyCheck]  -swiftPackageManagerAnalyzerEnabled = true<br />
+[DependencyCheck]  -archiveAnalyzerEnabled = true<br />
+[DependencyCheck]  -assemblyAnalyzerEnabled = true<br />
+[DependencyCheck]  -centralAnalyzerEnabled = true<br />
+[DependencyCheck]  -nuspecAnalyzerEnabled = true<br />
+[DependencyCheck]  -nexusAnalyzerEnabled = false<br />
+[DependencyCheck]  -autoconfAnalyzerEnabled = true<br />
+[DependencyCheck]  -cmakeAnalyzerEnabled = true<br />
+[DependencyCheck]  -opensslAnalyzerEnabled = true<br />
+[DependencyCheck]  -showEvidence = true<br />
+[DependencyCheck]  -formats = XML <br />
+[DependencyCheck]  -autoUpdate = true<br />
+[DependencyCheck]  -updateOnly = false<br />
+[DependencyCheck] Data directory created<br />
+[DependencyCheck] Scanning: /home/centos/.jenkins/workspace/owasptest<br />
+[DependencyCheck] Analyzing Dependencies<br />
+<br />
+[Pipeline] dependencyCheckPublisher<br />
+<br />
+[DependencyCheck] Collecting Dependency-Check analysis files...<br />
+[DependencyCheck] Searching for all files in /home/centos/.jenkins/workspace/owasptest that match the pattern **/dependency-check-report.xml<br />
+[DependencyCheck] Parsing 1 file in /home/centos/.jenkins/workspace/owasptest<br />
+[DependencyCheck] Successfully parsed file /home/centos/.jenkins/workspace/owasptest/dependency-check-report.xml with 0 unique warnings and 0 duplicates.<br />
+<br />
+<br />
+At this point you can view the report in http://localhost:9090/job/owasptest/lastSuccessfulBuild/artifact/dependency-check-report.xml<br />
+<br />
+<br />
+<br />
+To get interesting result you should use https://github.com/WebGoat/WebGoat.git<br />
+<br />
+At the end, a monster DB (330 MB) is built at /home/centos/.jenkins/workspace/owasptest/dependency-check-data/dc.h2.db<br />
+To learn mode about this DB, read here <a href="https://github.com/jeremylong/DependencyCheck/tree/master/core/src/main/resources/data">https://github.com/jeremylong/DependencyCheck/tree/master/core/src/main/resources/data</a><br />
+and here <a href="https://github.com/jeremylong/DependencyCheck/blob/master/core/src/main/resources/dependencycheck.properties">https://github.com/jeremylong/DependencyCheck/blob/master/core/src/main/resources/dependencycheck.properties</a><br />
+<br />
+Ref: <a href="https://issues.jenkins-ci.org/browse/JENKINS-37437">https://issues.jenkins-ci.org/browse/JENKINS-37437</a><br />
+<br />
+<br />
+

@@ -1,0 +1,27 @@
+---
+layout: post
+title: "ejbLink:  duplicated"
+date: 2011-03-09T10:58:00.003+01:00
+permalink: /2011/03/ejblink-duplicated.html
+blogger_id: "5476453609039229664"
+tags: ["jboss"]
+---
+this funny error was occurring only because in the tmp directory of JBoss there were some old jars....probably because I have deployed a Web Application in the unpacked format<br />
+<br />
+As with WebLogic, the same rule applies to JBoss: when you see something weird, just empty cache and tmp directories<br />
+<br />
+<br />
+<i><br />
+10:38:04,677 WARN  [ServiceController] Problem starting service jboss.j2ee:ear=acme-web.ear,jar=acme-domain.jar,name=BlaRepositoryBean,service=EJB3<br />
+java.lang.RuntimeException: could not resolve global JNDI name for @EJB for container BlaRepositoryBean: reference class: acme.domain.repository.VelocityProcessor <b>ejbLink:  duplicated</b> in acme-domain.jar<br />
+        at org.jboss.injection.EjbEncInjector.inject(EjbEncInjector.java:88)<br />
+        at org.jboss.ejb3.EJBContainer.start(EJBContainer.java:566)<br />
+        at org.jboss.ejb3.SessionContainer.start(SessionContainer.java:154)<br />
+        at org.jboss.ejb3.stateless.StatelessContainer.start(StatelessContainer.<br />
+java:102)<br />
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.<br />
+java:39)<br />
+<br />
+<br />
+</i>

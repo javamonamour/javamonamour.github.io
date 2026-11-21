@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Parsing XML in Java, how frustrating..."
+date: 2012-08-18T09:15:00.001+02:00
+permalink: /2012/08/parsing-xml-in-java-how-frustrating.html
+blogger_id: "1733463978894192953"
+tags: ["parsers", "xml"]
+---
+<pre name="code" class="brush: java"><%@page import="java.net.*" %>
+<%@page import="java.io.*" %>
+<%@page import="javax.xml.xpath.*" %>
+<%@page import="org.xml.sax.*" %>
+<%@page import="javax.xml.parsers.*" %>
+<%@page import="org.w3c.dom.*" %>
+
+  
+
+<% 
+   String urlToRead = "http://acme.com:8101/sbresource?SCHEMA/httptest/version";
+      URL url;
+      HttpURLConnection conn;
+      BufferedReader rd;
+      String line;
+      String xml = "";
+      String version = "N/A";
+      try {
+         url = new URL(urlToRead);
+         conn = (HttpURLConnection) url.openConnection();
+         conn.setRequestMethod("GET");
+         rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+         while ((line = rd.readLine()) != null) {
+          xml += line;
+         }
+         rd.close();
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+      XPathFactory factory = XPathFactory.newInstance();
+      XPath xpath = factory.newXPath();
+      //String expression = "//xs:element[@name='version']/@id";
+      String expression = "//*";
+      DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+      InputSource is = new InputSource(new StringReader(xml));
+      Document document = builder.parse(is);
+      out.write("parsed");
+      Node widgetNode = (Node) xpath.evaluate(expression, document, XPathConstants.NODE);
+      out.write("evaluated");
+      out.write(widgetNode.getTextContent());
+      out.write("widgetNode is null? " + (widgetNode == null));
+%>
+
+</pre><br />
+<br />
+I promise you, this is hell when you compare to XML Parsing in Groovy or Python...<br />
+<br />
+

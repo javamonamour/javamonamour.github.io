@@ -1,0 +1,18 @@
+---
+layout: post
+title: "How do I make a weblogic server fail?"
+date: 2013-01-17T17:39:00.000+01:00
+permalink: /2013/01/how-do-i-make-weblogic-server-fail.html
+blogger_id: "2605952835364965562"
+---
+I needed to start a WebLogic Managed Server and make it fail, to test that the start script correctly reports the issue.
+<br/><br/>
+Untargeting the wlsbjmsrpDataSource datasource didn't work - it's not a fatal error unless you use the datasource for Database migration.
+<br/><br/>
+The first idea that occurred to me is to set its listen port to the same port used by the Admin Server: in this case the server goes into FAILED_NOT_RESTARTABLE
+<br/>
+<br/>
+<br/>
+
+
+

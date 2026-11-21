@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Customization File for SOA Suite"
+date: 2010-11-29T19:55:00.000+01:00
+permalink: /2010/11/customization-file-for-soa-suite.html
+blogger_id: "6969586541721375153"
+tags: ["FileAdapter"]
+---
+When you specify an input/output directory for your File Adapter, use "Logical Name" rather than "Physical Path" (Directory Names are specified as....).<br />
+Let's assume I specify FILES_DIR_OUT.<br />
+<br />
+This will create an entry in the composite.xml<br />
+<br />
+<property name="FILES_DIR_OUT" type="xs:string" many="false"               override="may"></property><br />
+<br />
+and at the beginning it's an empty string. <br />
+<br />
+You should specify a token (like ${FILES_DIR_OUT}) and during your deployment process replace that token with the actual value - use any filtering mechanism like Maven Filter of a simple "sed" script....  <br />
+<br />
+I don't think there is a built-in support in the Ant build and deploy scripts to do that.<br />
+<br />
+<br />
+See also the File Adapter documentation:<br />
+<a href="http://download.oracle.com/docs/cd/E15523_01/integration.1111/e10231/adptr_file.htm#CIAHFFBI ">http://download.oracle.com/docs/cd/E15523_01/integration.1111/e10231/adptr_file.htm#CIAHFFBI <br />
+</a>

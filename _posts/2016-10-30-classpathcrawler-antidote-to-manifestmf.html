@@ -1,0 +1,559 @@
+---
+layout: post
+title: "ClasspathCrawler, the antidote to the manifest.mf ClassPath poison"
+date: 2016-10-30T08:15:00.000+01:00
+permalink: /2016/10/classpathcrawler-antidote-to-manifestmf.html
+blogger_id: "3031292053332770295"
+tags: ["classpath"]
+---
+Some intoxicated Moron after a night of Martini and Pizza must have decided to introduce in Java one of the most brittle and obscure fantasies in the history of IT: the Class Path clause in a manifest.mf <a href="https://docs.oracle.com/javase/tutorial/deployment/jar/downman.html">https://docs.oracle.com/javase/tutorial/deployment/jar/downman.html</a>.
+
+<br/>
+This "person with special needs" has probably caused a loss of several billion dollars to the world economy, by wasting countless hours of countless people frantically try to sort out their classpath dependencies so obscurely specified. Worse still, many Java workers ignore completely this features, and are clueless on how effectively a class is retrieved by a classloader even without them explicitly mentioning the containing JAR in the Application Classpath, nor deploying the JAR with the EAR.
+
+<br/><br/>
+So I have written this tool to explore how WebLogic 12.3.1 classpath is formed:
+<br/><br/>
+
+<a href="https://raw.githubusercontent.com/vernetto/JavaMonAmour/master/SSLTests/src/ClasspathCrawler.java">https://raw.githubusercontent.com/vernetto/JavaMonAmour/master/SSLTests/src/ClasspathCrawler.java</a>
+
+<br/><br/>
+Just invoke it adding the weblogic.jar to the classpath when calling "java ClasspathCrawler". In my case, I run the class from D:\pierre\github\JavaMonAmour\workspace\SSLTests\bin and the location of the weblogic.jar is D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar.
+
+<br/><br/>
+As you might notice, between circular references and missing JARs, the result is quite interesting.
+
+<br/><br/>
+
+The result is here:
+
+<br/><br/>
+<pre class="brush: java">
+
+classpath=D:\pierre\github\JavaMonAmour\workspace\SSLTests\bin;D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+INFO: skipping directory D:\pierre\github\JavaMonAmour\workspace\SSLTests\bin
+classpath=../../modules/features/weblogic.server.merged.jar ../../modules/features/weblogic.server.merge.modules_12.1.3.0.jar ../../../oracle_common/common/lib/config-launch.jar schema/weblogic-domain-binding.jar schema/weblogic-domain-binding-compatibility.jar schema/diagnostics-binding.jar schema/diagnostics-image-binding.jar ../../../oracle_common/modules/mysql-connector-java-commercial-5.1.22/mysql-connector-java-commercial-5.1.22-bin.jar cryptoj.jar  ../../../oracle_common/modules/datadirect/wlsqlserver.jar ../../../oracle_common/modules/datadirect/wldb2.jar ../../../oracle_common/modules/datadirect/wlsybase.jar ../../../oracle_common/modules/datadirect/wlinformix.jar ../../../oracle_common/modules/datadirect/fmwgenerictoken.jar osgi.jar wlw-langx.jar jcom.jar weblogic-L10N.jar wljaccutil.jar  
+
+classpath=../jaxr-api.jar ../saaj-impl.jar ../jaxb-impl.jar ../glassfish.jsf_2.0.0.0_2-1-20.jar ../com.bea.core.utils_2.3.0.0.jar ../com.bea.core.diagnostics.instrumentor.config_3.0.0.0.jar ../com.bea.core.diagnostics.instrumentor.config_3.1.0.0.jar ../com.bea.core.redef.binding_3.1.0.0.jar ../com.oracle.core.coherence.app.descriptor.binding_1.1.0.0.jar ../com.oracle.core.coherence.descriptor.binding_4.0.0.0.jar ../com.bea.core.diagnostics.accessor.binding_4.0.0.0.jar ../monfox.dsnmp.agent_1.3.0.0_4-7-30.jar ../com.bea.core.datasource6.binding_2.3.0.0.jar ../com.bea.core.descriptor.application.binding_3.0.0.0.jar ../com.bea.core.descriptor.j2ee.binding_3.0.0.0.jar ../com.bea.core.descriptor.settable.binding_3.0.0.0.jar ../com.bea.core.descriptor.wl.binding_4.0.0.0.jar ../com.bea.core.management.core.binding_4.1.0.0.jar
+
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\jaxr-api.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\saaj-impl.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\jaxb-impl.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.diagnostics.instrumentor.config_3.0.0.0.jar doesn't exist
+classpath=../hk2-api_2.3.0-b01.jar ../hk2-utils_2.3.0-b01.jar ../hk2-locator_2.3.0-b01.jar ../hk2-runlevel_2.3.0-b01.jar ../../../oracle_common/modules/features/com.oracle.db.jdbc7-no-dms.jar ../../../oracle_common/modules/oracle.jdbc_12.1.0/aqapi.jar ../../../oracle_common/modules/oracle.ons_12.1.3/ons.jar ../../../oracle_common/modules/javax.persistence_2.0.0.0_2-0.jar ../../../oracle_common/modules/oracle.toplink_12.1.3/eclipselink.jar ../../../oracle_common/modules/oracle.toplink_12.1.3/toplink-grid.jar ../../../oracle_common/modules/oracle.toplink_12.1.3/toplink-exalogic.jar ../com.oracle.css.common.security.i18n_7.1.0.0.jar ../com.oracle.css.common.security.xacml_7.1.0.0.jar ../com.oracle.css.common.security.saml2.utils_7.1.0.0.jar ../com.oracle.css.common.engine.impl_7.1.0.0.jar ../com.oracle.css.common.engine.api_7.1.0.0.jar ../com.oracle.css.common.security.api_7.1.0.0.jar ../com.oracle.css.common.security.impl_7.1.0.0.jar ../com.oracle.css.common.security.jdkutils_7.1.0.0.jar ../com.oracle.css.common.security.utils_7.1.0.0.jar ../com.oracle.css.common.security.saml2_7.1.0.0.jar ../com.oracle.css.common.security.saml2.manage_7.1.0.0.jar ../com.oracle.css.common.security.providers.utils_7.1.0.0.jar ../com.oracle.css.common.security.saml.utils_7.1.0.0.jar ../com.oracle.css.common.security.xacmlproviders.utils_7.1.0.0.jar ../com.oracle.css.common.security.providers.env_7.1.0.0.jar ../com.bea.core.certj_1.0.0.0_6-1-1.jar ../../../oracle_common/modules/asm-3.1.jar ../../../coherence/lib/coherence.jar ../../../coherence/lib/coherence-web.jar ../com.oracle.core.eclipselink.integration_3.1.0.0.jar ../../../oracle_common/modules/com.oracle.webservices.wls.wls-ws-metainf-services-impl_12.1.3.jar ../com.oracle.css.opensaml_7.1.0.0.jar ../com.oracle.css.opensaml2_7.1.0.0.jar ../com.oracle.css.weblogic.security.wls_7.1.0.0.jar ../com.oracle.css.weblogic.security_7.1.0.0.jar ../org.apache.openjpa_1.5.0.0_1-1-1.jar ../../../oracle_common/modules/internal/features/com.oracle.webservices.wls.wls-classpath_12.1.3.jar ../com.bea.core.diagnostics.instrumentor.config_3.1.0.0.jar ../com.bea.core.datasource6.binding_2.3.0.0.jar ../com.bea.core.descriptor.settable.binding_3.0.0.0.jar ../com.bea.core.diagnostics.accessor.binding_4.0.0.0.jar ../com.bea.core.management.core.binding_4.1.0.0.jar ../com.bea.core.kodo.integration.binding_4.0.0.0.jar ../com.bea.core.redef.binding_3.1.0.0.jar ../com.bea.core.descriptor.application.binding_3.0.0.0.jar ../com.bea.core.descriptor.j2ee.binding_3.0.0.0.jar ../com.bea.core.descriptor.wl.binding_4.0.0.0.jar ../com.bea.core.descriptor.settable.binding_3.0.0.0.jar ../com.oracle.core.coherence.descriptor.binding_4.0.0.0.jar ../com.oracle.core.coherence.app.descriptor.binding_1.1.0.0.jar ../com.bea.core.descriptor.application_3.0.0.0.jar ../com.bea.core.descriptor.j2ee_3.0.0.0.jar ../com.bea.core.descriptor.wl_4.0.0.0.jar ../com.bea.core.descriptor_2.2.0.0.jar ../com.bea.core.compat.wl.90_1.6.0.0.jar ../com.oracle.core.coherence.descriptor_4.0.0.0.jar ../com.oracle.core.coherence.app.descriptor_1.1.0.0.jar weblogic.server.modules.jsf2.0_12.1.3.0.jar ../../../oracle_common/modules/com.bea.core.i18n_3.0.0.0.jar ../../../oracle_common/modules/oracle.toplink_12.1.3/toplink-dataservices.jar ../../../oracle_common/modules/oracle.xdk_12.1.3/xmlparserv2_sans_jaxp_services.jar ../monfox.dsnmp.agent_1.3.0.0_4-7-30.jar ../../../oracle_common/modules/javax.xml.bind_1.0.0.0_2-2-3.jar ../../../oracle_common/modules/javax.xml.ws_1.0.0.0_2-2.jar ../com.bea.core.i18n.generator_4.0.0.0.jar ../com.bea.core.i18n.tools_3.1.0.0.jar ../../../oracle_common/modules/org.apache.ant_1.9.2/lib/ant.jar ../../../oracle_common/modules/org.apache.ant_1.9.2/lib/ant-launcher.jar ../com.bea.core.kodo_1.8.0.0_4-2-1.jar ../com.bea.core.kodo.integration_4.0.0.0.jar ../com.bea.core.kodo.integration.tools_2.2.0.0.jar ../hk2-api_2.3.0-b01.jar ../hk2-locator_2.3.0-b01.jar ../hk2-utils_2.3.0-b01.jar ../hk2-runlevel_2.3.0-b01.jar ../com.oracle.cmm.agent_1.0.0.b01.jar ../com.oracle.cmm.lowertier_1.0.0.0.jar ../../../oracle_common/modules/jackson-core-asl-1.9.2.jar ../../../oracle_common/modules/jackson-jaxrs-1.9.2.jar ../../../oracle_common/modules/jackson-mapper-asl-1.9.2.jar ../../../oracle_common/modules/jackson-xc-1.9.2.jar ../../../oracle_common/modules/jettison-1.1.jar ../../../oracle_common/modules/weblogic.jaxrs.internal.common_1.2.0.0.jar ../../../oracle_common/modules/weblogic.jaxrs.client_3.0.0.0.jar ../../../oracle_common/modules/weblogic.jaxrs.server_3.0.0.0.jar ../../../oracle_common/modules/jersey-core-1.18.jar ../../../oracle_common/modules/jersey-client-1.18.jar ../../../oracle_common/modules/jersey-server-1.18.jar ../../../oracle_common/modules/jersey-servlet-1.18.jar ../../../oracle_common/modules/jersey-multipart-1.18.jar ../../../oracle_common/modules/jersey-json-1.18.jar ../javax.websocket_1.0.0.0.jar ../glassfish.tyrus_1.0.0.0_1-3-5.jar ../glassfish.tyrus.fallback_1.0.0.0_1-0.jar ../com.oracle.weblogic.websocket.client_1.0.0.0.jar ../javax.json_1.0.0.0_1-0.jar ../com.oracle.weblogic.build-1.7-utils_1.0.0.0.jar ../hibernate.validator_1.0.0.0_4-1-0.jar
+
+classpath=../../../oracle_common/modules/oracle.jdbc_12.1.0/ojdbc7.jar ../../../oracle_common/modules/oracle.ucp_12.1.0.jar ../../../oracle_common/modules/oracle.osdt_12.1.3/osdt_cert.jar ../../../oracle_common/modules/oracle.osdt_12.1.3/osdt_core.jar ../../../oracle_common/modules/oracle.pki_12.1.3/oraclepki.jar ../../../oracle_common/modules/oracle.nlsrtl_12.1.0/orai18n.jar ../../../oracle_common/modules/oracle.xdb_12.1.0.jar
+
+classpath=orai18n-mapping.jar orai18n-utility.jar orai18n-collation.jar orai18n-translation.jar orai18n-net.jar orai18n-servlet.jar orai18n-lcsd.jar orai18n-tools.jar gdk_custom.jar
+
+classpath=gdk_custom.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\gdk_custom.jar doesn't exist
+classpath=orai18n-mapping.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-mapping.jar already in effective classpath..... possible circular reference
+classpath=orai18n.jar orai18n-utility.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-utility.jar already in effective classpath..... possible circular reference
+classpath=orai18n-utility.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-utility.jar already in effective classpath..... possible circular reference
+classpath=orai18n-mapping.jar orai18n.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-mapping.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar already in effective classpath..... possible circular reference
+classpath=orai18n-mapping.jar orai18n-utility.jar orai18n-collation.jar orai18n-translation.jar orai18n.jar orai18n-net.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-mapping.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-utility.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-collation.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-translation.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-net.jar already in effective classpath..... possible circular reference
+classpath=orai18n-mapping.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-mapping.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\gdk_custom.jar doesn't exist
+classpath=../../../../oracle_common/modules/com.oracle.webservices.wls.wls-ws-metainf-services-impl_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.wls.wls-integration-impl_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.wls.wls-soap-stack-impl_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.wls.wls-soap-tool-jspgen_12.1.3.jar ../../../../oracle_common/modules/com.oracle.state-management.executor-internal-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.state-management.persistence-service-internal-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.state-management.persistence-service-provider-state-management-impl_12.1.3.jar ../../../../oracle_common/modules/com.oracle.state-management.state-management-internal-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.state-management.state-management-provider-aggregate-impl_12.1.3.jar ../../../../oracle_common/modules/com.oracle.state-management.state-management-provider-coherence-impl_12.1.3.jar ../../../../oracle_common/modules/com.oracle.state-management.state-management-provider-common-internal-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.state-management.state-management-provider-jdbc-impl_12.1.3.jar ../../../../oracle_common/modules/com.oracle.state-management.state-management-provider-memory-impl_12.1.3.jar ../../../../oracle_common/modules/com.oracle.state-management.transactional-map-internal-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.audit-internal-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.disi-impl_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.disi-internal-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.fabric-common-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.mdds-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.mdds-jersey-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.orasaaj-rt-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.session-manager-impl_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.session-manager-internal-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.user-api_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.ws-star-impl_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.wls.wls-ws-api_12.1.3.jar ../../../../oracle_common/modules/com.sun.istack.istack-commons-runtime_2.19.jar ../../../../oracle_common/modules/com.sun.xml.fastinfoset.FastInfoset_1.2.13.jar ../../../../oracle_common/modules/com.sun.xml.messaging.saaj.saaj-impl_1.3.jar ../../../../oracle_common/modules/com.sun.xml.stream.buffer.streambuffer_1.5.3.jar ../../../../oracle_common/modules/com.sun.xml.ws.jaxws-eclipselink-plugin_2.2.jar ../../../../oracle_common/modules/com.sun.xml.ws.jaxws-rt_2.2.jar ../../../../oracle_common/modules/com.sun.xml.ws.jaxws-tools_2.2.jar ../../../../oracle_common/modules/com.sun.xml.ws.policy_2.4.jar ../../../../oracle_common/modules/com.sun.xml.ws.sdo-eclipselink-plugin_2.2.jar ../../../../oracle_common/modules/org.glassfish.external.management-api_3.2.1-b001.jar ../../../../oracle_common/modules/org.glassfish.gmbal.gmbal-api-only_3.1.0-b001.jar ../../../../oracle_common/modules/org.glassfish.ha.ha-api_3.1.9.jar ../../../../oracle_common/modules/org.glassfish.metro.metro-cm-api_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.metro-cm-impl_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.metro-commons_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.metro-config-api_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.metro-runtime-api_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.metro-runtime-impl_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.soaptcp-api_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.soaptcp-impl_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.wsmc-api_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.wsrm-api_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.wsrm-impl_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.wsrx-commons_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.wssx-api_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.wstx-core_2.3.1.jar ../../../../oracle_common/modules/org.glassfish.metro.xmlfilter_2.3.1.jar ../../../../oracle_common/modules/org.jvnet.mimepull.mimepull_1.9.4.jar ../../../../oracle_common/modules/org.jvnet.staxex.stax-ex_1.7.5.jar ../../../../oracle_common/modules/com.oracle.http_client.http_client_12.1.3.jar ../../../../oracle_common/modules/com.oracle.webservices.orawsdl-api_12.1.3.jar ../../../../oracle_common/modules/com.sun.org.apache.xml.internal.resolver_20050927.jar ../../../../oracle_common/modules/com.sun.xml.bind.jaxb-core_2.2.jar ../../../../oracle_common/modules/com.sun.xml.bind.jaxb-impl_2.2.jar ../../../../oracle_common/modules/com.sun.xml.bind.jaxb-xjc_2.2.jar ../../../../oracle_common/modules/com.sun.xml.bind.jaxb-jxc_2.2.jar ../../../../oracle_common/modules/org.codehaus.woodstox.stax2-api_3.1.1.jar ../../../../oracle_common/modules/org.codehaus.woodstox.woodstox-core-asl_4.2.0.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.wls.wls-ws-metainf-services-impl_12.1.3.jar already in effective classpath..... possible circular reference
+classpath=javax.annotation-api.jar jsr181-api.jar jaxb-api.jar jaxws-api.jar javax.xml.soap-api.jar FastInfoset.jar gmbal-api-only.jar ha-api.jar jaxb-impl.jar management-api.jar mimepull.jar policy.jar saaj-impl.jar stax-ex.jar stax2-api.jar streambuffer.jar woodstox-core-asl.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\javax.annotation-api.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jsr181-api.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-api.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxws-api.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\javax.xml.soap-api.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\FastInfoset.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\gmbal-api-only.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\ha-api.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-impl.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\management-api.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\mimepull.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\policy.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\saaj-impl.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\stax-ex.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\stax2-api.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\streambuffer.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\woodstox-core-asl.jar doesn't exist
+classpath=jaxws-rt.jar jaxb-xjc.jar jaxb-core.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxws-rt.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-xjc.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-core.jar doesn't exist
+classpath=hk2-core.jar class-model.jar config.jar auto-depends.jar javax.inject.jar asm-all-repackaged.jar hk2-api.jar osgi-resource-locator.jar tiger-types.jar bean-validator.jar jtype.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\hk2-core.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\class-model.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\config.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\auto-depends.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\javax.inject.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\asm-all-repackaged.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\hk2-api.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\osgi-resource-locator.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\tiger-types.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\bean-validator.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jtype.jar doesn't exist
+classpath=jaxb-core-2.2.10-b140310.1920.jar jaxb-api-2.2.12-b140109.1041.jar istack-commons-runtime-2.19.jar txw2-2.2.10-b140310.1920.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-core-2.2.10-b140310.1920.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-api-2.2.12-b140109.1041.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\istack-commons-runtime-2.19.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\txw2-2.2.10-b140310.1920.jar doesn't exist
+classpath=jaxb-core.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-core.jar doesn't exist
+classpath=jaxb-core.jar jaxb-impl.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-core.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-impl.jar doesn't exist
+classpath=jaxb-core.jar jaxb-impl.jar jaxb-xjc.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-core.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-impl.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\jaxb-xjc.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.diagnostics.instrumentor.config_3.1.0.0.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.datasource6.binding_2.3.0.0.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.settable.binding_3.0.0.0.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.diagnostics.accessor.binding_4.0.0.0.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.management.core.binding_4.1.0.0.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.redef.binding_3.1.0.0.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.application.binding_3.0.0.0.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.j2ee.binding_3.0.0.0.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.wl.binding_4.0.0.0.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.settable.binding_3.0.0.0.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.coherence.descriptor.binding_4.0.0.0.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.coherence.app.descriptor.binding_1.1.0.0.jar already in effective classpath..... possible circular reference
+classpath=../glassfish.jsf_2.0.0.0_2-1-20.jar
+
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\glassfish.jsf_2.0.0.0_2-1-20.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\monfox.dsnmp.agent_1.3.0.0_4-7-30.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\hk2-api_2.3.0-b01.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\hk2-locator_2.3.0-b01.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\hk2-utils_2.3.0-b01.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\modules\hk2-runlevel_2.3.0-b01.jar already in effective classpath..... possible circular reference
+classpath=../../modules/com.oracle.cie.config-patch_12.1.3.0.jar ../../jlib/help-share.jar ../../jlib/jewt4.jar ../../jlib/jgoodies-looks.jar ../../jlib/ohj.jar ../../jlib/oracle_ice.jar ../../jlib/share.jar ../../modules/com.oracle.cie.config-wls-schema_12.1.3.0.jar ../../modules/features/com.oracle.cie.config_8.1.0.0.jar  ../../modules/bcprov-jdk16-1.45.jar ../../modules/features/orapki.lib_12.1.3.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-patch_12.1.3.0.jar doesn't exist
+classpath=jgoodies-looks.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\jlib\jgoodies-looks.jar already in effective classpath..... possible circular reference
+classpath=com.oracle.cie.config.L10N_8.1.0.0.jar ../com.bea.core.xml.xmlbeans_1.0.0.0_2-6-0.jar ../javax.xml.stream_1.1.1.0.jar ../com.oracle.cie.config-cam_8.1.0.0.jar ../com.oracle.cie.config-wls-api_1.0.0.0.jar ../com.oracle.cie.config-wls_8.1.0.0.jar ../com.oracle.cie.config_8.1.0.0.jar ../com.oracle.cie.encryption_2.1.0.0.jar ../com.oracle.cie.comdev_7.1.0.0.jar ../com.oracle.cie.wizard_7.1.0.0.jar ../com.oracle.cie.xmldh_2.7.0.0.jar ../com.oracle.cie.dependency_1.1.0.0.jar ../com.bea.core.antlr_2.7.7.jar ../com.bea.core.xquery_1.8.0.0.jar ../com.bea.core.xquery.xmlbeans-interop_1.8.0.0.jar ../com.oracle.cie.config-security_8.1.0.0.jar ../com.oracle.cie.config-security-impl_8.1.0.0.jar ../com.oracle.cie.config-owsm_8.1.0.0.jar ../com.oracle.cie.service-table_1.1.0.0.jar ../com.oracle.cie.service-table-schema_1.1.0.0.jar ../com.oracle.cie.service-table-impl_1.1.0.0.jar ../com.oracle.cie.rcu_1.1.0.0.jar ../com.oracle.cie.config-quickstart-launcher_1.0.0.0.jar ../com.oracle.cie.config-quickstart-schema-launcher_1.0.0.0.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config.L10N_8.1.0.0.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-cam_8.1.0.0.jar doesn't exist
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\com.bea.core.antlr_2.7.7.jar doesn't exist
+INFO: skipping directory D:\pierre\downloads\wls1213\oracle_common\common\lib
+classpath=../../../oracle_common/modules/oracle.osdt_12.1.3/osdt_cert.jar ../../../oracle_common/modules/oracle.osdt_12.1.3/osdt_core.jar ../../../oracle_common/modules/oracle.pki_12.1.3/oraclepki.jar ../../../oracle_common/modules/oracle.ldap_12.1.3/ojmisc.jar ../../../oracle_common/modules/oracle.rsa_12.1.3/cryptoj.jar
+
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.osdt_12.1.3\osdt_cert.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.osdt_12.1.3\osdt_core.jar already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\oracle_common\modules\oracle.pki_12.1.3\oraclepki.jar already in effective classpath..... possible circular reference
+INFO: skipping directory D:\pierre\downloads\wls1213\wlserver\server\lib
+classpath=../../../oracle_common/modules/javax.jsp_4.0.0.0_2-2.jar ../../../oracle_common/modules/glassfish.el_1.2.0.0_2-2.jar ../../../oracle_common/modules/javax.servlet_2.2.0.0_3-0.jar ../../modules/com.bea.core.repackaged.jdt_1.0.0.0_3-10-0.jar ../../modules/com.bea.core.utils.compiler_2.2.0.0.jar  ../../modules/com.bea.core.weblogic.web.api_4.0.0.0.jar wlw-langx-L10N.jar
+
+WARNING: D:\pierre\downloads\wls1213\wlserver\server\lib already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\server\lib\wlw-langx-L10N.jar doesn't exist
+classpath=weblogic-de.jar weblogic-es.jar weblogic-fr.jar weblogic-it.jar weblogic-ja.jar weblogic-ko.jar weblogic-pt_BR.jar weblogic-zh_CN.jar weblogic-zh_TW.jar
+
+WARNING: D:\pierre\downloads\wls1213\wlserver\server\lib already in effective classpath..... possible circular reference
+WARNING: D:\pierre\downloads\wls1213\wlserver\server\lib already in effective classpath..... possible circular reference
+effective classpath = [D:\pierre\github\JavaMonAmour\workspace\SSLTests\bin, D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar, D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar, D:\pierre\downloads\wls1213\wlserver\modules\glassfish.jsf_2.0.0.0_2-1-20.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.utils_2.3.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.diagnostics.instrumentor.config_3.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.redef.binding_3.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.coherence.app.descriptor.binding_1.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.coherence.descriptor.binding_4.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.diagnostics.accessor.binding_4.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\monfox.dsnmp.agent_1.3.0.0_4-7-30.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.datasource6.binding_2.3.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.application.binding_3.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.j2ee.binding_3.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.settable.binding_3.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.wl.binding_4.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.management.core.binding_4.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\hk2-api_2.3.0-b01.jar, D:\pierre\downloads\wls1213\wlserver\modules\hk2-utils_2.3.0-b01.jar, D:\pierre\downloads\wls1213\wlserver\modules\hk2-locator_2.3.0-b01.jar, D:\pierre\downloads\wls1213\wlserver\modules\hk2-runlevel_2.3.0-b01.jar, D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.db.jdbc7-no-dms.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.jdbc_12.1.0\ojdbc7.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.ucp_12.1.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.osdt_12.1.3\osdt_cert.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.osdt_12.1.3\osdt_core.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.pki_12.1.3\oraclepki.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-mapping.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-utility.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-collation.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-translation.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-net.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-servlet.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-lcsd.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-tools.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.xdb_12.1.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.jdbc_12.1.0\aqapi.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.ons_12.1.3\ons.jar, D:\pierre\downloads\wls1213\oracle_common\modules\javax.persistence_2.0.0.0_2-0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.toplink_12.1.3\eclipselink.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.toplink_12.1.3\toplink-grid.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.toplink_12.1.3\toplink-exalogic.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.i18n_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.xacml_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.saml2.utils_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.engine.impl_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.engine.api_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.api_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.impl_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.jdkutils_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.utils_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.saml2_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.saml2.manage_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.providers.utils_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.saml.utils_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.xacmlproviders.utils_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.providers.env_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.certj_1.0.0.0_6-1-1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\asm-3.1.jar, D:\pierre\downloads\wls1213\coherence\lib\coherence.jar, D:\pierre\downloads\wls1213\coherence\lib\coherence-web.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.eclipselink.integration_3.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.wls.wls-ws-metainf-services-impl_12.1.3.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.opensaml_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.opensaml2_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.weblogic.security.wls_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.weblogic.security_7.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\org.apache.openjpa_1.5.0.0_1-1-1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.wls.wls-integration-impl_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.wls.wls-soap-stack-impl_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.wls.wls-soap-tool-jspgen_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.executor-internal-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.persistence-service-internal-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.persistence-service-provider-state-management-impl_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-internal-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-provider-aggregate-impl_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-provider-coherence-impl_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-provider-common-internal-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-provider-jdbc-impl_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-provider-memory-impl_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.transactional-map-internal-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.audit-internal-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.disi-impl_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.disi-internal-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.fabric-common-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.mdds-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.mdds-jersey-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.orasaaj-rt-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.session-manager-impl_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.session-manager-internal-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.user-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.ws-star-impl_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.wls.wls-ws-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.istack.istack-commons-runtime_2.19.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.fastinfoset.FastInfoset_1.2.13.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.messaging.saaj.saaj-impl_1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.stream.buffer.streambuffer_1.5.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.ws.jaxws-eclipselink-plugin_2.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.ws.jaxws-rt_2.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.ws.jaxws-tools_2.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.ws.policy_2.4.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.ws.sdo-eclipselink-plugin_2.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.external.management-api_3.2.1-b001.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.gmbal.gmbal-api-only_3.1.0-b001.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.ha.ha-api_3.1.9.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-cm-api_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-cm-impl_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-commons_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-config-api_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-runtime-api_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-runtime-impl_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.soaptcp-api_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.soaptcp-impl_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wsmc-api_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wsrm-api_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wsrm-impl_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wsrx-commons_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wssx-api_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wstx-core_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.xmlfilter_2.3.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.jvnet.mimepull.mimepull_1.9.4.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.jvnet.staxex.stax-ex_1.7.5.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.http_client.http_client_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.orawsdl-api_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.org.apache.xml.internal.resolver_20050927.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.bind.jaxb-core_2.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.bind.jaxb-impl_2.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.bind.jaxb-xjc_2.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.bind.jaxb-jxc_2.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.codehaus.woodstox.stax2-api_3.1.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.codehaus.woodstox.woodstox-core-asl_4.2.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.kodo.integration.binding_4.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.application_3.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.j2ee_3.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.wl_4.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor_2.2.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.compat.wl.90_1.6.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.coherence.descriptor_4.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.coherence.app.descriptor_1.1.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.modules.jsf2.0_12.1.3.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.bea.core.i18n_3.0.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.toplink_12.1.3\toplink-dataservices.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.xdk_12.1.3\xmlparserv2_sans_jaxp_services.jar, D:\pierre\downloads\wls1213\oracle_common\modules\javax.xml.bind_1.0.0.0_2-2-3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\javax.xml.ws_1.0.0.0_2-2.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.i18n.generator_4.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.i18n.tools_3.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.apache.ant_1.9.2\lib\ant.jar, D:\pierre\downloads\wls1213\oracle_common\modules\org.apache.ant_1.9.2\lib\ant-launcher.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.kodo_1.8.0.0_4-2-1.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.kodo.integration_4.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.kodo.integration.tools_2.2.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.cmm.agent_1.0.0.b01.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.cmm.lowertier_1.0.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\jackson-core-asl-1.9.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\jackson-jaxrs-1.9.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\jackson-mapper-asl-1.9.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\jackson-xc-1.9.2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\jettison-1.1.jar, D:\pierre\downloads\wls1213\oracle_common\modules\weblogic.jaxrs.internal.common_1.2.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\weblogic.jaxrs.client_3.0.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\weblogic.jaxrs.server_3.0.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\jersey-core-1.18.jar, D:\pierre\downloads\wls1213\oracle_common\modules\jersey-client-1.18.jar, D:\pierre\downloads\wls1213\oracle_common\modules\jersey-server-1.18.jar, D:\pierre\downloads\wls1213\oracle_common\modules\jersey-servlet-1.18.jar, D:\pierre\downloads\wls1213\oracle_common\modules\jersey-multipart-1.18.jar, D:\pierre\downloads\wls1213\oracle_common\modules\jersey-json-1.18.jar, D:\pierre\downloads\wls1213\wlserver\modules\javax.websocket_1.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\glassfish.tyrus_1.0.0.0_1-3-5.jar, D:\pierre\downloads\wls1213\wlserver\modules\glassfish.tyrus.fallback_1.0.0.0_1-0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.weblogic.websocket.client_1.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\javax.json_1.0.0.0_1-0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.weblogic.build-1.7-utils_1.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\hibernate.validator_1.0.0.0_4-1-0.jar, D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar, D:\pierre\downloads\wls1213\oracle_common\jlib\help-share.jar, D:\pierre\downloads\wls1213\oracle_common\jlib\jewt4.jar, D:\pierre\downloads\wls1213\oracle_common\jlib\jgoodies-looks.jar, D:\pierre\downloads\wls1213\oracle_common\jlib\ohj.jar, D:\pierre\downloads\wls1213\oracle_common\jlib\oracle_ice.jar, D:\pierre\downloads\wls1213\oracle_common\jlib\share.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-wls-schema_12.1.3.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.bea.core.xml.xmlbeans_1.0.0.0_2-6-0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\javax.xml.stream_1.1.1.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-wls-api_1.0.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-wls_8.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config_8.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.encryption_2.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.comdev_7.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.wizard_7.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.xmldh_2.7.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.dependency_1.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.bea.core.xquery_1.8.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.bea.core.xquery.xmlbeans-interop_1.8.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-security_8.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-security-impl_8.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-owsm_8.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.service-table_1.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.service-table-schema_1.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.service-table-impl_1.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.rcu_1.1.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-quickstart-launcher_1.0.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-quickstart-schema-launcher_1.0.0.0.jar, D:\pierre\downloads\wls1213\oracle_common\common\lib, D:\pierre\downloads\wls1213\oracle_common\modules\bcprov-jdk16-1.45.jar, D:\pierre\downloads\wls1213\oracle_common\modules\features\orapki.lib_12.1.3.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.ldap_12.1.3\ojmisc.jar, D:\pierre\downloads\wls1213\oracle_common\modules\oracle.rsa_12.1.3\cryptoj.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\schema\weblogic-domain-binding.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\schema\weblogic-domain-binding-compatibility.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\schema\diagnostics-binding.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\schema\diagnostics-image-binding.jar, D:\pierre\downloads\wls1213\oracle_common\modules\mysql-connector-java-commercial-5.1.22\mysql-connector-java-commercial-5.1.22-bin.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\cryptoj.jar, D:\pierre\downloads\wls1213\wlserver\server\lib, D:\pierre\downloads\wls1213\oracle_common\modules\datadirect\wlsqlserver.jar, D:\pierre\downloads\wls1213\oracle_common\modules\datadirect\wldb2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\datadirect\wlsybase.jar, D:\pierre\downloads\wls1213\oracle_common\modules\datadirect\wlinformix.jar, D:\pierre\downloads\wls1213\oracle_common\modules\datadirect\fmwgenerictoken.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\osgi.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\wlw-langx.jar, D:\pierre\downloads\wls1213\oracle_common\modules\javax.jsp_4.0.0.0_2-2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\glassfish.el_1.2.0.0_2-2.jar, D:\pierre\downloads\wls1213\oracle_common\modules\javax.servlet_2.2.0.0_3-0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.repackaged.jdt_1.0.0.0_3-10-0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.utils.compiler_2.2.0.0.jar, D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.weblogic.web.api_4.0.0.0.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\jcom.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-L10N.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-de.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-es.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-fr.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-it.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-ja.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-ko.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-pt_BR.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-zh_CN.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-zh_TW.jar, D:\pierre\downloads\wls1213\wlserver\server\lib\wljaccutil.jar]
+entries = [file D:\pierre\github\JavaMonAmour\workspace\SSLTests\bin referenced by ROOT
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar referenced by ROOT
+ file D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\glassfish.jsf_2.0.0.0_2-1-20.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.utils_2.3.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.diagnostics.instrumentor.config_3.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.redef.binding_3.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.coherence.app.descriptor.binding_1.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.coherence.descriptor.binding_4.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.diagnostics.accessor.binding_4.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\monfox.dsnmp.agent_1.3.0.0_4-7-30.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.datasource6.binding_2.3.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.application.binding_3.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.j2ee.binding_3.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.settable.binding_3.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.wl.binding_4.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.management.core.binding_4.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merged.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\hk2-api_2.3.0-b01.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\hk2-utils_2.3.0-b01.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\hk2-locator_2.3.0-b01.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\hk2-runlevel_2.3.0-b01.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.db.jdbc7-no-dms.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.jdbc_12.1.0\ojdbc7.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.db.jdbc7-no-dms.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.ucp_12.1.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.db.jdbc7-no-dms.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.osdt_12.1.3\osdt_cert.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.db.jdbc7-no-dms.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.osdt_12.1.3\osdt_core.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.db.jdbc7-no-dms.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.pki_12.1.3\oraclepki.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.db.jdbc7-no-dms.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.db.jdbc7-no-dms.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-mapping.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-utility.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-collation.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-translation.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-net.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-servlet.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-lcsd.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n-tools.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\oracle.nlsrtl_12.1.0\orai18n.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.xdb_12.1.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.db.jdbc7-no-dms.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.jdbc_12.1.0\aqapi.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.ons_12.1.3\ons.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\javax.persistence_2.0.0.0_2-0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.toplink_12.1.3\eclipselink.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.toplink_12.1.3\toplink-grid.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.toplink_12.1.3\toplink-exalogic.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.i18n_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.xacml_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.saml2.utils_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.engine.impl_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.engine.api_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.api_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.impl_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.jdkutils_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.utils_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.saml2_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.saml2.manage_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.providers.utils_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.saml.utils_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.xacmlproviders.utils_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.common.security.providers.env_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.certj_1.0.0.0_6-1-1.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\asm-3.1.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\coherence\lib\coherence.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\coherence\lib\coherence-web.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.eclipselink.integration_3.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.wls.wls-ws-metainf-services-impl_12.1.3.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.opensaml_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.opensaml2_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.weblogic.security.wls_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.css.weblogic.security_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\org.apache.openjpa_1.5.0.0_1-1-1.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.wls.wls-integration-impl_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.wls.wls-soap-stack-impl_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.wls.wls-soap-tool-jspgen_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.executor-internal-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.persistence-service-internal-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.persistence-service-provider-state-management-impl_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-internal-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-provider-aggregate-impl_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-provider-coherence-impl_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-provider-common-internal-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-provider-jdbc-impl_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.state-management-provider-memory-impl_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.state-management.transactional-map-internal-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.audit-internal-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.disi-impl_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.disi-internal-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.fabric-common-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.mdds-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.mdds-jersey-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.orasaaj-rt-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.session-manager-impl_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.session-manager-internal-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.user-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.ws-star-impl_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.wls.wls-ws-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.istack.istack-commons-runtime_2.19.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.fastinfoset.FastInfoset_1.2.13.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.messaging.saaj.saaj-impl_1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.stream.buffer.streambuffer_1.5.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.ws.jaxws-eclipselink-plugin_2.2.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.ws.jaxws-rt_2.2.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.ws.jaxws-tools_2.2.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.ws.policy_2.4.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.ws.sdo-eclipselink-plugin_2.2.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.external.management-api_3.2.1-b001.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.gmbal.gmbal-api-only_3.1.0-b001.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.ha.ha-api_3.1.9.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-cm-api_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-cm-impl_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-commons_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-config-api_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-runtime-api_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.metro-runtime-impl_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.soaptcp-api_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.soaptcp-impl_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wsmc-api_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wsrm-api_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wsrm-impl_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wsrx-commons_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wssx-api_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.wstx-core_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.glassfish.metro.xmlfilter_2.3.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.jvnet.mimepull.mimepull_1.9.4.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.jvnet.staxex.stax-ex_1.7.5.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.http_client.http_client_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.webservices.orawsdl-api_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.org.apache.xml.internal.resolver_20050927.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.bind.jaxb-core_2.2.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.bind.jaxb-impl_2.2.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.bind.jaxb-xjc_2.2.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.sun.xml.bind.jaxb-jxc_2.2.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.codehaus.woodstox.stax2-api_3.1.1.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.codehaus.woodstox.woodstox-core-asl_4.2.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\internal\features\com.oracle.webservices.wls.wls-classpath_12.1.3.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.kodo.integration.binding_4.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.application_3.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.j2ee_3.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor.wl_4.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.descriptor_2.2.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.compat.wl.90_1.6.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.coherence.descriptor_4.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.core.coherence.app.descriptor_1.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.modules.jsf2.0_12.1.3.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.bea.core.i18n_3.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.toplink_12.1.3\toplink-dataservices.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.xdk_12.1.3\xmlparserv2_sans_jaxp_services.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\javax.xml.bind_1.0.0.0_2-2-3.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\javax.xml.ws_1.0.0.0_2-2.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.i18n.generator_4.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.i18n.tools_3.1.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.apache.ant_1.9.2\lib\ant.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\org.apache.ant_1.9.2\lib\ant-launcher.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.kodo_1.8.0.0_4-2-1.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.kodo.integration_4.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.kodo.integration.tools_2.2.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.cmm.agent_1.0.0.b01.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.cmm.lowertier_1.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\jackson-core-asl-1.9.2.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\jackson-jaxrs-1.9.2.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\jackson-mapper-asl-1.9.2.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\jackson-xc-1.9.2.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\jettison-1.1.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\weblogic.jaxrs.internal.common_1.2.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\weblogic.jaxrs.client_3.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\weblogic.jaxrs.server_3.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\jersey-core-1.18.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\jersey-client-1.18.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\jersey-server-1.18.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\jersey-servlet-1.18.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\jersey-multipart-1.18.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\jersey-json-1.18.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\javax.websocket_1.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\glassfish.tyrus_1.0.0.0_1-3-5.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\glassfish.tyrus.fallback_1.0.0.0_1-0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.weblogic.websocket.client_1.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\javax.json_1.0.0.0_1-0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.oracle.weblogic.build-1.7-utils_1.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\hibernate.validator_1.0.0.0_4-1-0.jar referenced by D:\pierre\downloads\wls1213\wlserver\modules\features\weblogic.server.merge.modules_12.1.3.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\oracle_common\jlib\help-share.jar referenced by D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar
+ file D:\pierre\downloads\wls1213\oracle_common\jlib\jewt4.jar referenced by D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar
+ file D:\pierre\downloads\wls1213\oracle_common\jlib\jgoodies-looks.jar referenced by D:\pierre\downloads\wls1213\oracle_common\jlib\jewt4.jar
+ file D:\pierre\downloads\wls1213\oracle_common\jlib\ohj.jar referenced by D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar
+ file D:\pierre\downloads\wls1213\oracle_common\jlib\oracle_ice.jar referenced by D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar
+ file D:\pierre\downloads\wls1213\oracle_common\jlib\share.jar referenced by D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-wls-schema_12.1.3.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.bea.core.xml.xmlbeans_1.0.0.0_2-6-0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\javax.xml.stream_1.1.1.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-wls-api_1.0.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-wls_8.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config_8.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.encryption_2.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.comdev_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.wizard_7.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.xmldh_2.7.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.dependency_1.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.bea.core.xquery_1.8.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.bea.core.xquery.xmlbeans-interop_1.8.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-security_8.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-security-impl_8.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-owsm_8.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.service-table_1.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.service-table-schema_1.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.service-table-impl_1.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.rcu_1.1.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-quickstart-launcher_1.0.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\com.oracle.cie.config-quickstart-schema-launcher_1.0.0.0.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\com.oracle.cie.config_8.1.0.0.jar
+ file D:\pierre\downloads\wls1213\oracle_common\common\lib referenced by D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\bcprov-jdk16-1.45.jar referenced by D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\features\orapki.lib_12.1.3.jar referenced by D:\pierre\downloads\wls1213\oracle_common\common\lib\config-launch.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.ldap_12.1.3\ojmisc.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\orapki.lib_12.1.3.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\oracle.rsa_12.1.3\cryptoj.jar referenced by D:\pierre\downloads\wls1213\oracle_common\modules\features\orapki.lib_12.1.3.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\schema\weblogic-domain-binding.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\schema\weblogic-domain-binding-compatibility.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\schema\diagnostics-binding.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\schema\diagnostics-image-binding.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\mysql-connector-java-commercial-5.1.22\mysql-connector-java-commercial-5.1.22-bin.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\cryptoj.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\datadirect\wlsqlserver.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\datadirect\wldb2.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\datadirect\wlsybase.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\datadirect\wlinformix.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\datadirect\fmwgenerictoken.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\osgi.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\wlw-langx.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\javax.jsp_4.0.0.0_2-2.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\wlw-langx.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\glassfish.el_1.2.0.0_2-2.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\wlw-langx.jar
+ file D:\pierre\downloads\wls1213\oracle_common\modules\javax.servlet_2.2.0.0_3-0.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\wlw-langx.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.repackaged.jdt_1.0.0.0_3-10-0.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\wlw-langx.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.utils.compiler_2.2.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\wlw-langx.jar
+ file D:\pierre\downloads\wls1213\wlserver\modules\com.bea.core.weblogic.web.api_4.0.0.0.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\wlw-langx.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\jcom.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-L10N.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-de.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-L10N.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-es.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-L10N.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-fr.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-L10N.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-it.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-L10N.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-ja.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-L10N.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-ko.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-L10N.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-pt_BR.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-L10N.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-zh_CN.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-L10N.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-zh_TW.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic-L10N.jar
+ file D:\pierre\downloads\wls1213\wlserver\server\lib\wljaccutil.jar referenced by D:\pierre\downloads\wls1213\wlserver\server\lib\weblogic.jar]
+
+</pre>
+
+
+
+<br/><br/>
+
+Just in case my github account dies, I put here the source code (I know, this is not Java8 functional programming, but it works):
+<br/><br/>
+
+<pre class="brush: java">
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+public class ClasspathCrawler {
+
+ List&lt;String&gt; effectiveClasspath = new ArrayList&lt;String&gt;();
+ List&lt;CPEntry&gt; entries = new ArrayList&lt;CPEntry&gt;();
+ 
+ boolean VERBOSE = false; 
+
+ public static void main(String[] args) throws Exception {
+  ClasspathCrawler cpc = new ClasspathCrawler();
+  String cp = System.getProperty(&quot;java.class.path&quot;);
+  String cpseparator = File.pathSeparator;
+  cpc.crawl(&quot;&quot;, cp, cpseparator, &quot;ROOT&quot;);
+  System.out.println(&quot;effective classpath = &quot; + cpc.effectiveClasspath);
+  System.out.println(&quot;entries = &quot; + cpc.entries.toString().replaceAll(&quot;,&quot;, &quot;\n&quot;));
+ }
+
+ private void crawl(String basepath, String cp, String cpseparator, String referencedBy) throws Exception {
+  log(&quot;classpath=&quot; + cp);
+  for (String cpentry : cp.split(cpseparator)) {
+   cpentry = cpentry.trim();
+   if (basepath != null &amp;&amp; basepath.length() &gt; 0) {
+    if (VERBOSE) log(&quot;normalizing &quot; + cpentry + &quot; using basepath &quot; + basepath);
+    cpentry = new File(basepath + &quot;/&quot; + cpentry).getCanonicalFile().getAbsolutePath();
+   }
+   if (VERBOSE) log(&quot;entry=&quot; + cpentry);
+   File cpentryFile = new File(cpentry);
+   if (cpentryFile.exists()) {
+    if (effectiveClasspath.contains(cpentry)) {
+     log(&quot;WARNING: &quot; + cpentry + &quot; already in effective classpath..... possible circular reference&quot;);
+    }
+    else {
+     if (VERBOSE) log(&quot;adding to effectiveClasspath &quot; + cpentry);
+     effectiveClasspath.add(cpentry);
+     entries.add(new CPEntry(cpentry, referencedBy));
+     if (VERBOSE) log(&quot;content of effectiveClasspath is &quot; + effectiveClasspath);
+     if (cpentryFile.isFile()) {
+      ZipFile zipFile = new ZipFile(cpentryFile);
+      ZipEntry zipEntry = zipFile.getEntry(&quot;META-INF/MANIFEST.MF&quot;);
+      if (zipEntry != null) {
+       String content = readZipEntry(zipFile, zipEntry);
+       if (VERBOSE) log(content);
+       String cpInManifest = extractCp(content);
+       if (cpInManifest != null &amp;&amp; cpInManifest.length() &gt; 0) {
+        if (VERBOSE) log(&quot;cpInManifest=&quot; + cpInManifest);
+        crawl(cpentryFile.getParentFile().getAbsolutePath(), cpInManifest, &quot; &quot;, cpentry);
+       }
+      }
+     }
+     else {
+      log(&quot;INFO: skipping directory &quot; + cpentry);
+     }
+    }
+
+   }
+   else {
+    log(&quot;WARNING: &quot; + cpentry + &quot; doesn't exist&quot;);
+   }
+  }
+
+ }
+
+ private String extractCp(String content) {
+  boolean capture = false;
+  StringBuffer result = new StringBuffer();
+  for (String line : content.split(&quot;\n&quot;)) {
+   if (line.startsWith(&quot;Class-Path:&quot;)) {
+    capture = true;
+   }
+   else if (capture &amp;&amp; !line.startsWith(&quot; &quot;)) {
+    capture = false;
+   }
+   if (capture) {
+    result.append(line);
+   }
+  }
+
+  return result.toString().replace(&quot;Class-Path: &quot;, &quot;&quot;).replace(&quot;\r &quot;, &quot;&quot;).replace(&quot;\n &quot;, &quot;&quot;);
+ }
+
+ private String readZipEntry(ZipFile zipFile, ZipEntry zipEntry) throws IOException, UnsupportedEncodingException {
+  InputStream inputStream = zipFile.getInputStream(zipEntry);
+  ByteArrayOutputStream result = new ByteArrayOutputStream();
+  byte[] buffer = new byte[1024];
+  int length;
+  while ((length = inputStream.read(buffer)) != -1) {
+   result.write(buffer, 0, length);
+  }
+  String content = result.toString(&quot;UTF-8&quot;);
+  return content;
+ }
+
+ public void log(String message) {
+  System.out.println(message);
+ }
+}
+
+
+
+class CPEntry {
+ String file;
+ String addedBy;
+ public CPEntry(String file, String addedBy) {
+  this.file = file;
+  this.addedBy = addedBy;
+ }
+ public String toString() {
+  return &quot;file &quot; + this.file + &quot; referenced by &quot; + this.addedBy; 
+ }
+}
+</pre>
+<br/><br/>

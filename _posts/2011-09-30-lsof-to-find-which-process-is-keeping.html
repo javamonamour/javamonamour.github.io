@@ -1,0 +1,55 @@
+---
+layout: post
+title: "lsof to find which process is keeping a socket open"
+date: 2011-09-30T12:12:00.000+02:00
+permalink: /2011/09/lsof-to-find-which-process-is-keeping.html
+blogger_id: "207002935366626478"
+tags: ["lsof"]
+---
+I know I must already have blogged this...<br />
+<br />
+If the port is 10011, do this:<br />
+<br />
+/usr/sbin/lsof -nl | egrep "TCP|UDP" | grep 10011<br />
+<br />
+<br />
+<pre>COMMAND     PID     USER   FD   TYPE             DEVICE   SIZE/OFF    NODE NAME
+
+java      10747      574   13u  IPv4 0xe0000004a31e6680        0t0     TCP 127.0.0.1:55785-&gt;127.0.0.1:10011 (ESTABLISHED)
+java      10747      574   15u  IPv4 0xe0000004ab25aa00   0t296774     TCP 10.3.255.175:53916-&gt;10.3.255.175:10011 (ESTABLISHED)
+java      10748      574   13u  IPv4 0xe0000004638b6d00     0t9957     TCP 10.3.255.175:53927-&gt;10.3.255.175:10011 (ESTABLISHED)
+java      10748      574   15u  IPv4 0xe000000462b22100        0t0     TCP 127.0.0.1:55786-&gt;127.0.0.1:10011 (ESTABLISHED)
+java      10749      574   13u  IPv4 0xe000000460469100        0t0     TCP 127.0.0.1:55787-&gt;127.0.0.1:10011 (ESTABLISHED)
+java      10749      574   15u  IPv4 0xe0000004c2dce380   0t298907     TCP 10.3.255.175:53921-&gt;10.3.255.175:10011 (ESTABLISHED)
+java      10750      574   13u  IPv4 0xe000000460f47680   0t300255     TCP 10.3.255.175:53935-&gt;10.3.255.175:10011 (ESTABLISHED)
+java      10750      574   15u  IPv4 0xe000000462b22400    0t34979     TCP 127.0.0.1:54761-&gt;127.0.0.1:10011 (ESTABLISHED)
+java      21200      574  597u  IPv4 0xe000000497104380     0t1688     TCP 10.3.255.168:55375-&gt;10.3.255.168:10011 (ESTABLISHED)
+java      27806      574  342u  IPv4 0xe000000483b10400     0t2961     TCP 10.3.255.168:10011-&gt;10.3.255.168:55375 (ESTABLISHED)
+java      27806      574  346u  IPv4 0xe00000049fe42a00     0t2956     TCP 127.0.0.1:10011-&gt;127.0.0.1:54761 (ESTABLISHED)
+java      27806      574  351u  IPv4 0xe000000482c52980      0t220     TCP 127.0.0.1:10011-&gt;127.0.0.1:55785 (ESTABLISHED)
+java      27806      574  356u  IPv4 0xe000000449aebc80        0t0     TCP 10.3.67.168:10011 (LISTEN)
+java      27806      574  363u  IPv4 0xe000000462cfc100        0t0     TCP 10.3.255.175:10011 (LISTEN)
+java      27806      574  364u  IPv4 0xe0000004ac2f7c80        0t0     TCP 10.3.255.168:10011 (LISTEN)
+java      27806      574  365u  IPv4 0xe0000004ad028400        0t0     TCP 127.0.0.1:10011 (LISTEN)
+java      27806      574  366u  IPv4 0xe0000004bf415980        0t0     TCP 10.3.255.174:10011 (LISTEN)
+java      27806      574  367u  IPv4 0xe0000004d24b3400      0t220     TCP 127.0.0.1:10011-&gt;127.0.0.1:55786 (ESTABLISHED)
+java      27806      574  368u  IPv4 0xe0000004bf415680        0t0     TCP 10.3.255.179:10011 (LISTEN)
+java      27806      574  369u  IPv4 0xe00000049e0a3680      0t220     TCP 127.0.0.1:10011-&gt;127.0.0.1:55787 (ESTABLISHED)
+java      27806      574  378u  IPv4 0xe0000004638b6700   0t244556     TCP 10.3.255.175:10011-&gt;10.3.255.175:53916 (ESTABLISHED)
+java      27806      574  379u  IPv4 0xe0000001ef703980   0t247992     TCP 10.3.255.175:10011-&gt;10.3.255.175:53921 (ESTABLISHED)
+java      27806      574  382u  IPv4 0xe0000004bbae2c80    0t10277     TCP 10.3.255.175:10011-&gt;10.3.255.175:53927 (ESTABLISHED)
+java      27806      574  397u  IPv4 0xe00000046080da00   0t246284     TCP 10.3.255.175:10011-&gt;10.3.255.175:53935 (ESTABLISHED)
+java      27806      574  397u  IPv4 0xe00000046080da00   0t246284     TCP 10.3.255.175:10011-&gt;10.3.255.175:53935 (ESTABLISHED)
+
+
+</pre>
+<br />
+<br />
+<br />
+you can see that the same socket is reported twice, once on the receiving side and the other on the sending side
+
+<br />
+<br />
+<a href="http://www.akadia.com/services/lsof_quickstart.txt">Here you can find a splendid tutorial on lsof</a>.
+
+

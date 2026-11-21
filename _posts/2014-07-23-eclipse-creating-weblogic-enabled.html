@@ -1,0 +1,63 @@
+---
+layout: post
+title: "Eclipse: creating a weblogic-enabled project"
+date: 2014-07-23T13:13:00.001+02:00
+permalink: /2014/07/eclipse-creating-weblogic-enabled.html
+blogger_id: "4027840375547159897"
+tags: ["eclipse", "weblogic"]
+---
+When you create a Java project, it's NOT faceted
+
+<br />
+<br />
+This project is not configured to use project facets. Converting this project to faceted form will allow you to easily control the available technologies.
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/d2ad0359e8edd367.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/8131667647e766c7.png" height="488" width="640" /></a></div>
+<br />
+<br />
+and its .project file contains:
+<br />
+<br />
+<pre class="brush: xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;projectDescription&gt;
+ &lt;name&gt;WLExtensions&lt;/name&gt;
+ &lt;comment&gt;&lt;/comment&gt;
+ &lt;projects&gt;
+ &lt;/projects&gt;
+ &lt;buildSpec&gt;
+  &lt;buildCommand&gt;
+   &lt;name&gt;org.eclipse.jdt.core.javabuilder&lt;/name&gt;
+   &lt;arguments&gt;
+   &lt;/arguments&gt;
+  &lt;/buildCommand&gt;
+ &lt;/buildSpec&gt;
+ &lt;natures&gt;
+  &lt;nature&gt;org.eclipse.jdt.core.javanature&lt;/nature&gt;
+ &lt;/natures&gt;
+&lt;/projectDescription&gt;
+</pre>
+<br />
+<br />
+if you click on "convert to faceted form" you get an extra builder org.eclipse.wst.common.project.facet.core.builder in the .project, and an extra org.eclipse.wst.common.project.facet.core.nature nature
+<br />
+<br />
+Once you have a faceted project, you can associate it to a Runtime:
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/e7606aca37f1c364.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/caee77bc0ab1a3b4.png" /></a></div>
+<br />
+<br />
+which allows you to enable WebLogic System libraries:
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/e1c7bb58a3e7fe16.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/7fff6d2f04cc143e.png" /></a></div>
+<br />
+<br />
+Let's be frank, it could be simpler. Even because NOT all WebLogic classes are available in the System Libraries, often one has to hunt right and left for the right jar. 
+<br />
+<br />

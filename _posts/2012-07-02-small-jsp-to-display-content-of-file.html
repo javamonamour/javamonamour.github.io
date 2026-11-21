@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Small JSP to display the content of a file"
+date: 2012-07-02T12:58:00.004+02:00
+permalink: /2012/07/small-jsp-to-display-content-of-file.html
+blogger_id: "7531092978073597545"
+tags: ["jsp"]
+---
+pass the filename as ?file=/path/to/myfile.txt<br />
+<br />
+&lt;%@page import="java.io.*"%><br />
+<br />
+&lt;%<br />
+<br />
+<pre name="code" class="brush: java">String filename = request.getParameter("file");
+FileReader fr = new FileReader(filename); 
+BufferedReader br = new BufferedReader(fr);
+String line;
+while ( (line = br.readLine() ) != null ) {
+    out.write(line);
+    out.write("\n");
+}
+br.close();
+fr.close();
+</pre>%>

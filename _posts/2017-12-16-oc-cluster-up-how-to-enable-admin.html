@@ -1,0 +1,55 @@
+---
+layout: post
+title: "oc cluster up : how to enable admin privileges"
+date: 2017-12-16T10:35:00.000+01:00
+permalink: /2017/12/oc-cluster-up-how-to-enable-admin.html
+blogger_id: "6820436691017466640"
+tags: ["openshift"]
+---
+Once you install OpenShift with "oc cluster up", you are confronted with a frustrating situation: you are told to login as<br />
+<br />
+oc login -u system -p admin<br />
+<br />
+to be a cluster administrator, but in reality you are just a regular user.<br />
+<br />
+If you try to do<br />
+<br />
+oc adm policy add-cluster-role-to-user cluster-admin system<br />
+<br />
+you get a<br />
+<br />
+Error from server (Forbidden): User "system" cannot list clusterrolebindings.authorization.openshift.io at the cluster scope: User "system" cannot list all clusterrolebindings.authorization.openshift.io in the cluster (get clusterrolebindings.authorization.openshift.io)<br />
+<br />
+<br />
+After zillion of desperate attempts (including reinstalling everything a few times) I have found a way:<br />
+<br />
+#become root<br />
+sudo su -<br />
+#login as admin, not as system<br />
+oc login -u admin -p admin<br />
+#grant yourself superhuman rights<br />
+oc adm policy add-cluster-role-to-user cluster-admin admin --config=/var/lib/origin/openshift.local.config/master/admin.kubeconfig<br />
+<i>cluster role "cluster-admin" added: "admin"</i><br />
+#login again<br />
+oc login -u admin -p admin<br />
+<i>Login successful.<br />
+<br />
+You have access to the following projects and can switch between them with 'oc project <projectname>':<br />
+<br />
+* default<br />
+kube-public<br />
+kube-system<br />
+myproject<br />
+openshift<br />
+openshift-infra<br />
+openshift-node<br />
+<br />
+Using project "default".<br />
+</i><br />
+<br />
+<br />
+<br />
+and when I log into https://127.0.0.1:8443/console/  as admin/admin I can see all the Openshift internal projects.<br />
+<br />
+<br />
+

@@ -1,0 +1,18 @@
+---
+layout: post
+title: "SchemaName in oracle.tip.adapter.db.DBStoredProcedureInteractionSpec (JCA DbAdapter)"
+date: 2013-04-06T22:11:00.002+02:00
+permalink: /2013/04/schemaname-in-oracletipadapterdbdbstore.html
+blogger_id: "2390986384653052065"
+tags: ["DBAdapter"]
+---
+In JDeveloper, the wizard automatically generates an element "property name="SchemaName" value="DEV1_SOAINFRA"" in the endpoint-interaction/interaction-spec className="oracle.tip.adapter.db.DBStoredProcedureInteractionSpec" element.
+
+<br/>
+This is annoying since the schema is already associated to the JCA instance we are using (connection-factory location="eis/DB/Nesoa" UIConnectionName="DEV1_SOAINFRA" adapterRef="")
+<br/>
+You can safely remove the SchemaName element.<br/>
+It is also safe to rename UIConnectionName to anything you like.<br/>
+
+
+

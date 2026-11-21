@@ -1,0 +1,62 @@
+---
+layout: post
+title: "CentOS, change hostname and IPs"
+date: 2009-06-05T16:42:00.001+02:00
+permalink: /2009/06/centos-change-hostname-and-ips.html
+blogger_id: "1909088553975857795"
+---
+first, become root:<br />
+<br />
+sudo su -<br />
+(enter your pw)<br />
+<br />
+<span style="font-weight: bold;">To change IP:</span><br />
+<br />
+ifconfig add eth0 192.168.63.129<br />
+<br />
+see <a href="http://dhika.cikul.or.id/how-to-change-centos-ip-address.html">http://dhika.cikul.or.id/how-to-change-centos-ip-address.html</a><br />
+<br />
+quote:<br />
+<span style="font-style: italic;">ifconfig command create temporary IP address change, if you reboot your server, you will see that your IP still not change. If you want make permanent ip change, you must edit files under /etc/sysconfig/network-scripts/</span><br />
+unquote.<br />
+<br />
+<br />
+and edit your /etc/hosts file<br />
+<br />
+cd /etc/sysconfig/network-scripts/<br />
+vi ifcfg-eth0<br />
+<br />
+DEVICE=eth0<br />
+BOOTPROTO=static<br />
+IPADDR=172.17.17.10<br />
+NETMASK=255.255.255.248<br />
+ONBOOT=yes<br />
+<br />
+cp ifcfg-eth0:0<br />
+and edit correspondingly<br />
+service network restart<br />
+<br />
+MAKE SURE your NETMASK is the same as the host machine, otherwise the 2 won't be able to communicate....<br />
+<br />
+here the instructions are more precise:<br />
+<br />
+<a href="http://www.xenocafe.com/tutorials/linux/redhat/bind_multiple_ip_addresses_to_single_nic/index.php">http://www.xenocafe.com/tutorials/linux/redhat/bind_multiple_ip_addresses_to_single_nic/index.php</a><br />
+<br />
+<br />
+<span style="font-weight: bold;">To change hostname:</span><br />
+<br />
+<br />
+then echo “newhostname” &gt; /proc/sys/kernel/hostname<br />
+<br />
+or<br />
+<br />
+sysctl kernel.hostname=NEW_HOSTNAME<br />
+<br />
+and edit /etc/sysconfig/network  to set HOSTNAME to the value you need<br />
+<br />
+see here <a href="http://www.ducea.com/2006/08/07/how-to-change-the-hostname-of-a-linux-system/">http://www.ducea.com/2006/08/07/how-to-change-the-hostname-of-a-linux-system/</a><br />
+<br />
+also, run <span style="font-weight: bold;">system-config-network</span> and change hostname under DNS tab,<br />
+logout then login again<br />
+<br />
+finally, add the new hostname to the hosts file

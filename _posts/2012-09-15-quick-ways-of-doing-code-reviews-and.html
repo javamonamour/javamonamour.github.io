@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Quick ways of doing code reviews and sanity checks in OSB"
+date: 2012-09-15T09:46:00.001+02:00
+permalink: /2012/09/quick-ways-of-doing-code-reviews-and.html
+blogger_id: "2539562848014980129"
+tags: ["xmlspy", "XPath"]
+---
+I have been asked to check that all log statements are done with "debug" level, as someone does it with "error" and then you end up with a lot of garbage in Production.<br />
+<br />
+The stupid way is to click around.<br />
+<br />
+The smart way is:<br />
+<br />
+- export a sbconfig.jar with all the projects<br />
+- unzip the sbconfig.jar in a directory. You will notice that each Proxy is a XML file with .ProxyService extension<br />
+- open XMLSpy and open one of those .ProxyService xml file <br />
+- menu XML, Evaluate XPath<br />
+- enter //*:log[*:logLevel != 'debug' and *:expr/*:xqueryText != '$faultVar']<br />
+(normally we log with "error" level only the faultVar<br />
+- if you find NOTHING, then cool<br />
+- you can run the XPath on ALL files in a given folder (see "where" button in XMLSpy)<br />
+<br />
+for more info: <a href="http://www.altova.com/xmlspy/xpath-analyzer.html">http://www.altova.com/xmlspy/xpath-analyzer.html</a><br />
+<br />
+<br />
+The way I ahve done it, use Everything Search to identify all .ProxyService files, copy them into a folder, drag and drop them in XmlSpy so that they are all open.<br />
+<br />
+Select "Open Files" in the XPath Evaluation tab, and run the little "evaluate XPath" button.<br />
+<br />
+<br />
+

@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Quarkus Kubernetes and Katacoda"
+date: 2019-03-08T18:04:00.001+01:00
+permalink: /2019/03/quarkus-kubernetes-and-katacoda.html
+blogger_id: "2274536951734021490"
+tags: ["kubernetes", "quarkus"]
+---
+<a href="https://quarkus.io/guides/kubernetes-guide">https://quarkus.io/guides/kubernetes-guide</a><br />
+<br />
+I open a Katacoda lab with minikube in it <a href="https://www.katacoda.com/courses/kubernetes/launch-single-node-cluster">https://www.katacoda.com/courses/kubernetes/launch-single-node-cluster</a><br />
+<br />
+First step: <a href="https://quarkus.io/guides/getting-started-guide.html">https://quarkus.io/guides/getting-started-guide.html</a><br />
+<br />
+git clone https://github.com/quarkusio/quarkus-quickstarts.git<br />
+cd getting-started<br />
+mvn compile quarkus:dev<br />
+<br />
+now open a new terminal and "curl http://localhost:8080/hello"<br />
+<br />
+<br />
+<br />
+cd quarkus-quickstarts/<br />
+cd getting-started-kubernetes/<br />
+<br />
+#install graalvm<br />
+mkdir /root/graalvm<br />
+cd /root/graalvm<br />
+curl -L -o graalvm-ce-1.0.0-rc13-linux-amd64.tar.gz https://github.com/oracle/graal/releases/download/vm-1.0.0-rc13/graalvm-ce-1.0.0-rc13-linux-amd64.tar.gz<br />
+tar xvfz graalvm-ce-1.0.0-rc13-linux-amd64.tar.gz<br />
+export GRAALVM_HOME=/root/graal/graalvm-ce-1.0.0-rc13<br />
+<br />
+mvn package -Pnative<br />
+<br />
+here I get plenty of compilation errors, so I am giving up...<br />
+<br />
+<br />
+GraalVM is available here <a href="http://www.graalvm.org/downloads/">http://www.graalvm.org/downloads/</a><br />
+and more instructions here <a href="https://www.graalvm.org/docs/getting-started/">https://www.graalvm.org/docs/getting-started/</a><br />
+<br />
+<br />
+<br />
+

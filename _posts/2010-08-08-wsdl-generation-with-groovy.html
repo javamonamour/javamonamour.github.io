@@ -1,0 +1,62 @@
+---
+layout: post
+title: "WSDL Generation with Groovy"
+date: 2010-08-08T17:03:00.005+02:00
+permalink: /2010/08/wsdl-generation-with-groovy.html
+blogger_id: "326919295274268369"
+tags: ["groovy", "wsdlgenerator"]
+---
+I am fed up of crafting WSDL by hand, it's mostly fluff and it can be generated from a template.<br />
+<br />
+I don't like template languages like Velocity either.<br />
+<br />
+So I have decided to generate my WSDL in Grovvy.<br />
+<br />
+I have installed the Eclipse Plugin:<br />
+<a href="http://dist.springsource.org/release/GRECLIPSE/e3.5">http://dist.springsource.org/release/GRECLIPSE/e3.5</a>/<br />
+<br />
+or<br />
+<a href="http://dist.springsource.org/release/GRECLIPSE/e3.6/">http://dist.springsource.org/release/GRECLIPSE/e3.6/</a><br />
+<br />
+<br />
+<br />
+Here a good example of how to parse XML with Groovy:<br />
+<a href="http://groovy.codehaus.org/Reading+XML+using+Groovy%27s+XmlParser">http://groovy.codehaus.org/Reading+XML+using+Groovy%27s+XmlParser</a><br />
+<br />
+The XML defining the service is:<br />
+<br />
+<pre class="brush: xml" name="code"><wsdldefinition>
+<servicename>GeoServicePS</servicename>
+<version>1</version>
+<schemalocation>../XSD/GEO_OSB_EJBSchema.xsd</schemalocation>
+<operations>
+ <operation>getCitiesByLikeCityName</operation>
+ <operation>getLocationsByName</operation>
+ <operation>getLocationsByLocationIds</operation>
+</operations>
+</wsdldefinition>
+
+</pre><br />
+First create a Groovy Project, then a Groovy class - this is only a POC on how to parse XML:<br />
+<br />
+<br />
+<pre class="brush: java" name="code">class WSDLGenerator {
+
+ static main(args) {
+  File file = new File("resources/geowsdl.xml");
+  def records = new XmlParser().parseText(file.getText());
+  def servicename = records.servicename.text();
+  def version = records.version.text();
+  def schemalocation = records.schemalocation.text();
+  def operations = records.operations;
+  for (operation in operations.operation) {
+   println operation.text();
+  }
+ }
+}
+
+</pre><br />
+<br />
+It's as simple as that! In Java it would have taken me 5 times more code!<br />
+<br />
+I will never edit manually a WSDL again, all you need is a XSD with your domain model, and you can generate the blessed WSDL by script.

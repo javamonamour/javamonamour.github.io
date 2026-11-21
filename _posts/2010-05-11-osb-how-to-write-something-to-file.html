@@ -1,0 +1,59 @@
+---
+layout: post
+title: "OSB: how to write something to a file"
+date: 2010-05-11T10:33:00.002+02:00
+permalink: /2010/05/osb-how-to-write-something-to-file.html
+blogger_id: "5060035726845483924"
+tags: ["filewrite", "OSB"]
+blogger_comments:
+  - author: "Unknown"
+    date: 2015-08-20
+    html: "Hi <br /><br />How to set this file name like reasonable, I didn&#39;t get that step, Could you please explain me.<br /><br /><br />thanks<br />suresh"
+  - author: "vernetto"
+    date: 2015-08-21
+    html: "hi Suresh, I have added a paragraph to explain how to add the transport header. It&#39;s an option in the Route command..."
+  - author: "vernetto"
+    date: 2015-08-22
+    html: "Suresh, you can compute dynamically the filename with an XQuery expression, with a Java Callout, or if you are brave enough you could use the Oracle File Adapter (RAR) which implement OOTB this date/sequence functionality"
+  - author: "Unknown"
+    date: 2015-08-22
+    html: "Hi Pierluigi,<br /><br />Thanks so much for the response. As per your comment I have done that. But I am expecting abc_YYYYMMDD_Sequence.txt ?? Is it possible in OSB ??<br /><br />appreciate for your help..<br /><br /><br />Suresh"
+  - author: "Unknown"
+    date: 2015-08-23
+    html: "Hi Pierluigi,<br /><br />got it. Thanks so much for the reply...<br /><br /><br />thanks<br />Suresh"
+---
+create&nbsp; a BS,<br />
+type Messaging Service,<br />
+Request Message Type = text,<br />
+Response Message Type = none,<br />
+Transport Protocol. File<br />
+end point URI: add your destination directory<br />
+<br />
+The payload will be written to a file with a name like this:<br />
+8777563012195256358--6573da2d.12881bdd24b.-7fbe<br />
+<br />
+If you want to set the filename (which sounds reasonable) should set the transport headers :<br />
+&lt;file:<b>filePath</b>&nbsp; &nbsp;&nbsp;&nbsp; xmlns:<b>file</b>="http://www.bea.com/wli/sb/transports/file"&gt;<b>C:\temp\files\peppolino.txt</b>&lt;/file:filePath&gt;<br />
+<br />
+<br />
+The response document will be empty, and the response metadata will be<br />
+<pre name="code" class="brush: xml"><con:metadata   xmlns:con="http://www.bea.com/wli/sb/test/config">
+ <tran:response-code   xmlns:tran="http://www.bea.com/wli/sb/transports">0</tran:response-code>
+ <tran:encoding   xmlns:tran="http://www.bea.com/wli/sb/transports">utf-8</tran:encoding>
+ <file:filePath   xmlns:file="http://www.bea.com/wli/sb/transports/file">
+ C:\geo\filewriterout\1397675502822972061-34dc1924.129e5f8c47d.-7fc6
+ </file:filePath>
+ </con:metadata>
+
+
+
+
+
+
+</pre>
+<br /><br />
+Since the input is specified as text, it can be anything, not necessarily XML.
+<br /><br />
+To set the file name,  in the Route node use the option "Set Transport Headers for[ Outbound Request ]" and selected Pass all Headers through Pipeline in the calling proxy.
+
+<br /><br />

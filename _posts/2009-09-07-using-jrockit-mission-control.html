@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Using JRockit Mission Control"
+date: 2009-09-07T14:43:00.000+02:00
+permalink: /2009/09/using-jrockit-mission-control.html
+blogger_id: "8016621694387096173"
+---
+start your Java server application with:<br /><br />-Xmanagement:ssl=false,authenticate=false,autodiscovery=true -Djrockit.managementserver.port=9010<br /><br />(if you don' specify a port it will use 7091)<br /><br />it will tell you:<br /><br />[JRockit] Management server started on port 9010, ssl=false, authenticate=false.<br />[JRockit] JDP server up. Broadcasting target 10.66.3.19:7091 every 5000 ms.<br /><br /><br />the custom JMX service URL is:<br />service:jmx:rmi:///jndi/rmi://localhost:7091/jmxrmi<br /><br /><br />a thread dump will show you an extra thread:<br /><br /><br />"RMI TCP Accept-9010" id=13 idx=0x40 tid=2379 prio=5 alive, in native, daemon<br />    at java/net/PlainSocketImpl.socketAccept(Ljava/net/SocketImpl;)V(Native Method)<br />    at java/net/PlainSocketImpl.accept(PlainSocketImpl.java:384)<br />    ^-- Holding lock: java/net/SocksSocketImpl@0x14144818[thin lock]<br />    at java/net/ServerSocket.implAccept(ServerSocket.java:450)<br />    at java/net/ServerSocket.accept(ServerSocket.java:421)<br />    at sun/rmi/transport/tcp/TCPTransport.run(TCPTransport.java:340)<br />    at java/lang/Thread.run(Thread.java:595)<br />    at jrockit/vm/RNI.c2java(JJJJJ)V(Native Method)<br />    -- end of trace

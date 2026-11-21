@@ -1,0 +1,103 @@
+---
+layout: post
+title: "nxsd:validation, nxsd:fieldValidation,"
+date: 2011-12-04T21:09:00.006+01:00
+permalink: /2011/12/nxsdvalidation-nxsdfieldvalidation.html
+blogger_id: "7033896551141529392"
+tags: ["nxsd", "validation"]
+---
+the question is risen here <br />
+<a href="https://forums.oracle.com/forums/thread.jspa?threadID=1054790">https://forums.oracle.com/forums/thread.jspa?threadID=1054790</a><br />
+<br />
+here the official doc<br />
+<br />
+<a href="http://docs.oracle.com/cd/E15586_01/integration.1111/e10231/nfb.htm">http://docs.oracle.com/cd/E15586_01/integration.1111/e10231/nfb.htm</a><br />
+<br />
+<br />
+<b>Top-Level Validation -&gt; nxsd:validation="true"</b><br />
+<br />
+information about the line and column in the native stream where the error was encountered is not provided by top-level validation.<br />
+<br />
+<br />
+<b>Field-Level Validation -&gt; nxsd:fieldValidation="true"</b><br />
+<br />
+only on inbound payloads<br />
+<br />
+information about the exact line and character where the error was encountered is displayed.<br />
+<br />
+<br />
+So, what is the difference between <br />
+<br />
+a) NOT using any validation at JCA level<br />
+b) using nxsd:validation="true" in the nXSD file<br />
+c) using nxsd:fieldValidation="true" in the nXSD file<br />
+d) using both nxsd:validation="true" and nxsd:fieldValidation="true" in the nXSD file<br />
+<br />
+and submitting a file which has a correct structure but a validation error in a field.<br />
+<br />
+<br />
+<b>In case a)</b>, the file passes the JCA adapter and is handed over to the Proxy Service<br />
+<br />
+<b>In case b)</b>, the file is rejected in the JCA adapter, with this message:<br />
+<br />
+<br />
+<i><br />
+Error while translating inbound file : spaceattheend.dat<br />
+ORABPEL-11157<br />
+<br />
+Error: translated xml document does not conform to xml schema.<br />
+error:Invalid text 'PAL ' in element: 'UOM'.<br />
+Please ensure that native data is correct. To turnoff result validation, unset flag nxsd:validation in nxsd<br />
+<br />
+at oracle.tip.pc.services.translation.framework.XlatorHelper.validateDOMNode(XlatorHelper.java:701)<br />
+at oracle.tip.pc.services.translation.framework.XlatorHelper.validate(XlatorHelper.java:667)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.translateFromNative(NXSDTranslatorImpl.java:612)<br />
+at oracle.tip.adapter.file.inbound.InboundTranslatorDelegate.xlate(InboundTranslatorDelegate.java:314)<br />
+at oracle.tip.adapter.file.inbound.InboundTranslatorDelegate.doXlate(InboundTranslatorDelegate.java:121)<br />
+at oracle.tip.adapter.file.inbound.ProcessorDelegate.doXlate(ProcessorDelegate.java:388)<br />
+at oracle.tip.adapter.file.inbound.ProcessorDelegate.process(ProcessorDelegate.java:174)<br />
+at oracle.tip.adapter.file.inbound.ProcessWork.run(ProcessWork.java:349)<br />
+at weblogic.work.ContextWrap.run(ContextWrap.java:41)<br />
+at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)<br />
+at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)<br />
+at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)<br />
+<br />
+</i><br />
+<br />
+and<br />
+<br />
+<i><br />
+Sending message to Adapter Framework for rejection to user-configured rejection handlers  : {<br />
+file=C:\in\spaceattheend.dat, Exception=ORABPEL-11157<br />
+<br />
+Error: translated xml document does not conform to xml schema.<br />
+error:Invalid text 'PAL ' in element: 'UOM'.<br />
+Please ensure that native data is correct. To turnoff result validation, unset flag nxsd:validation in nxsd<br />
+<br />
+}<br />
+</i><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<b>in case c)</b><br />
+<br />
+you get a similar message, but it shows also the line and column number<br />
+<br />
+<i><br />
+<br />
+<br />
+Sending message to Adapter Framework for rejection to user-configured rejection handlers  : {<br />
+file=C:\in\spaceattheend.dat, Exception=ORABPEL-11156<br />
+<br />
+Error: native data read does not conform to xsd type.<br />
+actual-value PAL  is not valid for data type . Please check before Line=2, Col=1 in the native stream.<br />
+Please ensure that native data conforms to xsd type. To turnoff field validation, unset flag nxsd:fieldValidation in nxsd<br />
+<br />
+</i><br />
+<br />
+<br />
+<b>in case d)</b><br />
+<br />
+it's same as c)

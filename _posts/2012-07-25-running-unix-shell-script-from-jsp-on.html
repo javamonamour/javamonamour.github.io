@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Running a Unix shell script from JSP on Tomcat"
+date: 2012-07-25T12:23:00.000+02:00
+permalink: /2012/07/running-unix-shell-script-from-jsp-on.html
+blogger_id: "9002320597091353812"
+tags: ["exec", "tomcat"]
+---
+Let's start with the simplest <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Runtime.html#exec%28java.lang.String,%20java.lang.String[]%29">version of Runtime.exec()</a><br />
+<br />
+if I do:<br />
+<br />
+&lt;%<br />
+ java.lang.Runtime.getRuntime().exec("/home/soa/proton/runme.sh", new String[] {"MYVAR=FANCULON"});<br />
+<br />
+%><br />
+<br />
+<br />
+you pass to the script the System variable MYVAR with the value FANCULON<br />
+<br />
+runme.sh contains:<br />
+echo $MYVAR > myvar.log<br />
+<br />
+myvar.log ends up in Tomcat bin directory, which is assumed as "current directory" for the script.<br />
+<br />
+<br />
+I can do better by specifying the current directory for the process with this <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Runtime.html#exec%28java.lang.String[],%20java.lang.String[],%20java.io.File%29">other version of exec</a>.<br />
+<br />
+So if I do<br />
+<br />
+java.lang.Runtime.getRuntime().exec("/home/soa/proton/runme.sh", new String[] {"MYVAR=FANCULON"}, new java.io.File("/home/soa/proton/"));<br />
+<br />
+the myvar.log is written in /home/soa/proton/

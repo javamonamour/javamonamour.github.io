@@ -1,0 +1,47 @@
+---
+layout: post
+title: "tar gzip exclude folder"
+date: 2013-11-08T16:22:00.002+01:00
+permalink: /2013/11/tar-gzip-exclude-folder.html
+blogger_id: "6521244436594969653"
+tags: ["tar"]
+---
+Rule n.1: <br/><br/>
+never run tar inside the same folder you are tarring: tar will include the tar-file that it's creating... CRAZY!
+
+<br/>
+<br/>
+Rule n. 2:<br/><br/>
+
+--exclude works only if it's the first parameter after tar... IN SOME versions of tar ONLY.... CRAZY!
+<br/>
+in my version it has to come last.
+
+<br/>
+<i>
+cd /opt/oracle/backups
+<br/>
+tar cvzf osbpr1dobackup11Nov2013_108.tar.gz  /opt/oracle/domains/osbpr1do/ --exclude="shared/store/jms" 
+</i>
+
+
+<br/><br/>
+
+Rule n. 3:<br/><br/>
+if the exclude folder ends in /, tar will ignore it without warning.... CRAZY!
+
+<br/><br/>
+Rule n. 4:<br/><br/>
+
+The exclude parameter shoule be relative to the -C path:<br/><br/>
+this is good:<br/><br/>
+tar cvzf /opt/oracle/backups/deleteme.tar.gz -C /opt/oracle/bin/ . --exclude="src"
+
+<br/><br/>
+this is bad:
+<br/><br/>
+tar cvzf /opt/oracle/backups/deleteme.tar.gz -C /opt/oracle/bin/ . --exclude="/opt/oracle/bin/src"
+<br/><br/>
+
+That's why I never use tar but rather jar.
+

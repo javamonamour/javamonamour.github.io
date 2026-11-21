@@ -1,0 +1,49 @@
+---
+layout: post
+title: "OSB and  SLA alerts in Eclipse"
+date: 2014-08-27T12:28:00.003+02:00
+permalink: /2014/08/osb-and-sla-alerts-in-eclipse.html
+blogger_id: "4966548017678483862"
+tags: ["OSB"]
+---
+When you define a SLA alert in the OSB Console (sbconsole) this xml is added you your .proxy file :
+
+<pre class="brush: xml">
+  &lt;ser:alertRules>
+    &lt;ser:alertRule name="slow" enabled="true">
+      &lt;aler:description>slow&lt;/aler:description>
+      &lt;aler:AlertFrequency>every-time&lt;/aler:AlertFrequency>
+      &lt;aler:AlertSeverity>normal&lt;/aler:AlertSeverity>
+      &lt;aler:StopProcessing>false&lt;/aler:StopProcessing>
+      &lt;aler:Condition type="statistics">
+        &lt;aler:config aggregation-interval="10" xsi:type="mon:monitoringConditionType" xmlns:mon="http://www.bea.com/wli/monitoring/alert/condition/monitoringstatistic">
+          &lt;mon:monCondExpr>
+            &lt;mon:function>max&lt;/mon:function>
+            &lt;mon:lhs>Project$PVtest/PVtest/Transport/response-time&lt;/mon:lhs>
+            &lt;mon:lhs-operand-type xsi:nil="true"/>
+            &lt;mon:lhsDisplayName>Response Time&lt;/mon:lhsDisplayName>
+            &lt;mon:operator>>&lt;/mon:operator>
+            &lt;mon:rhs>600000&lt;/mon:rhs>
+          &lt;/mon:monCondExpr>
+        &lt;/aler:config>
+      &lt;/aler:Condition>
+      &lt;aler:AlertDestination ref="PVtest/pier"/>
+      &lt;aler:AlertSummary>slow&lt;/aler:AlertSummary>
+    &lt;/ser:alertRule>
+  &lt;/ser:alertRules>
+</pre>
+
+<p/>
+where PVtest/pier is an AlertDestination.
+<p/><p/>
+The horrifying thing is that if I import into eclipse this sbconfig.jar, the alertRules is emptied.
+<p/><p/>
+You can find some reference in the comments <a href="http://orasoa.blogspot.com/2011/01/osb-deploy-service-level-agreement-sla.html?_sm_au_=iVVPHf5rW1424Fw6">here</a> and <a href="http://biemond.blogspot.com/2011/05/osb-endpoint-monitoring-and-sla-alert.html?_sm_au_=iVVPHf5rW1424Fw6">here</a>. Of course I am shocked and horrified, because this is horrible and horrific.
+
+<p/><p/>
+So if you want to have those SLA, you must be very careful with Eclipse....
+
+
+
+
+

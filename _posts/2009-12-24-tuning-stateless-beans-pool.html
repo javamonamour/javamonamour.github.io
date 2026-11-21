@@ -1,0 +1,14 @@
+---
+layout: post
+title: "Tuning the Stateless Beans pool"
+date: 2009-12-24T13:46:00.000+01:00
+permalink: /2009/12/tuning-stateless-beans-pool.html
+blogger_id: "4870353950458036779"
+---
+On WebLogic Admin console, click on "Deployments", "Monitoring", "EJB", "Stateless EJB", "Miss Total Count" <br />
+<br />
+<i>Provides a count of the total number of times a failed attempt was made to get an instance from the free pool.</i><br />
+<i>An attempt to get a bean from the pool will fail if there are no available instances in the pool.</i><br />
+<br />
+<br />
+&nbsp;This metric should be considered in relationship with "Access Total Count"; if the percentage is meaningful (say 1%) it's worth to increase the "max beans in pool" size in the Deployment Descriptor

@@ -1,0 +1,36 @@
+---
+layout: post
+title: "BEA-000449 Closing the socket, as no data read from it on  1.2.3.4:5,6789"
+date: 2016-08-17T10:31:00.001+02:00
+permalink: /2016/08/bea-000449-closing-socket-as-no-data.html
+blogger_id: "9118360152201150063"
+tags: ["network"]
+---
+BEA-000449 Closing the socket, as no data read from it on  1.2.3.4:5,6789 during the configured idle timeout of 5 seconds
+<br/><br/>
+
+1.2.3.4:5,6789  represents an IP (1.2.3.4) and port number 5,6789  (I find irritating that then print the , as separator....)
+
+<br/><br/>
+
+This message can be ignored NORMALLY (use a log filter is you like), and the IP addresses most likely are Load Balancer IPs. It means PROBABLY that a user doesn't wait for a web page to be entirely loaded, and navigates away closing abruptly the current socket transfer. The "configured idle timeout" however identifies a special case of "login timeout" kicking in (see below)
+<br/><br/>
+
+Read "Error Logs Say "Warning Socket BEA-000449 Closing socket as no data read" (Doc ID 2051032.1)" oracle document, saying that 
+<br/><br/>
+<pre>
+"WebLogic Server tries to reuse sockets to improve performance, but sockets which are idle for a specified period are closed. The length of this period is controlled by the weblogic.client.socket.ConnectTimeout parameter, which specifies the amount of time the server waits before closing an inactive HTTP connection. This is set in the WebLogic Server startup script as one of the JAVA_OPTIONS. For example:
+
+-Dweblogic.client.socket.ConnectTimeout=XXX"
+
+</pre>
+
+<br/><br/>
+Surely, if 5 seconds is too little , you can change it! Probably 5 s comes from the configuration value of login timeout : <br/><br/>
+
+"config / turning / login time out : (default is 5000ms)" "The login timeout for this server's default regular (non-SSL) listen port. This is the maximum amount of time allowed for a new connection to establish." ServerMBean.LoginTimeoutMillis 
+
+<br/><br/>
+
+
+

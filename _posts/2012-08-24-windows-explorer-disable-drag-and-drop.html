@@ -1,0 +1,45 @@
+---
+layout: post
+title: "Windows Explorer: disable drag and drop"
+date: 2012-08-24T22:53:00.000+02:00
+permalink: /2012/08/windows-explorer-disable-drag-and-drop.html
+blogger_id: "4001892135524051632"
+---
+One of the zillion reasons why I hate windows is Windows Explorer, one of the biggest failures in the File Management tools galaxy. It's so pathetic that you can't even disable the drag and drop - one of the most common causes of file loss - especially when using the touchpad.<br />
+<br />
+Here is a workaround:<br />
+<br />
+regedit<br />
+<br />
+HKEY_CURRENT_USER\Control Panel\Desktop<br />
+<br />
+DragHeight=999999 (original value 4)<br />
+DragWidth=999999 (original value 4)<br />
+<br />
+<br />
+restart computer<br />
+<br />
+It works!<br />
+<br />
+Googling around I also found this post:<br />
+<br />
+<br />
+"You can set the drag and drop or copy and paste files<br />
+confirmation prompt<br />
+<br />
+Localy:<br />
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersio<br />
+n\Internet Settings\Zones\0]<br />
+<br />
+"1802"=dword:00000001<br />
+<br />
+AND on the intranet:<br />
+[HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersio<br />
+n\Internet Settings\Zones\1]<br />
+<br />
+"1802"=dword:00000001<br />
+<br />
+"<br />
+<br />
+but I haven't tried....<br />
+

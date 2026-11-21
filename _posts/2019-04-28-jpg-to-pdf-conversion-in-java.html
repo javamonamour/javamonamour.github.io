@@ -1,0 +1,74 @@
+---
+layout: post
+title: "JPG to PDF conversion in Java"
+date: 2019-04-28T22:37:00.001+02:00
+permalink: /2019/04/jpg-to-pdf-conversion-in-java.html
+blogger_id: "131705186187113616"
+tags: ["jpg", "PDF"]
+---
+<a href="https://gist.github.com/gholker/9a6b68ae51b3bef8931b946958dd81f2">https://gist.github.com/gholker/9a6b68ae51b3bef8931b946958dd81f2</a><br />
+<br />
+<br />
+Create a Spring Initializer App (plain vanilla)<br />
+<br />
+<br />
+add this dependency: com.itextpdf:itextpdf:5.5.13<br />
+<br />
+run this code<br />
+<br />
+<br />
+<pre class="brush: java">
+package org.pierre.jpgtopdf;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+
+@SpringBootApplication
+public class JpgtopdfApplication implements CommandLineRunner {
+
+    public static void main(String[] args) {
+        SpringApplication.run(JpgtopdfApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        File root = new File("D:\\pierre\\tasse2019\\");
+        String outputFile = "output.pdf";
+        List&lt;String> files = new ArrayList&lt;String>();
+        String[] alljpgs = root.list((dir, name) -> name.endsWith("jpg"));
+        files.addAll(Arrays.asList(alljpgs));
+
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream(new File(root, outputFile)));
+        document.open();
+        for (String f : files) {
+            document.newPage();
+            Image image = Image.getInstance(new File(root, f).getAbsolutePath());
+            image.setAbsolutePosition(0, 0);
+            image.setBorderWidth(0);
+            image.scaleAbsolute(PageSize.A4);
+            document.add(image);
+        }
+        document.close();
+    }
+}
+
+
+</pre><br />
+<br />
+It's amazingly fast!<br />
+<br />
+

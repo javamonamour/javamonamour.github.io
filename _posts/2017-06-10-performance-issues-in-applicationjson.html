@@ -1,0 +1,30 @@
+---
+layout: post
+title: "performance issues in application/json vs application/x-www-form-urlencoded"
+date: 2017-06-10T16:32:00.001+02:00
+permalink: /2017/06/performance-issues-in-applicationjson.html
+blogger_id: "7802691314626700580"
+---
+alternative 1:
+<br/><br/>
+<pre>
+httpPost.setHeader("Content-Type", "application/x-www-form-urlencoded");
+</pre>
+<br/><br/>
+alternative 2:
+<br/><br/>
+<pre>
+httpPost.setHeader("Content-Type", "application/json"); 
+</pre>
+<br/><br/>
+using application/x-www-form-urlencoded in Content-Type 3mb POST is taking 101 seconds
+<br/>
+using json content type 3mb  POST is taking 2 seconds
+<br/>
+
+
+For a discussion on what is what, see here <a href="http://stackoverflow.com/questions/9870523/differences-in-application-json-and-application-x-www-form-urlencoded">http://stackoverflow.com/questions/9870523/differences-in-application-json-and-application-x-www-form-urlencoded</a>
+
+<br/>
+<br/>
+

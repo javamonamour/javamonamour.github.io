@@ -1,0 +1,18 @@
+---
+layout: post
+title: "OSB JMS Reporting Provider miserably failing when non-Gridlink Datasource used for wlsbjmsrpDataSource"
+date: 2012-04-05T02:01:00.000+02:00
+permalink: /2012/04/osb-jms-reporting-provider-miserably.html
+blogger_id: "2038035129122930823"
+tags: ["OSB", "reporting"]
+---
+The error we find in the logs , whenever we try to access the OSB Message Reports in Operations, is:<br />
+<br />
+&lt;BEA-494002> &lt;Internal error occured in OSBConsole : null<br />
+java.lang.RuntimeException<br />
+        at com.bea.wli.reporting.jmsprovider.runtime.ReportingDataAccessImpl.getDBCurrentTS(ReportingDataAccessImpl.java:490)<br />
+        at com.bea.alsb.console.oam.reporting.jmsprovider.ReportingHelper.getCurrentDBTS(ReportingHelper.java:293)<br />
+        at com.bea.alsb.console.reporting.jmsprovider.ReportManagementFlow.getDefaultTimeFilterSearchForm(ReportManagementFlow.java:474)<br />
+        at com.bea.alsb.console.reporting.jmsprovider.ReportManagementFlow.viewMessages(ReportManagementFlow.java:85)<br />
+<br />
+Since we use RAC, we should transform the wlsbjmsrpDataSource into a GridLink DS.

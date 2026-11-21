@@ -1,0 +1,85 @@
+---
+layout: post
+title: "kubernetes mount file on an existing folder"
+date: 2019-10-07T14:03:00.000+02:00
+permalink: /2019/10/kubernetes-mount-file-on-existing-folder.html
+blogger_id: "6397504753107296386"
+tags: ["configmap", "k8s", "kubernetes"]
+---
+With <a href="https://kubernetes.io/docs/concepts/storage/volumes/#configmap">ConfigMap</a> and <a href="https://kubernetes.io/docs/concepts/storage/volumes/#secret">Secret</a> you can "populate" a volume with files and "mount" that volume to a container, so that the application can access those files. <br />
+<br />
+<b><br />
+echo "one=1" > file1.properties<br />
+echo "two=2" > file2.properties<br />
+kubectl create configmap myconfig --from-file file1.properties --from-file file2.properties<br />
+kubectl describe configmaps myconfig<br />
+</b><br />
+<br />
+<pre>Name:         myconfig
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+file1.properties:
+----
+one=1
+
+file2.properties:
+----
+two=2
+
+Events:  <none>
+</pre><br />
+<br />
+Now I can mount the ConfigMap into a Pod, as described <a href="https://kubernetes.io/docs/concepts/storage/volumes/#configmap">here</a> <br />
+<br />
+<br />
+cat mypod.yml<br />
+<br />
+<pre>apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-pod
+spec:
+  containers:
+    - name: test
+      image: nginx
+      volumeMounts:
+        - name: config-vol
+          mountPath: /etc/config
+  volumes:
+    - name: config-vol
+      configMap:
+        name: myconfig
+        items:
+          - key: file1.properties
+            path: myfile1.properties
+
+</pre><br />
+<b>kubectl create -f mypod.yml</b><br />
+<br />
+<b>kubectl exec -ti configmap-pod bash</b><br />
+<br />
+cat /etc/config/myfile1.properties<br />
+one=1<br />
+<br />
+<br />
+<br />
+<br />
+Now I change the image to vernetto/mynginx, which contains already a /etc/config/file0.properties<br />
+The existing folder /etc/config/ is completely replaced by the volumeMount, so file0.properties disappears!<br />
+Only /etc/config/file1.properties is there.<br />
+<br />
+They claim that one can selectively mount only one file from the volume, and leave the original files in the base image:<br />
+<a href="https://stackoverflow.com/questions/33415913/whats-the-best-way-to-share-mount-one-file-into-a-pod/43404857#43404857">https://stackoverflow.com/questions/33415913/whats-the-best-way-to-share-mount-one-file-into-a-pod/43404857#43404857</a>  using subPath, but it is definitely not working for me.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

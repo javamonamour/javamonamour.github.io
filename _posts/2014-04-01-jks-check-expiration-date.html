@@ -1,0 +1,29 @@
+---
+layout: post
+title: "JKS check expiration date"
+date: 2014-04-01T11:50:00.002+02:00
+permalink: /2014/04/jks-check-expiration-date.html
+blogger_id: "3510557973490592356"
+tags: ["jks"]
+---
+Use the -v option with the keytool -list command, and look at the "until" field:<br />
+<br />
+<br />
+<b>keytool -keystore /opt/oracle/certs/acme.com.jks -v -list</b><br />
+<br />
+Alias name: acme.com<br />
+Creation date: Jun 5, 2013<br />
+Entry type: PrivateKeyEntry<br />
+Certificate chain length: 1<br />
+Certificate[1]:<br />
+Owner: CN=acme.com, O=acme acme SA, L=Paperopoli, ST=Duckland, C=DU<br />
+Issuer: CN=acme Issuing CA 01, DC=acme, DC=com<br />
+Serial number: 1fe97622099100001948<br />
+Valid from: Mon May 13 13:46:49 CEST 2013 <b>until: Thu Apr 11 13:46:49 CEST 2015</b><br />
+Certificate fingerprints:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MD5:&nbsp; 2B:97:58:CA:35:18:38:AA:BB:2D:C4:BA:81:56:AD:1E<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SHA1: E4:0D:DD:EE:1F:3E:2B:F7:07:FE:CC:C2:F2:55:05:E6:74:98:26:2A<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Signature algorithm name: SHA1withRSA<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Version: 3<br />
+<br />
+

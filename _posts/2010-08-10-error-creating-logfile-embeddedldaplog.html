@@ -1,0 +1,15 @@
+---
+layout: post
+title: "    Error creating logFile: EmbeddedLDAP.log (Permission denied)"
+date: 2010-08-10T08:53:00.000+02:00
+permalink: /2010/08/error-creating-logfile-embeddedldaplog.html
+blogger_id: "6730362263228526449"
+tags: ["chown"]
+---
+This is what happens when you forget that you are root and you start weblogic (never install and run weblogic as root!).... the access rights of some files get changed...<br />
+<br />
+this<br />
+chown -R osbuser /path/to/your/domain<br />
+run as root<br />
+<br />
+should bring you back to normal life

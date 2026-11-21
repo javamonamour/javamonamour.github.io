@@ -1,0 +1,97 @@
+---
+layout: post
+title: "Installing Docker Java and Wildfly on DigitalOcean Centos7 droplet"
+date: 2018-03-25T00:02:00.000+01:00
+permalink: /2018/03/installing-docker-java-and-wildfly-on.html
+blogger_id: "1602663766894433113"
+tags: ["digitalocean", "docker", "wildfly"]
+---
+<br />
+<a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-centos-7">https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-centos-7</a><br />
+<br />
+<a href="https://devops.profitbricks.com/tutorials/how-to-install-and-configure-wildfly-application-server-on-centos-7/">https://devops.profitbricks.com/tutorials/how-to-install-and-configure-wildfly-application-server-on-centos-7/<br />
+</a><br />
+<br />
+Login as root<br />
+<br />
+yum check-update<br />
+curl -fsSL https://get.docker.com/ | sh<br />
+sudo usermod -aG docker centos<br />
+sudo systemctl start docker<br />
+sudo systemctl status docker<br />
+sudo systemctl enable docker<br />
+#make sure that user centos exists<br />
+sudo su - centos // then exit<br />
+#download and copy here the jdk <br />
+tar -xzvf jdk-8u161-linux-x64.tar.gz -C /opt/<br />
+alternatives --install /usr/bin/java java /opt/jdk1.8.0_161/bin/java 2<br />
+alternatives --config java<br />
+alternatives --install /usr/bin/jar jar /opt/jdk1.8.0_161/bin/jar 2<br />
+alternatives --install /usr/bin/javac javac /opt/jdk1.8.0_161/bin/javac 2<br />
+alternatives --set jar /opt/jdk1.8.0_161/bin/jar<br />
+alternatives --set javac /opt/jdk1.8.0_161/bin/javac<br />
+java -version<br />
+<br />
+vi /etc/profile.d/java.sh<br />
+<br />
+<pre>if ! echo ${PATH} | grep -q /opt/jdk1.8.0_161/bin ; then
+   export PATH=/opt/jdk1.8.0_161/bin:${PATH}
+fi
+if ! echo ${PATH} | grep -q /opt/jdk1.8.0_161/jre/bin ; then
+   export PATH=/opt/jdk1.8.0_161/jre/bin:${PATH}
+fi
+export JAVA_HOME=/opt/jdk1.8.0_161
+export JRE_HOME=/opt/jdk1.8.0_161/jre
+export CLASSPATH=.:/opt/jdk1.8.0_161/lib/tools.jar:/opt/jdk1.8.0_161/jre/lib/rt.jar
+</pre><br />
+vi /etc/profile.d/java.csh<br />
+<br />
+<pre>if ( "${path}" !~ */opt/jdk1.8.0_161/bin* ) then
+   set path = ( /opt/jdk1.8.0_161/bin $path )
+endif
+if ( "${path}" !~ */opt/jdk1.8.0_161/jre/bin* ) then
+    set path = ( /opt/jdk1.8.0_161/jre/bin $path )
+endif
+setenv JAVA_HOME /opt/jdk1.8.0_161
+setenv JRE_HOME /opt/jdk1.8.0_161/jre
+setenv CLASSPATH .:/opt/jdk1.8.0_161/lib/tools.jar:/opt/jdk1.8.0_161/jre/lib/rt.jar
+
+</pre><br />
+<br />
+chmod 755 /etc/profile.d/java.sh<br />
+chmod 755 /etc/profile.d/java.csh<br />
+curl -O  http://download.jboss.org/wildfly/10.1.0.Final/wildfly-10.1.0.Final.zip<br />
+yum install unzip<br />
+unzip wildfly-10.1.0.Final.zip -d /opt/<br />
+#set JBOSS_HOME and JAVA_HOME<br />
+vi /opt/wildfly-10.1.0.Final/bin/standalone.conf<br />
+#set JBOSS_HOME and JAVA_HOME<br />
+vi /etc/profile<br />
+#set the right IP address<br />
+vi /opt/wildfly-10.1.0.Final/standalone/configuration/standalone.xml<br />
+cd /opt/wildfly-10.1.0.Final/bin/<br />
+./add-user.sh<br />
+<br />
+chown -R centos:centos /opt/wildfly-10.1.0.Final/<br />
+<br />
+su - centos<br />
+#start wildfly<br />
+cd /opt/wildfly-10.1.0.Final/bin<br />
+./standalone.sh<br />
+<br />
+<br />
+<br />
+Create these entries in your /home/centos/.bash_profile<br />
+<br />
+export WF_BIN=/opt/wildfly-10.1.0.Final/bin/<br />
+export WF_DEP=/opt/wildfly-10.1.0.Final/standalone/deployments/<br />
+export WF_TMP=/opt/wildfly-10.1.0.Final/standalone/tmp/<br />
+export WF_LOG=/opt/wildfly-10.1.0.Final/standalone/log/<br />
+alias STARTWF="cd $WF_BIN; nohup ./standalone.sh 2>&1 > standalone.log &"<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

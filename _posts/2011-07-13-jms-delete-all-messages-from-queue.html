@@ -1,0 +1,58 @@
+---
+layout: post
+title: "JMS: delete (remove) all messages from a JMS Queue"
+date: 2011-07-13T17:51:00.008+02:00
+permalink: /2011/07/jms-delete-all-messages-from-queue.html
+blogger_id: "1307793271416199295"
+tags: ["jms"]
+---
+<pre name="code" class="brush: java">public static final String WEBLOGIC_JMS_XA_CONNECTION_FACTORY = "weblogic/jms/XAConnectionFactory";
+
+
+ public static Context createInitialContext() throws NamingException {
+  Hashtable<String, String> ht = new Hashtable<String, String>();
+  ht.put(Context.INITIAL_CONTEXT_FACTORY, "weblogic.jndi.WLInitialContextFactory");
+  ht.put(Context.PROVIDER_URL, "t3://acme.com:7009");     
+  Context ctx = new InitialContext(ht);
+  return ctx;
+ }
+
+
+ public void init(String jndiname) throws Exception {
+  // get the initial context
+  Context ctx = createInitialContext();
+  // lookup the queue object
+  queue = (Queue) ctx.lookup(jndiname);
+  
+  // lookup the queue connection factory
+  queueConnFactory = (QueueConnectionFactory) ctx.lookup(WEBLOGIC_JMS_XA_CONNECTION_FACTORY);
+  // create a queue connection
+  queueConn = queueConnFactory.createQueueConnection();
+  // create a queue session
+  queueSession = queueConn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+  // create a queue browser
+  queueBrowser = queueSession.createBrowser(queue);
+  
+  // start the connection
+  queueConn.start();
+ }
+
+
+ public void deleteAllMessagesFromQueue(String jndiname) throws Exception {
+    init(jndiname);
+    MessageConsumer consumer = queueSession.createConsumer(queue);
+    Message message = null;
+    do {
+        message = consumer.receiveNoWait();
+     if (message != null) message.acknowledge();
+    } 
+    while (message != null);
+  
+    consumer.close();
+    queueConn.close();
+ }
+
+
+
+
+</pre>

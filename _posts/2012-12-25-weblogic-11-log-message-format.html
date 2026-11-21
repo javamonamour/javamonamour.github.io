@@ -1,0 +1,55 @@
+---
+layout: post
+title: "WebLogic 11 Log Message Format"
+date: 2012-12-25T18:37:00.000+01:00
+permalink: /2012/12/weblogic-11-log-message-format.html
+blogger_id: "6383184467335330629"
+tags: ["threads"]
+---
+In Java, I can rename a thread:<br/><br/>
+
+String originalName = Thread.currentThread().getName();<br/>
+Thread.currentThread().setName(originalName + " - My custom name here");<br/>
+
+<br/>
+<br/>
+<br/>
+
+<a href="http://docs.oracle.com/cd/E12839_01/web.1111/e13739/logging_services.htm#i1180710">Here the WebLogic 11 Log Format doc</a>
+<br/><br/>
+
+For example this is an error message:<br/><br/>
+
+####&lt;Dec 18, 2012 11:55:29 AM CET> &lt;Error> &lt;ALSB Logging> &lt;acme108> &lt;osbpr1ms2> &lt;[ACTIVE] ExecuteThread: '23' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;anonymous>> &lt;> &lt;465bebdd30aa6335:1ab575e0:13b48cc30e9:-8000-00000000007651df> &lt;1355828129705> &lt;BEA-000000> &lt; [null, null, null, ERROR] ****CheckMachineExists_PS - Fault in SEH****: con:fault xmlns:con="http://www.bea.com/wli/sb/context"
+<br/><br/>
+this is:<br/><br/>
+
+<b>Locale-formatted</b> Timestamp &lt;Dec 18, 2012 11:55:29 AM CET><br/>
+<b>Severity</b> &lt;Error><br/>
+<b>Subsystem</b> &lt;ALSB Logging><br/>
+<b>Machine Name</b> &lt;acme108><br/>
+<b>Server Name</b> &lt;osbpr1ms2><br/>
+<b>Thread ID</b> &lt;[ACTIVE] ExecuteThread: '23' for queue: 'weblogic.kernel.Default (self-tuning)'><br/>
+
+<b>User ID</b> &lt;&lt;anonymous>><br/>
+<b>Transaction ID</b> &lt;> <br/>
+
+<b>Diagnostic Context ID</b> &lt;465bebdd30aa6335:1ab575e0:13b48cc30e9:-8000-00000000007651df><br/>
+
+<b>Raw Time Value</b> &lt;1355828129705><br/>
+<b>Message ID</b> &lt;BEA-000000><br/>
+<b>Message Text</b> &lt; [null, null, null, ERROR] ****CheckMachineExists_PS - Fault in SEH****: con:fault xmlns:con="http://www.bea.com/wli/sb/context"<br/>
+
+<br/><br/>
+
+
+<a href="http://docs.oracle.com/cd/E23943_01/web.1111/e13714/config_context.htm">Here some explanation on what a Diagnostic Context ID is.</a>
+
+
+<br/><br/>
+
+
+
+
+
+

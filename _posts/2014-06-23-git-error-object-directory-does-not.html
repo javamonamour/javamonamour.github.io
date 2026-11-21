@@ -1,0 +1,26 @@
+---
+layout: post
+title: "git error: object directory does not exist; check .git/objects/info/alternates."
+date: 2014-06-23T09:35:00.002+02:00
+permalink: /2014/06/git-error-object-directory-does-not.html
+blogger_id: "4757248073666963502"
+tags: ["git"]
+---
+Being an idiot, I have deleted the entire content of the C:\Users\nnkrepelja\.r10k\git folder.... with dire consequences, each time i do a "git add" I get the error 
+
+<br/>
+<i>git error: object directory does not exist; check .git/objects/info/alternates.</i>
+
+<br/>
+
+Restoring the content of the cache fixes the issue.
+
+<br/>
+
+Question: what is this mysterious .git/objects/info/alternates ?
+<br/>
+Here <a href="http://git-scm.com/docs/gitrepository-layout.html">http://git-scm.com/docs/gitrepository-layout.html</a> it claims that you can borrow objects from other repositories.... sounds a bit iffy, and it's not my case really...
+<br/>
+
+Git is very powerful but it takes a looong learning curve....in the meantime, don't play around too much, you touch it you break it...
+<br/>

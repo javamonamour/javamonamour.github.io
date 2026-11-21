@@ -1,0 +1,63 @@
+---
+layout: post
+title: "Exception in HttpInboundMessageContext.close: java.net.SocketException: Socket closed"
+date: 2013-11-21T11:56:00.002+01:00
+permalink: /2013/11/exception-in-httpinboundmessagecontextc.html
+blogger_id: "3936035387465191115"
+tags: ["weblogic"]
+blogger_comments:
+  - author: "Julien Rivière"
+    date: 2013-11-21
+    html: "We got those errors when chunk mode isn&#39;t supported by target web service.<br /><br />Disabling &#39;Enable Chunk Mode&#39; would solve it (if it&#39;s the same error)."
+  - author: "Anonymous"
+    date: 2020-03-26
+    html: "How can we disable chunk mode ? from osb ?"
+---
+Apparently under VERY heavy load we get this error in a HTTP Business Service... still under investigation.
+<br/><br/>
+It's not using a nio muxer, so I don't this that the Patch 9552622 described in 
+java.io.IOException: Broken Pipe Seen Frequently in WebLogic Server Logs (Doc ID 1476825.1)
+ really applies...
+<br/><br/>
+
+<pre>
+
+####&lt;Nov 20, 2013 9:10:28 PM CET> &lt;Error> &lt;WliSbTransports> &lt;myhost> &lt;osbpr1ms1> &lt;[ACTIVE] ExecuteThread: '100' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;anonymous>> &lt;> &lt;4cea82998b9a2c15:7ce38336:1427138d527:-8000-00000000000af294> &lt;1384978228423> &lt;BEA-381304> &lt;Exception in HttpInboundMessageContext.close: java.net.SocketException: Socket closed
+java.net.SocketException: Socket closed
+        at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:99)
+        at java.net.SocketOutputStream.write(SocketOutputStream.java:136)
+        at weblogic.servlet.internal.ChunkOutput.writeChunkTransfer(ChunkOutput.java:568)
+        at weblogic.servlet.internal.ChunkOutput.writeChunks(ChunkOutput.java:539)
+        at weblogic.servlet.internal.ChunkOutput.flush(ChunkOutput.java:427)
+        at weblogic.servlet.internal.CharsetChunkOutput.flush(CharsetChunkOutput.java:298)
+        at weblogic.servlet.internal.ChunkOutput$2.checkForFlush(ChunkOutput.java:648)
+        at weblogic.servlet.internal.CharsetChunkOutput.write(CharsetChunkOutput.java:200)
+        at weblogic.servlet.internal.ChunkOutputWrapper.write(ChunkOutputWrapper.java:148)
+        at weblogic.servlet.internal.ServletOutputStreamImpl.write(ServletOutputStreamImpl.java:148)
+        at org.apache.xmlbeans.impl.store.Cursor._save(Cursor.java:590)
+        at org.apache.xmlbeans.impl.store.Cursor.save(Cursor.java:2537)
+        at org.apache.xmlbeans.impl.values.XmlObjectBase.save(XmlObjectBase.java:223)
+        at com.bea.wli.sb.sources.XmlObjectSource.writeTo(XmlObjectSource.java:92)
+        at com.bea.wli.sb.sources.OutboundXOPSource.writeTo(OutboundXOPSource.java:116)
+        at com.bea.wli.sb.transports.http.HttpInboundMessageContext.close(HttpInboundMessageContext.java:264)
+        at sun.reflect.GeneratedMethodAccessor882.invoke(Unknown Source)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+        at java.lang.reflect.Method.invoke(Method.java:597)
+        at com.bea.wli.sb.transports.Util$4.invoke(Util.java:351)
+        at $Proxy165.close(Unknown Source)
+        at com.bea.wli.sb.pipeline.MessageProcessor.finishProcessing(MessageProcessor.java:398)
+        at com.bea.wli.sb.pipeline.RouterCallback.onReceiveResponse(RouterCallback.java:108)
+        at com.bea.wli.sb.pipeline.RouterCallback.run(RouterCallback.java:183)
+        at weblogic.work.ContextWrap.run(ContextWrap.java:41)
+        at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+
+
+</pre>
+
+
+<br/><br/>
+
+
+

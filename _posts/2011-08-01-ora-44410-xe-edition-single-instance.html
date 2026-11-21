@@ -1,0 +1,90 @@
+---
+layout: post
+title: "ORA-44410: XE edition single instance violation error"
+date: 2011-08-01T11:26:00.002+02:00
+permalink: /2011/08/ora-44410-xe-edition-single-instance.html
+blogger_id: "5022794085420144478"
+blogger_comments:
+  - author: "vernetto"
+    date: 2011-12-03
+    html: "great stuff Paulo, I have updated my post with your solution.<br /><br />Thanks again!"
+  - author: "Anonymous"
+    date: 2011-12-03
+    html: "I&#39;v run into the exactly same problem and made exactly the same mistake:<br /><br />export ORACLE_HOME=$ORACLE_BASE/product/10.2.0/server<b>/</b><br /><br />Remove the trailing backslash from the path. Also add TNS_ADMIN. Here is my complete .bash_profile:<br /><br />$ cat .bash_profile<br />export ORACLE_BASE=/usr/lib/oracle/xe/app/oracle<br />export ORACLE_HOME=$ORACLE_BASE/product/10.2.0/server<br />export ORACLE_SID=XE<br />export TNS_ADMIN=$ORACLE_HOME/network/admin<br />export PATH=$PATH:$ORACLE_HOME/bin<br /><br />I hope this helps."
+  - author: "Sérgio Berlotto Jr"
+    date: 2012-01-11
+    html: "Tks for this solution !<br />Works fine for me...<br />Save my life ! :-)"
+  - author: "Anonymous"
+    date: 2012-02-16
+    html: "Thanks for solution.<br />was having the same problem, solution worked for me"
+  - author: "adesst"
+    date: 2014-01-06
+    html: "Super! Problem away..."
+  - author: "VINAY"
+    date: 2016-05-25
+    html: "Not sure what, but issue is solved once system team rebooted the machine.<br />"
+---
+I am trying to run Oracle XE on Oracle Virtual Box<br />
+<br />
+<b>/oracle/db/xe/app/oracle/product/10.2.0/server/bin/sqlplus </b><br />
+<br />
+<i>&quot;Error 6 initializing SQL*Plus<br />
+Message file sp1&lt;lang&gt;.msb not found<br />
+SP2-0750: You may need to set ORACLE_HOME to your Oracle software directory<br />
+&quot;<br />
+</i><br />
+<br />
+<b>cd</b><br />
+<b>vi .bash_profile <br />
+<br />
+export ORACLE_BASE=/oracle/db/xe/app/oracle<br />
+export ORACLE_HOME=$ORACLE_BASE/product/10.2.0/server/<br />
+export ORACLE_SID=XE<br />
+<br />
+PATH=$PATH:$HOME/bin:$ORACLE_HOME/bin<br />
+</b><br />
+<br />
+<br />
+<b>source .bash_profile</b><br />
+<br />
+<b>sqlplus / as sysdba</b><br />
+<br />
+<i>&quot;connected to an idle instance&quot;</i><br />
+<br />
+<b>select * from dual</b><br />
+<i>&quot;ORA-01034: ORACLE not available&quot;</i><br />
+<br />
+<b>startup</b><br />
+<br />
+<i>&quot;ORA-44410: XE edition single instance violation error&quot;</i><br />
+<br />
+<b>shutdown abort</b><br />
+<i>&quot;ORACLE instance shut down&quot;</i><br />
+<br />
+<b>startup</b><br />
+<i>&quot;ORA-44410: XE edition single instance violation error&quot;</i><br />
+<br />
+GRRRRRR!<br />
+<br />
+<br />
+lsnrctl status<br />
+<br />
+<i>&quot;Instance &quot;PLSExtProc&quot;, status UNKNOWN&quot;</i><br />
+<br />
+<br />
+The solution is provided by Paulo (thank you soooo much) in his comment:<br />
+<br />
+<i><br />
+I've run into the exactly same problem and made exactly the same mistake:<br />
+<br />
+export ORACLE_HOME=$ORACLE_BASE/product/10.2.0/server/<br />
+<br />
+<b>Remove the trailing backslash from the path</b>. Also add TNS_ADMIN. Here is my complete .bash_profile:<br />
+<br />
+$ cat .bash_profile<br />
+export ORACLE_BASE=/usr/lib/oracle/xe/app/oracle<br />
+export ORACLE_HOME=$ORACLE_BASE/product/10.2.0/server<br />
+export ORACLE_SID=XE<br />
+export TNS_ADMIN=$ORACLE_HOME/network/admin<br />
+export PATH=$PATH:$ORACLE_HOME/bin<br />
+</i>

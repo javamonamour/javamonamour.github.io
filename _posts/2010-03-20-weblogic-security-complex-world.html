@@ -1,0 +1,63 @@
+---
+layout: post
+title: "WebLogic Security, a complex world"
+date: 2010-03-20T07:28:00.001+01:00
+permalink: /2010/03/weblogic-security-complex-world.html
+blogger_id: "6062986828817593755"
+tags: ["security"]
+---
+Just trying to summarize all the options / tabs existing in WebLogic and covering the security topic.<br />
+<br />
+At <b>Domain </b>level, there is a "<b>Security</b>" tab:<br />
+<br />
+"<b>general</b>": features cross-domain security settings, node manager credentials, default realm<br />
+<br />
+"<b>filter</b>" : you can specify a weblogic.security.net.ConnectionFilter class to prevent connections based on their IP etc (the default implementation is weblogic.security.net.ConnectionFilterImpl). On how to set the Connection Filter, see <a href="http://download-llnw.oracle.com/docs/cd/E15051_01/wls/docs103/security/con_filtr.html#wp1029318">http://download-llnw.oracle.com/docs/cd/E15051_01/wls/docs103/security/con_filtr.html#wp1029318</a><br />
+<br />
+<br />
+"<b>unlock user</b>": just to unlock a user<br />
+<br />
+"<b>embedded LDAP</b>" : various parameters (cache and startup sync) for the Embedded LDAP<br />
+<br />
+"<b>roles</b>" : defines domain security roles (you can map the role with the XACMLRoleMapper)<br />
+<br />
+"<b>policies</b>" : they concern "User Lockout" (based e.g. on roles defined in previous tab - they will be saved in XACMLAuthorizer)&nbsp; ; "configuration", "file upload", "file download", "view log", "identity assertion"<br />
+<br />
+Still at Domain level, we have "<b>Web Service security</b>": <br />
+<br />
+credential providers<br />
+token handler<br />
+timestamp<br />
+<br />
+<br />
+<br />
+<br />
+At <b>Server</b> level, there is only:<br />
+<b>roles</b> and <b>policies</b> to be able to restart the server<br />
+<br />
+In the "security realms" page, you can create new security realms.<br />
+<br />
+<b>Configuration</b>:<br />
+<b>General</b> tab: choose Security Model (DD only), protects JMX access<br />
+<b>RDBMS Security Store</b> tab: allows to use a DB as security store<br />
+<br />
+<b>User Lockout</b>: to block hackers<br />
+<b>Performance</b>: defines cache<br />
+<b>Users and Groups</b>: you can define new Users and Groups<br />
+<br />
+<b>Roles and Policies</b>:<br />
+<b>Realm Roles</b>: lets you view and edit all roles and policies for Deployments, EJB Modules and EJB, JMS Destinations and Modules, JDBC Datasources, Domain and Server level roles.<br />
+<br />
+<b>Credential mappings</b>: let you map WebLogic Server users to remote users<br />
+<br />
+Providers:<br />
+Authentication<br />
+Authorization<br />
+Adjudication<br />
+Role Mapping<br />
+Auditing<br />
+Credential Mapping<br />
+Certification Path<br />
+Keystores<br />
+<br />
+Migration: import and export

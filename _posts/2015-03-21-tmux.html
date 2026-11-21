@@ -1,0 +1,76 @@
+---
+layout: post
+title: "tmux"
+date: 2015-03-21T00:10:00.002+01:00
+permalink: /2015/03/tmux.html
+blogger_id: "1787060669147386698"
+tags: ["tmux"]
+---
+I hear good things about tmux. I want to try it on CentOS 6.6.
+<br/><br/>
+
+sudo yum install tmux
+
+<br/><br/>
+No package tmux available
+
+<br/><br/>
+
+Bummer. Let's install it manually :
+<br/><br/>
+
+Login as root
+<br/><br/>
+<pre>
+mkdir /tmp/tmuxinstall
+cd /tmp/tmuxinstall
+
+wget https://github.com/downloads/libevent/libevent/libevent-2.0.21-stable.tar.gz
+
+wget -O tmuxsources.tar.gz http://sourceforge.net/projects/tmux/files/latest/download?source=files
+
+tar xvzf libevent-2.0.21-stable.tar.gz
+
+tar xvzf tmuxsources.tar.gz
+
+yum install gcc kernel-devel make ncurses-devel
+
+cd /tmp/tmuxinstall/libevent-2.0.21-stable
+
+./configure --prefix=/usr/local
+
+make && make install
+
+
+cd /tmp/tmuxinstall/tmux-1.9a
+
+LDFLAGS="-L/usr/local/lib -Wl,-rpath=/usr/local/lib" ./configure --prefix=/usr/local
+
+make && make install
+
+tmux
+
+</pre>
+
+
+<br/><br/>
+
+
+It should all work now.
+
+<br/><br/>
+
+
+You can get a tutorial here
+<br/><br/>
+<iframe width="640" height="360" src="https://www.youtube.com/embed/BHhA_ZKjyxo?feature=player_detailpage" frameborder="0" allowfullscreen></iframe>
+
+<br/><br/>
+
+
+Some explanation of the product here <a href="https://en.wikipedia.org/wiki/Tmux">https://en.wikipedia.org/wiki/Tmux</a>
+
+
+<br/><br/>
+
+

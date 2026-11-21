@@ -1,0 +1,21 @@
+---
+layout: post
+title: "Revocation information for the security certificate for this site is not available. "
+date: 2014-07-22T10:30:00.001+02:00
+permalink: /2014/07/revocation-information-for-security.html
+blogger_id: "2597491174811280490"
+tags: ["certificate", "security", "windows"]
+---
+one of our workstations was getting regularly this popup "Revocation information for the security certificate for this site is not available. Do you want to proceed?". It's a Windows 7 machine.
+<br/><br/>
+
+
+Clicking on "view certificate" it was showing one of our certificates. Opening the certificate we discovered that there is a <a href="http://en.wikipedia.org/wiki/Revocation_list">Certificate Revocation List</a>  
+<br/><br/>
+
+They tried "Start, then Control Panel, then Internet Options, then Clear SSSL State", they also checked that the date/time was correct.
+<br/><br/>
+This article <a href="http://www.brighthub.com/internet/security-privacy/articles/82291.aspx  ">http://www.brighthub.com/internet/security-privacy/articles/82291.aspx</a>  is a sort of universal source of truth for this issue.
+<br/><br/>
+
+Then we discovered simply that the CRL URL was not accessible from that workstation, because the proxy was blocking it. Granting access to that URL solved the issue.<br/><br/>

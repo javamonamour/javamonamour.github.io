@@ -1,0 +1,84 @@
+---
+layout: post
+title: "docker registry-mirrors"
+date: 2018-04-18T10:38:00.000+02:00
+permalink: /2018/04/docker-registry-mirrors.html
+blogger_id: "4333733265850376077"
+tags: ["docker", "registry"]
+---
+One can setup a registry mirror to intercept all "docker pull" and route them through a local cache registry..... however there seem to be issues when you use Nexus Docker Repo for this purpose...<br />
+<br />
+setup Nexus Docker registry as here <a href="/2018/03/using-nexus-3-as-docker-registry-proxy.html">/2018/03/using-nexus-3-as-docker-registry-proxy.html</a><br />
+<br />
+<br />
+cat /etc/docker/daemon.json <br />
+{<br />
+"debug" : true,<br />
+"experimental" : true,<br />
+"insecure-registries" : [ "localhost:8081", "localhost:8082" ],<br />
+"registry-mirrors" : [<br />
+"http://localhost:8082"<br />
+]<br />
+}<br />
+<br />
+sudo systemctl daemon-reload<br />
+sudo systemctl restart docker<br />
+<br />
+<br />
+docker start nexus3<br />
+docker login localhost:8082 (admin/admin123)<br />
+<br />
+docker info<br />
+Registry Mirrors:<br />
+http://localhost:8082/<br />
+<br />
+docker pull hello-world<br />
+<br />
+sudo cat /var/log/messages | grep docker<br />
+<br />
+<pre>Apr 17 22:35:02 localhost dockerd: time="2018-04-17T22:35:02.139328745+02:00" level=debug msg="Calling GET /v1.37/images/json"
+Apr 17 22:35:14 localhost dockerd: time="2018-04-17T22:35:14.623910991+02:00" level=debug msg="Calling GET /_ping"
+Apr 17 22:35:14 localhost dockerd: time="2018-04-17T22:35:14.628661368+02:00" level=debug msg="Calling GET /v1.37/info"
+Apr 17 22:35:14 localhost dockerd: time="2018-04-17T22:35:14.673297720+02:00" level=debug msg="Calling POST /v1.37/images/create?fromImage=hello-world&amp;tag=latest"
+Apr 17 22:35:14 localhost dockerd: time="2018-04-17T22:35:14.673784263+02:00" level=debug msg="Trying to pull hello-world from http://localhost:8082/ v2"
+Apr 17 22:35:15 localhost dockerd: time="2018-04-17T22:35:15.137325587+02:00" level=info msg="Attempting next endpoint for pull after error: Get http://localhost:8082/v2/library/hello-world/manifests/latest: no basic auth credentials"
+Apr 17 22:35:15 localhost dockerd: time="2018-04-17T22:35:15.137404591+02:00" level=debug msg="Trying to pull hello-world from https://registry-1.docker.io v2"
+Apr 17 22:35:17 localhost dockerd: time="2018-04-17T22:35:17.637206822+02:00" level=debug msg="Pulling ref from V2 registry: hello-world:latest"
+Apr 17 22:35:17 localhost dockerd: time="2018-04-17T22:35:17.640510754+02:00" level=debug msg="docker.io/library/hello-world:latest resolved to a manifestList object with 9 entries; looking for a linux/amd64 match"
+Apr 17 22:35:17 localhost dockerd: time="2018-04-17T22:35:17.640582612+02:00" level=debug msg="found match for linux/amd64 with media type application/vnd.docker.distribution.manifest.v2+json, digest sha256:d5c74e6f8efc7bdf42a5e22bd764400692cf82360d86b8c587a7584b03f51520"
+Apr 17 22:35:18 localhost dockerd: time="2018-04-17T22:35:18.504407966+02:00" level=debug msg="pulling blob \"sha256:9bb5a5d4561a5511fa7f80718617e67cf2ed2e6cdcd02e31be111a8d0ac4d6b7\""
+Apr 17 22:35:19 localhost dockerd: time="2018-04-17T22:35:19.580697501+02:00" level=debug msg="Downloaded 9bb5a5d4561a to tempfile /var/lib/docker/tmp/GetImageBlob741769005"
+Apr 17 22:35:19 localhost dockerd: time="2018-04-17T22:35:19.600499679+02:00" level=debug msg="Applying tar in /var/lib/docker/overlay2/6fd7cd727232306d47dbbd8835c85bab265bc3c51f1fd4e784d814556652d761/diff"
+Apr 17 22:35:19 localhost dockerd: time="2018-04-17T22:35:19.759362924+02:00" level=debug msg="Applied tar sha256:2b8cbd0846c5aeaa7265323e7cf085779eaf244ccbdd982c4931aef9be0d2faf to 6fd7cd727232306d47dbbd8835c85bab265bc3c51f1fd4e784d814556652d761, size: 1848"
+</pre><br />
+<br />
+Interesting this message:<br />
+<br />
+Apr 17 22:35:15 localhost dockerd: time="2018-04-17T22:35:15.137325587+02:00" level=info msg="Attempting next endpoint for pull after error: Get http://localhost:8082/v2/library/hello-world/manifests/latest: no basic auth credentials"<br />
+<br />
+<br />
+<br />
+<br />
+<a href="https://github.com/moby/moby/issues/20097">https://github.com/moby/moby/issues/20097</a><br />
+<a href="https://stackoverflow.com/questions/42143395/docker-registry-mirror-not-used">https://stackoverflow.com/questions/42143395/docker-registry-mirror-not-used</a> no basic auth credentials -&gt; solution with nginx<br />
+<a href="https://github.com/moby/moby/issues/30880">https://github.com/moby/moby/issues/30880</a> this is the main ticket<br />
+<br />
+<i><br />
+it seems that the only workaround is to setup a nginx proxy with basic authentication injected<br />
+Otherwise, https://github.com/moby/moby/issues/30880  "Nexus OSS 3.6.0-02 can finally transparently proxy docker images. It has a new feature called "Anonymous Read Access" for docker registry access (see<br />
+<a href="https://help.sonatype.com/display/NXRM3/Private+Registry+for+Docker">https://help.sonatype.com/display/NXRM3/Private+Registry+for+Docker</a>) and disabling "Force basic authentication" and adding "Docker bearer token realm" in nexus/admin/security/realms seems to fixes this issue, no more "no basic auth credentials" in the logfile." <br />
+<br />
+</i><br />
+<br />
+I have done the above, and I can now see after a "docker pull hello-world":<br />
+<br />
+<pre>Apr 18 15:01:24 localhost dockerd: time="2018-04-18T15:01:24.245724948+02:00" level=debug msg="Calling GET /_ping"
+Apr 18 15:01:24 localhost dockerd: time="2018-04-18T15:01:24.246891099+02:00" level=debug msg="Calling GET /v1.37/info"
+Apr 18 15:01:24 localhost dockerd: time="2018-04-18T15:01:24.362426987+02:00" level=debug msg="Calling POST /v1.37/images/create?fromImage=hello-world&tag=latest"
+Apr 18 15:01:24 localhost dockerd: time="2018-04-18T15:01:24.374842745+02:00" level=debug msg="Trying to pull hello-world from http://localhost:8082/ v2"
+Apr 18 15:01:24 localhost dockerd: time="2018-04-18T15:01:24.439398678+02:00" level=debug msg="Increasing token expiration to: 60 seconds"
+Apr 18 15:01:29 localhost dockerd: time="2018-04-18T15:01:29.026052252+02:00" level=debug msg="Pulling ref from V2 registry: hello-world:latest"
+</pre><br />
+<br />
+<br />
+

@@ -1,0 +1,21 @@
+---
+layout: post
+title: "HermesJMS fails to start with Java 8"
+date: 2017-10-08T17:42:00.001+02:00
+permalink: /2017/10/hermesjms-fails-to-start-with-java-8.html
+blogger_id: "6351829669306433946"
+tags: ["HermesJMS"]
+---
+HermesJMS silently fails.<br />
+<br />
+in hermes.bat I remove "echo off" and replace "javaw" with "java", to discover that the error is:<br />
+<br />
+org.xml.sax.SAXNotRecognizedException: Feature 'http://javax.xml.XMLConstants/feature/secure-processing' is not recognized.<br />
+<br />
+I replace the HermesJMS/lib/xercesImpl.jar with a new one https://mvnrepository.com/artifact/xerces/xercesImpl/2.11.0-22  and it works!<br />
+<br />
+<br />
+Here <a href="https://developer.jboss.org/wiki/UsingHermesJMSWithHornetQ#comment-11123">https://developer.jboss.org/wiki/UsingHermesJMSWithHornetQ#comment-11123</a> how to connect HermesJMS to JBoss<br />
+<br />
+<br />
+

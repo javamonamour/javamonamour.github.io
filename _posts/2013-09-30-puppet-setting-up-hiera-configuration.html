@@ -1,0 +1,54 @@
+---
+layout: post
+title: "Puppet: setting up hiera configuration in Vagrant"
+date: 2013-09-30T09:07:00.000+02:00
+permalink: /2013/09/puppet-setting-up-hiera-configuration.html
+blogger_id: "1079914887604866113"
+tags: ["hiera", "puppet"]
+---
+In Puppet, hiera configuration file is expected to be in /etc/puppetlabs/puppet/hiera.yaml.
+<br/>
+How to automate the copy of this file, so that every time you do a "vagrant up" the whole Puppet environment is ready?
+<br/>
+This is one way: in your Vagrantfile, BEFORE the " config.vm.provision :puppet do |puppet|" clause, you add this: 
+
+<i>
+config.vm.provision :shell, :inline => "ln -sf /vagrant/configuration/hiera.yaml /etc/puppetlabs/puppet/hiera.yaml"
+
+</i>
+
+<br/>
+and in your Vagrant folder on your host - under the folder containing the Vagrantfile - you create a folder "configuration", 
+containing a hiera.yaml:
+
+<pre>
+---
+:backends: yaml
+:yaml:
+  :datadir: /vagrant/configuration/hieradata
+:hierarchy: 
+  - osb-vagrant-local
+  - osb-vagrant
+  
+</pre>
+<br/>
+
+and a subfolder configuration/hieradata containing the files osb-vagrant.yaml and osb-vagrant-local.yaml (osb-vagrant is the hostname of my box as in config.vm.host_name = "osb-vagrant.acme.com"
+
+
+<br/>
+
+Vagrant will "mirror" to /vagrant on the guest whatever is in your current folder on the host. The symbolic link will do the rest.
+
+<br/>
+
+At this point you can enter any variable in osb-vagrant.yaml, like 
+<pre>
+pippo : pluto
+</pre>
+
+and if you do hiera('pippo) you should get pluto.
+
+<br/><br/>
+
+

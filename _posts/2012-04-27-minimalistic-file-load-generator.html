@@ -1,0 +1,68 @@
+---
+layout: post
+title: "Minimalistic file load generator and HAFileAdapter tester"
+date: 2012-04-27T05:23:00.004+02:00
+permalink: /2012/04/minimalistic-file-load-generator.html
+blogger_id: "2446458240171799922"
+tags: ["file", "WLST"]
+---
+I need to copy over and over the same file (with different file names) to a shared SAMBA folder, to test HAFileAdater in a cluster.<br />
+<br />
+Minimalistic approach, a shell script:<br />
+<br />
+<pre name="code" class="brush: java">for i in {1..10}
+do
+    cp myfile.xml target/myfile${i}.xml
+done
+</pre><br />
+but when it comes to sleeping, sleep in shell takes only a parameter in SECONDS (no milliseconds). Pathetic.<br />
+<br />
+Why some people use Shell script to do anything more than really basic stuff, I will never understand. Probably they started their career 20 years ago with Shell scripting and they never weaned off.<br />
+<br />
+So I do the same in Python:<br />
+<pre name="code" class="brush: java">import shutil
+import time
+i = 1
+while i < 100:
+    shutil.copyfile('myfile.xml', 'target/myfile' + str(i) + '.xml'
+    i = i + 1
+    time.sleep(0.01)
+</pre>
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBArtifacts/HAFileAdapterTest.jar">Here</a> is a JCA file poller.... just change FileAdapter into HAFileAdapter in the JCA file, and the source folder, and add a Report action to trace the file name ($inbound/ctx:transport/ctx:request/tp:headers/jca:jca.file.FileName )
+
+here is $inbound :
+
+<pre name="code" class="brush: xml"><con:endpoint name="ProxyService$HAFileAdapterTester$FileReaderPS" xmlns:con="http://www.bea.com/wli/sb/context">
+  <con:service>
+    <con:operation>Read</con:operation>
+  </con:service>
+  <con:transport>
+    <con:uri>jca://eis/FileAdapter</con:uri>
+    <con:mode>request</con:mode>
+    <con:qualityOfService>best-effort</con:qualityOfService>
+    <con:request xsi:type="jca:JCARequestMetaDataXML" xmlns:jca="http://www.bea.com/wli/sb/transports/jca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <tran:headers xsi:type="jca:JCARequestHeadersXML" xmlns:tran="http://www.bea.com/wli/sb/transports">
+        <tran:user-header name="jca.file.CreationTime" value="0"/>
+        <jca:SOAPAction>Read</jca:SOAPAction>
+        <jca:jca.file.FileName>New Text Document.txt</jca:jca.file.FileName>
+        <jca:jca.file.Directory>C:\pierre\infiles\in3</jca:jca.file.Directory>
+        <jca:jca.file.Size>0</jca:jca.file.Size>
+        <jca:jca.file.Batch>IG1OEdhYeSMWsjUbSnFe1NnrVx-2v0YafavtRTvgZGs.</jca:jca.file.Batch>
+        <jca:jca.file.BatchIndex>1</jca:jca.file.BatchIndex>
+        <jca:jca.file.LastModifiedTime>1335498161556</jca:jca.file.LastModifiedTime>
+      </tran:headers>
+      <tran:encoding xmlns:tran="http://www.bea.com/wli/sb/transports">UTF-8</tran:encoding>
+    </con:request>
+    <con:response xsi:type="jca:JCAResponseMetaDataXML" xmlns:jca="http://www.bea.com/wli/sb/transports/jca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <tran:headers xsi:type="jca:JCAResponseHeadersXML" xmlns:tran="http://www.bea.com/wli/sb/transports"/>
+      <tran:response-code xmlns:tran="http://www.bea.com/wli/sb/transports">0</tran:response-code>
+    </con:response>
+  </con:transport>
+  <con:security>
+    <con:transportClient>
+      <con:username>&lt;anonymous></con:username>
+    </con:transportClient>
+  </con:security>
+</con:endpoint>
+
+</pre>

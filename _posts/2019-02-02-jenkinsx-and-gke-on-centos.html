@@ -1,0 +1,135 @@
+---
+layout: post
+title: "JenkinsX and GKE on Centos"
+date: 2019-02-02T11:50:00.000+01:00
+permalink: /2019/02/jenkinsx-and-gke-on-centos.html
+blogger_id: "7118905486488250052"
+tags: ["jenkinsx", "jx. gke", "kubernetes"]
+---
+Install JX:<br />
+<br />
+https://gist.github.com/vfarcic/8cef206b4df0b1bbec3060d1d45c2a80<br />
+<br />
+<pre>mkdir -p ~/.jx/bin
+
+curl -L https://github.com/jenkins-x/jx/releases/download/v1.3.634/jx-linux-amd64.tar.gz \
+    | tar xzv -C ~/.jx/bin
+
+export PATH=$PATH:~/.jx/bin
+
+echo 'export PATH=$PATH:~/.jx/bin' \
+>> ~/.bashrc
+</pre><br />
+<br />
+<br />
+install gcloud:<br />
+<br />
+<br />
+https://cloud.google.com/sdk/docs/downloads-yum<br />
+<br />
+<pre>tee -a /etc/yum.repos.d/google-cloud-sdk.repo << EOM
+[google-cloud-sdk]
+name=Google Cloud SDK
+baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOM
+
+
+yum install google-cloud-sdk
+
+</pre>
+
+<br/>
+create GKE cluster
+<br/>
+
+<b>jx create cluster gke</b>
+
+<br/>
+(this will install kubectl and try to install helm.... helm installation fails with
+<br/>
+
+<pre>"error: error installing helm: failed to remove helm secrets: failed to run '/root/.jx/bin/helm plugin remove secrets' command in directory '', output: 'Error: Plugin: secrets not found': exit status 1"
+</pre><br/>
+So I download help here https://storage.googleapis.com/kubernetes-helm/helm-v2.12.3-linux-amd64.tar.gz 
+<br/>
+<b>
+gunzip helm-v2.12.3-linux-amd64.tar.gz
+tar xvf helm-v2.12.3-linux-amd64.tar
+mv linux-amd64/helm /usr/local/bin/helm
+mv linux-amd64/tiller /usr/local/bin/tiller
+</b>
+
+<br/>
+I request an authorization code at https://accounts.google.com/o/oauth2/auth?
+<br/>
+
+then run
+<br/>
+<b>gcloud auth login --brief</b>
+<br/>
+and paste the authorization code
+<br/>
+
+
+
+<b>jx install --provider=gke</b>
+
+unable to load in-cluster configuration, KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined
+error: failed to create the kube client: unable to load in-cluster configuration, KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined
+
+<br/>
+
+I do:
+<br/>
+export KUBERNETES_SERVICE_HOST=cloud.google.com
+export KUBERNETES_SERVICE_PORT=443
+<br/>
+then again "jx install --provider=gke" and I get
+<br/>
+
+open /var/run/secrets/kubernetes.io/serviceaccount/token: no such file or directory
+error: failed to create the kube client: open /var/run/secrets/kubernetes.io/serviceaccount/token: no such file or directory
+<br/>
+and of course also this fails
+<br/>
+jx create cluster gke -n jx-rocks -p pippo -z us-east1-b -m n1-standard-2 --min-num-nodes 3 --max-num-nodes 5 --default-admin-password admin --default-environment-prefix jx-rocks
+
+<br/>
+with this error
+<br/>
+<pre>open /var/run/secrets/kubernetes.io/serviceaccount/token: no such file or directory
+Go to the following link in your browser:
+
+    https://accounts.google.com/o/oauth2/auth?redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&prompt=select_account&response_type=code&client_id=32555940559.apps.googleusercontent.com&scope
+=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fappengine.admin+https%3A%2F%2Fwww
+.googleapis.com%2Fauth%2Fcompute+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Faccounts.reauth&access_type=offline
+
+
+ERROR: There was a problem with web authentication.
+ERROR: (gcloud.auth.login) EOF when reading a line
+Enter verification code: Error: Command failed  gcloud auth login --brief
+error creating cluster exit status 1
+error: exit status 1
+</pre><br/>
+I have googled everywhere and I find no help... it seems that JX is still a niche product and immature..
+<br/>
+I am giving up...
+<br/>
+Maybe I will try some parameters <a href="https://jenkins-x.io/commands/jx_create_cluster_gke/">https://jenkins-x.io/commands/jx_create_cluster_gke/</a>
+
+<br/>
+<b>kubectl get ns</b>
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+
+<br/>
+what????<br />
+<br />
+<br />
+<br />
+<br />
+

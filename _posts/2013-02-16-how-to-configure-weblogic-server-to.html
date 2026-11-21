@@ -1,0 +1,214 @@
+---
+layout: post
+title: "How to Configure WebLogic Server to Send a Notification When Its Configuration is Changed [ID 1377733.1]"
+date: 2013-02-16T05:26:00.001+01:00
+permalink: /2013/02/how-to-configure-weblogic-server-to.html
+blogger_id: "5613417772820216675"
+---
+I have decided to implement this article in the Oracle Knowledge Base: 
+"How to Configure WebLogic Server to Send a Notification When Its Configuration is Changed [ID 1377733.1]"
+<br />
+<br />
+This reference will be useful
+<a href="http://docs.oracle.com/cd/E21764_01/web.1111/e13714/config_watch_notif.htm">http://docs.oracle.com/cd/E21764_01/web.1111/e13714/config_watch_notif.htm</a>
+
+<br />
+<br />
+domain -&gt; Configuration -&gt; General -&gt; Advanced settings and set the Configuration Audit Type to "Change Log":
+
+<br />
+<br />
+WLST<br />
+<pre> 
+cd('/')
+cmo.setConfigurationAuditType('log')
+</pre>
+<br />
+<br />
+Create a Diagnostic Module, of type "Log Watch"<br />
+Log Watch Severity will need to be set to "Info"
+
+
+<br />
+<pre>cmo.createWLDFSystemResource('ConfigurationAuditModule')
+
+cd('/SystemResources/ConfigurationAuditModule')
+cmo.setDescription('')
+
+cd('/WLDFSystemResources/ConfigurationAuditModule/WLDFResource/ConfigurationAuditModule/WatchNotification/ConfigurationAuditModule')
+cmo.setLogWatchSeverity('Info')
+cmo.createWatch('ConfigurationAuditRule')
+
+cd('/WLDFSystemResources/ConfigurationAuditModule/WLDFResource/ConfigurationAuditModule/WatchNotification/ConfigurationAuditModule/Watches/ConfigurationAuditRule')
+cmo.setRuleType('Log')
+cmo.setEnabled(true)
+cmo.setRuleExpression('(MESSAGE LIKE \'%MODIFIED%\' OR MESSAGE LIKE \'%CREATED%\' OR MESSAGE LIKE \'%REMOVED%\') AND (SUBSYSTEM = \'Configuration Audit\')')
+cmo.setAlarmType('None')
+
+activate()
+
+</pre>
+<br />
+<br />
+and create a Mail Session
+<br />
+<br />
+<pre>cd('/')
+cmo.createMailSession('MailSessionAdmin')
+
+cd('/MailSessions/MailSessionAdmin')
+cmo.setJNDIName('MailSessionAdmin')
+prop = Properties()
+prop.setProperty('mail.smtp.host', 'smtp.acme.com')
+cmo.setProperties(prop)
+
+set('Targets',jarray.array([ObjectName('com.bea:Name=osbpl1as,Type=Server'), ObjectName('com.bea:Name=osbpl1cl,Type=Cluster')], ObjectName))
+
+</pre>
+<br />
+<br />
+and assign an email notification to our Watch:
+<br />
+<br />
+<pre>cd('/WLDFSystemResources/ConfigurationAuditModule/WLDFResource/ConfigurationAuditModule/WatchNotification/ConfigurationAuditModule')
+cmo.createSMTPNotification('EmailAdmin')
+
+cd('/WLDFSystemResources/ConfigurationAuditModule/WLDFResource/ConfigurationAuditModule/WatchNotification/ConfigurationAuditModule/SMTPNotifications/EmailAdmin')
+cmo.setEnabled(true)
+cmo.setMailSessionJNDIName('MailSessionAdmin')
+set('Recipients',jarray.array([String('pierluigi.vernetto@acme.com')], String))
+cmo.setSubject(None)
+cmo.setBody(None)
+
+</pre>
+<br />
+<br />
+and don't forget to assign the email notification to the watch:
+<br />
+<br />
+<pre>cd('/WLDFSystemResources/ConfigurationAuditModule/WLDFResource/ConfigurationAuditModule/WatchNotification/ConfigurationAuditModule/Watches/ConfigurationAuditRule')
+set('Notifications',jarray.array([ObjectName('com.bea:Name=EmailAdmin,Type=weblogic.diagnostics.descriptor.WLDFSMTPNotificationBean,Parent=[osbpl1do]/WLDFSystemResources[ConfigurationAuditModule],Path=WLDFResource[ConfigurationAuditModule]/WatchNotification[ConfigurationAuditModule]/SMTPNotifications[EmailAdmin]')], ObjectName))
+
+</pre>
+<br />
+<br />
+Remember to target the WLDF module , if you had already the default Module-FMWDFW, you should untarget it.
+
+
+
+<br />
+<br />
+If all is set up correctly, whey you change the log file size from 10000 to 10001 you should get this email:
+
+<br />
+<pre>WatchTime: Feb 16, 2013 5:44:11 AM CET 
+WatchDomainName: osbpl1do 
+WatchServerName: osbpl1as 
+WatchSeverityLevel: Notice 
+WatchName: ConfigurationAuditRule 
+WatchRuleType: Log 
+WatchRule: (MESSAGE LIKE '%MODIFIED%' OR MESSAGE LIKE '%CREATED%' OR MESSAGE LIKE '%REMOVED%') AND (SUBSYSTEM = 'Configuration Audit') 
+WatchData: DATE = Feb 16, 2013 5:44:11 AM CET SERVER = osbpl1as MESSAGE = USER Pierluigi MODIFIED com.bea:Name=osbpl1as,Type=Log,Server=osbpl1as ATTRIBUTE FileMinSize FROM 10000 TO 10001 SUBSYSTEM = Configuration Audit USERID = Pierluigi SEVERITY = Info THREAD = [ACTIVE] ExecuteThread: '3' for queue: 'weblogic.kernel.Default (self-tuning)' MSGID = BEA-159904 MACHINE = hqchnesoa200 TXID =  CONTEXTID = 80c3be353c83ac6e:3a272057:13ccf23ffee:-8000-0000000000002cef TIMESTAMP = 1360989851820  
+WatchAlarmType: None 
+WatchAlarmResetPeriod: 60000 
+SMTPNotificationName: EmailAdmin 
+
+</pre>
+<br />
+<br />
+The entire script is here, I had to exclude user WLS Kernel to avoid false positives:<br />
+<br />
+<pre class="brush: java" name="code">
+
+domain='osbp1do'
+adminName='osbpl1as'  
+clusterName='osbpl1cl'
+
+print "connecting to ", adminURL
+connect(adminUserName, adminPassword, adminURL)
+
+
+
+print "clusterName, adminName", clusterName, adminName
+
+edit()
+startEdit()
+cd('/')
+cmo.setConfigurationAuditType('log')
+theModuleName='ConfigurationAuditModule'
+
+myMbean = getMBean('/WLDFSystemResources/' + theModuleName)
+if (myMbean == None):
+    cmo.createWLDFSystemResource(theModuleName)
+else:
+    print "module", theModuleName, "already exists" 
+    
+cd('/SystemResources/' + theModuleName)
+cmo.setDescription('Monitor configuration changes')
+
+cd('/WLDFSystemResources/' + theModuleName + '/WLDFResource/' + theModuleName + '/WatchNotification/' + theModuleName)
+cmo.setLogWatchSeverity('Info')
+
+auditRuleName='ConfigurationAuditRule'
+myMbean = getMBean('/WLDFSystemResources/' + theModuleName + '/WLDFResource/' + theModuleName + '/WatchNotification/' + theModuleName + '/Watches/' + auditRuleName)
+if (myMbean == None):
+    cmo.createWatch(auditRuleName)
+else:
+    print "audit rule", auditRuleName, "already exists"    
+
+cd('/WLDFSystemResources/' + theModuleName + '/WLDFResource/' + theModuleName + '/WatchNotification/' + theModuleName + '/Watches/' + auditRuleName)
+cmo.setRuleType('Log')
+cmo.setEnabled(true)
+cmo.setRuleExpression('(USERID != \'<wls kernel="">\') AND (MESSAGE LIKE \'%MODIFIED%\' OR MESSAGE LIKE \'%CREATED%\' OR MESSAGE LIKE \'%REMOVED%\') AND (SUBSYSTEM = \'Configuration Audit\')')
+cmo.setAlarmType('None')
+
+theMailSessionName='MailSessionAdmin'
+cd('/')
+myMbean = getMBean('/MailSessions/' + theMailSessionName)
+if (myMbean == None):
+    cmo.createMailSession(theMailSessionName)
+else:
+    print "mailSession", theMailSessionName, "already exists"
+
+cd('/MailSessions/' + theMailSessionName)
+cmo.setJNDIName(theMailSessionName)
+prop = Properties()
+prop.setProperty('mail.smtp.host', 'smtp.acme.com')
+cmo.setProperties(prop)
+set('Targets',jarray.array([ObjectName('com.bea:Name=' + adminName + ',Type=Server'), ObjectName('com.bea:Name=' + clusterName +',Type=Cluster')], ObjectName))
+
+
+cd('/WLDFSystemResources/' + theModuleName + '/WLDFResource/' + theModuleName + '/WatchNotification/' + theModuleName)
+
+theEmailNotificationName='EmailAdmin'
+myMbean = getMBean('/WLDFSystemResources/' + theModuleName + '/WLDFResource/' + theModuleName + '/WatchNotification/' + theModuleName + '/SMTPNotifications/' + theEmailNotificationName)
+if (myMbean == None):
+    cmo.createSMTPNotification(theEmailNotificationName)
+else:
+    print "SMTPNotification", theEmailNotificationName, "already exists"    
+
+cd('/WLDFSystemResources/' + theModuleName + '/WLDFResource/' + theModuleName + '/WatchNotification/' + theModuleName + '/SMTPNotifications/' + theEmailNotificationName)
+cmo.setEnabled(true)
+cmo.setMailSessionJNDIName(theMailSessionName)
+set('Recipients',jarray.array([String('pierluigi.vernetto@acme.com')], String))
+cmo.setSubject("audit weblogic configuration change domain=" + domain)
+cmo.setBody(None)
+
+cd('/SystemResources/' + theModuleName)
+set('Targets',jarray.array([ObjectName('com.bea:Name=' + adminName + ',Type=Server'), ObjectName('com.bea:Name=' + clusterName +',Type=Cluster')], ObjectName))
+
+
+cd('/WLDFSystemResources/' + theModuleName + '/WLDFResource/' + theModuleName + '/WatchNotification/' + theModuleName + '/Watches/' + auditRuleName)
+set('Notifications',jarray.array([ObjectName('com.bea:Name=EmailAdmin,Type=weblogic.diagnostics.descriptor.WLDFSMTPNotificationBean,Parent=[' + domain + ']/WLDFSystemResources[' + theModuleName + '],Path=WLDFResource[' + theModuleName + ']/WatchNotification[' + theModuleName + ']/SMTPNotifications[EmailAdmin]')], ObjectName))
+
+save()
+validate()
+activate()
+
+
+</wls></pre>
+<br />
+<br />
+See also <a href="/2012/05/weblogic-configuration-audit-type.html">/2012/05/weblogic-configuration-audit-type.html</a>
+
+

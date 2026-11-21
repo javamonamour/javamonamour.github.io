@@ -1,0 +1,40 @@
+---
+layout: post
+title: "h2 remote TCP client"
+date: 2018-04-20T05:15:00.001+02:00
+permalink: /2018/04/h2-remote-tcp-client.html
+blogger_id: "7408117041172927150"
+tags: ["h2"]
+---
+telnet ip port<br />
+<br />
+Remote connections to this server are not allowed, see -tcpAllowOthers<br />
+org.h2.jdbc.JdbcSQLException: Remote connections to this server are not allowed, see -tcpAllowOthers [90117-197]<br />
+at org.h2.message.DbException.getJdbcSQLException(DbException.java:357)<br />
+at org.h2.message.DbException.get(DbException.java:179)<br />
+at org.h2.message.DbException.get(DbException.java:155)<br />
+at org.h2.message.DbException.get(DbException.java:144)<br />
+at org.h2.server.TcpServerThread.run(TcpServerThread.java:89)<br />
+at java.lang.Thread.run(Thread.java:748)<br />
+Connection closed by foreign host.<br />
+<br />
+<br />
+You fix the issue by running h2 server as:<br />
+<br />
+java -cp "/opt/h2/bin/h2-1.4.197.jar:$H2DRIVERS:$CLASSPATH" -Dh2.consoleTimeout=500000 org.h2.tools.Console -web -webAllowOthers  -tcp -tcpAllowOthers<br />
+<br />
+<br />
+on the client side, in wildfly, you have<br />
+<br />
+&lt;datasource jndi-name=&quot;java:jboss/datasources/DOICHDS&quot; pool-name=&quot;DOICHDS&quot; enabled=&quot;true&quot; use-java-context=&quot;true&quot;&gt;<br />
+&lt;connection-url&gt;jdbc:h2:tcp://yourserverip:9092/~/PIPPO;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE&lt;/connection-url&gt;<br />
+&lt;driver&gt;h2&lt;/driver&gt;<br />
+&lt;security&gt;<br />
+&lt;user-name&gt;PIPPO&lt;/user-name&gt;<br />
+&lt;password&gt;PIPPO&lt;/password&gt;<br />
+&lt;/security&gt;<br />
+&lt;/datasource&gt;<br />
+<br />
+See <a href="https://stackoverflow.com/a/9838282/651288">https://stackoverflow.com/a/9838282/651288</a><br />
+<br />
+

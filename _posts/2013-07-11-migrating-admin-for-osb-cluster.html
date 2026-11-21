@@ -1,0 +1,48 @@
+---
+layout: post
+title: "Migrating Admin for a OSB cluster"
+date: 2013-07-11T12:42:00.001+02:00
+permalink: /2013/07/migrating-admin-for-osb-cluster.html
+blogger_id: "6649969430641166786"
+tags: ["OSB"]
+---
+if you plan to start the admin server on the second node, all DOMAIN_HOME/osb/config/* have to be copied from node1 o node2:<br />
+<br />
+make sure no osb session is currently open:<br />
+&nbsp;this should be empty:<br />
+<b><i>ls /opt/oracle/domains/osbpr4do/osb/config/sessions</i></b><br />
+<br />
+align the DOMAIN_HOME/osb/config/core on node2 with the content of node1:<br />
+<br />
+on node1:<br />
+<b><i>
+cd /opt/oracle/domains/osbpr4do/osb/config/core<br />
+jar cvf /tmp/coreconfig.jar *</i></b><br />
+<b><i>
+
+
+</i></b><br />
+on node2:<br />
+copy the coreconfig.jar to /tmp<br />
+<b>cd /opt/oracle/domains/osbpr4do/osb/config/core<br />
+rm -rf *<br />
+cp /tmp/coreconfig.jar .<br />
+jar xvf coreconfig.jar</b><br />
+<br />
+<br />
+<br />copy of ldap files and deployments:<br /><br />on node 1:<br /><i><b>cd /opt/oracle/domains/osbpr4do/servers/<br />jar cvf /tmp/osbpr4as.jar osbpr4as*</b></i><br /><br />copy the jar /tmp/osbpr4as.jar on node1 to /tmp/osbpr4as.jar on node2<br /><i><b>cd /opt/oracle/domains/osbpr4do/servers/<br />jar xvf /tmp/osbpr4as.jar</b></i><br /><br />
+<br />
+<br />
+Now you can start the Admin on node2
+
+<br />
+The alternative is to move all DOMAIN_HOME/osb folder to a shared location, and create a symbolic link
+<br />
+ls -s $DOMAIN_HOME/osb $DOMAIN_HOME/shared/osb
+<br />
+unfortunately there doesn't seem to be a way to configure this folder, so the only workaround is the symlink.
+<br />
+See also <a href="/2013/07/starting-weblogic-admin-on-backup-node.html">/2013/07/starting-weblogic-admin-on-backup-node.html</a>
+
+
+

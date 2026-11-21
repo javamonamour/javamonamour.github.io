@@ -1,0 +1,75 @@
+---
+layout: post
+title: "Sanity check on WebLogic classpath"
+date: 2010-09-04T14:48:00.006+02:00
+permalink: /2010/09/sanity-check-on-weblogic-classpath.html
+blogger_id: "7510870172372051574"
+tags: ["classpath"]
+---
+A constant nightmare for WebLogic administrators is to make sure your WebLogic classpath doesn't contain crap.<br />
+<br />
+This (where 3757 is the PID) prints the classpath:<br />
+<br />
+jrcmd 3757 print_properties | grep java.class.path<br />
+<br />
+java.class.path=entry1:entry2:....<br />
+<br />
+<br />
+<br />
+Here is a script to check the integrity of the classpath:<br />
+<br />
+<br />
+<br />
+<pre name="code" class="brush: bash">pid=$1
+entries=`jrcmd ${pid} print_properties | grep java.class.path | awk -F'=' '{print $2}' | tr ':' '\n'`
+entriesList=(${entries})
+for i in `seq 0 $((${#entriesList[@]}-1))`;
+do
+  entry=${entriesList[$i]}
+  if [ -f ${entry} ]
+    then echo "FILE ${entry} exists"
+    else
+      if [ -d ${entry} ]
+      then echo "DIRECTORY ${entry} exists"
+      else
+         echo "NONEXISTING ${entry}"
+      fi
+  fi
+done
+
+
+</pre><br />
+or if running Sun, use<br />
+jinfo -sysprops ${pid} | grep java.class.path | awk -F'=' '{print $2}'<br />
+<br />
+<br />
+If you have problems executing jrcmd $pid print_properties  - for instance some security restrictions, you can try this:<br />
+<br />
+<pre name="code" class="brush: bash">allcps=`ps -ef | grep weblogic | tr ' ' '\n' | grep java.class.path | awk -F'=' '{print $2}'` 
+#here we have many lines, each with a classpath
+allcpsList=(${allcps})
+for j in `seq 0 $((${#allcpsList[@]}-1))`; 
+do    
+ line=(${allcpsList[$j]})
+ entriesList=`echo $line | tr ':' '\n'`
+ entriesListSplit=(${entriesList})
+ for i in `seq 0 $((${#entriesListSplit[@]}-1))`;
+ do
+          entry=${entriesListSplit[$i]}
+   if [ -f ${entry} ]
+     then echo "FILE ${entry} exists"
+     else
+       if [ -d ${entry} ]
+       then echo "DIRECTORY ${entry} exists"
+       else
+   echo "NONEXISTING ${entry}"
+       fi
+   fi
+        done
+done
+
+
+
+</pre><br />
+<br />
+running the script followed by | sort | more gives interesting results

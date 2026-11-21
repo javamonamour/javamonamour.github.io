@@ -1,0 +1,98 @@
+---
+layout: post
+title: "OSB: The import failed with exception: com.bea.wli.config.component.NotFoundException: Failed to create temporary jar file"
+date: 2010-07-05T18:07:00.004+02:00
+permalink: /2010/07/osb-import-failed-with-exception.html
+blogger_id: "8230533040209441719"
+tags: ["import", "osb11"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2013-11-18
+    html: "This comment has been removed by the author."
+  - author: "vernetto"
+    date: 2015-09-11
+    html: "well the error occurs only in presence of Java classes deployed in some OSB project, if I remember correctly.... and of course only while you are actually importing a new project.... so to reproduce the issue you should import a project with a Java archive in it... and maybe even update the archive to make sure OSB actually deploys a new version of it..."
+  - author: "Anonymous"
+    date: 2015-09-11
+    html: "We recently encountered a similar problem in PRODUCTION environment. Below is a snippet of the stack trace. This happened in an otherwise perfectly working Production server which was running fine since couple of years. As per the comments on forum <br /><br />https://community.oracle.com/thread/2247472?start=0&amp;tstart=0<br /><br />suspecting that the /alsbTempJars directory got deleted, we tried to reproduce the issue in our TEST environment by manually deleting the directory /alsbTempJars but there was no error and the application was running fine.<br />If the absence of directory /alsbTempJars  had caused this issue, then the same error should have occurred in our Test environment also. We are not getting any clue as to what might have caused this error in Production ?<br /><br />com.bea.wli.sb.management.BrokerManagementException: java.lang.RuntimeException: com.bea.wli.sb.management.BrokerManagementException: com.bea.wli.sb.stages.StageException: com.bea.wli.config.component.NotFoundException: Failed to create temporary jar file<br />com.bea.wli.sb.management.BrokerManagementException: java.lang.RuntimeException: com.bea.wli.sb.management.BrokerManagementException: com.bea.wli.sb.stages.StageException: com.bea.wli.config.component.NotFoundException: Failed to create temporary jar file<br />        at com.bea.wli.sb.pipeline.RouterManager.getRouterRuntime(RouterManager.java:642)<br />        at com.bea.wli.sb.pipeline.RouterContext.getInstance(RouterContext.java:172)<br />        at com.bea.wli.sb.pipeline.RouterManager.processMessage(RouterManager.java:579)<br />        at com.bea.wli.sb.transports.TransportManagerImpl.receiveMessage(TransportManagerImpl.java:375)<br />        at com.bea.wli.sb.transports.jms.JmsInboundMDB.onMessage(JmsInboundMDB.java:132)<br />        at sun.reflect.GeneratedMethodAccessor3475.invoke(Unknown Source)<br />        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)<br />        at java.lang.reflect.Method.invoke(Method.java:597)<br />Caused By: java.io.IOException: No such file or directory<br />        at java.io.UnixFileSystem.createFileExclusively(Native Method)"
+---
+<span class="statusmessageerror">The import failed with exception:  com.bea.wli.config.component.NotFoundException: Failed to create  temporary jar file</span><br />
+<br />
+<span class="statusmessageerror">&nbsp;</span> <br />
+This happens in Linux.<br />
+<br />
+This thread <a href="http://forums.oracle.com/forums/message.jspa?messageID=4390710#4390710">http://forums.oracle.com/forums/message.jspa?messageID=4390710#4390710</a> covers the issue, with no solution.<br />
+<br />
+Here same thing:<br />
+<a href="http://forums.oracle.com/forums/thread.jspa?threadID=1092747&amp;tstart=30">http://forums.oracle.com/forums/thread.jspa?threadID=1092747&amp;tstart=30</a><br />
+<br />
+The full stacktrace is:<br />
+<br />
+<pre class="code">Caused By: java.io.IOException: Permission denied
+ at java.io.UnixFileSystem.createFileExclusively(Native Method)
+ at java.io.File.checkAndCreate(File.java:1704)
+ at java.io.File.createTempFile(File.java:1792)
+ at com.bea.wli.sb.util.IOUtils.storeToTempFile(IOUtils.java:245)
+ at com.bea.wli.sb.resources.archive.classloader.ArchiveClassLoaderDerivedTypeDef.computeData(ArchiveClassLoaderDerivedTypeDef.java:120)
+ at com.bea.wli.sb.resources.archive.classloader.ArchiveClassLoaderDerivedTypeDef.computeData(ArchiveClassLoaderDerivedTypeDef.java:34)
+ at com.bea.wli.config.derivedcache.DerivedCache.deriveTheValue(DerivedCache.java:453)
+ at com.bea.wli.config.derivedcache.DerivedCache.get(DerivedCache.java:273)
+ at com.bea.wli.config.derivedcache.DerivedResourceManager.getDerivedValueInfo(DerivedResourceManager.java:341)
+ at com.bea.wli.config.derivedcache.DerivedResourceManager.get(DerivedResourceManager.java:386)
+ at com.bea.wli.sb.resources.cache.DefaultDerivedTypeDef.getDerivedValue(DefaultDerivedTypeDef.java:106)
+ at com.bea.wli.sb.resources.archive.classloader.ArchiveClassLoaderCache.get(ArchiveClassLoaderCache.java:38)
+ at com.bea.wli.sb.resources.archive.summary.ArchiveSummaryDerivedTypeDef.computeData(ArchiveSummaryDerivedTypeDef.java:46)
+ at com.bea.wli.sb.resources.archive.summary.ArchiveSummaryDerivedTypeDef.computeData(ArchiveSummaryDerivedTypeDef.java:23)
+ at com.bea.wli.config.derivedcache.DerivedCache.deriveTheValue(DerivedCache.java:453)
+ at com.bea.wli.config.derivedcache.DerivedCache.get(DerivedCache.java:273)
+ at com.bea.wli.config.derivedcache.DerivedResourceManager.getDerivedValueInfo(DerivedResourceManager.java:341)
+ at com.bea.wli.config.derivedcache.DerivedResourceManager.get(DerivedResourceManager.java:386)
+ at com.bea.wli.sb.resources.cache.DefaultDerivedTypeDef.getDerivedValue(DefaultDerivedTypeDef.java:106)
+ at com.bea.wli.sb.resources.archive.summary.ArchiveSummaryCache.getArchiveSummary(ArchiveSummaryCache.java:31)
+ at com.bea.wli.sb.resources.archive.ArchiveResourceTypeDef.validate(ArchiveResourceTypeDef.java:85)
+ at com.bea.wli.config.validation.ResourceValidator.validateContents(ResourceValidator.java:118)
+ at com.bea.wli.config.validation.ResourceValidator.call(ResourceValidator.java:64)
+ at com.bea.wli.config.validation.SequentialValidator.validate(SequentialValidator.java:34)
+ at com.bea.wli.config.validation.ValidationService.validate(ValidationService.java:171)
+ at com.bea.wli.config.impl.CoreToSessionPropagator.doValidation(CoreToSessionPropagator.java:239)
+ at com.bea.wli.config.impl.CoreToSessionPropagator.handleBeforePrepare(CoreToSessionPropagator.java:118)
+ at com.bea.wli.config.impl.CoreToSessionPropagator.beforePrepare(CoreToSessionPropagator.java:77)
+ at com.bea.wli.config.transaction.TransactionListenerWrapper.beforePrepare(TransactionListenerWrapper.java:64)
+ at com.bea.wli.config.transaction.TransactionManager.notifyBeforePrepare(TransactionManager.java:1094)
+ at com.bea.wli.config.transaction.TransactionManager._prepareForCommit(TransactionManager.java:654)
+ at com.bea.wli.config.transaction.TransactionManager.endTransaction(TransactionManager.java:782)
+ at com.bea.wli.config.transaction.TransactionalTask._doExecute(TransactionalTask.java:226)
+ at com.bea.wli.config.transaction.TransactionalTask._doExecuteWithRetry(TransactionalTask.java:162)
+ at com.bea.wli.config.transaction.TransactionalTask.doExecute(TransactionalTask.java:142)
+ at com.bea.wli.config.task.impl.SessionedTask.doExecute(SessionedTask.java:236)
+ at com.bea.wli.config.task.impl.SessionedTask.doExecute(SessionedTask.java:191)
+ at com.bea.wli.config.task.impl.ImportTask.doImport(ImportTask.java:114)
+ at com.bea.wli.config.mbeans.Config.importUploaded(Config.java:467)
+ at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+ at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+ at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+ at java.lang.reflect.Method.invoke(Method.java:597)
+ at com.bea.alsb.console.support.ConsoleSideMBeanInvocationHandler.__invoke(ConsoleSideMBeanInvocationHandler.java:113)
+ at com.bea.alsb.console.support.ConsoleSideMBeanInvocationHandler.invoke(ConsoleSideMBeanInvocationHandler.java:71)
+ at $Proxy183.importUploaded(Unknown Source)
+ at com.bea.alsb.console.deployment.actions.UpdateImportRepositoryAction.execute(UpdateImportRepositoryAction.java:181)
+ at org.apache.struts.action.RequestProcessor.processActionPerform(RequestProcessor.java:431)
+
+</pre><br />
+<br />
+<br />
+This <a href="http://java.sun.com/javase/6/docs/api/java/io/File.html#createTempFile%28java.lang.String,%20java.lang.String%29%20">http://java.sun.com/javase/6/docs/api/java/io/File.html#createTempFile%28java.lang.String,%20java.lang.String%29 </a><br />
+<br />
+tells me that we are trying to write to the "default temporary directory"...<br />
+<br />
+<a href="http://www.idevelopment.info/data/Programming/java/io/Files/CreateTemporaryFile.java">http://www.idevelopment.info/data/Programming/java/io/Files/CreateTemporaryFile.java</a><br />
+<br />
+The default temporary-file directory is specified by the system property java.io.tmpdir. On UNIX systems the default value of this property is typically "/tmp" or "/var/tmp"; on Win32 systems it is typically "c:\\temp".<br />
+<br />
+<br />
+Most likely your /tmp/alsbTempJars has a owner different from the user that starts WebLogic.<br />
+<br />
+<br />
+See here <a href="http://download.oracle.com/docs/cd/E14148_02/wlcp/ocsg41_otn/installguide/soa-install.html">http://download.oracle.com/docs/cd/E14148_02/wlcp/ocsg41_otn/installguide/soa-install.html</a><br />
+<br />
+<i>After installing Oracle Service Bus on a UNIX or Linux system, make sure that the directory /tmp/alsbTempJars has the same access privileges as the BEA Home directory. Alternatively, remove the directory /tmp/alsbTempJars after the installation if the directory exists.</i>

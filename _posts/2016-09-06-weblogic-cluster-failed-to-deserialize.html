@@ -1,0 +1,98 @@
+---
+layout: post
+title: "WebLogic cluster: \"Failed to deserialize statedump from server \""
+date: 2016-09-06T15:50:00.002+02:00
+permalink: /2016/09/weblogic-cluster-failed-to-deserialize.html
+blogger_id: "7466616072306891003"
+tags: ["cluster"]
+---
+If you have an error "Failed to deserialize statedump from server " "java.lang.ClassNotFoundException"
+<br/>
+you should read Oracle Document:
+<br/><br/>
+"How To Avoid De-Serialize Statedump Errors While Starting Manage Servers in Cluster Environment (java.lang.ClassNotFoundException) (Doc ID 796357.1)"
+
+<br/><br/>
+
+
+The solution is to start first the Admin, and only when this is running you should start the managed servers one by one, and not in parallel (the Oracle doc says the opposite). Don't ask me questions, I have no clue.
+
+<br/><br/>
+The other possible root cause could be an invalid EAR, try rebuilding it and redeploying it.
+
+<br/><br/>
+<a href="http://oraclefmwadmins.blogspot.ch/2014/07/bea-000140-failed-to-deserialize.html">http://oraclefmwadmins.blogspot.ch/2014/07/bea-000140-failed-to-deserialize.html</a>
+
+<br/><br/>
+<pre>
+Reason:
+ Corrupted EJB files due to temporary communication failure between WebLogic admin and managed server instances
+
+Solution:
+ 1. Stop Weblogic Managed/Admin Server
+ 2.Delete the directory under $DOMAIN_HOME/servers/<SOA_SERVER1>/tmp/_WL_user/
+ 3.Restart Admin/Managed servers. The file will create automatically.
+
+</pre>
+
+<br/><br/>
+See also <a href="http://www.ateam-oracle.com/weblogic-server-cluster-messaging-protocols/">http://www.ateam-oracle.com/weblogic-server-cluster-messaging-protocols/</a> "When a server (re)joins the cluster, that server will ask another server in the cluster to provide the current view of its JNDI tree (known as a JNDI state dump) to initialize its view and then rely on JNDI replication messages to maintain it.  This JNDI state dump does not use the cluster messaging protocol and relies on a point-to-point connection with the other server."
+
+<br/><br/>
+
+<pre>
+
+ &lt;BEA-000140&gt; &lt;Failed to deserialize statedump from server 8572742343661541822S:169.13.12.236:[-1,-1,31623,31623,-1,-1,-1]:pipposerver_cluster2:pippovaimsi0_chlp2520199_server with java.lang.ClassNotFoundException: com.pippo.Pluto.
+java.lang.ClassNotFoundException: com.pippo.Pluto
+                at weblogic.application.internal.AppClassLoaderManagerImpl.loadApplicationClass(AppClassLoaderManagerImpl.java:164)
+                at weblogic.common.internal.ProxyClassResolver.resolveProxyClass(ProxyClassResolver.java:68)
+                at weblogic.common.internal.WLObjectInputStream.resolveProxyClass(WLObjectInputStream.java:76)
+                at java.io.ObjectInputStream.readProxyDesc(ObjectInputStream.java:1537)
+                at java.io.ObjectInputStream.readClassDesc(ObjectInputStream.java:1493)
+                at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1750)
+                at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1329)
+                at java.io.ObjectInputStream.defaultReadFields(ObjectInputStream.java:1977)
+                at java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1901)
+                at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1777)
+                at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1329)
+                at java.io.ObjectInputStream.readObject(ObjectInputStream.java:349)
+                at weblogic.common.internal.WLObjectInputStream.readObjectWL(WLObjectInputStream.java:98)
+                at weblogic.cluster.BasicServiceOffer.readExternal(BasicServiceOffer.java:172)
+                at java.io.ObjectInputStream.readExternalData(ObjectInputStream.java:1818)
+                at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1775)
+                at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1329)
+                at java.io.ObjectInputStream.readObject(ObjectInputStream.java:349)
+                at java.util.ArrayList.readObject(ArrayList.java:593)
+                at sun.reflect.GeneratedMethodAccessor3.invoke(Unknown Source)
+                at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+                at java.lang.reflect.Method.invoke(Method.java:597)
+                at java.io.ObjectStreamClass.invokeReadObject(ObjectStreamClass.java:1019)
+                at java.io.ObjectInputStream.readSerialData(ObjectInputStream.java:1877)
+                at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1777)
+                at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1329)
+                at java.io.ObjectInputStream.readObject(ObjectInputStream.java:349)
+                at weblogic.common.internal.WLObjectInputStream.readArrayList(WLObjectInputStream.java:116)
+                at weblogic.cluster.StateDumpMessage.readExternal(StateDumpMessage.java:53)
+                at java.io.ObjectInputStream.readExternalData(ObjectInputStream.java:1818)
+                at java.io.ObjectInputStream.readOrdinaryObject(ObjectInputStream.java:1775)
+                at java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1329)
+                at java.io.ObjectInputStream.readObject(ObjectInputStream.java:349)
+                at weblogic.cluster.HTTPExecuteRequest.run(HTTPExecuteRequest.java:90)
+                at weblogic.work.ExecuteThread.execute(ExecuteThread.java:256)
+                at weblogic.work.ExecuteThread.run(ExecuteThread.java:221)
+
+
+</pre>
+
+
+<br/>
+
+One should assign a warmup period <a href="https://docs.oracle.com/cd/E13222_01/wls/docs100/schemaref/config/http.www.bea.com.ns.weblogic.920.domain/types/clustertype.member-warmup-timeout-seconds.html">https://docs.oracle.com/cd/E13222_01/wls/docs100/schemaref/config/http.www.bea.com.ns.weblogic.920.domain/types/clustertype.member-warmup-timeout-seconds.html
+</a>  and make sure you use default protocol t3s
+
+<br/>
+
+
+
+
+

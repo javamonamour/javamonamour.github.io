@@ -1,0 +1,30 @@
+---
+layout: post
+title: "VMware Fedora image doesn't connect to USB controller"
+date: 2010-11-15T21:55:00.001+01:00
+permalink: /2010/11/vmware-fedora-image-doesnt-connect-to.html
+blogger_id: "8964444521529826923"
+tags: ["usb", "VMWare"]
+blogger_comments:
+  - author: "Rokas"
+    date: 2010-12-30
+    html: "very big thanks from lituania!"
+---
+VMware USB Arbitration Service service fails to start on Windows 7 with an error:<br />
+<br />
+Detected unrecognized USB driver (\Driver\usbfilter).<br />
+<br />
+<br />
+The solution is here:<br />
+<br />
+<a href="http://communities.vmware.com/thread/241662">http://communities.vmware.com/thread/241662</a><br />
+<br />
+"Try right clicking on one of the USB hubs and looking at the driver details. If usbfilter.sys is listed then open HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class{36FC9E60-C465-11CF-8056-444553540000} and delete the UpperFilter, usbfilter pair.<br />
+I rebooted and it works great now. "<br />
+<br />
+<br />
+I have wasted a couple of hours for this "trick".... it's working now....<br />
+<br />
+still, I am downloading a ready-made fedora 14 vmware image from linuxtracker...<br />
+<br />
+or rather, the version 13 from here <a href="http://www.thoughtpolice.co.uk/vmware/">http://www.thoughtpolice.co.uk/vmware/</a>  since the 14 apparently doesn't support VMware Tools (?).

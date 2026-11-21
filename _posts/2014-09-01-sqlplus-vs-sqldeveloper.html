@@ -1,0 +1,53 @@
+---
+layout: post
+title: "sqlplus vs sqldeveloper"
+date: 2014-09-01T11:10:00.000+02:00
+permalink: /2014/09/sqlplus-vs-sqldeveloper.html
+blogger_id: "6564593168343345108"
+tags: ["sqldeveloper", "sqlplus"]
+---
+When I run a DDL script in SQLDeveloper, it just runs perfect.
+Same script in SQL throws plenty of errors like:
+<br/><br/>
+ORA-00955: name is already used by an existing object
+<br/><br/>
+Incidentally, SQLPlus runs me completely crazy because it never tells you in a single line which TABLE is actually giving trouble, so it becomes really difficult to grep and report for errors...
+<br/><br/>
+
+Anyway, it turns out that if you run this in SQLPlus:
+
+<pre>
+  CREATE TABLE "BUILD_POINTS" 
+   ( "ENV" VARCHAR2(2 BYTE), 
+ "SUCCESS" NUMBER, 
+ "POINTS" NUMBER
+   ) ;
+/
+</pre>
+
+it interprets the final / as a "repeat last command", which obviously fails because the table was already created.
+<br/><br/>
+The problem is that I generate this DDL with a SQLDeveloper export, so I have little control on how this is being generated. I cannot unconditionally remove all / , because in the "create package" statement they are absolutely necessary. I should write a parsing script to conditionally remove the / when they belong to a "create table".
+<br/><br/>
+Being able to edit tables in SQLDeveloper and then export them is too convenient....I don't want to resort to having to code SQL manually...
+<br/><br/>
+
+
+
+
+One workaround could be inserting a table comment for each table, so that the / would be inserted after the "COMMENT ON TABLE" statement and not after the "CREATE TABLE" statement. Repeating a "COMMENT ON TABLE" doesn't generate any error.
+
+<br/><br/>
+
+See also <a href="http://stackoverflow.com/questions/5424401/difference-between-sqlplus-and-sqldeveloper">this</a> and better still <a href="http://stackoverflow.com/questions/1079949/sql-the-semicolon-or-the-slash">this</a>
+<br/><br/>
+An excellent solution is to upgrade to SQLDeveloper 4, which doesn't generate the ";\" sequence.
+<br/><br/>
+Check also the (quoting) checkbox called "Terminator" which when selected uses semicolons to terminate each statement (unquoting). It's in Tools/Database/Utilities/Export.
+<br/><br/>
+
+
+
+
+
+

@@ -1,0 +1,118 @@
+---
+layout: post
+title: "rpm tutorial"
+date: 2016-01-14T16:32:00.001+01:00
+permalink: /2016/01/rpm.html
+blogger_id: "4018143506822964322"
+tags: ["rpm"]
+---
+<br />
+<a href="https://rpm-packaging-guide.github.io/#preparing-software-for-packaging">https://rpm-packaging-guide.github.io/#preparing-software-for-packaging</a><br />
+<br />
+<a href="https://rpm-guide.readthedocs.io/en/latest/rpm-guide.html">https://rpm-guide.readthedocs.io/en/latest/rpm-guide.html</a><br />
+<br />
+<br />
+sudo yum install gcc rpm-build rpm-devel rpmlint make python bash coreutils diffutils patch rpmdevtools<br />
+<br />
+cd /home/centos<br />
+mkdir rpmtest<br />
+cd rpmtest/<br />
+vi hello-world.spec<br />
+<br />
+<pre>Name:       hello-world
+Version:    1
+Release:    1
+Summary:    Most simple RPM package
+License:    FIXME
+
+%description
+This is my first RPM package, which does nothing.
+
+%prep
+# we have no source, so nothing here
+
+%build
+cat > hello-world.sh &lt;&lt;EOF
+#!/usr/bin/bash
+echo Hello world
+EOF
+
+%install
+mkdir -p %{buildroot}/usr/bin/
+install -m 755 hello-world.sh %{buildroot}/usr/bin/hello-world.sh
+
+%files
+/usr/bin/hello-world.sh
+
+%changelog
+# let's skip this for now
+</pre><br />
+<br />
+<br />
+rpmdev-setuptree<br />
+rpmbuild -ba hello-world.spec<br />
+cd /home/centos/rpmbuild/<br />
+find .<br />
+#install<br />
+sudo rpm -i -f ./RPMS/x86_64/hello-world-1-1.x86_64.rpm<br />
+hello-world.sh<br />
+which hello-world.sh <br />
+cat /usr/bin/hello-world.sh<br />
+#find package<br />
+rpm -qa | grep hello<br />
+#delete <br />
+sudo rpm -e hello-world-1-1.x86_64<br />
+#<br />
+cd /home/centos/rpmbuild/<br />
+sudo rpm -qpi ./RPMS/x86_64/hello-world-1-1.x86_64.rpm<br />
+<br />
+<br />
+<pre>Name        : hello-world
+Version     : 1
+Release     : 1
+Architecture: x86_64
+Install Date: (not installed)
+Group       : Unspecified
+Size        : 33
+License     : FIXME
+Signature   : (none)
+Source RPM  : hello-world-1-1.src.rpm
+Build Date  : Mon 03 Jun 2019 09:19:39 PM CEST
+Build Host  : localhost
+Relocations : (not relocatable)
+Summary     : Most simple RPM package
+Description :
+This is my first RPM package, which does nothing.
+</pre><br />
+<br />
+<br />
+This is to list the content of a rpm file without installing it:  <br />
+<b>rpm -q -filesbypkg -p  filename.rpm </b><br />
+or also simply:<br />
+<b>sudo rpm -ql hello-world-1-1.x86_64</b><br />
+<br />
+<br />
+To extract:<br />
+<br />
+rpm2cpio ./RPMS/x86_64/hello-world-1-1.x86_64.rpm > /tmp/hello.cpio<br />
+<br />
+and then<br />
+<br />
+cpio -i --make-directories < /tmp/hello.cpio
+
+this will create under the current folder the file usr/bin/hello-world.sh
+
+
+
+
+
+
+See this nice presentation
+
+
+<iframe width="800" height="600" src="https://www.youtube.com/embed/pPRLLcF7KRU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe><br />
+<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,41 @@
+---
+layout: post
+title: "WebLogic webapplications returning HTTP 302 Moved Temporarily"
+date: 2013-07-03T19:26:00.001+02:00
+permalink: /2013/07/weblogic-webapplications-returning-http.html
+blogger_id: "2942685845921104543"
+tags: ["http", "weblogic"]
+---
+If I configure a HTTPFRONTEND HOST to the LoadBalancer lbr.acme.com (5.6.7.8),
+when I contact directly a Managed Server myserver.acme.com in the cluster, results in a HTTP redirect with the new location pointing to the LoadBalancer.
+<br/> I am struggling to find out how to disable this.
+
+<pre>
+
+
+wget http://myserver.acme.com:8001/gridlinkha
+--2013-07-03 13:40:15--  http://myserver.acme.com:8001/gridlinkha
+Resolving myserver.acme.com... 1.2.3.4
+Connecting to myserver.acme.com|1.2.3.4|:8001... connected.
+HTTP request sent, awaiting response... 302 Moved Temporarily
+Location: http://lbr.acme.com/gridlinkha/ [following]
+--2013-07-03 13:40:15--  http://lbr.acme.com/gridlinkha/
+Resolving lbr.acme.com... 5.6.7.8
+Connecting to lbr.acme.com|5.6.7.8|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1308 (1.3K) [text/html]
+Saving to: `index.html'
+
+
+setting max-redirect=0 makes the request fail altogether:
+
+wget --max-redirect 0 http://myserver.acme.com:8001/gridlinkha
+--2013-07-03 13:51:14--  http://myserver.acme.com:8001/gridlinkha
+Resolving myserver.acme.com... 1.2.3.4
+Connecting to myserver.acme.com|1.2.3.4|:8001... connected.
+HTTP request sent, awaiting response... 302 Moved Temporarily
+Location: http://lbr.acme.com/gridlinkha/ [following]
+0 redirections exceeded.
+
+</pre>
+

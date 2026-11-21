@@ -1,0 +1,79 @@
+---
+layout: post
+title: "debug maven settings"
+date: 2018-01-31T13:29:00.001+01:00
+permalink: /2018/01/debug-maven-settings.html
+blogger_id: "8558607013026369936"
+tags: ["maven"]
+---
+mvn archetype:generate -DarchetypeArtifactId=wildfly-javaee7-webapp-archetype -DarchetypeGroupId=org.wildfly.archetype -DarchetypeVersion=8.2.0.Final<br />
+<br />
+(create a nexustests artifactId)<br />
+<br />
+cd nexustests/<br />
+<b>mvn -X help:effective-settings</b><br />
+<br />
+<pre>Apache Maven 3.5.2 (138edd61fd100ec658bfa2d307c43b76940a5d7d; 2017-10-18T09:58:13+02:00)
+Maven home: /home/centos/apache-maven-3.5.2
+Java version: 1.8.0_161, vendor: Oracle Corporation
+Java home: /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.161-0.b14.el7_4.x86_64/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "3.10.0-693.11.6.el7.x86_64", arch: "amd64", family: "unix"
+
+
+[DEBUG] Reading global settings from /home/centos/apache-maven-3.5.2/conf/settings.xml
+[DEBUG] Reading user settings from /home/centos/.m2/settings.xml
+[DEBUG] Reading global toolchains from /home/centos/apache-maven-3.5.2/conf/toolchains.xml
+[DEBUG] Reading user toolchains from /home/centos/.m2/toolchains.xml
+[DEBUG] Using local repository at /home/centos/.m2/repository
+
+
+
+[DEBUG] Dependency collection stats: {ConflictMarker.analyzeTime=1779672, ConflictMarker.markTime=809680, ConflictMarker.nodeCount=135, ConflictIdSorter.graphTime=1026621, ConflictIdSorter.topsortTime=610945, ConflictIdSorter.conflictIdCount=39, ConflictIdSorter.conflictIdCycleCount=0, ConflictResolver.totalTime=8120595, ConflictResolver.conflictItemCount=95, DefaultDependencyCollector.collectTime=4585627924, DefaultDependencyCollector.transformTime=15642922}
+[DEBUG] org.apache.maven.plugins:maven-help-plugin:jar:2.2:
+[DEBUG]    org.apache.maven:maven-artifact:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-core:jar:2.2.1:compile
+[DEBUG]       org.slf4j:slf4j-jdk14:jar:1.5.6:runtime
+[DEBUG]          org.slf4j:slf4j-api:jar:1.5.6:runtime
+[DEBUG]       org.slf4j:jcl-over-slf4j:jar:1.5.6:runtime
+[DEBUG]       org.apache.maven.reporting:maven-reporting-api:jar:2.2.1:compile
+[DEBUG]          org.apache.maven.doxia:doxia-sink-api:jar:1.1:compile
+[DEBUG]          org.apache.maven.doxia:doxia-logging-api:jar:1.1:compile
+[DEBUG]       org.apache.maven:maven-repository-metadata:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-error-diagnostics:jar:2.2.1:compile
+[DEBUG]       commons-cli:commons-cli:jar:1.2:compile
+[DEBUG]       org.apache.maven:maven-artifact-manager:jar:2.2.1:compile
+[DEBUG]          backport-util-concurrent:backport-util-concurrent:jar:3.1:compile
+[DEBUG]       classworlds:classworlds:jar:1.1:compile
+[DEBUG]       org.sonatype.plexus:plexus-sec-dispatcher:jar:1.3:compile
+[DEBUG]          org.sonatype.plexus:plexus-cipher:jar:1.4:compile
+[DEBUG]    org.apache.maven:maven-model:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-plugin-descriptor:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-project:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-plugin-registry:jar:2.2.1:compile
+[DEBUG]       org.codehaus.plexus:plexus-interpolation:jar:1.11:compile
+[DEBUG]    org.apache.maven:maven-settings:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-profile:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-monitor:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-plugin-parameter-documenter:jar:2.2.1:compile
+[DEBUG]    org.apache.maven.plugin-tools:maven-plugin-tools-api:jar:2.4.3:compile
+[DEBUG]       jtidy:jtidy:jar:4aug2000r7-dev:compile
+[DEBUG]    org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9:compile
+[DEBUG]       junit:junit:jar:3.8.1:compile
+[DEBUG]    org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-4:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:1.5.7:compile
+[DEBUG]    jdom:jdom:jar:1.0:compile
+[DEBUG]    com.thoughtworks.xstream:xstream:jar:1.4.3:compile
+[DEBUG]       xmlpull:xmlpull:jar:1.1.3.1:compile
+[DEBUG]       xpp3:xpp3_min:jar:1.1.4c:compile
+[DEBUG]    commons-lang:commons-lang:jar:2.4:compile
+
+
+</pre><br />
+and a whole lot of other information that I have removed....<br />
+<br />
+<br />
+Awesome tool to troubleshoot STINKY Maven<br />
+<br />
+

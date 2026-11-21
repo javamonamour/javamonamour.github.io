@@ -1,0 +1,21 @@
+---
+layout: post
+title: "OSB load balancing of JMS messages"
+date: 2014-02-21T15:30:00.003+01:00
+permalink: /2014/02/osb-load-balancing-of-jms-messages.html
+blogger_id: "1567849108494108157"
+tags: ["jms", "OSB"]
+---
+Obviously, use Distributed queues.
+<br/>
+In the Business Service creating the JMS message, enter a single URI which has the cluster address, like:
+<br/>
+jms://host1.acme.com:8001,host2.acme.com:8001/jms.jndi.cf.MyCF/jms.jndi.dq.MyDQ
+<br/><br/>
+and in the jms.jndi.cf.MyCF, in the "Load Balance" tab, disable the checkbox "Server Affinity Enabled".
+<br/><br/>
+See also <a href="http://docs.oracle.com/cd/E28280_01/web.1111/e13814/jmstuning.htm#PERFM311">http://docs.oracle.com/cd/E28280_01/web.1111/e13814/jmstuning.htm#PERFM311</a>
+<br/><br/>
+
+
+

@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Unable to activate changes in a WebLogic console session"
+date: 2010-07-09T09:36:00.001+02:00
+permalink: /2010/07/unable-to-activate-changes-in-weblogic.html
+blogger_id: "7000044245674936938"
+tags: ["weblogic"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2010-12-16
+    html: "enable all the possible debug flags and do a thread dump on the admin to understand on what it is blocking...<br /><br />I suspect some cluster communication problem..."
+  - author: "Arturo"
+    date: 2010-12-16
+    html: "Hello Pierluigi, we have de same problem in a WLS 10.3.3 domain. All the servers are ok and have been restarted several times. No errors in logs.<br /><br />Any idea?.<br /><br />Thanks in advance,<br /><br />Arturo"
+---
+If one of the servers in the cluster is in an inconsistent state (FAILED, ADMIN),<br />
+you might find out that the "changes activation" will hang forever, with no error message.<br />
+<br />
+Workaround: <br />
+<br />
+a) don't fail servers :o)<br />
+b) if you have failed servers, before you make any configuration change shut them down

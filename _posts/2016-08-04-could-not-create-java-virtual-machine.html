@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Could not create the Java Virtual Machine"
+date: 2016-08-04T18:46:00.001+02:00
+permalink: /2016/08/could-not-create-java-virtual-machine.html
+blogger_id: "2923332383818458950"
+tags: ["JVM"]
+---
+<pre>
+cat Test.java 
+public class Test {
+ public static void main(String[] args) {
+        System.out.println("ciao");
+ }
+
+}
+javac Test.java
+export PIPPO="ciao - bello"
+java -Dpippo=$PIPPO Test
+Unrecognized option: -
+Error: Could not create the Java Virtual Machine.
+Error: A fatal exception has occurred. Program will exit.
+
+</pre>
+
+
+<br/><br/>
+
+This is how a simple space in the value of a property can mess up your JVM.
+
+<br/>
+
+if you run this
+<br/>
+java -Dpippo="$PIPPO" Test
+<br/>
+
+
+(with additional quotes) all works fine!
+
+
+

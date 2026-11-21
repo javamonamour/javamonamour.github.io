@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Git: Received HTTP code 407 from proxy"
+date: 2013-12-04T12:03:00.000+01:00
+permalink: /2013/12/git-received-http-code-407-from-proxy.html
+blogger_id: "4087300174460657835"
+tags: ["git"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2014-11-07
+    html: "This really works. Type <br /><br />git config --global http.proxy http://myusername:mypassword@proxy.acme.com:8080<br /><br />where myusername is &quot;domain\\username&quot; and password is &quot;yourpassword&quot;.<br /><br />Then do git clone as usually. :)"
+---
+I was cloning a git project:
+<br/><br/>
+<pre>
+git clone https://github.com/jiaqi/jmxterm
+</pre>
+<br/>
+and I got<br/>
+<pre>
+fatal: unable to access 'https://github.com/jiaqi/jmxterm/': Received HTTP code 407 from proxy after
+ CONNECT
+</pre>
+<br/><br/>
+
+just do
+<br/><br/>
+git config --global http.proxy http://myusername:mypassword@proxy.acme.com:8080
+<br/><br/>
+
+and it will work (inshallah)
+

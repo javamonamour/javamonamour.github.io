@@ -1,0 +1,30 @@
+---
+layout: post
+title: "WorkManager: “Maximum Threads Constraint” vs “Capacity Constraint”"
+date: 2014-12-05T09:25:00.000+01:00
+permalink: /2014/12/workmanager-maximum-threads-constraint.html
+blogger_id: "3671077005967526304"
+tags: ["workmanager"]
+---
+Someone was asking "if we set a limit of the number of concurrent requests using a work manager, what will happen to the other requests incoming when the limit has already been reached?"
+<br/><br/>
+
+On the workmanagr configuration, there is a "Capacity Constraint":<br/>
+The total number of requests that can be queued or executing before WebLogic Server begins rejecting requests”
+<br/><br/>
+
+What is the difference between “Maximum Threads Constraint” and “Capacity Constraint” ?
+<br/><br/>
+<a href="https://blogs.oracle.com/imc/entry/weblogic_server_performance_and_tuning1">https://blogs.oracle.com/imc/entry/weblogic_server_performance_and_tuning1</a>
+<br/><br/>
+
+Max Threads Constraint: Guarantees the number of threads the server will allocate to requests. 
+<br/><br/>
+Capacity Constraint: Causes the server to reject requests only when it has reached its capacity.
+<br/><br/>
+
+I think it’s safe to set Capacity Constraint to a quite high number (say 100) so as to allow the server to put clients on hold even when it has reached its max threads constraint.
+<br/><br/>
+It would be nice to test this….
+<br/><br/>
+

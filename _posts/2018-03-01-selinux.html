@@ -1,0 +1,109 @@
+---
+layout: post
+title: "SELinux"
+date: 2018-03-01T10:15:00.001+01:00
+permalink: /2018/03/selinux.html
+blogger_id: "3310361838382527195"
+tags: ["selinux"]
+---
+<a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security-enhanced_linux/chap-security-enhanced_linux-introduction#sect-Security-Enhanced_Linux-Introduction-Benefits_of_running_SELinux">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security-enhanced_linux/chap-security-enhanced_linux-introduction#sect-Security-Enhanced_Linux-Introduction-Benefits_of_running_SELinux<br />
+</a><br />
+<br />
+Priceless wiki <a href="https://wiki.centos.org/HowTos/SELinux">https://wiki.centos.org/HowTos/SELinux</a><br />
+<br />
+#disable DAC (must be root), will only log rule violations<br />
+setenforce 0<br />
+#enable it<br />
+setenforce 1<br />
+#check<br />
+getenforce<br />
+<br />
+#display info<br />
+sestatus<br />
+cat /etc/selinux/config  <br />
+<br />
+DAC and MAC (discretionary and mandatory access control). First DAC is applied, then MAC (if DAC succeeds).<br />
+#list user, role, type, level <br />
+ls -Z myfile<br />
+<br />
+<br />
+Access Vector Cache (AVC)<br />
+<br />
+#view SELinux-Linux user mappings<br />
+semanage login -l<br />
+<br />
+#view the SELinux context for processes<br />
+ps -eZ<br />
+<br />
+<br />
+#view SELinux context associated to your user<br />
+id -Z<br />
+<br />
+#label a file with a type (transient)<br />
+chcon -t <br />
+<br />
+#permanent relabeling of file<br />
+semanage <br />
+<br />
+#restore default context for process<br />
+restorecon <br />
+<br />
+<br />
+In Apache, if you get this:<br />
+<br />
+[Tue Feb 27 14:11:52.105495 2018] [core:error] [pid 41356] (13)Permission denied: [client 1.2.3.4:55713] AH00035: access to /index.html denied (filesystem path '/path/to/home') because search permissions are missing on a component of the path<br />
+<br />
+try <br />
+<br />
+ps -efZ  | grep http<br />
+<br />
+<br />
+and check the httpd process, on which TYPE (httpd_t) it's running:<br />
+<br />
+system_u:system_r:httpd_t:s0    root     37203     1  0 Feb28 ?        00:00:03 /usr/sbin/httpd -DFOREGROUND<br />
+system_u:system_r:httpd_t:s0    apache   37206 37203  0 Feb28 ?        00:00:00 /usr/sbin/httpd -DFOREGROUND<br />
+<br />
+<br />
+then you have to change the type of your file to be served<br />
+<br />
+ls -Z /path/to/index.html<br />
+-rw-r--r--. admrun admrun unconfined_u:object_r:default_t:s0 /path/to/index.html<br />
+<br />
+then you do <br />
+<br />
+chcon -t httpd_t /path/to/index.html<br />
+<br />
+if you get <br />
+<br />
+chcon: failed to change context of "/path/to/myfile" to "˜unconfined_u:object_r:httpd_t:s": Permission denied<br />
+<br />
+it's because httpd_t is a PROCESS type, not a FILE type ( see <a href="http://danwalsh.livejournal.com/54803.html">http://danwalsh.livejournal.com/54803.html</a> )<br />
+<br />
+<br />
+see here <a href="https://linux.die.net/man/8/httpd_selinux">https://linux.die.net/man/8/httpd_selinux</a> complete documentation of types<br />
+<br />
+<br />
+However it's better to change the context for the folder rather than for the individual files:<br />
+<br />
+<br />
+# semanage fcontext -a -t httpd_sys_content_t "/path/to(/.*)?"<br />
+# restorecon -R -v /path/to<br />
+<br />
+<br />
+<br />
+<br />
+see also "man semanage-fcontext" and <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security-enhanced_linux/sect-security-enhanced_linux-selinux_contexts_labeling_files-persistent_changes_semanage_fcontext">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security-enhanced_linux/sect-security-enhanced_linux-selinux_contexts_labeling_files-persistent_changes_semanage_fcontext</a><br />
+<br />
+<br />
+in Puppet (pueah) you can use <a href="https://github.com/voxpupuli/puppet-selinux">https://github.com/voxpupuli/puppet-selinux</a> and a clause like:<br />
+<br />
+<br />
+  selinux::fcontext { '/path/to':<br />
+    path   => '/path/to(/.*)?',<br />
+    setype => 'httpd_sys_content_t',<br />
+  }<br />
+<br />
+<br />
+<br />
+<br />
+

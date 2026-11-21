@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Data Serialization standards.... beyond XML"
+date: 2010-10-04T14:58:00.000+02:00
+permalink: /2010/10/data-serialization-standards-beyond-xml.html
+blogger_id: "5504048478728810928"
+tags: ["json", "xml", "yaml"]
+---
+I am reading a series of EXCELLENT pages on the Wikipedia:<br />
+<br />
+<a href="http://en.wikipedia.org/wiki/XML">XML</a><br />
+<br />
+<a href="http://en.wikipedia.org/wiki/JSON">JSON</a><br />
+<br />
+<a href="http://en.wikipedia.org/wiki/YAML">YAML</a><br />
+<br />
+<br />
+I am not saying one is better than the other. Each has pros and cons.<br />
+<br />
+XML disturbs me for his prolixity, the entities like < and > and &, and the close tags . I like it because it's fairly robust and unambiguous - barred Namespaces.<br />
+<br />
+JSON disturbs me for his quotes. I like its simplicity.<br />
+<br />
+YAML disturbs for the reliance on indentation and special notations. I like the rigorous representation of complex data structures.<br />
+<br />
+<br />
+But the huge question mark raising in my head is: why on Earth do we need a format that is directly readable/editable by humans? <br />
+So that one can use Notepad or vi to edit them? <br />
+<br />
+Ok, then I will give you a YAMLNotepad and a YAMLvi and we move away from a (necessarily inefficient) human readable format and use a more rigorous binary representation, mutuated for instance from Java .ser format or Coherence POF format or TIBCO or whatever other high-speed serialization standard.<br />
+We will gain in performance, validation, readibility (you can customize the program to display in whatever format you want, attaching the stylesheets of your choice)...<br />
+<br />
+Why on Earth the actual data on the wire must be in the same format that we display to the user? To me it's only because it's difficult to have a standard be supported across multiple products / platform, and an ASCII editor is the most universal too available. Too bad though.... so much is lost.

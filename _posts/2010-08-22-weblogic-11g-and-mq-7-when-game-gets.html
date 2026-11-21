@@ -1,0 +1,156 @@
+---
+layout: post
+title: "WebLogic 11g and MQ 7.... when the game gets tough..."
+date: 2010-08-22T14:13:00.009+02:00
+permalink: /2010/08/weblogic-11g-and-mq-7-when-game-gets.html
+blogger_id: "8557907157127834738"
+tags: ["MQ"]
+---
+(see also a previous post...<a href="/2010/08/weblogic-integration-with-mq-series.html">/2010/08/weblogic-integration-with-mq-series.html</a>)<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="http://t2.gstatic.com/images?q=tbn:EJmKYqpH2jHrjM:http://www.paulspence.net/cache/movie-pop-art/Blues%20Brothers.jpg_w400.jpg&amp;t=1" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://t2.gstatic.com/images?q=tbn:EJmKYqpH2jHrjM:http://www.paulspence.net/cache/movie-pop-art/Blues%20Brothers.jpg_w400.jpg&amp;t=1" /></a></div><br />
+I am following the instructions<br />
+<a href="http://ibswings.blogspot.com/2008/02/integrating-mq-broker-6-with-bea.html"><br />
+http://ibswings.blogspot.com/2008/02/integrating-mq-broker-6-with-bea.html</a><br />
+<br />
+and I get<br />
+<br />
+<br />
+Aug 22, 2010 2:26:30 PM CEST Debug EjbDeployment BEA-000000 [EJBModule] activate() on module : EJBModule(MQReceiver) : activating module <br />
+Aug 22, 2010 2:26:30 PM CEST Debug EjbDeployment BEA-000000 [MessageDrivenBeanInfoImpl] Calling JMS MDB helper with providerURL=null <br />
+Aug 22, 2010 2:26:30 PM CEST Debug JMSCDS BEA-000000 getSubject: before looking up jms/WLReceiverQueue providerIRL = null isLocal =  true <br />
+Aug 22, 2010 2:26:30 PM CEST Debug JMSCDS BEA-000000 Successfully created the initial context for the JNDIName jms/WLReceiverQueue <br />
+Aug 22, 2010 2:26:33 PM CEST Warning EJB BEA-010061 The Message-Driven EJB: TestMDB is unable to connect to the JMS destination: jms/WLReceiverQueue. The Error was:<br />
+<br />
+<br />
+<br />
+<pre><span style="font-size: x-small;">&nbsp;javax.jms.JMSException: JMSCS0006: An internal problem occurred. Diagnostic information for service was written to '/Oracle/Middleware/user_<wbr></wbr>projects/domains/<wbr></wbr>OSBDomainBasic/FFDC/JMSCC0004.<wbr></wbr>FDC'. Please terminate the application as the product is in an inconsistent internal state.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at com.ibm.msg.client.<wbr></wbr>commonservices.trace.Trace.<wbr></wbr>ffst(Trace.java:1386)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at com.ibm.msg.client.jms.admin.<wbr></wbr>JmsDestinationImpl.readObject(<wbr></wbr>JmsDestinationImpl.java:638)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at sun.reflect.<wbr></wbr>NativeMethodAccessorImpl.<wbr></wbr>invoke0(Native Method)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at sun.reflect.<wbr></wbr>NativeMethodAccessorImpl.<wbr></wbr>invoke(<wbr></wbr>NativeMethodAccessorImpl.java:<wbr></wbr>39)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at sun.reflect.<wbr></wbr>DelegatingMethodAccessorImpl.<wbr></wbr>invoke(<wbr></wbr>DelegatingMethodAccessorImpl.<wbr></wbr>java:25)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.lang.reflect.Method.<wbr></wbr>invoke(Method.java:597)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.io.ObjectStreamClass.<wbr></wbr>invokeReadObject(<wbr></wbr>ObjectStreamClass.java:974)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.io.ObjectInputStream.<wbr></wbr>readSerialData(<wbr></wbr>ObjectInputStream.java:1849)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.io.ObjectInputStream.<wbr></wbr>readOrdinaryObject(<wbr></wbr>ObjectInputStream.java:1753)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.io.ObjectInputStream.<wbr></wbr>readObject0(ObjectInputStream.<wbr></wbr>java:1329)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at java.io.ObjectInputStream.<wbr></wbr>readObject(ObjectInputStream.<wbr></wbr>java:351)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.rmi.extensions.<wbr></wbr>server.CBVInputStream.<wbr></wbr>readObject(CBVInputStream.<wbr></wbr>java:64)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jndi.internal.<wbr></wbr>JNDIHelper.copyObject(<wbr></wbr>JNDIHelper.java:28)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jndi.<wbr></wbr>WLSJNDIEnvironmentImpl.<wbr></wbr>copyObject(<wbr></wbr>WLSJNDIEnvironmentImpl.java:<wbr></wbr>77)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jndi.internal.<wbr></wbr>WLEventContextImpl.copyObject(<wbr></wbr>WLEventContextImpl.java:383)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jndi.internal.<wbr></wbr>WLEventContextImpl.lookup(<wbr></wbr>WLEventContextImpl.java:255)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jndi.internal.<wbr></wbr>WLContextImpl.lookup(<wbr></wbr>WLContextImpl.java:393)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at javax.naming.InitialContext.<wbr></wbr>lookup(InitialContext.java:<wbr></wbr>392)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.common.CDS$2.run(<wbr></wbr>CDS.java:503)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.security.acl.<wbr></wbr>internal.AuthenticatedSubject.<wbr></wbr>doAs(AuthenticatedSubject.<wbr></wbr>java:363)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.common.<wbr></wbr>CrossDomainSecurityManager.<wbr></wbr>runAs(<wbr></wbr>CrossDomainSecurityManager.<wbr></wbr>java:130)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.common.CDS.<wbr></wbr>lookupDestination(CDS.java:<wbr></wbr>497)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.jms.common.CDS.<wbr></wbr>getDDMembershipInformation(<wbr></wbr>CDS.java:276)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.ejb.container.<wbr></wbr>deployer.<wbr></wbr>MessageDrivenBeanInfoImpl.<wbr></wbr>createMDManagers(<wbr></wbr>MessageDrivenBeanInfoImpl.<wbr></wbr>java:1455)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.ejb.container.<wbr></wbr>deployer.<wbr></wbr>MessageDrivenBeanInfoImpl.<wbr></wbr>activate(<wbr></wbr>MessageDrivenBeanInfoImpl.<wbr></wbr>java:1252)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.ejb.container.<wbr></wbr>deployer.EJBDeployer.activate(<wbr></wbr>EJBDeployer.java:1320)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.ejb.container.<wbr></wbr>deployer.EJBModule.activate(<wbr></wbr>EJBModule.java:493)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.application.internal.<wbr></wbr>flow.ModuleListenerInvoker.<wbr></wbr>activate(<wbr></wbr>ModuleListenerInvoker.java:<wbr></wbr>227)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.application.internal.<wbr></wbr>flow.DeploymentCallbackFlow$2.<wbr></wbr>next(DeploymentCallbackFlow.<wbr></wbr>java:531)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.application.utils.<wbr></wbr>StateMachineDriver.nextState(<wbr></wbr>StateMachineDriver.java:41)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.application.internal.<wbr></wbr>flow.DeploymentCallbackFlow.<wbr></wbr>activate(<wbr></wbr>DeploymentCallbackFlow.java:<wbr></wbr>165)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.application.internal.<wbr></wbr>flow.DeploymentCallbackFlow.<wbr></wbr>activate(<wbr></wbr>DeploymentCallbackFlow.java:<wbr></wbr>157)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.application.internal.<wbr></wbr>BaseDeployment$2.next(<wbr></wbr>BaseDeployment.java:1267)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.application.utils.<wbr></wbr>StateMachineDriver.nextState(<wbr></wbr>StateMachineDriver.java:41)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.application.internal.<wbr></wbr>BaseDeployment.activate(<wbr></wbr>BaseDeployment.java:409)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.application.internal.<wbr></wbr>EarDeployment.activate(<wbr></wbr>EarDeployment.java:58)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.application.internal.<wbr></wbr>DeploymentStateChecker.<wbr></wbr>activate(<wbr></wbr>DeploymentStateChecker.java:<wbr></wbr>161)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.deploy.internal.<wbr></wbr>targetserver.<wbr></wbr>AppContainerInvoker.activate(<wbr></wbr>AppContainerInvoker.java:79)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.deploy.internal.<wbr></wbr>targetserver.BasicDeployment.<wbr></wbr>activate(BasicDeployment.java:<wbr></wbr>184)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.deploy.internal.<wbr></wbr>targetserver.BasicDeployment.<wbr></wbr>activateFromServerLifecycle(<wbr></wbr>BasicDeployment.java:361)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; at weblogic.management.deploy.<wbr></wbr>internal.DeploymentAdapter$1.<wbr></wbr>doActivate(DeploymentAdapter.<wbr></wbr>java:51)</span>
+
+</pre><br />
+<br />
+I also get<br />
+<pre>Exception in thread "Thread-39" java.lang.NoClassDefFoundError: com/ibm/mq/internal/MQCommonServices
+ at com.ibm.mq.MQSESSION.getJmqiEnv(MQSESSION.java:134)
+ at com.ibm.mq.MQQueueManagerFactory.<init>(MQQueueManagerFactory.java:85)
+ at com.ibm.mq.MQQueueManagerFactory.getInstance(MQQueueManagerFactory.java:112)
+ at com.ibm.mq.MQQueueManager.<clinit>(MQQueueManager.java:147)
+ at com.bea.wli.sb.transports.mq.MQResiduePurgeThread.run(MQResiduePurgeThread.java:83)
+
+</clinit></init></pre><br />
+which seems to be addressed here:<br />
+http://www.ibm.com/developerworks/forums/thread.jspa?threadID=236529<br />
+In this post it mentions some extra JARs for JNDI support, like mqcontext.jar....let's keep an eye on this.... this http://www-01.ibm.com/support/docview.wss?uid=swg24004684  is the support pack...<br />
+<br />
+<br />
+I target WLEventContextImpl and I find this:<br />
+<br />
+===============================================<br />
+Found: WLEventContextImpl<br />
+Class: weblogic.jndi.internal.WLEventContextImpl<br />
+Package: weblogic.jndi.internal<br />
+Library Name: wlfullclient.jar<br />
+Library Path: /Oracle/Middleware/wlserver_10.3/server/lib/wlfullclient.jar<br />
+===============================================<br />
+<br />
+===============================================<br />
+Found: WLEventContextImpl<br />
+Class: weblogic.jndi.internal.WLEventContextImpl<br />
+Package: weblogic.jndi.internal<br />
+Library Name: weblogic.jar<br />
+Library Path: /Oracle/Middleware/wlserver_10.3/server/lib/weblogic.jar<br />
+===============================================<br />
+<br />
+===============================================<br />
+Found: WLEventContextImpl<br />
+Class: weblogic.jndi.internal.WLEventContextImpl<br />
+Package: weblogic.jndi.internal<br />
+Library Name: wlthint3client.jar<br />
+Library Path: /Oracle/Middleware/wlserver_10.3/server/lib/wlthint3client.jar<br />
+<br />
+<br />
+<br />
+<br />
+I get the one in weblogic.jar, decompile the weblogic.jndi.internal.WLEventContextImpl class, and find that there is no debug statement in it.... I add some sysout in the lookup and copyObject methods to find out which class is causing the error, and copy the modified weblogic.jar back...<br />
+<br />
+my patched class file is in /home/osb/workspacePVPreMaven/WLPatchForMQ/bin/weblogic/jndi/internal/WLEventContextImpl.class<br />
+<br />
+I run these commands to copy the 3 jars in a temp directory and patch them:<br />
+<br />
+cp /home/osb/workspacePVPreMaven/WLPatchForMQ/bin/weblogic/jndi/internal/WLEventContextImpl.class ./weblogic/jndi/internal/WLEventContextImpl.class <br />
+<br />
+cp /Oracle/Middleware/wlserver_10.3/server/lib/weblogic.jar .<br />
+cp /Oracle/Middleware/wlserver_10.3/server/lib/wlfullclient.jar .<br />
+cp /Oracle/Middleware/wlserver_10.3/server/lib/wlthint3client.jar .<br />
+cp wlfullclient.jar wlfullclient.jar.ORI<br />
+cp weblogic.jar weblogic.jar.ORI<br />
+cp wlthint3client.jar wlthint3client.jar.ORI<br />
+<br />
+<br />
+jar uvf weblogic.jar weblogic/jndi/internal/WLEventContextImpl.class <br />
+cp weblogic.jar /Oracle/Middleware/wlserver_10.3/server/lib/weblogic.jar<br />
+<br />
+jar uvf wlfullclient.jar weblogic/jndi/internal/WLEventContextImpl.class <br />
+cp wlfullclient.jar /Oracle/Middleware/wlserver_10.3/server/lib/wlfullclient.jar <br />
+<br />
+jar uvf wlthint3client.jar weblogic/jndi/internal/WLEventContextImpl.class <br />
+cp wlthint3client.jar /Oracle/Middleware/wlserver_10.3/server/lib/wlthint3client.jar <br />
+<br />
+<br />
+<br />
+and to restore the files:<br />
+<br />
+cp weblogic.jar.ORI /Oracle/Middleware/wlserver_10.3/server/lib/weblogic.jar<br />
+cp wlfullclient.jar.ORI /Oracle/Middleware/wlserver_10.3/server/lib/wlfullclient.jar <br />
+cp wlthint3client.jar.ORI /Oracle/Middleware/wlserver_10.3/server/lib/wlthint3client.jar <br />
+<br />
+<br />
+Unfortunately the patch WORKS and traces the calls to JNDI lookups, but the decompilation must have messed it up because itcannot find a queue and the WLS crashes.<br />
+<br />
+With some terror I discover that connector.jar delivered with MQ 7 dates back to 2001 (JDK 1.3) and providerutil.jar dates back to 2000 (JDK 1.2).<br />
+<br />
+Enabling EJB, JMS, JNDI, ClassLoader flags doesn't help. Most likely the remote JMS destination deserialization fails.<br />
+<br />
+<br />
+<br />
+Jan-2011: interesting post here <a href="http://weblogic-wonders.com/weblogic/2010/11/24/weblogic-foreign-jms-server-configuration-with-mq-series/">http://weblogic-wonders.com/weblogic/2010/11/24/weblogic-foreign-jms-server-configuration-with-mq-series/</a>

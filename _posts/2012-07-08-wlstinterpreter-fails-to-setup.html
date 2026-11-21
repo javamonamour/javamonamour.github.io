@@ -1,0 +1,32 @@
+---
+layout: post
+title: "WLSTInterpreter fails to setup"
+date: 2012-07-08T13:28:00.000+02:00
+permalink: /2012/07/wlstinterpreter-fails-to-setup.html
+blogger_id: "6578600563773465217"
+tags: ["WLST"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2013-07-30
+    html: "and see also http://www.javamonamour.org/2012/07/error-in-finding-weblogichome.html"
+  - author: "vernetto"
+    date: 2013-07-30
+    html: "see if this https://forums.oracle.com/thread/2300143 can be of any help. <br /><br />If still in need, email me directly and I will try to reproduce (and fix) the issue. publicpierre at gmail dot com"
+  - author: "Habin"
+    date: 2013-07-30
+    html: "Can you elaborate how exactly it needs to be set.I am trying to run the java class and stuck with this exception.Tried to set -Dbea.home to my fusionmiddleware home but no luck with it."
+---
+java.lang.NullPointerException<br />
+ java.io.File.<init>(File.java:222)<br />
+ weblogic.management.utils.PDevHelper.getUpgradeLaunchLocation(PDevHelper.java:77)<br />
+ weblogic.management.utils.PDevHelper.getPDevClassLoader(PDevHelper.java:36)<br />
+ weblogic.management.scripting.utils.WLSTUtil.setupOffline(WLSTUtil.java:226)<br />
+ weblogic.management.scripting.utils.WLSTInterpreter.<init>(WLSTInterpreter.java:134)<br />
+ weblogic.management.scripting.utils.WLSTInterpreter.<init>(WLSTInterpreter.java:76)<br />
+<br />
+<br />
+It turns out that PDevHelper.getUpgradeLaunchLocation is requiring a bea.home property to be set (set it to -Dbea.home=/opt/oracle/fmw11_1_1_5/ )
+
+<br/><br/>
+
+See also <a href="/2012/07/error-in-finding-weblogichome.html">/2012/07/error-in-finding-weblogichome.html</a>

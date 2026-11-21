@@ -1,0 +1,49 @@
+---
+layout: post
+title: "Coherence cluster interference"
+date: 2011-12-29T14:25:00.002+01:00
+permalink: /2011/12/coherence-cluster-interference.html
+blogger_id: "2099006006420507138"
+tags: ["coherence"]
+---
+####&lt;Dec 28, 2011 12:32:51 PM CET&gt; &lt;Warning&gt; &lt;Coherence&gt; &lt;acme102&gt; &lt;osbdv1ms1&gt; &lt;Logger@1780819408 3.6.0.4&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;0000JI4RpfkE8Tk5ozx0iY1Eyjr6000002&gt; &lt;1325071971843&gt; &lt;BEA-000000&gt; &lt;Oracle Coherence 3.6.0.4 (member=n/a): Received a discovery message that indicates the presence of an existing cluster that does not respond to join requests; this is usually caused by a network layer failure:<br />
+Message "SeniorMemberHeartbeat"<br />
+{<br />
+FromMember=Member(Id=1, Timestamp=2011-11-24 15:56:30.477, Address=13.53.53.189:7890, MachineId=14269, Location=process:26431, Role=OSB-node)<br />
+FromMessageId=0<br />
+Internal=false<br />
+MessagePartCount=1<br />
+PendingCount=0<br />
+MessageType=17<br />
+ToPollId=0<br />
+Poll=null<br />
+Packets<br />
+{<br />
+[000]=Broadcast{PacketType=0x0DDF00D2, ToId=0, FromId=1, Direction=Incoming, ReceivedMillis=12:32:51.842, MessageType=17, ServiceId=0, MessagePartCount=1, MessagePartIndex=0, Body=0}<br />
+}<br />
+Service=ClusterService{Name=Cluster, State=(SERVICE_STARTED, STATE_ANNOUNCE), Id=0, Version=3.6}<br />
+ToMemberSet=null<br />
+NotifySent=false<br />
+<br />
+LastRecvTimestamp=none<br />
+MemberSet=MemberSet(Size=1, BitSetCount=1, ids=[1])<br />
+}&gt;<br />
+<br />
+<br />
+<a href="https://forums.oracle.com/forums/thread.jspa?threadID=1068440">https://forums.oracle.com/forums/thread.jspa?threadID=1068440</a><br />
+<br />
+<br />
+we need either to add<br />
+<br />
+-Dtangosol.coherence.wka=localhost -Dtangosol.coherence.ttl=0 -Dtangosol.coherence.localhost=127.0.0.1<br />
+<br />
+to the JVM parameters, or make sure each installation has a unique Coherence cluster multicast address<br />
+<br />
+<br />
+If you get forever this message:<br />
+"Delaying formation of a new cluster; waiting for well-known nodes to respond"<br />
+<br />
+read here: <a href="http://docs.oracle.com/cd/E24290_01/coh.371/e22837/cluster_setup.htm#CEGGHCAB">http://docs.oracle.com/cd/E24290_01/coh.371/e22837/cluster_setup.htm#CEGGHCAB</a><br />
+<br />
+then remove the wka option and use an explicit address:<br />
+-Dtangosol.coherence.clusteraddress=224.3.6.0 -Dtangosol.coherence.clusterport=3059

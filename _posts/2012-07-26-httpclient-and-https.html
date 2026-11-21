@@ -1,0 +1,111 @@
+---
+layout: post
+title: "HttpClient and HTTPS"
+date: 2012-07-26T16:39:00.001+02:00
+permalink: /2012/07/httpclient-and-https.html
+blogger_id: "8667764306221211396"
+tags: ["https"]
+---
+javax.net.ssl.SSLPeerUnverifiedException: peer not authenticated<br />
+<br />
+<a href="http://javaskeleton.blogspot.ch/2010/07/avoiding-peer-not-authenticated-with.html">http://javaskeleton.blogspot.ch/2010/07/avoiding-peer-not-authenticated-with.html</a> (too complicated, and the code doesn't give the imports.... grrrrr....)<br />
+<br />
+<a href="http://www.koders.com/java/fid22A749424D86D13C8E8530A62ADC9689E7DC6F67.aspx">http://www.koders.com/java/fid22A749424D86D13C8E8530A62ADC9689E7DC6F67.aspx</a><br />
+<br />
+org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory  "can be used to creats SSL Sockets  that accept self-signed certificates"<br />
+<br />
+it's in commons-ssl.jar or not-yet-commons-ssl jar  http://juliusdavies.ca/commons-ssl/download.html <br />
+<br />
+<br />
+I try the<br />
+<br />
+Protocol easyHttps = new Protocol("https", new EasySSLProtocolSocketFactory(), 443);<br />
+Protocol.registerProtocol("https", easyHttps);<br />
+<br />
+where Protocol is http://hc.apache.org/httpclient-3.x/apidocs/org/apache/commons/httpclient/protocol/Protocol.html and it's part of commons-httpclient-3.1.jar<br />
+<br />
+This gives a full working example:<br />
+<a href="https://discursive.atlassian.net/wiki/display/CJCOOK/Accepting+a+Self-Signed+Certificate">https://discursive.atlassian.net/wiki/display/CJCOOK/Accepting+a+Self-Signed+Certificate</a><br />
+<br />
+and the imports are:<br />
+<br />
+import java.io.File;<br />
+import java.io.FileFilter;<br />
+import java.io.IOException;<br />
+import java.security.GeneralSecurityException;<br />
+<br />
+import javax.net.ssl.SSLContext;<br />
+import javax.net.ssl.TrustManager;<br />
+import javax.net.ssl.X509TrustManager;<br />
+<br />
+import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;<br />
+import org.apache.commons.httpclient.protocol.Protocol;<br />
+import org.apache.http.HttpEntity;<br />
+import org.apache.http.HttpResponse;<br />
+import org.apache.http.client.HttpClient;<br />
+import org.apache.http.client.methods.HttpPost;<br />
+import org.apache.http.conn.ClientConnectionManager;<br />
+import org.apache.http.conn.scheme.Scheme;<br />
+import org.apache.http.conn.scheme.SchemeRegistry;<br />
+import org.apache.http.conn.ssl.SSLSocketFactory;<br />
+import org.apache.http.entity.ContentType;<br />
+import org.apache.http.entity.FileEntity;<br />
+import org.apache.http.impl.client.DefaultHttpClient;<br />
+import org.apache.http.util.EntityUtils;<br />
+<br />
+<br />
+I do this:<br />
+<br />
+DefaultHttpClient httpclient = new DefaultHttpClient();<br />
+HttpClient httpclientWrapped = wrapClient(httpclient);<br />
+<br />
+where<br />
+<br />
+<pre class="brush: java" name="code">public static HttpClient wrapClient(HttpClient base) {
+ try {
+  SSLContext ctx = SSLContext.getInstance("TLS");
+  X509TrustManager tm = new X509TrustManager() {
+
+   @Override
+   public void checkClientTrusted(
+     java.security.cert.X509Certificate[] arg0, String arg1)
+     throws java.security.cert.CertificateException {
+    // TODO Auto-generated method stub
+    
+   }
+
+   @Override
+   public void checkServerTrusted(
+     java.security.cert.X509Certificate[] arg0, String arg1)
+     throws java.security.cert.CertificateException {
+    // TODO Auto-generated method stub
+    
+   }
+
+   @Override
+   public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+    // TODO Auto-generated method stub
+    return null;
+   }
+
+  };
+  
+  ctx.init(null, new TrustManager[]{tm}, null);
+  SSLSocketFactory ssf = new SSLSocketFactory(ctx);
+  ssf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+  ClientConnectionManager ccm = base.getConnectionManager();
+  SchemeRegistry sr = ccm.getSchemeRegistry();
+  sr.register(new Scheme("https", ssf, 443));
+  return new DefaultHttpClient(ccm, base.getParams());
+ } catch (Exception ex) {
+  return null;
+ }
+} 
+
+</pre><br />
+<br />
+(change 443 for your own port)<br />
+<br />
+<br />
+but I still get<br />
+Connection reset  at java.net.SocketInputStream.read

@@ -1,0 +1,75 @@
+---
+layout: post
+title: "WebLogic whole server migration and wlsifconfig.sh"
+date: 2012-05-06T08:54:00.005+02:00
+permalink: /2012/05/weblogic-server-migration-and.html
+blogger_id: "477215512367512632"
+tags: ["TCP-IP", "weblogic"]
+---
+<a href="http://docs.oracle.com/cd/E21764_01/web.1111/e13709/migration.htm">Generalities on the Whole Server Migration</a><br />
+<br />
+<a href="http://docs.oracle.com/cd/E17904_01/core.1111/e12036/server_migration.htm">http://docs.oracle.com/cd/E17904_01/core.1111/e12036/server_migration.htm</a><br />
+<br />
+<a href="https://forums.oracle.com/forums/thread.jspa?messageID=4331554">https://forums.oracle.com/forums/thread.jspa?messageID=4331554</a><br />
+<br />
+<br />
+more in <a href="/2012/02/cluster-master-singleton-master.html">this other post</a><br />
+<br />
+in $DOMAIN_HOME/bin/server_migration there is this little script "wlsifconfig.sh", who is involved in the Virtual IP migration process - the core of the Server Migration really.<br />
+<br />
+I have opened to see what it does.<br />
+<br />
+There are 3 functions: listif(), removeif(), addif() (where if=network interface)<br />
+<br />
+<br />
+listif() does a "/sbin/ip -o addr", whose output is a bit intimidating:<br />
+<br />
+<i><br />
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 16436 qdisc noqueue \    link/loopback 00:00:0                                                                                       0:00:00:00 brd 00:00:00:00:00:00<br />
+1: lo    inet 127.0.0.1/8 scope host lo<br />
+1: lo    inet6 ::1/128 scope host \       valid_lft forever preferred_lft foreve                                                                                       r<br />
+2: eth0: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast maste                                                                                       r bond0 qlen 1000\    link/ether 9c:3e:99:17:6c:90 brd ff:ff:ff:ff:ff:ff<br />
+2: eth0    inet 10.10.10.10/32 brd 10.10.10.10 scope global eth0<br />
+3: eth1: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast maste                                                                                       r bond0 qlen 1000\    link/ether 9c:3e:99:17:6c:90 brd ff:ff:ff:ff:ff:ff<br />
+4: sit0: <noarp> mtu 1480 qdisc noop \    link/sit 0.0.0.0 brd 0.0.0.0<br />
+5: bond0: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc noqueue \    l                                                                                       ink/ether 9c:8e:39:27:6c:90 brd ff:ff:ff:ff:ff:ff<br />
+5: bond0    inet 120.56.5.189/24 brd 10.56.5.255 scope global bond0<br />
+5: bond0    inet 120.56.5.183/24 brd 10.56.5.255 scope global secondary bond0:0<br />
+5: bond0    inet 120.56.5.182/24 brd 10.56.5.255 scope global secondary bond0:1<br />
+5: bond0    inet6 fe80::9e8a:99ff:fea7:6c90/64 scope link \       valid_lft fore                                                                                       ver preferred_lft forever<br />
+</i><br />
+<br />
+basically for every nic it gives you all info on its configuration (one day maybe I will understand all this)<br />
+<br />
+The other command is<br />
+<br />
+<b>/sbin/ip -o addr | sed -n 's?.*inet \([0-9.]*\)\/[0-9]* .* \([^ ]*\)?\2 \1?p'</b><br />
+<br />
+which gives a much more human output, the list of each NIC and its associated IP:<br />
+<br />
+lo 127.0.0.1<br />
+eth0 10.10.10.10<br />
+bond0 10.56.5.189<br />
+bond0:0 10.56.5.183<br />
+bond0:1 10.56.5.182<br />
+<br />
+<br />
+The other function removeif() does a<br />
+ifconfig "ipaddress" down<br />
+ifconfig "ipaddress" 0.0.0.0<br />
+<br />
+<br />
+Finally addif() essentially does a<br />
+sudo /sbin/ifconfig (some parameter) up<br />
+<br />
+interesting is also the <a href="http://en.wikipedia.org/wiki/Address_Resolution_Protocol">Address Resolution Protocol</a> PING:<br />
+<br />
+<b>/sbin/arping</b><br />
+it needs sudo, example:<br />
+sudo /sbin/arping 11.61.286.232<br />
+<br />
+<a href="http://en.wikipedia.org/wiki/Arping">http://en.wikipedia.org/wiki/Arping</a><br />
+<br />
+<br />
+<br />
+Anyway shell scripting is so cryptic that it hurts the eyes.

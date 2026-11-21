@@ -1,0 +1,72 @@
+---
+layout: post
+title: "WebLogic: Installing WebLogic 10.3.5 binaries and creating a domain in 2 minutes"
+date: 2014-09-08T10:35:00.001+02:00
+permalink: /2014/09/weblogic-installing-weblogic-1035.html
+blogger_id: "2635059735317678273"
+tags: ["weblogic"]
+---
+Sometimes one need to create a throwaway domain in minutes....I hate having to remember all the small details....<br/>
+
+how to create a weblogic domain <br/>
+
+login to myhost<br/>
+sudo su - soa<br/>
+cd /opt/oracle/software<br/>
+make sure wls1035_generic.jar is there<br/>
+type "java -d64 -version"<br/>
+if this gives 'java version "1.6.0_33"' -> OK<br/>
+<br/><br/>
+vi silent.xml<br/><br/>
+<pre class="brush: xml">
+&lt;?xml version="1.0" encoding="UTF-8"?>
+   &lt;bea-installer>
+     &lt;input-fields>
+       &lt;data-value name="BEAHOME" value="/opt/oracle/fmw11_1_1_5" />
+       &lt;data-value name="WLS_INSTALL_DIR" value="/opt/oracle/fmw11_1_1_5/wlserver_10.3" />
+       &lt;data-value name="COMPONENT_PATHS"
+value="WebLogic Server/Core Application Server|WebLogic Server/Administration Console|WebLogic Server/Configuration Wizard and Upgrade Framework|WebLogic Server/Web 2.0 HTTP Pub-Sub Server|WebLogic Server/WebLogic JDBC Drivers|WebLogic Server/Third Party JDBC Drivers|WebLogic Server/WebLogic Server Clients|WebLogic Server/WebLogic Web Server Plugins|WebLogic Server/UDDI and Xquery Support|Oracle Coherence/Coherence Product Files|Oracle Coherence/Coherence Examples"/>
+       &lt;data-value name="NODEMGR_PORT" value="5556" />
+       &lt;data-value name="INSTALL_SHORTCUT_IN_ALL_USERS_FOLDER" value="no"/>
+    &lt;data-value name="LOCAL_JVMS" value="/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64"/>
+   &lt;/input-fields>
+&lt;/bea-installer>
+
+</pre>
+
+java -d64 -jar /opt/oracle/software/wls1035_generic.jar -mode=silent -silent_xml=silent.xml<br/>
+
+alias wlst="/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/bin/wlst.sh"<br/>
+
+vi createToolsDomain.py<br/>
+<pre class="brush: java">
+readTemplate('/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/templates/domains/wls.jar')
+
+cd('Servers/AdminServer')
+set('ListenPort', 7101)
+set('ListenAddress','myhost.acme.com')
+cd('/')
+cd('Security/base_domain/User/weblogic')
+cmo.setPassword('bla')
+setOption('OverwriteDomain', 'true')
+writeDomain('/opt/oracle/domains/toolsdomain')
+closeTemplate()
+exit()
+</pre>
+<br/><br/>
+run this:<br/>
+
+<b>wlst createToolsDomain.py</b><br/>
+
+cd /opt/oracle/domains/toolsdomain<br/>
+vi start.sh<br/>
+
+nohup /opt/oracle/domains/toolsdomain/startWebLogic.sh > /opt/oracle/domains/toolsdomain/adminserver.out 2>&1 &<br/><br/>
+
+chmod 755 start.sh<br/>
+
+Console in http://myhost.acme.com:7101/console/<br/><br/>
+
+
+
+

@@ -1,0 +1,71 @@
+---
+layout: post
+title: "OpenJPA will not be used"
+date: 2015-05-05T18:19:00.003+02:00
+permalink: /2015/05/openjpa-will-not-be-used.html
+blogger_id: "117942919496183896"
+tags: ["log"]
+---
+<a href="http://www.artofbi.com/blog/weblogic-log-repeats-openjpa-will-not-be-used-solution/">http://www.artofbi.com/blog/weblogic-log-repeats-openjpa-will-not-be-used-solution/</a>
+<br/><br/>
+a customer was complaining today about his stdour/stderr file being flooded by the message "OpenJPA will not be used".
+<br/><br/>
+The link above explains very well the story. The only issue is that not always it's advisable to redirect the stderr to the weblogic log file (I like very much the idea, but if already some monitoring mechanism is in place, it has to be adjusted)
+<br/><br/>
+Anyway in the config.xml you should have
+<br/><br/>
+
+for the domain:
+<br/><br/>
+<pre class="brush: xml">
+  &lt;log-filter>
+    &lt;name>OpenJPA&lt;/name>
+    &lt;filter-expression>NOT(MESSAGE LIKE '%OpenJPA will not be used%')&lt;/filter-expression>
+  &lt;/log-filter>
+</pre>
+<br/><br/>
+
+then for each server
+<br/><br/>
+<pre class="brush: xml">
+&lt;stdout-filter>OpenJPA&lt;/stdout-filter>
+</pre>
+<br/><br/>
+and also
+<br/><br/>
+<pre class="brush: xml">
+&lt;redirect-stderr-to-server-log-enabled>true&lt;/redirect-stderr-to-server-log-enabled>
+</pre>
+
+
+
+<br/><br/>
+
+According to Oracle Support, "This message comes up whenever a persistence provider (ex: Eclipse) other than Kodo or OpenJPA is used in Weblogic Server. "
+
+<br/><br/>
+
+In config.xml you can have one of 2 values:
+ <br/><br/>
+TOPLINK 
+<br/><br/>
+<pre class="brush: xml">
+  &lt;jpa>
+    &lt;default-jpa-provider>org.eclipse.persistence.jpa.PersistenceProvider&lt;/default-jpa-provider>
+  &lt;/jpa>
+  </pre>
+  <br/><br/>
+KODO
+<br/><br/>
+<pre class="brush: xml">
+  &lt;jpa>
+    &lt;default-jpa-provider>org.apache.openjpa.persistence.PersistenceProviderImpl&lt;/default-jpa-provider>
+  &lt;/jpa>
+  &lt;log>
+</pre>
+<br/><br/>
+
+See http://docs.oracle.com/cd/E24329_01/web.1211/e24972/using_toplink.htm#EJBAD1415  , possibly the application is setting the provider in the code : "Specify the provider in the javax.persistence.provider property passed to the Map parameter of the javax.persistence.Persistence.createEntityManagerFactory(String, Map) method."
+
+
+

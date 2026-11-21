@@ -1,0 +1,57 @@
+---
+layout: post
+title: "com.eviware.soapui.tools.SoapUILoadTestRunner"
+date: 2010-09-04T10:48:00.001+02:00
+permalink: /2010/09/comeviwaresoapuitoolssoapuiloadtestrunn.html
+blogger_id: "477943105198534600"
+tags: ["soapui"]
+---
+If you install SoapUI3.5.1 you get a <br />
+loadtestrunner.sh<br />
+<br />
+================================<br />
+=<br />
+= SOAPUI_HOME = /maerskwas/tools/soapui-3.5.1<br />
+=<br />
+================================<br />
+soapUI 3.5.1 LoadTest Runner<br />
+usage: loadtestrunner [options] <soapui-project-file><br />
+-v    Sets password for soapui-settings.xml file<br />
+-t    Sets the soapui-settings.xml file to use<br />
+-D    Sets system property with name=value<br />
+-G    Sets global property with name=value<br />
+-P    Sets or overrides project property with name=value<br />
+-S    Saves the project after running the tests<br />
+-c    Sets the testcase<br />
+-d    Sets the domain<br />
+-e    Sets the endpoint<br />
+-f    Sets the output folder to export to<br />
+-h    Sets the host<br />
+-l    Sets the loadtest<br />
+-m    Overrides the LoadTest Limit<br />
+-n    Overrides the LoadTest ThreadCount<br />
+-p    Sets the password<br />
+-r    Exports statistics and testlogs for each LoadTest run<br />
+-s    Sets the testsuite<br />
+-u    Sets the username<br />
+-w    Sets the WSS password type, either 'Text' or 'Digest'<br />
+-x    Sets project password for decryption if project is encrypted<br />
+Missing soapUI project file..<br />
+<br />
+<br />
+run as:<br />
+<br />
+./loadtestrunner.sh -r -f/home/tstuser/pierre/ /home/tstuser/pierre/TSTStressTest-soapui-project.xml<br />
+<br />
+<br />
+<br />
+After some time the load test finishes and you can find statistics in<br />
+LoadTest_1-log.txt<br />
+and<br />
+LoadTest_1-statistics.txt<br />
+<br />
+<br />
+Cool!<br />
+<br />
+A more complete syntax with -s -l -c options:<br />
+C:\pierre\SmartBear\soapUI-4.5.0\bin\loadtestrunner.bat -s"TerminalSetupServicePortBinding TestSuite" -c"GetUsers TestCase" -l"LoadTest 1" C:\pierre\workspace\SSS_AutomatedTests\SOAPUIArtifacts\MachineSetupService-soapui-project.xml

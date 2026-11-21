@@ -1,0 +1,40 @@
+---
+layout: post
+title: " java package 'weblogic.time' has no attribute 'localtime'"
+date: 2013-03-21T17:24:00.000+01:00
+permalink: /2013/03/java-package-weblogictime-has-no.html
+blogger_id: "1016740146549432035"
+tags: ["WLST"]
+blogger_comments:
+  - author: "Mallyboy"
+    date: 2015-03-19
+    html: "I believe this is because when the WLST connect() command executes the weblogic.time library overrides the (Python) time library.<br /><br />Another solution to your problem is then to add: <br /><b>import time as pytime </b><br /><br />right upfront (before the connect() is issued) and then refer to the functions with:<br /><br /><b>pytime.time()</b> etc"
+---
+In a WLST module I am trying to print the current time with:
+<br />
+<br />
+<i>time.strftime("%Y%m%d_%H%M%S", time.localtime())
+
+</i><br />
+<br />
+When I run within a wlst session, it works. When I run it from a script, it fails with the error
+<br />
+<br />
+<i>java package 'weblogic.time' has no attribute 'localtime'
+</i><br />
+<br />
+I guess that some wlst operations import weblogic.time under the cover.
+<br />
+<br />
+The only workaround I found is:
+<br />
+<br />
+<i>from time import localtime, strftime
+</i><br />
+<i><br /></i>
+<i>strftime("%Y%m%d_%H%M%S", localtime())
+</i><br />
+<br />
+This is REALLY silly, but this is real life.
+
+

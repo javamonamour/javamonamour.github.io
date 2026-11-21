@@ -1,0 +1,15 @@
+---
+layout: post
+title: "File.getName() in  windows and Unix"
+date: 2016-01-10T09:27:00.002+01:00
+permalink: /2016/01/filegetname-in-windows-and-unix.html
+blogger_id: "557389497892165752"
+tags: ["file"]
+---
+If you have a full path like filename="c:\temp\pippo.txt" , on windows new File(filename).getName() will return pippo.txt, but on *nix it will return "c:\temp\pippo.txt".
+<br/><br/>
+This can be a nasty issue: you want a path to be parsed consistently regardless of the OS on which the JVM is running. Well, that's not the case. So you are screwed.
+<br/><br/>
+
+Luckily you can use <a href="https://commons.apache.org/proper/commons-io/apidocs/org/apache/commons/io/FilenameUtils.html">https://commons.apache.org/proper/commons-io/apidocs/org/apache/commons/io/FilenameUtils.html</a> and it will work beautifully.
+

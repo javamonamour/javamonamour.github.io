@@ -1,0 +1,53 @@
+---
+layout: post
+title: "Java Mission Control jmc WebLogic plugin"
+date: 2016-12-17T21:19:00.000+01:00
+permalink: /2016/12/java-mission-control-jmc-weblogic-plugin.html
+blogger_id: "3603720579437356806"
+tags: ["jmc", "weblogic"]
+---
+funnily, the plugin installs, but whenever I run it, it says "event type BLA is not enabled in this recording" and I can't figure out how to enable the event recording...
+
+<br/><br/>
+<a href="https://docs.oracle.com/javacomponents/jmc-5-5/jmc-user-guide/experimental.htm#JMCCI131">https://docs.oracle.com/javacomponents/jmc-5-5/jmc-user-guide/experimental.htm#JMCCI131</a>
+<br/>
+<a href="https://blogs.oracle.com/WebLogicServer/entry/weblogic_tip">https://blogs.oracle.com/WebLogicServer/entry/weblogic_tip</a>
+<br/>
+this video is about the JRockit version:
+<br/>
+<iframe allowfullscreen="" frameborder="0" height="720" src="https://www.youtube.com/embed/Dqht4rFP9mM" width="1280"></iframe>
+
+<br/>
+To install: run jmc.exe, Help, Install new Software
+
+<br/>
+
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/eb37ebfcfc977e12.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/b60f68153315b571.jpg" width="640" height="267" /></a></div>
+
+<br/><br/>
+
+If you see this when activating Commercial Features via JMC:
+<br/><br/>
+
+<pre>
+[jfr][WARN ][3932.289] Unable to register PDH query for "\Process(java#0)\% Processor Tim"
+[jfr][WARN ][3932.290] Please check the registry if this performance object/counter is disabled
+[jfr][WARN ][3932.290] Unable to register PDH query for "\Process(java#0)\% Privileged Tim"
+[jfr][WARN ][3932.290] Please check the registry if this performance object/counter is disabled
+[jfr][WARN ][3932.290] Unable to register PDH query for "\Process(java#1)\% Processor Tim"
+[jfr][WARN ][3932.290] Please check the registry if this performance object/counter is disabled
+[jfr][WARN ][3932.290] Unable to register PDH query for "\Process(java#1)\% Privileged Tim"
+[jfr][WARN ][3932.290] Please check the registry if this performance object/counter is disabled
+[jfr][WARN ][3932.293] Unable to register PDH query for "\System\Context Switches/se"
+[jfr][WARN ][3932.293] Please check the registry if this performance object/counter is disabled
+</pre>
+
+<br/><br/>
+
+it seems to be a known bug (Windows only)
+
+<br/><br/>
+
+
+
+

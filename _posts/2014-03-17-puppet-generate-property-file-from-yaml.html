@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Puppet. generate a property file from a YAML hash"
+date: 2014-03-17T17:56:00.001+01:00
+permalink: /2014/03/puppet-generate-property-file-from-yaml.html
+blogger_id: "2141596189197388897"
+tags: ["puppet"]
+---
+the YAML:
+<br/><br/>
+<pre>
+acmev2_properties:
+  acmev2_env : DEV
+  acmev2_loadbalancerurl : http://hqchacme102.acme.com:8001/
+
+</pre>
+
+<br/><br/>
+
+
+The file/template statenent:
+<pre>
+  file { "${acmescripts_rootfolder}config/acmeconfig.properties":
+    ensure  => present,
+    content => template('acmev2/acmescripts/acmeconfig.properties.erb'),
+    mode    => 0775,
+  }
+</pre>
+<br/><br/>
+The acmeconfig.properties.erb template file:
+<br/><br/>
+<pre>
+<% @acmev2_properties.each do |key, value| -%>
+<%= key %>=<%= value %>
+<% end -%>
+
+</pre>
+
+<br/><br/>
+The generated property file:
+<br/><br/>
+<pre>
+acmev2_env=DEV
+acmev2_loadbalancerurl=http://hqchacme102.acme.com:8001/
+</pre>
+
+

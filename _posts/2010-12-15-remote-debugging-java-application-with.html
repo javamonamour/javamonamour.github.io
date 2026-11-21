@@ -1,0 +1,51 @@
+---
+layout: post
+title: "Remote monitoring of a Java application with JConsole"
+date: 2010-12-15T17:26:00.008+01:00
+permalink: /2010/12/remote-debugging-java-application-with.html
+blogger_id: "2232805599042673861"
+tags: ["jmxremote", "visualvm"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2011-02-27
+    html: "Nice article ,Remote Debugging was the single most feature which is very useful while developing larget enterprise application, specially<br />if your applicaiton is live and you don&#39;t have proper development environment setup in your dev box.<br /><br />Thanks<br />Javin<br /><a href=\"http://javarevisited.blogspot.com/2011/02/how-to-setup-remote-debugging-in.html\" rel=\"nofollow\">How to setup remote debugging in Eclipse </a>"
+---
+see <a href="http://download.oracle.com/javase/1.5.0/docs/guide/management/agent.html#remote">http://download.oracle.com/javase/1.5.0/docs/guide/management/agent.html#remote</a> <br />
+<br />
+and better still here <a href="http://www.performanceengineer.com/blog/monitoring-weblogic-using-jmx/">http://www.performanceengineer.com/blog/monitoring-weblogic-using-jmx/</a><br />
+<br />
+set these properties: <br />
+<br />
+-Dcom.sun.management.jmxremote<br />
+-Dcom.sun.management.jmxremote.port=8888<br />
+-Dcom.sun.management.jmxremote.ssl=false<br />
+-Dcom.sun.management.jmxremote.authenticate=false<br />
+<br />
+<br />
+<br />
+CAVEAT: on the same machine you could have multiple WLS. <br />
+You cannot assign the same jmx port to all of them.<br />
+You should prepare an individual script for each managed server,<br />
+<br />
+where you set <br />
+export JAVA_OPTIONS="-Dcom.sun.management.jmxremote.port=8888"<br />
+<br />
+and of course use a different port for each WLS.<br />
+<br />
+Something like this:<br />
+<br />
+<b>startOSB.sh</b>:<br />
+<br />
+export JAVA_OPTIONS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8888 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"<br />
+nohup ./startManagedWebLogic.sh osb_server1 http://myserver:7001 2>&1  > . ../servers/osb_server1/logs/osb_server1.out &<br />
+<br />
+<br />
+<br />
+<b>startSOA.sh</b>:<br />
+<br />
+export JAVA_OPTIONS="-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8889 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"<br />
+<br />
+nohup ./startManagedWebLogic.sh soa_server1 http://myserver:7001 2>&1  > ../servers/soa_server1/logs/soa_server1.out &<br />
+<br />
+<br />
+You will need to enable these settings when you want to connect VisualVM with JMX, see here <a href="http://visualvm.java.net/jmx_connections.html">http://visualvm.java.net/jmx_connections.html</a>

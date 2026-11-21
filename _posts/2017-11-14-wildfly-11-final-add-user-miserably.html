@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Wildfly 11 final: add-user miserably fails when run in git bash (and maybe cygwin)"
+date: 2017-11-14T05:11:00.001+01:00
+permalink: /2017/11/wildfly-11-final-add-user-miserably.html
+blogger_id: "5339936771467451851"
+tags: ["gitbash", "wildfly"]
+---
+$ ./add-user.sh <br />
+Exception in thread "main" java.lang.IllegalStateException: WFLYDM0021: No java.io.Console available to interact with user.<br />
+at org.jboss.as.domain.management.security.adduser.AddUser.<init>(AddUser.java:78)<br />
+at org.jboss.as.domain.management.security.adduser.AddUser.main(AddUser.java:240)<br />
+at org.jboss.modules.Module.run(Module.java:344)<br />
+at org.jboss.modules.Main.main(Main.java:525)<br />
+<br />
+<br />
+Simply pathetic. Just forget to run it from git bash, and execute the command from a regular powershell or cmd shell.<br />
+<br />
+It's my fault, I should not try to deploy anything on Windows, apart VirtualBox to be able to run CentOS...

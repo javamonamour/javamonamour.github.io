@@ -1,0 +1,65 @@
+---
+layout: post
+title: "MariaDB on CentOS 7"
+date: 2017-11-14T22:02:00.000+01:00
+permalink: /2017/11/mariadb-on-centos-7.html
+blogger_id: "1803324184186938832"
+tags: ["mariadb", "mysql"]
+---
+<span style="font-size: large;">With Docker</span><br />
+<br />
+<a href="https://hub.docker.com/_/mariadb/">https://hub.docker.com/_/mariadb/</a> <br />
+<br />
+docker run --name some-mariadb -p 3306:3306 -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mariadb:10.3.9<br />
+<br />
+docker ps<br />
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES<br />
+b02cd9d0dff0        mariadb:10.3.9      "docker-entrypoint.s…"   13 seconds ago      Up 10 seconds       3306/tcp            some-mariadb<br />
+<br />
+<br />
+<br />
+port is 3306<br />
+<br />
+<br />
+IMPORTANT: read here <a href="https://mariadb.com/kb/en/library/installing-and-using-mariadb-via-docker/">https://mariadb.com/kb/en/library/installing-and-using-mariadb-via-docker/</a> the customization to be done on the Mariadb container.<br />
+<br />
+container linking : docker run --name some-app --link some-mariadb:mysql -d application-that-uses-mysql<br />
+<br />
+<br />
+<br />
+<span style="font-size: large;">Without docker:</span><br />
+<br />
+<a href="https://www.tecmint.com/install-mariadb-in-centos-7/">https://www.tecmint.com/install-mariadb-in-centos-7/</a><br />
+<br />
+<br />
+<br />
+Useful introduction for digitalocean <a href="https://www.digitalocean.com/community/tutorials/how-to-create-and-manage-databases-in-mysql-and-mariadb-on-a-cloud-server">https://www.digitalocean.com/community/tutorials/how-to-create-and-manage-databases-in-mysql-and-mariadb-on-a-cloud-server</a><br />
+<br />
+<br />
+sudo systemctl start mariadb<br />
+sudo systemctl daemon-reload<br />
+sudo systemctl start mariadb<br />
+sudo mysql_secure_installation<br />
+<br />
+<br />
+Here <a href="https://www.heidisql.com/download.php?download=portable">https://www.heidisql.com/download.php?download=portable</a> a MariaDB UI<br />
+<br />
+Otherwise you can use https://razorsql.com/  which comes with a cost (free evaluation available)<br />
+<br />
+Apparently you can try also with good old SQLDeveloper <a href="https://oracle-base.com/articles/mysql/mysql-connections-in-sql-developer">https://oracle-base.com/articles/mysql/mysql-connections-in-sql-developer</a><br />
+<br />
+<br />
+<br />
+CREATE DATABASE calories<br />
+GRANT ALL PRIVILEGES ON calories.* TO 'calories'@'localhost' IDENTIFIED BY 'calories' WITH GRANT OPTION;<br />
+GRANT ALL PRIVILEGES ON calories.* TO 'calories'@'%' IDENTIFIED BY 'calories' WITH GRANT OPTION;<br />
+<br />
+CREATE TABLE calories.users<br />
+(id INT(10) NOT NULL,<br />
+email VARCHAR(100) NOT NULL,<br />
+PRIMARY KEY (id))<br />
+<br />
+<br />
+<br />
+<br />
+

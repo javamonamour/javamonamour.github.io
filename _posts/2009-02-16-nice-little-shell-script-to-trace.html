@@ -1,0 +1,66 @@
+---
+layout: post
+title: "Nice little shell script to trace memory occupation of Weblogic processes"
+date: 2009-02-16T17:26:00.006+01:00
+permalink: /2009/02/nice-little-shell-script-to-trace.html
+blogger_id: "7027614822465327897"
+tags: ["weblogic monitoring"]
+blogger_comments:
+  - author: "Mark van Holsteijn"
+    date: 2012-12-18
+    html: "This comment has been removed by the author."
+---
+this script was provided by the generosity of Mark van Holsteijn <a href="http://www.equilibrio-consultancy.com/">www.xebia.com</a> , a man with strong brain muscles.<br />
+<br />
+showWebLogic.sh<br />
+<br />
+<pre class="brush: bash" name="code">#!/bin/bash
+
+#!/bin/bash
+
+echo "pid minheap maxheap vsize residnt share text data name jvm"
+ps -ef | grep java | grep -v grep | while read LINE
+do
+        MINHEAP=$(echo $LINE | sed 's/.*-Xms\([^ ]*\).*/\1/')
+        MAXHEAP=$(echo $LINE | sed 's/.*-Xmx\([^ ]*\).*/\1/')
+        PID=$(echo $LINE | awk '{print $2}')
+        JVM=$(echo $LINE | awk '{print $8}')
+
+        NAME=$(echo $LINE | sed -n -e 's/.*-Dweblogic.Name=\([^ ]*\).*/\1/p')
+        if [ -z "$NAME" ] ; then
+                NAME=$(echo $LINE | sed -n -e 's/.*weblogic.\(NodeManager\).*/\1/p')
+        fi
+        if [ -z "$NAME" ] ; then
+                NAME="UnknownApp"
+        fi
+        cat /proc/$PID/statm | \
+        awk -vpid=$PID \
+        -vjvm="$JVM" \
+        -vname="$NAME" \
+        -vminheap=$MINHEAP \
+        -vmaxheap=$MAXHEAP \
+        '{ printf ("%ld\t%s\t%s\t%ldmb\t%ldmb\t%ldmb\t%ldmb\t%ldmb\t%s\t%s\n",
+        pid, minheap, maxheap,
+        ($1 * 4) / 1024,
+        ($2 * 4) / 1024,
+        ($3 * 4) / 1024,
+        $(4 * 4)/1024, ($6 * 4)/1024, name, jvm); }'
+
+done
+
+</pre><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+the output is:<br />
+<br />
+<pre>pid minheap maxheap vsize residnt share text data name jvm
+
+6811 128m 256m 1473mb 169mb 3mb 0mb 1391mb NodeManager /opt/bea/jrockit/R27.3.1/bin/java
+
+8289 512m 512m 2060mb 903mb 4mb 0mb 1962mb pierre_dev_eb_alsb_admin_server java
+
+9893 1024m 1024m 2474mb 1300mb 3mb 0mb 2383mb pierre_dev_eb_alsb_server_1 /opt/bea/jrockit/R27.3.1/bin/java
+</pre>

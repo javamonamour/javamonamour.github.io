@@ -1,0 +1,43 @@
+---
+layout: post
+title: "VM to VM communication in VirtualBox (Linux)"
+date: 2015-03-09T22:01:00.001+01:00
+permalink: /2015/03/vm-to-vm-communication-in-virtualbox.html
+blogger_id: "6961723441740556823"
+tags: ["network", "oraclevm"]
+---
+(amazing how many  examples on youtube are done with Weirdos... few of them use Linux...)
+<br/><br/>
+The official documentation says: 
+<a href="https://www.virtualbox.org/manual/ch06.html">https://www.virtualbox.org/manual/ch06.html</a><br/>
+"<b>NAT</b>: by default virtual machines cannot talk to each other"
+
+<br/><br/>
+Problem is that most of the time I start multiple VM on my host with the purpose of making them communicate with each other! So am I screwed?
+<br/><br/>
+
+An option which looks promising is <b>Internal Networking</b> : "Internal Networking is similar to bridged networking in that the VM can directly communicate with the outside world. However, the "outside world" is limited to other VMs on the same host which connect to the same internal network.". One could use also " <b>bridged networking</b> " but with Internal you don't need an adapter.  One Internal Network is available: intnet. But there is a HUGE limitation: "As a security measure, the Linux implementation of internal networking only allows VMs running under the same user ID to establish an internal network." . Bummer.
+
+<br/><br/>
+
+Frankly <b>"Host-only networking "</b> seems the most promising. it was designed exactly to let multiple appliances cooperate.
+<br/><br/>
+I usually use Host-only networking and give "real" IPs to my machines and they see each other without problem.
+<br/><br/>
+With Vagrant you can just use something like this:
+<br/><br/>
+  config.vm.network "private_network", ip: "192.168.58.101"
+<br/><br/>
+And you will be able to connect from host or from any other guest using 192.168.58.101 and the good thing is that IP will only be visible on your machine.
+<br/><br/>
+
+<br/><br/>
+
+Read these great presentations:<br/>
+<a href="https://blogs.oracle.com/fatbloke/entry/networking_in_virtualbox1">https://blogs.oracle.com/fatbloke/entry/networking_in_virtualbox1</a> 
+<br/>
+
+<a href="https://technology.amis.nl/2014/01/27/a-short-guide-to-networking-in-virtual-box-with-oracle-linux-inside/">https://technology.amis.nl/2014/01/27/a-short-guide-to-networking-in-virtual-box-with-oracle-linux-inside/</a>
+
+<br/>
+

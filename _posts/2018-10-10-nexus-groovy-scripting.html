@@ -1,0 +1,235 @@
+---
+layout: post
+title: "Nexus Groovy scripting"
+date: 2018-10-10T15:19:00.000+02:00
+permalink: /2018/10/nexus-groovy-scripting.html
+blogger_id: "1923098724710639833"
+tags: ["groovy", "nexus"]
+---
+Huge issue in Nexus is that you can't export/import your Users/Groups/Privileges and Repository configuration. All you can do is to take a "backup", which ends of in a folder as a completely unreadable/unversionable format.<br />
+<br />
+So I was looking for <br />
+<br />
+when you run a Groovy script in Nexus, you have available a predefined variable "<b>repository</b>", which is of type <a href="https://github.com/sonatype/nexus-public/blob/master/plugins/nexus-script-plugin/src/main/java/org/sonatype/nexus/script/plugin/internal/provisioning/RepositoryApiImpl.groovy">org.sonatype.nexus.script.plugin.internal.provisioning.RepositoryApiImpl</a> <br />
+<br />
+This in turn contains a reference to a blobStoreManager org.sonatype.nexus.blobstore.api.BlobStoreManager and to a repositoryManager <a href="https://github.com/sonatype/nexus-public/blob/master/components/nexus-repository/src/main/java/org/sonatype/nexus/repository/manager/RepositoryManager.java">org.sonatype.nexus.repository.manager.RepositoryManager</a> , plus a series of convenience methods to create commonly used repository formats (you are not expected to create anything fancy, most properties are assigned by default) and groups.<br />
+<br />
+Key element is a <a href="https://github.com/sonatype/nexus-public/blob/master/components/nexus-repository/src/main/java/org/sonatype/nexus/repository/config/Configuration.java">org.sonatype.nexus.repository.config.Configuration</a> object, again very disappointing since the configuration is represented by a "attribute" map (String, Map(String, Object)) which is really a stupid idea, too generic interface.<br />
+<br />
+RepositoryManager has a Iterable&lt;Repository&gt; browse();  which returns a collection of <a href="https://github.com/sonatype/nexus-public/blob/master/components/nexus-repository/src/main/java/org/sonatype/nexus/repository/Repository.java">org.sonatype.nexus.repository.Repository</a> <br />
+<br />
+Sample script:<br />
+<br />
+<pre class="brush: java">import org.sonatype.nexus.repository.Repository
+
+repository.repositoryManager.browse().each { Repository repo -&gt;
+    log.info("Repository: $repo")
+    log.info("Repository Configuration: $repo.configuration")
+}
+</pre><br />
+<br />
+this dumps in nexus.log the following content:<br />
+<br />
+<pre>Repository: RepositoryImpl$$EnhancerByGuice$$c5f0822b{type=proxy, format=nuget, name='nuget.org-proxy'}
+Repository Configuration: Configuration{repositoryName='nuget.org-proxy', recipeName='nuget-proxy', attributes={proxy={strictContentTypeValidation=true, contentMaxAge=1440, remoteUrl=https://www.nuget.org/api/v2/, metadataMaxAge=1440}, negativeCache={}, storage={blobStoreName=default}, nugetProxy={}, httpclient={connection={blocked=false, autoBlock=true}}}}
+
+Repository: RepositoryImpl$$EnhancerByGuice$$c5f0822b{type=hosted, format=maven2, name='maven-releases'}
+Repository Configuration: Configuration{repositoryName='maven-releases', recipeName='maven2-hosted', attributes={maven={versionPolicy=RELEASE, layoutPolicy=STRICT}, storage={writePolicy=ALLOW_ONCE, strictContentTypeValidation=false, blobStoreName=default}}}
+
+Repository: RepositoryImpl$$EnhancerByGuice$$c5f0822b{type=hosted, format=maven2, name='maven-snapshots'}
+Repository Configuration: Configuration{repositoryName='maven-snapshots', recipeName='maven2-hosted', attributes={maven={versionPolicy=SNAPSHOT, layoutPolicy=STRICT}, storage={writePolicy=ALLOW, strictContentTypeValidation=false, blobStoreName=default}}}
+
+Repository: RepositoryImpl$$EnhancerByGuice$$c5f0822b{type=proxy, format=maven2, name='maven-central'}
+Repository Configuration: Configuration{repositoryName='maven-central', recipeName='maven2-proxy', attributes={proxy={contentMaxAge=-1, remoteUrl=https://repo1.maven.org/maven2/, metadataMaxAge=1440}, negativeCache={timeToLive=1440, enabled=true}, storage={strictContentTypeValidation=false, blobStoreName=default}, maven-indexer={}, httpclient={connection={blocked=false, autoBlock=true}}, maven={versionPolicy=RELEASE, layoutPolicy=PERMISSIVE}}}
+
+Repository: RepositoryImpl$$EnhancerByGuice$$c5f0822b{type=group, format=nuget, name='nuget-group'}
+Repository Configuration: Configuration{repositoryName='nuget-group', recipeName='nuget-group', attributes={storage={blobStoreName=default}, nugetProxy={}, httpclient={}, group={memberNames=[nuget-hosted, nuget.org-proxy]}}}
+
+Repository: RepositoryImpl$$EnhancerByGuice$$c5f0822b{type=hosted, format=nuget, name='nuget-hosted'}
+Repository Configuration: Configuration{repositoryName='nuget-hosted', recipeName='nuget-hosted', attributes={storage={writePolicy=ALLOW, blobStoreName=default}}}
+
+Repository: RepositoryImpl$$EnhancerByGuice$$c5f0822b{type=group, format=maven2, name='maven-public'}
+Repository Configuration: Configuration{repositoryName='maven-public', recipeName='maven2-group', attributes={maven={versionPolicy=MIXED}, group={memberNames=[maven-releases, maven-snapshots, maven-central]}, storage={blobStoreName=default}}}
+
+
+</pre><br />
+<br />
+<br />
+which is pretty good result, at least you can capture in one go all the configuration of all your repositories.<br />
+<br />
+<br />
+<br />
+This task will delete all your repos:<br />
+<br />
+<pre class="brush: java">import org.sonatype.nexus.repository.Repository
+
+repository.repositoryManager.browse().each { Repository repo ->
+    log.info("DELETE Repository: $repo")
+    repository.repositoryManager.delete("$repo.name")
+}
+</pre><br />
+<br />
+All the <a href="https://help.sonatype.com/repomanager3/rest-and-integration-api/script-api/writing-scripts">predefined variables</a> are <br />
+<br />
+<b>core</b> which is a <a href="https://github.com/sonatype/nexus-public/blob/release-3.11.0-01/components/nexus-core/src/main/java/org/sonatype/nexus/internal/provisioning/CoreApiImpl.groovy">org.sonatype.nexus.internal.provisioning.CoreApiImpl</a><br />
+<br />
+<b>repository</b> which is a <a href="https://github.com/sonatype/nexus-public/blob/master/plugins/nexus-script-plugin/src/main/java/org/sonatype/nexus/script/plugin/internal/provisioning/RepositoryApiImpl.groovy">org.sonatype.nexus.script.plugin.internal.provisioning.RepositoryApiImpl</a><br />
+<br />
+<b>blobStore</b> which is a <a href="https://github.com/sonatype/nexus-public/blob/release-3.11.0-01/components/nexus-core/src/main/java/org/sonatype/nexus/internal/provisioning/BlobStoreApiImpl.groovy">org.sonatype.nexus.internal.provisioning.BlobStoreApiImpl</a>  <br />
+<pre>createFileBlobStore(final String name, final String path)
+<a href="https://github.com/sonatype/nexus-public/blob/master/components/nexus-blobstore-api/src/main/java/org/sonatype/nexus/blobstore/api/BlobStoreManager.java">org.sonatype.nexus.blobstore.api.BlobStoreManager</a> blobStoreManager 
+</pre><br />
+<b>security</b> which is a <a href="https://github.com/sonatype/nexus-public/blob/master/components/nexus-security/src/main/java/org/sonatype/nexus/security/internal/SecurityApiImpl.groovy">org.sonatype.nexus.security.internal.SecurityApiImpl</a><br />
+<pre>User addUser(final String id, final String firstName, final String lastName, final String email, final boolean active,
+final String password, final List<string> roleIds)
+Role addRole(final String id, final String name, final String description, final List<string> privileges,
+final List<string> roles)
+User setUserRoles(final String userId, final List<string> roleIds)
+</pre><br />
+If you do security.getSecuritySystem() you get an instance of this:<br />
+<a href="https://github.com/sonatype/nexus-public/blob/master/components/nexus-security/src/main/java/org/sonatype/nexus/security/SecuritySystem.java">https://github.com/sonatype/nexus-public/blob/master/components/nexus-security/src/main/java/org/sonatype/nexus/security/SecuritySystem.java</a><br />
+<br />
+<br />
+Good is that if you clone the github repo nexus-book-examples  you can directly open the APIs in <a href="file:///home/centos/gitclones/nexus-book-examples/scripting/apidocs/index.html">file:///home/centos/gitclones/nexus-book-examples/scripting/apidocs/index.html</a><br />
+<br />
+<br />
+List all users with their roles<br />
+<br />
+<pre class="brush: java">import groovy.json.JsonOutput
+users = security.getSecuritySystem().listUsers()
+userjson = JsonOutput.toJson(users)
+log.info("USERS $userjson")
+</pre><br />
+<br />
+or also<br />
+<br />
+<pre class="brush: java">import org.sonatype.nexus.security.user.UserSearchCriteria
+
+users = security.getSecuritySystem().searchUsers(new UserSearchCriteria())
+log.info("users=" + users)
+</pre><br />
+<br />
+Add users and roles:<br />
+<br />
+<pre class="brush: java">privileges = [
+            "nx-search-read",
+            "nx-repository-view-*-*-read",
+            "nx-repository-view-*-*-browse",
+            "nx-repository-view-*-*-add",
+            "nx-repository-view-*-*-edit",
+"nx-apikey-all"]
+
+security.addRole("deployer", "deployer", "deployment on all repositories", privileges, [])
+
+security.addUser(userName, firstName, lastName, email, true, password, ["deployer"])
+
+
+</pre><br />
+creating blobstores:<br />
+<br />
+<br />
+<pre class="brush: java">def list = ["dockerGroup", "mynpm", "pippo", "ivy", "dockerhosted", "dockerProxy", "jcenter", "pythonProxy"]
+for (item in list) {
+    log.info("creating blobstore " + item)
+    blobStore.createFileBlobStore(item, item)
+}
+
+</pre><br />
+<br />
+<br />
+creating hosted repositories<br />
+<br />
+<pre class="brush: java">import org.sonatype.nexus.repository.storage.WritePolicy;
+import org.sonatype.nexus.repository.maven.VersionPolicy;
+import org.sonatype.nexus.repository.storage.WritePolicy
+import org.sonatype.nexus.repository.maven.LayoutPolicy
+
+
+repository.createDockerHosted(name = 'pippo', httpPort = 8123, httpsPort = null, blobStoreName = 'docker', strictContentTypeValidation=true, v1Enabled=true, writePolicy = WritePolicy.ALLOW, forceBasicAuth=false)
+
+repository.createMavenHosted(name = 'ivyhosted', blobStoreName = 'ivy', strictContentTypeValidation = true, versionPolicy = VersionPolicy.RELEASE, writePolicy= WritePolicy.ALLOW_ONCE, layoutPolicy=LayoutPolicy.PERMISSIVE )
+
+</pre><br />
+<br />
+<br />
+You cannot delete anonymous, the only way is to update it:<br />
+<br />
+<pre class="brush: java">import org.sonatype.nexus.security.user.*
+import org.sonatype.nexus.security.role.*
+
+// the following 6 lines are not required
+anonymous = security.getSecuritySystem().getUser("anonymous", "default")
+log.info("Anonymous before=" + anonymous)
+Set allRoles = security.getSecuritySystem().listRoles();
+log.info("allRoles=" + allRoles)
+advRole = allRoles.find{it.roleId=='ADVRole'}
+log.info("advRole=" + advRole)
+
+// these 2 lines below do the job
+advRoleIdentifier = new RoleIdentifier('default', 'ADVRole');
+security.getSecuritySystem().setUsersRoles("anonymous", "default", [advRoleIdentifier].toSet())
+
+</pre><br />
+<br />
+Script to create/update a role (without affecting existing users using that role, if existing)<br />
+<br />
+<br />
+<pre class="brush: java">
+
+import org.sonatype.nexus.security.user.*
+import org.sonatype.nexus.security.role.*
+import static org.sonatype.nexus.security.user.UserManager.DEFAULT_SOURCE
+
+privileges = [
+            "nx-search-read",
+            "nx-repository-view-*-*-read",
+            "nx-repository-view-*-*-browse",
+            "nx-repository-view-*-*-add",
+            "nx-repository-view-*-*-edit",
+            "nx-apikey-all"
+]
+
+createOrUpdateRole("pippo", privileges, [])
+createOrUpdateUser("pippouser", [ "pippo", "nx-admin" ])
+
+def createOrUpdateRole(rolename, privileges, roles) {
+    log.info("calling createOrUpdateRole with parameters rolename=" + rolename + " privileges=" + privileges + " roles=" + roles)
+ Set allRoles = security.getSecuritySystem().listRoles()
+ Role role = allRoles.find{it.roleId==rolename}
+ if (role != null) {
+     log.info("existing role=" + role)
+  role.setPrivileges(privileges.toSet())
+  role.setRoles(roles.toSet())
+  log.info("updating role=" + role)
+  // security.securitySystem.getAuthorizationManager(DEFAULT_SOURCE).deleteRole(role.roleId)
+  security.securitySystem.getAuthorizationManager(DEFAULT_SOURCE).updateRole(role)
+  log.info("role updated=" + role)
+ }
+ else {
+  log.info("adding role " + rolename)
+  security.addRole(rolename, rolename, rolename, privileges, roles)
+  log.info("role " + rolename + " successfully added")
+ }
+}
+
+
+
+def createOrUpdateUser(username, roles) {
+ log.info("calling createOrUpdateUser with parameters username=" + username + " roles=" + roles)
+ Set allUsers = security.getSecuritySystem().listUsers()
+ User user = allUsers.find{it.userId == username}
+ if (user != null) {
+  log.info("updating existing user=" + user)
+  Set roleIdentifiers = new HashSet()
+  roles.each{ role -> roleIdentifiers.add(new RoleIdentifier("default", role))}
+  security.getSecuritySystem().setUsersRoles(username, "default", roleIdentifiers)
+ }
+ else {
+  security.addUser(username, username, username, username + "@gmail.com", true, username, roles)
+ }
+}
+
+
+</pre><br />
+<br />
+

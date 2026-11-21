@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Eclipse for Docker"
+date: 2018-05-30T17:06:00.001+02:00
+permalink: /2018/05/eclipse-for-docker.html
+blogger_id: "8178734040247090369"
+tags: ["docker", "eclipse"]
+---
+To install: Help/Eclipse Marketplace, search for Docker Tools, install.<br />
+Otherwise, install <a href="https://tools.jboss.org/features/dockertools.html">https://tools.jboss.org/features/dockertools.html</a>  "JBoss Tools" and you get also Docker Tools.<br />
+<br />
+Show View / Docker Explorer<br />
+<br />
+you get by default this one:<br />
+<br />
+unix:///var/run/docker.sock<br />
+<br />
+but you can also work with remote docker via TCP with authentication<br />
+<br />
+<br />
+this view shows ALL your containers (docker ps -a) and images (docker images), with a list of ports and volumes<br />
+<br />
+<a href="https://www.eclipse.org/community/eclipse_newsletter/2015/june/article3.php">https://www.eclipse.org/community/eclipse_newsletter/2015/june/article3.php</a><br />
+<br />
+<br />
+To enable managing a Docker environment running in your VirtualBox centos image, in VirtualBox enable port forwarding 2376 or 2375, see <a href="/2017/12/docker-enabling-remote-daemon.html">/2017/12/docker-enabling-remote-daemon.html</a><br />
+<br />
+Eclipse for Docker is a really nice tool! It makes it much easier to work with Docker. However I still believe one should be familiar with the Docker CLI.<br />
+<br />
+

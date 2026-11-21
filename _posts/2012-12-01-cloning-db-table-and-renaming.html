@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Cloning a DB table and renaming"
+date: 2012-12-01T21:40:00.000+01:00
+permalink: /2012/12/cloning-db-table-and-renaming.html
+blogger_id: "2937551973568648237"
+tags: ["oracledb"]
+---
+<i>create table PIPPO as (select * from PLUTO where 1 = 2);</i><br />
+<br />
+this will create an empty table.<br />
+<br />
+Unfortunately, neither PK nor FKs nor indexes will be created.<br />
+<br />
+The not null constraints WILL be created.<br />
+<br />
+rename PIPPO to PLUTO;<br />
+<br />
+will change the table name. Be careful because all the old indexes associated to PIPPO will now be associated to PLUTO, so you might have to rename also indexes.<br />
+<br />
+<br />
+<br />
+<br />
+<br />

@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Public Key Authentication With PuTTY"
+date: 2012-04-24T11:17:00.001+02:00
+permalink: /2012/04/public-key-authentication-with-putty.html
+blogger_id: "1743438303143131548"
+tags: ["ppk", "putty", "ssh"]
+---
+<a href="http://www.ualberta.ca/CNS/RESEARCH/LinuxClusters/pka-putty.html">http://www.ualberta.ca/CNS/RESEARCH/LinuxClusters/pka-putty.html</a><br />
+<br />
+<br />
+I run PuTTYgen<br />
+<br />
+provide passphrase<br />
+generate key<br />
+<br />
+save public key ssh-rsa in a file ssh-rsa.txt<br />
+save private key to myuserpprd.ppk<br />
+<br />
+<br />
+I log to remote server as myuser<br />
+<br />
+mkdir .ssh<br />
+cd .ssh<br />
+vi authorized_keys<br />
+
+paste the public key
+
+
+<br />
+
+save<br />
+<br />
+chmod 600 authorized_keys*
+
+<br />
+run putty<br />
+edit the "Private key file for authentication" to provide myuserpprd.ppk<br />
+<br />
+the first login I get<br />
+<br />
+"Authenticating with public key "rsa-key-20120424"<br />
+Passphrase for key "rsa-key-20120424":"

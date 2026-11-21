@@ -1,0 +1,73 @@
+---
+layout: post
+title: "WebLogic JMS connection factory: Maximum Messages per Session caveat"
+date: 2013-10-27T18:57:00.001+01:00
+permalink: /2013/10/weblogic-jms-connection-factory-maximum.html
+blogger_id: "3668292490904160849"
+tags: ["jms", "OSB"]
+---
+In OSB, a JMSProxy Service will generate 16 consumers in a queue. This should enable a tremendous message processing parallelism. <br/>
+Not necessarily. <br/>
+The way JMS messages are dispatched to the consumers is regulated by the Connection Factory property "Maximum Messages per Session", which defaults to 10 (see "client" tab). 
+<br/><br/>
+The console help says:
+<br/>
+<pre>
+The maximum number of messages that can exist for an asynchronous session 
+and that have not yet been passed to the message listener. 
+When the Synchronous Prefetch Mode is enabled, 
+this value also affects synchronous sessions with a message consumer 
+that will prefetch messages in one server access.
+</pre>
+
+(<a href="http://docs.oracle.com/cd/E21764_01/apirefs.1111/e13951/mbeans/ClientParamsBean.html#MessagesMaximum">the whole story is told here</a>)
+<br/><br/>
+<i>
+So in our case a single MDB prefetched 10 messages, 1 went to current mode and the others to pending, and the single thread associated to that consumer went stuck on a resource, and the other 9 jms messages stood pending forever. 
+<br/><br/>
+This is clearly a huge breach of the parallel processing paradigm, and it impacts also SLA on a conspicuous number of messages. We shall look at the opportunity to set this parameter to 1, disabling so the batching delivery mode for JMS messages.
+<br/><br/>
+I am not 100% sure that THIS parameter is actually guilty, but I don't see any other explanation.
+<br/><br/>
+
+
+See also "WebLogic Server (WLS) Support Pattern: Troubleshooting Pending JMS Messages (Doc ID 1204064.1)":
+<br/><br/>
+"This message buffer or pipeline can be configured using the MessagesMaximum parameter in the Connection Factory settings (http://download.oracle.com/docs/cd/E13222_01/wls/docs81/jms/implement.html#1080748). The default value of this parameter is 10 per instance of the asynchronous client. In case of a MDB, each instance is a separate client. Hence, if there are 15 instances of a given MDB, there can be 10*15=150 pending messages buffered on the MDB side in the message pipeline."
+
+<br/><br/>
+
+These buffered messages will not be consumed by the client if the client happens to be hanging for any reason while processing a message. Other messages in the pipeline will wait and contribute to the number of pending messages. Each such hanging thread corresponds to a hanging asynchronous client and contributes to pending messages equal to the MessagesMaximum parameter. For instance, 5 threads hanging in onMessage() method will contribute to 50 pending messages, assuming the MessagesMaximum parameter has the default value of 10.
+
+<br/><br/>
+
+
+You can also reduce the value of the MessagesMaximum property to 1 from the default value of 10. This means that there will be no messages in the pipeline. A second message will be delivered to the asynchronous consumer only after the first message processing has been completed. This can have some performance impact.
+<br/><br/>
+It is important to note that this MessagesMaximum property defined on the Connection Factory is different from the MessagesMaximum property for a JMS destination. The property for a JMS destination is used to configure the maximum number of messages that can be stored in the destination.
+<br/><br/>
+
+</i>
+
+<br/><br/>
+
+In WLST:
+<br/>
+
+<pre class="brush: java">
+jmsmodule='PVModule'
+jmsCF='PVCF'
+
+cd('/JMSSystemResources/' + jmsmodule + '/JMSResource/' + jmsmodule + '/ConnectionFactories/' + jmsCF + '/ClientParams/' + jmsCF)
+cmo.setMessagesMaximum(1)
+
+</pre>
+
+<br/><br/>
+
+once I do this, only max 16 messages (= the number of consumers) are in Pending state at any time, the other messages are current.
+
+
+
+
+

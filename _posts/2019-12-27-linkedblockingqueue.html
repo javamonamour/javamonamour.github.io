@@ -1,0 +1,45 @@
+---
+layout: post
+title: "LinkedBlockingQueue"
+date: 2019-12-27T13:01:00.004+01:00
+permalink: /2019/12/linkedblockingqueue.html
+blogger_id: "5249461827466111644"
+tags: ["collections"]
+---
+<pre class="brush: java">
+import java.util.concurrent.LinkedBlockingQueue;
+
+public class MyLinkedBlockingQueue {
+    public static void main(String[] args) throws InterruptedException {
+        LinkedBlockingQueue  linkedBlockingQueue = new LinkedBlockingQueue();
+        linkedBlockingQueue.put("PIPPO");
+        linkedBlockingQueue.put("PLUTO");
+        System.out.println(linkedBlockingQueue);
+        Object bla1 = linkedBlockingQueue.peek();
+        System.out.println(bla1);
+        Object bla2 = linkedBlockingQueue.take();
+        System.out.println(bla2);
+        Object bla3 = linkedBlockingQueue.take();
+        System.out.println(bla3);
+        Object bla4 = linkedBlockingQueue.take();
+        System.out.println(bla4);
+
+        System.out.println(linkedBlockingQueue);
+    }
+}
+
+
+</pre><br />
+the output is:<br />
+<br />
+[PIPPO, PLUTO]<br />
+PIPPO  // this is the peek<br />
+PIPPO  // this is the first take<br />
+PLUTO // this is the second take<br />
+<br />
+and then at bla4 it blocks, because the Queue is empty...waiting for someone to put something into it...<br />
+<br />
+<a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/LinkedBlockingQueue.html">https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/concurrent/LinkedBlockingQueue.html</a><br />
+<br />
+<br />
+

@@ -1,0 +1,119 @@
+---
+layout: post
+title: "javax.net.ssl.SSLHandshakeException: null cert chain"
+date: 2017-01-20T20:20:00.001+01:00
+permalink: /2017/01/javaxnetsslsslhandshakeexception-null.html
+blogger_id: "5796748467216994367"
+tags: ["ssl"]
+---
+Some HtTP 500 was being generated in a webapp.
+<br/>
+
+by enabling these flags
+<br/>
+<pre>
+-Djavax.net.debug=ssl:handshake
+-Dssl.debug=true
+-Dweblogic.log.StdoutSeverity=Debug
+-Dweblogic.StdoutDebugEnabled=true
+-Dwls.debug.https=true
+
+</pre>
+
+<br/>
+we discovered this error:
+
+<br/>
+<br/>
+
+<pre class="brush: java">
+weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.unwrap(ByteBuffer,ByteBuffer[]) called: result=Status = OK HandshakeStatus = NEED_TASK
+bytesConsumed = 12 bytesProduced = 0.&gt; 
+*** Certificate chain
+***
+ExecuteThread: '1' for queue: 'weblogic.socket.Muxer', fatal error: 42: null cert chain
+javax.net.ssl.SSLHandshakeException: null cert chain
+ExecuteThread: '1' for queue: 'weblogic.socket.Muxer', SEND TLSv1 ALERT:  fatal, description = bad_certificate
+ExecuteThread: '1' for queue: 'weblogic.socket.Muxer', WRITE: TLSv1 Alert, length = 2
+ExecuteThread: '1' for queue: 'weblogic.socket.Muxer', fatal: engine already closed.  Rethrowing javax.net.ssl.SSLHandshakeException: null cert chain
+ 
+ 
+ 
+ 
+ 
+&lt;Jan 18, 2017 4:39:09 PM CET&gt; &lt;Debug&gt; &lt;SecuritySSL&gt; &lt;BEA-000000&gt; &lt;[Thread[ExecuteThread: '1' for queue: 'weblogic.socket.Muxer',5,Thread Group for Queue: 'weblogic.socket.Muxer']]weblogic.security.SSL.jsseadapter: SSLENGINE: Exception occurred during SSLEngine.wrap(ByteBuffer,ByteBuffer).
+javax.net.ssl.SSLHandshakeException: null cert chain
+               at com.sun.net.ssl.internal.ssl.Handshaker.checkThrown(Handshaker.java:1227)
+               at com.sun.net.ssl.internal.ssl.SSLEngineImpl.checkTaskThrown(SSLEngineImpl.java:489)
+               at com.sun.net.ssl.internal.ssl.SSLEngineImpl.writeAppRecord(SSLEngineImpl.java:1165)
+               at com.sun.net.ssl.internal.ssl.SSLEngineImpl.wrap(SSLEngineImpl.java:1137)
+               at javax.net.ssl.SSLEngine.wrap(SSLEngine.java:450)
+               at weblogic.security.SSL.jsseadapter.JaSSLEngine$1.run(JaSSLEngine.java:68)
+               at weblogic.security.SSL.jsseadapter.JaSSLEngine.doAction(JaSSLEngine.java:732)
+               at weblogic.security.SSL.jsseadapter.JaSSLEngine.wrap(JaSSLEngine.java:66)
+               at weblogic.socket.JSSEFilterImpl.wrapAndWrite(JSSEFilterImpl.java:625)
+               at weblogic.socket.JSSEFilterImpl.doHandshake(JSSEFilterImpl.java:93)
+               at weblogic.socket.JSSEFilterImpl.doHandshake(JSSEFilterImpl.java:66)
+               at weblogic.socket.JSSEFilterImpl.isMessageComplete(JSSEFilterImpl.java:288)
+               at weblogic.socket.SocketMuxer.readReadySocketOnce(SocketMuxer.java:955)
+               at weblogic.socket.SocketMuxer.readReadySocket(SocketMuxer.java:897)
+               at weblogic.socket.PosixSocketMuxer.processSockets(PosixSocketMuxer.java:130)
+               at weblogic.socket.SocketReaderRequest.run(SocketReaderRequest.java:29)
+               at weblogic.socket.SocketReaderRequest.execute(SocketReaderRequest.java:42)
+               at weblogic.kernel.ExecuteThread.execute(ExecuteThread.java:145)
+               at weblogic.kernel.ExecuteThread.run(ExecuteThread.java:117)
+Caused By: javax.net.ssl.SSLHandshakeException: null cert chain
+               at com.sun.net.ssl.internal.ssl.Alerts.getSSLException(Alerts.java:172)
+               at com.sun.net.ssl.internal.ssl.SSLEngineImpl.fatal(SSLEngineImpl.java:1599)
+               at com.sun.net.ssl.internal.ssl.Handshaker.fatalSE(Handshaker.java:269)
+               at com.sun.net.ssl.internal.ssl.Handshaker.fatalSE(Handshaker.java:257)
+               at com.sun.net.ssl.internal.ssl.ServerHandshaker.clientCertificate(ServerHandshaker.java:1512)
+               at com.sun.net.ssl.internal.ssl.ServerHandshaker.processMessage(ServerHandshaker.java:212)
+               at com.sun.net.ssl.internal.ssl.Handshaker.processLoop(Handshaker.java:817)
+               at com.sun.net.ssl.internal.ssl.Handshaker$1.run(Handshaker.java:757)
+               at java.security.AccessController.doPrivileged(Native Method)
+               at com.sun.net.ssl.internal.ssl.Handshaker$DelegatedTask.run(Handshaker.java:1164)
+               at weblogic.socket.JSSEFilterImpl.doTasks(JSSEFilterImpl.java:191)
+               at weblogic.socket.JSSEFilterImpl.doHandshake(JSSEFilterImpl.java:97)
+               at weblogic.socket.JSSEFilterImpl.doHandshake(JSSEFilterImpl.java:66)
+               at weblogic.socket.JSSEFilterImpl.isMessageComplete(JSSEFilterImpl.java:288)
+               at weblogic.socket.SocketMuxer.readReadySocketOnce(SocketMuxer.java:955)
+               at weblogic.socket.SocketMuxer.readReadySocket(SocketMuxer.java:897)
+               at weblogic.socket.PosixSocketMuxer.processSockets(PosixSocketMuxer.java:130)
+               at weblogic.socket.SocketReaderRequest.run(SocketReaderRequest.java:29)
+               at weblogic.socket.SocketReaderRequest.execute(SocketReaderRequest.java:42)
+               at weblogic.kernel.ExecuteThread.execute(ExecuteThread.java:145)
+               at weblogic.kernel.ExecuteThread.run(ExecuteThread.java:117)
+
+</pre>
+<br/>
+<br/>
+
+
+Examining WebLogic config.xml we notice that
+
+<pre class="brush: xml">
+&lt;ssl&gt;
+      &lt;client-certificate-enforced&gt;false&lt;/client-certificate-enforced&gt;
+      &lt;listen-port&gt;32008&lt;/listen-port&gt;
+      &lt;two-way-ssl-enabled&gt;true&lt;/two-way-ssl-enabled&gt;
+&lt;/ssl&gt;
+</pre>
+
+
+
+and this  also appears in the logs:
+<pre class="brush: java">
+&lt;Jan 20, 2017 3:07:23 PM CET&gt; &lt;Debug&gt; &lt;SecuritySSL&gt; &lt;BEA-000000&gt; &lt;[Thread[DynamicJSSEListenThread[DefaultSecure],9,WebLogicServer]]weblogic.security.SSL.jsseadapter: SSLENGINE: SSLEngine.setNeedClientAuth(boolean): value=false.&gt;
+</pre>
+<br/>
+(setNeedClientAuth should have value=true ! )
+<br/>
+Setting the client-certificate-enforced to true fixed the issue.
+
+<br/>
+
+
+
+
+

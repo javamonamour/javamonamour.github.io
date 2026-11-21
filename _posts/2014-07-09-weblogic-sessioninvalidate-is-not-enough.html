@@ -1,0 +1,85 @@
+---
+layout: post
+title: "WebLogic session.invalidate() is not enough"
+date: 2014-07-09T09:10:00.001+02:00
+permalink: /2014/07/weblogic-sessioninvalidate-is-not-enough.html
+blogger_id: "8324291342859717319"
+tags: ["security", "weblogic"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2015-01-28
+    html: "request.logout() requires servlet 3.0, which is supported in WebLogic 12, but Weblogic 11 supports only servlet 2.5"
+  - author: "mqhnow1"
+    date: 2015-01-28
+    html: "Why not try request.logout()?  We are in the age of servlet 3.0."
+  - author: "Pasquale Russo"
+    date: 2016-12-01
+    html: "Hi Pierluigi!<br />The post is so old, but hope you can read it.<br />We have a problem with a logout and login of a page deployed in Weblogic.<br /><br />The page is composed in two part:<br />an upper part (with a specific war) and a bottom part handled by another war.<br />This means that user first log into the upper part and obtain a JSESSSIONID, then clicking in some link the bottom part is opened and we can see another JESSSIONID.<br />Now, for the moment we have a button in the upper part that logout the user.<br />Infact, in the next authentication the user obtain a NEW JSESSIONID for the upper part.<br />Unfortunately when now the user click on a link, the bottom part still have the old JSESSIONID. This happens only when user doesn&#39;t close his browser.<br /><br />Do you think your jsp code <br /><br /><br />&lt;%  <br />session.removeAttribute(&quot;User&quot;); <br />session.invalidate();  <br />weblogic.servlet.security.ServletAuthentication.invalidateAll(request); <br />request.logout();  // only from WebLogic 12, requires Servlet 3.0 <br />%&gt; <br /><br />will be able to remove all JSESSIONID?<br />What kind of jar we need to import into this jsp in order to call correctly the weblogic method? Have you an example of this page?<br />Thanks a lot!!!"
+---
+Implementing correctly security in WebLogic can be a daunting task. So many caveats and dodgy behaviors and not all is CLEARLY documented.
+<br/><br/>
+Suppose I have protested all my JSP with this clause in web.xml:
+
+<pre class="brush: xml">
+
+  &lt;security-constraint>
+        &lt;web-resource-collection>
+            &lt;web-resource-name>AdminPages&lt;/web-resource-name>
+            &lt;description>
+                These pages are only accessible by authorized
+                 administrators.
+            &lt;/description>
+            &lt;url-pattern>/*.jsp&lt;/url-pattern>
+            &lt;http-method>GET&lt;/http-method>
+        &lt;/web-resource-collection>
+        &lt;auth-constraint>
+            &lt;description>
+                These are the roles who have access.
+            &lt;/description>
+            &lt;role-name>
+                admin
+            &lt;/role-name>
+        &lt;/auth-constraint>
+        &lt;user-data-constraint>
+            &lt;description>
+                This is how the user data must be transmitted.
+            &lt;/description>
+            &lt;transport-guarantee>NONE&lt;/transport-guarantee>
+        &lt;/user-data-constraint>
+    &lt;/security-constraint>
+ &lt;error-page>
+
+</pre>
+
+
+<br/><br/>
+
+and the role "admin" is defined in a weblogic.xml:
+<br/><br/>
+<pre class="brush: xml">
+     &lt;security-role-assignment>
+         &lt;role-name>admin&lt;/role-name>
+         &lt;principal-name>Administrators&lt;/principal-name>
+         &lt;principal-name>Monitors&lt;/principal-name>
+         &lt;principal-name>Deployers&lt;/principal-name>
+     &lt;/security-role-assignment>
+
+</pre>
+
+
+At this point all your JSP require that you are authenticated.<br/><br/>
+To logout, you can provide this JSP code:<br/><br/>
+
+<pre class="brush: java">
+&lt;% 
+session.removeAttribute("User");
+session.invalidate(); 
+weblogic.servlet.security.ServletAuthentication.invalidateAll(request);
+request.logout();  // only from WebLogic 12, requires Servlet 3.0
+%>
+
+</pre>
+<br/><br/>
+Without the "invalidateAll(...)", it will not work. Apparently the session information is still kept on the server, and the session will be immediately resumed without asking you to authenticate again. Frustrating. Documentation on this topic is a bit confusing.
+
+

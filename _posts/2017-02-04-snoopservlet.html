@@ -1,0 +1,335 @@
+---
+layout: post
+title: "SnoopServlet"
+date: 2017-02-04T14:18:00.001+01:00
+permalink: /2017/02/snoopservlet.html
+blogger_id: "3634632926701345062"
+tags: ["weblogic"]
+---
+Create a Dynamic Web project "SnoopServlet"
+<br/>
+<br/>
+This is the web.xml:
+
+<br/>
+<br/>
+
+<pre class="brush: xml">
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns=&quot;http://xmlns.jcp.org/xml/ns/javaee&quot; xsi:schemaLocation=&quot;http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd&quot; id=&quot;WebApp_ID&quot; version=&quot;3.1&quot;&gt;
+  &lt;display-name&gt;SnoopServlet&lt;/display-name&gt;
+  &lt;welcome-file-list&gt;
+    &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;index.htm&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;default.html&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;default.htm&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;default.jsp&lt;/welcome-file&gt;
+  &lt;/welcome-file-list&gt;
+  &lt;servlet&gt;
+    &lt;description&gt;&lt;/description&gt;
+    &lt;display-name&gt;MySnoopServlet&lt;/display-name&gt;
+    &lt;servlet-name&gt;MySnoopServlet&lt;/servlet-name&gt;
+    &lt;servlet-class&gt;MySnoopServlet&lt;/servlet-class&gt;
+  &lt;/servlet&gt;
+  &lt;servlet-mapping&gt;
+    &lt;servlet-name&gt;MySnoopServlet&lt;/servlet-name&gt;
+    &lt;url-pattern&gt;/MySnoopServlet&lt;/url-pattern&gt;
+  &lt;/servlet-mapping&gt;
+&lt;/web-app&gt;
+
+</pre>
+
+<br/>
+This is the weblogic.xml:
+<br/>
+
+<pre class="brush: xml">
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;wls:weblogic-web-app xmlns:wls=&quot;http://xmlns.oracle.com/weblogic/weblogic-web-app&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd http://xmlns.oracle.com/weblogic/weblogic-web-app http://xmlns.oracle.com/weblogic/weblogic-web-app/1.9/weblogic-web-app.xsd&quot;&gt;
+    &lt;wls:weblogic-version&gt;12.2.1.2&lt;/wls:weblogic-version&gt;
+    &lt;wls:context-root&gt;SnoopServlet&lt;/wls:context-root&gt;
+&lt;/wls:weblogic-web-app&gt;
+
+</pre>
+
+<br/><br/>
+<pre class="brush: java">
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+@SuppressWarnings(&quot;serial&quot;)
+public class MySnoopServlet extends HttpServlet
+{
+    public int mycount = 0;
+    public MySnoopServlet()
+    {
+    }
+
+    public void destroy()
+    {
+    }
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException
+    {
+     mycount+=1;
+        HttpSession session;
+        PrintWriter out;
+        response.setContentType(&quot;text/html&quot;);
+        session = request.getSession();
+        out = response.getWriter();
+        try {
+         out.println(&quot;&lt;html&gt;&quot;);
+         out.println(&quot;&lt;head&gt;&lt;title&gt;SnoopServlet&lt;/title&gt;&lt;/head&gt;&quot;);
+         out.println(&quot;&lt;body text='#ffffff' bgcolor='#666699' link='#ffffff' vlink='#ffffff' alink='#ffffff'&gt;&quot;);
+         out.println(&quot;&lt;p&gt;The servlet has received a GET. This is the reply.&lt;/p&gt;&quot;);
+         out.flush();
+         out.print(&quot;&lt;p&gt;Request&quot;);
+         out.print(&quot;&lt;br&gt;Principal = &quot; + request.getUserPrincipal());
+         out.print(&quot;&lt;br&gt;URL = &quot; + request.getRequestURL().toString());
+         out.print(&quot;&lt;br&gt;AuthType = &quot; + request.getAuthType());
+         out.print(&quot;&lt;br&gt;RemoteUser = &quot; + request.getRemoteUser());
+         out.print(&quot;&lt;br&gt;ServerName = &quot; + System.getProperty(&quot;weblogic.Name&quot;));
+         out.print(&quot;&lt;br&gt;SessionID = &quot; + session.getId());
+         out.println(&quot;&lt;br&gt;&lt;hr&gt; &lt;br&gt;&quot;);
+         Enumeration enum1 = request.getHeaderNames();
+         out.print(&quot;&lt;p&gt;Header&quot;);
+         String item;
+         for(; enum1.hasMoreElements(); out.print(&quot;&lt;br&gt;&quot; + item + &quot;=&quot; + request.getHeader(item)))
+             item = (String)enum1.nextElement();
+ 
+         out.flush();
+         out.println(&quot;&lt;br&gt;&lt;hr&gt; &lt;br&gt;&quot;);
+         out.print(&quot;&lt;p&gt;Attributes&quot;);
+         for(enum1 = request.getAttributeNames(); enum1.hasMoreElements(); out.print(&quot;&lt;br&gt;&quot; + item + &quot;=&quot; + request.getAttribute(item)))
+             item = (String)enum1.nextElement();
+ 
+         out.flush();
+         out.println(&quot;&lt;br&gt;&lt;hr&gt; &lt;br&gt;&quot;);
+         out.print(&quot;&lt;p&gt;Parameters&quot;);
+         for(enum1 = request.getParameterNames(); enum1.hasMoreElements(); out.print(&quot;&lt;br&gt;&quot; + item + &quot;=&quot; + request.getParameter(item)))
+             item = (String)enum1.nextElement();
+ 
+         out.println(&quot;&lt;br&gt;&lt;hr&gt; &lt;br&gt;&quot;);
+         out.flush();
+       }
+       catch (Throwable th) {
+        out.print(&quot;&lt;pre&gt;&quot;);
+        th.printStackTrace();
+        th.printStackTrace(out);
+        out.print(&quot;&lt;/pre&gt;&quot;);
+      }
+      finally {
+        out.println(&quot;&lt;/body&gt;&lt;/html&gt;&quot;);
+      }
+        return;
+    }
+
+    public void init()
+        throws ServletException
+    {
+    }
+
+    
+}
+
+
+</pre>
+
+<br/>
+<br/>
+
+http://localhost:7001/SnoopServlet/MySnoopServlet?pippo=pluto
+
+
+<br/>
+<br/>
+<pre>
+The servlet has received a GET. This is the reply.
+
+Request
+Principal = null
+URL = http://192.168.56.1:7001/SnoopServlet/MySnoopServlet
+AuthType = null
+RemoteUser = null
+ServerName = AdminServer
+SessionID = MHcJQYLAVotakdRTZ2rAwUj_sRjWlQ3Bui-_d50iyOJwAwNJW6B2!837838669!1486213972672
+
+Header
+Host=192.168.56.1:7001
+User-Agent=Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0
+Accept=text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language=en-US,en;q=0.5
+Accept-Encoding=gzip, deflate
+Cookie=JSESSIONID=MowJK_Z1Wj2l48jsHZqf21DItW3tklujnqPmzh6Uj9vnI9CEtDfX!-1767948456
+Connection=keep-alive
+Upgrade-Insecure-Requests=1
+
+Attributes
+
+Parameters
+pippo=pluto
+</pre>
+
+<br/>
+The JSP can be found in $WL_HOME/samples/server/examples/src/examples/security/sslclient/src/main/webapp/SnoopServlet.jsp
+<br/><br/>
+
+<pre class="brush: java">
+&lt;!-- Copyright (c) 1999,2015, Oracle and/or its affiliates. All Rights Reserved.--&gt;
+&lt;%@ page import=&quot;java.util.Enumeration,
+      java.io.PrintWriter&quot;%&gt;
+
+&lt;%!
+   /**
+  * &lt;p&gt;This helper method can be used to help prevent Cross Site Scripting
+  * vulnerabilities. Any Servlet or JSP which sends user input (eg.
+  * query parameters in HTTP requests) to be rendered into a user's browser
+  * needs to use this method to encode the user input.  This ensures that any
+  * HTML in their input (either malicious or otherwise) is not executed by
+  * the browser.  This is achieved by converting characters to their HTML
+  * escaped form.  For example, '&amp;' is converted to '&amp;amp;amp;'.
+  * &lt;p&gt;
+  * A full description of Cross Site Scripting (XSS) vulnerabilities can
+  * be found at
+  * &lt;a href=&quot;http://www.cert.org/tech_tips/malicious_code_mitigation.html&quot;&gt;
+  * http://www.cert.org/tech_tips/malicious_code_mitigation.html&lt;/a&gt;.
+  *
+  * @param str
+  */
+  public String encodeXSS(String str) {
+   return weblogic.servlet.security.Utils.encodeXSS(str);
+  }
+%&gt;
+
+&lt;%
+ try {
+%&gt;
+   &lt;p&gt;
+    This servlet returns information about the HTTP request
+    itself. You can modify this servlet to take this information
+    and store it elsewhere for your HTTP server records. This
+    servlet is also useful for debugging.
+      &lt;/p&gt;
+   &lt;h3&gt;
+   Servlet Spec Version Implemented
+   &lt;/h3&gt;
+   &lt;pre&gt;
+   &lt;%= getServletConfig().getServletContext().getMajorVersion() + &quot;.&quot; + getServletConfig().getServletContext().getMinorVersion() %&gt;
+   &lt;/pre&gt;
+   &lt;h3&gt;
+   Requested URL
+   &lt;/h3&gt;
+   &lt;pre&gt;
+   &lt;%= request.getRequestURL().toString() %&gt;
+   &lt;/pre&gt;
+   &lt;h3&gt;
+   Request parameters
+   &lt;/h3&gt;
+   &lt;pre&gt;
+&lt;%
+
+   Enumeration enum_ = request.getParameterNames();
+   while(enum_.hasMoreElements()){
+     String key = (String)enum_.nextElement();
+     String[] paramValues = request.getParameterValues(key);
+     for(int i=0;i &lt; paramValues.length;i++){
+         out.println(key + &quot; : &quot;  + encodeXSS(paramValues[i]));
+     }
+   }
+
+%&gt;
+   &lt;/pre&gt;
+   &lt;h3&gt;
+   Request information
+   &lt;/h3&gt;
+   &lt;pre&gt;
+   Request Method: &lt;%= request.getMethod() %&gt;
+   Request URI: &lt;%= request.getRequestURI() %&gt;
+   Request Protocol: &lt;%= request.getProtocol() %&gt;
+   Servlet Path: &lt;%= request.getServletPath() %&gt;
+   Path Info: &lt;%= request.getPathInfo() %&gt;
+   Path Translated: &lt;%= request.getPathTranslated() %&gt;
+   Query String: &lt;%= encodeXSS(request.getQueryString()) %&gt;
+   Content Length: &lt;%= request.getContentLength() %&gt;
+   Content Type: &lt;%= request.getContentType() %&gt;
+   Server Name: &lt;%= request.getServerName() %&gt;
+   Server Port: &lt;%= request.getServerPort() %&gt;
+   Remote User: &lt;%= request.getRemoteUser() %&gt;
+   Remote Address: &lt;%= request.getRemoteAddr() %&gt;
+   Remote Host: &lt;%= request.getRemoteHost() %&gt;
+   Authorization Scheme: &lt;%= request.getAuthType() %&gt;
+   &lt;/pre&gt;
+   &lt;h3&gt;Certificate Information&lt;/h3&gt;
+   &lt;pre&gt;
+&lt;%
+   java.security.cert.X509Certificate certs [];
+   certs = (java.security.cert.X509Certificate [])
+   request.getAttribute(&quot;javax.servlet.request.X509Certificate&quot;);
+   if ((certs != null) &amp;&amp; (certs.length &gt; 0)) {
+%&gt;
+    Subject Name : &lt;%= certs[0].getSubjectDN().getName() %&gt; &lt;br&gt;
+    Issuer Name :&lt;%= certs[0].getIssuerDN().getName() %&gt; &lt;br&gt;
+    Certificate Chain Length : &lt;%= certs.length %&gt; &lt;br&gt;
+&lt;%
+
+      // List the Certificate chain
+      for (int i=0; i&lt;certs.length;i++) {
+%&gt;  Certificate[&lt;%= i %&gt;] : &lt;%= certs[i].toString() %&gt;
+
+&lt;%
+    } // end of for loop
+
+   }
+   else // certs==null
+    {
+%&gt;
+    Not using SSL or client certificate not required.
+&lt;%
+    } // end of else
+%&gt;
+   &lt;/pre&gt;
+   &lt;h3&gt;
+   Request headers
+   &lt;/h3&gt;
+   &lt;pre&gt;
+&lt;%
+   enum_ = request.getHeaderNames();
+   while (enum_.hasMoreElements()) {
+    String name = (String)enum_.nextElement();
+    out.println(name + &quot;: &quot; +encodeXSS(request.getHeader(name)));
+   }
+%&gt;
+   &lt;/pre&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
+&lt;%
+ }
+ catch (Exception ex) {
+  ex.printStackTrace(new PrintWriter(out));
+ }
+%&gt;
+
+</pre>
+
+<br/>
+
+http://localhost:7001/SnoopServlet/SnoopServlet.jsp
+
+
+<br/><br/>
+
+
+
+
+

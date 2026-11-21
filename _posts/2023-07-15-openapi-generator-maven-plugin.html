@@ -1,0 +1,48 @@
+---
+layout: post
+title: "openapi-generator-maven-plugin"
+date: 2023-07-15T12:55:00.004+02:00
+permalink: /2023/07/openapi-generator-maven-plugin.html
+blogger_id: "2496970054578398691"
+tags: ["openapi-generator-maven-plugin"]
+---
+The openapi-generator-maven-plugin is a plugin for the Apache Maven project management tool, which is used to build and manage projects written in Java and other languages. This plugin specifically aids in the generation of API clients, server stubs, API documentation, and configuration from an OpenAPI Specification (formerly known as the Swagger Specification).
+
+An OpenAPI Specification is a standard, language-agnostic way of describing HTTP-based APIs, allowing both humans and machines to understand the capabilities of a service without having to read the source code or access documentation.
+
+Here is an example of how the openapi-generator-maven-plugin might be configured in your pom.xml:
+
+<pre>
+
+&lt;build>
+  &lt;plugins>
+    &lt;plugin>
+      &lt;groupId>org.openapitools&lt;/groupId>
+      &lt;artifactId>openapi-generator-maven-plugin&lt;/artifactId>
+      &lt;version>4.3.1&lt;/version> &lt;!-- use the latest version available -->
+      &lt;executions>
+        &lt;execution>
+          &lt;goals>
+            &lt;goal>generate&lt;/goal>
+          &lt;/goals>
+          &lt;configuration>
+            &lt;inputSpec>${project.basedir}/src/main/resources/api.yaml&lt;/inputSpec>
+            &lt;generatorName>java&lt;/generatorName>
+            &lt;configOptions>
+              &lt;sourceFolder>src/gen/java/main&lt;/sourceFolder>
+            &lt;/configOptions>
+          &lt;/configuration>
+        &lt;/execution>
+      &lt;/executions>
+    &lt;/plugin>
+  &lt;/plugins>
+&lt;/build>
+
+</pre>
+
+In the configuration above, the inputSpec tag is used to specify the location of the API specification file. The generatorName tag is used to specify the language of the generated code, in this case, Java. The configOptions tag is used to specify various options for the generated code, such as its location within the project.
+
+After this plugin is set up and the project is built (for instance, with mvn install), the API clients, server stubs, and other generated code are produced automatically based on the API specification file. This can significantly streamline the development process when working with APIs.
+
+Please note the plugin version in the example is hypothetical and might be outdated at the time of your query. You should always try to use the latest available version.
+

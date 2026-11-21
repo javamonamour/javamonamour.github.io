@@ -1,0 +1,40 @@
+---
+layout: post
+title: "OSB vs SOA Suite"
+date: 2010-11-29T11:10:00.003+01:00
+permalink: /2010/11/osb-vs-soa-suite.html
+blogger_id: "2069296857781018906"
+tags: ["OSB", "SOASuite"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2010-11-29
+    html: "hello Damien,<br />yes I have used extensively the Eclipse Plugin for OSB, it sort-of-works for Message Flow editing and XQuery prototyping, <br />but XQueries cannot be Unit tested easily... and it&#39;s definitely a no-go for EJB Business Services....<br />its debugging tool is quite good, but it works intermittently...<br /><br />Also automatic deployment to OSB has some problems...<br /><br />On the whole I think the product needs some bug fixing.... anyway it&#39;s pretty decent.<br /><br /><br />As for Eclipse, I am not a big fan on the Elephant... its memory usage alone is appalling, 700 MB easily..."
+  - author: "Anonymous"
+    date: 2010-11-29
+    html: "Have you tried the Oracle Workshop for eclipse (OEPE)? while not as good as JDeveloper it does allow for source code control etc<br /><br />Damien"
+---
+guest post - thanks to Fabio.<br />
+<br />
+SOA Suite and OSB are overlapping products, and also complementary.<br />
+<br />
+Last year was it when starting another project, I did a POC to consider whether we should use SOA Suite or OSB. The project needed a bus service, so this was the only point analyzed. <br />
+<br />
+A summary:<br />
+<br />
+1) For long duration processes sure I would use BPEL, not OSB.<br />
+<br />
+2) I have looked at using only the Mediator (the former Oracle ESB). However, I could not do what I wanted, such as exception handling and auditing. So I started to analyze BPEL<br />
+<br />
+3) BPEL: the development environment in JDeveloper BPEL is much better than the OSB. Simple things like setting variables, and validate XPaths, which doesn't exist in OSB, JDeveloper SOA Suite has plugins that work very well.<br />
+However, you have to compare the performance of the OSB with the <b>performance </b>of BPEL. In my POC <b>OSB was at least 15 times faster than BPEL</b>. In my performance test, OSB reached 300 tps while BPEL is not going to 20tps. At the time I opened a call with Oracle, I disabled dehydration, and changed other settings to improve performance.<br />
+<br />
+The consultants at Oracle told me I could not greatly improve the performance of the BPEL, because it was not designed to be a bus service. And this is why Oracle has chosen the OSB Service Bus strategy.<br />
+<br />
+The runtime of the OSB is much more optimized than the BPEL runtime. The monitoring of OSB is also much more advanced, with real-time monitoring, SLA, alerts, etc..<br />
+When Oracle improve the plugin for OSB for something like BPEL (can be Eclipse or JDeveloper, no matter the tool), oh yes the product will be much better.<br />
+<br />
+<br />
+<br />
+<a href="http://www.slideshare.net/gschmutz/oracle-soa-suite-11g-mediator-vs-oracle-service-bus-osb">Here</a> a great presentation on what you can accomplish with OSB and with SOA Suite, and overlapping functionalities. Especially worthy is the slide at page 13.<br />
+<br />
+Of the same author, I would also recommend <a href="http://www.slideshare.net/gschmutz/best-practices-for-testing-soa-suite-11g-based-systems?src=related_normal&rel=2605969">this</a> presentation on testing SOA Suite environments.

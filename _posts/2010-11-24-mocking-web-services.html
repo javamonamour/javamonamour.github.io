@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Mocking Web Services"
+date: 2010-11-24T12:41:00.002+01:00
+permalink: /2010/11/mocking-web-services.html
+blogger_id: "8755373329023543770"
+tags: ["mockws"]
+---
+SOAP UI contains a mock service generation utility. <br />
+<br />
+Is it worth using it?<br />
+<br />
+<br />
+<a href="http://delusionofgrandeur.posterous.com">Luciano </a>says:<br />
+<br />
+<br />
+I have used them, and for me they are complicated to maintain (we had some 20 SoapUI Mocks and it was a pain in the neck to update and deploy them to Win and UNIX). <br />
+<br />
+Another problem with the mock SoapUI is linked to the fact that if you change the WSDL you realize the problem only at runtime. For us it was a problem because the WSDL would change weekly, maybe not your case. <br />
+<br />
+Finally, on my advice, we've moved to "normal" Web Services deployed in a dedicated EAR. In doing so we obtained the following advantages:<br />
+<br />
+- Easy to deploy (the deploy was carried out directly by Hudson, during the normal deploy the application)<br />
+<br />
+- The business logic of the mock can be more sophisticated, since it's all in Java<br />
+<br />
+- The mock were compiled during the normal build procedure of the project, so we could detectd problems in the WSDL at build time - rather than runtime.<br />
+<br />
+<br />
+The infrastructure that I had set up allowed to create a web service from a WSDL with a simple command Gradl, so the migration to "mock Java" was a matter of 3 hours work. <br />
+<br />
+If you have a mock or two, with a WSDL that never changes and one environment and deploy a simple business logic, use SoapUI. Otherwise consider creating a dedicated web service.

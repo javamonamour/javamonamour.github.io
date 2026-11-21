@@ -1,0 +1,61 @@
+---
+layout: post
+title: "Getting started with Ansible in Docker"
+date: 2017-12-16T23:05:00.000+01:00
+permalink: /2017/12/getting-started-with-ansible-in-docker.html
+blogger_id: "6780504049081327694"
+tags: ["ansible", "centos", "docker"]
+---
+Since OpenShift uses Ansible, and also since I hate Puppet, I love Python, Ansible is based on Python and I always wanted to learn a Provisioning tool other from Puppet to prove that Puppet folks are losers...<br />
+and since Ansible can nuke your environment if used incorrectly....<br />
+<br />
+I am installing Ansible in a docker Centos machine, so I can nuke it at my will!<br />
+<br />
+docker pull centos<br />
+#here nothing happens<br />
+docker run centos<br />
+docker container ls<br />
+docker run -i -t centos<br />
+yum install man<br />
+yum install ansible<br />
+exit<br />
+#note down the container id, it's displayed after the root@ prompt , like in root@61d50a06c86c<br />
+docker commit 61d50a06c86c centosansible<br />
+<br />
+at this point I can easily run:<br />
+docker run -i -t centosansible<br />
+<br />
+and if I do<br />
+docker images | grep centos<br />
+centosansible                  latest              2766690643c3        9 minutes ago       353MB<br />
+centos                         latest              3fa822599e10        2 weeks ago         204MB<br />
+<br />
+I see that my image is there (the 353MB size include all the layers from centos image, which are NOT duplicated, so the real additional space is only 353-204=149 MB<br />
+<br />
+<br />
+<a href="http://docs.ansible.com/ansible/latest/intro_installation.html">http://docs.ansible.com/ansible/latest/intro_installation.html</a><br />
+<br />
+<br />
+ansible --version<br />
+<pre>ansible 2.4.1.0
+  config file = /etc/ansible/ansible.cfg
+  configured module search path = [u'/root/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python2.7/site-packages/ansible
+  executable location = /usr/bin/ansible
+  python version = 2.7.5 (default, Aug  4 2017, 00:39:18) [GCC 4.8.5 20150623 (Red Hat 4.8.5-16)]
+</pre><br />
+<br />
+ansible localhost -a /bin/date<br />
+<br />
+ansible localhost -m ping<br />
+<br />
+<br />
+<br />
+This is a nice tutorial - skip first 13 minutes, then you have 20 minutes of theory, then some interesting Ansible examples<br />
+<br />
+<iframe width="854" height="480" src="https://www.youtube.com/embed/dCQpaTTTv98" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe><br />
+<br />
+<br />
+<br />
+<br />
+

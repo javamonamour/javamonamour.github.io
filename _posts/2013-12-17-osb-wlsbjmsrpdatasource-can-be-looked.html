@@ -1,0 +1,37 @@
+---
+layout: post
+title: "OSB: wlsbjmsrpDataSource can be looked up only by an Admin or ALSBSystem user"
+date: 2013-12-17T16:30:00.002+01:00
+permalink: /2013/12/osb-wlsbjmsrpdatasource-can-be-looked.html
+blogger_id: "8807654360839161171"
+tags: ["OSB"]
+---
+The short way: 
+<br/>
+<pre>
+cd /opt/oracle/domains/osbdev1do/servers/osbdev1ms1/data/ldap/ldapfiles
+
+less EmbeddedLDAP.data
+
+search for wlsbjmsrpDataSource 
+</pre>
+
+<br/><br/>
+you will find the policy:
+<br/>
+
+
+<pre class="brush: xml">
+
+&lt;Policy xmlns="urn:oasis:names:tc:xacml:2.0:policy:schema:os" PolicyId="urn:bea:xacml:2.0:entitlement:resource:type@E@Fjndi@G@M@Oapplication@E@M@Opath@E@VwlsbjmsrpDataSource@W" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">&lt;Description>Rol(ALSBSystem) | Rol(Admin)&lt;/Description>&lt;Target>&lt;Resources>&lt;Resource>&lt;ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">type=&lt;jndi&gt;, application=, path={wlsbjmsrpDataSource}&lt;/AttributeValue>&lt;ResourceAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:resource:resource-ancestor-or-self" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>&lt;/ResourceMatch>&lt;/Resource>&lt;/Resources>&lt;/Target>&lt;Rule RuleId="primary-rule" Effect="Permit">&lt;Condition>&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:or">&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ALSBSystem&lt;/AttributeValue>&lt;SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role" DataType="http://www.w3.org/2001/XMLSchema#string"/>&lt;/Apply>&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Admin&lt;/AttributeValue>&lt;SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:role" DataType="http://www.w3.org/2001/XMLSchema#string"/>&lt;/Apply>&lt;/Apply>&lt;/Condition>&lt;/Rule>&lt;Rule RuleId="deny-rule" Effect="Deny">&lt;/Rule>&lt;/Policy>
+
+
+
+</pre>
+
+
+
+so if you are using the GridLink <a href="http://www.oracle.com/technetwork/articles/gridlink-rac-488352.zip">http://www.oracle.com/technetwork/articles/gridlink-rac-488352.zip</a> monitoring application, you should make sure it runs with a technical id which is Admin or ALSBSystem .
+
+
+

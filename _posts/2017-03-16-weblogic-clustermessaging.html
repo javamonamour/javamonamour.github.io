@@ -1,0 +1,30 @@
+---
+layout: post
+title: "WebLogic ClusterMessaging  "
+date: 2017-03-16T07:51:00.001+01:00
+permalink: /2017/03/weblogic-clustermessaging.html
+blogger_id: "6008116862232752596"
+tags: ["cluster"]
+---
+We occasionally see these messages in an instance of a WLS cluster:
+<br/><br/>
+
+####&lt;Mar 8, 2017 10:21:43 AM CET&gt; &lt;Info&gt; &lt;WorkManager&gt; &lt;myhost&gt; &lt;myserver&gt; &lt;[ACTIVE] ExecuteThread: '13' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1488964903589&gt; &lt;BEA-002939&gt; &lt;The maximum thread constraint ClusterMessaging has been reached 2 times for the last 237 seconds.&gt;  
+
+
+
+<br/><br/>
+What is that constraint ClusterMessaging ? It's set internally by WLS on a WorkManager, it allows max 8 threads to handle the internal cluster messaging and this parameter can't be changed.
+
+
+<br/><br/>
+If you want to detect what is wrong, take a few thread dumps at interval of 3-5 seconds. Most likely you have some huge object in the JNDI tree being serialized/deserialized. Another possibility is that you have a non serializable object in the JNDI tree. If this is not the case, try analyzing your network traffic (the procedure could be very differend depending if you are using Multicast of Unicast)
+
+<br/><br/>
+In our case, we had this message  which could be a hint that serialization is wrong:
+<br/><br/>
+&lt;Mar 14, 2017 10:30:19 AM CET&gt; &lt;Error&gt; &lt;Cluster&gt; &lt;BEA-000123&gt; &lt;Conflict start: You tried to bind an object under the name jdbc.workflow.HibernateSessionFactory in the JNDI tree. The object  from -2132852355821393490S:169.56.179.213:[-1,-1,32275,32275,-1,-1,-1]:mydomain:myserver01 is non-clusterable, and you have tried to bind more than once from two or more servers. Such objects can only be deployed from one server.&gt; 
+
+<br/><br/>
+
+

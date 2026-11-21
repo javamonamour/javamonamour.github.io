@@ -1,0 +1,48 @@
+---
+layout: post
+title: "soapui: browser component is disabled"
+date: 2012-08-02T10:52:00.002+02:00
+permalink: /2012/08/soapui-browser-component-is-disabled.html
+blogger_id: "6458743653995490272"
+tags: ["soapui"]
+---
+<a href="http://www.eviware.com/forum/viewtopic.php?f=2&t=7797&hilit=disabled+browser">http://www.eviware.com/forum/viewtopic.php?f=2&t=7797&hilit=disabled+browser</a><br />
+<br />
+<br />
+apparently if you want to use the SOAPUI embedded browser you must use the 32 bit JDK.<br />
+<br />
+Just <a href="http://www.oracle.com/technetwork/java/javase/downloads/jre-7u3-download-1501631.html">install a Java 7 32 bit</a>, then put this in your soapui.bat:<br />
+<br />
+<br />
+<pre name="code" class="brush: java">@echo off
+
+set SOAPUI_HOME=C:\pierre\SmartBear\soapUI-4.5.0\bin\
+
+set JAVA=c:\pierre\jre32\bin\java
+
+rem init classpath
+
+set CLASSPATH=%SOAPUI_HOME%soapui-4.5.0.jar;%SOAPUI_HOME%..\lib\*;
+
+rem JVM parameters, modify as appropriate
+set JAVA_OPTS=-Xms128m -Xmx1024m -Dsoapui.properties=soapui.properties -Dsoapui.home=%SOAPUI_HOME%
+
+if "%SOAPUI_HOME%" == "" goto START
+    set JAVA_OPTS=%JAVA_OPTS% -Dsoapui.ext.libraries="%SOAPUI_HOME%ext"
+    set JAVA_OPTS=%JAVA_OPTS% -Dsoapui.ext.listeners="%SOAPUI_HOME%listeners"
+    set JAVA_OPTS=%JAVA_OPTS% -Dsoapui.ext.actions="%SOAPUI_HOME%actions"
+                set JAVA_OPTS=%JAVA_OPTS% -Djava.library.path="%SOAPUI_HOME%\"
+                set JAVA_OPTS=%JAVA_OPTS% -Dwsi.dir="%SOAPUI_HOME%..\wsi-test-tools"
+rem uncomment to disable browser component
+rem    set JAVA_OPTS=%JAVA_OPTS% -Dsoapui.jxbrowser.disable="true"
+
+:START
+
+rem ********* run soapui ***********
+
+"%JAVA%" %JAVA_OPTS% com.eviware.soapui.SoapUI %*
+
+
+</pre><br />
+<br />
+where c:\pierre\jre32\bin\java is the location of your 32 bit JRE

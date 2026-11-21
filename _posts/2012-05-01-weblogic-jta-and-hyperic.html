@@ -1,0 +1,55 @@
+---
+layout: post
+title: "WebLogic JTA and Hyperic"
+date: 2012-05-01T12:38:00.002+02:00
+permalink: /2012/05/weblogic-jta-and-hyperic.html
+blogger_id: "5686255007047747687"
+tags: ["JTA"]
+---
+Generalities on JTA: <a href="http://en.wikipedia.org/wiki/Java_Transaction_API">http://en.wikipedia.org/wiki/Java_Transaction_API</a><br />
+<br />
+Some explanation on the interaction between a Transaction Manager and a Resource Manager in WebLogic <a href="http://docs.oracle.com/cd/E15051_01/wls/docs103/jta/jtatxexp.html#wp1065101">here</a> <br />
+<br />
+The interesting story is that in a WebLogic server there are a-plenty of JTA resources:<br />
+<br />
+<br />
+<br />
+ACMEDataSource_mydomain      <br />
+WLStore_mydomain_FileStore_auto_1      <br />
+WLStore_mydomain_ACMECommonFileStore1      <br />
+WLStore_mydomain_WseeFileStore_auto_1      <br />
+WLStore_mydomain__WLS_myserver      <br />
+WSATGatewayRM_myserver_mydomain      <br />
+eis/AQ/aqSample      <br />
+eis/activemq/Queue      <br />
+eis/aqjms/Queue      <br />
+eis/aqjms/Topic      <br />
+eis/fioranomq/Topic      <br />
+eis/jbossmq/Queue      <br />
+eis/pramati/Queue      <br />
+eis/sunmq/Queue      <br />
+eis/tibjms/Queue      <br />
+eis/tibjms/Topic      <br />
+eis/tibjmsDirect/Queue      <br />
+eis/tibjmsDirect/Topic      <br />
+eis/webspheremq/Queue      <br />
+eis/wls/Queue      <br />
+eis/wls/Topic <br />
+<br />
+<br />
+they are coming from <br />
+* all XA Datasources (actually, probably only those who are being used in a DbAdapter connection factory)<br />
+* all Resource Adaptors (the eis/..... is the JNDI name of the "javax.resource.cci.ConnectionFactory" deployed<br />
+* all the file stores<br />
+<br />
+<br />
+the WSATGatewayRM is something related to Web Services Atomic Transactions (WSAT) <a href="http://docs.oracle.com/cd/E14571_01/web.1111/e13734/transaction.htm">http://docs.oracle.com/cd/E14571_01/web.1111/e13734/transaction.htm</a> <br />
+... I see some entries related to WSAT in config\fmwconfig\policy-accessor-config.xml.... <br />
+grep -r WSAT *<br />
+&lt;interceptor name="ClientWSATInterceptor" class="oracle.j2ee.ws.client.transaction.ClientWSATInterceptor"<br />
+&lt;interceptor name="ServerWSATInterceptor" class="oracle.j2ee.ws.server.transaction.ServerWSATInterceptor"<br />
+<br />
+and they are part of the <br />
+&lt;interceptor-chain name="SOAPServiceBindingInterceptorChain" class="oracle.integration.platform.common.SOAPBindingInterceptorChain"&gt;<br />
+and<br />
+&lt;interceptor-chain name="SOAPReferenceBindingInterceptorChain"  class="oracle.integration.platform.common.SOAPBindingInterceptorChain"&gt;

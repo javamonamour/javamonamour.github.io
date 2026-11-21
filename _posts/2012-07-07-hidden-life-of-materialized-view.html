@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Hidden life of a Materialized View"
+date: 2012-07-07T07:43:00.000+02:00
+permalink: /2012/07/hidden-life-of-materialized-view.html
+blogger_id: "8180723907564342832"
+tags: ["oracledb"]
+---
+in order to create a materialized view that can be refreshed (instead of "completely rebuilt") you must create a "materialized view log":<br />
+<br />
+<b>create materialized view log on wli_qs_report_attribute;</b><br />
+<br />
+after that you can create the matview:<br />
+<br />
+<b>CREATE MATERIALIZED VIEW WLI_QS_REPORT_MAT_VIEW as select * from wli_qs_report_attribute;<br />
+</b><br />
+<br />
+this will generate a table mlog$_wli_qs_report_attrib listing all the changes since the last refresh:<br />
+<br />
+select count(*) from mlog$_wli_qs_report_attrib;<br />
+3776<br />
+<br />
+desc mlog$_wli_qs_report_attrib<br />
+Name            Null Type          <br />
+--------------- ---- ------------- <br />
+MSG_GUID             VARCHAR2(64)  <br />
+SNAPTIME$$           DATE          <br />
+DMLTYPE$$            VARCHAR2(1)   <br />
+OLD_NEW$$            VARCHAR2(1)   <br />
+CHANGE_VECTOR$$      RAW(255 BYTE)<br />
+<br />
+<br />
+After you fast refresh the WLI_QS_REPORT_MAT_VIEW MATERIALIZED VIEW, the size of mlog$_wli_qs_report_attrib will drop to 0, and the ERROR sign next to the WLI_QS_REPORT_MAT_VIEW goes away.

@@ -1,0 +1,46 @@
+---
+layout: post
+title: "JPA using Coherence as Level 2 Cache"
+date: 2011-12-16T22:38:00.001+01:00
+permalink: /2011/12/jpa-using-coherence-and-level-2-cache.html
+blogger_id: "5866080159978538447"
+tags: ["coherence"]
+---
+quite cool this video on TopLink grid with COH in WL Cluster.<br />
+<br />
+<object style="height: 390px; width: 640px;"><param name="movie" value="http://www.youtube.com/v/eYgVYLey5Fg?version=3&feature=player_detailpage"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><embed src="http://www.youtube.com/v/eYgVYLey5Fg?version=3&feature=player_detailpage" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="640" height="360"></object><br />
+<br />
+In a nutshell:<br />
+<br />
+<ul><li>Coherence can cache DB data in a cluster-wide manner</li>
+<li>Grid Cache mode uses Coherence to cache (read-through) objects by ID</li>
+<li>Grid Read mode turns JPQL queries into COH Grid queries</li>
+<li>Grid Entity mode supports read and writes directly into the Cache</li>
+</ul><br />
+Grid Entity can be tricky, because updates are asynchronous and they could fail, leaving the cache out of sync with the DB.<br />
+<br />
+Recommended model: <br />
+Out-Of-Process, COH is in a different JVM as the Application Server.<br />
+<br />
+In-Process: everything in the same JVM. Good only for development.<br />
+<br />
+Mixed model (some data in near-cache, some in far-cache) can be useful in some applications.<br />
+<br />
+<br />
+<br />
+Second part:<br />
+<br />
+<br />
+<object style="height: 390px; width: 640px"><param name="movie" value="http://www.youtube.com/v/Ket7aGKKa5g?version=3&feature=player_detailpage"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><embed src="http://www.youtube.com/v/Ket7aGKKa5g?version=3&feature=player_detailpage" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="640" height="360"></object><br />
+<br />
+<br />
+it's quite cool, it shows how to create a COH cluster and server, how to configure a WL server for COH. It gives an example of a Grid Entity mode to offload DB writes.<br />
+<br />
+<br />
+Here the example <br />
+<a href="http://blogs.oracle.com/jeffwest/entry/introducing_the_oracle_parcel_serviceexamplereference_application">http://blogs.oracle.com/jeffwest/entry/introducing_the_oracle_parcel_serviceexamplereference_application<br />
+</a><br />
+<br />
+and the code is on SVN at https://svn.java.net/svn/oracle-pacel-svc~ops-r3-ee6 <br />
+<br />
+COOL!

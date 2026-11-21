@@ -1,0 +1,70 @@
+---
+layout: post
+title: "FileAdapter claiming that a message is malformed"
+date: 2011-01-20T12:05:00.005+01:00
+permalink: /2011/01/fileadapter-claiming-that-message-is.html
+blogger_id: "1606142384084724713"
+tags: ["FileAdapter"]
+---
+<i>20-Jan-2011 10:10:32 o'clock WET   warning   jca_framework_and_adapter   BEA-000000   onReject: The resource adapter 'File Adapter' requested handling of a malformed inbound message. However, the following activation property has not been defined: 'rejectedMessageHandlers'. Please define it and redeploy. Will use the default Rejection Directory file://jca\Read\rejectedMessages for now. <br />
+<br />
+20-Jan-2011 10:10:32 o'clock WET   warning   jca_framework_and_adapter   BEA-000000   onReject: Sending invalid inbound message to Rejection Handler:  <br />
+</i><br />
+<br />
+This happens when processing a 40000 lines file (5 MB of info). <br />
+The funny thing is that if I halve the number of lines, it works. And the second half of the file is exactly the same as the first. So I am sure it's NOT a problem with the data format, but rather with the message size.<br />
+No further clue is provided by the adapter.<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E14571_01/doc.1111/e15866/jca.htm">Here</a> look at 25.1.5 Logging  for how to turn on debug flag (go to <br />
+C:\Oracle1\Middleware\user_projects\domains\soadev\alsbdebug.xml and set<br />
+alsb-jca-framework-adapter-debug to true, then restart the server)<br />
+<br />
+but to no avail.<br />
+<br />
+Where is file://jca\Read\rejectedMessages defined?<br />
+<a href="http://sqltech.cl/doc/oas10gR31/integrate.1013/b28994/adptr_file.htm#CACJCDBJ">Here</a> they give some clues, like setting<br />
+<br />
+property name="rejectedMessageHandlers" to file://C:/orabpel/samples/test/errorTest<br />
+/rejectedMessages<br />
+but it's not accepted by FileAdapter.<br />
+<br />
+see also <a href="http://download.oracle.com/docs/cd/B14099_19/integrate.1012/b25307/adptr_file.htm#CACJCDBJ">here</a> the official Oracle doc.<br />
+<br />
+The adapter implementation is oracle.tip.adapter.file.inbound.FileActivationSpec<br />
+<br />
+See <a href="http://download.oracle.com/docs/cd/E17904_01/integration.1111/e10231/adptr_propertys.htm">here</a> for a list of properties for the Adapter.<br />
+<br />
+<br />
+Here <a href="http://niallcblogs.blogspot.com/2010/09/oracle-file-adapter-osb-11g-debatching.html">http://niallcblogs.blogspot.com/2010/09/oracle-file-adapter-osb-11g-debatching.html</a> an interesting post on the OSB/Batch Reading topic.<br />
+<br />
+<br />
+<br />
+At last I use these settings:<br />
+<br />
+<pre name="code" class="brush: xml">
+&lt;adapter-config name="MyFileReader" adapter="File Adapter" wsdlLocation="MyFileReader.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata"&gt;
+  
+  &lt;connection-factory location="eis/FileAdapter" UIincludeWildcard="*.txt" adapterRef=""/&gt;
+  &lt;endpoint-activation portType="Read_ptt" operation="Read"&gt;
+    &lt;activation-spec className="oracle.tip.adapter.file.inbound.FileActivationSpec"&gt;
+      &lt;property name="UseHeaders" value="false"/&gt;
+      &lt;property name="PhysicalDirectory" value="C:/acmepoc/myFiles/in"/&gt;
+      &lt;property name="Recursive" value="true"/&gt;
+      &lt;property name="PublishSize" value="200"/&gt;
+       &lt;property name="DeleteFile" value="true"/&gt;
+      &lt;property name="IncludeFiles" value=".*\.txt"/&gt;
+      &lt;property name="PollingFrequency" value="10"/&gt;
+      &lt;property name="MinimumAge" value="0"/&gt;
+    &lt;/activation-spec&gt;
+  &lt;/endpoint-activation&gt;
+
+&lt;/adapter-config&gt;
+</pre><br />
+<br />
+<br />
+and I get a beautiful OutOfMemoryException :<br />
+<br />
+<br />
+<br />
+<i>JCA_FRAMEWORK_AND_ADAPTER BEA-000000 InboundTranslatorDelegate caught Generic Exception , the Resource Adapter will ignore this<br />
+java.lang.OutOfMemoryError: Java heap space</i>

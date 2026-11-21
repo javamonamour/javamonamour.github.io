@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Reverse Proxy with nodejs"
+date: 2023-03-18T23:46:00.008+01:00
+permalink: /2023/03/reverse-proxy-with-nodejs.html
+blogger_id: "5680634266764419836"
+tags: ["reverseproxy"]
+---
+https://github.com/http-party/node-http-proxy
+<br />
+npm install http-proxy --save
+<br />
+node .\server.js
+<br />
+<br />
+
+
+<pre>var http = require('http'),
+    httpProxy = require('http-proxy');
+//
+// Create your proxy server and set the target in the options.
+//
+httpProxy.createProxyServer({target:'http://localhost:10090'}).listen(8000);
+
+</pre> 
+
+<br />
+
+

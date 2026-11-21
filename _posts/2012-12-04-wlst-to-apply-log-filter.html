@@ -1,0 +1,31 @@
+---
+layout: post
+title: "WLST to apply a log filter"
+date: 2012-12-04T14:15:00.001+01:00
+permalink: /2012/12/wlst-to-apply-log-filter.html
+blogger_id: "5275487900239421786"
+tags: ["log", "WLST"]
+---
+Creating a log Filter is not enough, you should also associate it to each managed server and admin server: <br/>
+
+
+<pre name="code" class="brush: java">
+
+startEdit()
+cd('/')
+cmo.createLogFilter('LogFilter-1')
+
+cd('/LogFilters/LogFilter-1')
+cmo.setFilterExpression('NOT(MSGID = \'BEA-149515\')')
+
+
+cd('/Servers/myms1/Log/myms1')
+cmo.setLogFileFilter(getMBean('/LogFilters/LogFilter-1'))
+cmo.setStdoutFilter(getMBean('/LogFilters/LogFilter-1'))
+cmo.setDomainLogBroadcastFilter(getMBean('/LogFilters/LogFilter-1'))
+
+activate()
+
+</pre>
+
+

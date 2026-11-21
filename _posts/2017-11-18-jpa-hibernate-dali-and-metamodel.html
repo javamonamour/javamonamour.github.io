@@ -1,0 +1,150 @@
+---
+layout: post
+title: "JPA, Hibernate, Dali and the Metamodel"
+date: 2017-11-18T11:13:00.001+01:00
+permalink: /2017/11/jpa-hibernate-dali-and-metamodel.html
+blogger_id: "2707064758524048485"
+tags: ["dali", "hibernate", "JPA"]
+---
+When building Query criterias, you want to avoid using the String "email" to identify an Entity field... the day you change the field "email" into "mailaddress", your code still compiles but breaks in PROD... ugly... unless you wrote tests... but I prefer when it breaks during compile!<br />
+<br />
+So you must use <a href="https://docs.jboss.org/hibernate/entitymanager/3.5/reference/en/html/querycriteria.html">https://docs.jboss.org/hibernate/entitymanager/3.5/reference/en/html/querycriteria.html</a> "the static form of metamodel reference", that is using an automatically generated class <br />
+<br />
+<a href="https://stackoverflow.com/questions/3037593/how-to-generate-jpa-2-0-metamodel">https://stackoverflow.com/questions/3037593/how-to-generate-jpa-2-0-metamodel</a><br />
+<br />
+Example:<br />
+<br />
+<pre class="brush: java">package org.pierre.calories.entities;
+
+import java.io.Serializable;
+import javax.persistence.*;
+import java.math.BigDecimal;
+
+
+/**
+ * The persistent class for the USERS database table.
+ * 
+ */
+@Entity
+@Table(name="USERS")
+@NamedQuery(name="User.findAll", query="SELECT u FROM User u")
+public class User implements Serializable {
+ private static final long serialVersionUID = 1L;
+
+ @Id
+ @GeneratedValue
+ private String userid;
+
+ private BigDecimal expectedcalperday;
+ 
+ private String email;
+
+ public String getEmail() {
+  return email;
+ }
+
+ public void setEmail(String email) {
+  this.email = email;
+ }
+
+ public User() {
+ }
+
+ public User(String userid, BigDecimal expectedcalperday) {
+  super();
+  this.userid = userid;
+  this.expectedcalperday = expectedcalperday;
+ }
+
+ public String getUserid() {
+  return this.userid;
+ }
+
+ public void setUserid(String userid) {
+  this.userid = userid;
+ }
+
+ public BigDecimal getExpectedcalperday() {
+  return this.expectedcalperday;
+ }
+
+ public void setExpectedcalperday(BigDecimal expectedcalperday) {
+  this.expectedcalperday = expectedcalperday;
+ }
+
+}
+</pre><br />
+<br />
+<br />
+and its metamodel<br />
+<br />
+<pre class="brush: java">package org.pierre.calories.entities;
+
+import java.math.BigDecimal;
+import javax.annotation.Generated;
+import javax.persistence.metamodel.SingularAttribute;
+import javax.persistence.metamodel.StaticMetamodel;
+
+@Generated(value="Dali", date="2017-11-18T11:02:45.198+0100")
+@StaticMetamodel(User.class)
+public class User_ {
+ public static volatile SingularAttribute&lt;User, String> userid;
+ public static volatile SingularAttribute&lt;User, BigDecimal> expectedcalperday;
+ public static volatile SingularAttribute&lt;User, String> email;
+}
+
+</pre><br />
+To achieve this in Eclipse: Project/Properties and then:<br />
+<br />
+<br />
+<a href="/images/d98bb51f315a3aca.jpg" imageanchor="1" ><img border="0" src="/images/6b56ae2e947d5556.jpg" width="640" height="511" data-original-width="892" data-original-height="712" /></a><br />
+<br />
+<br />
+The multitude of very complicated options (in Maven for instance) to achieve the same EASY result is just one more evidence of the very pathetic state of IT in 2017....   a huge spread of technologies and product to achieve really basic results.... the notion of metadata associated to persistence was around already 25 years ago, it's sad to see that we still don't have proper engineering and consolidated practice.<br />
+<br />
+At this point I can write my logic like this:<br />
+<br />
+<pre class="brush: java">package org.pierre.calories.database;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+
+import org.pierre.calories.entities.Meal;
+import org.pierre.calories.entities.User;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
+
+@ApplicationScoped
+public class CaloriesRepository {
+
+    @Inject
+    private EntityManager em;
+    
+    public Meal findMealById(Long id) {
+        return em.find(Meal.class, id);
+    }
+    
+    public User findUserById(Long id) {
+        return em.find(User.class, id);
+    }
+        
+    public User findUserByEmail(String email) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery&lt;User&gt; criteria = cb.createQuery(User.class);
+        Root&lt;User&gt; rootUser = criteria.from(User.class);
+        CriteriaQuery&lt;User&gt; select = criteria.select(rootUser);
+//OLD SCHOOL  CriteriaQuery&lt;User&gt; emailresult = select.where(cb.equal(rootUser.get(&quot;email&quot;), email));
+        CriteriaQuery&lt;User&gt; emailresult = select.where(cb.equal(rootUser.get(User_.email), email));
+        return em.createQuery(emailresult).getSingleResult();
+    }  
+    
+}
+</pre><br />
+<br />
+Of course there are much easier ways to achieve the same result, like JPQL <a href="https://en.wikipedia.org/wiki/Java_Persistence_Query_Language">https://en.wikipedia.org/wiki/Java_Persistence_Query_Language</a><br />
+<br />
+<br />
+

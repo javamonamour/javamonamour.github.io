@@ -1,0 +1,27 @@
+---
+layout: post
+title: "WLST or python : how to print environment variables"
+date: 2012-11-21T10:53:00.001+01:00
+permalink: /2012/11/wlst-or-python-how-to-print-environment.html
+blogger_id: "955643854445113364"
+tags: ["WLST"]
+---
+import os<br/>
+print print os.environ<br/>
+<br/><br/>
+
+{'WL_HOME': '/opt/oracle/fmw11_1_0_2/wlserver_10.3', 'DISPLAY': 'localhost:10.0', 'WEBLOGIC_CLASSPATH': '/opt/oracle/fmw11_1_0_2/patch_wls1032/profiles/default/sys_manifest_classpath/weblogic_patch.jar:/opt/oracle/java/lib/tools.jar:/opt/oracle/fmw11_1_0_2/utils/config/10.3/config-launch.jar:/opt/oracle/fmw11_1_0_2/wlserver_10.3/server/lib/weblogic_sp.jar:/opt/oracle/fmw11_1_0_2/wlserver_10.3/server/lib/weblogic.jar:/opt/oracle/fmw11_1_0_2/modules/features/weblogic.server.modules_10.3.2.0.jar:/opt/oracle/fmw11_1_0_2/wlserver_10.3/server/lib/webservices.jar:/opt/oracle/fmw11_1_0_2/modules/org.apache.ant_1.7.0/lib/ant-all.jar:/opt/oracle/fmw11_1_0_2/modules/net.sf.antcontrib_1.0.0.0_1-0b2/lib/ant-contrib.jar', 'G_BROKEN_FILENAMES': '1', 'LESSOPEN': '|/usr/bin/lesspipe.sh %s', 'XFILESEARCHPATH': '/usr/dt/app-defaults/%L/Dt', 'MEM_ARGS': '-Xms32m -Xmx200m -XX:MaxPermSize=128m', 'JAVA_USE_64BIT': 'true', 'POINTBASE_HOME': '/opt/oracle/fmw11_1_0_2/wlserver_10.3/common/eval/pointbase', 'PATH': '/opt/oracle/fmw11_1_0_2/wlserver_10.3/server/bin:/opt/oracle/fmw11_1_0_2/modules/org.apache.ant_1.7.0/bin:/opt/oracle/java/jre/bin:/opt/oracle/java/bin:/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin:/home/myuser/bin', 'POINTBASE_TOOLS': '/opt/oracle/fmw11_1_0_2/wlserver_10.3/common/eval/pointbase/lib/pbtools57.jar', 'LOGNAME': 'myuser', 'MODULES_DIR': '/opt/oracle/fmw11_1_0_2/modules', 'SHLVL': '3', 'HISTSIZE': '1000', 'ANT_HOME': '/opt/oracle/fmw11_1_0_2/modules/org.apache.ant_1.7.0', 'JAVA_OPTIONS': ' -Xverify:none', 'INPUTRC': '/etc/inputrc', 'SHELL': '/bin/bash', 'SSH_TTY': '/dev/pts/0', 'WLS1032_PATCH_LIBPATH': '/opt/oracle/fmw11_1_0_2/patch_wls1032/profiles/default/native', 'WLS1032_PATCH_PATH': '/opt/oracle/fmw11_1_0_2/patch_wls1032/profiles/default/native', 'PRODUCTION_MODE': '', 'FEATURES_DIR': '/opt/oracle/fmw11_1_0_2/modules/features', 'PATHSEP': ':', 'HOSTNAME': 'myhost', 'PATCH_PATH': '/opt/oracle/fmw11_1_0_2/patch_wls1032/profiles/default/native', 'WLS1032_PATCH_EXT_DIR': '/opt/oracle/fmw11_1_0_2/patch_wls1032/profiles/default/sysext_manifest_classpath', 'PATCH_CLASSPATH': '/opt/oracle/fmw11_1_0_2/patch_wls1032/profiles/default/sys_manifest_classpath/weblogic_patch.jar', 'BEA_HOME': '/opt/oracle/fmw11_1_0_2', 'MAIL': '/var/spool/mail/myuser', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'no=00:fi=00:di=00;34:ln=00;36:pi=40;33:so=00;35:bd=40;33;01:cd=40;33;01:or=01;05;37;41:mi=01;05;37;41:ex=00;32:*.cmd=00;32:*.exe=00;32:*.com=00;32:*.btm=00;32:*.bat=00;32:*.sh=00;32:*.csh=00;32:*.tar=00;31:*.tgz=00;31:*.arj=00;31:*.taz=00;31:*.lzh=00;31:*.zip=00;31:*.z=00;31:*.Z=00;31:*.gz=00;31:*.bz2=00;31:*.bz=00;31:*.tz=00;31:*.rpm=00;31:*.cpio=00;31:*.jpg=00;35:*.gif=00;35:*.bmp=00;35:*.xbm=00;35:*.xpm=00;35:*.png=00;35:*.tif=00;35:', 'LD_LIBRARY_PATH': '/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64/jre/lib/amd64/server:/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64/jre/lib/amd64:/usr/lib/jvm/java-1.6.0-sun-1.6.0.33.x86_64/jre/../lib/amd64:/opt/oracle/fmw11_1_0_2/patch_wls1032/profiles/default/native:/opt/oracle/fmw11_1_0_2/wlserver_10.3/server/native/linux/x86_64:/opt/oracle/fmw11_1_0_2/wlserver_10.3/server/native/linux/x86_64/oci920_8', 'SSH_CONNECTION': '10.140.21.90 50600 10.56.5.185 22', 'HOME': '/home/myuser', 'PWD': '/opt/oracle', 'WEBLOGIC_EXTENSION_DIRS': '/opt/oracle/fmw11_1_0_2/patch_wls1032/profiles/default/sysext_manifest_classpath', 'PATCH_LIBPATH': '/opt/oracle/fmw11_1_0_2/patch_wls1032/profiles/default/native', 'JAVA_VENDOR': 'Sun', 'POINTBASE_CLASSPATH': ':/opt/oracle/fmw11_1_0_2/wlserver_10.3/common/eval/pointbase/lib/pbembedded57.jar:/opt/oracle/fmw11_1_0_2/wlserver_10.3/common/eval/pointbase/lib/pbclient57.jar', 'NLSPATH': '/usr/dt/lib/nls/msg/%L/%N.cat', 'TMOUT': '900', 'ANT_CONTRIB': '/opt/oracle/fmw11_1_0_2/modules/net.sf.antcontrib_1.0.0.0_1-0b2', 'SSH_CLIENT': '10.140.21.90 50600 22', 'USER': 'myuser', 'JAVA_HOME': '/opt/oracle/java', 'CLASSPATH': '/opt/oracle/fmw11_1_0_2/patch_wls1032/profiles/default/sys_manifest_classpath/weblogic_patch.jar:/opt/oracle/java/lib/tools.jar:/opt/oracle/fmw11_1_0_2/utils/config/10.3/config-launch.jar:/opt/oracle/fmw11_1_0_2/wlserver_10.3/server/lib/weblogic_sp.jar:/opt/oracle/fmw11_1_0_2/wlserver_10.3/server/lib/weblogic.jar:/opt/oracle/fmw11_1_0_2/modules/features/weblogic.server.modules_10.3.2.0.jar:/opt/oracle/fmw11_1_0_2/wlserver_10.3/server/lib/webservices.jar:/opt/oracle/fmw11_1_0_2/modules/org.apache.ant_1.7.0/lib/ant-all.jar:/opt/oracle/fmw11_1_0_2/modules/net.sf.antcontrib_1.0.0.0_1-0b2/lib/ant-contrib.jar:::/opt/oracle/fmw11_1_0_2/wlserver_10.3/common/eval/pointbase/lib/pbembedded57.jar:/opt/oracle/fmw11_1_0_2/wlserver_10.3/common/eval/pointbase/lib/pbclient57.jar:/opt/oracle/fmw11_1_0_2/wlserver_10.3/common/eval/pointbase/lib/pbtools57.jar', 'TERM': 'xterm', 'CLASSPATHSEP': ':', 'WLS1032_PATCH_CLASSPATH': '/opt/oracle/fmw11_1_0_2/patch_wls1032/profiles/default/sys_manifest_classpath/weblogic_patch.jar', 'JAVA_VM': '-client', '_': '/bin/env'}
+
+
+<br/><br/>
+
+for a specific value:<br/>
+
+print os.environ['JAVA_HOME']<br/>
+
+<br/>
+
+
+
+
+

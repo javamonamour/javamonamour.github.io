@@ -1,0 +1,51 @@
+---
+layout: post
+title: "How to create a XmlObject using XmlCursor"
+date: 2010-09-12T15:18:00.000+02:00
+permalink: /2010/09/how-to-create-xmlobject-using-xmlcursor.html
+blogger_id: "3168731457154115498"
+tags: ["xmlcursor"]
+---
+<pre name="code" class="brush: java">
+String GEONS="http://www.acme.com/schema/GeoServicePS/v1";
+String operationResponse="getCountriesResponse";
+
+XmlObject result = XmlObject.Factory.newInstance();
+XmlCursor cursor = result.newCursor();
+QName responseQName = new QName(GEONS, operationResponse);
+cursor.toNextToken();
+cursor.beginElement(responseQName);
+for (Location loc : locations) {
+ cursor.beginElement(new QName(GEONS, "Location"));
+ cursor.insertElementWithText(new QName(GEONS, "countryid"), loc.getCountryId());
+ cursor.toParent();
+}
+
+
+</pre><br />
+<br />
+this will produce:<br />
+<br />
+<br />
+<pre name="code" class="brush: xml">
+
+<v1:getCountriesResponse xmlns:v1="http://www.acme.com/schema/GeoServicePS/v1"><v1:Location><v1:countryid>IT</v1:countryid></v1:Location><v1:Location><v1:countryid>AU</v1:countryid></v1:Location></v1:getCountriesResponse>
+
+
+</pre><br />
+<br />
+<br />
+If you want to extract the operation name from the $body (an XmlObject), this is how:<br />
+<br />
+<br />
+<pre name="code" class="brush: java">
+XmlCursor newCursor = body.newCursor();
+newCursor.toFirstChild();
+  
+System.out.println("operation=" + newCursor.getName().getLocalPart());
+
+</pre><br />
+If you want to extract the values of the Operation parameters, you can use the XmlCursor APIs:<br />
+toFirstChild()<br />
+getTextValue()<br />
+toNextSibling()

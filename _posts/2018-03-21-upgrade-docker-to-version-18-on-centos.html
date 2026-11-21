@@ -1,0 +1,104 @@
+---
+layout: post
+title: "Upgrade docker to version 18 on Centos"
+date: 2018-03-21T09:59:00.002+01:00
+permalink: /2018/03/upgrade-docker-to-version-18-on-centos.html
+blogger_id: "3793935109306492019"
+tags: ["docker"]
+---
+For stability love I was sticking to docker 1.12....<br />
+Several new features are interesting, so I am upgrading...<br />
+This link <a href="https://docs.docker.com/install/linux/docker-ce/centos/#set-up-the-repository">https://docs.docker.com/install/linux/docker-ce/centos/#set-up-the-repository</a><br />
+is really useful<br />
+<br />
+This is what I have done:<br />
+<br />
+docker version<br />
+sudo yum remove docker docker-common docker-selinux docker-engine<br />
+sudo yum remove docker                   docker-client                   docker-client-latest                   docker-common                   docker-latest                   docker-latest-logrotate                   docker-logrotate                   docker-selinux                   docker-engine-selinux                   docker-engine<br />
+sudo yum install -y yum-utils   device-mapper-persistent-data   lvm2<br />
+sudo yum-config-manager     --add-repo     https://download.docker.com/linux/centos/docker-ce.repo<br />
+sudo yum-config-manager --enable docker-ce-edge<br />
+sudo yum-config-manager --enable docker-ce-test<br />
+sudo yum install docker-ce<br />
+docker version<br />
+<br />
+<br />
+<br />
+<i><br />
+Client:<br />
+Version: 18.03.0-ce-rc4<br />
+API version: 1.37<br />
+Go version: go1.9.4<br />
+Git commit: fbedb97<br />
+Built: Thu Mar 15 07:40:24 2018<br />
+OS/Arch: linux/amd64<br />
+Experimental: false<br />
+Orchestrator: swarm<br />
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?<br />
+</i><br />
+<br />
+<br />
+oops I forgot to start and enable:<br />
+<br />
+sudo systemctl start docker<br />
+sudo systemctl enable docker<br />
+<i>Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/lib/systemd/system/docker.service.</i><br />
+<br />
+<br />
+docker version<br />
+<i><br />
+Client:<br />
+Version: 18.03.0-ce-rc4<br />
+API version: 1.37<br />
+Go version: go1.9.4<br />
+Git commit: fbedb97<br />
+Built: Thu Mar 15 07:40:24 2018<br />
+OS/Arch: linux/amd64<br />
+Experimental: false<br />
+Orchestrator: swarm<br />
+<br />
+Server:<br />
+Engine:<br />
+Version: 18.03.0-ce-rc4<br />
+API version: 1.37 (minimum version 1.12)<br />
+Go version: go1.9.4<br />
+Git commit: fbedb97<br />
+Built: Thu Mar 15 07:44:03 2018<br />
+OS/Arch: linux/amd64<br />
+Experimental: false<br />
+</i><br />
+<br />
+<br />
+sudo systemctl status docker<br />
+<i><br />
+[sudo] password for centos: <br />
+● docker.service - Docker Application Container Engine<br />
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)<br />
+   Active: active (running) since Wed 2018-03-21 09:58:07 CET; 1h 25min ago<br />
+     Docs: https://docs.docker.com<br />
+ Main PID: 19616 (dockerd)<br />
+    Tasks: 47<br />
+   Memory: 55.7M<br />
+   CGroup: /system.slice/docker.service<br />
+           ├─19616 /usr/bin/dockerd<br />
+           ├─19631 docker-containerd --config /var/run/docker/containerd/containerd.toml<br />
+           ├─20235 /usr/bin/docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 8081 -container-ip 172.17.0.2 -container-port 8081<br />
+           └─20241 docker-containerd-shim -namespace moby -workdir /var/lib/docker/containerd/daemon/io.containerd.runtime.v1.linux/moby/d510b3bfdff1a6ff247d08f101c463fa2c496ea52ff6f822c5cc8736b8d04b81 -addre...<br />
+<br />
+Mar 21 09:58:04 localhost.localdomain dockerd[19616]: time="2018-03-21T09:58:04.569448393+01:00" level=info msg="[graphdriver] using prior storage driver: devicemapper"<br />
+Mar 21 09:58:05 localhost.localdomain dockerd[19616]: time="2018-03-21T09:58:05.554399630+01:00" level=info msg="Graph migration to content-addressability took 0.00 seconds"<br />
+Mar 21 09:58:05 localhost.localdomain dockerd[19616]: time="2018-03-21T09:58:05.559942092+01:00" level=info msg="Loading containers: start."<br />
+Mar 21 09:58:06 localhost.localdomain dockerd[19616]: time="2018-03-21T09:58:06.971793300+01:00" level=info msg="Default bridge (docker0) is assigned with an IP address 172.17.0.0/16. Daemon opti...d IP address"<br />
+Mar 21 09:58:07 localhost.localdomain dockerd[19616]: time="2018-03-21T09:58:07.568225034+01:00" level=info msg="Loading containers: done."<br />
+Mar 21 09:58:07 localhost.localdomain dockerd[19616]: time="2018-03-21T09:58:07.634962555+01:00" level=info msg="Docker daemon" commit=fbedb97 graphdriver(s)=devicemapper version=18.03.0-ce-rc4<br />
+Mar 21 09:58:07 localhost.localdomain dockerd[19616]: time="2018-03-21T09:58:07.635202601+01:00" level=info msg="Daemon has completed initialization"<br />
+Mar 21 09:58:07 localhost.localdomain dockerd[19616]: time="2018-03-21T09:58:07.682479847+01:00" level=info msg="API listen on /var/run/docker.sock"<br />
+Mar 21 09:58:07 localhost.localdomain systemd[1]: Started Docker Application Container Engine.<br />
+Mar 21 10:04:44 localhost.localdomain dockerd[19616]: time="2018-03-21T10:04:44+01:00" level=info msg="shim docker-containerd-shim started" address="/containerd-shim/moby/d510b3bfdff1a6ff247d08f1...ks" pid=20241<br />
+Hint: Some lines were ellipsized, use -l to show in full.<br />
+<br />
+<br />
+</i><br />
+<br />
+

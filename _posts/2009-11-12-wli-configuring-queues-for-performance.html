@@ -1,0 +1,8 @@
+---
+layout: post
+title: "WLI: configuring JMS queues for performance"
+date: 2009-11-12T16:01:00.000+01:00
+permalink: /2009/11/wli-configuring-queues-for-performance.html
+blogger_id: "3072609350281069504"
+---
+The JMS queues <span style="font-weight:bold;">AsyncDispatcher</span> and <span style="font-weight:bold;">AsyncDispatcher_error</span> are needed for each project containing process.<br />All WLI process are based on these 2 queues, and it is therefore necessary to configure them properly.<br /><br />For the queue <span style="font-weight:bold;">AsyncDispatcher</span>:<br />- Retry => 0 or a low value with a redelivery delay set. The retry may be useful in case of unavailability of external system.<br />- Error destination => AsyncDispatcher_error.<br /><br />For the queue <span style="font-weight:bold;">AsyncDispatcher_error</span>:<br />- Retry => maximum value in order not to lose messages.<br />- Redelivery delay positioned so as not to saturate the server.

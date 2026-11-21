@@ -1,0 +1,85 @@
+---
+layout: post
+title: "Find all Java classes implementing a given interface.... reflections!"
+date: 2015-11-26T14:39:00.000+01:00
+permalink: /2015/11/find-all-java-classes-implementing.html
+blogger_id: "923928716375586203"
+tags: ["find", "java"]
+---
+<a href="https://code.google.com/p/reflections/">https://code.google.com/p/reflections/</a>
+
+<br/><br/>
+
+Download the ÜBER JAR here <a href="https://code.google.com/p/reflections/downloads/detail?name=reflections-0.9.9-RC1-uberjar.jar&can=2&q=">https://code.google.com/p/reflections/downloads/detail?name=reflections-0.9.9-RC1-uberjar.jar&can=2&q=</a>
+<br/><br/>
+
+<pre class="brush: java">
+
+package pierre.reflections;
+import java.net.URL;
+import java.util.Set;
+
+import org.reflections.Reflections;
+
+
+
+public class FindInterfaceImplementations {
+ public static void main(String[] args) {
+  Reflections reflections = new Reflections();
+  Set&lt;URL> urls = reflections.getConfiguration().getUrls();
+  for (URL item : urls) {
+   System.out.println(item.toString());
+  }
+  Set&lt;Class&lt;? extends javax.enterprise.inject.spi.InjectionTargetFactory>> classes = reflections.getSubTypesOf(javax.enterprise.inject.spi.InjectionTargetFactory.class);
+  System.out.println(classes.size());
+ }
+
+}
+
+</pre>
+
+<br/><br/>
+
+
+This version will load only classes under the "oracle" package:
+<br/><br/>
+
+<pre class="brush: java">
+
+
+package com.pierre.typequerylanguage;
+
+import java.io.File;
+import java.util.Set;
+
+import org.reflections.Reflections;
+
+import oracle.ucp.ConnectionAffinityCallback;
+
+public class FindInterfaceImplementation {
+ public static boolean VERBOSE = true;
+
+ public static void main(String[] args) {
+  if (VERBOSE) {
+   System.out.println(&quot;searching in the following jars:&quot;);
+   System.out.println(System.getProperty(&quot;java.class.path&quot;).replace(File.pathSeparatorChar, '\n'));
+  }
+  Reflections reflections = new Reflections(&quot;oracle&quot;);
+  System.out.println(&quot;searching now&quot;);
+  
+  
+  Set&lt;Class&lt;? extends ConnectionAffinityCallback&gt;&gt; classes = reflections.getSubTypesOf(oracle.ucp.ConnectionAffinityCallback.class);
+  for (Class clazz : classes) {
+   System.out.println(&quot;found: &quot; + clazz.getCanonicalName());
+  }
+  System.out.println(&quot;searching done&quot;);
+ }
+
+}
+
+</pre>
+
+<br/><br/>
+
+
+

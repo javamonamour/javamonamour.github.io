@@ -1,0 +1,28 @@
+---
+layout: post
+title: "WebLogic, how to run SQL commands without SQLPlus"
+date: 2012-05-21T10:20:00.000+02:00
+permalink: /2012/05/weblogic-how-to-run-sql-commands.html
+blogger_id: "700486571840102493"
+tags: ["jdbc", "sql", "weblogic"]
+---
+few people know this :o) :<br />
+<br />
+cd $DOMAIN_HOME<br />
+. ./bin/setDomainEnv.sh<br />
+<br />
+java utils.Schema<br />
+Usage: java utils.Schema &lt;url> &lt;driver> [options] &lt;SQL file><br />
+<br />
+where:<br />
+    &lt;url>              JDBC driver URL.<br />
+    &lt;driver>           JDBC driver class pathname.<br />
+    &lt;SQL file>         Text file with SQL statements.<br />
+<br />
+where options include:<br />
+    -u &lt;user>          User name to be passed to database.<br />
+    -p &lt;password>      User password to be passed to database.<br />
+    -verbose           Print SQL statements and database messages.<br />
+<br />
+<br />
+utils.Schema is a class in weblogic.jar

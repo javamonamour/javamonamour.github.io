@@ -1,0 +1,74 @@
+---
+layout: post
+title: "Poor man's guide to HTML layout"
+date: 2011-03-29T10:27:00.000+02:00
+permalink: /2011/03/poor-mans-guide-to-html-layout.html
+blogger_id: "8344876312625294326"
+tags: ["html layout"]
+---
+I am absolutely NULL at layouts... no artistic and spacial sense I guess.<br />
+<br />
+So this is an easy and cartesian way of laying out your widgets on a HTML form..; use tables!<br />
+<br />
+<br />
+this:<br />
+<br />
+<pre class="brush: xml">
+<table> <tr>
+  <td>A</td>
+  <td>B</td>
+ </tr>
+ <tr>
+  <td>C</td>
+  <td>D</td>
+ </tr>
+ <tr>
+  <td><br />
+   <table>    <tr>
+     <td>E</td>
+     <td>F</td>
+    </tr>
+    <tr>
+     <td>G</td>
+     <td>H</td>
+    </tr>
+   </table>  </td>
+  <td>I</td>
+ </tr> 
+ <td>L</td>
+ 
+</table>
+</pre><br />
+<br />
+would be rendered as:<br />
+<br />
+<br />
+<table> <tr>
+  <td>A</td>
+  <td>B</td>
+ </tr>
+ <tr>
+  <td>C</td>
+  <td>D</td>
+ </tr>
+ <tr>
+  <td><br />
+   <table>    <tr>
+     <td>E</td>
+     <td>F</td>
+    </tr>
+    <tr>
+     <td>G</td>
+     <td>H</td>
+    </tr>
+   </table>  </td>
+  <td>I</td>
+ </tr> 
+ <td>L</td>
+ 
+</table><br />
+<br />
+which is good enough for my purposes...<br />
+<br />
+<br />
+HTML is a total pain in the ass, it's a classic example of a city build on top of weak foundations, like Venice or Ciudad de Mexico... they become soon extremely expensive to maintain, and they should be completely transfered to a better location.

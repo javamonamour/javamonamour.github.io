@@ -1,0 +1,61 @@
+---
+layout: post
+title: "Disabling debatching in Oracle JCA File Adapter"
+date: 2011-12-27T21:32:00.003+01:00
+permalink: /2011/12/disabling-debatching-in-oracle-jca-file.html
+blogger_id: "2263368809959508953"
+tags: ["nxsd"]
+---
+If in the JCA file adapter file you specify PublishSize=1, the file translator will <br />
+consider that every <b>LINE </b>(up to EOL) in your file is a <b>MESSAGE</b>. <br />
+<br />
+Even if the <b>Root Element</b> of my message is a complexType made by a sequence of subtypes, the <b>NXSDTranslator </b>will dispatch a message to OSB  PER EACH LINE, and the message will contain ONLY THE SUBTYPE, not the Root Element.<br />
+<br />
+<br />
+Even if you specify <b>uniqueMessageSeparator</b>="someweirdstring", it will keep doing the same trick.<br />
+<br />
+In the log, you see:<br />
+<br />
+jca.file.BatchIndex=1 (2, 3... up to the number of lines in the file)<br />
+jca.file.Batch=CsHjmLiOA8VinpSTERKIh6cfUYmxQvUbZzfDlDH0DRI<br />
+<br />
+(all the messages in the same Batch (=file) have the same jca.file.Batch property)<br />
+<br />
+The only way to avoid this <b>DEBATCHING</b> (split a message in multiple submessages) is to explicitly set the PublishSize to a BLANK value (default is 1).<br />
+<br />
+<a href="http://docs.oracle.com/cd/E25054_01/integration.1111/e10231/adptr_propertys.htm">see doc here</a><br />
+<br />
+<b>PublishSize</b>: This property indicates whether the file contains multiple messages and how many messages to publish to the BPEL process at a time. The parameter is of type int and is not mandatory. The default value is 1.<br />
+<br />
+For example, if a certain file has 11 records and this parameter is set to 2, then the file will be processed 2 records at a time and the final record will be processed in the sixth iteration.<br />
+<br />
+<br />
+Pay attention to the <b>JCA file</b>, the PublishSize can be nested there.<br />
+Look in the <b>nXSD file</b>, there can be a nxsd:publishSize clause, set it to "" (an empty string)<br />
+<br />
+<br />
+<br />
+In the logs, per each batch element you will see a separate invocation to the translator:<br />
+<br />
+<i><br />
+Invoking inbound translation for : PuO20111212_164122_1640.txt<br />
+InboundTranslatorDelegate:: Ordinary DOM Created<br />
+Completed inbound translation for : PuO20111212_164122_1640.txt<br />
+</i><br />
+<br />
+<br />
+<br />
+<br />
+Classes to monitor:<br />
+<br />
+oracle.tip.pc.services.translation.xlators.nxsd.<b>NXSDTranslatorImpl</b><br />
+(method xlator.translateFromNative(in, res, xlationCtx))<br />
+<br />
+oracle.tip.adapter.file.inbound.<b>ProcessorDelegate</b><br />
+(ProcessorDelegate.process(FileInfo) and does a doXlate)<br />
+<br />
+<br />
+oracle.tip.adapter.file.inbound.<b>FileActivationSpec</b><br />
+<br />
+<br />
+see also <a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/nxsd/Translate.java">http://javatoolsforweblogic.googlecode.com/svn/trunk/nxsd/Translate.java</a> for how to invoke the NXSDTranslatorImpl from CLI

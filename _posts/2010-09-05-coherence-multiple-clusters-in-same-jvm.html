@@ -1,0 +1,53 @@
+---
+layout: post
+title: "Coherence multiple clusters in same jvm"
+date: 2010-09-05T12:14:00.001+02:00
+permalink: /2010/09/coherence-multiple-clusters-in-same-jvm.html
+blogger_id: "2197010680607639670"
+blogger_comments:
+  - author: "Robert Varga"
+    date: 2010-09-20
+    html: "Hi Pierluigi,<br /><br />you could take a look at the following page, I created a small library to make things a bit easier (outside of a container):<br /><br />http://coherence.politext.info/multiple-coherence-nodes-in-a-jvm"
+  - author: "vernetto"
+    date: 2010-09-23
+    html: "hello Robert, <br />thank you very much for your valuable input.<br />I really wish I had some time to cooperate with you on Coherence, it would be nice to have some open source tools regarding Coherence.<br />It&#39;s a wonderful product, indeed.<br />I had the opportunity to work with Adam Korczak and Michal Stawowski and they taught me so much. Can you please send me your email so we can keep in touch?<br />Thanks!<br />Pierre"
+---
+The BIG question is: how can I connect to multiple clusters (different multicast/unicast addresses) from within the same JVM?<br />
+<br />
+The answer I get from the experts is: only by having separate classloaders.<br />
+<br />
+Which is not always easy to do, especially when you don't have control on the way your client is deployed and packaged. Like in OSB.<br />
+<br />
+<br />
+Hot google searches: IsolatingClassLoader, BlockingClassLoader<br />
+<br />
+See this <a href="http://forums.oracle.com/forums/thread.jspa?threadID=929695">http://forums.oracle.com/forums/thread.jspa?threadID=929695</a><br />
+on multiple Coherence in same JVM<br />
+<br />
+<br />
+<i>"all you need to do is ensure that Coherence is loaded by two independent class loaders and not from a common parent class loader."</i><br />
+<br />
+This one also is very revealing<br />
+<br />
+<a href="http://forums.oracle.com/forums/thread.jspa?threadID=586481">http://forums.oracle.com/forums/thread.jspa?threadID=586481</a><br />
+<br />
+<i>"They will of course be contained within separate web application class loaders."</i><br />
+<br />
+<br />
+More on the 2 caches here:<br />
+<a href="http://forums.oracle.com/forums/thread.jspa?threadID=587007">http://forums.oracle.com/forums/thread.jspa?threadID=587007</a><br />
+<br />
+<i>"You can define a path to the cache configuration descriptor in your operation configuration override file (tangosol-coherence=override.xml) or specify it in the system property "tangosol.coherence.cacheconfig"."</i><br />
+<br />
+<br />
+And here:<br />
+<br />
+http://forums.oracle.com/forums/thread.jspa?threadID=1079608<br />
+<br />
+<i>It is possible to do what you ask but it comes with a whole set of issues that need to be worked around. We run multiple Coherence instances in a single JVM (usually something like 2 storage nodes, an extend proxy and a client) for unit/acceptance tests. This is done with a special implementation of a classloader so each Coherence instance runs isolated by its own classloader - in the same way that web applications all run isolated from eachother in a web container like Tomcat. A number of Coherence settings can be overriden using System properties and we have also implemented classloader aware system properties, so each of our Coherence instances has its own system properties related to the classloader that it is contained in.<br />
+</i><br />
+<br />
+<br />
+Here a very pictorial view, going in depth in the concept of "Coherence Cluster Node Isolation"<br />
+<br />
+<a href="http://wiki.tangosol.com/display/COH34UG/Cluster+Node+Isolation+in+Coherence*Web">http://wiki.tangosol.com/display/COH34UG/Cluster+Node+Isolation+in+Coherence*Web</a>

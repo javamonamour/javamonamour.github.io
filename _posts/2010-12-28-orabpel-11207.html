@@ -1,0 +1,28 @@
+---
+layout: post
+title: "ORABPEL-11207"
+date: 2010-12-28T15:05:00.000+01:00
+permalink: /2010/12/orabpel-11207.html
+blogger_id: "1992750866496636740"
+tags: ["FileAdapter", "opaqueElement"]
+---
+I was trying to write into a File using File Adapter and opaqueElement.... evidently there is a trick, I know you must transform the data in base64 binary format.... one day I will find out how to do it...<br />
+<br />
+<pre>
+IO Failure in translator.
+IO failure because the   translator failed to   to copy InputStream to OutputStream. .
+Check the error stack and fix the cause of the error. Contact oracle support if error is not fixable.
+
+ at oracle.tip.pc.services.translation.framework.XlatorHelper.copyStream(XlatorHelper.java:160)
+ at oracle.tip.pc.services.translation.xlators.opaque.OpaqueTranslator.translateToNative(OpaqueTranslator.java:311)
+ at oracle.tip.adapter.file.FileUtil.translate(FileUtil.java:1262)
+ ... 64 more
+Caused by: java.io.IOException: Error in encoded stream: needed 4 valid base64 characters but only got 3 before EOF, the 10 most recent characters were: "elloPierre"
+ at com.sun.mail.util.BASE64DecoderStream.decode(BASE64DecoderStream.java:250)
+ at com.sun.mail.util.BASE64DecoderStream.read(BASE64DecoderStream.java:148)
+ at java.io.FilterInputStream.read(FilterInputStream.java:102)
+ at oracle.tip.pc.services.translation.framework.XlatorHelper.copyStream(XlatorHelper.java:157)
+ ... 66 more
+
+
+</pre>

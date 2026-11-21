@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Weblogic network channel bindings on multihomed servers"
+date: 2011-08-21T15:32:00.000+02:00
+permalink: /2011/08/weblogic-network-channel-bindings-on.html
+blogger_id: "1048051857572917753"
+tags: ["networkchannel"]
+---
+I have a cluster myCluster, Unicast,<br />
+For every managed server, I have created a Network Channel unicastChannel, supporting a single protocol "cluster-broadcast" (menu server/protocols/channels)<br />
+<br />
+Even if I specify a ListenAddress - giving localhost or 127.0.0.1 as an address, WebLogic creates a ServerConnectionRuntime for each IP bound to my host (including the VMWare and VirtualBox IPs):<br />
+<br />
+(Server/Monitoring/Channel)<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/4d7c92eed8418b73.jpg" imageanchor="1" style=""><img border="0" height="131" width="320" src="/images/ba74967d373e08c3.jpg" /></a></div><br />
+This behavior <a href="http://download.oracle.com/docs/cd/E13222_01/wls/docs81/adminguide/network.html">is documented here</a><br />
+<br />
+"If you use a network channel with a server instance on a multi-homed machine, you must enter a valid Listen Address either in ServerMBean or in the channel. If the channel and ServerMBean Listen Address are blank or specify the localhost address (IP address 0.0.0.0 or 127.*.*.*), the server binds the network channel listen port and SSL listen ports to all available IP addresses on the multi-homed machine."<br />
+<br />
+If I enter "pierrepc" - that it the actual hostname - the binding is limited to 1 IP:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/f5a48d70f31f57a1.jpg" imageanchor="1" style=""><img border="0" height="106" width="320" src="/images/06cac26e80bcc0b4.jpg" /></a></div><br />
+

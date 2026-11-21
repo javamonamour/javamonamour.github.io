@@ -1,0 +1,77 @@
+---
+layout: post
+title: "WebLogic: invoking web services and clientgen"
+date: 2010-02-08T11:38:00.000+01:00
+permalink: /2010/02/weblogic-invoking-web-services-and.html
+blogger_id: "3746662061172081401"
+tags: ["clientgen", "webservices"]
+---
+From your Web Service&nbsp; (or JPD process), generate the WSDL (say HelloWorldSyncContract.WSDL).<br />
+<br />
+In Workshop, Right Click on the WSDL, and do "clientgen": this will generate a HelloWorldSyncContract.jar file.<br />
+<br />
+Put the jar file in the lib directory of your Test project.<br />
+<br />
+You are now ready to code tests.... once you sort our all the NoClassDefFound that you will get... you need to add some 10 modules to your classpath:<br />
+<br />
+Here is a list of modules:<br />
+<br />
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />
+&lt;classpath&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="src" path="src"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Oracle WebLogic Server v10.3 JRE"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="src" path=".apt_src"&gt;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;attributes&gt;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;attribute name="optional" value="true"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&lt;/attributes&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;/classpathentry&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="con" path="com.bea.workshop.wls.j2eelib/wls-commonslogging-bridge-war/exact/1.0"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="lib/CompanyDBWS.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/workshop_10.3/weblogic-beehive/lib/controls/weblogic-webservice-control.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/workshop_10.3/weblogic-beehive/lib/controls/runtime/weblogic-controls.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/org.apache.beehive_1.0.2.2/apache-beehive-svn-snapshot/lib/controls/beehive-controls.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/wlserver_10.3/server/lib/wseeclient.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/com.bea.core.descriptor_1.4.0.0.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/com.bea.core.descriptor.j2ee_1.1.0.0.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/glassfish.jaxws.rt_2.1.3.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/com.bea.core.weblogic.saaj_1.3.0.0.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/com.bea.core.xml.staxb.runtime_1.3.0.0.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/com.bea.core.weblogic.workmanager_1.4.0.0.jar"/&gt;<br />
+&nbsp;&nbsp; <br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/com.bea.core.utils.classloaders_1.4.0.0.jar"/&gt;<br />
+&nbsp;&nbsp; <br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/com.bea.core.utils.full_1.4.0.0.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/com.bea.core.logging_1.4.0.0.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/com.bea.core.management.core.binding_2.3.0.0.jar"/&gt;<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/com.bea.core.management.core_2.3.0.0.jar"/&gt;<br />
+<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="lib" path="C:/beaosb/modules/com.bea.core.i18n_1.4.0.0.jar"/&gt;<br />
+<br />
+<br />
+<br />
+&nbsp;&nbsp; &nbsp;&lt;classpathentry kind="output" path="build/classes"/&gt;<br />
+&lt;/classpath&gt;<br />
+<br />
+<br />
+<br />
+I have struggled with JavaClassFinder (precious tool!) to find out all these libraries.<br />
+<br />
+Anyway we have 2 ways:<br />
+the JAX-WS <br />
+http://download-llnw.oracle.com/docs/cd/E12840_01/wls/docs103/webserv/client.html <br />
+and the RPC way <br />
+http://download-llnw.oracle.com/docs/cd/E12840_01/wls/docs103/webserv_rpc/client.html<br />
+<br />
+<br />
+You can learn from WebLogic examples <a href="file:///C:/beawli/wlserver_10.3/samples/server/docs/core/index.html">file:///C:/beawli/wlserver_10.3/samples/server/docs/core/index.html</a><br />
+<br />
+<br />
+Later note: in fact WebLogic already gives you all the jars you need in the famous <code class="cCode">wseeclient.zip&nbsp;</code><br />
+<br />
+<code class="cCode">See here</code><br />
+<a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/webserv/client.html#wp229351"><code class="cCode">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/webserv/client.html#wp229351</code></a><br />
+<br />
+<code class="cCode">So.... read carefully documentation before you start chasing things around...</code><br />
+<code class="cCode">&nbsp;</code>

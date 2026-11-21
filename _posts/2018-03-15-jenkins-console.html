@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Jenkins console"
+date: 2018-03-15T04:01:00.001+01:00
+permalink: /2018/03/jenkins-console.html
+blogger_id: "7692392285313078905"
+tags: ["jenkins"]
+---
+interesting presentation (skip first 9 minutes)<br />
+<br />
+<iframe width="800" height="600" src="https://www.youtube.com/embed/qaUPESDcsGg" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe><br />
+<br />
+Scripts:<br />
+<br />
+println "I hacked you"<br />
+new File('/etc/passwd').text<br />
+<br />
+<br />
+println "${Jenkins.instance.root}"<br />
+<br />
+"ls -ltr /".execute().text<br />
+<br />
+Jenkins.getInstance().metaClass.methods*.name.sort().unique()<br />
+<br />
+<br />
+on Jenkins CLI <a href="https://wiki.jenkins.io/display/JENKINS/Jenkins+CLI">https://wiki.jenkins.io/display/JENKINS/Jenkins+CLI</a><br />
+<br />
+the scripts by Sam <a href="https://github.com/samrocketman/jenkins-script-console-scripts">https://github.com/samrocketman/jenkins-script-console-scripts</a><br />
+<br />
+<a href="https://github.com/jenkinsci/jenkins-scripts">https://github.com/jenkinsci/jenkins-scripts</a><br />
+<br />
+<br />
+<a href="http://groovy-lang.org/learn.html">http://groovy-lang.org/learn.html</a><br />
+<br />
+<a href="https://wiki.jenkins.io/display/JENKINS/Jenkins+Script+Console">https://wiki.jenkins.io/display/JENKINS/Jenkins+Script+Console</a>

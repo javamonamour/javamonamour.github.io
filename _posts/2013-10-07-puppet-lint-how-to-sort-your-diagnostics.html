@@ -1,0 +1,55 @@
+---
+layout: post
+title: "puppet-lint: how to sort your diagnostics"
+date: 2013-10-07T12:37:00.001+02:00
+permalink: /2013/10/puppet-lint-how-to-sort-your-diagnostics.html
+blogger_id: "8987888308706896349"
+tags: ["puppet"]
+---
+I find a bit irritating that the output of puppet-lint is not sorted. I refer to fix my puppet manifests top-down rather than by class of error.
+
+This does the job:
+
+<pre>
+puppet-lint /vagrant/modules/mymodule/manifests/mymanifest.pp | awk '{ print $NF , $0}' | sort -n
+</pre>
+
+and the result is neatly sorted by linenumber:
+
+<pre>
+23 ERROR: create_certificate_file not in autoload module layout on line 23
+33 ERROR: create_jks_store not in autoload module layout on line 33
+38 WARNING: indentation of => is not properly aligned on line 38
+39 WARNING: indentation of => is not properly aligned on line 39
+41 ERROR: trailing whitespace found on line 41
+44 WARNING: indentation of => is not properly aligned on line 44
+45 WARNING: indentation of => is not properly aligned on line 45
+46 ERROR: trailing whitespace found on line 46
+48 ERROR: trailing whitespace found on line 48
+52 ERROR: jks_java_wrapper_certificate not in autoload module layout on line 52
+52 WARNING: line has more than 80 characters on line 52
+66 ERROR: trailing whitespace found on line 66
+70 ERROR: jks_java_wrapper_key not in autoload module layout on line 70
+70 WARNING: defined type not documented on line 70
+70 WARNING: line has more than 80 characters on line 70
+76 WARNING: indentation of => is not properly aligned on line 76
+77 WARNING: indentation of => is not properly aligned on line 77
+78 WARNING: indentation of => is not properly aligned on line 78
+80 WARNING: indentation of => is not properly aligned on line 80
+81 ERROR: two-space soft tabs not used on line 81
+90 ERROR: trailing whitespace found on line 90
+91 WARNING: line has more than 80 characters on line 91
+94 WARNING: line has more than 80 characters on line 94
+97 ERROR: trailing whitespace found on line 97
+100 ERROR: trailing whitespace found on line 100
+101 ERROR: trailing whitespace found on line 101
+113 WARNING: indentation of => is not properly aligned on line 113
+114 ERROR: trailing whitespace found on line 114
+114 WARNING: indentation of => is not properly aligned on line 114
+
+</pre>
+
+<br/><br/>
+
+Incidentally,most trivial issues can be <a href="http://bombasticmonkey.com/2013/01/28/fix-simple-problems-with-puppet-lint/">fixed with a "pre" version of puppet-lint</a>, or also CTRL + SHIFT + F in Geppetto.
+

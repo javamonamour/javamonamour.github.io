@@ -1,0 +1,212 @@
+---
+layout: post
+title: "Oracle DbAdapter, FileAdapter, FTPAdapter automated customization"
+date: 2012-06-08T07:31:00.001+02:00
+permalink: /2012/06/oeacle-dbadapter-fileadapter-ftpadapter.html
+blogger_id: "7094707765844471771"
+tags: ["DBAdapter", "FileAdapter", "ftpadapter"]
+blogger_comments:
+  - author: "xiaowen"
+    date: 2012-10-03
+    html: "I think I understand now. i misunderstood this line fileName = os.path.basename(planFullPath). It&#39;s just use the same filename, not the actual file in that location. thanks, i will give a go tomorrow. thanks for our time.<br />"
+  - author: "xiaowen"
+    date: 2012-10-03
+    html: "Is this &quot;original&quot; plan.xml checked out from svn? Is the path of plan1 runtime version plan.xml in the admin server?"
+  - author: "vernetto"
+    date: 2012-10-03
+    html: "ooooh sorry I am completely stupid, I had not understood your question. The &quot;original&quot; plan.xml should be in the same directory where the .py file is."
+  - author: "xiaowen"
+    date: 2012-10-03
+    html: "Hi, Thanks for your quick reply. like you said, after check out the xxxplan.xml, i need manually copy them to disk. But to where, is it the same location as current runtime version plan.xml?"
+  - author: "vernetto"
+    date: 2012-10-03
+    html: "I am not 100% sure if this answer your question: the property adapter.properties file contains 3 variables plan1, plan2, plan3 pointing to the xxxplan.xml files on disk.... you must check them out of SVN and copy them to disk..."
+  - author: "xiaowen"
+    date: 2012-10-03
+    html: "Hi, very good post. But have a question. from my understanding your script should replace the variable ( like FTP_HOST) in PLAN.XML with the value in your adapter.properties file. This PLAN.XML should be store in SVN, and the target plan.xml is in planFullPath.  your script below, copyfileWithTokenSubstitution(fileName, planFullPath, configProps). loading the script from same path in server. how do you read the PLAN.XML check out from SVN?<br /><br />thanks<br /><br />Kevin<br />"
+  - author: "xiaowen"
+    date: 2012-12-04
+    html: "Hi,Sorry to take so long time to test your scripts. It&#39;s half way working. Maybe i missed something. I run the script and gor successful message, but the adapter resource is not showing in my DbAdapter(DbAdapter-&gt;Configuration-&gt;Outbound Connection Pools)<br /><br />here is the log<br /><br /><br /> [wlst] Applying plan /oracle/Middleware/user_projects/domains/hb6d_domain/shared/jcaAdapter/plan/DBPlan.xml to adapter /oracle/Middleware/Oracle_SOA1/soa/connectors/DbAdapter.rar (adapter type is DbAdapter)<br />     [wlst] Loading application from /oracle/Middleware/Oracle_SOA1/soa/connectors/DbAdapter.rar ...<br />     [wlst]     <br />     [wlst]     <br />     [wlst]     <br />     [wlst] Loaded application from /oracle/Middleware/Oracle_SOA1/soa/connectors/DbAdapter.rar and the deployment plan from /oracle/Middleware/user_projects/domains/hb6d_domain/shared/jcaAdapter/plan/DBPlan.xml<br />     [wlst] The WLSTPlan object is assigned to variable wlstPlan_connectors.<br />     [wlst]     <br />     [wlst] Saving all your changes ...<br />     [wlst] Saved all your changes successfully.<br />     [wlst] Activating all your changes, this may take a while ...<br />     [wlst] The edit lock associated with this edit session is released<br />     [wlst] once the activation is completed.<br />     [wlst] Activation completed<br />     [wlst] Redeploying application DbAdapter ...<br />     [wlst]     <br />     [wlst] .Completed the redeployment of Application with status completed<br />     [wlst] Current Status of your Deployment:<br />     [wlst] Deployment command type: redeploy<br />     [wlst] Deployment State       : completed<br />     [wlst] Deployment Message     : no message<br />     [wlst] Done executing the script.<br />     [wlst] Disconnected from weblogic server: AdminServer<br />     [wlst]     <br /><br />BUILD SUCCESSFUL<br />Total time: 14 seconds<br /><br />Could you help,please<br /><br />cheers<br /><br />Kevin"
+  - author: "vernetto"
+    date: 2012-12-05
+    html: "maybe you need to uncomment the line with &quot;updateApplication&quot;... not sure why, we don&#39;t do &quot;updateApplication&quot; and it works here... please try that and kindly let me know...<br />appName should be DbAdapter.rar, I guess, kindly read the documentation:<br /><br />http://docs.oracle.com/cd/E13222_01/wls/docs91/config_scripting/reference.html<br /><br />"
+  - author: "xiaowen"
+    date: 2012-12-05
+    html: "The new resource was added in the Plan.xml. But if i did not manually &quot;update&quot; DbAdapter, it&#39;s not showing in the console.  ????"
+  - author: "vernetto"
+    date: 2012-12-05
+    html: "in your logs everything looks correct, we also run the script a million times and it was always working. My only suggestion is to run the script manually, one line at a time, and examine each variable and the result of each action...."
+  - author: "xiaowen"
+    date: 2012-12-19
+    html: "Hi, I know what&#39;s happened now. It&#39;s weblogic console bug. The scripts is working and create new Adapter configuration in the Plan.xml and also in the JNDI tree. BUT not showing the new configuration in the console(DbAdapter-&gt;Configuration-&gt;Outbound Connection Pools). it&#39;s appeared in (DbAdapter-&gt;Control-&gt;Outbound Connection Pools).<br />I did not deploy my osb code, because i did not see they are in console(DbAdapter-&gt;Configuration-&gt;Outbound Connection Pools). So just ignore this in the console, everything is working fine."
+---
+Put in SVN the Deployment Plan created manually in an environment - if makes no sense to create the Plan.xml programmatically, it's only asking for trouble.<br />
+<br />
+In them, replace the actual environment-dependent values with tokens like ${DOMAIN_NAME}<br />
+the tokens are:<br />
+tokens=DOMAIN_NAME,FTP_HOST,FTP_PASSWORD,FTP_USER<br />
+<br />
+The JNDI names of all your DataSources will not change from environment to environment, so there is no point in replacing them.<br />
+<br />
+create a adapters.properties file like this:<br />
+<br />
+<pre>plan1=/opt/oracle/domains/${DOMAIN_NAME}/shared/apps/dbadapter/plan/DBAdapterPlan.xml
+plan2=/opt/oracle/domains/${DOMAIN_NAME}/shared/apps/fileadapter/plan/FileAdapterPlan.xml
+plan3=/opt/oracle/domains/${DOMAIN_NAME}/shared/apps/ftpadapter/plan/FTPAdapterPlan.xml
+
+plans=plan1,plan2,plan3
+
+adapter1=/opt/oracle/fmw11_1_1_5/osb/soa/connectors/DbAdapter.rar
+adapter2=/opt/oracle/fmw11_1_1_5/osb/soa/connectors/FileAdapter.rar
+adapter3=/opt/oracle/fmw11_1_1_5/osb/soa/connectors/FtpAdapter.rar
+
+adapters=adapter1,adapter2,adapter3
+
+username=weblogic
+password=welcome1
+url=t3://myhost.acme.com:7001
+
+tokens=DOMAIN_NAME,FTP_HOST,FTP_PASSWORD,FTP_USER
+DOMAIN_NAME=osbpl1do
+FTP_HOST=myfthost.acme.com
+FTP_PASSWORD=pippopassword
+FTP_USER=pippouser
+</pre><br />
+<br />
+create a WLST script like this:<br />
+<br />
+<pre name="code" class="brush: java">#############################################################################
+#
+# Configure a new environment with the Plans.xml from SVN
+# uses adapters.properties file.
+#
+#############################################################################
+
+from java.io import FileInputStream
+from shutil import copyfile
+import os, sys
+import re
+
+#not used, keep only as a reference
+def copyfileobj(fsrc, fdst, length=16*1024):
+    """copy data from file-like object fsrc to file-like object fdst"""
+    while 1:
+        buf = fsrc.read(length)
+        if not buf:
+            break
+        fdst.write(buf)
+
+def copyfileWithTokenSubstitution(filein, fileout, properties):
+        input = open(filein)
+        output = open(fileout, 'w')
+        for s in input:
+            rep = s
+            for tokenname in properties.get("tokens").split(','):
+                rep = rep.replace("${" + tokenname + "}", properties.get(tokenname))
+            output.write(rep)
+        input.close()
+        output.close()
+    
+#not used, keep only as a reference
+def copyfile(src, dst):
+    """Copy data from src to dst"""
+    fsrc = None
+    fdst = None
+    try:
+        fsrc = open(src, 'rb')
+        fdst = open(dst, 'wb')
+        copyfileobj(fsrc, fdst)
+    finally:
+        if fdst:
+            fdst.close()
+        if fsrc:
+            fsrc.close()
+
+
+
+    
+propertyFileName = 'adapters.properties'    
+
+#loading properties
+print 'Loading properties from ', propertyFileName
+propInputStream = FileInputStream(propertyFileName)
+configProps = Properties()
+configProps.load(propInputStream)
+
+domainName = configProps.get('DOMAIN_NAME')
+
+plans=configProps.get("plans")
+adapters=configProps.get("adapters")
+
+planArray = []
+adapterArray = []
+
+#create needed directories where to put *Plan.xml
+for plan in plans.split(','):
+    planFullPath = configProps.get(plan).replace("${DOMAIN_NAME}", domainName)
+    planArray.append(planFullPath)
+
+#create array of adapters
+for adapter in adapters.split(','):
+    adapterName = configProps.get(adapter)
+    adapterArray.append(adapterName)
+
+
+#create dir if doesn't exist - fail if unable to create it
+for planFullPath in planArray:    
+    dirName = os.path.dirname(planFullPath)
+    print "creating directory " + dirName
+    if not os.path.exists(dirName):
+        os.makedirs(dirName)
+    
+#check for directory existence
+for planFullPath in planArray:
+    dirName = os.path.dirname(planFullPath)
+    print "testing directory " + dirName
+    
+    if not os.path.exists(dirName):
+        message = "directory " + dirName + " does not exist"
+        print message
+        raise Exception(message)
+
+    
+
+#copy all Plan.xml files to their final destination, with token substitution
+for planFullPath in planArray:
+    fileName = os.path.basename(planFullPath)
+    print "copying " + fileName + " to " + planFullPath  
+    copyfileWithTokenSubstitution(fileName, planFullPath, configProps)
+
+#Connect to Admin Server    
+connect(configProps.get("username"),configProps.get("password"),configProps.get("url"))
+
+#applying changes to the Adapters
+edit()
+try:
+    for index in range(len(planArray)):
+        startEdit()
+        plan = planArray[index]
+        adapter = adapterArray[index]
+        
+        adapterType = os.path.basename(adapter).split('.')[0]
+        
+        print 'Applying plan ' + plan + " to adapter " + adapter + " (adapter type is " + adapterType + ")"
+        myPlan = loadApplication(adapter, plan)
+        myPlan.save()
+        save()
+        activate(block='true')
+        cd('/AppDeployments/' + adapterType + '/Targets')
+        #updateApplication(appName, planPath);
+        redeploy(adapterType, plan, targets = cmo.getTargets())
+         
+
+except:
+    dumpStack()
+    stopEdit('y')
+    message="unable to finish job"
+    raise Exception(message)
+
+disconnect()
+print "job finished successfully"
+
+</pre>

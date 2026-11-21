@@ -1,0 +1,41 @@
+---
+layout: post
+title: "Deleting a non empty directory with find -delete"
+date: 2015-10-25T16:05:00.001+01:00
+permalink: /2015/10/deleting-non-empty-directory-with-find.html
+blogger_id: "8170622864228984166"
+tags: ["bash"]
+---
+<pre>
+mkdir  /opt/oracle/Pipposcriptsstaging/PippoScripts-1.23
+mkdir  /opt/oracle/Pipposcriptsstaging/PippoScripts-1.22
+
+(put some content in both folders)
+
+this will fail:
+
+find /opt/oracle/Pipposcriptsstaging/  -type d -name "PippoScripts*" ! -name "PippoScripts-1.22" -delete
+
+
+because find -delete can only remove empty folders (don't try the -maxdepth, -depth, -mindepth, -prune options, they won't work)
+
+
+For some REALLY weird reason, this command too will fail:
+
+find /opt/oracle/Pipposcriptsstaging/  -type d -name "PippoScripts*" ! -name "PippoScripts-1.22" -exec rm -rf '{}' \;
+find: `/opt/oracle/Pipposcriptsstaging/PippoScripts-1.23': No such file or directory
+
+but it actually deletes the PippoScripts-1.23 folder (WEIRD!)
+
+
+The only way to make it work:
+
+find /opt/oracle/Pipposcriptsstaging/PippoScripts-1.23 -type f  -delete
+
+find /opt/oracle/Pipposcriptsstaging/PippoScripts-1.23 -type d  -delete
+
+
+</pre>
+
+
+

@@ -1,0 +1,62 @@
+---
+layout: post
+title: "JKS: protecting your Private Key with a password"
+date: 2014-11-17T12:17:00.001+01:00
+permalink: /2014/11/jks-protecting-your-private-key-with.html
+blogger_id: "8442481366242299613"
+tags: ["keytool"]
+---
+Strangely, <a href="https://github.com/puppetlabs/puppetlabs-java_ks">Puppet java_ks module</a> doesn't cater for protecting the Private Key with a password. This feature seems to be available only through the Oracle proprietary <a href="https://docs.oracle.com/cd/E24329_01/web.1211/e24487/utils.htm#ADMRF151">ImportPrivateKey tool</a> , through the "-keyfilepass" option.  <br />
+<br />
+Another tool providing the same functionality is <a href="http://semoa.sourceforge.net/docs/api/semoa/tools/codec/pkcs/ExtKeyTool.html">ExtKeyTool</a>, <a href="http://sourceforge.net/projects/semoa/files/">available here</a> .  <br />
+<br />
+If you don't need a scripting interface, but are happy with a UI, you can use <a href="http://keystore-explorer.sourceforge.net/">Keystore Explorer</a>, it' really cool. It allows you very simply to export the Private Key in PKCS#8, PVK or OpenSSL formats. All these formats can be encrypted and protected with a password, to avoid that the PK is stolen.  Not necessarily your .key file is protected. Incidentally if your .key file begins with "-----BEGIN RSA PRIVATE KEY-----", it's most likely a OpenSSL file.  <br />
+<br />
+Traditionally in the WebLogic world people use the utils.ImportPrivateKey utility; as you see, it supports all: a password-protected key file (-keyfilepass), a password-protected JKS store (-storepass), a password-protected key entry in the JKS Store (-keypass):   <br />
+<br />
+<pre>cd $DOMAIN_HOME/bin
+. ./setDomainEnv.sh
+java utils.ImportPrivateKey
+
+Usage: java utils.ImportPrivateKey
+        -certfile <cert_file> -keyfile <private_key_file>
+        [-keyfilepass <private_key_password>]
+        -keystore <keystore> -storepass <storepass> [-storetype <storetype>]
+        -alias <alias> [-keypass <keypass>]
+        [-help]
+
+Where:
+-certfile, -keyfile, -keyfilepass
+        certificate and private key files, and the private key password
+
+-keystore, -storepass, -storetype
+        keystore file name, password, and type. The default type is JKS.
+
+-alias -keypass
+        alias and password of the keystore key entry where the private key
+        and the public certificate will be imported. When the key entry
+        password is not specified, the private key password will be used
+        instead, or when it is not specified either, the keystore password.
+
+</pre><br />
+<br />
+In fact, you MUST protect your key with a password in the JKS file, but the .key file needs not to be protected (-keyfilepass can be omitted). The -keypass parameter is the same you provide for "Private Key Passphrase" in the "SSL" configuration of the WebLogic Server. The -storepass corresponds to the "Custom Identity Keystore Passphrase" in the "Keystore" tab of the WLConsole.  <br />
+<br />
+Another workaroundish way of doing it is using keytool and going through a pkcs12 keystore:  <pre>-importkeystore [-v]
+             [-srckeystore <srckeystore>] [-destkeystore <destkeystore>]
+             [-srcstoretype <srcstoretype>] [-deststoretype <deststoretype>]
+             [-srcstorepass <srcstorepass>] [-deststorepass <deststorepass>]
+             [-srcprotected] [-destprotected]
+             [-srcprovidername <srcprovidername>]
+             [-destprovidername <destprovidername>]
+             [-srcalias <srcalias> [-destalias <destalias>]
+               [-srckeypass <srckeypass>] [-destkeypass <destkeypass>]]
+             [-noprompt]
+             [-providerclass <provider_class_name> [-providerarg <arg>]] ...
+             [-providerpath <pathlist>]
+
+</pre><br />
+<br />
+Just use the -destkeypass option, and -srcstoretype PKCS12 (<a href="http://stackoverflow.com/questions/906402/importing-an-existing-x509-certificate-and-private-key-in-java-keystore-to-use-i">see this SO post</a>).   <br />
+<br />
+

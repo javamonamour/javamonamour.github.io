@@ -1,0 +1,35 @@
+---
+layout: post
+title: "WELD is a holy piece of crap"
+date: 2019-01-15T08:47:00.002+01:00
+permalink: /2019/01/weld-is-holy-piece-of-crap.html
+blogger_id: "1101386031364863963"
+tags: ["weld"]
+---
+All of a sudden I get this, and the HTML page is basically blank<br />
+<br />
+<br />
+2019-01-14 16:21:54,369 WARN  [org.jboss.weld.Servlet] (http-/127.0.0.1:8180-1) WELD-000714 HttpContextLifecycle guard leak detected. The Servlet container is not fully compliant. The value was 1<br />
+2019-01-14 16:21:54,370 WARN  [org.jboss.weld.Context] (http-/127.0.0.1:8180-1) WELD-000223 Bean store leak was detected during org.jboss.weld.context.http.HttpRequestContextImpl association: org.apache.catalina.connector.RequestFacade@6da1f69f<br />
+2019-01-14 16:21:54,371 WARN  [org.jboss.weld.Context] (http-/127.0.0.1:8180-1) WELD-000223 Bean store leak was detected during org.jboss.weld.context.http.HttpSessionContextImpl association: org.apache.catalina.connector.RequestFacade@6da1f69f<br />
+<br />
+<br />
+I am just using some javax.inject.Inject and javax.ejb.Stateless annotations.<br />
+<br />
+<br />
+After undoing all and redoing one step at a time, it all works.<br />
+<br />
+<br />
+I have enabled weld logging in standalone.xml<br />
+<br />
+&lt;logger category="org.jboss.weld">&lt;level name="DEBUG"/>&lt;/logger><br />
+<br />
+<br />
+but this doesn't help much.<br />
+<br />
+THey say one should hook in the BeanManager to examine its content, but I find this unpractical.<br />
+They should really provide a managemen/monitoring console, like the /beans endpoint in SpringBoot.<br />
+<br />
+Once more, Java EE proves to be inferior to Spring.<br />
+<br />
+

@@ -1,0 +1,23 @@
+---
+layout: post
+title: "XAER_NOTA : The XID is not valid"
+date: 2016-06-16T13:57:00.000+02:00
+permalink: /2016/06/xaernota-xid-is-not-valid.html
+blogger_id: "5644449929691829754"
+tags: ["tx"]
+---
+If you get this error, most likely you need to tune your transaction timeoutS (there are many!)
+
+<br/><br/>
+Look for Oracle Support documents "Recommended Timeout Configuration When Using an External Transaction Processing Monitor and XA with Oracle (Doc ID 338880.1)" and for "WebLogic Server: Getting "XAER_NOTA : The XID is not valid" Exception with XA Datasource (Doc ID 1352715.1)" 
+<br/><br/>
+
+The golden rule is "global transaction timeout < session timeout < distributed_lock_timeout", so check the value of the DB "distributed_lock_timeout" value.
+<br/><br/>
+See also <a href="/2011/09/pending-xa-transactions-on-oracle-db.html">/2011/09/pending-xa-transactions-on-oracle-db.html</a> and <a href="/2015/10/ora-24756-transaction-does-not-exist.html">/2015/10/ora-24756-transaction-does-not-exist.html</a>
+<br/><br/>
+
+
+
+
+

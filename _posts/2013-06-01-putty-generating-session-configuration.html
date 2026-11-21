@@ -1,0 +1,45 @@
+---
+layout: post
+title: "Putty: generating session configuration from code"
+date: 2013-06-01T12:35:00.001+02:00
+permalink: /2013/06/putty-generating-session-configuration.html
+blogger_id: "1535514577518112871"
+tags: ["putty"]
+---
+I am an automation freak, and I hate doing manual copy and paste of information around.
+<br />
+<br />
+I have to work on some 30 different accounts, so it's quite nice to store all this info in a CMDB and generate all the Putty session from it.<br />
+<br />
+Unfortunately Putty uses the Windows Registry - which sucks. There are information on how to export this info, but I could not figure out how to store the hostname-username-password.<br />
+<br />
+I find it much easier to bypass putty with MTPutty and generate myself the&nbsp;mtputty.xml file.<br />
+Here&nbsp;<a href="http://ttyplus.com/multi-tabbed-putty/faq.html">http://ttyplus.com/multi-tabbed-putty/faq.html</a>&nbsp;they explain how:<br />
+<br />
+<br />
+<i><span style="font-family: Courier New, Courier, monospace;">I am creating mtputty.xml myself. How can I encrypt my passwords?</span></i><br />
+<i><span style="font-family: Courier New, Courier, monospace;"><br /></span></i>
+<i><span style="font-family: Courier New, Courier, monospace;">You can use XML tag "PlainPassword" instead of "Password". Specify your password under this tag as a plaintext. When you quit MTPuTTY, PlainPassword will be removed automatically, but your password will be saved encrypted.
+</span></i><br />
+<br />
+I will ignore the MTPutty/Servers/Putty section and do only the MTPutty/Internals/Putty/Node.
+
+Each node is like this:
+
+
+<br />
+<pre>&lt;Node Type="1"&gt;
+ &lt;SavedSession&gt;PH30-0KWP355&lt;/SavedSession&gt;
+ &lt;DisplayName&gt;PH30-0KWP355_oracle_2228&lt;/DisplayName&gt;
+ &lt;ServerName&gt;10.140.21.45&lt;/ServerName&gt;
+ &lt;PuttyConType&gt;4&lt;/PuttyConType&gt;
+ &lt;Port&gt;2228&lt;/Port&gt;
+ &lt;UserName&gt;oracle&lt;/UserName&gt;
+ &lt;Password&gt;g9X5n9zRcaw=&lt;/Password&gt;
+ &lt;PasswordDelay&gt;0&lt;/PasswordDelay&gt;
+ &lt;CLParams&gt;-load PH30-0KWP355 10.140.21.45 -ssh -P 2228 -l oracle -pw *****&lt;/CLParams&gt;
+ &lt;ScriptDelay&gt;0&lt;/ScriptDelay&gt;
+&lt;/Node&gt;
+
+</pre>
+

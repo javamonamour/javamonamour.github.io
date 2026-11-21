@@ -1,0 +1,72 @@
+---
+layout: post
+title: "Apache SSL and ciphersuites"
+date: 2019-05-16T14:01:00.001+02:00
+permalink: /2019/05/apache-ssl-and-ciphersuites.html
+blogger_id: "5584075181582185486"
+tags: ["cipher", "httpd"]
+---
+Useful commands and links<br />
+<br />
+https://httpd.apache.org/docs/2.4/mod/mod_ssl.html#sslciphersuite<br />
+<br />
+<br />
+openssl ciphers -v<br />
+<br />
+http://www.openssl.org/docs/apps/ciphers.html<br />
+<br />
+httpd -v <br />
+httpd -V<br />
+<br />
+https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html <br />
+<br />
+openssl s_client -connect 129.123.123.112:443<br />
+<br />
+yum list all<br />
+yum install nmap<br />
+<br />
+<br />
+nmap -p 443 --unprivileged -script ssl-enum-ciphers 129.123.123.112  <br />
+<br />
+<a href="https://www.tecklyfe.com/nmap-script-test-ssl-versions-cipher-suites/">https://www.tecklyfe.com/nmap-script-test-ssl-versions-cipher-suites/</a><br />
+<br />
+SSLCipherSuite HIGH:!aNULL:!MD5<br />
+<br />
+SSLCipherSuite HIGH:!aNULL:!MD5:!SSLv3:!TLSv1<br />
+<br />
+<pre>PORT    STATE SERVICE
+443/tcp open  https
+| ssl-enum-ciphers: 
+|   SSLv3: No supported ciphers found
+|   TLSv1.0: No supported ciphers found
+|   TLSv1.1: No supported ciphers found
+|   TLSv1.2: 
+|     ciphers: 
+|       TLS_DHE_RSA_WITH_AES_128_CBC_SHA256 - strong
+|       TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 - strong
+|       TLS_DHE_RSA_WITH_AES_256_CBC_SHA256 - strong
+|       TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 - strong
+|       TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256 - strong
+|       TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 - strong
+|       TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384 - strong
+|       TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 - strong
+|       TLS_RSA_WITH_AES_128_CBC_SHA256 - strong
+|       TLS_RSA_WITH_AES_128_GCM_SHA256 - strong
+|       TLS_RSA_WITH_AES_256_CBC_SHA256 - strong
+|       TLS_RSA_WITH_AES_256_GCM_SHA384 - strong
+|     compressors: 
+|       NULL
+|_  least strength: strong
+
+</pre><br />
+<br />
+<br />
+<br />
+<a href="https://en.wikipedia.org/wiki/Évariste_Galois">https://en.wikipedia.org/wiki/Évariste_Galois</a><br />
+<br />
+talking about GCM ciphers <a href="https://en.wikipedia.org/wiki/Galois/Counter_Mode">https://en.wikipedia.org/wiki/Galois/Counter_Mode</a><br />
+<br />
+<br />
+<br />
+<br />
+

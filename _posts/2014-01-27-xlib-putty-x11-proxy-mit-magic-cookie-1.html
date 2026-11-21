@@ -1,0 +1,31 @@
+---
+layout: post
+title: "Xlib: PuTTY X11 proxy: MIT-MAGIC-COOKIE-1 data did not match"
+date: 2014-01-27T15:56:00.000+01:00
+permalink: /2014/01/xlib-putty-x11-proxy-mit-magic-cookie-1.html
+blogger_id: "244600828237322925"
+tags: ["X11"]
+---
+I got this message logging as user1 with X11 forwarding with putty, then sudo su - user2, then run JConsole
+
+<br/>
+solution: 
+<br/>
+login as user1 
+<br/>
+xauth list
+<br/>
+(you get here a list of entries, say line1, line2...)
+<br/>
+sudo su - user2
+<br/>
+xauth add line1
+<br/>
+xauth add line2
+
+<br/>
+
+It works!
+
+
+

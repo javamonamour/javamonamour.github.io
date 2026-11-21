@@ -1,0 +1,54 @@
+---
+layout: post
+title: "System property jdk.tls.namedGroups(null) contains no supported elliptic curves"
+date: 2017-06-30T09:34:00.000+02:00
+permalink: /2017/06/system-property-jdktlsnamedgroupsnull.html
+blogger_id: "1366399697151932467"
+tags: ["ssl"]
+---
+We get this using java version "1.6.0_141"  Java(TM) SE Runtime Environment (build 1.6.0_141-b12) Java HotSpot(TM) 64-Bit Server VM (build 20.141-b12, mixed mode) :
+
+
+<br/><br/>
+
+<pre class="brush: java">
+
+java.lang.IllegalArgumentException: System property jdk.tls.namedGroups(null) contains no supported elliptic curves
+ at com.sun.net.ssl.internal.ssl.SupportedEllipticCurvesExtension.&lt;clinit&gt;(HelloExtensions.java:567)
+
+&lt;Jun 29, 2017 11:16:07 AM CEST&gt; &lt;Error&gt; &lt;Socket&gt; &lt;BEA-000421&gt; &lt;Uncaught Throwable in processSockets
+ java.lang.ExceptionInInitializerError.
+ java.lang.ExceptionInInitializerError
+ at com.sun.net.ssl.internal.ssl.HelloExtensions.&lt;init&gt;(HelloExtensions.java:73)
+ at com.sun.net.ssl.internal.ssl.HandshakeMessage$ClientHello.&lt;init&gt;(HandshakeMessage.java:223)
+ at com.sun.net.ssl.internal.ssl.ServerHandshaker.processMessage(ServerHandshaker.java:204)
+ at com.sun.net.ssl.internal.ssl.Handshaker.processLoop(Handshaker.java:945)
+ at com.sun.net.ssl.internal.ssl.Handshaker$1.run(Handshaker.java:885)
+ Truncated. see log file for complete stacktrace
+ Caused By: java.lang.IllegalArgumentException: System property jdk.tls.namedGroups(null) contains no supported elliptic curves
+ at com.sun.net.ssl.internal.ssl.SupportedEllipticCurvesExtension.&lt;clinit&gt;(HelloExtensions.java:567)
+ at com.sun.net.ssl.internal.ssl.HelloExtensions.&lt;init&gt;(HelloExtensions.java:73)
+ at com.sun.net.ssl.internal.ssl.HandshakeMessage$ClientHello.&lt;init&gt;(HandshakeMessage.java:223)
+ at com.sun.net.ssl.internal.ssl.ServerHandshaker.processMessage(ServerHandshaker.java:204)
+ at com.sun.net.ssl.internal.ssl.Handshaker.processLoop(Handshaker.java:945)
+ Truncated. see log file for complete stacktrace
+ &gt;
+ &lt;Jun 29, 2017 11:16:07 AM CEST&gt; &lt;Error&gt; &lt;Socket&gt; &lt;BEA-000421&gt; &lt;Uncaught Throwable in processSockets
+ java.lang.NoClassDefFoundError: Could not initialize class com.sun.net.ssl.internal.ssl.SupportedEllipticCurvesExtension.
+ java.lang.NoClassDefFoundError: Could not initialize class com.sun.net.ssl.internal.ssl.SupportedEllipticCurvesExtension
+ at com.sun.net.ssl.internal.ssl.HelloExtensions.&lt;init&gt;(HelloExtensions.java:73)
+ at com.sun.net.ssl.internal.ssl.HandshakeMessage$ClientHello.&lt;init&gt;(HandshakeMessage.java:223)
+ at com.sun.net.ssl.internal.ssl.ServerHandshaker.processMessage(ServerHandshaker.java:204)
+ at com.sun.net.ssl.internal.ssl.Handshaker.processLoop(Handshaker.java:945)
+ at com.sun.net.ssl.internal.ssl.Handshaker$1.run(Handshaker.java:885)
+ Truncated. see log file for complete stacktrace
+
+</pre>
+
+<br/><br/>
+
+The issue can be solved by removing -Dweblogic.ssl.JSSEEnabled=true 
+<br/><br/>
+According to the Oracle website this issue was introduced with 141-b12 - http://www.oracle.com/technetwork/java/javase/overview-156328.html#R160_141 and is fixed in JDK 141-b32
+<br/><br/>
+

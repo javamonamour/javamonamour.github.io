@@ -1,0 +1,86 @@
+---
+layout: post
+title: "which Cipher Suites your JVM supports"
+date: 2016-07-25T12:23:00.001+02:00
+permalink: /2016/07/which-cipher-suites-your-jvm-supports.html
+blogger_id: "49861455174308552"
+tags: ["security", "ssl", "tls"]
+---
+"SunJSSE supports a large number of ciphersuites"  http://docs.oracle.com/javase/6/docs/technotes/guides/security/SunProviders.html#SunJSSEProvider  
+
+<br/>
+1) WLS 11g (WLS 10.3.6) uses JSSE and runs on Java SE 6
+<br/>
+ 2) JSSE java 6  <a href="http://docs.oracle.com/javase/6/docs/technotes/guides/security/SunProviders.html#SunJSSEProvider">http://docs.oracle.com/javase/6/docs/technotes/guides/security/SunProviders.html#SunJSSEProvider</a>
+<br/>
+ 3) WLS 10.3.6 ciphers: <a href="http://docs.oracle.com/cd/E28280_01/web.1111/e13707/ssl.htm#BABBDACC">http://docs.oracle.com/cd/E28280_01/web.1111/e13707/ssl.htm#BABBDACC</a>
+<br/>
+
+
+
+
+<br/>
+The classification of the different bits (TLS_DHE_RSA_WITH_AES_128_CBC_SHA) is as follows:
+<br/>
+TLS vs SSL
+<br/>
+RSA vs ECDH vs ECDHE vs DHE vs KRB5 
+<br/>
+ECDSA vs RSA
+<br/>
+RC4 vs 3DES vs DES vs AES
+<br/>
+EDE vs CBC
+<br/>
+SHA vs MD5
+
+<br/>
+
+<br/>
+
+Set "-Dssl.debug=true -Djavax.net.debug=ssl -Dweblogic.log.StdoutSeverity=Debug" then search for the statement 
+
+<br/>
+
+SSLEngine.setEnabledCipherSuites
+
+<br/>
+
+to see which Ciphers are actually ENABLED (not only supported).
+
+
+<br/>
+
+See also <a href="http://stackoverflow.com/questions/10487962/java-cipher-suites">http://stackoverflow.com/questions/10487962/java-cipher-suites</a>
+
+
+<br/>
+There is a property https.cipherSuites , and a  SSLSocket.setEnabledCipherSuites()/SSLEngine.setEnabledCipherSuites() method.
+
+<br/>
+See also MOS document "How to Verify the Sun JSSE Cipher Suites Available to WebLogic Server (11g/12c) (Doc ID 2052237.1)"
+<br/>
+suggesting to enable these flags
+
+<pre>
+ -Dweblogic.debug.DebugSecuritySSL=true
+ -Djavax.net.SSL=true
+ -Djava.debug=SSL
+ -Djavax.net.debug=all
+ -Dssl.debug=true
+ -Dweblogic.StdoutDebugEnabled=true
+ -Dweblogic.log.LogSeverity=Debug
+ -Dweblogic.log.LoggerSeverity=Debug
+</pre>
+
+
+
+
+
+ 
+
+
+
+
+
+

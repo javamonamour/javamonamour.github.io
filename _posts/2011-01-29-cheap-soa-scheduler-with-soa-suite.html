@@ -1,0 +1,14 @@
+---
+layout: post
+title: "Cheap SOA Scheduler with SOA Suite"
+date: 2011-01-29T17:45:00.000+01:00
+permalink: /2011/01/cheap-soa-scheduler-with-soa-suite.html
+blogger_id: "6683534727911306900"
+tags: ["scheduler"]
+---
+We have discussed in another post some possibilities to create a scheduler in SOA Suite. They are all very complicated.<br />
+<br />
+A cheap and dirty way to trigger a BPEL process at regular intervals is creating a TRIGGERME table with a field STATUS, and using a DBAdapter in the Exposed Services lane with a "Poll for new or updated rows" option, and using the same value for UNREAD and READ value in the STATUS field.<br />
+You can set the frequency of the polling to anything you want.<br />
+<br />
+This pattern is valid only for regular scheduling with no control on the starting time, so it's really a raw scheduler.

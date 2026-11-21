@@ -1,0 +1,53 @@
+---
+layout: post
+title: "JMS message delete in Java"
+date: 2013-12-02T17:14:00.001+01:00
+permalink: /2013/12/jms-message-delete-in-java.html
+blogger_id: "2313837005858830524"
+tags: ["jms"]
+---
+destinationJNDI should contain the JNDI name of the queue, like "CommonJmsServer1@jms.jndi.dq.NL_Notifications.NLNotificationReprocessQ".<br/><br/>
+<br/>
+ctx should be a valid InitialContext like:
+<br/>
+idlist should be a CSV list of message IDs that you want to delete
+<br/>
+<pre class="brush: java">
+
+
+ Properties env = new Properties();
+  env.put(javax.naming.Context.PROVIDER_URL, PROVIDER_URL);
+  env.put(Context.SECURITY_PRINCIPAL, WL_USER);
+  env.put(Context.SECURITY_CREDENTIALS, WL_PASSWORD);
+  env.put(Context.INITIAL_CONTEXT_FACTORY, WL_INITIAL_CONTEXT_FACTORY);
+  InitialContext ctx = new InitialContext(env);
+
+
+ javax.jms.Queue queue = (javax.jms.Queue) ctx.lookup(destinationJNDI.toString());
+
+  // lookup the queue connection factory
+  QueueConnectionFactory queueConnFactory = (QueueConnectionFactory) ctx.lookup(WEBLOGIC_JMS_XA_CONNECTION_FACTORY);
+  // create a queue connection
+  QueueConnection queueConn = queueConnFactory.createQueueConnection();
+  queueConn.start();
+
+  // create a queue session
+  Session queueSession = queueConn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+  for (String id : idlist.split(",")) {
+      if (id.startsWith("ID:") ) {
+        MessageConsumer consumer = queueSession.createConsumer(queue, " JMSMessageID='" +   id + "'");
+        Message message = consumer.receive(1000);
+        out.write("message = " + message + " ");
+        out.write("deleted ID " + id + " ");
+      }
+  }
+  queueSession.close();
+  queueConn.close();
+
+</pre>
+
+<br/>
+
+(posted also on StackOverflow)
+
+

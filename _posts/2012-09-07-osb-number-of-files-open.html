@@ -1,0 +1,44 @@
+---
+layout: post
+title: "OSB, number of files open"
+date: 2012-09-07T21:00:00.000+02:00
+permalink: /2012/09/osb-number-of-files-open.html
+blogger_id: "8343341595775668898"
+tags: ["lsof"]
+---
+We run an environment with Whole Server Migration.<br />
+<br />
+An important point is to make sure that we have enough resources (file handles) on a machine to be able to run 2 Managed Server - in case we migrate one.<br />
+<br />
+This is how you discover how many files are used by the user "soa":<br />
+<br />
+/usr/sbin/lsof -u soa | wc -l<br />
+<br />
+It turned out that a single server running the Admin and 4 Managed Servers required some 9000 files. An important load was represented by the MANY Datasources we need to deploy.<br />
+<br />
+This command:<br />
+ulimit -a<br />
+<br />
+will tell you the hard limit imposed by the Linux Kernel:<br />
+<br />
+ulimit -a<br />
+core file size          (blocks, -c) 0<br />
+data seg size           (kbytes, -d) unlimited<br />
+scheduling priority             (-e) 0<br />
+file size               (blocks, -f) unlimited<br />
+pending signals                 (-i) 132607<br />
+max locked memory       (kbytes, -l) 32<br />
+max memory size         (kbytes, -m) unlimited<br />
+<b>open files                      (-n) 8192</b><br />
+pipe size            (512 bytes, -p) 8<br />
+POSIX message queues     (bytes, -q) 819200<br />
+real-time priority              (-r) 0<br />
+stack size              (kbytes, -s) 10240<br />
+cpu time               (seconds, -t) unlimited<br />
+max user processes              (-u) 132607<br />
+virtual memory          (kbytes, -v) unlimited<br />
+file locks                      (-x) unlimited<br />
+<br />
+<br />
+apparently the limit is flexible, even with a limit of 8192 we were able to open 9050 files...<br />
+

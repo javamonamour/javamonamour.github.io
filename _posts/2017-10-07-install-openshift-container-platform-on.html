@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Install Openshift Container Platform on Ubuntu 16.4"
+date: 2017-10-07T13:42:00.001+02:00
+permalink: /2017/10/install-openshift-container-platform-on.html
+blogger_id: "2730063835376252448"
+tags: ["openshift"]
+---
+download oc here<br />
+<br />
+https://github.com/openshift/origin/releases/tag/v3.7.0-alpha.1<br />
+<br />
+untar the oc executable and put it somewhere in the path  (e.g. /usr/local/bin )<br />
+<br />
+install docker:<br />
+<br />
+sudo apt install docker.io<br />
+#sudo groupadd docker  // this should not be necessary! <br />
+sudo usermod -aG docker $(whoami)<br />
+sudo reboot now<br />
+sudo service docker start<br />
+docker ps <br />
+<br />
+oc cluster up<br />
+<br />
+if it comes up with an error related to --insecure-registry, you can start with "oc cluster up --skip-registry-check=true"<br />
+<br />
+It's really a struggle to make all this work... the whole integration Openshift-Docker is very environment-dependent, for instance on Ubuntu 17.4 I could not even install Docker... .pathetic... always something going wrong...<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Poor man's Puppet implementation"
+date: 2013-02-17T17:19:00.000+01:00
+permalink: /2013/02/poor-mans-puppet-implementation.html
+blogger_id: "4613350217034156586"
+---
+I have 3 Linux users: soa, soa2 and soa3, and several hosts to manage which to copy files etc.<br/><br/>
+Simplest thing is to create a common shared folder with NFS or similar.<br/><br/>
+The alternative is to setup .ssh trust between all machines, and use a centralized place from which to ssh and scp stuff around.
+
+This script allows you to loop over all users and machines and perform any command:
+
+
+
+<pre name="code" class="brush: java">
+
+getOptHome(){
+ local user="$1"
+ local path="opt"
+
+ if [ "soa" == "$user"  ]; then
+  optpath="opt"
+ elif [ "soa2" == "$user" ]; then 
+  optpath="opt2"
+ elif [ "soa3" == "$user" ]; then 
+  optpath="opt3"
+ else 
+  echo "User must be either soa, soa2 or soa3.  Exiting"
+  exit 1
+ fi
+}
+
+distributionListPPRD="acme103 acme105 acme106 acme112"
+distributionListPROD="acme107 acme108 acme110 acme111"
+usersList="soa soa2 soa3"
+
+fileToCopy='showWebLogic.sh'
+
+distributionList=$distributionListPPRD
+
+for host in $distributionList
+do
+
+ for user in $usersList 
+ do
+  getOptHome "$user"
+  ssh "$user"@"$host" mkdir -p /${optpath}/oracle/usr
+  #scp $fileToCopy "$user"@"$host":/${optpath}/oracle/usr
+ done
+
+done
+
+ 
+
+</pre>

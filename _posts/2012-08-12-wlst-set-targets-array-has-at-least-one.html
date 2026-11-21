@@ -1,0 +1,34 @@
+---
+layout: post
+title: "WLST set Targets : Array has at least one null element"
+date: 2012-08-12T19:02:00.000+02:00
+permalink: /2012/08/wlst-set-targets-array-has-at-least-one.html
+blogger_id: "4718824785027657601"
+tags: ["WLST"]
+blogger_comments:
+  - author: "diogoko"
+    date: 2017-11-09
+    html: "If you&#39;re doing something like<br /><br />  set(&#39;Targets&#39;, jarray.array([ObjectName(&#39;com.bea:Name=AdminServer,Type=Server&#39;)], ObjectName))<br /><br />there must NOT be a space between the object name and the &quot;Type=...&quot; part."
+  - author: "Anonymous"
+    date: 2018-10-20
+    html: "God bless you, diogoko. This was driving me crazy. Thank you."
+  - author: "SOA_Lead"
+    date: 2020-06-26
+    html: "Hi Diogoko,<br /><br />How to add more targets like AdminServer,osb_cluster,soa_cluster, kindly assist.<br /><br />Thanks<br />Rajah Samuel"
+---
+Very often I struggle with the setTarget method:<br />
+<br />
+this statement:<br />
+set('Targets', jarray.array(jmsServerArray, ObjectName))<br />
+<br />
+often results in:<br />
+<br />
+java.lang.IllegalArgumentException: Array has at least one null element<br />
+        at weblogic.descriptor.internal.AbstractDescriptorBeanHelper._cleanAndValidateArray(AbstractDescriptorBeanHelper.java:730)<br />
+        at weblogic.management.configuration.TargetInfoMBeanImpl.setTargets(TargetInfoMBeanImpl.java:240)<br />
+<br />
+<br />
+Now, the problem more often than not is NOT that some elements in jmsServerArray are null.... the problem lies in that they are the ObjectName of something that DOES NOT EXIST in the Domain/Server config.<br />
+So rather than trying to find out if an element is NULL, find out if it's a VALID RESOURCE.<br />
+<br />
+Frustrating.... indeed...

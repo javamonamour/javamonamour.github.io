@@ -1,0 +1,18 @@
+---
+layout: post
+title: "Change JVM parameters for Managed Server"
+date: 2011-10-02T11:21:00.000+02:00
+permalink: /2011/10/change-jvm-parameters-for-managed.html
+blogger_id: "7722057368034565288"
+tags: ["weblogic"]
+---
+If you start the Managed server from a script, invoking startManagedWebLogic.cmd,<br />
+be aware that passing the JVM parameters like this:<br />
+<br />
+set JAVA_OPTIONS=-Xms1024m -Xmx1024m<br />
+<br />
+will NOT work, although they DO appear in the command line. They appear, but duplicate and it's only the first occurrence which matters.<br />
+<br />
+This is the way to do it:<br />
+<br />
+set USER_MEM_ARGS=-Xms1024m -Xmx1024m -Xloggc:ms1gc.log

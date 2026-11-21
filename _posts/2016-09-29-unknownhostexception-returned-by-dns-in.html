@@ -1,0 +1,89 @@
+---
+layout: post
+title: "UnknownHostException returned by DNS, in reality due to not enough file descriptors available"
+date: 2016-09-29T18:06:00.001+02:00
+permalink: /2016/09/unknownhostexception-returned-by-dns-in.html
+blogger_id: "6699752895796963133"
+tags: ["network"]
+---
+
+interesting case, intermittently we get this error:
+<br/><br/>
+
+<pre>
+
+java.net.UnknownHostException: somehostnamehere
+                at java.net.Inet4AddressImpl.lookupAllHostAddr(Native Method)
+                at java.net.InetAddress$1.lookupAllHostAddr(InetAddress.java:922)
+                at java.net.InetAddress.getAddressesFromNameService(InetAddress.java:1316)
+                at java.net.InetAddress.getAllByName0(InetAddress.java:1269)
+                at java.net.InetAddress.getAllByName(InetAddress.java:1185)
+                at java.net.InetAddress.getAllByName(InetAddress.java:1119)
+                at org.apache.http.impl.conn.SystemDefaultDnsResolver.resolve(SystemDefaultDnsResolver.java:44)
+                at org.apache.http.impl.conn.HttpClientConnectionOperator.connect(HttpClientConnectionOperator.java:102)
+                at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:314)
+                at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:357)
+                at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:218)
+                at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:194)
+                at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:85)
+                at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:108)
+                at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:186)
+                at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:82)
+                at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:106)
+                
+</pre>
+
+<br/><br/>
+
+
+
+<a href="https://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/impl/conn/SystemDefaultDnsResolver.html">https://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/impl/conn/SystemDefaultDnsResolver.html</a>
+
+<br/><br/>
+
+"DNS resolver that uses the default OS implementation for resolving host names"
+
+<br/><br/>
+
+<pre>
+public InetAddress[] resolve(String host) throws UnknownHostException 
+{ return InetAddress.getAllByName(host); } 
+
+</pre>
+
+<br/><br/>
+
+<a href="https://docs.oracle.com/javase/7/docs/api/java/net/Inet4Address.html">https://docs.oracle.com/javase/7/docs/api/java/net/Inet4Address.html</a>
+<br/><br/>
+<a href="https://docs.oracle.com/javase/7/docs/api/java/net/InetAddress.html#getAllByName(java.lang.String)">https://docs.oracle.com/javase/7/docs/api/java/net/InetAddress.html#getAllByName(java.lang.String)</a>
+<br/><br/>
+
+<pre>
+
+InetAddress Caching 
+ The InetAddress class has a cache to store successful as well as unsuccessful host name resolutions. 
+ By default, when a security manager is installed, in order to protect against DNS spoofing attacks, the result of positive host name resolutions are cached forever. When a security manager is not installed, the default behavior is to cache entries for a finite (implementation dependent) period of time. The result of unsuccessful host name resolution is cached for a very short period of time (10 seconds) to improve performance. 
+
+If the default behavior is not desired, then a Java security property can be set to a different Time-to-live (TTL) value for positive caching. Likewise, a system admin can configure a different negative caching TTL value when needed. 
+
+Two Java security properties control the TTL values used for positive and negative host name resolution caching: 
+
+networkaddress.cache.ttl Indicates the caching policy for successful name lookups from the name service. The value is specified as as integer to indicate the number of seconds to cache the successful lookup. The default setting is to cache for an implementation specific period of time. 
+ A value of -1 indicates "cache forever". 
+
+networkaddress.cache.negative.ttl (default: 10)Indicates the caching policy for un-successful name lookups from the name service. The value is specified as as integer to indicate the number of seconds to cache the failure for un-successful lookups. 
+ A value of 0 indicates "never cache". A value of -1 indicates "cache forever". 
+
+</pre>
+
+
+<br/><br/>
+
+Unfortunately  public native InetAddress[] lookupAllHostAddr(String hostname) throws UnknownHostException;  is a NATIVE method, and it seems that the only exception he is capable of is UnknownHostException.. that is, even if the OS can't connect to DNS server, you get a UnknownHostException (which is totally incorrect)
+
+
+<br/><br/>
+
+
+
+

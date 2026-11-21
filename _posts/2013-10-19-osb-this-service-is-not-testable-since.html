@@ -1,0 +1,18 @@
+---
+layout: post
+title: "OSB : this service is not testable since all its operations require java arguments"
+date: 2013-10-19T19:19:00.001+02:00
+permalink: /2013/10/osb-this-service-is-not-testable-since.html
+blogger_id: "1178798986658173328"
+tags: ["OSB"]
+---
+I have created a simple Business Service to post a JMS message to a JMS queue.
+<br/>
+When I test it from the Test Console being logged in with a user belonging to Administrators group, all is fine.
+<br/>
+When I try with a user belonging to Operators, IntegrationOperators, Monitors, IntegrationMonitors it gives me a disable "debug" button and a funny message "this service is not testable since all its operations require java arguments".
+<br/>
+Adding "IntegrationDeployers" group, logging out and in again seems to solve the issue.
+
+
+

@@ -1,0 +1,39 @@
+---
+layout: post
+title: "OSB, closing a Project belonging to a Configuration will fail deployment"
+date: 2010-06-16T11:11:00.003+02:00
+permalink: /2010/06/osb-closing-project-belonging-to.html
+blogger_id: "7990700708937157839"
+tags: ["eclipse", "osb11"]
+---
+I find this feature a bit irritating:<br />
+you create configuration AConf,<br />
+you create inside two projects:<br />
+AProj<br />
+BProj<br />
+<br />
+<br />
+Now you close BProj and you deploy AConf to the server from Eclipse.<br />
+<br />
+You will get an error message reminding you that BProj is closed.<br />
+I would expect that, since I am deploying only AProj, the state of BProj doesn't really matter.<br />
+<br />
+Workaround: either keep the BProj open, or move it to another configuration.<br />
+<br />
+I like to keep open only the projects I am currently working on, to improve Eclipse performance issues and avoid getting confused while I click around.<br />
+<br />
+<br />
+I would also <b>strongly discourage renaming projects</b>, I have the impression the old name still hangs around in some configuration file, and when you deploy you get an error message:<br />
+<br />
+Resource '/yourProjectName' does not exist.<br />
+<br />
+after I have renamed yourProjectName intosomething else.<br />
+<br />
+<br />
+In fact you can go into ConfigurationProject/.setting/<b>com.bea.alsb.core.prefs</b><br />
+and there is a property<br />
+<b>container.referenced.projects</b>=yourProjectName1|yourProjectName2|<br />
+<br />
+Just remove the one you don't need... it's a hack but it works. <br />
+<br />
+Remember to refresh the ConfigProject in Eclipse afterwards, close the ConfigProject and reopen it.

@@ -1,0 +1,27 @@
+---
+layout: post
+title: "Basic, Form, Digest authentication"
+date: 2018-05-08T11:34:00.000+02:00
+permalink: /2018/05/basic-form-digest-authentication.html
+blogger_id: "6494255694354767690"
+tags: ["authentication"]
+---
+<a href="https://en.wikipedia.org/wiki/Basic_access_authentication">https://en.wikipedia.org/wiki/Basic_access_authentication</a> to be used with HTTPS otherwise you pass the password in clear text (no digest). Popup-based (unlike with form-based). <br />
+<br />
+"To unauthenticated requests, the server should return a response whose header contains a HTTP 401 Unauthorized status and a WWW-Authenticate field."<br />
+<br />
+<br />
+<a href="https://en.wikipedia.org/wiki/Form-based_authentication">https://en.wikipedia.org/wiki/Form-based_authentication</a><br />
+<br />
+<a href="https://en.wikipedia.org/wiki/HTTP%2BHTML_form-based_authentication">https://en.wikipedia.org/wiki/HTTP%2BHTML_form-based_authentication</a> same as "form-based authentication" <br />
+<br />
+<a href="https://en.wikipedia.org/wiki/Digest_access_authentication">https://en.wikipedia.org/wiki/Digest_access_authentication</a> use a hash function + nonce (HA1 = MD5(username:realm:password)) to encrypt username:password, making it more secure that basic authentication <br />
+<br />
+<br />
+<br />
+<br />
+<br />
+Something completely NUTS: https://en.wikipedia.org/wiki/List_of_HTTP_header_fields  "Authorization  Authentication credentials for HTTP authentication.  Authorization: Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ== "  they want to AUTHENTICATE but they use a "Authorization" header.... how confusing...<br />
+<br />
+<br />
+

@@ -1,0 +1,37 @@
+---
+layout: post
+title: "OSB, lessons learned and best practices"
+date: 2010-09-28T12:41:00.011+02:00
+permalink: /2010/09/osb-lessons-learned.html
+blogger_id: "4936906413509654976"
+tags: ["OSB"]
+---
+if someone asked me: "tell me, quick, what is your message to posterity about OSB?", <br />
+I would probably say:<br />
+<br />
+- from day 1, start <b>automated deployment</b> of your project to a development and integration server, <b>automated tests</b> with SOAPUI and continuous <b>performance monitoring</b> again with SOAPUI. Use customization files to do the property filtering for the target environment, this will force to identify from day 1 all the environment-dependent values. You should NEVER, EVER deploy something somewhere manually. NEVER. Was I clear? NEVER.<br />
+<br />
+<br />
+- learn <b>XQuery</b>, there is a lot you can do with XQuery without resorting to convoluted cascades of message processing actions (replace, rename, assign....). Remember, your message flow should stay ESSENTIAL, all the message processing should be hidden somewhere else<br />
+<br />
+- learn about <b>XmlObject</b> and <b>XmlCursor</b> in Java Callout and custom Java XPaths, they can bring the entire power of countless Java libraries to your message processing needs.<br />
+<br />
+- <b>generate WSDL automatically</b>, with Groovy or anything you like. They are a pain in the neck to be hacked manually. The same can be said about XQuery transformations. There is a debate on whether also Proxy Services could be generated automatically, and whether the ActionId is an obstacle or not...if you find yourself doing a lot of copying and pasting, this might be an option for you.<br />
+<br />
+- <b>publish WSDL and XSDs externally</b>, to an Apache server or any form of Registry. If you feel that keeping your resources inside OSB is cool, feel twice.<br />
+<br />
+- <b>wrap BS with a Local Transport PS</b>, abstraction is good when it comes with a low performance cost<br />
+<br />
+- make sure your <b>Application Specific Business Model</b> doesn't creep into your "Canonical Data Model", that's one of the main reasons people use a ESB anyway. Anyway, domain modeling is not something that should be left solely to the developer, make sure the Business too is involved.<br />
+<br />
+- <b>EJBs proxies</b> can be tempting - they map XML to Java for you - but they are expensive from a maintenance and performance perspective. If you need interfacing to the Java world, verify that you cannot replace them with a Java Callout.<br />
+<br />
+<br />
+Fabio adds these lessons: <br />
+<br />
+<div>- Enable <b>Monitoring </b>for BSP and PS with interval of 10-15 minutes</div><div></div><div>- Enable <b>SLA Alerts</b> for errors avg and max response times. Aggregation interval+15 minutes</div><div></div><div>- For every BSP, set a <b>timeout</b></div><div></div><div>- Create 1 or more <b>Workmanagers </b>and associate the PS to it.</div><div></div><div>- enforce consistent <b>Exception (fault) handling</b> and <b>logging</b> across all services</div><div></div><div>- <b>Auditing</b> - trace the service, operation, response time, response code, originating username/system, ipaddress... logging this information with log4j (rotation time 1 minute) and having an independent process parse the files and store this information asynchronously to a DB . This proves to be a more efficient way of auditing than using the ReportingMDB. ReportingMDB should be used only for infrequent events like SLA violations.<br />
+<br />
+<br />
+</div><div><br />
+<br />
+</div>

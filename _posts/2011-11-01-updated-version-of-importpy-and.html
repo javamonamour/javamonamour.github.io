@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Updated version of import.py and exportFromWorkspace for OSB 10.3.5"
+date: 2011-11-01T23:01:00.001+01:00
+permalink: /2011/11/updated-version-of-importpy-and.html
+blogger_id: "4816972949924730954"
+tags: ["osbimportexport"]
+---
+Things have slightly changed and since the previous versions you must adjust the classpaths.<br />
+<br />
+Copy the scripts into a directory and run:<br />
+<br />
+c:\apps\ant\bin\ant -verbose exportFromWorkspace<br />
+c:\apps\ant\bin\ant -verbose import<br />
+<br />
+Remember that your workspace should contain also a OSBConfiguration<br />
+<br />
+<br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBImport/build.properties">http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBImport/build.properties</a><br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBImport/build.xml">http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBImport/build.xml</a><br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBImport/import.properties">http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBImport/import.properties</a><br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBImport/import.py">http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBImport/import.py</a><br />
+<br />
+<br />
+The scripts are really raw and need refactoring, but they worked on my machine

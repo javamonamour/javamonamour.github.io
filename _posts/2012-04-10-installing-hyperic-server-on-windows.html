@@ -1,0 +1,177 @@
+---
+layout: post
+title: "Installing Hyperic Server on Windows and Agent on Linux to monitor WebLogic"
+date: 2012-04-10T20:23:00.004+02:00
+permalink: /2012/04/installing-hyperic-server-on-windows.html
+blogger_id: "6028648348637910012"
+tags: ["hyperic"]
+---
+Downloading: <br />
+<br />
+https://www.vmware.com/tryvmware/p/activate.php?p=hyperic&amp;lp=1<br />
+<br />
+VMware vFabric Hyperic 4.6.5 Server and Agent - Linux (64 bit)<br />
+03/15/12  |  4.6.5  |  396M  |  Binary (.tar.gz) <br />
+<br />
+It gives me a hyperic-hqee-installer-4.6.5-x86-64-linux.tar.gz<br />
+I unzip it into a hyperic-hqee-installer-4.6.5-x86-64-linux.tar<br />
+Which untarred gives a hyperic-hqee-installer-4.6.5 folder<br />
+<br />
+which contains<br />
+<br />
+86,371,609 hyperic-hqee-agent-4.6.5-x86-64-linux.tar.gz<br />
+DIR          installer<br />
+49,455 open_source_licenses-SpringSource_tc_Server.txt<br />
+796,537 open_source_licenses.txt<br />
+241,153,046 server-4.6.5.tar.gz<br />
+108 setup.bat<br />
+147 setup.sh<br />
+<br />
+<a href="http://pubs.vmware.com/vfabric5/index.jsp?topic=/com.vmware.vfabric.hyperic.4.6/vFabric_Hyperic_Installation_and_Configuration.html">Here the installation instructions</a>.<br />
+<br />
+I also download the Windows version.<br />
+Apparently no need for DB (using internal PostgreSQL DB)<br />
+Run setup.bat. Create a C:\pierre\hypericserver directory first.<br />
+Provide SMTP server.<br />
+<br />
+Admin user: hqadmin<br />
+<br />
+<br />
+At the end I get:<br />
+<br />
+<i><br />
+--------------------------------------------------------------------------------<br />
+Installation Complete:<br />
+Server successfully installed to: C:\pierre\hypericserver/server-4.6.5-EE<br />
+--------------------------------------------------------------------------------<br />
+<br />
+You should now install the HQ server as a Windows Service using this command:<br />
+<br />
+C:\pierre\hypericserver\server-4.6.5-EE\bin\hq-server.bat install<br />
+<br />
+You can then use the Service Control Manager (Control Panel-&gt;Services) to<br />
+start the HQ server.  Note that the first time the HQ server starts up it may<br />
+take several minutes to initialize.  Subsequent startups will be much faster.<br />
+<br />
+Once the HQ server reports that it has successfully started, you can log in<br />
+to your HQ server at:<br />
+<br />
+http://mymachine.euc.acme.com:7080/<br />
+username: hqadmin<br />
+password: pippo0<br />
+<br />
+To change your password, log in to the HQ server, click the "Administration"<br />
+link, choose "List Users", then click on the "hqadmin" user.<br />
+<br />
+<br />
+Setup completed.<br />
+A copy of the output shown above has been saved to:<br />
+C:\pierre\downloads\hyperic-hqee-installer-4.6.5-win32\hyperic-hqee-installer-4.6.5\installer\logs\hq-install.log<br />
+<br />
+Press the Enter key to exit setup.<br />
+<br />
+</i><br />
+<br />
+<br />
+I run a Command Prompt as Administrator, and execute<br />
+<br />
+C:\pierre\hypericserver\server-4.6.5-EE\bin\hq-server.bat install<br />
+<br />
+I get the message<br />
+<br />
+wrapper  | Hyperic HQ Server service installed.<br />
+<br />
+I run services.msc and I can see a "Hyperic HQ Server" service: I start it.<br />
+The executable is C:\pierre\hypericserver\server-4.6.5-EE\wrapper\sbin\wrapper-windows-x86-32.exe -s C:\pierre\hypericserver\server-4.6.5-EE\conf\wrapper.conf set.SERVER_INSTALL_HOME=C:\pierre\hypericserver\server-4.6.5-EE\bin\.. set.JAVA_HOME=C:\pierre\hypericserver\server-4.6.5-EE\bin\..\jre <br />
+<br />
+I access in Firefox the url http://mymachine.euc.acme.com:7080/<br />
+It takes a long time. But it works. I get this lovely screen:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/67e958257b775a0c.jpg" imageanchor="1"><img border="0" height="375" src="/images/b7408402755ffb13.jpg" width="640" /></a></div><br />
+<br />
+Now let's install the agent on Linux:<br />
+<br />
+<br />
+Now I install the agent on Linux.<br />
+Copy all the Linux stuff to /opt/hyperic/.<br />
+chmod 755 *.sh<br />
+chmod 755 /opt/hyperic/installer/bin/*<br />
+mkdir /opt/hyperic/agent <br />
+./setup.sh<br />
+<br />
+choose 2 (agent)<br />
+<br />
+when asked <br />
+<i>HQ agent installation path [default '/home/hyperic']:</i> say:<br />
+/opt/hyperic/agent<br />
+<br />
+It will tell you:<br />
+<br />
+<i><br />
+Loading install configuration...<br />
+Install configuration loaded.<br />
+Preparing to install...<br />
+Validating agent install configuration...<br />
+Installing the agent...<br />
+Looking for previous installation<br />
+Unpacking /opt/hyperic/hyperic-hqee-agent-4.6.5-x86-64-linux.tar.gz to: /opt/hyperic/agent/agent-4.6.5-EE...<br />
+Setting permissions on /opt/hyperic/agent/agent-4.6.5-EE...<br />
+Setting permissions on agent binaries...<br />
+Fixing line endings on text files...<br />
+--------------------------------------------------------------------------------<br />
+Installation Complete:<br />
+Agent successfully installed to: /opt/hyperic/agent<br />
+--------------------------------------------------------------------------------<br />
+You can now start your HQ agent by running this command:<br />
+<br />
+/opt/hyperic/agent/agent-4.6.5-EE/bin/hq-agent.sh start<br />
+<br />
+Setup completed.<br />
+A copy of the output shown above has been saved to:<br />
+/opt/hyperic/installer/logs/hq-install.log<br />
+<br />
+Deleting temporary JRE<br />
+<br />
+</i><br />
+<br />
+I run<br />
+/opt/hyperic/agent/agent-4.6.5-EE/bin/hq-agent.sh start<br />
+<br />
+<i><br />
+Starting HQ Agent...<br />
+- No token file found, waiting for Agent to initialize<br />
+[ Running agent setup ]<br />
+Should Agent communications to HQ be unidirectional [default=no]:<br />
+What is the HQ server IP address: 10.16.14.140<br />
+Should Agent communications to HQ always be secure [default=yes]:<br />
+What is the HQ server SSL port [default=7443]:<br />
+- Testing secure connection ... Success<br />
+What is your HQ login [default=hqadmin]:<br />
+What is your HQ password:<br />
+What IP should HQ use to contact the agent [default=10.16.5.122]:<br />
+What port should HQ use to contact the agent [default=2144]:<br />
+- Received temporary auth token from agent<br />
+- Registering agent with HQ<br />
+The server to agent communication channel is using a self-signed certificate and could not be verified<br />
+Are you sure you want to continue connecting? [default=no]: yes<br />
+- HQ gave us the following agent token<br />
+13340820388-163201022278915721-172183443318423049<br />
+- Informing agent of new HQ server<br />
+- Validating<br />
+- Successfully setup agent<br />
+<br />
+</i><br />
+<br />
+At this point, I go to the Hyperic console Home Page and in the Auto-Discovery tab I find the 2 WebLogic domains and the Apache Tomcat running on the Linux box.... pretty cool!<br />
+<br />
+<br />
+On the Linux box I see 2 processes:<br />
+<br />
+/opt/hyperic/agent/agent-4.6.5-EE/wrapper/sbin/../../wrapper/sbin/wrapper-linux-x86-64<br />
+<br />
+<br />
+/opt/hyperic/agent/agent-4.6.5-EE/jre/bin/java -Djava.security.auth.login.config=../../bundles/agent-4.6.5/jaas.config etc etc<br />
+<br />
+<br />
+To stop the agent:<br />
+/opt/hyperic//agent/agent-4.6.5-EE/bundles/agent-4.6.5/bin/hq-agent.sh stop

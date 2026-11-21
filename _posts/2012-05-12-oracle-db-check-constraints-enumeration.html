@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Oracle DB: check constraints enumeration"
+date: 2012-05-12T04:55:00.001+02:00
+permalink: /2012/05/oracle-db-check-constraints-enumeration.html
+blogger_id: "6714691659734403381"
+tags: ["oracledb"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2012-06-19
+    html: "Nice Article,<br />I had also written an Article about Disabling and Enabling Constraints, What precautions to be taken while performing these Operations etc.. in http://www.way2db.in/oracle-constraints.html"
+---
+Traditionally, if you want to restrict the values allowed for a column, you use a foreign key to a reference column in another table.<br />
+This can be quite boring, and lead to a proliferation of reference tables.<br />
+<br />
+A simple alternative is using <a href="http://thinkoracle.blogspot.com/2005/05/enum-in-oracle.html">ENUM</a><br />
+CHECK (col1 IN ('Monday', 'Tuesday', 'Wednesday', 'Thursday',<br />
+'Friday', 'Saturday', 'Sunday')<br />
+<br />
+SQL developer supports this in the "check constraints", just create a constraint and type MYCOLUMNNAME IN ('Monday', 'Tuesday')

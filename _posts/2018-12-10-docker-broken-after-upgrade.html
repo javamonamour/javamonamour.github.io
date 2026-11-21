@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Docker broken after upgrade"
+date: 2018-12-10T18:06:00.000+01:00
+permalink: /2018/12/docker-broken-after-upgrade.html
+blogger_id: "1942865178804680989"
+tags: ["docker"]
+---
+<b>sudo systemctl start docker</b><br />
+Job for docker.service failed because the control process exited with error code. See "systemctl status docker.service" and "journalctl -xe" for details.<br />
+<br />
+<br />
+<b>sudo journalctl -xe</b><br />
+<br />
+<br />
+Error starting daemon: error initializing graphdriver: /var/lib/docker contains several valid graphdrivers: devicemapper, overlay2; Please cleanup or explicit<br />
+<br />
+<b>sudo vi /etc/docker/daemon.json</b><br />
+<br />
+append this at the end and before the closed curly brace:<br />
+<br />
+,"storage-driver": "devicemapper"<br />
+<br />
+<br />
+<br />
+<b>sudo systemctl reset-failed docker.service</b><br />
+<b>sudo systemctl start docker.service</b><br />
+<br />
+<br />
+

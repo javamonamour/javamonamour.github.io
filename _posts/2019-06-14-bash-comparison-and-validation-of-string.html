@@ -1,0 +1,35 @@
+---
+layout: post
+title: "bash comparison and validation of string"
+date: 2019-06-14T22:04:00.000+02:00
+permalink: /2019/06/bash-comparison-and-validation-of-string.html
+blogger_id: "2525874893206331738"
+tags: ["bash"]
+---
+trying to understand Bash syntax is really wasted time.... just copy/paste working examples<br />
+<br />
+<br />
+<pre>
+array=("pippo pluto topolino")
+value=pluto
+
+[[ " ${array[@]} " =~ " ${value} " ]] && echo "YES" || echo "NO"
+
+if [[ " ${array[@]} " =~ " ${value} " ]]; then echo trovato; fi
+
+pippo="ciao"
+[[ $pippo = "ciao" ]] && echo "1yes"
+[[ "ciao" = "ciao" ]] && echo "2yes"
+
+x="valid"
+if [ "$x" = "valid" ]; then
+  echo "x has the value 'valid'"
+fi
+
+[[ "$x" = "valid" ]] && echo "x is valid" 
+
+[ "$x" == "valid" ] && echo "x has the value 'valid'"
+
+[ "$x" == "valid" ] && echo "i am valid" || echo "i am invalid"
+
+</pre>

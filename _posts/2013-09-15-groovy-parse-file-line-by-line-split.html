@@ -1,0 +1,62 @@
+---
+layout: post
+title: "Groovy: parse a file line by line, split, sort unique list of words"
+date: 2013-09-15T19:25:00.001+02:00
+permalink: /2013/09/groovy-parse-file-line-by-line-split.html
+blogger_id: "6674167535863906878"
+tags: ["groovy"]
+---
+I know, in bash this would be a one liner... however when things become more complicated, your bash code becomes hell, while Groovy maintains its readability
+
+<pre name="code" class="brush: java">
+
+print "Hello, welcome to the WordParser 1.0\n"
+
+rootDir = "C:\\pierre\\downloads\\istdaseinmensch\\"
+myfile = new File(rootDir + "Levi,_Primo_-_Ist_das_ein_Mensch.txt")
+
+myWords = []
+countWords = 0
+countLines = 0
+
+myfile.eachLine { line ->
+ if (line.trim().size() == 0) {
+  return null
+ } else {
+  countLines++
+  words = line.split("[^A-Za-z0-9]+")
+  for (theWord in words) {
+      if (theWord.length() > 0 && !Character.isDigit(theWord.charAt(0))) {
+ countWords++
+ myWords.add(theWord.toLowerCase())
+      }
+  }
+ }
+}
+
+print "countLines=" + countLines + " countWords=" + countWords + "\n"
+
+myUniqueWords = myWords.unique().sort()
+
+print "unique words = " + myUniqueWords.size() + "\n"
+
+new File(rootDir + "out.txt").withWriter { out ->
+ myUniqueWords.each {
+  out.println(it)
+ }
+}
+
+
+
+</pre>
+
+
+<br/>
+
+Next: how to invoke google translate REST API to get a translation for each word, and produce a readable output where each word has a mouse-over hint displaying its translation.
+
+
+<br/>
+
+PS try doing this in Puppet, it will be ready by the end of time and meanwhile most of the functions you have used are no longer supported.
+

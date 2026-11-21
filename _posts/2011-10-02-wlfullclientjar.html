@@ -1,0 +1,31 @@
+---
+layout: post
+title: "wlfullclient.jar"
+date: 2011-10-02T11:09:00.000+02:00
+permalink: /2011/10/wlfullclientjar.html
+blogger_id: "7607831921971130388"
+tags: ["weblogic"]
+---
+I was getting from my JMS client:<br />
+<br />
+com.sun.corba.se.impl.encoding.CDRInputStream_1_0 read_value<br />
+WARNING: "IOP00810257: (MARSHAL) Could not find class "org.omg.CORBA.MARSHAL:   vmcid: SUN  minor code: 257 completed: Maybe<br />
+        at com.sun.corba.se.impl.logging.ORBUtilSystemException.couldNotFindClass(ORBUtilSystemException.java:8260)<br />
+        <br />
+googling around I find:<br />
+<br />
+<a href="https://kr.forums.oracle.com/forums/thread.jspa?threadID=705919">https://kr.forums.oracle.com/forums/thread.jspa?threadID=705919</a><br />
+        <br />
+<br />
+1. Change directories to the server/lib directory.<br />
+cd WL_HOME/server/lib<br />
+<br />
+2. Use the following command to create wlfullclient.jar in the server/lib directory:<br />
+java -jar wljarbuilder.jar<br />
+<br />
+in fact the wljarbuilder.jar contains only a MANIFEST.MF with:<br />
+<br />
+Main-Class: com.bea.jarbuilder.JarBuilder<br />
+Class-Path: ../../../modules/com.bea.core.jarbuilder_1.6.0.1.jar<br />
+<br />
+It does build the wlfullclient.jar and it does solve the problem.

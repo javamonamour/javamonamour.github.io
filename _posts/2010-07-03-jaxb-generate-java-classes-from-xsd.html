@@ -1,0 +1,17 @@
+---
+layout: post
+title: "JAXB generate Java classes from xsd"
+date: 2010-07-03T18:16:00.000+02:00
+permalink: /2010/07/jaxb-generate-java-classes-from-xsd.html
+blogger_id: "9199522278052255830"
+tags: ["jaxb", "xjc"]
+---
+Using Excel, I have mapped a MFL to a <b>XSD</b>; now I want to generate the <b>Java </b>classes corresponding to the XSDs. JAX-WS uses <b>JAXB </b>as data binding, so:<br />
+<br />
+<a href="http://java.sun.com/webservices/docs/1.6/jaxb/xjc.html">http://java.sun.com/webservices/docs/1.6/jaxb/xjc.html</a><br />
+<br />
+I use <b>xjc</b>.bat to generate the Java classes.<br />
+<br />
+The alternative is: create a WebLogic WebService project, copy there your XSD, right click and "WebLogic WebServices / generate JAXB types", which internally invokes the <b>XJC2Task </b>Ant task.<br />
+<br />
+

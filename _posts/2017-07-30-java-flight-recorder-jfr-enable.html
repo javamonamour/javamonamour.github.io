@@ -1,0 +1,31 @@
+---
+layout: post
+title: "Java Flight Recorder JFR: enable recording of exceptions"
+date: 2017-07-30T20:31:00.002+02:00
+permalink: /2017/07/java-flight-recorder-jfr-enable.html
+blogger_id: "1164836564151686568"
+tags: ["jfr", "jmc"]
+---
+how to specify custom settings for JFR <br />
+<br />
+<a href="http://isuru-perera.blogspot.it/2016/03/specifying-custom-event-settings-file.html">http://isuru-perera.blogspot.it/2016/03/specifying-custom-event-settings-file.html</a> <br />
+<br />
+The default settings are in C:\Program Files\Java\jre1.8.0_121\lib\jfr\default.jfc (in Windows... otherwise in JAVA_HOME/jre/lib/jfr/default.jfc in Linux. <br />
+<br />
+so you can enable also the "Exceptions" event, just copy the default.jfc to /tmp/default.jfc, hack it <br />
+<br />
+<pre class="brush: xml">&lt;event path=&quot;java/exception_throw&quot;&gt;
+      &lt;setting name=&quot;enabled&quot; control=&quot;http://www.oracle.com/hotspot/jvm/enable-exceptions&quot;&gt;false&lt;/setting&gt;
+      &lt;setting name=&quot;stackTrace&quot;&gt;true&lt;/setting&gt;
+    &lt;/event&gt;
+</pre><br />
+<br />
+set it to true <br />
+<br />
+and start the jfr with <br />
+<br />
+jcmd JFR.start settings=/tmp/default.jfc <br />
+<br />
+and you will smile and be happy <br />
+<br />
+

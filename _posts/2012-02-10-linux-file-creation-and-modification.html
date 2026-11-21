@@ -1,0 +1,23 @@
+---
+layout: post
+title: "Linux file creation and modification date"
+date: 2012-02-10T12:00:00.001+01:00
+permalink: /2012/02/linux-file-creation-and-modification.html
+blogger_id: "2689141089516630152"
+tags: ["linux"]
+---
+touch myfile.txt<br />
+<br />
+ls -ltr <br />
+<br />
+-rw-rw-r-- 1 soa soa     0 <b>Feb 10 11:24</b> myfile.txt<br />
+<br />
+this is the MODIFICATION DATE (which at the beginning is same as creation date)<br />
+<br />
+if you later modify the file, there is no way (in Linux) to retrieve the creation date. You will always get the modification time.<br />
+<br />
+"ls -lact --full-time" will not help<br />
+<br />
+stat myfile.txt  will not help<br />
+<br />
+<a href="http://bloggerdigest.blogspot.com/2006/10/using-ls-command-by-examples.html">http://bloggerdigest.blogspot.com/2006/10/using-ls-command-by-examples.html</a>   gives a good list of ls options

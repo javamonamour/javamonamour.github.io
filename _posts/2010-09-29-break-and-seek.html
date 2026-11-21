@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Break and Seek"
+date: 2010-09-29T18:48:00.002+02:00
+permalink: /2010/09/break-and-seek.html
+blogger_id: "1353456318569763186"
+tags: ["breakAndSeek"]
+---
+So, after months (years?) of development and test, your application is ready for production.<br />
+The time is ripe for a new game: "<b>break and seek</b>".<br />
+<br />
+This game requires 2 participants: Atilla and Sherlock. <br />
+<br />
+In a test environment, <b>Atilla</b> will choose one <b>component</b> of the system to <b>break </b>(it can be anything: an instance of DB to bring down especially if using RAC, a JEE module to undeploy, a LDAP server to shutdown, a file system to be filled to 100%, an Application Server to shutdown, a password to change, a network cable to unplug....).<br />
+<br />
+Atilla will now tell Sherlock to <b>fix it</b>, without telling him what went down.<br />
+<br />
+<b>Sherlock </b>will then verify that: <br />
+a) the system fault is <b>monitored</b> and detected via some monitoring tool (eg Nagios)<br />
+b) the <b>error message</b> returned to the end <b>user</b> is not some horrible garbage, but something meaningful and reassuring<br />
+c) the <b>automated tests</b> are able to capture the fault<br />
+d) everybody is aware of the criticality of the fault and its consequences on other systems and on use cases... this can lead to rethinking the <b>fault tolerance/redundancy</b> of the system<br />
+e) transactions are properly <b>rolled back</b> and the system is not left in an inconsistent state<br />
+f) the <b>logs</b> contain meaningful messages and not loads of repeated stacktraces without any context information<br />
+g) the Operations manual contains <b>instructions</b> on how to fix the problem (location of start/stop scripts and other troubleshooting issues)<br />
+h) if the fault is not fixed within a given time, the system doesn't diverge (eg some file system gets filled with error reports or something along the line which would lead to a <b>domino effect</b>)<br />
+<br />
+<br />
+It's a beautiful game and the day you will go to production you will <b>sleep better</b>, knowing that you are ready to tackle all these accidents.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="http://www.moviegoods.com/Assets/product_images/1020/372437.1020.A.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320" src="http://www.moviegoods.com/Assets/product_images/1020/372437.1020.A.jpg" width="216" /></a></div><br />
+For us Italians, <b>Atilla</b> is a synonym of barbaric devastation. I was very surprised to learn, in Budapest, from my biking instructor, that in <b>Hungary</b> he is considered a national hero, and streets are dedicated to him... the same story seen by Spartacus and by Caesar...

@@ -1,0 +1,15 @@
+---
+layout: post
+title: "VirtualBox Centos7 high CPU for VBoxClient process"
+date: 2018-03-25T19:01:00.001+02:00
+permalink: /2018/03/virtualbox-centos7-high-cpu-for.html
+blogger_id: "3239208367520828424"
+tags: ["virtualbox"]
+---
+The issue is reported here <a href="https://forums.virtualbox.org/viewtopic.php?f=6&t=83507">https://forums.virtualbox.org/viewtopic.php?f=6&t=83507</a><br />
+<br />
+Occasionally the VBoxClient eats 100% CPU forever - which affects greatly also the host performance - and the only way to stop it is to shut down the VM.<br />
+<br />
+I have: disabled drag-and-drop, disabled shared folder and simply "kill -9" the process - this seems to cause no side effects.<br />
+<br />
+

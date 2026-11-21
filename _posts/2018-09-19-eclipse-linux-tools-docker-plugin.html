@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Eclipse Linux Tools (Docker Plugin) source code"
+date: 2018-09-19T15:39:00.000+02:00
+permalink: /2018/09/eclipse-linux-tools-docker-plugin.html
+blogger_id: "8230623925845734679"
+tags: ["docker", "eclipse"]
+---
+<a href="https://wiki.eclipse.org/Linux_Tools_Project/Git">https://wiki.eclipse.org/Linux_Tools_Project/Git</a><br />
+<br />
+git clone git://git.eclipse.org/gitroot/linuxtools/org.eclipse.linuxtools.git<br />
+<br />
+<br />
+<br />
+jars are installed NOT under the Eclipse installation folder, BUT here<br />
+<br />
+/home/centos/.p2/pool/features/org.eclipse.linuxtools.docker.feature_4.0.0.201806122135<br />
+/home/centos/.p2/pool/plugins/org.eclipse.linuxtools.docker.docs_4.0.0.201806122135.jar<br />
+/home/centos/.p2/pool/plugins/org.eclipse.linuxtools.docker.core_4.0.0.201806122135.jar<br />
+/home/centos/.p2/pool/plugins/org.eclipse.linuxtools.docker.editor_1.0.0.201806122135.jar<br />
+/home/centos/.p2/pool/plugins/org.eclipse.linuxtools.docker.ui_4.0.0.201806122135.jar<br />
+<br />
+<br />
+Here they explain how to submit a bug <a href="http://git.eclipse.org/c/linuxtools/org.eclipse.linuxtools.git/about/">http://git.eclipse.org/c/linuxtools/org.eclipse.linuxtools.git/about/</a><br />
+<br />
+Unfortunately there is a bug in org.eclipse.linuxtools.internal.docker.ui.wizards.ContainerCopyTo<br />
+<br />
+<pre class="brush: java">@Override
+    public boolean performFinish() {
+        boolean finished = mainPage.finish();
+        if (finished) {
+            target = mainPage.getDestination().toOSString();
+            sources = mainPage.getFilesToCopy();
+        }
+        return finished;
+    }
+</pre><br />
+If you run Eclipse on Windows, and the docker daemon runs on Linux, the toOSString() formats any path into the Windows format, which is not recognized by Linux. So you can't specify "/var" because it will be turned into "\\var" which obviously fails on Linux.<br />
+<br />
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=539239">https://bugs.eclipse.org/bugs/show_bug.cgi?id=539239</a>  bug submitted<br />
+<br />
+<br />
+<br />
+

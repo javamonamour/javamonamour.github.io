@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Connection Pools reaching their max capacity and over"
+date: 2009-11-23T10:59:00.000+01:00
+permalink: /2009/11/connection-pools-reaching-their-max.html
+blogger_id: "4994796003414106081"
+---
+<a href="http://docs.oracle.com/cd/E23943_01/apirefs.1111/e13952/taskhelp/jdbc/jdbc_datasources/ConfigureDiagnosticsForADataSource.html">http://docs.oracle.com/cd/E23943_01/apirefs.1111/e13952/taskhelp/jdbc/jdbc_datasources/ConfigureDiagnosticsForADataSource.html</a><br />
+<br />
+to make sure you are not leaking connections (forgetting to close them),<br />
+in your DataSource configuration go to "configuration"/diagnostics and check the "Profile Connection Leak"<br />This will generate a "profile-type" element in the jdbc-config.xml and set it to 4.
+
+<br />
+then in your Connection Pool configuration, click on advanced, and enter some large value for "Inactive Connection Timeout" (should be greater than the JTA timeout IMHO)
+<br /><br />
+
+For more details, see Oracle Support Doc
+
+"How to enable WLS Database Profiling to diagnose database connection problems in Webcenter Content (Doc ID 2071557.1) "

@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Eclipse generate JPA entities from DB"
+date: 2018-04-06T23:21:00.000+02:00
+permalink: /2018/04/eclipse-generate-jpa-entities-from-db.html
+blogger_id: "5140163053196339117"
+tags: ["JPA"]
+---
+Unfortunately there doesn't seem to exist a tool to generate JPA Entities directly from SQL. Weird!<br />
+So you have to start by populating a real schema.<br />
+<br />
+Create a Java project<br />
+<br />
+Configure "Targeted Runtimes" with "Wildfly 11 Runtime"<br />
+<br />
+Configure Project, Facets, and select JPA (ignore the "further configuration available")<br />
+<br />
+Right-click on Project, you should see "JPA Tools", "Generate Entities from tables"<br />
+<br />
+<br />
+<br />
+When I was young I was thinking of 2017 as the age of teletransportation and instant cure for all diseases. Instead it's the age of wasting hours for a Maven configuration. I bet the Cro-Magnon were more technologically savvy than the Maven folks.<br />
+<br />
+<br />
+

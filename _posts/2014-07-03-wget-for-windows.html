@@ -1,0 +1,31 @@
+---
+layout: post
+title: "wget for Windows"
+date: 2014-07-03T16:32:00.000+02:00
+permalink: /2014/07/wget-for-windows.html
+blogger_id: "3067630920205907135"
+tags: ["windows"]
+---
+If you are stranded on a Windows machine and you need to do a wget, you will be horrified to discover that there is not such tool.
+
+<br/>
+Here <a href="http://nyquist212.wordpress.com/2013/09/23/powershell-webclient-example/">http://nyquist212.wordpress.com/2013/09/23/powershell-webclient-example/</a> they show how to use PowerShell to emulate the command.
+<br/>
+For me, this simple code worked:
+<br/>
+run PowerShell,
+<br/>
+<pre>
+
+Function Get-Webclient ($url, $out) {
+ $request = New-Object System.Net.WebCLient
+ $request.DownloadFile($url, $out)
+}
+
+Get-Webclient "http://www.google.com" "C:\tmp\Foo3.txt"
+
+</pre>
+
+<br/><br/>
+
+Windows is so pathetic that if I were a Microsoft developer I would pretend I work serving fries in a Mac Donald to avoid being shunned by my neighbors...

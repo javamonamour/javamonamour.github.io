@@ -1,0 +1,120 @@
+---
+layout: post
+title: "Me, JMS, HermesJMS and JBoss"
+date: 2011-03-16T17:38:00.003+01:00
+permalink: /2011/03/me-jms-hermesjms-and-jboss.html
+blogger_id: "5784357465929643756"
+tags: ["hermes", "jms"]
+---
+<a href="http://www.hermesjms.com/">http://www.hermesjms.com/</a><br />
+<br />
+<br />
+excellent movie here on how to use HermesJMS to connect to JBossMQ:<br />
+<a href="http://www.hermesjms.com/demos/jboss_config.html">http://www.hermesjms.com/demos/jboss_config.html</a><br />
+<br />
+in practice:<br />
+configuration<br />
+providers<br />
+add group name<br />
+call it "JBoss 4.0.1"<br />
+<br />
+add jars: <br />
+<br />
+jboss-client, jbossall-client, jbossmq-client, jmx-invoker-adaptor-client, jnp-client (they are in C:\acme\dev\jboss\jboss-4.0.3SP1\client)<br />
+concurrent, jboss-jmx<br />
+(they are in C:\acme\dev\jboss\jboss-4.0.3SP1\lib)<br />
+<br />
+create initial context<br />
+<br />
+loader=JBoss 4.0.1<br />
+providerURL=jnp://localhost:1099<br />
+initialContextfactory=org.jnp.interfaces.NamingContextFactory<br />
+urlPackagePrefixes=org.jnp.interfaces:org.jboss.naming<br />
+securityCredentials=admin<br />
+securityAuthentication=admin<br />
+<br />
+<br />
+here more info on which parameters to use to create a connection:<br />
+<br />
+http://oatv.com/pub/a/onjava/2006/02/22/asynchronous-messaging-with-spring-jms.html?page=3<br />
+<br />
+<br />
+and at <a href="http://oatv.com/pub/a/onjava/2006/02/22/asynchronous-messaging-with-spring-jms.html?page=5">page 5</a> some Java code on how to send messages to JBossMQ<br />
+<br />
+<br />
+For convenience, here is the working code:<br />
+<br />
+<pre name="code" class="brush: java"> private void sendJMS() {
+  try {
+   String JNDINAME = "queue/testQueue";
+      String queueName = "queue/testQueue";
+      System.out.println("Queue name is " + queueName);
+
+      InitialContext jndiContext = null;
+   /*
+       * Create JNDI Initial Context
+       */
+      try {
+          Hashtable env = new Hashtable();
+          env.put("java.naming.factory.initial", "org.jnp.interfaces.NamingContextFactory");
+          env.put("java.naming.provider.url","localhost");
+          env.put("java.naming.factory.url.pkgs",
+              "org.jnp.interfaces:org.jboss.naming");
+
+          jndiContext = new InitialContext(env);
+      } catch (NamingException e) {
+          System.out.println("Could not create JNDI API " +
+              "context: " + e.toString());
+      }
+
+      QueueConnectionFactory queueConnectionFactory = null;
+   Queue queue = null;
+   /*
+       * Get queue connection factory and queue objects from JNDI context.
+       */
+      try {
+          queueConnectionFactory = (QueueConnectionFactory)
+          jndiContext.lookup("UIL2ConnectionFactory");
+
+          queue = (Queue) jndiContext.lookup(queueName);
+      } catch (NamingException e) {
+          System.out.println("JNDI API lookup failed: " + e.toString());
+      }
+
+      QueueConnection queueConnection = null;
+   /*
+       * Create connection, session, sender objects.
+       * Send the message.
+       * Cleanup JMS connection.
+       */
+      try {
+          queueConnection =
+              queueConnectionFactory.createQueueConnection();
+          QueueSession queueSession = queueConnection.createQueueSession(false,
+                  Session.AUTO_ACKNOWLEDGE);
+          QueueSender queueSender = queueSession.createSender(queue);
+          TextMessage message = queueSession.createTextMessage();
+          message.setText("This is a sample JMS message.");
+          System.out.println("Sending message: " + message.getText());
+          queueSender.send(message);
+
+      } catch (JMSException e) {
+       logger.error("Exception occurred: ", e);
+          
+      } finally {
+          if (queueConnection != null) {
+              try {
+                  queueConnection.close();
+              } catch (JMSException e) {
+               logger.error("unable to close queueConnection", e);
+              }
+          }
+      }
+  }
+  catch (Exception e) {
+   logger.error("unable to send JMS", e);
+  }
+
+ }
+
+</pre>

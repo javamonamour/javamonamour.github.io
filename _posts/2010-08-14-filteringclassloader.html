@@ -1,0 +1,32 @@
+---
+layout: post
+title: "FilteringClassLoader"
+date: 2010-08-14T20:41:00.000+02:00
+permalink: /2010/08/filteringclassloader.html
+blogger_id: "6402497318400082826"
+tags: ["classloaders"]
+---
+This article on ClassLoaders in WebLogic is extremely interesting:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/programming/classloading.html">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/programming/classloading.html</a><br />
+<br />
+I have taken some notes:<br />
+<br />
+<b>bootstrap</b> classloader<br />
+<b>extensions</b> classloader<br />
+<b>system classpath</b> classloader<br />
+<br />
+<b>application</b> classloaders<br />
+(EAR: root classloader for EJBs, child classloader for each WAR)<br />
+<br />
+in weblogic-application.xml with <b>classloader-structure</b> you can customize the classloaders<br />
+<br />
+APP-INF/lib<br />
+<br />
+manifest Class-Path entry<br />
+<br />
+when 2 modules share the same classloader, <b>call by reference</b> is possible. Otherwise call-by-value is used.<br />
+<br />
+classes in $CLASSPATH are always loaded before than whose in application classpath, unless you specify a <b>FilteringClassLoader</b>.<br />
+a FilteringClassLoader  allows you to load classes locally to your classloader<br />
+add prefer-application-packages descriptor element to the weblogic-application.xml

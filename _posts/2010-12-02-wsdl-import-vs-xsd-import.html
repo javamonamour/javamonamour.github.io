@@ -1,0 +1,30 @@
+---
+layout: post
+title: "WSDL import vs XSD import"
+date: 2010-12-02T20:09:00.001+01:00
+permalink: /2010/12/wsdl-import-vs-xsd-import.html
+blogger_id: "4867263045333852191"
+tags: ["wsdl:import"]
+---
+Ever found yourself struggling because your WSDL doesn't validate because some types - defined in an imported XSD - seem missing?<br />
+<br />
+Most likely you should read this article:<br />
+<a href="http://www.ibm.com/developerworks/xml/library/ws-tip-imports.html">http://www.ibm.com/developerworks/xml/library/ws-tip-imports.html</a><br />
+<br />
+You better use this clause:<br />
+<br />
+<pre> <wsdl:types>
+  <xs:schema>
+  <xs:import namespace="http://acme.foo.com" schemaLocation="AcmeSchema.xsd"/>
+  </xs:schema>
+ </wsdl:types>
+
+</pre><br />
+The clause wsdl:import should be reserved for WSDL only (although it DOES work also with XSDs), otherwise you will get the infamous:<br />
+<br />
+<i>Import of file:BLA.xsd is violation of BP 1.1 R2001. <br />
+Proceeding with a warning.<br />
+R2001 A DESCRIPTION MUST only use the WSDL "import" statement to import another WSDL description.<br />
+</i><br />
+<br />
+If you find all this confusing, so do I. At least they should give a warning at design time. Probably Java IDEs have spoiled me, I am expecting too much :o)

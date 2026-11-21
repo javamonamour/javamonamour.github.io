@@ -1,0 +1,37 @@
+---
+layout: post
+title: "First steps with HQApi command line interface"
+date: 2012-04-22T13:01:00.001+02:00
+permalink: /2012/04/first-steps-with-hqapi-command-line.html
+blogger_id: "2875645862798998555"
+tags: ["hyperic"]
+---
+<a href="http://support.hyperic.com/display/EVO/HQ+API+Command-Line+Tools#HQAPICommand-LineTools-DefineaConnectionPropertiesFile">here</a> instructions on how to create the file.<br />
+<br />
+I do this (my user is pvernet):<br />
+cd C:\Users\pvernet\<br />
+mkdir ".hq"<br />
+<br />
+I create a client.properties file containing this:<br />
+<br />
+host=localhost<br />
+port=7443<br />
+secure=true<br />
+user=hqadmin<br />
+password=hqadmin<br />
+<br />
+<br />
+and when I do<br />
+cd C:\pierre\workspace\Hyperic\lib\hqapi1-client-5.0.0\bin<br />
+hqapi agent list<br />
+<br />
+I get a fantastic<br />
+<br />
+&lt;?xml version="1.0" encoding="UTF-8" standalone="yes"?><br />
+&lt;AgentsResponse><br />
+&lt;Status>Success</Status><br />
+&lt;Agent id="10003" address="10.16.15.112" port="2144" version="4.6.5" unidirectional="false"/><br />
+&lt;/AgentsResponse><br />
+<br />
+<br />
+Awesome! This is like the HQApi Hello World!

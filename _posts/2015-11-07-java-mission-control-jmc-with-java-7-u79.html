@@ -1,0 +1,67 @@
+---
+layout: post
+title: "Java Mission Control JMC with Java 7 u79"
+date: 2015-11-07T22:36:00.001+01:00
+permalink: /2015/11/java-mission-control-jmc-with-java-7-u79.html
+blogger_id: "7537415968254865688"
+tags: ["jmc"]
+---
+jmc is installed OOTB with this jmc.ini file:
+<br/><br/>
+
+<pre>
+-startup
+../lib/missioncontrol/plugins/org.eclipse.equinox.launcher_1.3.0.v20140415-2008.jar
+--launcher.library
+../lib/missioncontrol/plugins/org.eclipse.equinox.launcher.win32.win32.x86_64_1.1.200.v20141007-2033
+--launcher.appendVmargs
+-vm
+../jre/bin/
+-vmargs
+-XX:+UseG1GC
+-XX:+UnlockCommercialFeatures
+-XX:+FlightRecorder
+-XX:FlightRecorderOptions=defaultrecording=true
+-Djava.net.preferIPv4Stack=true
+</pre>
+
+<br/><br/>
+
+unfortunately it doesn't discover my local JVM (run with a JDK java!)
+<br/><br/>
+I get this error message:
+<br/><br/>
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/97bfafae7d321555.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/f30bb25808d98d90.jpg" /></a></div>
+<br/><br/>
+
+
+"no local (attachable) JVM were detected".  The JMC help says:
+
+<pre>
+Why does Java Mission Control fail to find any local JVMs?
+Consider the following:
+
+•Make sure that you are using JAVA_HOME/bin/jmc to start the JMC client.
+
+
+•If you are running JMC from Eclipse, make sure that Eclipse is running on a JDK (not JRE).
+
+
+•Make sure that there is a directory named hsperfdata_username in the system's tmp directory, that it is writable by the user running JMC, and that the file system supports access control lists (ACLs).
+
+</pre>
+
+
+
+<br/><br/>
+First in the jmc.ini file I change ../jre/bin/ into C:\pierre\Java\jdk1.7.0_79\bin, then 
+ I select the C:\temp\hsperfdata_pierre folder and make it R/W (it was readonly!) and give full control to everyone. This time around all works fine. So sad that I don't get a better error message from JMC.... it would have been so simple just to display me a stacktrace or something more detailed. Even running "jmc -debug" didn't help...
+
+
+<br/><br/>
+If zou forget to run your program under test with the JMC options "-XX:+UnlockCommercialFeatures -XX:+FlightRecorder", you get this message:
+<br/><br/>
+Flight Recorder features are not enabled. To enable this you need to use a Java 7u4 or later JVM started with -XX:+UnlockCommercialFeatures -XX:+FlightRecorder.
+<br/><br/>
+
+

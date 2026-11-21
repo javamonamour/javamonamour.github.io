@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Randy Shoup on Ebay Architecture"
+date: 2011-05-08T12:13:00.000+02:00
+permalink: /2011/05/randy-shoup-on-ebay-architecture.html
+blogger_id: "927828728425599795"
+tags: ["ebay"]
+---
+impressive presentation, excellent slides, <br />
+I wish Randy wrote a book on his experience in EBay:<br />
+<br />
+<br />
+<a href="http://www.infoq.com/presentations/Best-Practices-eBay">http://www.infoq.com/presentations/Best-Practices-eBay</a><br />
+<br />
+<a href="http://www.freeshareworld.com/wordpress/wp-content/uploads/2010/10/ebay_arch_principles.pdf">here</a> the slides in PDF<br />
+<br />
+in this presentation he repeats mostly the same things but going more in technical depth:<br />
+<br />
+<a href="http://www.infoq.com/presentations/shoup-ebay-architectural-principles">http://www.infoq.com/presentations/shoup-ebay-architectural-principles</a><br />
+<br />
+<a href="http://qconsf.com/dl/QConSF2007/slides/public/RandyShoup_eBayArchPrinciples.pdf">here</a> the slides.<br />
+<br />
+<br />
+here are the mantras:<br />
+- partition everything, segmenting in functional areas<br />
+- use abstractions <br />
+- no client side DB transactions<br />
+- everything stateless<br />
+- parallelize searches (split/aggregate)<br />
+- asynchronous everywhere, with "message dispatch" and "periodic batch"<br />
+- automate everything - configuration and behaviour<br />
+- proactively detect failures<br />
+- all changes to code/schema should be "undoneable"<br />
+- code and features are centrally controlled<br />
+- when sh*t happens, have contingency plans and restore things gradually

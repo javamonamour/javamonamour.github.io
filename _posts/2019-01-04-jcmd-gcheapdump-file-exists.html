@@ -1,0 +1,31 @@
+---
+layout: post
+title: "jcmd  GC.heap_dump File exists"
+date: 2019-01-04T07:45:00.001+01:00
+permalink: /2019/01/jcmd-gcheapdump-file-exists.html
+blogger_id: "7660634530582625412"
+tags: ["jcmd"]
+---
+The instructions here https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/tooldescr006.html  say:<br />
+<br />
+Create a heap dump (hprof dump)<br />
+<br />
+jcmd GC.heap_dump filename=Myheapdump<br />
+<br />
+<br />
+This is wrong. First, you need a PID; second, you should not provide filename=bla but simply bla:<br />
+<br />
+<br />
+Correct example:<br />
+<br />
+/usr/lib/jvm/java-openjdk/bin/jcmd 50513 GC.heap_dump /u01/users/admrun/nexus3_02.hprof <br />
+<br />
+<br />
+if you run simply<br />
+<br />
+/usr/lib/jvm/java-openjdk/bin/jcmd 50513 GC.heap_dump filename=bla.hprof <br />
+<br />
+it doesn't create a bla.hprof but rather a "filename" file.... and the second time you run it you get a "File exists" message.<br />
+<br />
+Confusing and frustrating!<br />
+

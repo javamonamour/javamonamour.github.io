@@ -1,0 +1,57 @@
+---
+layout: post
+title: "Spring testing"
+date: 2018-04-06T23:14:00.000+02:00
+permalink: /2018/04/spring-testing.html
+blogger_id: "4775673913993650986"
+tags: ["Spring", "unittest"]
+---
+spring-test <br />
+<br />
+<a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/html/integration-testing.html">https://docs.spring.io/spring/docs/current/spring-framework-reference/html/integration-testing.html</a>  <br />
+<br />
+spring-boot-test <br />
+<br />
+<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html">https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html</a> <br />
+<br />
+@ContextConfiguration(locations = "/test-db-context.xml") <br />
+<br />
+<pre class="brush: xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;
+       xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+       xmlns:context=&quot;http://www.springframework.org/schema/context&quot;
+       xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd&quot;&gt;
+
+    &lt;context:component-scan base-package=&quot;com.pierre.sourcing.dao, com.pierre.xcoll.dao&quot; /&gt;
+
+    &lt;bean id=&quot;dataSource&quot; class=&quot;org.springframework.jdbc.datasource.DriverManagerDataSource&quot;&gt;
+        &lt;property name=&quot;driverClassName&quot; value=&quot;oracle.jdbc.driver.OracleDriver&quot; /&gt;
+        &lt;property name=&quot;url&quot; value=&quot;jdbc:oracle:thin:@pippo:1521:PLUTO&quot; /&gt;
+        &lt;property name=&quot;username&quot; value=&quot;pippouser&quot; /&gt;
+        &lt;property name=&quot;password&quot; value=&quot;pippopassword&quot; /&gt;
+    &lt;/bean&gt;
+
+    &lt;bean id=&quot;transManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot; &gt;
+        &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot; /&gt;
+    &lt;/bean&gt;
+
+    &lt;context:component-scan base-package=&quot;com.pierre.sourcing.dao&quot; /&gt;
+&lt;/beans&gt;
+
+</pre><br />
+<br />
+Important annotations <br />
+<br />
+org.springframework.test.annotation.Rollback; indicates whether the transaction for a transactional test method should be rolled back after the test method has completed.  <br />
+<br />
+org.springframework.transaction.annotation.Transactional  <br />
+<br />
+org.springframework.test.context.ContextConfiguration @ContextConfiguration("/test-config.xml") declares the application context resource locations or the annotated classes that will be used to load the context. <br />
+<br />
+org.springframework.test.context.jdbc.Sql at class level, like in @Sql(scripts = "/preparation-sqls/cleanup-test-data.sql")  , to run SQL BEFORE the test execution   <br />
+<br />
+org.springframework.test.context.junit4.SpringRunner  (@RunWith(SpringRunner.class) ) <br />
+<br />
+org.springframework.beans.factory.annotation.Autowired <br />
+<br />
+

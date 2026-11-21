@@ -1,0 +1,27 @@
+---
+layout: post
+title: "CentOS install JDK"
+date: 2018-01-05T13:20:00.001+01:00
+permalink: /2018/01/centos-install-jdk.html
+blogger_id: "8539235501415887859"
+tags: ["centos", "java"]
+---
+which java<br />
+java -version<br />
+ls -ltr /usr/bin/java<br />
+ls -ltr /etc/alternatives/java<br />
+<br />
+<br />
+sudo yum update<br />
+<br />
+yum list installed | grep "java"<br />
+<br />
+sudo yum install java-1.8.0-openjdk-devel<br />
+<br />
+cd /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.151-5.b12.el7_4.x86_64/<br />
+<br />
+sudo ln -sf /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.151-5.b12.el7_4.x86_64/bin/java /etc/alternatives/java<br />
+<br />
+<br />
+<br />
+

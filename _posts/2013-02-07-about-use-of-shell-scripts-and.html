@@ -1,0 +1,19 @@
+---
+layout: post
+title: "About the use of Shell Scripts and Java/Python scripts"
+date: 2013-02-07T12:41:00.001+01:00
+permalink: /2013/02/about-use-of-shell-scripts-and.html
+blogger_id: "8820335216091006739"
+tags: ["script"]
+---
+A former consultant was very fond of shell scripts - probably because they are so cryptic that they give their author a comfortable job security.
+<br/>
+Those scripts, being build/deployment scripts, make several calls to Python/WLST scripts and to Java classes. Each call entails starting a JVM, which even on a robust machine takes time, say 5 seconds.
+<br/>
+Also, each time you need to pass parameters around, which can quickly become a nightmare.
+<br/>
+The overall result is having scripts which are slow, hard to debug and difficult to maintain.
+<br/>
+
+My personal decision is: NEVER AGAIN SHELL SCRIPT. Do all in Python and FORGET SHELLS.
+

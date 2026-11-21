@@ -1,0 +1,63 @@
+---
+layout: post
+title: "ports and pods"
+date: 2019-09-01T11:10:00.002+02:00
+permalink: /2019/09/ports-and-pods.html
+blogger_id: "5544626027799986223"
+tags: ["kubernetes"]
+---
+#start a pod with default parameters<br />
+<b>kubectl run nginx --image=nginx --restart=Never</b><br />
+<br />
+<b>kubectl describe pod nginx</b><br />
+<br />
+Node:               node01/172.17.0.36<br />
+IP:                 10.32.0.2<br />
+<br />
+#we can reach nginx with the "IP" address<br />
+<b>curl 10.32.0.2:80</b><br />
+<br />
+but "curl 172.17.0.36:80" doesn't work!<br />
+<br />
+<b>kubectl describe nodes node01</b><br />
+InternalIP:  172.17.0.36<br />
+<br />
+<br />
+10.32.0.2 is the Pod's IP (=same IP for all containers running in that Pod):<br />
+<b>kubectl exec -ti nginx bash<br />
+hostname -i</b><br />
+10.32.0.2<br />
+<br />
+The Node IP cannot be used as such to reach the Pod/Container.<br />
+<br />
+Setting the spec.container.ports.containerPort will not change neither the IP nor the POrt at which nginx is running: this parameter is purely "declarative" and is only useful when exposing the Pod/Deployment with a Service.<br />
+<br />
+If you want to "expose" to an IP other than the Pod's IP: <br />
+<br />
+<b>kubectl expose pod nginx --port=8089 --target-port=80</b><br />
+<br />
+<b>kubectl describe service nginx</b><br />
+Type:              ClusterIP<br />
+IP:                10.99.136.123<br />
+Port:              <unset>  8089/TCP<br />
+TargetPort:        80/TCP<br />
+Endpoints:         10.32.0.2:80<br />
+<br />
+NB this IP 10.99.136.123 is NOT the Node's IP nor the Pod's IP. It's a service-specific IP.<br />
+<br />
+<b>curl 10.99.136.123:8089</b><br />
+<br />
+<b>kubectl get service --all-namespaces</b><br />
+<br />
+NAMESPACE     NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)         AGE<br />
+default       nginx        ClusterIP   10.99.136.123   <none>        8089/TCP        16m<br />
+<br />
+<br />
+<br />
+Ref: <br />
+<a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/">https://kubernetes.io/docs/concepts/cluster-administration/networking/</a> <br />
+<br />
+<br />
+<br />
+<br />
+

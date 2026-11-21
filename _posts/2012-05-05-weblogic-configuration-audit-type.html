@@ -1,0 +1,117 @@
+---
+layout: post
+title: "WebLogic Configuration Audit Type, how to monitor configuration changes"
+date: 2012-05-05T11:38:00.001+02:00
+permalink: /2012/05/weblogic-configuration-audit-type.html
+blogger_id: "3847097069773378109"
+tags: ["security", "weblogic"]
+---
+See also <a href="/2013/02/how-to-configure-weblogic-server-to.html">/2013/02/how-to-configure-weblogic-server-to.html</a>
+<br/><br/>
+
+Please read first the Oracle internal Document
+"How to Configure WebLogic Server to Send a Notification When Its Configuration is Changed [ID 1377733.1]"
+<br/><br/>
+
+and also Jan's <a href="http://jvzoggel.wordpress.com/2011/09/26/weblogic-domain-audit/">http://jvzoggel.wordpress.com/2011/09/26/weblogic-domain-audit/</a>
+<br/><br/>
+It often happens that people make configuration changes to an environment, and they forget to let the team know.<br />
+The amount of time wasted in troubleshooting because of this, amounts to the trillions of hours.<br />
+<br />
+At WebLogic domain level you can edit "Configuration Audit Type" to one of these levels (copy and paste from console help):<br />
+<br />
+CONFIG_CHANGE_NONE<br />
+<br />
+Configuration events will neither be written to the server log or directed to the Security Audit Framework.<br />
+<br />
+CONFIG_CHANGE_LOG<br />
+Configuration events will be written to the server log.<br />
+<br />
+CONFIG_CHANGE_AUDIT<br />
+Configuration events will be directed to the Security Audit Framework.<br />
+<br />
+CONFIG_CHANGE_LOG_AND_AUDIT<br />
+Configuration events will be written to the server log and directed to the Security Audit Framework.<br />
+<br />
+<br />
+What is this mysterious "Security Audit Framework" ? KGB? CIA? Gestapo?<br />
+<a href="http://docs.oracle.com/cd/E21764_01/web.1111/e13710/archtect.htm#i1059470">Here</a> they tell you that AuditEvent is persisted.... where?<br />
+<br />
+In Security/myrealm/Providers/Auditing create a securityEventAudit DefaultAuditor, then in "ProviderSpecific" select all events (actually you are interested in START_AUDIT. Enable all checkboxes.<br />
+<br />
+<a href="http://docs.oracle.com/cd/E15523_01/web.1111/e13707/providers.htm#i1198787">Here an explanation of the "Configuring the WebLogic Auditing Provider" </a>story, with specific details on the Configuration Change Audit.<br />
+<br />
+<br />
+<a href="http://docs.oracle.com/cd/E24329_01/web.1211/e24422/providers.htm#SECMG137">http://docs.oracle.com/cd/E24329_01/web.1211/e24422/providers.htm#SECMG137</a><br />
+<br />
+"<br />
+<h3 class="sect2" id="autoId8">
+Configuration Auditing</h3>
+You can configure the Administration Server to emit log messages and 
+generate audit events when a user changes the configuration of any 
+resource within a domain or invokes management operations on any 
+resource within a domain. For example, if a user disables SSL on a 
+Managed Server in a domain, the Administration Server emits log 
+messages. If you have enabled the WebLogic Auditing provider, it writes 
+the audit events to an additional security log. These messages and audit
+ events provide an audit trail of changes within a domain's 
+configuration (configuration auditing).<br />
+The Administration Server writes configuration auditing messages to 
+its local log file. They are not written to the domain-wide message log 
+by default.<br />
+Note that configuration audit information is contained in 
+Authorization Events. As a result, another approach to configuration 
+auditing is to consume Authorization Events. Note, however, that the 
+information in an Authorization Event tells you whether access was 
+allowed to perform a configuration change; it does not tell you whether 
+the configuration change actually succeeded (for instance, it might have
+ failed because it was invalid)."<br />
+<br />
+<br />
+<br />
+<br />
+This should create a DefaultAuditRecorder.log log file, marking each event between <br />
+<br />
+#### Audit Record Begin<br />
+<br />
+and<br />
+<br />
+Audit Record End ####<br />
+<br />
+<br />
+"Configuration auditing messages are identified by message IDs that fall within the range of 159900-159910."
+<br />
+<br />
+A configuration change will generate this:
+<br />
+<br />
+<pre>#### Audit Record Begin &lt;13-Feb-2013 21:38:14&gt;  &lt;Severity =SUCCESS&gt;  &lt;&lt;&lt;Event Type = Create Configuration Audit Event&gt;&lt;Subject = Subject: 2
+ Principal = class weblogic.security.principal.WLSUserImpl("weblogic")
+ Principal = class weblogic.security.principal.WLSGroupImpl("Administrators")
+&gt;&lt;Object = base_domain:Name=JMSServer-0,Type=JMSServer&gt;&gt;&gt; Audit Record End ####
+
+
+
+
+</pre>
+and every operation we do on the console is traced:
+<br />
+<br />
+<pre>#### Audit Record Begin &lt;13-Feb-2013 21:38:14&gt;  &lt;Severity =SUCCESS&gt;  &lt;&lt;&lt;Event Type = SetAttribute Configuration Audit Event&gt;&lt;Subject = Subject: 2
+ Principal = class weblogic.security.principal.WLSUserImpl("weblogic")
+ Principal = class weblogic.security.principal.WLSGroupImpl("Administrators")
+&gt;&lt;Object = com.bea:Name=JMSServer-0,Type=JMSServer&gt;&lt;Attribute = PersistentStore&gt;&lt;From = &gt;&lt;To = com.bea:Name=WseeFileStore,Type=FileStore&gt;&gt;&gt; Audit Record End ####
+</pre>
+<br />
+<br />
+and finally when I activate configuration:
+
+<br />
+<br />
+<pre>#### Audit Record Begin &lt;13-Feb-2013 21:38:14&gt;  &lt;Severity =SUCCESS&gt;  &lt;&lt;&lt;Event Type = Invoke Configuration Audit Event&gt;&lt;Subject = Subject: 2
+ Principal = class weblogic.security.principal.WLSUserImpl("weblogic")
+ Principal = class weblogic.security.principal.WLSGroupImpl("Administrators")
+&gt;&lt;Object = com.bea:Name=ConfigurationManager,Type=weblogic.management.mbeanservers.edit.ConfigurationManagerMBean&gt;&lt;Operation = save&gt;&lt;Parameters = &gt;&gt;&gt; Audit Record End ####
+</pre>
+<br />
+<br />

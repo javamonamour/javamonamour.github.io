@@ -1,0 +1,80 @@
+---
+layout: post
+title: "Stuck in tar"
+date: 2014-03-17T08:53:00.000+01:00
+permalink: /2014/03/stuck-in-tar.html
+blogger_id: "3107011613296970483"
+tags: ["tar"]
+---
+I have a tarball AcmeScripts-1.26-scripts.tar.gz containing a subfolder:
+<br />
+<br />
+tar tvzf AcmeScripts-1.26-scripts.tar.gz
+<br />
+<br />
+<pre>
+drwxr-xr-x 508/100           0 2014-03-11 12:21 AcmeScripts-1.26/jms/
+drwxr-xr-x 508/100           0 2014-03-11 12:21 AcmeScripts-1.26/logs/
+</pre>
+<br />
+<br />
+(i.e. all the content is under AcmeScripts-1.26)
+<br />
+<br />
+This is bloody maven who packages my scripts this way, no clue why.
+<br />
+<br />
+When I untar the tarball, I want to get rid of the AcmeScripts-1.26 subfolder, and untar all the content in a /opt/oracle/acmescripts/ folder (without having a /opt/oracle/acmescripts/AcmeScripts-1.26/ )
+<br />
+I have tried everything, but all attempt failed.<br />
+<br />
+This untars under /opt/oracle/acmescripts/AcmeScripts-1.26/:
+<br />
+<i>tar xvzf AcmeScripts-1.26-scripts.tar.gz -C /opt/oracle/acmescripts/ AcmeScripts-1.26/*</i>
+<br />
+<br />
+this does the same:
+<br />
+<br />
+<i>tar xvzf AcmeScripts-1.26-scripts.tar.gz -C /opt/oracle/acmescripts/ </i>
+<br />
+<br />
+There doesn't seem to be an option to untar the content of AcmeScripts-1.26-scripts.tar.gz/AcmeScripts-1.26/* directly to /opt/oracle/acmescripts/. I need to do it in 2 additional steps:
+<br />
+<br />
+<i> 
+mv /opt/oracle/acmescripts/AcmeScripts-1.26/* /opt/oracle/acmescripts/
+<br />
+rmdir /opt/oracle/acmescripts/AcmeScripts-1.26/
+</i>
+<br />
+<br />
+Which I don't find ideal. I would rather have something like
+<br />
+<br />
+<i>tar xvzf AcmeScripts-1.26-scripts.tar.gz -C /opt/oracle/acmescripts/ -D AcmeScripts-1.26/</i>
+<br />
+<br />
+(don't try it, the -D option doesn't exist)<br />
+<br />
+The workaround is to simply deploy&nbsp; the scripts to <i>/opt/oracle/acmescripts_staging/</i><i>AcmeScripts-1.26, </i>and then create a symbolic link between /opt/oracle/acmescripts_staging/AcmeScripts-1.26 and /opt/oracle/acmescripts/ <i>:</i><br />
+<i><br /></i>
+<i>ln -s </i><i>/opt/oracle/acmescripts_staging/</i><i>AcmeScripts-1.26&nbsp; /opt/oracle/acmescripts/</i><br />
+<br />
+Of course when you deploy a new version of the scripts, you have to:<br />
+a) remove the previous link<br />
+b) remove <i>/opt/oracle/acmescripts_staging/</i><i>AcmeScripts-1.26</i><br />
+c) create the new link&nbsp; <br /><i>ln -s </i><i>/opt/oracle/acmescripts_staging/</i><i>AcmeScripts-1.27&nbsp; /opt/oracle/acmescripts/</i><br />
+<br />
+which requires some coordination and making sure it all fits together. Not all that simple.<br />
+<br />
+I am a bit disappointed by tar, I always found it a underdesigned utility.
+<br />
+<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/5b8865406063d44e.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/5b8865406063d44e.jpg" height="478" width="640" /></a></div>
+<br />
+(this must be some La Brea tar pit ad)<br />
+<br />

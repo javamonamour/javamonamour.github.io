@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Bottle getting started"
+date: 2017-11-22T20:15:00.001+01:00
+permalink: /2017/11/bottle-getting-started.html
+blogger_id: "1477846651582669757"
+tags: ["bottle", "python"]
+---
+{% raw %}Looking for an alternative to Django... <br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/f714409ab0ef5115.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/c63445ea47d5aee1.jpg" width="400" height="300" data-original-width="259" data-original-height="194" /></a></div><br />
+Apparently webpy is basically dead. Bottle seems to be alive, and ported to Python 3<br />
+<br />
+<a href="http://bottlepy.org/docs/dev/index.html">http://bottlepy.org/docs/dev/index.html</a><br />
+<br />
+sudo pip3.6 install bottle<br />
+<br />
+python<br />
+<br />
+paste this code:<br />
+<br />
+<pre class="brush: java">from bottle import route, run, template
+
+@route('/hello/<name>')
+def index(name):
+    return template('<b>Hello {{name}}</b>!', name=name)
+
+run(host='localhost', port=8080)
+</pre><br />
+<br />
+Enter in the browser:<br />
+<br />
+http://127.0.0.1:8080/hello/world<br />
+<br />
+<br />
+It can't be simpler! Compare it to the same code in Java...<br />
+<br />
+{% endraw %}

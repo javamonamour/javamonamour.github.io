@@ -1,0 +1,58 @@
+---
+layout: post
+title: "Useful Java EE patterns"
+date: 2018-04-24T17:40:00.002+02:00
+permalink: /2018/04/useful-java-ee-patterns.html
+blogger_id: "2481444295098478885"
+tags: ["javaee"]
+---
+If you need a self-refreshing cache - with a timer to fetch updates - visible to all users:<br />
+<br />
+annotate a class ApplicationCache with:<br />
+<br />
+@javax.enterprise.context.ApplicationScoped<br />
+@javax.ejb.Singleton<br />
+@javax.ejb.ConcurrencyManagement(ConcurrencyManagementType.BEAN)<br />
+<br />
+<br />
+initialize it with a method annotated with <br />
+@javax.annotation.PostConstruct<br />
+public void startup()<br />
+<br />
+provide a scheduled method:<br />
+<br />
+@javax.ejb.Schedule(dayOfWeek = "1-5", hour = "*", minute = "*/30", persistent = false)<br />
+public void refreshCache()<br />
+<br />
+<br />
+Wherever you want to invoke a service method on the above class, you acquire a reference with<br />
+<br />
+@javax.inject.Inject<br />
+private ApplicationCache applicationCache;<br />
+<br />
+<br />
+=================<br />
+<br />
+<br />
+<br />
+If you need a logger:<br />
+<br />
+@javax.inject.Inject<br />
+private org.slf4j.Logger logger;<br />
+<br />
+<br />
+=================<br />
+<br />
+<br />
+<br />
+if you need a thread-safe collection:<br />
+<br />
+private final List<Employee> employees = Collections.synchronizedList(new ArrayList<Employee>());<br />
+private final Map<String, Employee> employeesMap = Collections.synchronizedMap(new HashMap<String, Employee>());<br />
+<br />
+===================<br />
+<br />
+<br />
+<br />
+<br />
+

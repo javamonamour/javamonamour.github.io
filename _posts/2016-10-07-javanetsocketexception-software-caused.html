@@ -1,0 +1,50 @@
+---
+layout: post
+title: "java.net.SocketException: Software caused connection abort: recv failed"
+date: 2016-10-07T11:17:00.002+02:00
+permalink: /2016/10/javanetsocketexception-software-caused.html
+blogger_id: "8350012036314816029"
+tags: ["ssl"]
+---
+if you see crap like this:
+
+
+<pre>
+
+Caused by: java.net.SocketException: Software caused connection abort: recv failed
+            at java.net.SocketInputStream.socketRead0(Native Method)
+            at java.net.SocketInputStream.socketRead(SocketInputStream.java:116)
+            at java.net.SocketInputStream.read(SocketInputStream.java:170)
+            at java.net.SocketInputStream.read(SocketInputStream.java:141)
+            at sun.security.ssl.InputRecord.readFully(InputRecord.java:465)
+            at sun.security.ssl.InputRecord.read(InputRecord.java:503)
+            at sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:973)
+            at sun.security.ssl.SSLSocketImpl.waitForClose(SSLSocketImpl.java:1769)
+            at sun.security.ssl.HandshakeOutStream.flush(HandshakeOutStream.java:124)
+            at sun.security.ssl.Handshaker.sendChangeCipherSpec(Handshaker.java:1083)
+            at sun.security.ssl.ClientHandshaker.sendChangeCipherAndFinish(ClientHandshaker.java:1222)
+            at sun.security.ssl.ClientHandshaker.serverHelloDone(ClientHandshaker.java:1134)
+            at sun.security.ssl.ClientHandshaker.processMessage(ClientHandshaker.java:348)
+            at sun.security.ssl.Handshaker.processLoop(Handshaker.java:979)
+            at sun.security.ssl.Handshaker.process_record(Handshaker.java:914)
+            at sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:1062)
+            at sun.security.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1375)
+            at sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1403)
+            at sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1387)
+            at sun.net.www.protocol.https.HttpsClient.afterConnect(HttpsClient.java:559)
+            at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:185)
+            at sun.net.www.protocol.http.HttpURLConnection.getOutputStream0(HttpURLConnection.java:1283)
+            at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(HttpURLConnection.java:1258)
+            at sun.net.www.protocol.https.HttpsURLConnectionImpl.getOutputStream(HttpsURLConnectionImpl.java:250)
+
+</pre>
+
+
+<br/>
+it means that the web service consumer doesn't send the certificate
+<br/>
+In reality the client should send a different (more meaningful) error, related to SSL handshake, that in reality it catched and ignores....then he tries to read the data, which never arrive, then he complains that the server closed the socket.
+<br/>
+You discover what really happened by setting the debug flags for jsse and you see that the server requests the client certificate, receives nothing and then sends the client to hell - which is the expected behaviour.
+<br/>
+

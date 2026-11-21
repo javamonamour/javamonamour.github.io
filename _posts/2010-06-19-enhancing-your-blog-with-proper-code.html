@@ -1,0 +1,88 @@
+---
+layout: post
+title: "Enhancing your blog with proper code formatting"
+date: 2010-06-19T15:24:00.012+02:00
+permalink: /2010/06/enhancing-your-blog-with-proper-code.html
+blogger_id: "8530784995359896620"
+tags: ["syntaxhighlighter"]
+blogger_comments:
+  - author: "Thomas Heuring"
+    date: 2011-01-04
+    html: "Hi Pierluigi,<br /><br />I use the same js scripts to make my code more aesthetic. But like you said, my blog is getting slow. Can you please show or tell me howe you added the scripts to you Google blog?<br /><br />Greetz,<br /><br />Thomas Heuring"
+  - author: "vernetto"
+    date: 2011-01-05
+    html: "I simply downloaded the scripts from alexgorbatchev&#39;s website and put it under another site (I think my Google Code or Google Site), faster than his... they were a lot faster... alex&#39;s site must be under a heavy load...<br />strangely, after some time they stopped working so I reverted to Alex&#39;s site.... as soon as I have time I will definitely try the experiment again, in fact some times it becomes excruciatingly slow"
+---
+Today Luciano told me my blog is a mess, at least I should properly format my code. He is right.<br />
+I have followed these instructions:<br />
+<br />
+<a href="http://concise-software.blogspot.com/2010/03/enabling-syntaxhighlighter-in-blogger.html">http://concise-software.blogspot.com/2010/03/enabling-syntaxhighlighter-in-blogger.html</a><br />
+<br />
+<br />
+<br />
+I am testing now:<br />
+this is done with the xml brush:<br />
+<br />
+Using &lt;pre name="code" class="brush: xml"&gt; :<br />
+<br />
+<pre class="brush: xml" name="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;Employee&gt;
+ &lt;name&gt;Pierre&lt;/name&gt;&lt;age&gt;33&lt;/age&gt;
+&lt;/Employee&gt;
+</pre><br />
+<br />
+this is done with the java brush:<br />
+<br />
+Using &lt;pre name="code" class="brush: java"&gt; :<br />
+<br />
+<pre class="brush: java" name="code">public class XMLLoaderTest {
+ @Test
+ public void testname() throws Exception {
+  XMLLoader&lt;Employee&gt; loader = new XMLLoader&lt;Employee&gt;();
+  Employee emp = loader.getObjectFromXMLFile(Employee.class, "testResources/Employees.xml");
+  System.out.println(emp.getName() + " " + emp.getAge());
+ }
+}
+
+</pre><br />
+<br />
+<pre class="brush: java" name="code">import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.File;
+
+/**
+ * Helper class to load Java Objects from an XML document
+ * See test methods for usage  
+ * @author pierre
+ *
+ * @param &lt;T&gt;
+ */
+public class XMLLoader &lt;T&gt; {
+ /**
+  * Loads an object from a XML file
+  * @param theClass
+  * @param fileName
+  * @return
+  * @throws JAXBException
+  */
+ public T getObjectFromXMLFile(Class theClass, String fileName) throws JAXBException {
+  T result = null;
+  JAXBContext jc = JAXBContext.newInstance(theClass);
+  Unmarshaller unmarshaller = jc.createUnmarshaller();
+  result = (T)unmarshaller.unmarshal(new File(fileName));
+  return result;
+ }
+}
+
+</pre><br />
+It works!<br />
+Make sure that you include the BrushXyz.js file when you use the "brush: xyz"<br />
+<br />
+<br />
+Also, I had to load some additional js (you can copy them from my HTML source) to make it look really pretty.<br />
+<br />
+I have the impression that this beauty comes with a cost: the page is slower to load.<br />
+<br />
+<br />
+I have now copied the .js and .css files to my google site,&nbsp; it seems much faster!

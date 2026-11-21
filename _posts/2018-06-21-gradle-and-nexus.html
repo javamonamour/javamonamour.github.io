@@ -1,0 +1,57 @@
+---
+layout: post
+title: "Gradle and Nexus"
+date: 2018-06-21T14:06:00.000+02:00
+permalink: /2018/06/gradle-and-nexus.html
+blogger_id: "7486429541405591212"
+tags: ["Gradle", "nexus"]
+---
+download Gradle binaries<br />
+<br />
+mkdir /home/centos/gradle<br />
+unzip -d /home/centos/gradle/ gradle-4.8-bin.zip<br />
+export PATH=$PATH:/home/centos/gradle/gradle-4.8/bin/<br />
+gradle -version<br />
+cd gitclones/<br />
+git clone https://github.com/buzdin/allure-junit5-course<br />
+<br />
+cd allure-junit5-course/<br />
+<br />
+vi build.gradle<br />
+<br />
+replace <br />
+<br />
+    repositories {<br />
+        jcenter()<br />
+    }<br />
+<br />
+with <br />
+<br />
+    repositories {<br />
+ maven {<br />
+           url "http://localhost:8181/repository/maven-public/"<br />
+        }<br />
+    }<br />
+<br />
+<br />
+if your "group" maven-public repository points only to Maven Central, the build will fail<br />
+<br />
+rm -rf .gradle/<br />
+gradle build  --refresh-dependencies --debug<br />
+<br />
+<br />
+<br />
+> Could not resolve all artifacts for configuration ':classpath'.<br />
+   > Could not find io.qameta.allure:allure-gradle:2.4.<br />
+     Searched in the following locations:<br />
+       - http://localhost:8181/repository/maven-public/io/qameta/allure/allure-gradle/2.4/allure-gradle-2.4.pom<br />
+       - http://localhost:8181/repository/maven-public/io/qameta/allure/allure-gradle/2.4/allure-gradle-2.4.jar<br />
+     Required by:<br />
+         project :<br />
+<br />
+<br />
+If you add to the group also a Proxy Repo "jcenter" pointing to https://jcenter.bintray.com/, everything works<br />
+<br />
+<br />
+<br />
+

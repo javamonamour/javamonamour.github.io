@@ -1,0 +1,37 @@
+---
+layout: post
+title: "puppet file recurse purge filebucket"
+date: 2014-03-06T15:19:00.002+01:00
+permalink: /2014/03/puppet-file-recurse-purge-filebucket.html
+blogger_id: "6915590218616929746"
+tags: ["puppet"]
+---
+Using 
+
+<pre>
+  file { "/path/to/target/":
+    source  => "/path/to/staging/",
+    recurse => true,
+    purge   => true,
+  }
+
+</pre>
+
+has one big caveat: if /path/to/target/ contains a lot of uncontrolled stuff which doesn't exist in /path/to/staging/, all this redundant stuff will be deleted and filebucketed (presumably across the network to a main file bucket running on the puppet master), and you will see this message:
+
+<br/>
+
+info: /File[/path/to/target/bireports/DailyReport_2014-3-5.txt]: Filebucketed /path/to/target/bireports/DailyReport_2014-3-5.txt to main with sum 8f629af878d7d7fd7b70d33502100a76
+<br/>
+notice: /File[/path/to/target/bireports/DailyReport_2014-3-5.txt]/ensure: removed
+<br/><br/>
+
+So the message is: be very careful to use "purge" if the target folder is supposed to contain plenty of other stuff. Consider moving that stuff under another folder. Or just forget the "purge".
+<br/>
+See also:
+<br/>
+<a href="http://docs.puppetlabs.com/references/latest/type.html#file-attribute-recurse">http://docs.puppetlabs.com/references/latest/type.html#file-attribute-recurse</a>
+<br/>
+Incidentally  in my case there were so many files that it ended up with a "Error 400 on SERVER: Could not intern from pson: regexp buffer overflow"
+
+

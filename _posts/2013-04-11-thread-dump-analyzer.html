@@ -1,0 +1,53 @@
+---
+layout: post
+title: "Thread Dump Analyzer"
+date: 2013-04-11T10:50:00.001+02:00
+permalink: /2013/04/thread-dump-analyzer.html
+blogger_id: "1528358132545516636"
+tags: ["threaddump"]
+---
+<br />
+I have installed a plugin for VisualVM to analyse Thread Dumps: <br />
+<br />
+<a href="http://java.net/projects/tda/downloads/directory/visualvm">http://java.net/projects/tda/downloads/directory/visualvm</a><br />
+download the 3 plugins (all 3 are necessary)<br />
+<br />
+it says:<br />
+<br />
+<i><a href="https://tda.dev.java.net/">https://tda.dev.java.net</a></i><br />
+<i>Version: 2.2 Author: Ingo Rockel&nbsp;&nbsp; Date: 8/9/10 Source: net-java-dev-tda-visualvm.nbm Homepage: https://tda.dev.java.net&nbsp; </i><br />
+<i>Plugin Description</i><br />
+<i>VisualVM Module of TDA - Thread Dump Analyzer</i><br />
+<i><br /></i>
+<b>To install the plugin</b><br />
+open C:\Oracle\Middleware\jdk160_24\bin\jvisualvm.exe<br />
+tools /plugins/downloaded/add plugin/install<br />
+<br />
+"they are not signed" warning.... continue<br />
+<br />
+<br />
+Be aware that thread dump files must have extension .tdump (like: bla.tdump)<br />
+<br />
+go to file/open/bla.tdump<br />
+<br />
+the trick is to look for "waiting threads", click on the STUCK thread<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/d119610d73b09889.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="449" src="/images/8856db8f61a23008.jpg" width="640" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/bc6d93e9609255c9.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="484" src="/images/8d8cb77d5647c72a.jpg" width="640" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/66009204b74947df.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="458" src="/images/6bb6b220caacfe01.jpg" width="640" /></a></div>
+<br />
+<br />
+<br />
+The tool makes it very easy to navigate from thread to thread based on the monitor id, so as to identify the root cause of a stuck thread.<br />
+<br />
+<br />
+<br />
+<br />

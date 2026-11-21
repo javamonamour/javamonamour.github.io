@@ -1,0 +1,20 @@
+---
+layout: post
+title: "JMX and Log4J"
+date: 2010-09-04T19:58:00.000+02:00
+permalink: /2010/09/jmx-and-log4j.html
+blogger_id: "8950255614577833206"
+tags: ["JMX"]
+---
+Tired of fighting with log4j.properties and restarting my application server,<br />
+giving also that I deeply dislike the idea of having a Thread dedicated to monitoring whether a log4j.properties file has changed or not, I decide to investigate in the intriguing connections between Log4J and JMX.<br />
+<br />
+<br />
+This seems a very authoritative article on the specific topic:<br />
+<a href="http://www.objectsource.com/j2eechapters/Ch06-Logging_Service.htm">http://www.objectsource.com/j2eechapters/Ch06-Logging_Service.htm</a><br />
+<br />
+and this <a href="http://java.sun.com/developer/technicalArticles/J2SE/jmx.html">http://java.sun.com/developer/technicalArticles/J2SE/jmx.html</a> a very general comprehensive coverage of JMX....<br />
+<br />
+I run the Hello example, funnily using JRMC it doesn't work, while with JConsole it works. Interestingly, they recommend to run JConsole remotely, not locally.<br />
+<br />
+Here <a href="http://code.google.com/p/javatoolsforweblogic/source/browse/#svn/trunk/PVJMX">http://code.google.com/p/javatoolsforweblogic/source/browse/#svn/trunk/PVJMX</a>&nbsp; the Eclipse project.

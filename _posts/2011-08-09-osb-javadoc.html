@@ -1,0 +1,29 @@
+---
+layout: post
+title: "OSB Javadoc"
+date: 2011-08-09T18:56:00.001+02:00
+permalink: /2011/08/osb-javadoc.html
+blogger_id: "3499769083470551877"
+tags: ["javadoc", "OSB"]
+---
+wew, I finally managed to write a tool to generate "Javadoc" from a sbconfig.jar file.<br />
+<br />
+It outputs a HTML file with each entry in the sbconfig.jar, description, list of efferent and afferent artifacts with hyperlink to them...<br />
+<br />
+pretty cool!<br />
+<br />
+<br />
+example:<br />
+<br />
+<a href="" id="GlobalResourcesACMEEventMQmqc"> <b>GlobalResources/ACMEEventMQ.MQConnection</b> </a> <i>MQ connection to read messages from MQ Server</i> <br />
+Uses:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="">GlobalResources/a447.sa</a> <br />
+<br />
+Is used by:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="">GlobalResources/ACMEMQBS.BusinessService</a> <br />
+<br />
+<hr/><a href="" id="GlobalResourcesa447sa"> <b>GlobalResources/a447.ServiceAccount</b> </a> <i>security credentials to access mq queue</i> <br />
+Uses:<br />
+<br/><br />
+Is used by:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="">GlobalResources/ACMEEventMQ.MQConnection</a> 

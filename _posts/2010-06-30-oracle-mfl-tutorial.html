@@ -1,0 +1,144 @@
+---
+layout: post
+title: "Oracle MFL tutorial"
+date: 2010-06-30T16:56:00.007+02:00
+permalink: /2010/06/oracle-mfl-tutorial.html
+blogger_id: "3298611321489381425"
+tags: ["mfl"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2010-10-20
+    html: "I&#39;m trying to get this unittest example to work but i can&#39;t find com.bea.wli.transform.fbruntime_1.1.0.0.jar nor WLXT class. Can you tell me where to find it?"
+  - author: "vernetto"
+    date: 2010-12-23
+    html: "sorry for the late reply: <br /><br />C:\\bea11\\Oracle_OSB\\modules\\com.bea.wli.transform.fbruntime_1.2.0.0.jar<br /><br />or C:\\Oracle1\\Middleware\\Oracle_OSB1\\modules\\com.bea.wli.transform.fbruntime_1.2.0.0.jar<br /><br /><br />and the WLXT is in there..."
+  - author: "chandu"
+    date: 2013-11-29
+    html: "please add delim=&#39;\\n&#39; to four last filed age"
+---
+All the documentation is here:<br />
+<a href="http://download.oracle.com/docs/cd/E13160_01/wli/docs10gr3/pdf/fbhelp.pdf">http://download.oracle.com/docs/cd/E13160_01/wli/docs10gr3/pdf/fbhelp.pdf</a><br />
+<br />
+Some examples here:<br />
+<a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/testing.html#wp1041203">http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/testing.html#wp1041203</a><br />
+<br />
+Excellent tutorial here<br />
+<br />
+<a href="http://biemond.blogspot.com/2008/12/flat-file-to-xml-with-oracle-service.html">http://biemond.blogspot.com/2008/12/flat-file-to-xml-with-oracle-service.html</a><br />
+<br />
+<br />
+In a OSB Project, do New, Other, Oracle Service Bus, MFL. Enter a name, like MQFeedParser.<br />
+You get this:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/ad9e6787225eb58c.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="215" src="/images/af029aecbdb2944b.png" width="400" /></a></div><br />
+<br />
+<br />
+GEOMQFeed is the "<b>Message Format</b>", i.e. the "<b>Root Element</b>".<br />
+<br />
+From here you can either insert a <b>Group </b>or a <b>Field</b>. A Group can contain other Groups and/or Fields.<br />
+A Group can be OPTIONAL or REQUIRED<br />
+A Group can repeat itself<br />
+You can define a Group once and use Group References to instantiate it multiple times.<br />
+<br />
+"Choice of Children" means that only one of the fields specified is allowed. <br />
+<br />
+Group Occurrence is self-explanatory.<br />
+<br />
+A TAGGED GROUP is a Group whose start is preceded by a specific value, like NEWGROUP:ACME (the tag being NEWGROUP: and the group name being ACME)<br />
+<br />
+<br />
+________________________________<br />
+<br />
+<br />
+A good way to <b>test </b>the MFL is to write a File Transport PS with MFL input<br />
+<br />
+For instance this:<br />
+<br />
+<pre class="brush: xml" name="code">&lt;?xml version='1.0' encoding='windows-1252'?&gt;
+&lt;!DOCTYPE MessageFormat SYSTEM 'mfl.dtd'&gt;
+&lt;!--   Enter description of the message format here.   --&gt;
+&lt;MessageFormat name='SampleMFL' version='2.02'&gt;
+    &lt;StructFormat name='Employees' delimOptional='y' repeat='*'&gt;
+        &lt;FieldFormat name='Name' type='String' delimOptional='y' length='12' strlenInChars='n' codepage='windows-1252'/&gt;
+        &lt;FieldFormat name='Age' type='String' delimOptional='y' length='3' strlenInChars='n' codepage='windows-1252'/&gt;
+    &lt;/StructFormat&gt;
+&lt;/MessageFormat&gt;
+</pre><br />
+when your input is this<br />
+Pierre01    345Pierre02    346<br />
+<br />
+should return you<br />
+<br />
+<pre class="brush: xml" name="code">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;SampleMFL&gt;
+  &lt;Employees&gt;
+    &lt;Name&gt;Pierre01&lt;/Name&gt;
+    &lt;Age&gt;345&lt;/Age&gt;
+  &lt;/Employees&gt;
+  &lt;Employees&gt;
+    &lt;Name&gt;Pierre01&lt;/Name&gt;
+    &lt;Age&gt;345&lt;/Age&gt;
+  &lt;/Employees&gt;
+&lt;/SampleMFL&gt;&nbsp;</pre><pre class="brush: xml" name="code">&nbsp;</pre><pre class="brush: xml" name="code">&nbsp;</pre><br />
+<br />
+<br />
+If the input data doesn't match the MFL you get:<br />
+<br />
+<i>com.bea.wli.sb.sources.TransformException: Failed to transform MFL content from binary to XML<br />
+<br />
+Caused By: &lt;MFLException&gt;<br />
+&lt;ErrorMessage&gt;Did not completely process all input data.&lt;/ErrorMessage&gt;<br />
+&lt;Details&gt;<br />
+&lt;Detail&gt;<br />
+&lt;Name&gt;ErrorCode&lt;/Name&gt;<br />
+&lt;Value&gt;-3&lt;/Value&gt;<br />
+&lt;/Detail&gt;<br />
+&lt;Detail&gt;<br />
+&lt;Name&gt;DataOffset&lt;/Name&gt;<br />
+&lt;Value&gt;15&lt;/Value&gt;<br />
+&lt;/Detail&gt;<br />
+&lt;/Details&gt;<br />
+&lt;/MFLException&gt;<br />
+at com.bea.nonxml.common.MFLException.create(MFLException.java:221)<br />
+at com.bea.nonxml.common.MFLException.create(MFLException.java:337)<br />
+at com.bea.nonxml.readers.NonXMLReaderVisitor.nextToken(NonXMLReaderVisitor.java:155)<br />
+at com.bea.nonxml.readers.TokenNonXMLReader.nextToken(TokenNonXMLReader.java:44)<br />
+at com.bea.binxml.v2.readers.SaxTokenReader$ExtendedTokenReaderWrapper.nextToken(SaxTokenReader.java:335)<br />
+at com.bea.binxml.v2.readers.SaxTokenReader.process(SaxTokenReader.java:189)<br />
+at com.bea.binxml.v2.readers.SaxTokenReader.process(SaxTokenReader.java:154)<br />
+at com.bea.wli.common.mfl.MflExecutor.executeXmlObject(MflExecutor.java:126)<br />
+at com.bea.wli.sb.resources.mfl.MflExecutor.executeXmlObject(MflExecutor.java:98)<br />
+at com.bea.wli.sb.stages.transform.MflTransformImpl.executeXmlObject(MflTransformImpl.java:84)<br />
+at com.bea.wli.sb.sources.MFLSource.getInstance(MFLSource.java:113)<br />
+at com.bea.wli.sb.sources.MFLTransformer.transform(MFLTransformer.java:75)<br />
+at com.bea.wli.sb.sources.MetaTransformer.doTransform(MetaTransformer.java:138)<br />
+at com.bea.wli.sb.sources.MetaTransformer.transform(MetaTransformer.java:89)<br />
+<br />
+</i><br />
+<br />
+<br />
+This http://forums.oracle.com/forums/thread.jspa?threadID=945164  should help,<br />
+"try to change the message type from text to binary"<br />
+<br />
+Here<br />
+C:\bea11\Oracle_OSB11\lib\modules\com.bea.alsb.resources.mfl.jar <br />
+<br />
+is the MflExecutor<br />
+<br />
+<br />
+There is this tool WLXT<br />
+<br />
+http://download.oracle.com/docs/cd/E13214_01/wli/docs70/classdocs/com/bea/wlxt/WLXT.html<br />
+<br />
+to unittest MFL.<br />
+You should include in the CLASSPATH : com.bea.wli.transform.fbruntime_1.1.0.0.jar and weblogic.jar<br />
+<br />
+<br />
+<pre name="code" class="brush: java">File binaryfile = new File("c:/geodata.dat");
+WLXT wlxt = new WLXT();
+URL mflDocumentName = new URL("file:c:/geodata.mfl");
+FileInputStream in = new FileInputStream(mybinaryfile);
+Document doc = wlxt.parse(mflDocumentName, in, null);
+String xml = WLXT.getXMLText(doc, 0, 2);
+System.out.println(xml);
+</pre>

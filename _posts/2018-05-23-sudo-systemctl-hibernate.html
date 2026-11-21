@@ -1,0 +1,28 @@
+---
+layout: post
+title: "sudo systemctl hibernate"
+date: 2018-05-23T18:05:00.001+02:00
+permalink: /2018/05/sudo-systemctl-hibernate.html
+blogger_id: "6115981788643496978"
+tags: ["centos"]
+---
+on Centos, I was trying to hibernate my machine:<br />
+<br />
+sudo systemctl hibernate<br />
+<br />
+<i>A dependency job for hibernate.target failed. See 'journalctl -xe' for details.</i><br />
+<br />
+journalctl -xe<br />
+<br />
+<br />
+<i>Failed to write mode to /sys/power/disk: Operation not permitted</i><br />
+<br />
+<a href="https://ask.fedoraproject.org/en/question/41118/f20-unable-to-hibernate-syspowerdisk-disabled/">https://ask.fedoraproject.org/en/question/41118/f20-unable-to-hibernate-syspowerdisk-disabled/</a><br />
+<br />
+<br />
+I removed "safe boot" option in the BIOS settings, and now I am able to hibernate! Amazing!<br />
+<br />
+<br />
+See also this <a href="https://www.thegeekdiary.com/centos-rhel-7-shutting-down-suspending-or-rebooting-commands-systemctl/">https://www.thegeekdiary.com/centos-rhel-7-shutting-down-suspending-or-rebooting-commands-systemctl/</a>, maybe "suspend" is cheaper safer and faster than hibernate...<br />
+<br />
+

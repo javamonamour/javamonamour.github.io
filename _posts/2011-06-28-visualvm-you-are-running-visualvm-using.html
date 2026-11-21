@@ -1,0 +1,18 @@
+---
+layout: post
+title: "visualvm you are running visualvm using Java Runtime Environment (jre)"
+date: 2011-06-28T17:01:00.001+02:00
+permalink: /2011/06/visualvm-you-are-running-visualvm-using.html
+blogger_id: "4266653553390147958"
+blogger_comments:
+  - author: "Paulo Bravo"
+    date: 2011-10-13
+    html: "Thanks, I&#39;ve just had the same problem, solved with your solution. :)"
+  - author: "Anonymous"
+    date: 2011-12-08
+    html: "Thanks so much for this :) could not find this anywhere else"
+  - author: "Larsen"
+    date: 2012-03-08
+    html: "You can also specify a JDK on the command line (see <a href=\"http://visualvm.java.net/description.html#getting_started\" rel=\"nofollow\">documentation</a>):<br /><br />visualvm.exe --jdkhome &quot;C:\\Programme\\Java\\jdk1.7.0_02&quot;<br /><br />For the Eclise plugin it is important to configure the correct path in the preferences (just search for &quot;visualvm&quot;)."
+---
+you double click on visualvm and you get this message - without an explanation of how to use a JDK instead.<br>Bummer.<br><br>After some research I find out that<br>visualvm_132\visualvm_132\etc<br>contains a file <br>visualvm.conf<br>  with an entry:<br><br># default location of JDK/JRE, can be overridden by using --jdkhome &lt;dir&gt; switch<br>#jdkhome=&quot;/path/to/jdk&quot;<br><br>I replace it with<br><br>jdkhome=C:/Oracle4/Middleware/jdk160_21<br>  <br>and it works....<br> 

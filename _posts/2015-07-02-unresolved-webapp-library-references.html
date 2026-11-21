@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Unresolved Webapp Library references"
+date: 2015-07-02T14:30:00.000+02:00
+permalink: /2015/07/unresolved-webapp-library-references.html
+blogger_id: "4377733387312500537"
+tags: ["weblogic"]
+---
+Unresolved Webapp Library references
+
+See <a href="http://docs.oracle.com/cd/E13222_01/wls/docs92/programming/libraries.html">http://docs.oracle.com/cd/E13222_01/wls/docs92/programming/libraries.html</a>
+<br/><br/>
+
+If your webapp requires a specific version of a library, you can use the container-descriptor/prefer-application-packages/package-name clause in the weblogic.xml of your webapp. But then you should also refer to the library specific version with another clause:
+
+<br/><br/>
+
+<pre class="brush: xml">
+   &lt;library-ref>
+      &lt;library-name>jax-rs&lt;/library-name>
+        &lt;specification-version>2.0&lt;/specification-version>
+        &lt;exact-match>false&lt;/exact-match>
+    &lt;/library-ref>
+</pre>
+
+
+<br/><br/>
+This is only a library-ref, so the library must be made available in the config.xml:
+
+<br/><br/>
+
+<pre class="brush: xml">
+  &lt;library>
+    &lt;name>jax-rs#2.0@2.5.1&lt;/name>
+    &lt;target>icr_v00_25000_localhost&lt;/target>
+    &lt;module-type>war&lt;/module-type>
+    &lt;source-path>/path/to/yourlibrary.war&lt;/source-path>
+    &lt;security-dd-model>DDOnly&lt;/security-dd-model>
+    &lt;staging-mode>nostage&lt;/staging-mode>
+    &lt;plan-staging-mode xsi:nil="true">&lt;/plan-staging-mode>
+    &lt;cache-in-app-directory>false&lt;/cache-in-app-directory>
+  &lt;/library>
+
+
+</pre>
+
+
+<br/><br/>
+
+otherwise you will get the dreaded "Unresolved Webapp Library references for ...."
+
+<br/><br/>
+
+
+On the whole I find these classloader and version issues an extremely uninteresting topic...

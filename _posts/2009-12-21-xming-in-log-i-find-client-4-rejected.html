@@ -1,0 +1,17 @@
+---
+layout: post
+title: "XMing: in the log I find client 4 rejected by IP x.y.z.w"
+date: 2009-12-21T13:26:00.000+01:00
+permalink: /2009/12/xming-in-log-i-find-client-4-rejected.html
+blogger_id: "6432143667983156211"
+blogger_comments:
+  - author: "hardihood07"
+    date: 2011-05-04
+    html: "Or you can add the client ip address to the X0.hosts file and restart Xming. That file is there in the installation dir.  It will work."
+  - author: "PhiLho"
+    date: 2012-07-16
+    html: "Good trick, I wouldn&#39;t have guessed...<br />I had to restart the telnet sessions to make it work, but it worked!"
+---
+add -ac to your XMing shortcut:<br />
+<br />
+"C:\Program Files\Xming\Xming.exe" :0 -clipboard -multiwindow -ac

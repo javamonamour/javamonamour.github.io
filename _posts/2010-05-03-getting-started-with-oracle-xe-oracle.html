@@ -1,0 +1,21 @@
+---
+layout: post
+title: "Getting started with Oracle XE (oracle database express edition)"
+date: 2010-05-03T16:11:00.000+02:00
+permalink: /2010/05/getting-started-with-oracle-xe-oracle.html
+blogger_id: "5899657170714618131"
+tags: ["Oracle"]
+---
+Once you install the product, you have a database created with name XE.<br />
+<br />
+<br />
+Go to C:\oraclexe\app\oracle\product\10.2.0\server\BIN and run <b>sqlplus</b><br />
+connect as system (pw admin presumably)<br />
+<br />
+You can do: connect system as sysdba<br />
+and <b>startup </b>and <b>shutdown </b>the DB.<br />
+<br />
+these commands will give you the installed DB:<br />
+<br />
+select * from global_name;<br />
+select name from v$database;

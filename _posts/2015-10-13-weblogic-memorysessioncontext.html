@@ -1,0 +1,86 @@
+---
+layout: post
+title: "WebLogic MemorySessionContext "
+date: 2015-10-13T13:42:00.002+02:00
+permalink: /2015/10/weblogic-memorysessioncontext.html
+blogger_id: "964231549121624972"
+tags: ["OutOfMemoryError"]
+---
+We had some PROD OutOfMemory recently.... done a heap dump and seen that we were in this situation:
+
+<a href="http://xmlandmore.blogspot.ch/2013/03/analyzing-performance-issue-caused-by.html">http://xmlandmore.blogspot.ch/2013/03/analyzing-performance-issue-caused-by.html</a>
+
+<pre>
+
+One instance of "weblogic.servlet.internal.session.MemorySessionContext" loaded by "sun.misc.Launcher$AppClassLoader @ 0x7818fbb60" occupies 732'427'648 (82.97%) bytes. The memory is accumulated in one instance of "java.util.Hashtable$Entry[]" loaded by "<system class loader>".
+
+Keywords
+weblogic.servlet.internal.session.MemorySessionContext
+java.util.Hashtable$Entry[]
+sun.misc.Launcher$AppClassLoader @ 0x7818fbb60
+
+
+</pre>
+<br/><br/>
+and this is the "Shortest Paths to the Accumulation Point" in Eclipse MAT:
+<br/><br/>
+<pre>
+
+java.util.Hashtable$Entry[383] @ 0x7b0455fd8
+ 1'552 732'427'400 
+\table java.util.Hashtable @ 0x7823d6118
+ 48 732'427'488 
+.\openSessions weblogic.servlet.internal.session.MemorySessionContext @ 0x7823d60e8
+ 48 732'427'648 
+..+sessionContext weblogic.servlet.internal.WebAppServletContext @ 0x782310e88
+ 208 452'632 
+..|+[0] java.lang.Object[1] @ 0x7812d7e28
+ 24 24 
+..||\array java.util.concurrent.CopyOnWriteArrayList @ 0x7812d7de0
+ 24 96 
+..||.\initializedContexts com.sun.faces.config.ConfigManager @ 0x7812d7dd0
+ 16 112 
+..||..\CONFIG_MANAGER class com.sun.faces.config.ConfigManager @ 0x776ab8198
+ 64 100'560 
+..||...\[17] java.lang.Object[2560] @ 0x78235eb90
+ 10'256 10'256 
+..||....\elementData java.util.Vector @ 0x78235ae78
+ 32 10'288 
+..||.....\classes weblogic.utils.classloaders.ChangeAwareClassLoader @ 0x78233c758
+ 104 9'648'032 
+..||......+contextClassLoader com.iona.corba.art.workqueue.AutomaticWorkQueueThreadPool$WorkQueueThread @ 0x783f0a9f0 [ORB=_it_orb_id_1,Pool=1]::id-10 Thread
+ 120 2'184 
+..||......+contextClassLoader com.iona.corba.art.workqueue.AutomaticWorkQueueThreadPool$WorkQueueThread @ 0x783f0b2d8 [ORB=_it_orb_id_1,Pool=1]::id-9 Thread
+ 120 2'184 
+..||......+contextClassLoader com.iona.corba.art.workqueue.AutomaticWorkQueueThreadPool$WorkQueueThread @ 0x783f0bb60 [ORB=_it_orb_id_1,Pool=1]::id-8 Thread
+ 120 2'192 
+..||......+contextClassLoader com.iona.corba.art.workqueue.AutomaticWorkQueueThreadPool$WorkQueueThread @ 0x783f12410 [ORB=_it_orb_id_1,Pool=1]::id-7 Thread
+ 120 2'192 
+..||......+contextClassLoader com.iona.corba.art.workqueue.AutomaticWorkQueueThreadPool$WorkQueueThread @ 0x783f12cd8 [ORB=_it_orb_id_1,Pool=1]::id-6 Thread
+ 120 2'192 
+..||......+contextClassLoader com.iona.corba.art.workqueue.AutomaticWorkQueueThreadPool$WorkQueueThread @ 0x783f13560 [ORB=_it_orb_id_1,Pool=1]::id-5 Thread
+ 120 2'304 
+..||......+contextClassLoader com.iona.corba.art.workqueue.AutomaticWorkQueueThreadPool$WorkQueueThread @ 0x783f13e60 [ORB=_it_orb_id_1,Pool=1]::id-4 Thread
+ 120 2'232 
+..||......+contextClassLoader com.iona.corba.art.workqueue.AutomaticWorkQueueThreadPool$WorkQueueThread @ 0x783f1a680 [ORB=_it_orb_id_1,Pool=1]::id-3 Thread
+ 120 2'160 
+..||......+contextClassLoader com.iona.corba.art.workqueue.AutomaticWorkQueueThreadPool$WorkQueueThread @ 0x783f1aef0 [ORB=_it_orb_id_1,Pool=1]::id-2 Thread
+ 120 2'304 
+..||......+contextClassLoader com.iona.corba.art.workqueue.AutomaticWorkQueueThreadPool$WorkQueueThread @ 0x783f1b7a0 [ORB=_it_orb_id_1,Pool=1]::id-1 Thread
+ 120 2'304 
+..||......+contextClassLoader java.lang.Thread @ 0x7da0b6650 Keep-Alive-Timer »
+ 112 176 
+..||......+classloader java.security.ProtectionDomain @ 0x78235b0b0 »
+ 40 232 
+..||......\Total: 12 entries
+   
+..|+context weblogic.servlet.internal.WebAppRuntimeMBeanImpl @ 0x7824209f8 »
+ 
+
+</pre>
+
+<br/><br/>
+
+It turned out indeed that the session timeout was indeed waaay too long...
+
+<br/><br/>

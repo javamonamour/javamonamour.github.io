@@ -1,0 +1,52 @@
+---
+layout: post
+title: "java.io.IOException: write not supported     at weblogic.corba.client.cluster.DummySocket$2.write(DummySocket.java:35)"
+date: 2011-10-02T10:08:00.000+02:00
+permalink: /2011/10/javaioioexception-write-not-supported.html
+blogger_id: "950090391321123856"
+---
+javax.naming.NamingException: Couldn't connect to the specified host : write not supported [Root exception is org.omg.CORBA.COMM_FAILURE:   vmcid: SUN  minor code: 203 completed: Maybe]<br />
+        at weblogic.corba.j2ee.naming.Utils.wrapNamingException(Utils.java:83)<br />
+        at weblogic.corba.j2ee.naming.ORBHelper.getORBReferenceWithRetry(ORBHelper.java:656)<br />
+        at weblogic.corba.j2ee.naming.ORBHelper.getORBReference(ORBHelper.java:594)<br />
+        at weblogic.corba.j2ee.naming.InitialContextFactoryImpl.getInitialContext(InitialContextFactoryImpl.java:85)<br />
+        at weblogic.corba.j2ee.naming.InitialContextFactoryImpl.getInitialContext(InitialContextFactoryImpl.java:31)<br />
+        at weblogic.jndi.WLInitialContextFactory.getInitialContext(WLInitialContextFactory.java:46)<br />
+        at javax.naming.spi.NamingManager.getInitialContext(NamingManager.java:667)<br />
+        at javax.naming.InitialContext.getDefaultInitCtx(InitialContext.java:288)<br />
+        at javax.naming.InitialContext.init(InitialContext.java:223)<br />
+        at javax.naming.InitialContext.<init>(InitialContext.java:197)<br />
+        at durablesubscribers.DurableSubscriberFactory.run(DurableSubscriberFactory.java:58)<br />
+        at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:441)<br />
+        at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.java:303)<br />
+        at java.util.concurrent.FutureTask.run(FutureTask.java:138)<br />
+        at java.util.concurrent.ThreadPoolExecutor$Worker.runTask(ThreadPoolExecutor.java:886)<br />
+        at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:908)<br />
+        at java.lang.Thread.run(Thread.java:662)<br />
+Caused by: org.omg.CORBA.COMM_FAILURE:   vmcid: SUN  minor code: 203 completed: Maybe<br />
+        at com.sun.corba.se.impl.logging.ORBUtilSystemException.writeErrorSend(ORBUtilSystemException.java:2259)<br />
+        at com.sun.corba.se.impl.logging.ORBUtilSystemException.writeErrorSend(ORBUtilSystemException.java:2277)<br />
+        at com.sun.corba.se.impl.transport.SocketOrChannelConnectionImpl.sendWithoutLock(SocketOrChannelConnectionImpl.java:1066)<br />
+        at com.sun.corba.se.impl.encoding.BufferManagerWriteGrow.sendMessage(BufferManagerWriteGrow.java:57)<br />
+        at com.sun.corba.se.impl.encoding.CDROutputObject.finishSendingMessage(CDROutputObject.java:144)<br />
+        at com.sun.corba.se.impl.protocol.CorbaMessageMediatorImpl.finishSendingRequest(CorbaMessageMediatorImpl.java:247)<br />
+        at com.sun.corba.se.impl.protocol.CorbaClientRequestDispatcherImpl.marshalingComplete1(CorbaClientRequestDispatcherImpl.j<br />
+va:355)<br />
+        at com.sun.corba.se.impl.protocol.CorbaClientRequestDispatcherImpl.marshalingComplete(CorbaClientRequestDispatcherImpl.ja<br />
+a:336)<br />
+        at com.sun.corba.se.impl.protocol.CorbaClientDelegateImpl.invoke(CorbaClientDelegateImpl.java:129)<br />
+        at com.sun.corba.se.impl.protocol.CorbaClientDelegateImpl.non_existent(CorbaClientDelegateImpl.java:232)<br />
+        at org.omg.CORBA.portable.ObjectImpl._non_existent(ObjectImpl.java:137)<br />
+        at weblogic.corba.j2ee.naming.ORBHelper.getORBReferenceWithRetry(ORBHelper.java:633)<br />
+        ... 15 more<br />
+Caused by: java.io.IOException: write not supported<br />
+        at weblogic.corba.client.cluster.DummySocket$2.write(DummySocket.java:35)<br />
+        at java.io.OutputStream.write(OutputStream.java:99)<br />
+        at com.sun.corba.se.impl.transport.SocketOrChannelConnectionImpl.write(SocketOrChannelConnectionImpl.java:724)<br />
+        at com.sun.corba.se.impl.encoding.CDROutputObject.writeTo(CDROutputObject.java:174)<br />
+        at com.sun.corba.se.impl.transport.SocketOrChannelConnectionImpl.sendWithoutLock(SocketOrChannelConnectionImpl.java:1016)<br />
+        ... 24 more<br />
+<br />
+<br />
+<br />
+it turns out that I was running classes compiled with a different JDK using different WebLogic libraries. Recompiling everything with the new libraries fixed the problem.

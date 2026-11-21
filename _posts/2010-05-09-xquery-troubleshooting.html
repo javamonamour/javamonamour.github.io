@@ -1,0 +1,15 @@
+---
+layout: post
+title: "XQuery troubleshooting"
+date: 2010-05-09T16:52:00.000+02:00
+permalink: /2010/05/xquery-troubleshooting.html
+blogger_id: "8076811549905716656"
+tags: ["XQuery"]
+---
+you get: <br />
+weblogic.xml.query.exceptions.XQueryDynamicException: {err}FORG0005: expected exactly one item, got 2+ items<br />
+<br />
+try this:<br />
+using element(*)* instead of element(*)<br />
+<br />
+_________________

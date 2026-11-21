@@ -1,0 +1,43 @@
+---
+layout: post
+title: "The infamous BEA-000627"
+date: 2009-12-02T13:26:00.000+01:00
+permalink: /2009/12/infamous-bea-000627.html
+blogger_id: "3515834600490675052"
+blogger_comments:
+  - author: "vernetto"
+    date: 2012-04-01
+    html: "no my friend I am sorry... I haven&#39;t had this error again, so I never bothered to investigate...<br /><br />The KB says:<br />Cause<br />This normally happens when the connection pool runs out of connections. <br /><br />Solution<br />In case of suspicious of connection leaking, set &quot;Inactive Connection Timeout&quot;. Set the number of seconds of inactivity after which reserved connections will forcibly be released back into the pool.<br /><br />If all connections are used up by high load, increase the value of the &quot;Maximum Capacity&quot; of the connection pool."
+---
+http://download.oracle.com/docs/cd/E13222_01/wls/docs100/messages/Common.html<br />
+<br />
+<br />
+Info: Reached maximum capacity of pool "pool", making "newVal" new resource instances instead of "oldVal".<br />
+<br />
+Description<br />
+Hit configured maximum capacity of pool while making additional resources for the pool. Therefore, the number of resources being made has been increased.<br />
+<br />
+Cause<br />
+Informational message.<br />
+<br />
+Action<br />
+No action required.<br />
+<br />
+<br />
+<br />
+I would expect to get a<br />
+<br />
+####2 dÃ©c. 2009 04 h 10 CET  Error  WLI-Worklist  peppe.acme.dns  atlasappli2  [ACTIVE] ExecuteThread: '247' for queue: 'weblogic.kernel.Default<br />
+(self-tuning)'  X5229701      1259723458590  BEA-493028  Internal error: unexpected ejb exception: java.sql.SQLException: Internal error: Cannot obtain<br />
+XAConnection <b> weblogic.common.resourcepool.ResourceLimitException: No resources currently available in pool </b> cgDataSource to allocate to applications, please in<br />
+crease the size of the pool and retry..<br />
+java.sql.SQLException: Internal error: Cannot obtain XAConnection weblogic.common.resourcepool.ResourceLimitException: No resources currently available in pool cgDataSource to allocate to applications, please increase the size of the pool and retry..<br />
+        at weblogic.jdbc.jta.DataSource.refreshXAConnAndEnlist(DataSource.java:1325)<br />
+        at weblogic.jdbc.jta.DataSource.getConnection(DataSource.java:441)<br />
+        at weblogic.jdbc.jta.DataSource.connect(DataSource.java:397)<br />
+        at weblogic.jdbc.common.internal.RmiDataSource.getConnection(RmiDataSource.java:359)<br />
+        at com.bea.wli.util.JDBCHelper.getConnection(JDBCHelper.java:77)<br />
+<br />
+<br />
+<br />
+Still investigating on this weird message

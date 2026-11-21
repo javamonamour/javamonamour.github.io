@@ -1,0 +1,135 @@
+---
+layout: post
+title: "Puppet and nested hashes in hiera"
+date: 2013-09-30T12:23:00.001+02:00
+permalink: /2013/09/puppet-and-nested-hashes-in-hiera.html
+blogger_id: "2526871929190494463"
+tags: ["hiera", "puppet"]
+blogger_comments:
+  - author: "Yamakasi"
+    date: 2014-08-31
+    html: "Hi,<br /><br />Thank you for your very quick response!<br /><br />As I&#39;m moving from a simple create_resources() and new to this, indeed it&#39;s brain-kicking... do you have a small example of a &quot;real&quot; manifest ?<br /><br />Thanks!<br /><br />Matt"
+  - author: "vernetto"
+    date: 2014-08-31
+    html: "in fact eventually we have removed that extra variable, and declared this way:<br /><br />keystores:<br />  dev.jks:<br />    jksfilename : dev.jks<br />    type : identity<br />    password : mypassword<br /><br />  trust.jks:<br />    jksfilename : trust.jks<br />    type : trust<br />    password : mypassword<br /><br /><br />and to build the array of files [dev.jks, trust.jks] you do:<br /><br />$keystorefiles = keys($keystores)<br /><br />How I miss the power of a true OO language.... never parsing configuration has been so hard..."
+  - author: "Yamakasi"
+    date: 2014-08-31
+    html: "Hi,<br /><br />Good example, thanks!<br /><br />Is this not possible without the keystorefiles section in some way or above each hiera part ?"
+---
+In Puppet, representing your data like a normal mortal would do leads you nowhere. <br/>
+You must model your data in a way that Puppet can access. 
+<br/>
+This is driving me absolutely crazy, in Puppet there are only straight lines and if you want to bend, you must compose 100 straight lines at a small angle.
+
+<br/>
+So, this highly normalized representation of an array of keystores is not usable by Puppet:
+
+<pre>
+
+---
+
+keystores:
+  - keystorename : dev.jks:
+    type : identity
+    password : 111111
+    certificates: 
+      - name : pippo.cer
+        alias : pippo   
+      - name : pluto.cer
+        alias : pluto      
+       
+  - keystorename : trust.jks
+    type : trust
+    password : 111111
+    certificates: 
+      - name : pippo.cer
+        alias : pippo   
+      - name : pluto.cer
+        alias : pluto   
+
+</pre>
+<br/>
+because Puppet cannot extract an array of "keystorename" from it. You can do:
+<br/>
+<pre>
+$keystores = hiera('keystores')
+
+#this generates a String
+$keystorename = $keystores[1]['keystorename'] 
+
+</pre>
+<br/>
+but you cannot say 
+<br/>
+<pre>
+#this generates an Array
+$keystorename = $keystores[]['keystorename']
+#FAILS!!!
+</pre>
+
+<br/>
+Nor you can access the element of the array which has a given keystorename. I really miss here the query capability of XPath. There doesn't seem to be a XPath for YAML.
+<br/>
+Look on <a href="http://docs.puppetlabs.com/puppet/2.7/reference/lang_datatypes.html">Puppet hash documentation</a> and you will find almost no help.
+<br/><br/>
+
+
+The workaround is to denormalize my data, using named instances and listing these names in a separate array keystorefiles:
+
+<pre>
+
+---
+keystorefiles:
+  - dev.jks
+  - trust.jks
+
+keystores:
+  dev.jks:
+    type : identity
+    password : 111111
+    certificates: 
+      - name : pippo.cer
+        alias : pippo   
+      - name : pluto.cer
+        alias : pluto     
+       
+  trust.jks:
+    type : trust
+    password : 111111
+    certificates: 
+      - name : pippo.cer
+        alias : pippo   
+      - name : pluto.cer
+        alias : pluto      
+
+
+</pre>
+
+
+<br/>
+
+and then you can access the data:
+
+<pre>
+$keystorefiles = hiera('keystorefiles')
+create_jks_store {$keystorefiles:}
+
+define create_jks_store {
+  $keystores = hiera('keystores')
+  $keystore = $keystores[$name]
+  notify { $keystore['type']:}  
+}
+
+</pre>
+
+
+notice the trick $keystore = $keystores[$name] to retrieve the individual named instance (dev.jks or trust.jks).
+
+<br/><br/>
+
+It takes a lot of effort to twist your brain to think this way.
+<br/><br/>
+
+
+
+

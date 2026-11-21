@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Spring Boot 2 HTTPS"
+date: 2019-06-19T21:14:00.002+02:00
+permalink: /2019/06/spring-boot-2-https.html
+blogger_id: "1382953599364622562"
+tags: ["https", "springboot"]
+---
+see also <a href="https://www.baeldung.com/spring-boot-https-self-signed-certificate">https://www.baeldung.com/spring-boot-https-self-signed-certificate</a><br />
+<br />
+<a href="https://better-coding.com/enabling-https-in-spring-boot-application/">https://better-coding.com/enabling-https-in-spring-boot-application/</a><br />
+<br />
+<br />
+generate the self-signed certificate:<br />
+<br />
+keytool -genkeypair -alias baeldung -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore baeldung.p12 -validity 3650<br />
+<br />
+and store it in src/main/resources/keystore folder<br />
+<br />
+in applications.properties:<br />
+<pre>server.port=8443
+
+management.endpoints.web.exposure.include=*
+management.endpoint.shutdown.enabled=true
+
+# The format used for the keystore. It could be set to JKS in case it is a JKS file
+server.ssl.key-store-type=PKCS12
+# The path to the keystore containing the certificate
+#server.ssl.key-store=classpath:keystore/baeldung.p12
+server.ssl.key-store=src/main/resources/keystore/baeldung.p12
+# The password used to generate the certificate
+server.ssl.key-store-password=password
+# The alias mapped to the certificate
+server.ssl.key-alias=baeldung
+server.ssl.key-password=password
+
+#trust store location
+trust.store=classpath:keystore/baeldung.p12
+#trust store password
+trust.store.password=password
+
+</pre>

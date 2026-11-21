@@ -1,0 +1,35 @@
+---
+layout: post
+title: "java.net.preferIPv4Stack  : IPV4 versus IPV6"
+date: 2015-03-18T10:09:00.003+01:00
+permalink: /2015/03/javanetpreferipv4stack-ipv4-versus-ipv6.html
+blogger_id: "4936636660316501575"
+tags: ["ipv6"]
+---
+See the whole documentation here <a href="https://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html">https://docs.oracle.com/javase/7/docs/api/java/net/doc-files/net-properties.html</a>
+
+<br/><br/>
+
+If you have a process listening on a Socket which is IPv6- enabled, you should see this by doing "ss -ln":
+<br/><br/>
+
+tcp LISTEN  0  100  ::ffff:192.168.6.210:7003  :::* 
+
+<br/><br/>
+If the socket is enabled only for IP4, you should see:
+<br/><br/>
+
+tcp LISTEN  0  100 192.168.6.110:7003  *:*  
+
+
+<br/><br/>
+
+
+
+
+<br/><br/>
+Passing the  -Djava.net.preferIPv4Stack=true property to the JVM forces the ServerSocket to bind to a IPV4 address - not sure why you want to do this anyway.
+
+
+
+

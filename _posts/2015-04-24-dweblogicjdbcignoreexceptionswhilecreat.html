@@ -1,0 +1,21 @@
+---
+layout: post
+title: "-Dweblogic.jdbc.ignoreExceptionsWhileCreatingInitialCapacity=true"
+date: 2015-04-24T19:29:00.002+02:00
+permalink: /2015/04/dweblogicjdbcignoreexceptionswhilecreat.html
+blogger_id: "4116322809970333325"
+tags: ["jdbc"]
+---
+I have just discovered the existence of this flag -Dweblogic.jdbc.ignoreExceptionsWhileCreatingInitialCapacity=true , whose name is quite self explanatory. However I found no documentation on it.
+<br/>
+There is a note (Doc ID 1557843.1) in support saying that this flag is not supported and not really recommended.
+
+<br/>
+
+I have personally always used InitialCapacity = 0, I don't care so much about losing performance on the first connection, I hate the AppServer to go in FAILED state if only ONE Datasource (which might be used only in some rare use case) is not available...
+
+<br/>
+
+But again you MIGHT need this flag for special cases.... so.... do as you like, just don't rely too much on this flag...
+<br/>
+See also -Dweblogic.deployment.IgnorePrepareStateFailures=true to the same purpose.

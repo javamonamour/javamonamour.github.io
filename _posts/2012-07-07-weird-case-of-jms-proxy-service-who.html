@@ -1,0 +1,62 @@
+---
+layout: post
+title: "The weird case of a JMS Proxy Service who failed to deploy"
+date: 2012-07-07T08:27:00.000+02:00
+permalink: /2012/07/weird-case-of-jms-proxy-service-who.html
+blogger_id: "1426430302969632475"
+tags: ["jms", "OSB"]
+---
+But it was reported as "Enabled" in the Operations console...<br />
+<br />
+Some JMS messages were stuck in a AcmeQ<br />
+<br />
+In the JMS Queue monitoring tab, we verified that no consumer was registered in any instance of the queue.<br />
+<br />
+In JNDI tree, all the queues and connection factories were deployed.<br />
+<br />
+In the deploment tab, it was noticed that 11 deploments exists with name _ALSB_nnnnnnnnnn.ear<br />
+<br />
+while in the /opt/oracle/domains/osbpr1do/sbgen/ there were 12 ears. <br />
+Each of there ears contain the MDB corresponding to a JMS proxy service.<br />
+ <br />
+Unjarring each ear and examining the application.xml revealed that /opt/oracle/domains/osbpr1do/sbgen/_ALSB_1339780728059.ear was the AcmeQ ear,<br />
+<br />
+and that it was NOT in the WebLogic config.xml as a deployment.<br />
+<br />
+(normally there should be a section<br />
+<br />
+<pre name="code" class="brush: xml">&lt;app-deployment>
+
+    &lt;name>_ALSB_1339780726229&lt;/name>
+
+    &lt;target>osbpr1cl&lt;/target>
+
+    &lt;module-type>ear&lt;/module-type>
+
+    &lt;source-path>sbgen/_ALSB_1339780726229.ear&lt;/source-path>
+
+    &lt;plan-dir>shared/osb/config/plan&lt;/plan-dir>
+
+    &lt;plan-path>Plan-_ALSB_1339780726229.ear.xml&lt;/plan-path>
+
+    &lt;security-dd-model>DDOnly&lt;/security-dd-model>
+
+    &lt;staging-mode>stage&lt;/staging-mode>
+
+  &lt;/app-deployment>
+
+</pre><br />
+for each ALSB ear)<br />
+<br />
+ <br />
+<br />
+It was taken the resolution to<br />
+<br />
+- export into a sbconfig.jar the Acme OSB project alone<br />
+<br />
+- delete the Acme OSB project and activate<br />
+<br />
+- reimport the Acme OSB project and activate<br />
+<br />
+<br />
+this fixed the issue and the JMS messages were consumed.

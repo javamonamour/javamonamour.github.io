@@ -1,0 +1,170 @@
+---
+layout: post
+title: "JMXTrans and Graphite: getting started"
+date: 2013-11-02T07:55:00.001+01:00
+permalink: /2013/11/jmxtrans-and-graphite-getting-started.html
+blogger_id: "8330942678275168082"
+tags: ["graphite", "JMX"]
+blogger_comments:
+  - author: "Asaf  Mesika"
+    date: 2015-11-27
+    html: "If you want to lose the hand-crafted json configuration file, take a loot at jmx2graphite at: https://github.com/logzio/jmx2graphite"
+  - author: "Anonymous"
+    date: 2016-03-06
+    html: "Finding the latest version of JmxTrans can be ... not as easy as it should be. I&#39;ve been getting report from user who were testing JmxTrans with the fairly old version referenced here.<br /><br />To make sure your have the latest release, have a look at <a href=\"http://search.maven.org/#artifactdetails%7Corg.jmxtrans%7Cjmxtrans%7C253%7C\" rel=\"nofollow\">Maven Central</a>."
+---
+You can achieve very decent monitoring of a Java application - including the JVM itself - with <a href="https://github.com/jmxtrans/jmxtrans">jmxtrans</a> and <a href="http://graphite.wikidot.com/">graphite</a> .<br />
+<br />
+No more horrible hand-crafted tool to extract and chart JMS data.<br />
+<br />
+A TRANS in Italian is a transexual, typically Brazilian - more knows as VIADOS - so hearing JMX<b>Trans</b> always puts me in a good mood because Italians like to make jokes about sex.
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/53a7b846f3759c6a.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/1c6c4360fd8c9600.jpg" /></a></div>
+<br />
+OK, let's be serious.<br />
+First read <a href="https://github.com/jmxtrans/jmxtrans/wiki">the excellent jmxtrans Wiki here</a>.
+<br />
+As suggested by jmstrans site, I listened to the presentation by Coda Hale but frankly it didn't say much new, he speaks well but not very informative
+<br />
+<br />
+Getting started:<br />
+<a href="https://github.com/jmxtrans/jmxtrans/releases">download the tar.gz here</a> 
+<br />
+<br />
+<pre>tar xvzf jmxtrans-242.tar.gz
+cd jmxtrans-242/rpm
+.... mmm when I run build.sh it asks me a release and version?????
+</pre>
+<br />
+<br />
+I will download a rpm <a href="https://github.com/jmxtrans/jmxtrans/downloads">from here</a> (instructions on the site are incomplete... not good...)
+<br />
+<br />
+<b>rpm -i jmxtrans-20121016.145842.6a28c97fbb-0.noarch.rpm
+
+
+</b><br />
+<br />
+I verify the installation parameters:<br />
+<b>less /etc/sysconfig/jmxtrans
+</b>
+<br />
+<br />
+<pre># configuration file for package jmxtrans
+export JAR_FILE="/usr/share/jmxtrans/jmxtrans-all.jar"
+export LOG_DIR="/var/log/jmxtrans"
+export SECONDS_BETWEEN_RUNS=60
+export JSON_DIR="/var/lib/jmxtrans"
+export HEAP_SIZE=512
+export NEW_SIZE=64
+export CPU_CORES=2
+export NEW_RATIO=8
+export LOG_LEVEL=debug
+</pre>
+<br />
+<b><br /></b>
+<pre><b>cd /usr/share/jmxtrans
+./jmxtrans.sh</b>
+Usage: ./jmxtrans.sh {start|stop|restart|status} [filename.json]
+</pre>
+<br />
+<br />
+I look into an example.json
+
+<br />
+<pre class="brush: plain" name="code">{
+  "servers" : [ {
+    "port" : "1099",
+    "host" : "w2",
+    "queries" : [ {
+      "outputWriters" : [ {
+        "@class" : "com.googlecode.jmxtrans.model.output.StdOutWriter",
+        "settings" : {
+        }
+      } ],
+      "obj" : "java.lang:type=Memory",
+      "attr" : [ "HeapMemoryUsage", "NonHeapMemoryUsage" ]
+    }, {
+      "outputWriters" : [ {
+        "@class" : "com.googlecode.jmxtrans.model.output.StdOutWriter",
+        "settings" : {
+        }
+      } ],
+      "obj" : "java.lang:name=CMS Old Gen,type=MemoryPool",
+      "attr" : [ "Usage" ]
+    }, {
+      "outputWriters" : [ {
+        "@class" : "com.googlecode.jmxtrans.model.output.StdOutWriter",
+        "settings" : {
+        }
+      } ],
+      "obj" : "java.lang:name=ConcurrentMarkSweep,type=GarbageCollector",
+      "attr" : [ "LastGcInfo" ]
+    } ],
+    "numQueryThreads" : 2
+  } ]
+}
+</pre>
+<br />
+(I still need to decide if I hate more JSON or XML... they both hurt the eye...)
+<br />
+<br />
+I write a sample Java class to monitor:
+<br />
+<b>vi Sample.java</b>
+<br />
+<pre class="brush: java">public class Sample {
+        public static void main(String[] args) {
+            try {
+                Thread.sleep(100000000);
+            }
+            catch (Exception e) {};
+        }
+}
+
+</pre>
+<br />
+<b>javac Sample.java</b>
+<br />
+<b>java -Dcom.sun.management.jmxremote.port=1105 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false Sample
+</b><br />
+<br />
+<b>cp example.json sample.json</b>
+<br />
+I edit port number and host to match 1105 and my localhost
+<br />
+<br />
+<b>./jmxtrans.sh start sample.json</b>
+<br />
+<br />
+this runs in background :
+
+<br />
+<i>
+<b>ps -ef | grep jmxtrans</b><br />
+<span style="font-size: x-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">root      2240     1  6 07:47 pts/1    00:00:15 /usr/bin/java -server -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true -Djmxtrans.log.level=debug -Djmxtrans.log.dir=. -Xms512M -Xmx512M -XX:+UseConcMarkSweepGC -XX:NewRatio=8 -XX:NewSize=64m -XX:MaxNewSize=64m -XX:MaxTenuringThreshold=16 -XX:GCTimeRatio=9 -XX:PermSize=384m -XX:MaxPermSize=384m -XX:+UseTLAB -XX:CMSInitiatingOccupancyFraction=85 -XX:+CMSIncrementalMode -XX:+CMSIncrementalPacing -XX:ParallelGCThreads=1 -Dsun.rmi.dgc.server.gcInterval=28800000 -Dsun.rmi.dgc.client.gcInterval=28800000 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=2101 -jar jmxtrans-all.jar -e -f sample.json -s 60
+</span></span></i>
+
+<br />
+<br />
+and if I do<br />
+<b>tail -f jmxtrans.log
+</b><br />
+I get a line per minute:
+
+<br />
+<span style="font-size: x-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><i>[02 Nov 2013 07:47:22] [main] 0      INFO  (com.googlecode.jmxtrans.JmxTransformer:134) - Starting Jmxtrans on : sample.json</i></span></span><br />
+<span style="font-size: x-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><i>[02 Nov 2013 07:47:23] [main] 1125   DEBUG (com.googlecode.jmxtrans.JmxTransformer:354) - Loaded file: /usr/share/jmxtrans/sample.json</i></span></span><br />
+<span style="font-size: x-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><i>[02 Nov 2013 07:47:23] [main] 1154   DEBUG (com.googlecode.jmxtrans.JmxTransformer:429) - Scheduled job: osb-vagrant.acme.com:1105-1383374843215-0158449004 for server: Server [host=osb-vagrant.acme.com, port=1105, url=null, cronExpression=null, numQueryThreads=2]</i></span></span><br />
+<span style="font-size: x-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><i>[02 Nov 2013 07:47:23] [ServerScheduler_Worker-1] 1167   DEBUG (com.googlecode.jmxtrans.jobs.ServerJob:31) - +++++ Started server job: Server [host=osb-vagrant.acme.com, port=1105, url=null, cronExpression=null, numQueryThreads=2]</i></span></span><br />
+<span style="font-size: x-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><i>[02 Nov 2013 07:47:23] [ServerScheduler_Worker-1] 1690   DEBUG (com.googlecode.jmxtrans.util.JmxUtils:102) - ----- Creating 3 query threads</i></span></span><br />
+<span style="font-size: x-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><i>[02 Nov 2013 07:47:24] [pool-1-thread-1] 1940   DEBUG (com.googlecode.jmxtrans.util.JmxUtils:195) - Executing queryName: java.lang:type=Memory from query: Query [obj=java.lang:type=Memory, resultAlias=null, attr=[HeapMemoryUsage, NonHeapMemoryUsage]]</i></span></span><br />
+<span style="font-size: x-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><i>[02 Nov 2013 07:47:24] [pool-1-thread-1] 2002   DEBUG (com.googlecode.jmxtrans.util.JmxUtils:209) - Finished running outputWriters for query: Query [obj=java.lang:type=Memory, resultAlias=null, attr=[HeapMemoryUsage, NonHeapMemoryUsage]]</i></span></span><br />
+<span style="font-size: x-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;"><i>[02 Nov 2013 07:47:24] [ServerScheduler_Worker-1] 2006   DEBUG (com.googlecode.jmxtrans.jobs.ServerJob:50) - +++++ Finished server job: Server [host=osb-vagrant.acme.com, port=1105, url=service:jmx:rmi:///jndi/rmi://osb-vagrant.acme.com:1105/jmxrmi, cronExpression=null, numQueryThreads=2]</i></span></span><br />
+<br />
+Next step: install grafite and plot these metrics....
+
+
+
+

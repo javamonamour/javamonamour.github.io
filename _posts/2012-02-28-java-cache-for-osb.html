@@ -1,0 +1,34 @@
+---
+layout: post
+title: "A Java cache for OSB"
+date: 2012-02-28T07:15:00.003+01:00
+permalink: /2012/02/java-cache-for-osb.html
+blogger_id: "7885328375551483179"
+tags: ["cache", "OSB"]
+---
+<a href="http://docs.oracle.com/javase/6/docs/api/java/util/concurrent/ConcurrentHashMap.html">http://docs.oracle.com/javase/6/docs/api/java/util/concurrent/ConcurrentHashMap.html</a><br />
+<br />
+<b>ConcurrentHashMap</b> is a Thread-safe implementation of a HashMap, optimized for concurrent reads and writes scenario.<br />
+<br />
+You can expose a <b>ConcurrentHashMap </b>as a Static attribute of a Java Bean, accessed by OSB Message Flow via Java Callout or Custom XPath.<br />
+<br />
+<b>cache </b>(the individual cache) is a HashMap<string, xmlobject=""> - where String is the Object Key (e.g. the userId), and <b>XmlObject </b>is the corresponging cached response (e.g. the User object). A Cache will contain homogeneous objects (XmlObject of the same type).<br />
+<br />
+<b>caches</b> (collection of cache) is a HashMap<string, cache="">, where String is the Cache Name (e.g. "USERS")<br />
+<br />
+<br />
+<b>caches.get("USERS").get("1234")</b> will return the XmlObject describing user 1234<br />
+<br />
+<br />
+caches.<b>clear</b>() will remove all caches<br />
+caches.get("USERS").<b>clear</b>() will clear an individual cache<br />
+<br />
+Caches can be cleared with a <b>REST Proxy Service</b> http://myhost:myport/CacheService/ClearCache/USERS<br />
+One can use a <b>cron job</b> with a <b>wget</b> command to clear them periodically<br />
+<br />
+One can add <b>metainformation</b> to a Cache, such as the creation time, the last update time, the last access time...<br />
+<br />
+One can expose management of the Caches via <b>JMX</b> (registering the MBeanAgent into the Weblogic or JVM MBean tree), and administering via JConsole or any other JMX-Enabled tool.<br />
+<br />
+The advantage of storing an <b>XmlObject</b> in cache is that it <b>doesn't require conversion inside OSB</b>, since OSB stores complex variables in XmlObject format.<br />
+In <b>Coherence</b> the object would be stored in <b>POF</b> format - requiring further materialization to XmlObject format</string,></string,>

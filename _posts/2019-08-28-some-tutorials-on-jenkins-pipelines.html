@@ -1,0 +1,57 @@
+---
+layout: post
+title: "some tutorials on Jenkins Pipelines"
+date: 2019-08-28T22:58:00.000+02:00
+permalink: /2019/08/some-tutorials-on-jenkins-pipelines.html
+blogger_id: "1684414348120379666"
+tags: ["jenkins"]
+---
+https://www.youtube.com/watch?v=-GsvomI4CCQ  very pragmatic <a href="https://www.youtube.com/channel/UCsvqVGtbbyHaMoevxPAq9Fg">Simplilearn</a> tutorial, <br />
+<br />
+you can practice on <a href="https://www.katacoda.com/courses/jenkins/build-docker-images">https://www.katacoda.com/courses/jenkins/build-docker-images</a> which gives you a dockerized Jenkins with console<br />
+<br />
+<br />
+<br />
+Awesome power-jenkins tip-pack <a href="https://www.youtube.com/watch?v=6BIry0cepz4">https://www.youtube.com/watch?v=6BIry0cepz4</a> :<br />
+<br />
+- run Jenkins in Docker (jenkins/jenkins)<br />
+<br />
+- select plugins you want to use (use plugins.txt to predefine a list of plugins)<br />
+<br />
+- use agents, with swarm plugin to register, automate the agent provisioning and make them ephemeral<br />
+<br />
+- don't use Maven jobs, because it's not reproduceable<br />
+<br />
+- use pipelines, with Jenkinsfile (pipeline/stages/stage/steps)<br />
+<br />
+- in pipelines, do all work on agents ("agent any")<br />
+<br />
+- user input stage should be run on master, to avoid blocking executors ("agent none")<br />
+<br />
+- limit number of stages<br />
+<br />
+- don't change $env variable, use withEnv(["hello=world"]) instead<br />
+<br />
+- parameters (?)<br />
+<br />
+- use parallelism, for end to end tests , and performance tests and in separate nodes<br />
+<br />
+- "scripted" is groovish for power user, declarative is ok for regular user<br />
+<br />
+- pipelines should be small, they are orchestration tools... do the heavy stuff fin shell scripts which are easier to test<br />
+<br />
+- in a pipeline everything is serializable so it can be resumed on failure (continuation-passing style)... but some classes are not serializable like groovy.text.StreamingTemplateEngine, then you have to wrap it<br />
+<br />
+- BlueOcean plugin, with Editor for declarative pipelines<br />
+<br />
+- use shared libraries in pipelines to reuse code, also reuse files <br />
+<br />
+- use views to show only the jobs you are interested in<br />
+<br />
+- BuildMonitor plugin to view jobs<br />
+<br />
+- API in JSON or XML<br />
+<br />
+- to-have plugins: BuildMonitor, Job Config History (to version freestyle jobs), Job DSL, Throttle Concurrent Builds, Timestamper, Version Number plugin & Build-name-setter<br />
+<br />
+

@@ -1,0 +1,57 @@
+---
+layout: post
+title: "Unicast cluster tuning"
+date: 2011-08-31T12:49:00.001+02:00
+permalink: /2011/08/unicast-cluster-tuning.html
+blogger_id: "8523998088986729689"
+tags: ["unicast"]
+---
+there are 2 properties you can set:<br />
+<br />
+weblogic.cluster.unicastHeartbeatTimeoutMillis (default 15000)<br />
+weblogic.cluster.unicastDiscoveryPeriodMillis (default 3000)<br />
+<br />
+If you get a message like:<br />
+add Leader BLA to unreliableSet<br />
+<br />
+(you get it only if UnicastMessaging debug flag is enabled)<br />
+<br />
+<br />
+and your cluster is divided in multiple groups each one with its own Group Leader, and this is annoying you,<br />
+you MIGHT consider changing the timeout value (do it at your own risk, side effects are still unknown by the author of this blog!).<br />
+<br />
+In fact unicastHeartbeatTimeoutMillis determines how long after the last heartbeat (LAT=Last Arrival Time) the "slave" should declare that the Group Leader is unrealiable.<br />
+<br />
+<br />
+The cluster's GroupLeader sends heartbeat messages every LeaderHeartbeatPeriod seconds:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E11035_01/wls100/schemaref/security/http.www.bea.com.ns.weblogic.920.domain/types/database-less-leasing-basistype.leader-heartbeat-period.html">http://download.oracle.com/docs/cd/E11035_01/wls100/schemaref/security/http.www.bea.com.ns.weblogic.920.domain/types/database-less-leasing-basistype.leader-heartbeat-period.html</a><br />
+<br />
+default value 10.<br />
+<br />
+<br />
+to view the value of the heartbeat period:<br />
+<br />
+ <br />
+<br />
+wlst.sh<br />
+<br />
+<i>connect('weblogic', 'welcome1', 't3://localhost:7011')<br />
+cd(‘/Clusters/myCluster/DatabaseLessLeasingBasis/myCluster’)<br />
+cmo.getLeaderHeartbeatPeriod()</i><br />
+<br />
+and it’s 10<br />
+<br />
+ <br />
+<br />
+and to set it I tried:<br />
+<br />
+cmo.setLeaderHeartbeatPeriod(20)<br />
+<br />
+but I get<br />
+<br />
+java.lang.RuntimeException: The requested attribute is not exposed through JMX: setLeaderHeartbeatPeriod<br />
+<br />
+Caused by: javax.management.AttributeNotFoundException: Attribute is readonly. : com.bea:Name=myCluster,Type=DatabaseLessLeasingBasis,Cluster=myCluster:LeaderHeartbeatPeriod<br />
+<br />
+So I guess you can only set it  by hacking the the config.xml – I don’t see it in the WebLogic console.

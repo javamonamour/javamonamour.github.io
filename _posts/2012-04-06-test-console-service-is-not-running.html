@@ -1,0 +1,280 @@
+---
+layout: post
+title: "\"Test Console\" service is not running. Contact administrator to start this service."
+date: 2012-04-06T15:26:00.000+02:00
+permalink: /2012/04/test-console-service-is-not-running.html
+blogger_id: "4583764420409412186"
+tags: ["OSB"]
+---
+The "culprit" thread (take a Thread Dump on the Admin) is:<br />
+<br />
+<pre>  "[ACTIVE] ExecuteThread: '8' for queue: 'weblogic.kernel.Default (self-tuning)'" RUNNABLE native
+          
+             java.net.PlainSocketImpl.socketConnect(Native Method)
+          
+             java.net.PlainSocketImpl.doConnect(PlainSocketImpl.java:351)
+          
+             java.net.PlainSocketImpl.connectToAddress(PlainSocketImpl.java:213)
+          
+             java.net.PlainSocketImpl.connect(PlainSocketImpl.java:200)
+          
+             java.net.SocksSocketImpl.connect(SocksSocketImpl.java:366)
+          
+             java.net.Socket.connect(Socket.java:529)
+          
+             weblogic.socket.SocketMuxer.newSocket(SocketMuxer.java:373)
+          
+             weblogic.socket.SocketMuxer.newClientSocket(SocketMuxer.java:383)
+          
+             weblogic.socket.ChannelSocketFactory.createSocket(ChannelSocketFactory.java:86)
+          
+             weblogic.socket.BaseAbstractMuxableSocket.createSocket(BaseAbstractMuxableSocket.java:133)
+          
+             weblogic.rjvm.t3.MuxableSocketT3.newSocketWithRetry(MuxableSocketT3.java:214)
+          
+             weblogic.rjvm.t3.MuxableSocketT3.connect(MuxableSocketT3.java:383)
+          
+             weblogic.rjvm.t3.ConnectionFactoryT3.createConnection(ConnectionFactoryT3.java:34)
+          
+             weblogic.rjvm.ConnectionManager.createConnection(ConnectionManager.java:1784)
+          
+             weblogic.rjvm.ConnectionManager.findOrCreateConnection(ConnectionManager.java:1424)
+          
+             weblogic.rjvm.ConnectionManager.bootstrap(ConnectionManager.java:443)
+          
+             weblogic.rjvm.ConnectionManager.bootstrap(ConnectionManager.java:321)
+          
+             weblogic.rjvm.RJVMManager.findOrCreateRemoteInternal(RJVMManager.java:254)
+          
+             weblogic.rjvm.RJVMManager.findOrCreate(RJVMManager.java:197)
+          
+             weblogic.rjvm.RJVMFinder.findOrCreateRemoteServer(RJVMFinder.java:238)
+          
+             weblogic.rjvm.RJVMFinder.findOrCreateInternal(RJVMFinder.java:200)
+          
+             weblogic.rjvm.RJVMFinder.findOrCreate(RJVMFinder.java:170)
+          
+             weblogic.rjvm.ServerURL.findOrCreateRJVM(ServerURL.java:153)
+          
+             weblogic.jndi.WLInitialContextFactoryDelegate.getInitialContext(WLInitialContextFactoryDelegate.java:353)
+          
+             weblogic.jndi.Environment.getContext(Environment.java:315)
+          
+             weblogic.jndi.Environment.getContext(Environment.java:285)
+          
+             weblogic.jndi.WLInitialContextFactory.getInitialContext(WLInitialContextFactory.java:117)
+          
+             javax.naming.spi.NamingManager.getInitialContext(NamingManager.java:667)
+          
+             javax.naming.InitialContext.getDefaultInitCtx(InitialContext.java:288)
+          
+             javax.naming.InitialContext.init(InitialContext.java:223)
+          
+             javax.naming.InitialContext.<init>(InitialContext.java:197)
+          
+             com.bea.alsb.console.test.TestServiceClient.getService(TestServiceClient.java:242)
+          
+             com.bea.alsb.console.test.TestServiceClient.getConfiguration(TestServiceClient.java:68)
+          
+             com.bea.alsb.console.test.actions.OpenTestDialogAction.execute(OpenTestDialogAction.java:121)
+          
+             org.apache.struts.action.RequestProcessor.processActionPerform(RequestProcessor.java:431)
+          
+             org.apache.beehive.netui.pageflow.PageFlowRequestProcessor.access$201(PageFlowRequestProcessor.java:97)
+          
+             org.apache.beehive.netui.pageflow.PageFlowRequestProcessor$ActionRunner.execute(PageFlowRequestProcessor.java:2044)
+          
+             org.apache.beehive.netui.pageflow.interceptor.action.internal.ActionInterceptors.wrapAction(ActionInterceptors.java:91)
+          
+             org.apache.beehive.netui.pageflow.PageFlowRequestProcessor.processActionPerform(PageFlowRequestProcessor.java:2116)
+          
+             com.bea.alsb.console.common.base.SBConsoleRequestProcessor.processActionPerform(SBConsoleRequestProcessor.java:91)
+          
+             org.apache.struts.action.RequestProcessor.process(RequestProcessor.java:236)
+          
+             org.apache.beehive.netui.pageflow.PageFlowRequestProcessor.processInternal(PageFlowRequestProcessor.java:556)
+          
+             org.apache.beehive.netui.pageflow.PageFlowRequestProcessor.process(PageFlowRequestProcessor.java:853)
+          
+             com.bea.alsb.console.common.base.SBConsoleRequestProcessor.process(SBConsoleRequestProcessor.java:191)
+          
+             org.apache.beehive.netui.pageflow.AutoRegisterActionServlet.process(AutoRegisterActionServlet.java:631)
+          
+             org.apache.beehive.netui.pageflow.PageFlowActionServlet.process(PageFlowActionServlet.java:158)
+          
+             com.bea.console.internal.ConsoleActionServlet.process(ConsoleActionServlet.java:262)
+          
+             org.apache.struts.action.ActionServlet.doGet(ActionServlet.java:414)
+          
+             com.bea.console.internal.ConsoleActionServlet.doGet(ConsoleActionServlet.java:134)
+          
+             com.bea.alsb.console.common.base.SBConsoleActionServlet.doGet(SBConsoleActionServlet.java:49)
+          
+             org.apache.beehive.netui.pageflow.PageFlowUtils.strutsLookup(PageFlowUtils.java:1199)
+          
+             org.apache.beehive.netui.pageflow.PageFlowUtils.strutsLookup(PageFlowUtils.java:1129)
+          
+             com.bea.portlet.adapter.scopedcontent.ScopedContentCommonSupport.executeAction(ScopedContentCommonSupport.java:687)
+          
+             com.bea.portlet.adapter.scopedcontent.ScopedContentCommonSupport.processActionInternal(ScopedContentCommonSupport.java:142)
+          
+             com.bea.portlet.adapter.scopedcontent.StrutsStubImpl.processAction(StrutsStubImpl.java:76)
+          
+             com.bea.portlet.adapter.NetuiActionHandler.raiseScopedAction(NetuiActionHandler.java:111)
+          
+             com.bea.netuix.servlets.controls.content.NetuiContent.raiseScopedAction(NetuiContent.java:181)
+          
+             com.bea.netuix.servlets.controls.content.NetuiContent.raiseScopedAction(NetuiContent.java:167)
+          
+             com.bea.netuix.servlets.controls.content.NetuiContent.handlePostbackData(NetuiContent.java:225)
+          
+             com.bea.netuix.nf.ControlLifecycle$2.visit(ControlLifecycle.java:180)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:324)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walkRecursive(ControlTreeWalker.java:334)
+          
+             com.bea.netuix.nf.ControlTreeWalker.walk(ControlTreeWalker.java:130)
+          
+             com.bea.netuix.nf.Lifecycle.processLifecycles(Lifecycle.java:395)
+          
+             com.bea.netuix.nf.Lifecycle.processLifecycles(Lifecycle.java:361)
+          
+             com.bea.netuix.nf.Lifecycle.processLifecycles(Lifecycle.java:352)
+          
+             com.bea.netuix.nf.Lifecycle.runInbound(Lifecycle.java:184)
+          
+             com.bea.netuix.nf.Lifecycle.run(Lifecycle.java:159)
+          
+             com.bea.netuix.servlets.manager.UIServlet.runLifecycle(UIServlet.java:388)
+          
+             com.bea.netuix.servlets.manager.UIServlet.doPost(UIServlet.java:258)
+          
+             com.bea.netuix.servlets.manager.UIServlet.doGet(UIServlet.java:211)
+          
+             com.bea.netuix.servlets.manager.UIServlet.service(UIServlet.java:196)
+          
+             com.bea.netuix.servlets.manager.SingleFileServlet.service(SingleFileServlet.java:251)
+          
+             javax.servlet.http.HttpServlet.service(HttpServlet.java:820)
+          
+             weblogic.servlet.AsyncInitServlet.service(AsyncInitServlet.java:130)
+          
+             weblogic.servlet.internal.StubSecurityHelper$ServletServiceAction.run(StubSecurityHelper.java:227)
+          
+             weblogic.servlet.internal.StubSecurityHelper.invokeServlet(StubSecurityHelper.java:125)
+          
+             weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:300)
+          
+             weblogic.servlet.internal.TailFilter.doFilter(TailFilter.java:26)
+          
+             weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+          
+             oracle.security.jps.ee.http.JpsAbsFilter$1.run(JpsAbsFilter.java:111)
+          
+             java.security.AccessController.doPrivileged(Native Method)
+          
+             oracle.security.jps.util.JpsSubject.doAsPrivileged(JpsSubject.java:313)
+          
+             oracle.security.jps.ee.util.JpsPlatformUtil.runJaasMode(JpsPlatformUtil.java:413)
+          
+             oracle.security.jps.ee.http.JpsAbsFilter.runJaasMode(JpsAbsFilter.java:94)
+          
+             oracle.security.jps.ee.http.JpsAbsFilter.doFilter(JpsAbsFilter.java:161)
+          
+             oracle.security.jps.ee.http.JpsFilter.doFilter(JpsFilter.java:71)
+          
+             weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+          
+             oracle.dms.servlet.DMSServletFilter.doFilter(DMSServletFilter.java:136)
+          
+             weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+          
+             weblogic.servlet.internal.RequestEventsFilter.doFilter(RequestEventsFilter.java:27)
+          
+             weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+          
+             weblogic.servlet.internal.WebAppServletContext$ServletInvocationAction.wrapRun(WebAppServletContext.java:3715)
+          
+             weblogic.servlet.internal.WebAppServletContext$ServletInvocationAction.run(WebAppServletContext.java:3681)
+          
+             weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:321)
+          
+             weblogic.security.service.SecurityManager.runAs(SecurityManager.java:120)
+          
+             weblogic.servlet.internal.WebAppServle
+
+tContext.securedExecute(WebAppServletContext.java:2277)
+          
+             weblogic.servlet.internal.WebAppServletContext.execute(WebAppServletContext.java:2183)
+          
+             weblogic.servlet.internal.ServletRequestImpl.run(ServletRequestImpl.java:1454)
+          
+             weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+          
+             weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+
+
+          
+</pre><br />
+<br />
+<br />
+I suspect that the cluster address is not properly set:<br />
+<br />
+There are some Articles on My Oracle Support (1250190.1, ID 973431.1) <br />
+and a thread <a href="https://forums.oracle.com/forums/messageview.jspa?messageID=10257847&stqc=true">https://forums.oracle.com/forums/messageview.jspa?messageID=10257847&stqc=true</a><br />
+<br />
+my advice is to avoid using a DNS cluster address with Unicast (maybe, no clue really, talk to support)
+<br />
+
+More in general: check if JKS are configured correctly for all servers, that all servers are running, that the cluster address is set correctly...
+
+

@@ -1,0 +1,23 @@
+---
+layout: post
+title: "Openshift \"Could not resolve host: github.com; Unknown error\""
+date: 2017-12-28T16:47:00.003+01:00
+permalink: /2017/12/openshift-could-not-resolve-host.html
+blogger_id: "2014834303410679700"
+tags: ["openshift"]
+---
+if you get the error<br />
+<br />
+"Could not resolve host: github.com; Unknown error"<br />
+<br />
+when building your POD, the solution is simply:<br />
+<br />
+sudo oc cluster down<br />
+sudo iptables -F<br />
+sudo oc cluster up<br />
+<br />
+https://github.com/openshift/origin/issues/12110<br />
+<br />
+https://github.com/openshift/origin/issues/10139<br />
+<br />
+Pathetic

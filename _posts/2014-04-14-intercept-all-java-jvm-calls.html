@@ -1,0 +1,76 @@
+---
+layout: post
+title: "intercept all java JVM calls"
+date: 2014-04-14T19:11:00.001+02:00
+permalink: /2014/04/intercept-all-java-jvm-calls.html
+blogger_id: "5792961064225458298"
+tags: ["java"]
+---
+Good man David wrote a script to log all the calls to Java with the parameters passed:
+
+<br/>
+
+mv /usr/lib/jvm/jre-1.7.0-oracle.x86_64/bin/java /usr/lib/jvm/jre-1.7.0-oracle.x86_64/bin/java_
+<br/>
+vi /usr/lib/jvm/jre-1.7.0-oracle.x86_64/bin/java
+
+<pre class="brush: bash"">
+
+
+
+
+#! /bin/bash
+
+LOG_DIR=/tmp/log_puppet_weblogic
+LOG_FILE=$LOG_DIR/log.txt
+echo "+++++++++++++++++++++++++++++"  | tee -a $LOG_FILE
+echo "+++ EXECUTING JAVA. CMD: java" "$@"  | tee -a $LOG_FILE
+
+java=$(readlink -f $0)
+echo "+++ EXECUTING JAVA. time: "`date +"%Y%m%d-%H%M%S"` | tee -a $LOG_FILE
+echo "+++ EXECUTING JAVA. java: $java"  | tee -a $LOG_FILE
+echo "+++ EXECUTING JAVA. cp: $CLASSPATH"  | tee -a $LOG_FILE
+
+for arg; do
+#  if [[ ${arg: -3} == ".py" ]] || [[ ${arg: -4} == ".xml" ]]; then
+  if [[ ${arg: -3} == ".py" ]]; then
+    echo "+++ EXECUTING JAVA. cat $arg. START."  | tee -a $LOG_FILE
+    cat $arg  | tee -a $LOG_FILE
+    echo "+++ EXECUTING JAVA. cat $arg. END."  | tee -a $LOG_FILE
+    f=file-$(basename $arg)-$(date +"%Y%m%d-%H%M%S")
+    cp $arg $LOG_DIR/$f
+  fi
+done
+
+f=$LOG_DIR/log-$(date +"%Y%m%d-%H%M%S").txt
+echo "+++ EXECUTING JAVA. running. log: $f"  | tee -a $LOG_FILE
+original_java=${java}_
+set -e
+(($original_java "$@") 2>&1 ) | tee $f
+
+EXIT_CODE=${PIPESTATUS[0]}
+
+echo "+++ EXECUTING JAVA. cat $f. START."  | tee -a $LOG_FILE
+cat $f | tee -a $LOG_FILE
+echo "+++ EXECUTING JAVA. cat $f. END."  | tee -a $LOG_FILE
+
+echo "+++ EXECUTING JAVA. exit code: $EXIT_CODE" | tee -a $LOG_FILE
+echo "+++ EXECUTING JAVA. END."  | tee -a $LOG_FILE
+
+exit $EXIT_CODE
+
+</pre>
+
+<br />
+
+
+chmod 775 /usr/lib/jvm/jre-1.7.0-oracle.x86_64/bin/java
+
+
+
+<br />
+
+At this point, all calls will be logged to /tmp/log_puppet_weblogic/log.txt and the stdout of each command will go into a separate file in /tmp/log_puppet_weblogic/ folder.
+This is particularly useful to trace all the WLST calls.
+
+

@@ -1,0 +1,17 @@
+---
+layout: post
+title: "Windows Explorer Open a Command Prompt"
+date: 2010-05-06T09:57:00.000+02:00
+permalink: /2010/05/windows-explorer-open-command-prompt.html
+blogger_id: "4145111613097675110"
+tags: ["registry"]
+---
+Since I do it all the time, here is the registry entry (save this to a command.reg file and import it into the registry)<br />
+<br />
+Windows Registry Editor Version 5.00<br />
+<br />
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Folder\shell\Command Prompt]<br />
+@="Open A Command Prompt"<br />
+<br />
+[HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Folder\shell\Command Prompt\command]<br />
+@="cmd.exe /k pushd %1"

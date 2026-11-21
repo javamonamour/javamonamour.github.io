@@ -1,0 +1,71 @@
+---
+layout: post
+title: "WLST : *sys-package-mgr*: can't write cache file for"
+date: 2013-05-22T18:28:00.000+02:00
+permalink: /2013/05/wlst-sys-package-mgr-cant-write-cache.html
+blogger_id: "7962182960291347889"
+tags: ["WLST"]
+---
+On a new box, when I run /opt/oracle/fmw11_1_1_5/osb/common/bin/wlst.sh  I get:
+
+<br/><br/>
+
+<pre>
+
+Initializing WebLogic Scripting Tool (WLST) ...
+
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/modules/oracle.jrf_11.1.1/jrf-wlstman.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/lib/adfscripting.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/lib/adf-share-mbeans-wlst.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/lib/mdswlst.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/resources/auditwlst.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/resources/igfwlsthelp.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/resources/jps-wlst.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/resources/jrf-wlst.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/resources/oamap_help.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/resources/oamAuthnProvider.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/resources/ossoiap_help.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/resources/ossoiap.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/resources/ovdwlsthelp.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/resources/sslconfigwlst.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/resources/wsm-wlst.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/utils/config/10.3/config-launch.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/derby/lib/derbynet.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/derby/lib/derbyclient.jar'
+*sys-package-mgr*: can't write cache file for '/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/derby/lib/derbytools.jar'
+*sys-package-mgr*: can't write index file
+
+
+</pre>
+
+<br/><br/>
+doing ls -ltr /tmp I find out that wlstTempsoa and alsbTempJars belong to a strange user 1102  
+<br/><br/>
+
+<pre>
+
+drwxr-xr-x 3    1102   506   4096 May 13 23:05 wlstTempsoa
+-rw-r----- 1    1102   506      0 May 14 10:08 pki_data-1980089318.lck.tmp
+-rw-r----- 1    1102   506      0 May 14 10:08 pki_data638484921.lck.tmp
+-rw-r----- 1    1102   506      0 May 14 10:08 jazn-data1986377050xml.lck
+drwxr----- 2    1102   506   4096 May 14 10:08 alsbTempJars
+
+
+</pre>
+<br/><br/>
+
+<a href="https://forums.oracle.com/forums/thread.jspa?messageID=3018833">https://forums.oracle.com/forums/thread.jspa?messageID=3018833</a>
+
+<br/><br/>
+
+mkdir /tmp/wlstTmp 
+<br/><br/>
+and edit /opt/oracle/fmw11_1_1_5/osb/common/bin/wlst.sh adding
+<br/><br/>
+export WLST_PROPERTIES="-Dpython.cachedir=/tmp/wlstTmp"
+
+
+<br/><br/>
+
+
+

@@ -1,0 +1,85 @@
+---
+layout: post
+title: "oracle.jdbc.ReadTimeout for oracle.sql.CLOB.getChars"
+date: 2014-01-06T14:38:00.003+01:00
+permalink: /2014/01/oraclejdbcreadtimeout-for.html
+blogger_id: "8326502318929711365"
+tags: ["jdbc"]
+---
+we often have this stuck thread on oracle.sql.CLOB.getChars:
+
+<br/><br/>
+
+<pre>
+####&lt;Jan 6, 2014 10:34:39 AM CET> &lt;Error> &lt;WebLogicServer> &lt;hqchacme110> &lt;osbpr1ms3> &lt;[ACTIVE] ExecuteThread: '19' for queue:
+'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;d1a7b26be2c41106:7f955c62:143498f1087:-8000-00000000001dcb6a> &lt;1389
+000879486> &lt;BEA-000337> &lt;[STUCK] ExecuteThread: '15' for queue: 'weblogic.kernel.Default (self-tuning)' has been busy for "708"
+seconds working on the request "weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl@16c083ce", which is more than the conf
+igured time (StuckThreadMaxTime) of "600" seconds. Stack trace:
+        java.net.SocketInputStream.socketRead0(Native Method)
+        java.net.SocketInputStream.read(SocketInputStream.java:129)
+        oracle.net.nt.MetricsEnabledInputStream.read(TcpNTAdapter.java:718)
+        oracle.net.ns.Packet.receive(Packet.java:295)
+        oracle.net.ns.DataPacket.receive(DataPacket.java:106)
+        oracle.net.ns.NetInputStream.getNextPacket(NetInputStream.java:317)
+        oracle.net.ns.NetInputStream.read(NetInputStream.java:262)
+        oracle.jdbc.driver.T4CSocketInputStreamWrapper.read(T4CSocketInputStreamWrapper.java:107)
+        oracle.jdbc.driver.T4CMAREngine.getNBytes(T4CMAREngine.java:1579)
+        oracle.jdbc.driver.T4C8TTILobd.unmarshalLobData(T4C8TTILobd.java:455)
+        oracle.jdbc.driver.T4C8TTILob.readLOBD(T4C8TTILob.java:796)
+        oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:389)
+        oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:204)
+        oracle.jdbc.driver.T4C8TTIClob.read(T4C8TTIClob.java:245)
+        oracle.jdbc.driver.T4CConnection.getChars(T4CConnection.java:3630)
+        oracle.sql.CLOB.getChars(CLOB.java:756)
+        oracle.sql.CLOB.getSubString(CLOB.java:398)
+        weblogic.jdbc.wrapper.Clob_oracle_sql_CLOB.getSubString(Unknown Source)
+        oracle.tip.adapter.db.sp.oracle.TypeConverter.toString(TypeConverter.java:241)
+        oracle.tip.adapter.db.sp.oracle.TypeConverter.toString(TypeConverter.java:275)
+        oracle.tip.adapter.db.sp.oracle.XMLBuilder.DOM(XMLBuilder.java:198)
+        oracle.tip.adapter.db.sp.AbstractXMLBuilder.buildDOM(AbstractXMLBuilder.java:264)
+        oracle.tip.adapter.db.sp.SPInteraction.executeStoredProcedure(SPInteraction.java:148)
+        oracle.tip.adapter.db.DBInteraction.executeStoredProcedure(DBInteraction.java:1102)
+        oracle.tip.adapter.db.DBInteraction.execute(DBInteraction.java:247)
+        oracle.tip.adapter.sa.impl.fw.wsif.jca.WSIFOperation_JCA.performOperation(WSIFOperation_JCA.java:529)
+        oracle.tip.adapter.sa.impl.fw.wsif.jca.WSIFOperation_JCA.executeOperation(WSIFOperation_JCA.java:353)
+        oracle.tip.adapter.sa.impl.fw.wsif.jca.WSIFOperation_JCA.executeReque
+
+
+
+</pre>
+
+<br/>
+<br/>
+
+at the same time on the Oracle DB side we have:
+<br/>
+<pre>
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+        TNS for IBM/AIX RISC System/6000: Version 11.2.0.3.0 - Production
+        TCP/IP NT Protocol Adapter for IBM/AIX RISC System/6000: Version 11.2.0.3.0 - Production
+        Oracle Bequeath NT Protocol Adapter for IBM/AIX RISC System/6000: Version 11.2.0.3.0 - Production
+  Time: 06-JAN-2014 10:22:25
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+
+TNS-12535: TNS:operation timed out
+    ns secondary err code: 12560
+    nt main err code: 505
+
+TNS-00505: Operation timed out
+    nt secondary err code: 78
+    nt OS err code: 0
+  Client address: (ADDRESS=(PROTOCOL=tcp)(HOST=10.56.34.53)(PORT=1125))
+Mon Jan 06 10:23:48 2014
+
+</pre>
+<br/><br/>
+
+
+I will try to fix this by setting the property oracle.jdbc.ReadTimeout to 1 800 000 (milliseconds = 30 minutes)
+
+

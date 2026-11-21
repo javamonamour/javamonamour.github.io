@@ -1,0 +1,77 @@
+---
+layout: post
+title: "setfacl and getfacl in action"
+date: 2014-07-30T11:49:00.001+02:00
+permalink: /2014/07/setfacl-and-getfacl-in-action.html
+blogger_id: "46075171188989314"
+tags: ["linux"]
+---
+I had no clue that in Linux you can grant specific access rights to an individual user on a file/folder, using setfacl:
+
+
+<pre>
+[root@osb-vagrant opt]# umask
+0022
+[root@osb-vagrant opt]# cd /opt
+[root@osb-vagrant opt]# mkdir pippo
+[root@osb-vagrant opt]# ls -ltra
+...
+drwxr-xr-x   2 root root 4096 Jul 30 11:36 pippo
+...
+[root@osb-vagrant opt]# getfacl /opt/pippo
+# file: pippo
+# owner: root
+# group: root
+user::rwx
+group::r-x
+other::r-x
+</pre>
+
+<br/><br/>
+Since I have umask 0022, when I create a directory it's as per defaults read only for all other users.
+For instance, user "soa" can't create a file in /opt/pippo:
+<br/><br/>
+
+<pre>
+[soa@osb-vagrant pippo]$ cd /opt/pippo
+[soa@osb-vagrant pippo]$ touch ciao.txt
+touch: cannot touch `ciao.txt': Permission denied
+</pre>
+<br/><br/>
+But this can be changed!
+<br/><br/>
+<pre>
+[root@osb-vagrant opt]# setfacl -m u:soa:rwx /opt/pippo
+[root@osb-vagrant opt]# getfacl /opt/pippo
+getfacl: Removing leading '/' from absolute path names
+# file: opt/pippo
+# owner: root
+# group: root
+user::rwx
+user:soa:rwx
+group::r-x
+mask::rwx
+other::r-x
+</pre>
+<br/><br/>
+
+notice here the new element "user:soa:rwx".
+
+<br/><br/>
+At this point, user "soa" can create a file in /opt/pippo ! But no other user can...
+<br/><br/>
+See also <a href="http://www.computerhope.com/unix/usetfacl.htm">http://www.computerhope.com/unix/usetfacl.htm</a> for more advanced examples.
+<br/><br/>
+
+In Puppet:
+<br/><br/>
+<pre>
+exec {'/usr/bin/setfacl -R -dm u::rwx,g::rwx,o::rwx /zdata/':
+      require => Mount["${inbound_messages_path}"],
+}
+
+</pre>
+
+<br/><br/>
+
+

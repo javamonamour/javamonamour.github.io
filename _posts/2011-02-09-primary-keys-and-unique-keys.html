@@ -1,0 +1,16 @@
+---
+layout: post
+title: "Primary keys and Unique keys"
+date: 2011-02-09T15:56:00.002+01:00
+permalink: /2011/02/primary-keys-and-unique-keys.html
+blogger_id: "4249133184981451270"
+tags: ["primarykey"]
+---
+<a href="http://en.wikipedia.org/wiki/Primary_key">http://en.wikipedia.org/wiki/Primary_key</a><br />
+<br />
+Today some philosophical debate on whether one should absolutely have a primary key or not, and if one can use Foreign Key to point to a column which is not a Primary Key.  <br />
+<br />
+The answer is that, basically, ANY column can be used as a Primary Key (=something that can be used to identify a record without ambiguity) as long as it's UNIQUE and NOT NULLABLE. <br />
+Primary Key is just a convenient term for the developer, but carries no exclusive property of its own.<br />
+<br />
+Specifically on Oracle you might find that the INDEX associated to a PK is CLUSTERED, while for a Unique Key it is not clustered.

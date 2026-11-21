@@ -1,0 +1,137 @@
+---
+layout: post
+title: "bash scripts organized with rerun"
+date: 2013-11-03T18:18:00.001+01:00
+permalink: /2013/11/bash-scripts-organized-with-rerun.html
+blogger_id: "7175441481938239381"
+tags: ["bash", "rerun"]
+---
+A small "rerun tutorial" or "getting started with rerun".<br />
+Rerun wiki: <a href="https://github.com/rerun/rerun/wiki">https://github.com/rerun/rerun/wiki</a>
+<br />
+<br />
+<a href="http://repository-stagrlee.forge.cloudbees.com/release/rpms/rerun/">Download the rpm here</a> 
+<br />
+<br />
+#remember to do export http_proxy=http://myuser:mypw@proxy.acme.com:8080
+<br />
+<br />
+<b>wget http://repository-stagrlee.forge.cloudbees.com/release/rpms/rerun/rerun-1.0.2-1.fc17.noarch.rpm
+<br />
+rpm -i rerun-1.0.2-1.fc17.noarch.rpm
+<br />
+rerun
+</b>
+<i>Available modules in "/usr/lib/rerun/modules":<br />
+  stubbs: "Simple rerun module builder" - 1.0.2<br /><br />
+</i>
+
+<br />
+then I download https://github.com/downloads/rerun-modules/rerun-modules/rerun-modules-repo-1.0-21.noarch.rpm, copy it locally (wget doesn't work with https on github, no clue...)
+<br />
+and I do:<br />
+<br />
+<b>rpm -i rerun-modules-repo-1.0-21.noarch.rpm</b><br />
+<br />
+this one didn't work for me (connectivity problems) but it's not essential:
+<br />
+yum -y --disablerepo '*' --enablerepo 'rerun-modules' install '*'<br />
+<br />
+<br />
+I create my first module<br />
+<br />
+<b>rerun stubbs: add-module</b><br />
+<i>Module name:</i><br />
+<i>pippo</i><br />
+<i>Module description:</i><br />
+<i>my first rerun</i><br />
+<i>Created module structure: /usr/lib/rerun/modules/pippo.</i><br />
+<br />
+<br />
+If you look in /usr/lib/rerun/modules/pippo, there is a <b>lib </b>folder - containing an empty functions.sh - and a <b>command </b>folder.
+
+<br />
+<br />
+<b>rerun stubbs:add-command</b>
+
+<br />
+<pre>Module:
+1) pippo
+2) stubbs
+#? 1
+You picked module pippo (1)
+Command:
+hello
+Description:
+say hello
+Wrote command script: /usr/lib/rerun/modules/pippo/commands/hello/script
+Wrote test script: /usr/lib/rerun/modules/pippo/tests/hello-1-test.sh
+
+</pre>
+then I add an option to the command:
+<br />
+<b>rerun stubbs:add-option
+</b><br />
+<br />
+<pre>Module:
+1) pippo
+2) stubbs
+#? 1
+You picked module pippo (1)
+Command:
+1) hello
+#? 1
+You picked command hello (1)
+Option:
+name
+Description:
+the person to greet
+Required:
+1) true
+2) false
+#? 1
+Export:
+1) true
+2) false
+#? 1
+Default:
+Pierre
+Wrote option metadata: /usr/lib/rerun/modules/pippo/options/name/metadata
+Updated command metadata:  /usr/lib/rerun/modules/pippo/commands/hello/metadata
+Updated command script header: /usr/lib/rerun/modules/pippo/commands/hello/script
+
+</pre>
+<br />
+<br />
+<b>vi /usr/lib/rerun/modules/pippo/commands/hello/script</b>
+<br />
+and after this text:
+<br />
+<pre># - - -
+# Put the command implementation here.
+# - - -
+</pre>
+<br />
+I enter this:
+
+<b>echo name is $NAME</b>
+
+<br />
+<br />
+I run it:<br />
+<br />
+<b>rerun pippo:hello  --name Luigi</b>
+<br />
+name is Luigi
+<br />
+<br />
+and rerun it:
+<br />
+<br />
+<b>rerun pippo:hello</b>
+<br />
+name is Pierre
+<br />
+<br />
+Ok at least we have proven that it can can be made to work...
+

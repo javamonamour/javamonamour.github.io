@@ -1,0 +1,92 @@
+---
+layout: post
+title: "GraalVM native image"
+date: 2019-05-10T12:02:00.001+02:00
+permalink: /2019/05/graalvm-native-image.html
+blogger_id: "9241610224702484"
+tags: ["graalvm"]
+---
+download GraalVM CE and unzip it to /home/centos/graalvm-ce-19.0.0/<br />
+<br />
+export JAVA_HOME=/home/centos/graalvm-ce-19.0.0/<br />
+export GRAALVM_HOME=/home/centos/graalvm-ce-19.0.0/<br />
+<br />
+cd /home/centos/graalvm-ce-19.0.0/bin<br />
+./java -version<br />
+sudo ./gu install native-image<br />
+<br />
+vi HelloWorld.java<br />
+<br />
+<pre>public class HelloWorld {
+        public static void main(String[] args) {
+            System.out.println("hello world");
+        }
+}
+</pre><br />
+<br />
+<br />
+<b>./javac HelloWorld.java</b><br />
+<br />
+<b>time ./java HelloWorld</b><br />
+<br />
+<br />
+hello world<br />
+<br />
+real 0m0.074s<br />
+user 0m0.057s<br />
+sys 0m0.019s<br />
+<br />
+<br />
+<br />
+./native-image -H:+ReportExceptionStackTraces HelloWorld<br />
+<br />
+<pre>Build on Server(pid: 6249, port: 45750)
+[helloworld:6249]    classlist:     299.78 ms
+[helloworld:6249]        (cap):     359.96 ms
+[helloworld:6249]        setup:     479.50 ms
+Error: Basic header file missing (<zlib.h>). Make sure headers are available on your system.
+com.oracle.svm.core.util.UserError$UserException: Basic header file missing (<zlib.h>). Make sure headers are available on your system.
+ at com.oracle.svm.core.util.UserError.abort(UserError.java:65)
+ at com.oracle.svm.hosted.c.CAnnotationProcessor.reportCompilerError(CAnnotationProcessor.java:138)
+ at com.oracle.svm.hosted.c.codegen.CCompilerInvoker.compileAndParseError(CCompilerInvoker.java:74)
+ at com.oracle.svm.hosted.c.CAnnotationProcessor.compileQueryCode(CAnnotationProcessor.java:131)
+ at com.oracle.svm.hosted.c.CAnnotationProcessor.process(CAnnotationProcessor.java:84)
+ at com.oracle.svm.hosted.c.NativeLibraries.finish(NativeLibraries.java:311)
+ at com.oracle.svm.hosted.NativeImageGenerator.processNativeLibraryImports(NativeImageGenerator.java:1523)
+ at com.oracle.svm.hosted.NativeImageGenerator.setupNativeLibraries(NativeImageGenerator.java:997)
+ at com.oracle.svm.hosted.NativeImageGenerator.setupNativeImage(NativeImageGenerator.java:829)
+ at com.oracle.svm.hosted.NativeImageGenerator.doRun(NativeImageGenerator.java:521)
+ at com.oracle.svm.hosted.NativeImageGenerator.lambda$run$0(NativeImageGenerator.java:441)
+ at java.util.concurrent.ForkJoinTask$AdaptedRunnableAction.exec(ForkJoinTask.java:1386)
+ at java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:289)
+ at java.util.concurrent.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1056)
+ at java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1692)
+ at java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:157)
+Error: Image build request failed with exit status 1
+
+</pre><br />
+<br />
+sudo yum install glibc-devel<br />
+sudo yum install zlib-devel<br />
+sudo yum install gcc<br />
+<br />
+./native-image HelloWorld<br />
+<br />
+time ./helloworld <br />
+hello world<br />
+<br />
+real 0m0.012s<br />
+user 0m0.001s<br />
+sys 0m0.011s<br />
+<br />
+<br />
+<br />
+<br />
+References: <br />
+<br />
+<a href="https://www.graalvm.org/">https://www.graalvm.org/</a><br />
+<br />
+<br />
+<br />
+<br />
+

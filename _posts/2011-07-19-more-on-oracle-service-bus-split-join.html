@@ -1,0 +1,31 @@
+---
+layout: post
+title: "More on Oracle Service Bus Split Join"
+date: 2011-07-19T15:27:00.000+02:00
+permalink: /2011/07/more-on-oracle-service-bus-split-join.html
+blogger_id: "9206000378708943641"
+tags: ["split-join"]
+---
+Unsurprisingly Split Join use some BPEL constructs:<br />
+<br />
+xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"<br />
+<br />
+bpel:partnerLinks<br />
+bpel:variables<br />
+bpel:sequence<br />
+bpel:receive<br />
+and bpel:flow to implement the parallel execution of branches<br />
+<br />
+In fact I can't wait to see the BPEL engine of SOA Suite seamlessly merged into the Oracle Service Bus.<br />
+<br />
+<br />
+<br />
+<br />
+Funny thing is that a SplitJoin is defined only for 1 operation on a target service, but the Business Service you originate from it exposes ALL operations n the WSDL. If by mistake you invoke the wrong operation, you get:<br />
+<br />
+<i>The invocation resulted in an error: Split-Join is configured for operation "bla" but received request for operation "mumble". Make sure the correct operation is selected in route, publish or service callout actions in the proxy message Split-Join..<br />
+</i><br />
+<br />
+And unlike in the traditional OSB where you can access a uninitialized variable without getting any error, in BPEL if you forget to assign a value to <i>response</i> you get<br />
+<br />
+[BEA-2031518] Variable 'response' is being referenced before it has been initialized with a value.

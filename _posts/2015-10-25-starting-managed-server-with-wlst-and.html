@@ -1,0 +1,80 @@
+---
+layout: post
+title: "Starting a Managed Server with WLST and NodeManager"
+date: 2015-10-25T17:58:00.000+01:00
+permalink: /2015/10/starting-managed-server-with-wlst-and.html
+blogger_id: "3662690434526249139"
+tags: ["nodemanager", "WLST"]
+---
+1) factor out commonly used constants into a setenv.sh file:<br />
+<br />
+<pre>#!/bin/sh
+
+#prefix for domain 
+PREF=osbpr1
+Interface=bond0
+AdminIP=10.56.5.119
+NetMask=255.255.255.0
+
+JAVA_HOME="/opt/oracle/java"
+MW_HOME="/opt/oracle/fmw"
+WL_HOME="${MW_HOME}/wlserver_10.3"
+
+DOM_HOME=/opt/oracle/domains
+
+LOG_HOME=/var/log/weblogic
+# home of certificates
+CERT_HOME=/opt/oracle/certs
+
+JAVA_VERSION=java-1.6.0-sun-1.6.0.29.x86_64
+</pre>
+<br />
+<br />
+2) prepare a NodeManager userConfigFile:<br />
+<br />
+/opt/oracle/domains/osbdv1do/nmuserconfigfile.secure<br />
+<br />
+containing<br />
+<pre>weblogic.management.username={AES}hU8qRGjiFmqK6kHqG8yZlpXTD+KZGjld85q7sIgMP4w\=
+weblogic.management.password={AES}xF+6rgG5NqNYBxDzqR/MlLlR1iYSqQezJrJ+Mi52gTc\=
+</pre>
+<br />
+<br />
+and a userKeyFile /opt/oracle/domains/osbdv1do/nmuserkeyfile.secure<br />
+<br />
+<br />
+<br />
+3) Prepare a startAdmin.py file (in reality it can start ANY server, not only the admin):<br />
+<br />
+<pre class="brush: java" name="code">adminName = sys.argv[1]
+domainName = sys.argv[2]
+nmHost = sys.argv[3]
+
+nmPort = '5556'
+domHome='/opt/oracle/domains/' + domainName
+
+print nmHost, nmPort, domainName, adminName
+
+# -----------------------------------------------------------------------------
+# connect to NodeManager
+# -----------------------------------------------------------------------------
+nmConnect( userConfigFile=domHome + '/nmuserconfigfile.secure', userKeyFile=domHome + '/nmuserkeyfile.secure', host=nmHost, port=nmPort, domainName=domainName, domainDir=domHome, nmType='plain' )
+
+# -----------------------------------------------------------------------------
+# start the server
+# -----------------------------------------------------------------------------
+try:
+
+    nmStart( adminName, domHome )
+
+except:
+    nmDisconnect()
+    exit('y', 4)
+
+
+nmDisconnect()
+
+
+
+</pre>
+

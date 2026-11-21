@@ -1,0 +1,29 @@
+---
+layout: post
+title: "EOL issues on Unix/Windows"
+date: 2011-12-27T21:41:00.000+01:00
+permalink: /2011/12/eol-issues-on-unixwindows.html
+blogger_id: "1035744402469577396"
+tags: ["unix"]
+---
+in vi, if you want to view a file in HEX mode, do this:<br />
+<br />
+:%!xxd <br />
+<br />
+<br />
+line feed=10=0x0A (\n)<br />
+carriage return=13=0x0D  (\r)<br />
+<br />
+<br />
+in Windows, a EOL is defined by \r\n (0D0A)<br />
+in Unix, a EOL is defined by \n (0A)<br />
+<br />
+<br />
+to change EOL to some other character:<br />
+<br />
+tr '\n' '#' < test1.txt > test2.txt<br />
+<br />
+to turn a Windows file into Unix:<br />
+dos2unix filename<br />
+<br />
+Excellent Notepad++ to convert one format into another (Edit/EOL conversion)

@@ -1,0 +1,137 @@
+---
+layout: post
+title: "JRules exposed via Web Services"
+date: 2010-05-31T11:00:00.001+02:00
+permalink: /2010/05/jrules-exposed-via-web-services.html
+blogger_id: "3856673720681323577"
+tags: ["jrules", "webservices"]
+---
+Typically you have a <b>RuleApp</b>, which contains several <b>RuleSets</b>.<br />
+<br />
+When you produce a RuleSet, you can write several <b>BusinessRules</b> in it.<br />
+<br />
+Here <a href="http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m2/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global800.html">http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m2/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global800.html</a> it says:<br />
+<br />
+<i>The decision service automatically generates a Web Services Description Language (WSDL) file for each deployed ruleset archive</i><br />
+<br />
+In our example, helloWorldRuleApp contains helloWorldRuleApp,<br />
+and helloWorldRuleApp contains 2 BusinessRule: greetingsItalian and greetingsEnglish.<br />
+They will return respectively <i>Buongiorno</i> and <i>Good morning!</i>. <br />
+<br />
+JRules&nbsp; exposes them automatically via Web Services, the endpoint looks like:<br />
+<br />
+http://localhost:8080/DecisionService/ws/<b>helloWorldRuleApp</b>/1.0/<b>greetingsRuleset</b>/1.0<br />
+<br />
+This will fire all the Rules inside the greetingsRuleset.<br />
+<br />
+<br />
+The result will be:<br />
+<br />
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ds="http://www.ilog.com/rules/DecisionService"&gt;<br />
+&nbsp;&nbsp; &lt;soapenv:Body&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;DecisionServiceResponse xmlns="http://www.ilog.com/rules/DecisionService"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ilog.rules.outputString&gt;Buongiorno<br />
+Good morning!&lt;/ilog.rules.outputString&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<b>ilog.rules.firedRulesCount</b>&gt;2&lt;/ilog.rules.firedRulesCount&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/DecisionServiceResponse&gt;<br />
+&nbsp;&nbsp; &lt;/soapenv:Body&gt;<br />
+&lt;/soapenv:Envelope&gt;<br />
+<br />
+<br />
+that is: <br />
+ilog.rules.outputString is the output of all the Rules invoked<br />
+ilog.rules.firedRulesCount is the count of the rules fired<br />
+<br />
+<br />
+The WSDL associated to the Web Service is:<br />
+<br />
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />
+&lt;wsdl:definitions targetNamespace="http://www.ilog.com/rules/DecisionService" xmlns:tns="http://www.ilog.com/rules/DecisionService" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/"&gt;<br />
+&lt;wsdl:types&gt;<br />
+&lt;xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.ilog.com/rules/DecisionService" xmlns:param="http://www.ilog.com/rules/param" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;<br />
+&lt;xsd:import namespace="http://www.ilog.com/rules/param"/&gt;<br />
+&lt;xsd:element name="DecisionServiceRequest"&gt;<br />
+&lt;xsd:complexType&gt;<br />
+&lt;xsd:sequence&gt;<br />
+&lt;/xsd:sequence&gt;<br />
+&lt;/xsd:complexType&gt;<br />
+<br />
+&lt;/xsd:element&gt;<br />
+&lt;xsd:element name="DecisionServiceResponse"&gt;<br />
+&lt;xsd:complexType&gt;<br />
+&lt;xsd:sequence&gt;<br />
+&lt;xsd:element name="ilog.rules.outputString" type="xsd:string"/&gt;<br />
+&lt;xsd:element name="ilog.rules.firedRulesCount" type="xsd:int"/&gt;<br />
+&lt;/xsd:sequence&gt;<br />
+&lt;/xsd:complexType&gt;<br />
+&lt;/xsd:element&gt;<br />
+<br />
+&lt;xsd:element name="DecisionServiceException"&gt;<br />
+&lt;xsd:complexType&gt;<br />
+&lt;xsd:sequence&gt;<br />
+&lt;xsd:element maxOccurs="1" minOccurs="1" name="exception" nillable="false" type="xsd:string"/&gt;<br />
+&lt;/xsd:sequence&gt;<br />
+&lt;/xsd:complexType&gt;<br />
+&lt;/xsd:element&gt;<br />
+&lt;/xsd:schema&gt;<br />
+&lt;xsd:schema targetNamespace="http://www.ilog.com/rules/param" xmlns:ns0="http://www.ilog.com/rules/param"/&gt;<br />
+<br />
+&lt;/wsdl:types&gt;<br />
+&lt;wsdl:message name="DecisionServiceSoapResponse"&gt;<br />
+&lt;wsdl:part name="parameters" element="tns:DecisionServiceResponse"&gt;<br />
+&lt;/wsdl:part&gt;<br />
+&lt;/wsdl:message&gt;<br />
+&lt;wsdl:message name="DecisionServiceSoapFault"&gt;<br />
+&lt;wsdl:part name="fault" element="tns:DecisionServiceException"&gt;<br />
+&lt;/wsdl:part&gt;<br />
+&lt;/wsdl:message&gt;<br />
+<br />
+&lt;wsdl:message name="DecisionServiceSoapRequest"&gt;<br />
+&lt;wsdl:part name="parameters" element="tns:DecisionServiceRequest"&gt;<br />
+&lt;/wsdl:part&gt;<br />
+&lt;/wsdl:message&gt;<br />
+&lt;wsdl:portType name="DecisionServiceJRulesPVHelloWorld"&gt;<br />
+&lt;wsdl:operation name="executeDecisionService"&gt;<br />
+&lt;wsdl:input message="tns:DecisionServiceSoapRequest"&gt;<br />
+&lt;/wsdl:input&gt;<br />
+&lt;wsdl:output message="tns:DecisionServiceSoapResponse"&gt;<br />
+<br />
+&lt;/wsdl:output&gt;<br />
+&lt;wsdl:fault name="DecisionServiceSoapFault" message="tns:DecisionServiceSoapFault"&gt;<br />
+&lt;/wsdl:fault&gt;<br />
+&lt;/wsdl:operation&gt;<br />
+&lt;/wsdl:portType&gt;<br />
+&lt;wsdl:binding name="DecisionServiceSOAP" type="tns:DecisionServiceJRulesPVHelloWorld"&gt;<br />
+&lt;soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/&gt;<br />
+&lt;wsdl:operation name="executeDecisionService"&gt;<br />
+&lt;soap:operation soapAction="executeDecisionService" style="document"/&gt;<br />
+<br />
+&lt;wsdl:input&gt;<br />
+&lt;soap:body use="literal"/&gt;<br />
+&lt;/wsdl:input&gt;<br />
+&lt;wsdl:output&gt;<br />
+&lt;soap:body use="literal"/&gt;<br />
+&lt;/wsdl:output&gt;<br />
+&lt;wsdl:fault name="DecisionServiceSoapFault"&gt;<br />
+&lt;soap:fault name="DecisionServiceSoapFault" use="literal"/&gt;<br />
+&lt;/wsdl:fault&gt;<br />
+<br />
+&lt;/wsdl:operation&gt;<br />
+&lt;/wsdl:binding&gt;<br />
+&lt;wsdl:service name="DecisionServiceJRulesPVHelloWorld"&gt;<br />
+&lt;wsdl:port name="DecisionServiceSOAPesp50ws17206.crb.acme.net" binding="tns:DecisionServiceSOAP"&gt;<br />
+&lt;soap:address location="http://localhost:8080/DecisionService/ws/helloWorldRuleApp/1.0/greetingsRuleset/1.0"/&gt;<br />
+&lt;/wsdl:port&gt;<br />
+&lt;/wsdl:service&gt;<br />
+&lt;/wsdl:definitions&gt;<br />
+<br />
+<br />
+Let's watch an example where you pass an XML parameter (thank you David Selman for your excellent presentation, but next time can you ask a beautiful girl to show her face instead of yours :O)? We are all men in this business and seing a girl once in a while would help...):<br />
+<br />
+<br />
+<object style="height: 344px; width: 425px;"><param name="movie" value="http://www.youtube.com/v/pkuSwczFtJ4"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><embed src="http://www.youtube.com/v/pkuSwczFtJ4" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="425" height="344"></embed></object><br />
+<br />
+In fact it's all about invoking a Web Service, the video shows how to do it with a Eclipse Plugin and Axis2 Java generated code.<br />
+<br />
+<br />
+The way I see it is that there is a DecisionService servlet serving all RuleApps and acting as a Proxy to the Rules Engine.

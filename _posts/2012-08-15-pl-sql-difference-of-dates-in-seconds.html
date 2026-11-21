@@ -1,0 +1,44 @@
+---
+layout: post
+title: "PL-SQL difference of dates in seconds"
+date: 2012-08-15T16:27:00.000+02:00
+permalink: /2012/08/pl-sql-difference-of-dates-in-seconds.html
+blogger_id: "29758850640234080"
+tags: ["PL-SQL"]
+---
+this expression, as a difference of 2 dates:<br />
+<br />
+TO_DATE('2012-08-13 11.20.00', 'YYYY-MM-DD HH24:MI:SS') - max(CREATIONTIME)<br />
+<br />
+is a "INTERVAL DAY TO SECOND", not a "number".<br />
+<br />
+<br />
+This function provided by asktom<br />
+<br />
+<pre>create or replace function datediff( p_what in varchar2, 
+                                        p_d1   in date, 
+                                        p_d2   in date ) return number 
+   as 
+       l_result    number; 
+   begin 
+       select (p_d2-p_d1) * 
+              decode( upper(p_what), 
+                      'SS', 24*60*60, 'MI', 24*60, 'HH', 24, NULL ) 
+        into l_result from dual; 
+  
+       return l_result; 
+   end; 
+ 
+</pre><br />
+<br />
+is very useful, you can do this:<br />
+<br />
+<br />
+select trunc(datediff('ss', TO_DATE('2012-08-13 11.20.00', 'YYYY-MM-DD HH24:MI:SS'),  max(A.CREATIONTIME) ))<br />
+<br />
+and you get the result as a numeric value!<br />
+<br />
+ <br />
+<br />
+<br />
+

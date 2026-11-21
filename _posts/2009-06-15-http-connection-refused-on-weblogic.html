@@ -1,0 +1,8 @@
+---
+layout: post
+title: "HTTP Connection Refused on Weblogic Server"
+date: 2009-06-15T12:39:00.000+02:00
+permalink: /2009/06/http-connection-refused-on-weblogic.html
+blogger_id: "5503599662354512340"
+---
+<span style="font-size:100%;"><span style="font-family:arial;">(from a LinkedIn discussion, just making the results public)<br /><br />try the following:</span><br /></span><span style="font-size:100%;"><span style="font-weight: bold;"><br /></span>netstat, lsof, traceroute, ping</span><span style="font-size:100%;"><br /><span style="font-family:arial;">telnet into the ip:port and type GET <enter></enter></span><br />check firewall<br />check exclusion list of a proxy<br /></span><span style="font-size:100%;">trace http session using wireshark or httpfox and see where does the http transaction gets stopped before reaching server</span><span style="font-size:100%;"><br /><br />try also connecting from the same machine where the Server is running, that would rule out most networking/firewall issues - I believe. Simply opening a telnet client from the box itself and do the GET thing would be good enough.<br />Possibly, also, see if you can hack the config.xml and enable the debug flags concerning TCP-IP.<br />Also, from the server's log, during the startup phase try to identify something like:<br />network channel BLA started,<br />just to make sure your server is ACTUALLY listening on that port.<br /><br /><br /></span>

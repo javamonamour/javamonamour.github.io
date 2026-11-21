@@ -1,0 +1,45 @@
+---
+layout: post
+title: "SOA by the book"
+date: 2010-09-29T23:21:00.001+02:00
+permalink: /2010/09/soa-by-book.html
+blogger_id: "5653829948831056736"
+tags: ["SOA"]
+---
+Udi Dahan gives a great presentation on common errors of "SOA by the book":<br />
+<br />
+<a href="http://www.infoq.com/presentations/SOA-Business-Autonomous-Components">http://www.infoq.com/presentations/SOA-Business-Autonomous-Components</a><br />
+<br />
+I have taken some notes here:<br />
+<br />
+some skepticism about the term <b>SOA</b>.... "Oriented" means nothing, "Architecture" nobody really agrees on what it means.... only "Service" is left!<br />
+<br />
+<b>Loose Coupling</b> : ok for LC design time, but what about LC Runtime ? <br />
+<br />
+The Tables of the Law:<br />
+Services are autonomous<br />
+Boundaries are explicit<br />
+Share Contract and Schema, not Class and Type<br />
+Compatibility is based on Policy<br />
+<br />
+see http://en.wikipedia.org/wiki/Service-orientation<br />
+<br />
+You can end up with extremely complex architectures "everything is a service!" .<br />
+Layers on Layers on Layers.<br />
+It looks good on PowerPoint, but Hell on Earth.<br />
+A simple interaction can trigger zillion of services calling each other.<br />
+<br />
+The entire this is NOT Agile. Any change entails LOTS of changes everywhere.<br />
+<br />
+And if you end up a CYCLE, a service being called twice in an interaction, you are screwed!<br />
+<br />
+Asynchronous invocation only DOUBLE the number of threads blocked.<br />
+<br />
+The longer the interactions last, the more you can have GC problems -> OOM <br />
+Long running Transactions generate deadlocks.<br />
+<br />
+Publish Subscribe can alleviate the crazy interdependencies: each service gets a Event notification of the change in other data. No need to ask the price, we are told every time it changes.<br />
+<br />
+SOA is coupled with EDA: Services are coupled with Events.<br />
+<br />
+.... continues ....

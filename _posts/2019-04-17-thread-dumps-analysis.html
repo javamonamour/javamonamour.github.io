@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Thread dumps analysis"
+date: 2019-04-17T09:39:00.001+02:00
+permalink: /2019/04/thread-dumps-analysis.html
+blogger_id: "935380215826245257"
+tags: ["threaddump"]
+---
+this post provides useful insights on how to detect issues from a Thread Dump:<br />
+<br />
+<a href="http://allthingsmdw.blogspot.com/2012/02/analyzing-thread-dumps-in-middleware_08.html">http://allthingsmdw.blogspot.com/2012/02/analyzing-thread-dumps-in-middleware_08.html</a><br />
+<br />
+For a quick thread dump consolidation one can use https://spotify.github.io/threaddump-analyzer/   or https://www.jetbrains.com/help/idea/analyzing-external-stacktraces.html (both are quite equivalent).... <br />
+<br />
+Problem is that these tools are Application Server agnostic and don't tell you what is normal and what is not. I think some AI should be added to the tool, plus some graphical rendering for instance of the lock analysis.<br />
+<br />
+When I have time I want to look into  https://fastthread.io/  <br />
+<br />
+Anyway advanced thread analysis is a skill in itself and should be done with proper tooling... manually sorting stuff can be overwhelming for the regular human being.

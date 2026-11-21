@@ -1,0 +1,69 @@
+---
+layout: post
+title: "Ruminations about Jenkins"
+date: 2019-04-17T13:27:00.000+02:00
+permalink: /2019/04/ruminations-about-jenkins.html
+blogger_id: "5300865862950424090"
+tags: ["jenkins"]
+---
+The jobs are defined in here:<br />
+<br />
+$JENKINS_HOME/jobs<br />
+<br />
+For every project (item), there is a folder.<br />
+<br />
+In every folder there is a config.xml file which hopefully should contain the entire project definition.<br />
+<br />
+My assumption is that one should simply save the config.xml, and this is enough to recreate the project elsewhere.<br />
+<br />
+I am worried because the Project definitions in Jenkins are not saved in bitbucket,<br />
+and we don’t have an automated way to export them from PROD and  import them to a UAT instance.<br />
+<br />
+One COULD tar the $JENKINS_HOME/jobs  folder, but it’s very bulky.<br />
+<br />
+<br />
+[jobs]$ cd myproject/<br />
+<br />
+[myproject]$ ls -ltra<br />
+<br />
+drwxr-xr-x.   3 pippo pippogroup  4096 Jul 18  2016 modules<br />
+-rw-r--r--.   1 pippo pippogroup     6 Apr 25  2018 nextBuildNumber<br />
+lrwxrwxrwx.   1 pippo pippogroup    26 Apr 25  2018 lastSuccessful -> builds/lastSuccessfulBuild<br />
+lrwxrwxrwx.   1 pippo pippogroup    22 Apr 25  2018 lastStable -> builds/lastStableBuild<br />
+drwxr-xr-x.   5 pippo pippogroup  4096 Apr 25  2018 workspace<br />
+drwxr-xr-x.  24 pippo pippogroup  4096 Apr 25  2018 builds<br />
+-rw-r--r--.   1 pippo pippogroup  7257 Apr 25  2018 config.xml<br />
+drwxr-xr-x.   5 pippo pippogroup  4096 Apr 25  2018 .<br />
+drwxr-xr-x. 360 pippo pippogroup 20480 Mar 18 15:06 ..<br />
+<br />
+<br />
+especially the workspace is a PIG<br />
+<br />
+So for the time being I will simply tar up all the config.xml and untar them in UAT:<br />
+<br />
+<br />
+cd $JENKINS_HOME/jobs<br />
+<br />
+find . –maxdepth 2 –name config.xml | tar cvf /var/tmp/alljenkinsconfig.tar –T –<br />
+<br />
+(maxdepth is important to avoid picking up files coming from the workspaces)<br />
+<br />
+However we should really really IMHO push all those config.xml to bitbucket, regularly – ideally automatically whenever someone changes a config.xml:<br />
+<br />
+git init<br />
+#set origin and remote<br />
+find . –maxdepth 2 –name config.xml –exec git add {} \;<br />
+git commit -m "blablabla"<br />
+git push <br />
+<br />
+<br />
+Incidentally, many project folders contain spaces, which makes it much trickier to write scripts to manipulate them.<br />
+<br />
+I am not in favor of Capital Punishment, apart from cases when people create folders containing spaces.<br />
+<br />
+<br />
+Jenkins sucks anyway. Design is from Napoleonian Era, UI made by a freak, configuration freakishly XML based without fluent Administration Groovy API, <br />
+actually in the old times they were much better at designing stuff, think of the Tour Eiffel or the Pyramids and the Coliseum. <br />
+Nowadays any idiotic monkey can code freakish products like Maven or Jenkins and become a celebrity.<br />
+<br />
+

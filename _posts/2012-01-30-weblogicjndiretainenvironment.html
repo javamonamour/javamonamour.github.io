@@ -1,0 +1,28 @@
+---
+layout: post
+title: "weblogic.jndi.retainenvironment"
+date: 2012-01-30T00:08:00.001+01:00
+permalink: /2012/01/weblogicjndiretainenvironment.html
+blogger_id: "5551186865025070750"
+tags: ["JNDI", "weblogic"]
+---
+if you specify -Dweblogic.jndi.retainenvironment=true in the WLS command line,<br />
+<br />
+<br />
+in WLInitialContextFactoryDelegate:<br />
+<br />
+        if(KernelStatus.isServer())<br />
+        {<br />
+            String s = System.getProperty("weblogic.jndi.retainenvironment");<br />
+            if(s != null)<br />
+                keepEnvironmentUntilContextClose = true;<br />
+        }<br />
+<br />
+<br />
+if (!keepEnvironmentUntilContextClose)<br />
+      JNDIEnvironment.getJNDIEnvironment().popThreadEnvironment();<br />
+<br />
+<br />
+I am trying to understand what this - seemingly undocumented - parameter does.<br />
+<br />
+If you have an idea, pleas leave a comment...

@@ -1,0 +1,27 @@
+---
+layout: post
+title: "Typical crontab mistakes for a dummy"
+date: 2013-02-20T20:32:00.001+01:00
+permalink: /2013/02/typycal-crontab-mistakes-for-dummy.html
+blogger_id: "2809460830579231074"
+tags: ["crontab"]
+---
+3 things have to be born in mind when putting a service in crontab:
+
+<br/><br/>
+
+- crontab doesn't run .bash_profile, so you should start your script with:
+<br/>
+source /home/soa/.bash_profile
+<br/><br/>
+- stderr and stdout will vanish, so always redirect both to a file:
+
+<br/>
+/opt/oracle/scripts/mycommand.sh 2>&1 >> /opt/oracle/scripts/mylogfile.log
+
+<br/><br/>
+
+- at script start, the current directory can be anything, so to be on the safe side start with a cd /opt/oracle/scripts/
+
+<br/><br/>
+

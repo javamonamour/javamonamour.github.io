@@ -1,0 +1,49 @@
+---
+layout: post
+title: "difference between java and javaw"
+date: 2014-01-28T01:18:00.001+01:00
+permalink: /2014/01/difference-between-java-and-javaw.html
+blogger_id: "517982604691283867"
+tags: ["java"]
+---
+create this file JavaConsole.java:
+<br/>
+<pre class="brush: java">
+
+import java.io.Console;
+
+public class JavaConsole {
+ public static void main(String[] args) {
+  Console console = System.console();
+  System.out.println("the console is " + console);
+ }
+}
+
+</pre>
+<br/>
+compile it:
+<br/>
+javac JavaConsole.java
+<br/>
+run it:
+<br/>
+java JavaConsole > outputjava.txt
+<br/>
+javaw JavaConsole > outputjavaw.txt
+<br/>
+<br/>
+
+in the second case, the console object is null, because javaw has not associate a Console to allow for stdin and stdout. We can't even print to a console output, that's why I had to redirect to a file in order to observe the result of the println.
+<br/>
+<br/>
+When should I use javaw? Well, frankly, I guess when you don't want a console output, like in most server side applications.  Why WebLogic uses java and not javaw? Good question.... in fact, you always want to redirect the stdout of WebLogic to a file (hoping that nothing is written to it...)...
+
+<br/>
+
+
+
+
+ 
+
+
+

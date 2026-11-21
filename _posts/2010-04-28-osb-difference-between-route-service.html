@@ -1,0 +1,13 @@
+---
+layout: post
+title: "OSB: difference between Route, Service Callout and Publish"
+date: 2010-04-28T10:52:00.000+02:00
+permalink: /2010/04/osb-difference-between-route-service.html
+blogger_id: "5746559654897124662"
+tags: ["OSB"]
+---
+service call out .. you call a service in a SYNCHRONOUS way (pipeline blocks and waits for service response)<br />
+<br />
+publish ... same but ASYNCHRONOUS, so message flow continues in the pipeline<br />
+<br />
+route ... it's the last node of the proxy, it's not in the pipeline, you pass all processing to another (business or proxy) service

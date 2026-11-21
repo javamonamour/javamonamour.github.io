@@ -1,0 +1,23 @@
+---
+layout: post
+title: "perf4j"
+date: 2011-02-19T11:19:00.001+01:00
+permalink: /2011/02/perf4j.html
+blogger_id: "6044206502073573888"
+tags: ["perf4j"]
+---
+<a href="http://perf4j.codehaus.org/">http://perf4j.codehaus.org/</a><br />
+<br />
+<b>Presentation</b> <a href="http://perf4j.codehaus.org/devguide.html">here</a>.<br />
+<br />
+Using <a href="http://perf4j.codehaus.org/apidocs/org/perf4j/LoggingStopWatch.html"><b>LoggingStopWatch</b></a> (start and stop) is a cleaner way of logging performance records.<br />
+<br />
+Later you can process the perf log fils with <b><a href="http://perf4j.codehaus.org/apidocs/org/perf4j/LogParser.html"><b>LogParser</b></a></b> to display statistics. You can even generate graphics.<br />
+<br />
+<a href="http://perf4j.codehaus.org/apidocs/org/perf4j/log4j/AsyncCoalescingStatisticsAppender.html"><b>AsyncCoalescingStatisticsAppender</b></a> allows buffering of log events.<br />
+<br />
+<br />
+<a href="http://perf4j.codehaus.org/apidocs/org/perf4j/log4j/JmxAttributeStatisticsAppender.html"><b>JmxAttributeStatisticsAppender</b></a> allows you to monitor performance through JConsole<br />
+<br />
+You can use <b>@Profiled</b> annotation to monitor a method<br />
+Also, you can weave perf4j monitoring with <b>Spring</b> or <b>AspectJ</b>.

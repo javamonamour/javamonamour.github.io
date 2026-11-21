@@ -1,0 +1,50 @@
+---
+layout: post
+title: "Cygwin tricks with Ruby"
+date: 2014-06-19T17:09:00.004+02:00
+permalink: /2014/06/cygwin-tricks-with-ruby.html
+blogger_id: "6639339538518170583"
+tags: ["cygwin"]
+---
+First thing, install the Cygwin version of Ruby:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/973cfa7c7594210f.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/973cfa7c7594210f.png" height="339" width="640" /></a></div>
+<br />
+<br />
+during Cygwin setup, otherwise if you try to run the Windows version of Ruby you will get:<br />
+<br />
+<i>C:\Ruby200-x64\bin\ruby.exe: No such file or directory -- /cygdrive/c/Ruby200-x64/bin/r10k (LoadError)</i><br />
+<br />
+This is BAD:<br />
+$ ruby --version<br />
+ruby 2.0.0p353 (2013-11-22) [x64-mingw32]<br />
+<br />
+This is GOOD:<br />
+$ ruby --version<br />
+ruby 1.9.3p545 (2014-02-24) [x86_64-cygwin]<br />
+<br />
+And, to be on the safe side, remove the Windows Ruby from the PATH.<br />
+<br />
+If when you try to install r10k<br />
+<br />
+<b>gem install r10k</b><br />
+<br />
+you get this error:<br />
+<i><br /></i>
+<br />
+<div style="color: black; direction: ltr; font-family: MS Shell Dlg 2; font-size: 9pt;">
+<i>/usr/lib/ruby/1.9.1/net/http.rb:763: 
+[BUG] rb_sys_fail(connect(2)) - errno == 0</i></div>
+<div style="color: black; direction: ltr; font-family: MS Shell Dlg 2; font-size: 9pt;">
+<br />
+<i>...</i><br />
+<i>You may have encountered a bug in the Ruby interpreter or extension libraries.<br />Bug reports are welcome.<br />For details: http://www.ruby-lang.org/bugreport.html<br />Aborted (core dumped)</i><br />
+<br />
+<br />
+then try first to configure the proxy inside Cygwin:<br />
+<br />
+<b>export http_proxy=http://yourusername:yourpassword@proxy.acme.com:8080 </b></div>
+<div style="color: black; direction: ltr; font-family: MS Shell Dlg 2; font-size: 9pt;">
+</div>
+

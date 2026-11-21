@@ -1,0 +1,67 @@
+---
+layout: post
+title: "Vagrant, setting multiple IPs on a box"
+date: 2014-05-30T16:27:00.002+02:00
+permalink: /2014/05/vagrant-setting-multiple-ips-on-box.html
+blogger_id: "918424287516375494"
+tags: ["vagrant"]
+---
+The official doc gives example only for 1 IP: 
+<a href="http://docs.vagrantup.com/v2/networking/private_network.html">http://docs.vagrantup.com/v2/networking/private_network.html</a>
+<br/><br/>
+<pre>
+Vagrant.configure("2") do |config|
+  config.vm.network "private_network", ip: "192.168.50.4"
+end
+</pre>
+<br/><br/>
+
+Googling around I could find only 1 example of Multiple IPs:
+
+<br/><br/>
+<a href="https://groups.google.com/forum/#!topic/vagrant-up/hqtdOEjjlsw">https://groups.google.com/forum/#!topic/vagrant-up/hqtdOEjjlsw</a>
+
+<pre>
+Vagrant::Config.run do |config|
+  config.vm.define :web001 do |config|
+    config.vm.box = "base"
+    config.vm.forward_port("http", 5000, 8881)
+    config.vm.forward_port("ssh", 22, 2222)
+    config.vm.host_name = "web001.example.com"
+    config.vm.network("33.33.33.10")
+    config.vm.network("33.33.33.20", {:adapter=>2})
+  end
+end 
+</pre>
+<br/><br/>
+but it doesn't work for me...
+
+<br/><br/>
+Any help would be greatly appreciated....
+
+<br/><br/>
+
+PS <a href="http://stackoverflow.com/questions/23957752/vagrant-how-to-configure-multiple-nics-within-a-vagrantfile">the question was answered here</a> 
+
+just do a:
+
+<pre>
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "precise64"
+
+  config.vm.network "private_network", ip: "192.168.50.4"
+  config.vm.network "private_network", ip: "192.168.50.5"
+  config.vm.network "private_network", ip: "192.168.50.6"
+  config.vm.network "private_network", ip: "192.168.50.7"
+
+end
+</pre>
+
+<br/><br/>
+
+I thought I had tried it before and didn't work... but it DOES work! Great!
+<br/><br/>
+

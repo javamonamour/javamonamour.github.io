@@ -1,0 +1,274 @@
+---
+layout: post
+title: "JSON to Java, Java to JSON"
+date: 2018-05-18T04:32:00.000+02:00
+permalink: /2018/05/json-to-java-java-to-json.html
+blogger_id: "8661332529436402644"
+tags: ["fasterxml", "jackson", "json"]
+---
+I am extremely lazy, and I want to model JSON, or Java, but not both at the same time.<br />
+<br />
+In case you want to write JSON first, and then generate Java:<br />
+<br />
+https://github.com/astav/JsonToJava<br />
+<br />
+git clone https://github.com/astav/JsonToJava.git<br />
+cd  JsonToJava<br />
+mvn package<br />
+./sample-run.sh<br />
+java -cp target/classes/:lib/*:import/ com.astav.jsontojava.JsonToJava sample.json out test TestOutput regex-sample.json false <br />
+<br />
+rules.json<br />
+<pre>{
+  "rules": [
+  {"gav":"org.codehaus.plexus:plexus-utils:3.0" , "allow":"false"},
+  {"gav":"org.codehaus.plexus:plexus-utils:2.8" , "allow":"true"}
+  ]
+}
+
+</pre><br />
+I run this:<br />
+<br />
+export CLASSPATH=target/classes/:lib/*:import/<br />
+java com.astav.jsontojava.JsonToJava  rules.json out test TestOutput regex-sample.json false<br />
+<br />
+this is what it generates: <br />
+<br />
+RulesEntry.java<br />
+<pre class="brush: java">package test;
+
+import org.codehaus.jackson.annotate.JsonProperty;
+import java.util.*;
+
+public class RulesEntry {
+ @JsonProperty("allow") private Boolean allow;
+ @JsonProperty("gav") private String gav;
+}
+
+</pre><br />
+TestOutput.java<br />
+<pre class="brush: java">package test;
+
+import org.codehaus.jackson.annotate.JsonProperty;
+import java.util.*;
+
+public class TestOutput {
+ @JsonProperty("rules") private List&lt;rulesentry> rules;
+}
+
+</pre><br />
+<br />
+<br />
+<br />
+An alternative is http://www.jsonschema2pojo.org/ , for the same input JSON I get a somehow less accurate modelling:<br />
+<br />
+<pre>-----------------------------------com.example.Rule.java-----------------------------------
+
+package com.example;
+
+import java.util.HashMap;
+import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+"gav",
+"allow"
+})
+public class Rule {
+
+@JsonProperty("gav")
+private String gav;
+@JsonProperty("allow")
+private String allow;
+@JsonIgnore
+private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+@JsonProperty("gav")
+public String getGav() {
+return gav;
+}
+
+@JsonProperty("gav")
+public void setGav(String gav) {
+this.gav = gav;
+}
+
+@JsonProperty("allow")
+public String getAllow() {
+return allow;
+}
+
+@JsonProperty("allow")
+public void setAllow(String allow) {
+this.allow = allow;
+}
+
+@JsonAnyGetter
+public Map<String, Object> getAdditionalProperties() {
+return this.additionalProperties;
+}
+
+@JsonAnySetter
+public void setAdditionalProperty(String name, Object value) {
+this.additionalProperties.put(name, value);
+}
+
+}
+-----------------------------------com.example.Rules.java-----------------------------------
+
+package com.example;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({
+"rules"
+})
+public class Rules {
+
+@JsonProperty("rules")
+private List<rule> rules = null;
+@JsonIgnore
+private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+@JsonProperty("rules")
+public List<rule> getRules() {
+return rules;
+}
+
+@JsonProperty("rules")
+public void setRules(List<rule> rules) {
+this.rules = rules;
+}
+
+@JsonAnyGetter
+public Map<String, Object> getAdditionalProperties() {
+return this.additionalProperties;
+}
+
+@JsonAnySetter
+public void setAdditionalProperty(String name, Object value) {
+this.additionalProperties.put(name, value);
+}
+
+}
+
+</pre><br />
+<br />
+<br />
+To model Java first, then JSON:<br />
+<br />
+<pre class="brush: java">import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class RulesTest {
+
+ @Test
+ public void listToJSON() throws Exception {
+  List&lt;Rules> list = new ArrayList&lt;Rules>();
+  list.add(new Rule("org.codehaus.plexus:plexus-utils:3.0", true));
+  list.add(new Rule("org.codehaus.plexus:plexus-utils:2.6", false));
+  Rules rules = new Rules(list);
+  final ByteArrayOutputStream out = new ByteArrayOutputStream();
+  final ObjectMapper mapper = new ObjectMapper();
+  mapper.writeValue(out, rules );
+
+  final byte[] data = out.toByteArray();
+  System.out.println(new String(data));
+ 
+  Rules rules2 = mapper.readValue(data, Rules.class);
+  System.out.println(rules2);
+ }
+
+}
+</pre><br />
+<pre class="brush: java">public class Rule {
+ String gav;
+ Boolean allow;
+ public String getGav() {
+  return gav;
+ }
+ public void setGav(String gav) {
+  this.gav = gav;
+ }
+ public Boolean getAllow() {
+  return allow;
+ }
+ public void setAllow(Boolean allow) {
+  this.allow = allow;
+ }
+ @Override
+ public String toString() {
+  return "Rule [gav=" + gav + ", allow=" + allow + "]";
+ }
+ public Rule(String gav, Boolean allow) {
+  super();
+  this.gav = gav;
+  this.allow = allow;
+ }
+ public Rule() {
+   super();
+ }
+ 
+ 
+}
+
+
+
+import java.util.List;
+
+public class Rules {
+ private List&lt;Rule> rules;
+
+ public List&lt;Rule> getRules() {
+  return rules;
+ }
+
+ public void setRules(List&lt;Rule> rules) {
+  this.rules = rules;
+ }
+
+ public Rules(List&lt;Rule> rules) {
+  super();
+  this.rules = rules;
+ }
+ public Rules() {
+  super();
+ }
+ @Override
+ public String toString() {
+  return "Rules [rules=" + rules + "]";
+ }
+
+}
+
+
+</pre><br />
+and I get this<br />
+<br />
+{"rules":[{"gav":"org.codehaus.plexus:plexus-utils:3.0","allow":true},{"gav":"org.codehaus.plexus:plexus-utils:2.6","allow":false}]}<br />
+Rules [rules=[Rule [gav=org.codehaus.plexus:plexus-utils:3.0, allow=true], Rule [gav=org.codehaus.plexus:plexus-utils:2.6, allow=false]]]<br />
+<br />
+<br />
+<br />
+<br />
+

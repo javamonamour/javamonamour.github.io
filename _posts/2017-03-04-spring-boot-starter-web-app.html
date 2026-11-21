@@ -1,0 +1,158 @@
+---
+layout: post
+title: "Spring Boot starter web app"
+date: 2017-03-04T18:25:00.000+01:00
+permalink: /2017/03/spring-boot-starter-web-app.html
+blogger_id: "7533470555542137541"
+tags: ["springboot"]
+---
+(courtesy of the excellent javabrains.io <a href="https://javabrains.io/courses/spring_bootquickstart/  ">https://javabrains.io/courses/spring_bootquickstart/</a>  )  <br />
+Install Spring Tool Suite <a href="https://spring.io/tools/sts/all">https://spring.io/tools/sts/all</a>  <br />
+<br />
+Run STS.exe   <br />
+Adjust your Maven setting.xml (Window, Preferences, Maven, User Settings) <br />
+<br />
+new / Maven Project <br />
+<br />
+edit the pom.xml : <br />
+<br />
+<pre class="brush: xml">&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;io.javabrains.springbootquickstart&lt;/groupId&gt;
+  &lt;artifactId&gt;course-api&lt;/artifactId&gt;
+  &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+  &lt;name&gt;Java Brains Course API&lt;/name&gt;
+  &lt;parent&gt;
+   &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+   &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+   &lt;version&gt;1.5.0.RELEASE&lt;/version&gt;
+  &lt;/parent&gt;
+  
+  &lt;dependencies&gt;
+  &lt;dependency&gt;
+  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+  &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+  &lt;/dependency&gt;
+  
+  &lt;/dependencies&gt;
+  
+  &lt;properties&gt;
+   &lt;java.version&gt;1.8&lt;/java.version&gt;
+  &lt;/properties&gt;
+&lt;/project&gt;
+
+</pre><br />
+<br />
+Create this main App class <br />
+<br />
+<pre class="brush: java">package io.javabrains.springbootstarter;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class CourseApiApp {
+
+ public static void main(String[] args) {
+  SpringApplication.run(CourseApiApp.class, args);
+
+ }
+
+}
+</pre><br />
+<br />
+and these 2 controller classes <br />
+<br />
+<pre class="brush: java">package io.javabrains.springbootstarter.hello;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class HelloController {
+ @RequestMapping("/hello")
+ public String sayHi() {
+  return "Hi";
+ }
+ 
+ 
+
+}
+</pre><br />
+<br />
+<pre class="brush: java">package io.javabrains.springbootstarter.topic;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class TopicController {
+ @RequestMapping("/topics")
+ public List<topic> getAllTopics() {
+  return Arrays.asList(
+    new Topic("a", "aa", "aaa"),
+    new Topic("b", "bb", "bbb")
+    );
+ } 
+
+}
+
+
+</pre><br />
+<br />
+where Topic is   <br />
+<br />
+<pre class="brush: java">
+package io.javabrains.springbootstarter.topic;
+
+public class Topic {
+ private String id;
+ private String name;
+ private String description;
+ public String getId() {
+  return id;
+ }
+ public void setId(String id) {
+  this.id = id;
+ }
+ public String getName() {
+  return name;
+ }
+ public void setName(String name) {
+  this.name = name;
+ }
+ public String getDescription() {
+  return description;
+ }
+ public void setDescription(String description) {
+  this.description = description;
+ }
+ public Topic(String id, String name, String description) {
+  super();
+  this.id = id;
+  this.name = name;
+  this.description = description;
+ }
+ 
+ public Topic() {
+  
+ }
+ 
+
+}
+
+
+</pre><br />
+<br />
+Run the main App (this will start the embedded tomcat), enter in the browser this  <br />
+<br />
+http://localhost:8080/topics <br />
+<br />
+and you get a great JSON response....  <br />
+<br />
+[{"id":"a","name":"aa","description":"aaa"},{"id":"b","name":"bb","description":"bbb"}]  <br />
+<br />
+

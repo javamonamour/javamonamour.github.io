@@ -1,0 +1,26 @@
+---
+layout: post
+title: "systemd"
+date: 2017-12-19T01:52:00.001+01:00
+permalink: /2017/12/systemd.html
+blogger_id: "5888170103396075264"
+tags: ["linux", "systemd"]
+---
+Really interesting reading <a href="https://en.wikipedia.org/wiki/Systemd">https://en.wikipedia.org/wiki/Systemd</a><br />
+<br />
+<br />
+For instance, I didn't know that systemd has PID = 1<br />
+<br />
+ps -ef | grep systemd<br />
+root         1     0  0 Dec16 ?        00:10:38 /usr/lib/systemd/systemd --switched-root --system --deserialize 2<br />
+<br />
+and that other daemons like journald, logind and networkd (if running), have parent PID = 1<br />
+<br />
+ps -ef | grep journald<br />
+root       499     1  0 Dec16 ?        00:02:41 /usr/lib/systemd/systemd-journald<br />
+<br />
+<br />
+ps -ef | grep logind<br />
+root       727     1  0 Dec16 ?        00:01:00 /usr/lib/systemd/systemd-logind<br />
+<br />
+

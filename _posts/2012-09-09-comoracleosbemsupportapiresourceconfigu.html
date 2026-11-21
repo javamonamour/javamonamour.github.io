@@ -1,0 +1,92 @@
+---
+layout: post
+title: "com.oracle.osb.emsupport.api.ResourceConfiguration.getConfiguration"
+date: 2012-09-09T09:50:00.000+02:00
+permalink: /2012/09/comoracleosbemsupportapiresourceconfigu.html
+blogger_id: "2029380296302024145"
+tags: ["OSB"]
+---
+Once every 7 minutes we find this in the Admin log:<br />
+<br />
+java.lang.IllegalArgumentException: null id<br />
+        at com.bea.wli.sb.util.RouterElement.<init>(RouterElement.java:214)<br />
+        at com.bea.wli.sb.util.RouterElementFactory.traverseAction(RouterElementFactory.java:168)<br />
+        at com.bea.wli.sb.util.RouterElementFactory.traverseFrontierActions(RouterElementFactory.java:201)<br />
+        at com.bea.wli.sb.util.RouterElementFactory.traverseFrontierActions(RouterElementFactory.java:183)<br />
+        at com.bea.wli.sb.util.RouterElementFactory.traverseAction(RouterElementFactory.java:166)<br />
+        at com.bea.wli.sb.util.RouterElementFactory.traverseActionSequence(RouterElementFactory.java:88)<br />
+        at com.bea.wli.sb.util.RouterElementFactory.traverseStage(RouterElementFactory.java:152)<br />
+        at com.bea.wli.sb.util.RouterElementFactory.traversePipeline(RouterElementFactory.java:142)<br />
+        at com.bea.wli.sb.util.RouterElementFactory.traversePipelineNode(RouterElementFactory.java:129)<br />
+        at com.bea.wli.sb.util.RouterElementFactory.traversePipelineFlowType(RouterElementFactory.java:66)<br />
+        at com.bea.wli.sb.util.RouterElementFactory.toRouterElement(RouterElementFactory.java:49)<br />
+        at com.oracle.osb.emsupport.impl.ServiceHelper.getPipeline(ServiceHelper.java:228)<br />
+        at com.oracle.osb.emsupport.impl.ServiceHelper.getProxyServiceConfiguration(ServiceHelper.java:109)<br />
+        at <b>com.oracle.osb.emsupport.impl.ServiceHelper.getConfiguration(ServiceHelper.java:73)</b><br />
+        at com.oracle.osb.emsupport.api.ResourceConfiguration.getConfiguration(ResourceConfiguration.java:83)<br />
+        at sun.reflect.GeneratedMethodAccessor783.invoke(Unknown Source)<br />
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)<br />
+        at java.lang.reflect.Method.invoke(Method.java:597)<br />
+        at com.sun.jmx.mbeanserver.StandardMBeanIntrospector.invokeM2(StandardMBeanIntrospector.java:93)<br />
+        at com.sun.jmx.mbeanserver.StandardMBeanIntrospector.invokeM2(StandardMBeanIntrospector.java:27)<br />
+        at com.sun.jmx.mbeanserver.MBeanIntrospector.invokeM(MBeanIntrospector.java:208)<br />
+        at com.sun.jmx.mbeanserver.PerInterface.getAttribute(PerInterface.java:65)<br />
+        at com.sun.jmx.mbeanserver.MBeanSupport.getAttribute(MBeanSupport.java:216)<br />
+        at com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.getAttribute(DefaultMBeanServerInterceptor.java:666)<br />
+        at com.sun.jmx.mbeanserver.JmxMBeanServer.getAttribute(JmxMBeanServer.java:638)<br />
+        at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase$12.run(WLSMBeanServerInterceptorBase.java:326)<br />
+        at java.security.AccessController.doPrivileged(Native Method)<br />
+        at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase.getAttribute(WLSMBeanServerInterceptorBase.java:324)<br />
+        at weblogic.management.mbeanservers.internal.JMXContextInterceptor.getAttribute(JMXContextInterceptor.java:157)<br />
+        at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase$12.run(WLSMBeanServerInterceptorBase.java:326)<br />
+        at java.security.AccessController.doPrivileged(Native Method)<br />
+        at weblogic.management.jmx.mbeanserver.WLSMBeanServerInterceptorBase.getAttribute(WLSMBeanServerInterceptorBase.java:324)<br />
+        at weblogic.management.mbeanservers.internal.SecurityInterceptor.getAttribute(SecurityInterceptor.java:299)<br />
+        at weblogic.management.jmx.mbeanserver.WLSMBeanServer.getAttribute(WLSMBeanServer.java:279)<br />
+        at weblogic.management.mbeanservers.internal.JMXConnectorSubjectForwarder$5$1.run(JMXConnectorSubjectForwarder.java:326)<br />
+        at java.security.AccessController.doPrivileged(Native Method)<br />
+        at weblogic.management.mbeanservers.internal.JMXConnectorSubjectForwarder$5.run(JMXConnectorSubjectForwarder.java:324)<br />
+        at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)<br />
+        at weblogic.management.mbeanservers.internal.JMXConnectorSubjectForwarder.getAttribute(JMXConnectorSubjectForwarder.java:319)<br />
+        at javax.management.remote.rmi.RMIConnectionImpl.doOperation(RMIConnectionImpl.java:1404)<br />
+        at javax.management.remote.rmi.RMIConnectionImpl.access$200(RMIConnectionImpl.java:72)<br />
+        at javax.management.remote.rmi.RMIConnectionImpl$PrivilegedOperation.run(RMIConnectionImpl.java:1265)<br />
+        at java.security.AccessController.doPrivileged(Native Method)<br />
+        at javax.management.remote.rmi.RMIConnectionImpl.doPrivilegedOperation(RMIConnectionImpl.java:1367)<br />
+        at javax.management.remote.rmi.RMIConnectionImpl.getAttribute(RMIConnectionImpl.java:600)<br />
+        at javax.management.remote.rmi.RMIConnectionImpl_WLSkel.invoke(Unknown Source)<br />
+        at weblogic.rmi.internal.BasicServerRef.invoke(BasicServerRef.java:667)<br />
+        at weblogic.rmi.internal.BasicServerRef$1.run(BasicServerRef.java:522)<br />
+        at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)<br />
+        at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:146)<br />
+        at weblogic.rmi.internal.BasicServerRef.handleRequest(BasicServerRef.java:518)<br />
+        at weblogic.rmi.internal.wls.WLSExecuteRequest.run(WLSExecuteRequest.java:118)<br />
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)<br />
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)<br />
+<br />
+<br />
+<br />
+Who invokes this com.oracle.osb.emsupport.api.ResourceConfiguration.getConfiguration through JMX every 7 minutes?<br />
+<br />
+And where is this action with a null ID?<br />
+<br />
+<br />
+The structure of the Proxy XML is:<br />
+<br />
+xmlns:ser="http://www.bea.com/wli/sb/services"<br />
+xmlns:con="http://www.bea.com/wli/sb/pipeline/config"<br />
+xmlns:con7="http://www.bea.com/wli/sb/stages/transform/config"<br />
+xmlns:con6="http://www.bea.com/wli/sb/stages/publish/config"<br />
+<br />
+<pre>ser:router 
+   con:pipeline
+      con:stage
+         con:actions
+             con7:assign
+
+</pre><br />
+<br />
+<br />
+Still investigating.....<br />
+<br />
+

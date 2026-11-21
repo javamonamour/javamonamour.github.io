@@ -1,0 +1,59 @@
+---
+layout: post
+title: "centos filesystem ntfs not configured in kernel"
+date: 2018-10-09T13:00:00.000+02:00
+permalink: /2018/10/centos-filesystem-ntfs-not-configured.html
+blogger_id: "1285651010232875704"
+tags: ["centos", "ntfs"]
+---
+trying to install an external HD (Windows formatted) on a Centos box...<br />
+<br />
+<pre>centos@localhost ~]$ sudo fdisk -l /dev/sdc2
+
+Disk /dev/sdc2: 4000.7 GB, 4000650887168 bytes, 7813771264 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 33553920 bytes
+Disk label type: dos
+Disk identifier: 0x6e697373
+
+This doesn't look like a partition table
+Probably you selected the wrong device.
+
+     Device Boot      Start         End      Blocks   Id  System
+/dev/sdc2p1   ?  1936269394  3772285809   918008208   4f  QNX4.x 3rd part
+Partition 1 does not start on physical sector boundary.
+/dev/sdc2p2   ?  1917848077  2462285169   272218546+  73  Unknown
+Partition 2 does not start on physical sector boundary.
+/dev/sdc2p3   ?  1818575915  2362751050   272087568   2b  Unknown
+Partition 3 does not start on physical sector boundary.
+/dev/sdc2p4   ?  2844524554  2844579527       27487   61  SpeedStor
+Partition 4 does not start on physical sector boundary.
+
+Partition table entries are not in disk order
+[centos@localhost ~]$ 
+
+</pre><br />
+<b>sudo yum install epel-release</b><br />
+<br />
+Package epel-release-7-11.noarch already installed and latest version<br />
+Nothing to do<br />
+<br />
+<br />
+find /lib/modules/ | grep ntfs<br />
+<br />
+<br />
+nothing is found!<br />
+<b><br />
+sudo yum install ntfs-3g -y</b><br />
+<br />
+<br />
+and now it works! Great! New mountpoint is /run/media/centos/Seagate\ Expansion\ Drive/<br />
+<br />
+<br />
+REF:<br />
+<br />
+<a href="https://www.rootusers.com/how-to-mount-a-windows-ntfs-disk-in-linux/">https://www.rootusers.com/how-to-mount-a-windows-ntfs-disk-in-linux/</a><br />
+<br />
+<br />
+

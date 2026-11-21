@@ -1,0 +1,59 @@
+---
+layout: post
+title: "Groovy, updating XML with XmlSlurper"
+date: 2011-11-04T22:07:00.002+01:00
+permalink: /2011/11/groovy-modifying-xml-with-xmlslurper.html
+blogger_id: "4686365304537466000"
+tags: ["xmlslurper"]
+---
+Sometimes you don't want only to parse XML, but also modify XML with XmlSlurper.<br />
+<br />
+<br />
+<a href="http://groovy.codehaus.org/api/groovy/util/XmlSlurper.html#parse%28java.io.InputStream%29">XmlSlurper.parse(...)</a> returns an object of type <a href="http://groovy.codehaus.org/api/groovy/util/slurpersupport/GPathResult.html">GPathResult</a><br />
+<br />
+To change the content of a node, use <a href="http://groovy.codehaus.org/api/groovy/util/slurpersupport/GPathResult.html#replaceBody%28java.lang.Object%29">replaceBody()</a><br />
+<br />
+<br />
+For instance, with the XML file of the previous post, you can change a value of an element this way:<br />
+<br />
+<br />
+<pre name="code" class="brush: java">import groovy.xml.XmlUtil
+
+/*
+ * Lookup customization file
+ * Search //cus:envValueAssignments[(cus:envValueAssignments/xt:owner/xt:type/text() == $1 
+ *          AND //cus:envValueAssignments/xt:owner/xt:path/text() = $2)][xt:envValueType == $3]
+ * and replace their xt:value with $4
+ *  
+ */
+
+def customizations = new XmlSlurper().parse("ALSBCustomizationFile.xml").declareNamespace(xt: 'http://www.bea.com/wli/config/xmltypes',xsi: 'http://www.w3.org/2001/XMLSchema-instance', cus : 'http://www.bea.com/wli/config/customizations')
+
+//println XmlUtil.serialize( customizations )
+
+customizations.'cus:customization'.each {
+    println "UNO"
+ if (it.'@xsi:type' == "cus:EnvValueCustomizationType") {
+  println "TROVATO"
+  for (item in it.'cus:envValueAssignments') {
+   if (item.'xt:envValueType' == 'Service URI') {
+    println "ITEM Service URI, before is " + item.'xt:value'
+    item.'xt:value'.replaceBody("ciao")
+    println "ITEM Service URI, after  is " + item.'xt:value'
+   }
+  }
+ }
+}
+
+
+println XmlUtil.serialize( customizations )
+
+
+</pre><br />
+The document is actually updated the second time you print it.<br />
+<br />
+It was tough to figure this out, <a href="http://groovy.codehaus.org/Updating+XML+with+XmlSlurper">the official article</a> on "updating XML with XmlSlurper" suggests to simply assign:<br />
+<br />
+item.'xt:value' = "ciao"<br />
+<br />
+but it simply doesn't work

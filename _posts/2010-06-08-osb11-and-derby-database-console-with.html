@@ -1,0 +1,51 @@
+---
+layout: post
+title: "OSB, WebLogic and Derby Database Console with NetBeans"
+date: 2010-06-08T16:32:00.007+02:00
+permalink: /2010/06/osb11-and-derby-database-console-with.html
+blogger_id: "5534538460573016324"
+tags: ["derby", "llr", "osb11"]
+---
+After installation of OSB11, we get by default a DataSource connecting to this database:<br />
+<br />
+jdbc:derby://localhost:1527/<b>osbexamples</b>;create=true;ServerName=localhost;databaseName=osbexamples<br />
+<br />
+with driver<br />
+org.apache.derby.jdbc.ClientDriver<br />
+<br />
+user=DEV_SOAINFRA<br />
+<br />
+To connect a Console with NetBeans 6.8 do this:<br />
+<br />
+Window/Services<br />
+<br />
+open the Databases tab<br />
+<br />
+there should be already a jdbc:derby .../samples <br />
+<br />
+you can edit it (or create a new one) with these properties:<br />
+<br />
+URL: jdbc:derby://localhost:1527/osbexamples<br />
+Driver: org.apache.derby.jdbc.ClientDriver<br />
+Schema: APP<br />
+User: DEV_SOAINFRA<br />
+<br />
+in the schema DEV_SOAINFRA<br />
+you can open the table<br />
+<br />
+WL_LLR_ADMINSERVER which contains:<br />
+<br />
+XIDSTR&nbsp;&nbsp;&nbsp; POOLNAMESTR&nbsp;&nbsp;&nbsp; RECORDSTR<br />
+JDBC LLR Domain//Server&nbsp;&nbsp;&nbsp; JDBC LLR Domain//Server&nbsp;&nbsp;&nbsp; <b>osbdomain//AdminServer</b><br />
+JDBC LLR Version&nbsp;&nbsp;&nbsp; JDBC LLR Version&nbsp;&nbsp;&nbsp; 1.0<br />
+<br />
+where osbdomain is your domain name, and AdminServer your admin server name.<br />
+<br />
+So if you have multiple Weblogic Domains on the same machine, but only one instance of Derby running, you can create a new schema for a new user, and make sure that the second domain uses as a JDBC Pool user this new user, and update the "JDBC LLR Domain//Server" record with the name of your domain/adminserver.<br />
+<br />
+This shold fix the infamous exception:<br />
+<br />
+<br />
+<pre class="code">java.sql.SQLException: JDBC LLR, table verify failed for table 'WL_LLR_ADMINSERVER', row 
+'JDBC LLR Domain//Server' record had unexpected value 'my_domain2//AdminServer' expected&nbsp;</pre><pre class="code">'my_domain//AdminServer'</pre><pre class="code">&nbsp;</pre><pre class="code">&nbsp;</pre><pre class="code">An easier solution is to change (Wl Console : AdminServer/General/advanced options/JDBC LLR Table Name) the table name to use in LLR: the default is 
+WL_LLR_ADMINSERVER but you can change it to something else)</pre>

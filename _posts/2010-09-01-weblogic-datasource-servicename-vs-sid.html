@@ -1,0 +1,38 @@
+---
+layout: post
+title: "WebLogic Datasource: ServiceName vs SID"
+date: 2010-09-01T19:04:00.000+02:00
+permalink: /2010/09/weblogic-datasource-servicename-vs-sid.html
+blogger_id: "1201561860610495446"
+tags: ["Oracle"]
+blogger_comments:
+  - author: "Sudipto Desmukh"
+    date: 2011-05-11
+    html: "Thanks , you are a life saver !!"
+  - author: "Anonymous"
+    date: 2011-08-31
+    html: "Thanks a lot, you saved me a lot of trouble !"
+  - author: "confused"
+    date: 2011-12-22
+    html: "Thank u so much!! Your post has saved me..."
+  - author: "PexeD"
+    date: 2015-02-08
+    html: "I LOVE YOU!!!"
+---
+if your DB is setup to use a Service Name rather than a SID, the URL syntax is slightly different:<br />
+<br />
+<br />
+jdbc:oracle:thin:@1.2.3.4:1521/SERVICENAME<br />
+<br />
+instead of the usual <br />
+<br />
+jdbc:oracle:thin:@1.2.3.4:1521:SERVICENAME<br />
+<br />
+<br />
+If you make a mistake, you will get the dreaded<br />
+<pre>
+Connection test failed.
+Message icon - Error Listener refused the connection with the following error: ORA-12505, TNS:listener does not currently know of SID given in connect descriptor <br/>oracle.jdbc.driver.SQLStateMapping.newSQLException(SQLStateMapping.java:74)<br/>oracle.jdbc.driver.DatabaseError.newSQLException(DatabaseError.java:135)<br/>oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:203)<br/>oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:489)<br/>oracle.jdbc.driver.T4CConnection.logon(T4CConnection.java:439)<br/>oracle.jdbc.driver.PhysicalConnection.<init>(PhysicalConnection.java:640)<br/>oracle.jdbc.driver.T4CConnection.<init>(T4CConnection.java:205)<br/>oracle.jdbc.driver.T4CDriverExtension.getConnection(T4CDriverExtension.java:35)<br/>oracle.jdbc.driver.OracleDriver.connect(OracleDriver.java:554)<br/>oracle.jdbc.pool.OracleDataSource.getPhysicalConnection(OracleDataSource.java:388)<br/>oracle.jdbc.xa.client.OracleXADataSource.getPooledConnection(OracleXADataSource.java:645)<br/>oracle.jdbc.xa.client.OracleXADataSource.getXAConnection(OracleXADataSource.java:265)<br/>oracle.jdbc.xa.client.OracleXADataSource.getXAConnection(OracleXADataSource.java:141)<br/>com.bea.console.utils.jdbc.JDBCUtils.testConnection(JDBCUtils.java:550)<br/>com.bea.console.actions.jdbc.datasources.createjdbcdatasource.CreateJDBCDataSource.testConnectionConfiguration(CreateJDBCDataSource.java:458)<br/>sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br/>sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)<br/>sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)<br/>java.lang.reflect.Method.invoke(Method.java:597)<br/>org.apache.beehive.netui.pageflow.FlowController.invokeActionMethod(FlowController.java:870)<br/>...
+
+
+</pre>

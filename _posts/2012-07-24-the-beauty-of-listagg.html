@@ -1,0 +1,18 @@
+---
+layout: post
+title: "The beauty of LISTAGG"
+date: 2012-07-24T17:33:00.000+02:00
+permalink: /2012/07/the-beauty-of-listagg.html
+blogger_id: "6692580637762218939"
+tags: ["listagg", "oracledb"]
+---
+<a href="http://www.oracle-base.com/articles/misc/string-aggregation-techniques.php">http://www.oracle-base.com/articles/misc/string-aggregation-techniques.php</a><br />
+<br />
+I have been struggling for a while looking for a way to CHAIN (CONCAT) a column while GROUP BY another column.... <br />
+<br />
+Looked into "OVER (PARTITION BY deptno)" ...(oracle analytics) <br />
+Looked into STRAGG....<br />
+<br />
+LISTAGG does it in the simplest possible way. <br />
+<br />
+SELECT deptno, LISTAGG(ename, ',') WITHIN GROUP (ORDER BY ename) AS employees FROM   emp GROUP BY deptno;

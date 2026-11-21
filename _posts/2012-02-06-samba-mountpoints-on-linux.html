@@ -1,0 +1,45 @@
+---
+layout: post
+title: "SAMBA mountpoints on Linux"
+date: 2012-02-06T19:59:00.001+01:00
+permalink: /2012/02/samba-mountpoints-on-linux.html
+blogger_id: "6737425662288949010"
+tags: ["samba"]
+---
+How do I find out which SAMBA mountpounts I have on my box?<br />
+<br />
+Using mount you shall find some <a href="http://linux.die.net/man/8/mount.cifs">Common Internet File System (CIFS) </a> entries :<br />
+<br />
+[soa@hqchACMESOA104 ffmw]$ <b>mount</b><br />
+<br />
+/dev/mapper/rootvg-rootlv on / type ext3 (rw)<br />
+proc on /proc type proc (rw)<br />
+sysfs on /sys type sysfs (rw)<br />
+devpts on /dev/pts type devpts (rw,gid=5,mode=620)<br />
+/dev/mapper/rootvg-tmplv on /tmp type ext3 (rw)<br />
+/dev/mapper/rootvg-optlv on /opt type ext3 (rw)<br />
+/dev/mapper/rootvg-homelv on /home type ext3 (rw)<br />
+/dev/mapper/rootvg-varlv on /var type ext3 (rw)<br />
+/dev/cciss/c0d0p1 on /boot type ext3 (rw)<br />
+tmpfs on /dev/shm type tmpfs (rw)<br />
+none on /proc/sys/fs/binfmt_misc type binfmt_misc (rw)<br />
+sunrpc on /var/lib/nfs/rpc_pipefs type rpc_pipefs (rw)<br />
+//acme1999.ACME.com/zdata/ER/ACMESOA/3786 on /data/ffmw/ACME1 type <b>cifs</b> (rw,mand,noexec,nosuid,nodev)<br />
+//chornl1999.ACME.com/zdata/ER/ACMESOA/0983 on /data/ffmw/ACME2 type <b>cifs</b> (rw,mand,noexec,nosuid,nodev)<br />
+<br />
+<br />
+[soa@hqchACMESOA104 ffmw]$ <b>cat /etc/fstab</b><br />
+<br />
+/dev/rootvg/rootlv      /                       ext3    defaults        1 1<br />
+/dev/rootvg/tmplv       /tmp                    ext3    defaults        1 2<br />
+/dev/rootvg/optlv       /opt                    ext3    defaults        1 2<br />
+/dev/rootvg/homelv      /home                   ext3    defaults        1 2<br />
+/dev/rootvg/varlv       /var                    ext3    defaults        1 2<br />
+LABEL=/boot             /boot                   ext3    defaults        1 2<br />
+tmpfs                   /dev/shm                tmpfs   defaults        0 0<br />
+devpts                  /dev/pts                devpts  gid=5,mode=620  0 0<br />
+sysfs                   /sys                    sysfs   defaults        0 0<br />
+proc                    /proc                   proc    defaults        0 0<br />
+/dev/rootvg/swaplv      swap                    swap    defaults        0 0<br />
+//acme1999.ACME.com/zdata/ER/ACMESOA/3786 /data/ffmw/ACME1  <b>cifs</b>  rw,domain=ACME,username=CHAVEACMESOA,password=AVENes0a,auto,users     0 0<br />
+//emcal1999.ACME.com/zdata/ER/ACMESOA/0983 /data/ffmw/ACME2 <b>cifs</b>  rw,domain=ACME,username=CHORNACMESOA,password=ORNNes0a,auto,users     0 0

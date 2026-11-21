@@ -1,0 +1,54 @@
+---
+layout: post
+title: "UCP and RAC"
+date: 2015-09-11T11:38:00.002+02:00
+permalink: /2015/09/ucp-and-rac.html
+blogger_id: "4473333773874055594"
+blogger_comments:
+  - author: "Anonymous"
+    date: 2015-09-11
+    html: "Might be caused because of: <br />Caused by: oracle.net.ns.NetException: Listener refused the connection with the following error:<br />ORA-12516, TNS:listener could not find available handler with matching protocol stack"
+---
+If you configure a Gridlink Datasource with the wrong ServiceName, you might get:
+<br />
+<br />
+java.sql.SQLException: Pool connect failed : java.lang.ClassCastException: java.lang.Boolean cannot be cast to oracle.ucp.jdbc.oracle.OracleConnectionAffinityContext
+<br />
+<br />
+This is possibly one of the weirdest exceptions I have ever seen...spooky and unreal...
+<br />
+It turns out that the root cause could also be that tablespace is full, or other DB-related issues.... but it's NOT a WLS or Application issue (apart from being a useless error message...)
+
+<br />
+<br />
+If you wonder what the "ucp" means, it's a RAC-specific implementation of the more traditional connection pool :
+<a href="https://docs.oracle.com/cd/E11882_01/java.112/e12265/intro.htm#BABDIDGD">https://docs.oracle.com/cd/E11882_01/java.112/e12265/intro.htm#BABDIDGD</a>
+<br />
+<br />
+The way I understand it is that a UCP is a RAC-specific Connection Pool service running UNDER the WebLogic connection pool, and handling RAC-specific features like seamless recovery from node failures.
+<br />
+<br />
+
+PS the whole stacktrace is:
+
+<pre>
+
+Caused By: java.sql.SQLException: java.lang.ClassCastException: java.lang.Boolean cannot be cast to oracle.ucp.jdbc.oracle.OracleConnectionAffinityContext
+        at weblogic.jdbc.common.internal.JDBCUtil.wrapAndThrowResourceException(JDBCUtil.java:278)
+        at weblogic.jdbc.common.internal.RmiDataSource.getPoolConnection(RmiDataSource.java:503)
+        at weblogic.jdbc.common.internal.RmiDataSource.getConnectionInternal(RmiDataSource.java:594)
+        at weblogic.jdbc.common.internal.RmiDataSource.getConnection(RmiDataSource.java:545)
+        at weblogic.jdbc.common.internal.RmiDataSource.getConnection(RmiDataSource.java:538)
+        Truncated. see log file for complete stacktrace
+Caused By: java.lang.ClassCastException: java.lang.Boolean cannot be cast to oracle.ucp.jdbc.oracle.OracleConnectionAffinityContext
+        at oracle.ucp.jdbc.oracle.RACManagerImpl.selectConnectionPerRCLBAndAffinity(RACManagerImpl.java:2126)
+        at weblogic.jdbc.common.rac.internal.UCPRACModuleImpl.getConnection(UCPRACModuleImpl.java:269)
+        at weblogic.jdbc.common.internal.HAConnectionPool.reserve(HAConnectionPool.java:264)
+        at weblogic.jdbc.common.internal.ConnectionPoolManager.reserve(ConnectionPoolManager.java:137)
+        at weblogic.jdbc.common.internal.RmiDataSource.getPoolConnection(RmiDataSource.java:501)
+        Truncated. see log file for complete stacktrace
+
+
+</pre>
+
+

@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Apache WebLogic plugin and Apache"
+date: 2009-09-17T11:11:00.000+02:00
+permalink: /2009/09/apache-weblogic-plugin-and-apache.html
+blogger_id: "5900552985094162028"
+---
+it's important to use worker rather than prefork.<br /><br />See <a href="http://httpd.apache.org/docs/2.0/mod/worker.html">http://httpd.apache.org/docs/2.0/mod/worker.html</a><br /><br />If your configuration is like this one, you better rebuild Apache with the "worker" option:<br /><br />bash-2.05$ /usr/local/apache2/bin/httpd -V<br />Server version: Apache/2.0.59<br />Server built:   Aug 21 2006 04:19:58<br />Server's Module Magic Number: 20020903:12<br />Server loaded:  APR 0.9.12, APR-UTIL 0.9.12<br />Compiled using: APR 0.9.12, APR-UTIL 0.9.12<br />Architecture:   32-bit<br />Server compiled with....<br />-D <span style="font-weight:bold;">APACHE_MPM_DIR="server/mpm/prefork"</span><br />-D APR_HAS_SENDFILE<br />-D APR_HAS_MMAP<br />-D APR_HAVE_IPV6 (IPv4-mapped addresses enabled)<br />-D APR_USE_FCNTL_SERIALIZE<br />-D APR_USE_PTHREAD_SERIALIZE<br />-D SINGLE_LISTEN_UNSERIALIZED_ACCEPT<br />-D APR_HAS_OTHER_CHILD<br />-D AP_HAVE_RELIABLE_PIPED_LOGS<br />-D HTTPD_ROOT="/usr/local/apache2"<br />-D SUEXEC_BIN="/usr/local/apache2/bin/suexec"<br />-D DEFAULT_PIDLOG="logs/httpd.pid"<br />-D DEFAULT_SCOREBOARD="logs/apache_runtime_status"<br />-D DEFAULT_LOCKFILE="logs/accept.lock"<br />-D DEFAULT_ERRORLOG="logs/error_log"<br />-D AP_TYPES_CONFIG_FILE="conf/mime.types"<br />-D SERVER_CONFIG_FILE="conf/httpd.conf"<br /><br /><br />bash-2.05$ /usr/local/apache2/bin/httpd -l<br />Compiled in modules:<br /> core.c<br /> prefork.c<br /> http_core.c<br /> mod_so.c

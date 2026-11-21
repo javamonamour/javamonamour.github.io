@@ -1,0 +1,27 @@
+---
+layout: post
+title: "axis2 EndpointReference"
+date: 2010-06-12T13:44:00.000+02:00
+permalink: /2010/06/axis2-endpointreference.html
+blogger_id: "4256748585050978731"
+tags: ["Axis2"]
+---
+To point your Axis2 client stub to any server: <br />
+<br />
+<b>&nbsp;&nbsp;&nbsp; private static final String SERVER_NAME = "localhost:7001";</b><br />
+<br />
+&nbsp;&nbsp; &nbsp;private static final String TARGET_ENDPOINT = "http://" + SERVER_NAME + "//GEO_OSB_Portal/PS/GeoOsbServicePS";<br />
+<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp; /**<br />
+&nbsp;&nbsp;&nbsp; &nbsp;* Return a valid instance of a Stub, ready to invoke methods<br />
+&nbsp;&nbsp;&nbsp; &nbsp;* @return<br />
+&nbsp;&nbsp;&nbsp; &nbsp;* @throws AxisFault<br />
+&nbsp;&nbsp;&nbsp; &nbsp;*/<br />
+&nbsp;&nbsp;&nbsp; private GeoOsbServiceStub getStub() throws AxisFault {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; GeoOsbServiceStub stub = new GeoOsbServiceStub();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; EndpointReference targetEpr = new <b>EndpointReference</b>(TARGET_ENDPOINT);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; stub._getServiceClient().setTargetEPR(targetEpr );<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return stub;<br />
+&nbsp;&nbsp;&nbsp; }

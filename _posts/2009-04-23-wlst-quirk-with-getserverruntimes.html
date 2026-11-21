@@ -1,0 +1,19 @@
+---
+layout: post
+title: "WLST quirk with getServerRuntimes()"
+date: 2009-04-23T09:47:00.000+02:00
+permalink: /2009/04/wlst-quirk-with-getserverruntimes.html
+blogger_id: "6675812017046576256"
+tags: ["WLST"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2010-03-15
+    html: "actually I am also fighting with WebIllogic DisIntegration... war on multiple fronts... the troops are exhausted."
+  - author: "vernetto"
+    date: 2010-03-15
+    html: "sorry lava, I really have no energies to troubleshoot this issue, I&#39;m already fighting with WebIllogic WebService security and bleeding too much... <br />Wow fantastic you live in Kathmandu, I really envy you, must be fantastic over there."
+  - author: "Anonymous"
+    date: 2010-03-15
+    html: "I tried the logic to find JDBCRuntime Objects but it shows 0 in has Next. Could you elaborate further ?  I use spring.jar in weblogic application to connect to my db server."
+---
+this:<br /><br /><pre style="font-style: italic; font-family: arial;"><span style="font-size:100%;">connect(username,password,url)<br /><br />domainRuntime()<br /></span></pre><span style="font-family: arial;font-size:100%;" ><span style="font-style: italic;">cmo.getServerRuntimes()</span></span><br /><br />will not work! Don't ask me why.<br /><br />use instead:<br /><br /><pre>domainRuntimeService.getServerRuntimes()<br /><br />domainRuntimeService is a WLST predefined variable.<br />Strange, uh?<br /><br /><br /><br /></pre>

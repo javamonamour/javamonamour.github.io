@@ -1,0 +1,63 @@
+---
+layout: post
+title: "DIA-48315: ADR unavailable"
+date: 2013-06-08T16:58:00.001+02:00
+permalink: /2013/06/dia-48315-adr-unavailable.html
+blogger_id: "575952635817707452"
+---
+After an incident occurs, creation of the 
+
+
+<pre>
+oracle.dfw.incident.IncidentCreationException: DFW-40116: failure creating incident
+Cause: DFW-40112: There was an error executing adrci commands; the following errors have been found "DIA-48315: ADR unavailable
+DIA-48315: ADR unavailable
+DIA-48315: ADR unavailable
+"
+Action: Ensure that command line tool "adrci" can be executed from the command line.
+        at oracle.dfw.impl.incident.DiagnosticsDataExtractorImpl.createADRIncident(DiagnosticsDataExtractorImpl.java:933)
+        at oracle.dfw.impl.incident.DiagnosticsDataExtractorImpl.createIncident(DiagnosticsDataExtractorImpl.java:298)
+        at oracle.dfw.spi.weblogic.JMXWatchNotificationListener.handleNotification(JMXWatchNotificationListener.java:259)
+        at com.sun.jmx.interceptor.DefaultMBeanServerInterceptor$ListenerWrapper.handleNotification(DefaultMBeanServerInterceptor.ja
+va:1732)
+        at javax.management.NotificationBroadcasterSupport.handleNotification(NotificationBroadcasterSupport.java:257)
+        at javax.management.NotificationBroadcasterSupport$SendNotifJob.run(NotificationBroadcasterSupport.java:322)
+        at javax.management.NotificationBroadcasterSupport$1.execute(NotificationBroadcasterSupport.java:307)
+        at javax.management.NotificationBroadcasterSupport.sendNotification(NotificationBroadcasterSupport.java:229)
+        at weblogic.management.jmx.modelmbean.WLSModelMBean.sendNotification(WLSModelMBean.java:828)
+        at weblogic.diagnostics.watch.JMXNotificationProducer.postJMXNotification(JMXNotificationProducer.java:79)
+        at weblogic.diagnostics.watch.JMXNotificationProducer.sendNotification(JMXNotificationProducer.java:104)
+        at com.bea.diagnostics.notifications.JMXNotificationService.send(JMXNotificationService.java:122)
+        at weblogic.diagnostics.watch.JMXNotificationListener.processWatchNotification(JMXNotificationListener.java:103)
+        at weblogic.diagnostics.watch.Watch.performNotifications(Watch.java:621)
+        at weblogic.diagnostics.watch.Watch.evaluateLogRuleWatch(Watch.java:546)
+        at weblogic.diagnostics.watch.WatchManager.evaluateLogEventRulesAsync(WatchManager.java:792)
+        at weblogic.diagnostics.watch.WatchManager.run(WatchManager.java:552)
+        at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+Caused By: oracle.dfw.common.DiagnosticsException: DFW-40112: failed to execute the adrci commands "create home base="/opt/oracle/domains/osbts4do/servers/osbts4ms1/adr" product_type=ofm product_id=osbts4do instance_id=osbts4ms1
+debug ami 72
+set base /opt/oracle/domains/osbts4do/servers/osbts4ms1/adr
+set homepath diag/ofm/osbts4do/osbts4ms1
+create incident problem_key="BEA-101017 [HTTP][javax.servlet.ServletException]" error_facility="BEA" error_number=101017 error_message="null" create_time="2013-06-07 14:33:20.516 +02:00" ecid="87e67e9e23221171:-2788ccc2:13f1e8879ce:-8000-000000000000006c"
+"
+Cause: There was an error executing adrci commands; the following errors have been found "DIA-48315: ADR unavailable
+DIA-48315: ADR unavailable
+DIA-48315: ADR unavailable
+
+
+
+</pre>
+
+See <a href="http://docs.oracle.com/cd/B28359_01/server.111/b28319/adrci.htm">http://docs.oracle.com/cd/B28359_01/server.111/b28319/adrci.htm</a>
+
+<br/>
+
+We are still investigating this issue.
+<br/>
+
+
+
+
+

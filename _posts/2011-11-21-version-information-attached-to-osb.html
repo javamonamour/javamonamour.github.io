@@ -1,0 +1,34 @@
+---
+layout: post
+title: "Version Information attached to a OSB Service/Project"
+date: 2011-11-21T20:27:00.002+01:00
+permalink: /2011/11/version-information-attached-to-osb.html
+blogger_id: "6815646207534061589"
+tags: ["OSB", "versioning"]
+---
+If your customer he asks you "which version of a given service to we have in the TST environment?" you want to give him a 100% safe answer.<br />
+<br />
+So you better find a way to return this info in a API.<br />
+<br />
+Here is a way:<br />
+<br />
+in each project (say POCVersioning), write a GetVersion proxy service:<br />
+<br />
+Request  Message Type = None<br />
+Response Message Type = XML<br />
+<br />
+Replace [ node contents ] of [ . ] in [ body ] with XQuery Resource <b>version</b><br />
+<br />
+where "version" is a XQuery function like this:<br />
+<br />
+&lt;version&gt;37&lt;/version&gt;<br />
+<br />
+At this point you can invoke from the browser<br />
+<br />
+http://localhost:7011/POCVersioning/GetVersion<br />
+<br />
+and you get back the &lt;version&gt;37&lt;/version&gt;  XML<br />
+<br />
+Sounds silly? Maybe, but it saves a lot of trouble.<br />
+<br />
+Of course, you want to assign automatically the version number in the automated build process (Hudson, Bamboo...) using some Maven/Ant/whatever versioning mechanism. Or just maintain it manually.

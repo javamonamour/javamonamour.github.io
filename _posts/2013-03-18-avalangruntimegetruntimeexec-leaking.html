@@ -1,0 +1,66 @@
+---
+layout: post
+title: "java.lang.Runtime.getRuntime().exec leaking pipes"
+date: 2013-03-18T14:39:00.002+01:00
+permalink: /2013/03/avalangruntimegetruntimeexec-leaking.html
+blogger_id: "8903333308809061760"
+tags: ["lsof"]
+---
+I do this in a WebApp in Tomcat:
+
+<pre>
+Process proc = java.lang.Runtime.getRuntime().exec("generateSQLDeveloperConnections.sh");
+proc.waitFor();
+</pre>
+
+<br/><br/>
+
+but apparently according to this post: 
+<a href="http://mark.koli.ch/2011/01/leaky-pipes-remember-to-close-your-streams-when-using-javas-runtimegetruntimeexec.html">http://mark.koli.ch/2011/01/leaky-pipes-remember-to-close-your-streams-when-using-javas-runtimegetruntimeexec.html</a>
+
+this can leak resources.
+
+<br/><br/>
+To investigate, I run the PRICELESS lsof on the Tomcat pid 12193:
+<br/><br/>
+/usr/sbin/lsof -a -p 12193
+<br/><br/>
+and I notice after each run of getRuntime().exec 3 extra pipes:
+<br/><br/>
+
+<pre>
+java    12193  soa   76w  FIFO      0,6      0t0 14925870 pipe
+java    12193  soa   77r  FIFO      0,6      0t0 14925871 pipe
+java    12193  soa   79r  FIFO      0,6      0t0 14925872 pipe
+</pre>
+
+<br/><br/>
+
+who are never closed.
+
+<br/><br/>
+
+I will definitely add the code
+
+<br/><br/>
+<pre name="code" class="brush: java">
+import static org.apache.commons.io.IOUtils.closeQuietly;
+
+Process p = null;
+try {
+  p = Runtime.getRuntime().exec(...);
+  // Do something with p.
+} finally {
+  if(p != null) {
+    closeQuietly(p.getOutputStream());
+    closeQuietly(p.getInputStream());
+    closeQuietly(p.getErrorStream());
+  }
+}
+
+</pre>
+
+
+
+and see if this takes care of the issue.
+

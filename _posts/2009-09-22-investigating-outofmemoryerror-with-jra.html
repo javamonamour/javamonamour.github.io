@@ -1,0 +1,16 @@
+---
+layout: post
+title: "Investigating OutOfMemoryError with JRA recording"
+date: 2009-09-22T17:17:00.000+02:00
+permalink: /2009/09/investigating-outofmemoryerror-with-jra.html
+blogger_id: "3294921028956816519"
+tags: ["jrockit", "OutOfMemoryError"]
+---
+<a href="/images/5f163d14a5180759.png" onblur="try {parent.deselectBloggerImageGracefully();} catch(e) {}"><img alt="" border="0" id="BLOGGER_PHOTO_ID_5384312192732508034" src="/images/ee8205b85d02a7ed.png" style="cursor: pointer; float: left; height: 245px; margin: 0pt 10px 10px 0pt; width: 320px;" /></a><br />
+enter JRMC and connect to your server;<br />
+<br />
+connect the console, click on MBean, Triggers, Add... java.lang:type=Memory, HeapMemoryUsage#used<br />
+set your threshold (in bytes)<br />
+<br />
+as action, set "start jra recording"  and give a meaningful file name.<br />
+This way when your memory threshold is exceeded you will be able to examine what is going on, even hours after the incident.

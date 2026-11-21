@@ -1,0 +1,61 @@
+---
+layout: post
+title: "Functions vs Components in React, and useState"
+date: 2023-04-07T17:48:00.004+02:00
+permalink: /2023/04/functions-vs-components-in-react-and.html
+blogger_id: "659780696033501251"
+tags: ["react"]
+---
+useState example:
+<br/>
+<pre>
+import React, {useState} from 'react'
+
+export default function Counter({initialCount}) {
+    const [count, setCount] = useState(initialCount)
+    return (
+        &lt;div>
+            &lt;button onClick = {() => setCount(prevCount => prevCount - 1)}>-&lt;/button>
+            &lt;span>{count}&lt;/span>
+            &lt;button onClick = {() => setCount(prevCount => prevCount + 1)}>+&lt;/button>
+        &lt;/div>
+    )
+}
+</pre>
+<br/><br/>
+
+
+same thing using Component
+<br/><br/>
+<pre>
+
+import React, { Component } from 'react'
+
+export default class Counter extends Component {
+
+    constructor(props){
+        super(props);
+        this.state = {
+            count: props.initialCount
+        }
+    }
+
+    render() {
+        return (
+            &lt;div>
+                &lt;button onClick={() => this.changeCount(-1)}>-&lt;/button>
+                &lt;span>{this.state.count}&lt;/span>
+                &lt;button onClick={() => this.changeCount(1)}>+&lt;/button>
+            &lt;/div>
+        )
+    }
+
+    changeCount(amount) {
+        this.setState(prevState => {return { count: prevState.count + amount}})
+    }
+
+}
+
+</pre>
+
+

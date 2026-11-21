@@ -1,0 +1,70 @@
+---
+layout: post
+title: "java.lang.NoClassDefFoundError: oracle/integration/platform/kernel/FabricMeshUtils"
+date: 2012-06-03T15:51:00.003+02:00
+permalink: /2012/06/javalangnoclassdeffounderror.html
+blogger_id: "2464507700886627363"
+tags: ["FileAdapter", "JCA", "OSB"]
+---
+We often get this error while using OSB with JCA File Adapter:<br />
+<br />
+<pre>java.lang.NoClassDefFoundError: oracle/integration/platform/kernel/FabricMeshUtils
+        at oracle.tip.adapter.file.inbound.FileListDAO.<init>(FileListDAO.java:188)
+        at oracle.tip.adapter.file.inbound.PollWork.<init>(PollWork.java:236)
+        at oracle.tip.adapter.file.FileResourceAdapter.endpointActivation(FileResourceAdapter.java:222)
+        at oracle.tip.adapter.sa.impl.fw.jca.AdapterFrameworkImpl.endpointActivation(AdapterFrameworkImpl.java:498)
+        at oracle.tip.adapter.sa.impl.inbound.JCABindingActivationAgent.activateEndpoint(JCABindingActivationAgent.java:336)
+        at oracle.tip.adapter.sa.impl.JCABindingServiceImpl.activate(JCABindingServiceImpl.java:113)
+</init></init></pre><br />
+<br />
+the class is in C:\Oracle\Middleware\jdeveloper\soa\modules\oracle.soa.fabric_11.1.1\fabric-runtime.jar<br />
+<br />
+or in<br />
+C:\Oracle\Middleware\Oracle_SOA1\soa\modules\oracle.soa.fabric_11.1.1\fabric-runtime.jar<br />
+<br />
+(better use the latter...)<br />
+<br />
+<br />
+and in oracle.tip.adapter.file.inbound.FileListDAO there is clearly a dependency:<br />
+import oracle.integration.platform.blocks.FabricConfigManager;<br />
+import oracle.integration.platform.kernel.FabricMeshUtils;<br />
+<br />
+<br />
+<br />
+When loading this class fails, you will see in the logs "Unable to retrieve database info"<br />
+<br />
+After adding the fabric-runtime.jar file to $DOMAIN_HOME/lib, I still get:<br />
+<br />
+<br />
+<i><br />
+<br />
+While trying to lookup 'soa-infra:comp.ApplicationContext' didn't find subcontext 'soa-infra:comp'. Resolved ''<br />
+javax.naming.NameNotFoundException: While trying to lookup 'soa-infra:comp.ApplicationContext' didn't find subcontext 'soa-infra:comp'. Resolved ''; remaining name 'soa-infra:comp/ApplicationContext'<br />
+at weblogic.jndi.internal.BasicNamingNode.newNameNotFoundException(BasicNamingNode.java:1139)<br />
+at weblogic.jndi.internal.BasicNamingNode.lookupHere(BasicNamingNode.java:247)<br />
+at weblogic.jndi.internal.ServerNamingNode.lookupHere(ServerNamingNode.java:182)<br />
+at weblogic.jndi.internal.BasicNamingNode.lookup(BasicNamingNode.java:206)<br />
+at weblogic.jndi.internal.WLEventContextImpl.lookup(WLEventContextImpl.java:254)<br />
+at weblogic.jndi.internal.WLContextImpl.lookup(WLContextImpl.java:411)<br />
+at javax.naming.InitialContext.lookup(InitialContext.java:392)<br />
+at oracle.integration.platform.kernel.FabricMeshUtils.getApplicationContext(FabricMeshUtils.java:57)<br />
+at oracle.tip.adapter.file.inbound.FileListDAO.&lt;init&gt;(FileListDAO.java:188)<br />
+at oracle.tip.adapter.file.inbound.PollWork.&lt;init&gt;(PollWork.java:236)<br />
+at oracle.tip.adapter.file.FileResourceAdapter.endpointActivation(FileResourceAdapter.java:222)<br />
+at oracle.tip.adapter.sa.impl.fw.jca.AdapterFrameworkImpl.endpointActivation(AdapterFrameworkImpl.java:498)<br />
+at oracle.tip.adapter.sa.impl.inbound.JCABindingActivationAgent.activateEndpoint(JCABindingActivationAgent.java:336)<br />
+at oracle.tip.adapter.sa.impl.JCABindingServiceImpl.activate(JCABindingServiceImpl.java:113)<br />
+at com.bea.wli.sb.transports.jca.binding.JCATransportInboundOperationBindingServiceImpl.activateService(JCATransportInboundOperationBindingServiceImpl.java:325)<br />
+<br />
+<br />
+</i><br />
+<br />
+<br />
+<br />
+RESOLUTION: we decided to ignore this message, if you want to configure the FileAdapter for useCompression you can do so with the JCA Activation Properties.<br />
+I assume all works fine in SOA Suite, where the FabricMeshUtils is surely available in the classpath.<br />
+<br />
+<br />
+<br />
+In fact, further investigation proves that the only side effect of this error is that the useCompression (default: false) flag can be set only using the JCA Activation Properties, and not with a DB value (in any case OSB doesn't use any DB to store configuration information).<br />
+

@@ -1,0 +1,74 @@
+---
+layout: post
+title: "Java SOAP with Attachment in WebLogic"
+date: 2014-08-06T14:30:00.003+02:00
+permalink: /2014/08/java-soap-with-attachment-in-weblogic.html
+blogger_id: "441982357173014002"
+---
+This is some code which more or less works:
+<br /><br />
+
+<pre class="brush: java">
+import javax.xml.soap.*;
+import java.net.URL;
+
+String POSTTOURL = "http://yourhost:yourport/yourservice";
+
+MessageFactory factory = MessageFactory.newInstance();
+SOAPMessage message = factory.createMessage();
+SOAPPart soapPart = message.getSOAPPart();
+SOAPEnvelope envelope = soapPart.getEnvelope();
+SOAPHeader header = envelope.getHeader();
+SOAPBody body = envelope.getBody();
+...
+set the body content here
+...
+SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+SOAPConnection connection = soapConnectionFactory.createConnection();
+java.net.URL endpoint = new URL(POSTTOURL);
+SOAPMessage soapResponse = connection.call(message, endpoint);
+out.write("soapResponse=" + soapResponse.getSOAPBody().toString());
+
+</pre>
+
+
+<br />
+
+The above code without any "body content" will generate this:
+<br />
+<pre class="brush: xml">
+&lt;soapenv:Body xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"/>"
+ operation="null"
+ attachments="&lt;con:attachments xmlns:con="http://www.bea.com/wli/sb/context"/>"
+ outbound="null"
+ fault="null"
+ inbound="&lt;con:endpoint name="BLA" xmlns:con="http://www.bea.com/wli/sb/context">
+  &lt;con:service/>
+  &lt;con:transport/>
+  &lt;con:security/>
+&lt;/con:endpoint>"
+ header="&lt;soapenv:Header xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"/>
+
+</pre>
+<br />
+<br />
+<br />
+I got this error message:
+<br />
+<code>This class does not support SAAJ 1.1</code><br />
+<br />
+Adding this in the setDomainEnv.sh for JAVA_OPTIONS seems to fix it:
+<br />
+<code>-Djavax.xml.soap.MessageFactory=weblogic.xml.saaj.MessageFactoryImpl</code><br />
+<br />
+<br />
+See also document "Receive the Error "This Class Does Not Support SAAJ 1.1" when Running a P6 Web Services Application (Doc ID 1297252.1)" where they recommend:
+<br />
+<pre>
+JAVA_OPTIONS="${SAVE_JAVA_OPTIONS} 
+-Djavax.xml.soap.MessageFactory=com.sun.xml.messaging.saaj.soap.ver1_1.SOAPMessageFactory1_1Impl 
+-Djavax.xml.soap.SOAPConnectionFactory=weblogic.wsee.saaj.SOAPConnectionFactoryImpl"
+</pre>
+<br /><br />
+
+

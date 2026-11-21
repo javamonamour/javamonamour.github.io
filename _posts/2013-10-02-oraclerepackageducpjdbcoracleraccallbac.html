@@ -1,0 +1,29 @@
+---
+layout: post
+title: "oracle.repackaged.ucp.jdbc.oracle.RACCallbackGuard"
+date: 2013-10-02T09:21:00.001+02:00
+permalink: /2013/10/oraclerepackageducpjdbcoracleraccallbac.html
+blogger_id: "3236780529103380405"
+tags: ["OracleRAC"]
+---
+today we saw this in the logs:
+
+<pre>
+
+####&lt;Oct 2, 2013 8:47:23 AM CEST> &lt;Warning>
+ &lt;oracle.repackaged.ucp.jdbc.oracle.RACCallbackGuard> &lt;acme111>
+ &lt;osbpr1ms4> &lt;Thread-100> &lt;&lt;anonymous>> &lt;> 
+&lt;0000K5o7QgvE4Uk5ozS4yY1IIgWK000003> &lt;1380696443473> &lt;BEA-000000> 
+&lt;RAC callback: guarded method threw exception>
+
+
+</pre>
+
+<br/>
+
+no idea what happened.... it could be a RAC instance dead and TX being switched to another instance... still under investigation...<br/>
+<br/>
+
+Ok, what happened is that the DBA team started the second node of the RAC cluster, and the JDBCDrivers somehow got the notification, but something must have gone wrong.<br/>
+
+

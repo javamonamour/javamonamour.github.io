@@ -1,0 +1,55 @@
+---
+layout: post
+title: "XQuery: Binary search on sorted collection"
+date: 2012-07-17T08:48:00.000+02:00
+permalink: /2012/07/xquery-binary-search-on-sorted.html
+blogger_id: "9179569303228950156"
+tags: ["XQuery"]
+---
+Big problem with XQuery is that - unlike SQL - it doesn't allow you to specify indexes on a collection of elements. All searches are "full table scan". What a pain. Performance becomes ridiculous when the elements of a collection are numerous.<br />
+<br />
+An improvement can be obtained by sorting the collection with a "order by PK" (PK being the field on which you plan to perform your search), and using a recursive binary search on the collection:<br />
+<br />
+<pre name="code" class="brush: java">
+xquery version "1.0" encoding "Cp1252";
+
+declare namespace xf = "http://tempuri.org/FindPrice/";
+
+
+declare function xf:FindPriceBinarySearch($loopDepth as xs:integer, $intProdId as xs:string, $prices as element()*, $startIndex as xs:integer, $endIndex as xs:integer)
+    as element() {
+        let $middleIndex := xs:integer(  xs:integer(($endIndex - $startIndex) div 2) + xs:integer($startIndex)) 
+        let $middleElement := $prices[$middleIndex]
+        let $middleProductId := $middleElement/product_id/text()
+        return
+        if ($loopDepth < 15 and $middleProductId < $intProdId) then
+         xf:FindPriceBinarySearch($loopDepth + 1, $intProdId, $prices, $middleIndex, $endIndex)
+        else if ($loopDepth < 15 and $middleProductId > $intProdId) then
+           xf:FindPriceBinarySearch($loopDepth+ 1, $intProdId, $prices, $startIndex, $middleIndex)
+        else
+         $middleElement
+          
+};
+
+declare function xf:FindPrice($intProdId as xs:string, $prices as element())
+    as element() {
+        xf:FindPriceBinarySearch(0, $intProdId, $prices//price, 1, count($prices//price))
+};
+
+declare variable $product_id as xs:string external;
+declare variable $prices as element() external;
+
+xf:FindPrice($product_id, $prices)
+</pre><br />
+<br />
+this xquery will ALMOST work (I know it doesn't find elements at the end of the collection :o( ), the input being:<br />
+<br />
+<br />
+&lt;prices><br />
+&lt;price><br />
+&lt;product_id>AAA&lt;/product_id><br />
+&lt;/price><br />
+&lt;price><br />
+&lt;product_id>BBB&lt;/product_id><br />
+&lt;/price><br />
+&lt;/prices>

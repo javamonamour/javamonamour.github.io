@@ -1,0 +1,53 @@
+---
+layout: post
+title: "Stderr: VBoxManage.exe: error: Could not rename the directory"
+date: 2013-08-24T12:20:00.000+02:00
+permalink: /2013/08/stderr-vboxmanageexe-error-could-not.html
+blogger_id: "5274146242707583449"
+tags: ["vagrant"]
+---
+I am not a big fan of Vagrant, its behavior is way too erratic and opaque for me. When it works we are happy, when it fails - and it fails way too often - we are left googling sparse and stern documentation.
+<br/><br/>
+
+This new error "Stderr: VBoxManage.exe: error: Could not rename the directory" could be fixed only after LOTS of googling and trial and error:
+
+<br/><br/>
+
+<pre>
+Vagrant.configure("2") do |config2|
+  # ... (other config)
+  config2.vm.provider :virtualbox do |vb|
+      vb.name = "jkstest"
+  end
+end
+</pre>
+
+<br/><br/>
+
+This should be added just after the config.vm.box_url clause, and BEFORE any customize.
+
+<br/><br/>
+
+How frustrating.<br/><br/>
+Despite this settings, my VB is created in C:\Users\myuser\VirtualBox VMs\workspaceJKS_1377339021, rather than in the jkstest folder. <br/><br/>
+
+
+The original error message was:
+<pre>
+There was an error while executing `VBoxManage`, a CLI used by Vagrant
+for controlling VirtualBox. The command and stderr is shown below.
+
+Command: ["modifyvm", "3a81f6e5-ba5a-438b-85a8-501a63a3a053", "--name", "trunk_1377853840"]
+
+Stderr: VBoxManage.exe: error: Could not rename the directory 'C:\Users\pippo\VirtualBox VMs\acme-basebox' to
+'C:\Users\pippo\VirtualBox VMs\trunk_1377853840' to save the settings file (VERR_ACCESS_DENIED)
+VBoxManage.exe: error: Details: code E_FAIL (0x80004005), component SessionMachine, interface IMachine, callee IUnknown
+VBoxManage.exe: error: Context: "SaveSettings()" at line 2527 of file VBoxManageModifyVM.cpp
+
+</pre>
+
+In fact, there was another VBOX running, which had been created with the name "acme-basebox" (this is the setting config.vm.box = "acme-basebox" . Shutting down this machine allowed me to start the other without the above mentioned hack.
+
+
+
+

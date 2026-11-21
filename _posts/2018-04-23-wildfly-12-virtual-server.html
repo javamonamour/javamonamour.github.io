@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Wildfly 12 virtual-server "
+date: 2018-04-23T07:42:00.000+02:00
+permalink: /2018/04/wildfly-12-virtual-server.html
+blogger_id: "1083594344695510331"
+---
+<a href="http://www.mastertheboss.com/jboss-web/jbosswebserver/how-to-deploy-a-web-application-on-the-root-context-on-jboss-as-7">http://www.mastertheboss.com/jboss-web/jbosswebserver/how-to-deploy-a-web-application-on-the-root-context-on-jboss-as-7<br />
+</a><br />
+<br />
+Schemas for the standalone.xml can be found in D:\apps\wildfly12\docs\schema<br />
+<br />
+For the undertow (former web) subsystem, use wildfly-undertow_5_0.xsd<br />
+<br />
+<xs:attribute name="default-virtual-host" type="xs:string" default="default-host"/><br />
+<br />
+and the virtual-server is defined in jboss-as-web_2_2.xsd (which is JBoss AS, not Wildfly)<br />
+<br />
+<br />
+This CLI:<br />
+/subsystem=undertow:write-attribute(name=default-virtual-host, value=default-host)<br />
+adds default-virtual-host="default-host" to the line subsystem xmlns="urn:jboss:domain:undertow:5.0"  in config.xml<br />
+<br />
+subsystem xmlns="urn:jboss:domain:undertow:5.0" <br />
+<br />
+<br />
+<br />
+<br />
+Very helpful: <a href="https://docs.jboss.org/author/display/WFLY10/CLI+Recipes">https://docs.jboss.org/author/display/WFLY10/CLI+Recipes</a>

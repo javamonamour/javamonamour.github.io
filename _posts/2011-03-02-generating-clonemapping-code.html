@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Generating clone/mapping code"
+date: 2011-03-02T15:08:00.002+01:00
+permalink: /2011/03/generating-clonemapping-code.html
+blogger_id: "1349794463856036018"
+tags: ["clone"]
+---
+If you find yourself typing manually boring mapping code, there is something wrong.<br />
+<br />
+Either install an Eclipse plugin to generate the code for you, <br />
+or use Dozer,<br />
+or write a script to generate the code for you.<br />
+<br />
+Here is a simple example of such a script (it's Groovy but it's basically Java)<br />
+<br />
+<pre name="code" class="brush: java">package com.pierre
+
+import java.lang.reflect.Method
+
+class CloneGenerator {
+
+ static main(args) {
+  Class clazz = Class.forName("com.acme.mypackage.MyClass")
+  for (Method m : clazz.getMethods()) {
+   if (m.getName().startsWith("get")) {
+    String attribute = m.getName().substring(3); 
+    println("objectDestination.set" + attribute + "(objectSource.get" + attribute + "());")
+   }
+  }
+ }
+
+}
+
+</pre>

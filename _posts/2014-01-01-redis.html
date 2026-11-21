@@ -1,0 +1,49 @@
+---
+layout: post
+title: "Redis"
+date: 2014-01-01T22:14:00.002+01:00
+permalink: /2014/01/redis.html
+blogger_id: "3794731499474698359"
+tags: ["redis"]
+---
+Training here http://try.redis.io/
+<br/>
+To install:
+<br/><br/>
+<b>yum install redis</b>
+<br/>
+<b>vi /etc/redis.conf</b>
+<br/>
+comment out the "bind 127.0.0.1" line
+<br/>
+<b>/usr/sbin/redis-server /etc/redis.conf</b>
+<br/>
+<pre>
+ps -ef | grep redis
+root      4092     1  0 21:27 ?        00:00:00 /usr/sbin/redis-server /etc/redis.conf
+</pre>
+<br/><br/>
+<b>/usr/bin/redis-cli ping</b>
+<br/>
+PONG
+<br/><br/>
+
+<b>netstat -an | grep 6379</b>
+<pre>
+tcp        0      0 0.0.0.0:6379                0.0.0.0:*                   LISTEN
+</pre>
+<br/><br/>
+
+
+if in /etc/redis.conf you specify a "bind IP" (IP=10.0.2.159 then you have to use the -h option:
+<br/>
+<b>/usr/bin/redis-cli -h 10.0.2.15 shutdown</b>
+<br/><br/>
+
+
+you can issue several commands:<br/>
+set key value<br/>
+get key<br/>
+incr key<br/><br/>
+
+

@@ -1,0 +1,36 @@
+---
+layout: post
+title: "OSB load test on AnyXML interface with SOAPUI"
+date: 2012-04-10T10:34:00.002+02:00
+permalink: /2012/04/osb-load-test-on-anyxml-interface-with.html
+blogger_id: "473706377275136799"
+tags: ["OSB", "soapui"]
+---
+Open SOAPUI <br />
+File/ New Project<br />
+Enter a project name (eg PIPPOLoadTest) and leave everything else empty<br />
+<br />
+create project <br />
+<br />
+right click on project<br />
+New REST Service - leave checked the "Open dialog to create a REST Resource"<br />
+<br />
+Resource name - enter MyTest1, and enter endpoint URI for your Proxy Service<br />
+<br />
+New Rest Method - choose HTTP Method = POST<br />
+<br />
+You will get this window - in the bottom left you can paste your XML payload (it's NOT a SOAP message, so you should not have the soap:envelope nor soap:body tags)<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/37ec362b996a465e.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="370" src="/images/af0886aee10caf25.jpg" width="640" /></a></div><br />
+<br />
+Test the service with the payload. If it works, then we are ready to create the TestSuite.<br />
+<br />
+Right click on project, "Generate Test Suite", select resources (the above created MyTest1), select "generate a default LoadTest for each created TestCase"<br />
+<br />
+This creates the TestSuite. You can open the LoadTest and change parameters (Threads, delay...)<br />
+<br />
+<br />
+On your OSB project, select your Proxy Service, Operational Parameters, enable monitoring with 1 minute aggregation level, Action level.<br />
+<br />
+Start your SOAPUI Load Test. <br />
+<br />
+Go to Operations, Service Health, Action Metrics and you will have a detailed analysis of average time taken by action.

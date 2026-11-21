@@ -1,0 +1,38 @@
+---
+layout: post
+title: "the crazy story of securerandom.source=file:/dev/./urandom"
+date: 2014-04-24T10:26:00.000+02:00
+permalink: /2014/04/the-crazy-story-of-securerandomsourcefi.html
+blogger_id: "6788543285038367079"
+tags: ["java"]
+---
+More or less everybody know that if SSL encryption operations are slow, the culprit must be the source of entropy from /dev/random, and that you can replace it with /dev/urandom. <br />
+<br />
+Everybody know that you can do this in 2 equivalent ways:
+<br />
+<br />
+<ul>
+<li>either you enter securerandom.source=file:/dev/urandom in $JAVA_HOME/jre/lib/security/java.security</li>
+</ul>
+<br />
+<br />
+<ul>
+<li>or you start the JVM with the argument&nbsp;-Djava.security.egd=file:/dev/urandom</li>
+</ul>
+<br />
+What really is striking is that although this value might already be set by default on Windows, one should actually set as a value <b>"/dev/./urandom"</b> on Linux systems, otherwise APPARENTLY the setting is not actually accepted by Java and it defaults again to /dev/random<br />
+<br />
+How in 2014 we still have to manually take care of these things, it's a mystery. And whether this is actually true, another mystery.
+
+<br />
+<br />
+Apparently this is intended - and not a bug <a href="http://bugs.java.com/view_bug.do?bug_id=6202721">http://bugs.java.com/view_bug.do?bug_id=6202721</a>,  however it's disheartening.
+
+See also Oracle Doc "Long Delay During Startup of SOA Managed Server (Doc ID 1336411.1)" and <br />
+<a href="http://download.oracle.com/docs/cd/E14571_01/doc.1111/e14772/weblogic_server_issues.htm#ASRSS2066">http://download.oracle.com/docs/cd/E14571_01/doc.1111/e14772/weblogic_server_issues.htm#ASRSS2066</a><br />
+<a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6202721">http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6202721</a>  <br />
+<a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6521844">http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6521844</a>  
+ <br />
+However, it says "Note that this workaround should not be used in production environments because it uses pseudo-random numbers instead of genuine random numbers." <br />
+
+

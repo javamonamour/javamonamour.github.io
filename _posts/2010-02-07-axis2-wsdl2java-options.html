@@ -1,0 +1,85 @@
+---
+layout: post
+title: "Axis2 : WSDL2Java options"
+date: 2010-02-07T13:58:00.000+01:00
+permalink: /2010/02/axis2-wsdl2java-options.html
+blogger_id: "1511660881412069423"
+---
+<span style="font-size: xx-small;"></span><br />
+<div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: xx-small;">C:\downloads\axis2-1.5.1-bin\axis2-1.5.1\bin&gt;<b>wsdl2java.bat</b><br />
+Using AXIS2_HOME:&nbsp;&nbsp; C:\downloads\axis2-1.5.1-bin\axis2-1.5.1<br />
+Using JAVA_HOME:&nbsp;&nbsp;&nbsp; C:\beawli\jrockit_160_05<br />
+Usage: WSDL2Java [options] -uri <url or="" path=""> : A url or path to a WSDL<br />
+<br />
+where [options] include:<br />
+&nbsp; -o <path>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Specify a directory path for the generated code.<br />
+&nbsp; -a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Generate async style code only (Default: off).<br />
+&nbsp; -s&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Generate sync style code only (Default: off). Takes precedence over -a.<br />
+&nbsp; -p <pkg1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Specify a custom package name for the generated code.<br />
+&nbsp; -l <language>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Valid languages are java and c (Default: java).<br />
+&nbsp; -t&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Generate a test case for the generated code.<br />
+&nbsp; -ss&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Generate server side code (i.e. skeletons) (Default: off).<br />
+&nbsp; -sd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Generate service descriptor (i.e. services.xml). (Default: off). Valid with -ss.<br />
+&nbsp; -d <databinding>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Valid databinding(s) are adb, xmlbeans, jibx and jaxbri (Default: adb).<br />
+&nbsp; -g&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Generates all the classes. Valid only with -ss.<br />
+&nbsp; -pn <port_name>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Choose a specific port when there are multiple ports in the wsdl.<br />
+&nbsp; -sn <service_name>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Choose a specific service when there are multiple services in the wsdl.<br />
+&nbsp; -u&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Unpacks the databinding classes<br />
+&nbsp; -r <path>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Specify a repository against which code is generated.<br />
+&nbsp; -ns2p ns1=pkg1,ns2=pkg2&nbsp; Specify a custom package name for each namespace specified in the wsdls schema.<br />
+&nbsp; -ssi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Generate an interface for the service implementation (Default: off).<br />
+&nbsp; -wv <version>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; WSDL Version. Valid Options : 2, 2.0, 1.1<br />
+&nbsp; -S <path>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Specify a directory path for generated source<br />
+&nbsp; -R <path>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Specify a directory path for generated resources<br />
+&nbsp; -em <file path="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Specify an external mapping file<br />
+&nbsp; -f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Flattens the generated files<br />
+&nbsp; -uw&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Switch on un-wrapping.<br />
+&nbsp; -xsdconfig <file path="">&nbsp;&nbsp; Use XMLBeans .xsdconfig file. Valid only with -d xmlbeans.<br />
+&nbsp; -ap&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Generate code for all ports<br />
+&nbsp; -or&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Overwrite the existing classes<br />
+&nbsp; -b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Generate Axis 1.x backward compatible code.<br />
+&nbsp; -sp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Suppress namespace prefixes (Optimzation that reduces size of soap request/response)<br />
+&nbsp; -E<key> <value>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Extra configuration options specific to certain databindings. Examples:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -Ebindingfile <path>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (for jibx) - specify the file path for the binding file<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -Etypesystemname <my_type_system_name> (for xmlbeans) - override the randomly generated type system name<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -Ejavaversion 1.5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (for xmlbeans) - generates Java 1.5 code (typed lists instead of arrays)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -Emp <package name=""> (for ADB) - extension mapper package name<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -Eosv (for ADB) - turn off strict validation.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -Ewdc (for xmlbeans) - Generate code with a dummy schema. if someone use this option they have to generate the xmlbeans code seperately with the scomp command comes with the xmlbeans distribution and replace the Axis2 generated classes with correct classes<br />
+&nbsp; --noBuildXML&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dont generate the build.xml in the output directory<br />
+&nbsp; --noWSDL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dont generate WSDLs in the resources directory<br />
+&nbsp; --noMessageReceiver&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dont generate a MessageReceiver in the generated sources<br />
+&nbsp; --http-proxy-host <host> Proxy host address if you are behind a firewall<br />
+&nbsp; --http-proxy-port <port> Proxy port address if you are behind a firewall<br />
+&nbsp; -ep <package-name-list>&nbsp; Exclude packages - these packages are deleted after code generation<br />
+&nbsp; -sin <interface-name>&nbsp;&nbsp;&nbsp; Skeleton interface name - used to specify a name for skeleton interface other than the default one<br />
+&nbsp; -scn <class-name>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Skeleton class name - used to specify a name for skeleton class other than the default one<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -EbindingFileName <path>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (for jaxbri) - specify the file path for the episode file<br />
+&nbsp; -oaa <override-absolute-address>&nbsp; -change the absolute http addresses to local file addresses generated by wsdl2java tool<br />
+&nbsp; -ebc <exception-base-class>&nbsp; -generated Exceptions are inherited from this exception rather than the java.lang.Exception class<br />
+&nbsp; -uon <use-operation-name>&nbsp; -by default the first letter of the generated method name changeed to lowercase. This option stops that and make it same as operation name</use-operation-name></exception-base-class></override-absolute-address></path></class-name></interface-name></package-name-list></port></host></package></my_type_system_name></path></value></key></file></file></path></path></version></path></service_name></port_name></databinding></language></pkg1></path></url></span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: xx-small;"><br />
+</span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: xx-small;"><br />
+</span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: xx-small;"><br />
+</span><br />
+<span style="font-size: xx-small;"><br />
+</span><br />
+<span style="font-size: small;">I am running it this way:</span><br />
+<span style="font-size: small;"><br />
+</span><br />
+<span style="font-size: small;">wsdl2java.bat -sd -d xmlbeans -uri http://localhost:7001/ACME_INTEG_WEB/processes/GetPrepaidAccountBalanceProcess.jpd?WSDL</span><br />
+<span style="font-size: small;"><br />
+</span><br />
+<span style="font-size: small;">and it produces:</span><br />
+<span style="font-size: small;">- a CallbackHandler</span><br />
+<span style="font-size: small;">- a Stub</span><br />
+<span style="font-size: small;">- a ReturnDocument and ReturnResponse Document (Interfaces) and their implementations</span><br />
+<span style="font-size: small;"><br />
+</span><br />
+<span style="font-size: small;"><br />
+</span><br />
+<span style="font-size: small;"><br />
+</span><br />
+<span style="font-size: small;"><br />
+</span><br />
+<span style="font-size: xx-small;"><br />
+</span></div>

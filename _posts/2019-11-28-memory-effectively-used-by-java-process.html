@@ -1,0 +1,28 @@
+---
+layout: post
+title: "memory effectively used by a Java process"
+date: 2019-11-28T21:12:00.000+01:00
+permalink: /2019/11/memory-effectively-used-by-java-process.html
+blogger_id: "3582396519810788091"
+tags: ["heap", "jmap", "pmap"]
+---
+cat /proc/102433/smaps | grep -i pss |  awk '{Total+=$2} END {print Total/1024" MB"}'<br />
+<br />
+499.514 MB<br />
+<br />
+cat /proc/102433/smaps | grep -i rss |  awk '{Total+=$2} END {print Total/1024" MB"}'<br />
+<br />
+506.32 MB<br />
+<br />
+<br />
+jmap<br />
+<br />
+pmap<br />
+<br />
+<br />
+To learn more about smaps, read here <a href="https://jameshunt.us/writings/smaps.html">https://jameshunt.us/writings/smaps.html</a><br />
+ <br />
+<br />
+ <br />
+<br />
+ 

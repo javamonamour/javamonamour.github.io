@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Recursive decompilation of your JARs"
+date: 2011-08-31T16:08:00.006+02:00
+permalink: /2011/08/recursively-decompilation-of-your-jars.html
+blogger_id: "1883529917643781881"
+tags: ["decompiler"]
+---
+get your jad.exe here:<br />
+<a href="http://www.varaneckas.com/jad">http://www.varaneckas.com/jad</a><br />
+<br />
+<br />
+follow the instructions here:<br />
+<a href="http://www.adarshr.com/papers/recursive">http://www.adarshr.com/papers/recursive</a><br />
+<br />
+<br />
+in a nutshell:<br />
+<br />
+<br />
+create a directory c:\myjars\<br />
+copy jad.exe to c:\myjars<br />
+copy your jars to c:\myjars\ (for /r %x in (*.jar) do copy /Y "%x" c:\myjars)<br />
+cd c:\myjars\<br />
+for %x in (*.jar) do jar xvf %x<br />
+#(del *.jar - if you want)<br />
+jad.exe -r -o -sjava -d . ./**/*.class <br />
+#(-r means recursive, -o means overwite, -sjava means create .java files instead of .jad files)<br />
+#(del /S /Q *.class - if you want)<br />
+<br />
+<br />
+<br />
+as simple as that<br />
+<br />
+This is also a quick and dirty way to dump the content of all jars into a txt file:<br />
+<br />
+del alljars.txt<br />
+for /r %x in (*.jar) do myecho %x >> alljars.txt<br />
+<br />
+where myecho.bat contains:<br />
+<br />
+@echo OFF<br />
+echo %1<br />
+jar tf %1<br />
+echo ______________________________________________________________
+
+
+<br /><br />
+
+the option -lnc adds the line number in the generated code!
+
+<br /><br />
+
+2015-10-23: using jd http://jd.benow.ca/ you can open a jar and File/Save Sources...
+<br /><br />
+
+

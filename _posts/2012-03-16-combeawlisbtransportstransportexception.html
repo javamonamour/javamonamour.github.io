@@ -1,0 +1,12 @@
+---
+layout: post
+title: "com.bea.wli.sb.transports.TransportException PS has been disabled"
+date: 2012-03-16T21:35:00.000+01:00
+permalink: /2012/03/combeawlisbtransportstransportexception.html
+blogger_id: "3003695061465562269"
+tags: ["jms"]
+---
+com.bea.wli.sb.transports.TransportException PS has been disabled <br />
+This is most likely due to a poison message in a Queue, being redelivered over and over because you forgot to set Redelivery Limit and Redelivery Delay on the queue.<br />
+<br />
+Go to the JMSServer, monitoring, see all active destinations, enable display of all the columns and look for pending messages. You can pause consumption on the destination and/or delete the pending JMSMessage.

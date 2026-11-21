@@ -1,0 +1,24 @@
+---
+layout: post
+title: "OSB: passing a OSB variable to a Java Callout"
+date: 2010-07-11T16:23:00.001+02:00
+permalink: /2010/07/osb-passing-osb-variable-to-java.html
+blogger_id: "1605486047408128051"
+tags: ["javacallout"]
+---
+If you declare a Java static function with an input parameter of type Employee, and your $body contains a valid Employee structure, and you try to pass it to the Java callout as it is, you will get a wonderful:<br />
+<br />
+<i>Value of type 'org.apache.xmlbeans.impl.values.XmlAnyTypeImpl' cannot be type-cast to Employee</i><br />
+<br />
+The reason being that internally OSB represents every variable (including $body) as a <br />
+<a href="https://www.docjar.com/docs/api/org/apache/xmlbeans/impl/values/XmlAnyTypeImpl.html">https://www.docjar.com/docs/api/org/apache/xmlbeans/impl/values/XmlAnyTypeImpl.html</a><br />
+<br />
+which implements the XmlObject interface, as specified here in the OSB Java Callout doc:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/eclipsehelp/ui_ref.html#sj_uiSplitJoinJavaCalloutProperties">http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/eclipsehelp/ui_ref.html#sj_uiSplitJoinJavaCalloutProperties</a><br />
+<br />
+<br />
+<br />
+No fear! In your Java code, you can use my fantastic XMLLoader class, do a toString on the XmlObject and parse it into the Java class using JAXB:<br />
+<br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/xmlLoader/XMLLoader.java">http://javatoolsforweblogic.googlecode.com/svn/trunk/xmlLoader/XMLLoader.java</a>

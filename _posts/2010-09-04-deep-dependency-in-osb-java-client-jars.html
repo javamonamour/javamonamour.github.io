@@ -1,0 +1,116 @@
+---
+layout: post
+title: "Deep dependency in OSB Java Client jars"
+date: 2010-09-04T16:35:00.001+02:00
+permalink: /2010/09/deep-dependency-in-osb-java-client-jars.html
+blogger_id: "8281585774144594584"
+---
+It looks like, when you deploy a OSB project, the WSDL is generated and this entails parsing annotations in all the Java classes reachable from the Public Interface of your EJB  Business Service. So, unless you deploy all the dependencies, you will get something like this: <br />
+<br />
+<br />
+[JAM] Error: unexpected exception thrown: <br />
+java.lang.ClassNotFoundException: info.politext.coherence.pof.annotation.PofSerialized<br />
+at java.net.URLClassLoader$1.run(URLClassLoader.java:200)<br />
+at java.net.URLClassLoader.findClass(URLClassLoader.java:188)<br />
+at java.lang.ClassLoader.loadClass(ClassLoader.java:303)<br />
+at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:308)<br />
+at java.lang.ClassLoader.loadClass(ClassLoader.java:248)<br />
+at java.lang.Class.forName0(Native Method)<br />
+at java.lang.Class.forName(Class.java:169)<br />
+at com.bea.util.annogen.view.internal.JavadocAnnogenTigerDelegateImpl_150.getClassFor(JavadocAnnogenTigerDelegateImpl_150.java:99)<br />
+at com.bea.util.annogen.view.internal.JavadocAnnogenTigerDelegateImpl_150.extractAnnotations(JavadocAnnogenTigerDelegateImpl_150.java:51)<br />
+at com.bea.util.annogen.view.internal.javadoc.ProgramElementJavadocIAE.extractIndigenousAnnotations(ProgramElementJavadocIAE.java:58)<br />
+at com.bea.util.annogen.view.internal.AnnoViewerBase.getIndigenousAnnotations(AnnoViewerBase.java:103)<br />
+at com.bea.util.annogen.view.internal.AnnoViewerBase.getAnnotations(AnnoViewerBase.java:68)<br />
+at com.bea.util.annogen.view.internal.AnnoViewerBase.getAnnotation(AnnoViewerBase.java:85)<br />
+at com.bea.util.annogen.view.internal.jam.JamAnnoViewerImpl.getAnnotation(JamAnnoViewerImpl.java:63)<br />
+at com.bea.staxb.buildtime.Java2Schema.ensureDocumentElementsExistFor(Java2Schema.java:767)<br />
+at com.bea.staxb.buildtime.Java2Schema.internalBind(Java2Schema.java:505)<br />
+at com.bea.staxb.buildtime.BindingCompiler.bind(BindingCompiler.java:125)<br />
+at com.bea.staxb.buildtime.BindingCompiler.bindAsExplodedTylar(BindingCompiler.java:161)<br />
+at weblogic.wsee.bind.buildtime.internal.SoapAwareJava2Schema.bindAsExplodedTylar(SoapAwareJava2Schema.java:1415)<br />
+at weblogic.wsee.bind.buildtime.internal.TylarJ2SBindingsBuilderImpl.createBuildtimeBindings(TylarJ2SBindingsBuilderImpl.java:216)<br />
+at weblogic.wsee.tools.jws.jaxrpc.JAXRPCWebServiceInfo.createBindings(JAXRPCWebServiceInfo.java:228)<br />
+at weblogic.wsee.tools.jws.wsdl.WsdlBuilder.processImpl(WsdlBuilder.java:50)<br />
+at weblogic.wsee.tools.jws.jaxrpc.JAXRPCProcessor.process(JAXRPCProcessor.java:28)<br />
+at weblogic.wsee.tools.jws.process.CompositeProcessor.process(CompositeProcessor.java:47)<br />
+at weblogic.wsee.tools.jws.build.JwsCompiler.buildWebServices(JwsCompiler.java:532)<br />
+at weblogic.wsee.tools.jws.build.JwsCompiler.compile(JwsCompiler.java:494)<br />
+at weblogic.wsee.tools.anttasks.JwsModule.generate(JwsModule.java:379)<br />
+at weblogic.wsee.tools.anttasks.JwsModule.build(JwsModule.java:257)<br />
+at weblogic.wsee.tools.anttasks.JwscTask.execute(JwscTask.java:229)<br />
+at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)<br />
+at sun.reflect.GeneratedMethodAccessor319.invoke(Unknown Source)<br />
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)<br />
+at java.lang.reflect.Method.invoke(Method.java:597)<br />
+at org.apache.tools.ant.dispatch.DispatchUtils.execute(DispatchUtils.java:106)<br />
+at org.apache.tools.ant.Task.perform(Task.java:348)<br />
+at org.apache.tools.ant.Target.execute(Target.java:357)<br />
+at org.apache.tools.ant.Target.performTasks(Target.java:385)<br />
+at org.apache.tools.ant.Project.executeSortedTargets(Project.java:1337)<br />
+at org.apache.tools.ant.Project.executeTarget(Project.java:1307)<br />
+at com.bea.wli.sb.transports.ejb.jwsgeneration.AppGenerator.generateWsdl(AppGenerator.java:305)<br />
+at com.bea.wli.sb.transports.ejb.jwsgeneration.AppGenerator.generateWsdl(AppGenerator.java:270)<br />
+at com.bea.wli.sb.transports.ejb.EjbBindingTypeInfo.createBindingTypeInfo(EjbBindingTypeInfo.java:280)<br />
+at com.bea.wli.sb.transports.ejb.EjbBindingTypeInfo$EjbBindingTypeDerivedTypeDef.computeData(EjbBindingTypeInfo.java:250)<br />
+at com.bea.wli.sb.transports.ejb.EjbBindingTypeInfo$EjbBindingTypeDerivedTypeDef.computeData(EjbBindingTypeInfo.java:231)<br />
+at com.bea.wli.config.derivedcache.DerivedCache.deriveTheValue(DerivedCache.java:453)<br />
+at com.bea.wli.config.derivedcache.DerivedCache.get(DerivedCache.java:273)<br />
+at com.bea.wli.config.derivedcache.DerivedResourceManager.getDerivedValueInfo(DerivedResourceManager.java:341)<br />
+at com.bea.wli.config.derivedcache.DerivedResourceManager.get(DerivedResourceManager.java:386)<br />
+at com.bea.wli.sb.transports.ejb.EjbBindingTypeInfo.create(EjbBindingTypeInfo.java:222)<br />
+at com.bea.wli.sb.transports.ejb.EjbTransportProvider.getBindingInfo(EjbTransportProvider.java:438)<br />
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)<br />
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)<br />
+at java.lang.reflect.Method.invoke(Method.java:597)<br />
+at com.bea.wli.sb.transports.Util$1.invoke(Util.java:83)<br />
+at $Proxy125.getBindingInfo(Unknown Source)<br />
+at com.bea.wli.sb.util.BindingTypeInfoUtil.getSelfDescribedBindingTypeInfo(BindingTypeInfoUtil.java:352)<br />
+at com.bea.wli.sb.resources.service.CommonServiceRepository.getAllOperations(CommonServiceRepository.java:763)<br />
+at com.bea.wli.sb.monitoring.ServiceStatistics.getStatisticDescriptors(ServiceStatistics.java:160)<br />
+at com.bea.wli.sb.service.ServiceResourceStatInfoFactory.getStatistics(ServiceResourceStatInfoFactory.java:52)<br />
+at com.bea.wli.sb.monitoring.ResourceStatInfoFactory.newInstance(ResourceStatInfoFactory.java:43)<br />
+at com.bea.wli.sb.service.ServiceManager.getStatInfo(ServiceManager.java:234)<br />
+at com.bea.wli.sb.service.ServiceStatisticsListener.updateRuntime(ServiceStatisticsListener.java:188)<br />
+at com.bea.wli.sb.service.ServiceStatisticsListener.endLoadNotification(ServiceStatisticsListener.java:169)<br />
+at com.bea.wli.config.impl.ResourceListenerNotifier.sendLoadNotificationsInContext(ResourceListenerNotifier.java:265)<br />
+at com.bea.wli.config.impl.ResourceListenerNotifier.access$400(ResourceListenerNotifier.java:31)<br />
+at com.bea.wli.config.impl.ResourceListenerNotifier$1.execute(ResourceListenerNotifier.java:153)<br />
+at com.bea.wli.config.transaction.TransactionalTask._doExecute(TransactionalTask.java:217)<br />
+at com.bea.wli.config.transaction.TransactionalTask.doExecute(TransactionalTask.java:140)<br />
+at com.bea.wli.config.impl.ResourceListenerNotifier.sendLoadNotifications(ResourceListenerNotifier.java:161)<br />
+at com.bea.wli.config.impl.ResourceListenerNotifier.sendLoadNotifications(ResourceListenerNotifier.java:137)<br />
+at com.bea.wli.config.ConfigService.startListeners(ConfigService.java:985)<br />
+at com.bea.wli.sb.init.AppListener.__postStart(AppListener.java:425)<br />
+at com.bea.wli.sb.init.AppListener.access$200(AppListener.java:106)<br />
+at com.bea.wli.sb.init.AppListener$4.run(AppListener.java:386)<br />
+at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)<br />
+at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:147)<br />
+at weblogic.security.Security.runAs(Security.java:61)<br />
+at com.bea.wli.sb.init.AppListener.postStart(AppListener.java:382)<br />
+at weblogic.application.internal.flow.BaseLifecycleFlow$PostStartAction.run(BaseLifecycleFlow.java:297)<br />
+at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:321)<br />
+at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:121)<br />
+at weblogic.application.internal.flow.BaseLifecycleFlow$LifecycleListenerAction.invoke(BaseLifecycleFlow.java:199)<br />
+at weblogic.application.internal.flow.BaseLifecycleFlow.postStart(BaseLifecycleFlow.java:71)<br />
+at weblogic.application.internal.flow.TailLifecycleFlow.activate(TailLifecycleFlow.java:34)<br />
+at weblogic.application.internal.BaseDeployment$2.next(BaseDeployment.java:1269)<br />
+at weblogic.application.utils.StateMachineDriver.nextState(StateMachineDriver.java:43)<br />
+at weblogic.application.internal.BaseDeployment.activate(BaseDeployment.java:409)<br />
+at weblogic.application.internal.EarDeployment.activate(EarDeployment.java:58)<br />
+at weblogic.application.internal.DeploymentStateChecker.activate(DeploymentStateChecker.java:161)<br />
+at weblogic.deploy.internal.targetserver.AppContainerInvoker.activate(AppContainerInvoker.java:79)<br />
+at weblogic.deploy.internal.targetserver.BasicDeployment.activate(BasicDeployment.java:184)<br />
+at weblogic.deploy.internal.targetserver.BasicDeployment.activateFromServerLifecycle(BasicDeployment.java:361)<br />
+at weblogic.management.deploy.internal.DeploymentAdapter$1.doActivate(DeploymentAdapter.java:52)<br />
+at weblogic.management.deploy.internal.DeploymentAdapter.activate(DeploymentAdapter.java:200)<br />
+at weblogic.management.deploy.internal.AppTransition$2.transitionApp(AppTransition.java:31)<br />
+at weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)<br />
+at weblogic.management.deploy.internal.ConfiguredDeployments.activate(ConfiguredDeployments.java:170)<br />
+at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:124)<br />
+at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:181)<br />
+at weblogic.management.deploy.internal.DeploymentServerService.start(DeploymentServerService.java:97)<br />
+at weblogic.t3.srvr.SubsystemRequest.run(SubsystemRequest.java:64)<br />
+at weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)<br />
+at weblogic.work.ExecuteThread.run(ExecuteThread.java:173)

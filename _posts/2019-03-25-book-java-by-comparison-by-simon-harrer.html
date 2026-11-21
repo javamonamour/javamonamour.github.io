@@ -1,0 +1,141 @@
+---
+layout: post
+title: "Book: java by comparison by Simon Harrer, Jörg Lenhard, Linus Dietz"
+date: 2019-03-25T15:37:00.000+01:00
+permalink: /2019/03/book-java-by-comparison-by-simon-harrer.html
+blogger_id: "3715081657512448401"
+tags: ["books", "java"]
+---
+Interesting book, concise and a breeze to read<br />
+<br />
+<a href="https://pragprog.com/book/javacomp/java-by-comparison">https://pragprog.com/book/javacomp/java-by-comparison</a><br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="https://pragprog.com/book/javacomp/java-by-comparison" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/c7a3f24e9391eb41.jpg" width="333" height="400" data-original-width="190" data-original-height="228" /></a></div><br />
+Source code is here <a href="https://pragprog.com/titles/javacomp/source_code">https://pragprog.com/titles/javacomp/source_code</a><br />
+<br />
+My first (not very functional) implementation of FizzBuzz:<br />
+<br />
+<pre class="brush: java">
+import java.util.stream.IntStream;
+
+public class ConsoleBasedFizzBuzz implements FizzBuzz {
+    public static void main(String[] args) {
+        FizzBuzz fizzBuzz = new ConsoleBasedFizzBuzz();
+        fizzBuzz.print(1, 100);
+    }
+
+    private static void accept(int i) {
+        StringBuffer result = new StringBuffer();
+        if (i % 3 == 0) result.append("Fizz");
+        if (i % 5 == 0) result.append("Buzz");
+        if (result.length() == 0) result.append(i);
+        System.out.println(result);
+    }
+
+    @Override
+    public void print(int from, int to) {
+        IntStream.range(from, to).forEach(ConsoleBasedFizzBuzz::accept);
+    }
+}
+
+</pre><br />
+<br />
+"Any fool can write code that a computer can understand. Good programmers write code that humans can understand."<br />
+<br />
+<br />
+Avoid Unnecessary Comparisons<br />
+Avoid Negations<br />
+Return Boolean Expressions Directly<br />
+Simplify Boolean Expressions<br />
+Avoid NullPointerException in Conditionals<br />
+Avoid Switch Fallthrough<br />
+Always Use Braces<br />
+Ensure Code Symmetry<br />
+Replace Magic Numbers with Constants<br />
+Favor Enums Over Integer Constants<br />
+Favor For-Each Over For Loops<br />
+Avoid Collection Modification During Iteration<br />
+Avoid Compute-Intense Operations During Iteration<br />
+Group with New Lines<br />
+Favor Format Over Concatenation<br />
+Favor Java API Over DIY<br />
+Remove Superfluous Comments<br />
+Remove Commented-Out Code<br />
+Replace Comments with Constants<br />
+Replace Comments with Utility Methods<br />
+Document Implementation Decisions<br />
+Document Using Examples<br />
+Structure JavaDoc of Packages<br />
+Structure JavaDoc of Classes and Interfaces<br />
+Structure JavaDoc of Methods<br />
+Structure JavaDoc of Constructors<br />
+Use Java Naming Conventions<br />
+Follow Getter/Setter Conventions for Frameworks<br />
+Avoid Single-Letter Names<br />
+Avoid Abbreviations<br />
+Avoid Meaningless Terms<br />
+Use Domain Terminology<br />
+Fail Fast<br />
+Always Catch Most Specific Exception<br />
+Explain Cause in Message<br />
+Avoid Breaking the Cause Chain<br />
+Expose Cause in Variable<br />
+Always Check Type Before Cast<br />
+Always Close Resources<br />
+Always Close Multiple Resources<br />
+Explain Empty Catch<br />
+Structure Tests Into Given-When-Then<br />
+Use Meaningful Assertions<br />
+Expected Before Actual Value<br />
+Use Reasonable Tolerance Values<br />
+Let JUnit Handle Exceptions<br />
+Describe Your Tests @DisplayName @Disabled<br />
+Favor Standalone Tests<br />
+Parametrize Your Tests @ParameterizedTest @ValueSource<br />
+Cover the Edge Cases<br />
+Split Method with Optional Parameters<br />
+Favor Abstract Over Concrete Types<br />
+Favor Immutable Over Mutable State<br />
+Combine State and Behavior<br />
+Avoid Leaking References (defensive copying)<br />
+Avoid Returning Null<br />
+Favor Lambdas Over Anonymous Classes<br />
+Favor Method References Over Lambdas<br />
+Avoid Side Effects<br />
+Use Collect for Terminating Complex Streams<br />
+Avoid Exceptions in Streams<br />
+Favor Optional Over Null   (Optional.ofNullable())<br />
+Avoid Optional Fields or Parameters<br />
+Use Optionals as Streams <br />
+<br />
+Google Java Style Guide <a href="https://google.github.io/styleguide/javaguide.html">https://google.github.io/styleguide/javaguide.html</a><br />
+<br />
+Automate Your Build<br />
+Favor Logging Over Console Output<br />
+Minimize and Isolate Multithreaded Code<br />
+Use High-Level Concurrency Abstractions<br />
+Speed Up Your Program<br />
+<br />
+<br />
+<pre>import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
+
+import java.io.IOException;
+
+public class JunitAssertionsTest {
+
+    @Test
+    public void testException() {
+        Executable when = () -> pippo();
+        Assertions.assertThrows(IOException.class, when);
+    }
+
+    private void pippo() throws IOException {
+        System.out.println("running");
+        throw new IOException("ciao");
+    }
+}
+</pre><br />
+

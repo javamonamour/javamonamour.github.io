@@ -1,0 +1,31 @@
+---
+layout: post
+title: "Ignore Stuck Threads for JCA FileAdapter"
+date: 2012-06-23T06:07:00.001+02:00
+permalink: /2012/06/ignore-stuck-threads-for-jca.html
+blogger_id: "3758980016374516780"
+tags: ["FileAdapter"]
+---
+The default threading model for FileAdapter created long running threads who poll the file system. After 600 seconds they generate Health warning and error stacktraces. To get rid of this, without losing in general the capability to detect Stuck Threads in other parts of the Server, use a WorkManager and associate it to each Proxy Service using a FileAdapter.<br />
+<br />
+WLST Snippet to create WorkManager :<br />
+<br />
+<pre name="code" class="brush: java">DOMAIN_NAME=osbpl1do
+CLUSTER_NAME=osbpl1cl
+
+edit()
+startEdit()
+cd('/SelfTuning/' + DOMAIN_NAME)
+cmo.createWorkManager('WorkManagerIgnoreStuckThreads')
+cd('/SelfTuning/' + DOMAIN_NAME + '/WorkManagers/WorkManagerIgnoreStuckThreads')
+set('Targets',jarray.array([ObjectName('com.bea:Name=' + CLUSTER_NAME + ',Type=Cluster')], ObjectName))
+cmo.setIgnoreStuckThreads(true)
+
+activate()
+</pre><br />
+<br />
+<br />
+For each of the FileAdapter JCA Proxy Services, edit the JCA Properties and assign 'WorkManagerIgnoreStuckThreads' to the Dispatch Policy.<br />
+<br />
+<br />
+See also the <a href="http://docs.oracle.com/cd/E23943_01/dev.1111/e15866/jca.htm">official Oracle doc on this topic</a> (search for ignore-stuck-threads)

@@ -1,0 +1,67 @@
+---
+layout: post
+title: "WebLogic \"The managed server could not update the configuration files\""
+date: 2016-12-29T16:59:00.000+01:00
+permalink: /2016/12/weblogic-managed-server-could-not.html
+blogger_id: "8553789837846027215"
+tags: ["weblogic"]
+---
+getting this error today, with Admin server up and running, and starting a Managed server member of a cluster.... the .bindings file is part of the MQ Foreign JMS server configuration:
+<br/><br/>
+
+<pre class="brush: java">
+
+&lt;Dec 29, 2016 4:07:04 PM CET&gt; &lt;Error&gt; &lt;Management&gt; &lt;BEA-141196&gt; &lt;The managed server could not update the configuration files during the registration with the deployment service. The update failed due to an exception:
+weblogic.management.DeploymentException: Exception occured while copying files
+ at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.doUpdate(DataUpdate.java:307)
+ at weblogic.deploy.internal.targetserver.datamanagement.ConfigDataUpdate.doUpdate(ConfigDataUpdate.java:102)
+ at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.update(DataUpdate.java:72)
+ at weblogic.deploy.internal.targetserver.datamanagement.Data.commitDataUpdate(Data.java:118)
+ at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.updateFiles(RuntimeAccessDeploymentReceiverService.java:880)
+ at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.handleRegistrationResponse(RuntimeAccessDeploymentReceiverService.java:728)
+ at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.registerHandler(RuntimeAccessDeploymentReceiverService.java:699)
+ at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.start(RuntimeAccessDeploymentReceiverService.java:169)
+ at weblogic.t3.srvr.ServerServicesManager.startService(ServerServicesManager.java:462)
+ at weblogic.t3.srvr.ServerServicesManager.startInStandbyState(ServerServicesManager.java:167)
+ at weblogic.t3.srvr.T3Srvr.initializeStandby(T3Srvr.java:881)
+ at weblogic.t3.srvr.T3Srvr.startup(T3Srvr.java:568)
+ at weblogic.t3.srvr.T3Srvr.run(T3Srvr.java:469)
+ at weblogic.Server.main(Server.java:71)
+Caused By: java.io.FileNotFoundException: /path/to/mydomain/config/jms/.bindings (Permission denied)
+ at java.io.FileOutputStream.open(Native Method)
+ at java.io.FileOutputStream.&lt;init&gt;(FileOutputStream.java:194)
+ at java.io.FileOutputStream.&lt;init&gt;(FileOutputStream.java:145)
+ at weblogic.utils.FileUtils.writeToFile(FileUtils.java:115)
+ at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.copy(DataUpdate.java:265)
+ at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.copyOrExtractTo(DataUpdate.java:202)
+ at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.updateLocalData(DataUpdate.java:168)
+ at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.doUpdate(DataUpdate.java:299)
+ at weblogic.deploy.internal.targetserver.datamanagement.ConfigDataUpdate.doUpdate(ConfigDataUpdate.java:102)
+ at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.update(DataUpdate.java:72)
+ at weblogic.deploy.internal.targetserver.datamanagement.Data.commitDataUpdate(Data.java:118)
+ at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.updateFiles(RuntimeAccessDeploymentReceiverService.java:880)
+ at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.handleRegistrationResponse(RuntimeAccessDeploymentReceiverService.java:728)
+ at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.registerHandler(RuntimeAccessDeploymentReceiverService.java:699)
+ at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.start(RuntimeAccessDeploymentReceiverService.java:169)
+ at weblogic.t3.srvr.ServerServicesManager.startService(ServerServicesManager.java:462)
+ at weblogic.t3.srvr.ServerServicesManager.startInStandbyState(ServerServicesManager.java:167)
+ at weblogic.t3.srvr.T3Srvr.initializeStandby(T3Srvr.java:881)
+ at weblogic.t3.srvr.T3Srvr.startup(T3Srvr.java:568)
+ at weblogic.t3.srvr.T3Srvr.run(T3Srvr.java:469)
+ at weblogic.Server.main(Server.java:71)
+&gt; 
+
+</pre>
+
+<br/><br/>
+
+
+The issue is that a MS tried to get the latest configuration files from the Admin at startup. See "Error Starting WebLogic Server: BEA-141196: The managed server could not update the configuration files during the registration with the deployment service (Doc ID 1461960.1)". in My Oracle Support.
+
+<br/><br/>
+
+You can either make that configuration file WRITEABLE, or shut down the Admin and make sure that the MS has already the latest configuration.
+
+
+
+

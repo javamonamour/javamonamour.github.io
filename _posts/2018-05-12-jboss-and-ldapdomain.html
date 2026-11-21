@@ -1,0 +1,108 @@
+---
+layout: post
+title: "JBoss and LdapDomain"
+date: 2018-05-12T20:24:00.000+02:00
+permalink: /2018/05/jboss-and-ldapdomain.html
+blogger_id: "6946373297161473316"
+tags: ["jboss", "LDAP", "security"]
+---
+check this <a href="https://developer.jboss.org/thread/274715?_sscc=t">https://developer.jboss.org/thread/274715?_sscc=t</a><br />
+<br />
+<br />
+in standalone.xml you should have:<br />
+<br />
+<pre class="brush: xml">&lt;security-domain name=&quot;LdapDomain&quot; cache-type=&quot;default&quot;&gt;
+ &lt;authentication&gt;
+  &lt;login-module code=&quot;LdapExtended&quot; flag=&quot;required&quot;&gt;
+   &lt;module-option name=&quot;java.naming.factory.initial&quot; value=&quot;com.sun.jndi.ldap.LdapCtxFactory&quot;/&gt;
+   &lt;module-option name=&quot;java.naming.provider.url&quot; value=&quot;ldap://localhost:10389&quot;/&gt;
+   &lt;module-option name=&quot;java.naming.security.authentication&quot; value=&quot;simple&quot;/&gt;
+   &lt;module-option name=&quot;bindDN&quot; value=&quot;uid=admin,ou=system&quot;/&gt;
+   &lt;module-option name=&quot;bindCredential&quot; value=&quot;secret&quot;/&gt;
+   &lt;module-option name=&quot;baseCtxDN&quot; value=&quot;ou=People,dc=example,dc=com&quot;/&gt;
+   &lt;module-option name=&quot;baseFilter&quot; value=&quot;(uid={0})&quot;/&gt;
+   &lt;module-option name=&quot;rolesCtxDN&quot; value=&quot;ou=Roles,dc=example,dc=com&quot;/&gt;
+   &lt;module-option name=&quot;roleFilter&quot; value=&quot;(member={1})&quot;/&gt;
+   &lt;module-option name=&quot;roleAttributeID&quot; value=&quot;cn&quot;/&gt;
+   &lt;module-option name=&quot;searchScope&quot; value=&quot;ONELEVEL_SCOPE&quot;/&gt;
+   &lt;module-option name=&quot;allowEmptyPasswords&quot; value=&quot;true&quot;/&gt;
+  &lt;/login-module&gt;
+ &lt;/authentication&gt;
+&lt;/security-domain&gt;
+
+
+</pre><br />
+<br />
+<br />
+How to secure your web.xml: <a href="/2012/06/tomcat-web-application-security-in-20.html">/2012/06/tomcat-web-application-security-in-20.html</a><br />
+<br />
+<br />
+<pre class="brush: xml">&lt;security-constraint&gt;
+ &lt;web-resource-collection&gt;
+  &lt;web-resource-name&gt;HtmlAuth&lt;/web-resource-name&gt;
+  &lt;description&gt;application security constraints
+  &lt;/description&gt;
+  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+  &lt;http-method&gt;GET&lt;/http-method&gt;
+  &lt;http-method&gt;POST&lt;/http-method&gt;
+  &lt;http-method&gt;PUT&lt;/http-method&gt;
+  &lt;http-method&gt;DELETE&lt;/http-method&gt;
+ &lt;/web-resource-collection&gt;
+ &lt;auth-constraint&gt;
+  &lt;role-name&gt;Manager&lt;/role-name&gt;
+ &lt;/auth-constraint&gt;
+&lt;/security-constraint&gt;
+&lt;login-config&gt;
+ &lt;auth-method&gt;BASIC&lt;/auth-method&gt;
+ &lt;realm-name&gt;Sample Realm&lt;/realm-name&gt;
+&lt;/login-config&gt;
+&lt;security-role&gt;
+ &lt;role-name&gt;Manager&lt;/role-name&gt;
+&lt;/security-role&gt;
+</pre><br />
+jboss-web.xml :<br />
+<br />
+<br />
+<pre class="brush: xml">&lt;jboss-web&gt;
+&lt;security-domain&gt;java:/jaas/LdapDomain&lt;/security-domain&gt;
+&lt;/jboss-web&gt;
+</pre><br />
+<br />
+In order to use FORM login, instead of BASIC:<br />
+<br />
+<pre class="brush: xml">&lt;login-config&gt;
+    &lt;auth-method&gt;FORM&lt;/auth-method&gt;
+    &lt;realm-name&gt;OsbReports Application&lt;/realm-name&gt;
+    &lt;form-login-config&gt;
+      &lt;form-login-page&gt;/login.jsp&lt;/form-login-page&gt;
+      &lt;form-error-page&gt;/error.jsp&lt;/form-error-page&gt;
+    &lt;/form-login-config&gt;
+  &lt;/login-config&gt;
+</pre><br />
+with login.jsp :<br />
+<br />
+<pre class="brush: xml">&lt;form method=&quot;POST&quot; action=&quot;j_security_check&quot;&gt;
+&lt;input type=&quot;text&quot; name=&quot;j_username&quot;&gt;
+&lt;input type=&quot;password&quot; name=&quot;j_password&quot;&gt;
+&lt;/form&gt;
+</pre><br />
+<br />
+See also<br />
+<br />
+<br />
+<br />
+<br />
+<a href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/how_to_configure_identity_management/legacy_security_subsystem#configure_a_security_domain_to_use_ldap">https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html/how_to_configure_identity_management/legacy_security_subsystem#configure_a_security_domain_to_use_ldap</a><br />
+<br />
+<a href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html-single/login_module_reference/index#ldapextended_login_module">https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html-single/login_module_reference/index#ldapextended_login_module</a><br />
+<br />
+<br />
+<br />
+<br />
+All JBoss login modules: https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.1/html-single/login_module_reference/<br />
+<br />
+JBOSS LDAP Examples https://developer.jboss.org/wiki/LDAPSecurityRealmExamples , shows how to use username-filter and advanced-filter to query onsAMAccountName and memberOf )<br />
+<br />
+<br />
+<br />
+

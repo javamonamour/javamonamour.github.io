@@ -1,0 +1,34 @@
+---
+layout: post
+title: "OSB. version info embedded in a project, and how to query it dynamically"
+date: 2012-10-04T12:52:00.000+02:00
+permalink: /2012/10/osb-version-info-embedded-in-project.html
+blogger_id: "3474513529089715176"
+tags: ["OSB"]
+---
+in a project httptest, create a XML Schema "version", whose content is minimal:<br />
+<br />
+&lt;xs:schema&gt;&lt;xs:element name="version" id="v1.02"/&gt;&lt;/xs:schema&gt;<br />
+<br />
+you can retrieve the content of the document with a HTTP GET:<br />
+<br />
+http://hostname:8101/sbresource?SCHEMA/httptest/version<br />
+<br />
+See also <a href="http://docs.oracle.com/cd/E23943_01/admin.1111/e15867/project_explorer.htm">http://docs.oracle.com/cd/E23943_01/admin.1111/e15867/project_explorer.htm</a><br />
+<br />
+<br />
+
+In alternative, you can embed the info in a comment:<br />
+
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;schema xmlns="http://www.w3.org/2001/XMLSchema">
+&lt;!--version=v1.21 -->
+&lt;!--timestamp=20130204154312 -->
+&lt;!--deployer=topolino -->
+&lt;/schema>
+
+</pre>
+
+<br /><br />
+

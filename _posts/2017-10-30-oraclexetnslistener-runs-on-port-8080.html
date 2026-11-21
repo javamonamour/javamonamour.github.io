@@ -1,0 +1,21 @@
+---
+layout: post
+title: "OracleXETNSListener runs on port 8080"
+date: 2017-10-30T21:43:00.000+01:00
+permalink: /2017/10/oraclexetnslistener-runs-on-port-8080.html
+blogger_id: "6338055051510443222"
+---
+If you run locally a Oracle XE instance, you are bound to have it occupy port 8080 (with catastrophic consequences for all other application using this popular port)<br />
+<br />
+Run tcpview to make sure that the process tnslsnr.exe is using the port 8080<br />
+<br />
+You can then open Sqldeveloper, login as SYS, and run this:<br />
+<br />
+begin<br />
+ dbms_xdb.sethttpport('9090');<br />
+end;<br />
+<br />
+then restart the oracle listener (maybe first shut it down, they start your other application using port 8080, then start the oracle listener)<br />
+<br />
+it's a sad world. Why is everyone using 8080, there are so many integer numbers...<br />
+

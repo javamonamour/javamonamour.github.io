@@ -1,0 +1,38 @@
+---
+layout: post
+title: "weblogic keep generated java from jsp"
+date: 2013-03-25T11:16:00.002+01:00
+permalink: /2013/03/weblogic-keep-generated-java-from-jsp.html
+blogger_id: "2004265210183684320"
+tags: ["webapp", "weblogic"]
+---
+in your weblogic.xml, enter this:<br />
+<pre>&lt;weblogic-web-app  xmlns="http://www.bea.com/ns/weblogic/90" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+   &lt;jsp-descriptor&gt;
+        &lt;keepgenerated&gt;true&lt;/keepgenerated&gt;
+  &lt;working-dir&gt;/opt/oracle/apps/wlobelix/tmp&lt;/working-dir&gt;
+        &lt;backward-compatible&gt;true&lt;/backward-compatible&gt;
+  &lt;debug&gt;true&lt;/debug&gt;
+    &lt;/jsp-descriptor&gt;
+
+</pre>
+<br />
+<br />
+Make sure that /opt/oracle/apps/wlobelix/tmp exists, and is writable by the unix user running WLS.
+<br />
+<br />
+Redeploy, restart - eventually before restart delete the weblogic server tmp directory.In the Configuration tab of the webapplication, make sure the checkboxes are active:<br />
+<br />
+<a href="/images/1b714f313a28de43.jpg" imageanchor="1"><img border="0" src="/images/a4affba2913e308f.jpg" /></a>
+<br />
+<br />
+<a href="/images/f34058e6a24e0f16.jpg" imageanchor="1"><img border="0" height="266" src="/images/40721e4415c9be54.jpg" width="640" /></a>
+<br />
+<br />
+
+
+BIG WARNING: remember to delete the content of the /opt/oracle/apps/wlobelix/tmp folder at each new deployment, otherwise you might not get the latest JSP version.
+
+
+
+

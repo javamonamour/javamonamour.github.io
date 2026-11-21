@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Mojarra 2.2.13.SP4 in Wildfly 11 debugging"
+date: 2017-12-03T10:23:00.002+01:00
+permalink: /2017/12/mojarra-2213sp4-in-wildfly-11-debugging.html
+blogger_id: "3344647095192540176"
+tags: ["jsf", "wildfly"]
+---
+I get a message "The form component needs to have a UIForm in its ancestry. Suggestion: enclose the necessary components within &lt;h:form> ". After some mucking (basically, exclude stuff and see if it still breaks) I discovered the fix: enclose a p:menubar in a h:form   &lt;h:form>&lt;p:menubar><br />
+<br />
+A few things leave me really disappointed: this warning should be issued by Eclipse editor, not runtime... and the warning message should be accompanied by the exact location and identity of the offending element.<br />
+<br />
+And in Mojarra 2.2.13.SP4 (Wildfly 11) there doesn't seem to be any debugging flag to get more information.<br />
+<br />
+RANT ON once more, ui development has made huge steps BACKWARDS in the last 20 years RANT OFF Using Delphi in 1995 I was able to put together a very decent and complex UI in MINUTES - with JSF/HTML/Mojarra/CSS/Bootstrap it takes MONTHS and it's no fun. That's why whenever I have to do a UI I keep it MINIMALISTIC, I hate wasting my time in such poorly engineered products.<br />
+<br />
+<br />
+<br />
+

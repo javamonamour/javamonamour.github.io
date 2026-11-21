@@ -1,0 +1,41 @@
+---
+layout: post
+title: "WLST reading a property file"
+date: 2013-11-17T18:50:00.001+01:00
+permalink: /2013/11/wlst-reading-property-file.html
+blogger_id: "2099050204593228551"
+tags: ["WLST"]
+---
+thepropertyfile is a regular property file:
+<br/>
+<pre>
+bla=value1
+mumble=value2=3
+</pre>
+
+<br/>
+
+This function handles also the case where a value contains a = sign
+<br/>
+
+
+<pre class="style: java">
+
+
+def getProperties(thepropertyfile):
+    properties = dict()
+    for line in open(thepropertyfile):
+        strippedline = line.strip()
+        if "=" in strippedline:
+            key,value = line.strip().split('=', 1)
+            properties[key] = value
+    return properties
+
+</pre>
+<br/>
+
+to get the value, do properties.get('bla')
+
+<br/>
+
+

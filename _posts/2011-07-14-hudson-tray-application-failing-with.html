@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Hudson Tray Application failing with \"multiple points\" NumberFormatException"
+date: 2011-07-14T17:00:00.006+02:00
+permalink: /2011/07/hudson-tray-application-failing-with.html
+blogger_id: "7951566207512236132"
+tags: ["hudson"]
+---
+<i>java.lang.NumberFormatException: multiple points<br />
+at sun.misc.FloatingDecimal.readJavaFormatString(Unknown Source)<br />
+at java.lang.Float.parseFloat(Unknown Source)<br />
+at org.hudson.trayapp.model.Server.isHudsonBuild173orGreater(Server.java:300)</i><br />
+<br />
+<br />
+If anybody has a clue, please help.<br />
+<br />
+I was trying to install it from the Hudson Update Center...<br />
+<br />
+Here <a href="http://issues.hudson-ci.org/browse/HUDSON-5557?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel">http://issues.hudson-ci.org/browse/HUDSON-5557?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel</a>  it says that you must be logged in in order to make Hudson Tray Application work.... =:o(<br />
+<br />
+I had to "Enable security" in Hudson configuration, "Hudson's own user database"<br />
+<br />
+At this point I login and.... I still get the exception :o(((<br />
+<br />
+<br />
+Here <a href="http://wiki.hudson-ci.org/display/HUDSON/Hudson+Tray+Application">http://wiki.hudson-ci.org/display/HUDSON/Hudson+Tray+Application</a> is a preview of what I would get if only it was working.<br />
+<br />
+When I click on the link to Issue Tracker I get a "404" at <a href="http://java.net/jira/browse/HUDSON">http://java.net/jira/browse/HUDSON</a><br />
+<br />
+very depressing.... one hour wasted...

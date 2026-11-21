@@ -1,0 +1,37 @@
+---
+layout: post
+title: "umask 022 or 002"
+date: 2012-11-18T20:31:00.001+01:00
+permalink: /2012/11/umask-022-or-002.html
+blogger_id: "6008761913396996069"
+tags: ["umask"]
+---
+We have 2 separate WebLogic domains, with 2 separate Linux users: soa and soa2.<br/> 
+<br/> 
+It is important to SEPARATE these 2 users, so that if I login as soa, I can do operations (write access) only on the soa domain.<br/> <br/> 
+
+A possible approach is having soa and soa2 being member of the same group "soa", and imposing that both users have umask 022 .<br/><br/>
+
+umask 022 <br/>
+
+Normally you set this value in the /etc/profile startup file<br/><br/>
+
+<pre>
+UID=`id -ru`
+if [ $UID -gt 99 ] && [ "`id -gn`" = "`id -un`" ]; then
+    umask 002
+else
+    umask 022
+fi
+</pre>
+
+<br/><br/>
+
+"id -ru" is the numeric ID (example: 1004)
+<br/><br/>
+-r print the real ID instead of the effective ID<br/>
+-u print only the effective user ID<br/>
+-g print only the effective group ID<br/>
+-n print a name instead of a number<br/>
+<br/><br/>
+

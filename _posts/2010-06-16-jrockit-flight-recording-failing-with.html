@@ -1,0 +1,21 @@
+---
+layout: post
+title: "JRockit Flight Recording  failing with \"Could not download recording\""
+date: 2010-06-16T16:18:00.002+02:00
+permalink: /2010/06/jrockit-flight-recording-failing-with.html
+blogger_id: "6302694356194840284"
+tags: ["jfr"]
+blogger_comments:
+  - author: "Staffan Larsen"
+    date: 2010-06-22
+    html: "Could mean that there is no data in the recording - perhaps because no events were triggered?"
+---
+Running a Flight Recording with JRockit Mission Control 4.0 I get this error message:<br />
+<br />
+Could not download recording for lassi3.<br />
+&nbsp; java.io.FileNotFoundException: No chunks<br />
+<br />
+Googling around there is absolutely nothing on this topic....<br />
+<br />
+Even running the recording with a local JRMC console gives the same error.<br />
+I had to restart WebLogic to make it work again... no error message in the logs... strange indeed.

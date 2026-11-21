@@ -1,0 +1,68 @@
+---
+layout: post
+title: "ORA-24756: transaction does not exist "
+date: 2015-10-20T09:30:00.001+02:00
+permalink: /2015/10/ora-24756-transaction-does-not-exist.html
+blogger_id: "7660567449818515844"
+tags: ["OracleRAC", "xa"]
+---
+Here is the stacktrace:
+<br/><br/>
+<pre>
+java.sql.SQLException: 
+ORA-24756: transaction does not exist at 
+oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:450) at 
+oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:392) at 
+oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:385) at 
+oracle.jdbc.driver.T4CTTIfun.processError(T4CTTIfun.java:1018) at 
+oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:522) at 
+oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:257) at 
+oracle.jdbc.driver.T4CTTIOtxen.doOTXEN(T4CTTIOtxen.java:166) at 
+oracle.jdbc.driver.T4CXAResource.doTransaction(T4CXAResource.java:757) at 
+oracle.jdbc.driver.T4CXAResource.doPrepare(T4CXAResource.java:518) at 
+oracle.jdbc.xa.client.OracleXAResource.prepare(OracleXAResource.java:713)
+</pre>
+<br/><br/>
+
+If you get this error, you must be using Oracle RAC and XA.
+<br/><br/>
+You must carefully craft the various timeouts in WebLogic and in Oracle DB.
+<br/><br/>
+See Oracle note "Troubleshooting ORA-24756 while Running an XA Program or MSDTC with the Oracle RDBMS (Doc ID 1076242.6)". THE rule is:
+global transaction timeout < session timeout < distributed_lock_timeout . See also "Recommended Timeout Configuration When Using an External Transaction Processing Monitor and XA with Oracle (Doc ID 338880.1)" .
+<br/><br/>
+
+Each MDB has a specific timeout, but this should not be involved in the issue (this in the weblogic.ejb.jar.xml DD <a href="https://docs.oracle.com/cd/E13222_01/wls/docs103/ejb/DDreference-ejb-jar.html">https://docs.oracle.com/cd/E13222_01/wls/docs103/ejb/DDreference-ejb-jar.html</a> )
+<br/><br/>
+<pre class="brush: xml">
+&lt;transaction-descriptor>
+ &lt;trans-timeout-seconds>2400&lt;/trans-timeout-seconds>
+ &lt;/transaction-descriptor>
+</pre>
+
+<br/><br/>
+So you should end up with this configuration in config.xml and the "$XA_DATASOURCE"jdbc.xml
+<br/><br/>
+<pre class="brush: xml">
+&gt; config/jdbc/&lt;datasource&gt;-jdbc.xml
+ &lt;jdbc-xa-params&gt;
+ &lt;keep-xa-conn-till-tx-complete&gt;true&lt;/keep-xa-conn-till-tx-complete&gt;
+ &lt;xa-end-only-once&gt;true&lt;/xa-end-only-once&gt;
+ &lt;xa-set-transaction-timeout&gt;true&lt;/xa-set-transaction-timeout&gt;
+ &lt;xa-transaction-timeout&gt;3300&lt;/xa-transaction-timeout&gt;
+ &lt;xa-retry-duration-seconds&gt;3600&lt;/xa-retry-duration-seconds&gt;
+ &lt;/jdbc-xa-params&gt;
+
+&gt; config/config.xml
+ &lt;jta&gt;
+ &lt;timeout-seconds&gt;3000&lt;/timeout-seconds&gt;
+ &lt;forget-heuristics&gt;false&lt;/forget-heuristics&gt;
+ &lt;max-resource-requests-on-server&gt;1000&lt;/max-resource-requests-on-server&gt;
+ &lt;/jta&gt;
+</pre>
+
+
+<br/><br/>
+
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/cead95789bbfe582.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/627a6fd21fb76cd0.jpg" /></a></div>
+

@@ -1,0 +1,19 @@
+---
+layout: post
+title: "org.apache.log4j.net.SMTPAppender"
+date: 2011-09-18T21:52:00.000+02:00
+permalink: /2011/09/orgapachelog4jnetsmtpappender.html
+blogger_id: "3721580617564683886"
+tags: ["log4j"]
+---
+there is a lovely way to send an alert by email using log4j:<br />
+just create an appender email of type SMTPAppender:<br />
+<br />
+<br />
+log4j.appender.email=org.apache.log4j.net.SMTPAppender<br />
+log4j.appender.email.SMTPHost=mailgateway.mycompany.com<br />
+log4j.appender.email.BufferSize=128<br />
+log4j.appender.email.To=myself@rabiddog.com<br />
+log4j.appender.email.Subject=My Subject Here<br />
+log4j.appender.email.layout=org.apache.log4j.HTMLLayout<br />
+log4j.appender.email.layout.ConversionPattern=  [%t]: %m%n

@@ -1,0 +1,44 @@
+---
+layout: post
+title: "WebLogic dbping"
+date: 2014-05-09T09:43:00.003+02:00
+permalink: /2014/05/dbping-home-made.html
+blogger_id: "5659215729114830215"
+tags: ["db", "jdbc"]
+---
+The good old <a href="http://docs.oracle.com/cd/E15523_01/web.1111/e13749/utils.htm#i1143266">weblogic dbping utility</a> seems to require the  weblogic.jdbc.oracle.OracleDriver class with the ORACLEB option, and I have no clue where to find it (not in /opt/oracle/fmw11_1_1_5/oracle_common/modules/oracle.jdbc_11.1.1/ojdbc6dms.jar) , so... I wrote my little tool:
+<br/><br/>
+
+<pre class="brush: java">
+
+package com.acme.osb.db;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DBPing {
+ public static void main(String[] args) throws ClassNotFoundException, SQLException {
+  Class.forName("oracle.jdbc.driver.OracleDriver");
+  System.out.println("length " + args.length);
+  String user = args[0];
+  String password = args[1];
+  String url = args[2];
+  String now = new java.util.Date().toString();
+  System.out.println(now + " user= " + user + " password=" + password + " url=" + url);
+  java.sql.Connection conn = DriverManager.getConnection(url, user, password);
+  System.out.println("ok");
+ }
+}
+
+
+</pre>
+
+<br/><br/>
+
+run this<br/>
+java com.acme.osb.db.DBPing myuser mypassword "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=myhost)(PORT=myport))(CONNECT_DATA=(SERVICE_NAME=myservicename)))"
+
+<br/>
+
+
+

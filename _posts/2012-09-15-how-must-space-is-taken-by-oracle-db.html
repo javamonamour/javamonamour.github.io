@@ -1,0 +1,9 @@
+---
+layout: post
+title: "How much space is taken by a Oracle DB table"
+date: 2012-09-15T07:04:00.000+02:00
+permalink: /2012/09/how-must-space-is-taken-by-oracle-db.html
+blogger_id: "5328563628775443711"
+tags: ["oracledb"]
+---
+select sum(bytes)/1024/1024/1024 from user_segments where segment_name = 'WLI_QS_REPORT_ATTRIBUTE' ;

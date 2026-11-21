@@ -1,0 +1,18 @@
+---
+layout: post
+title: "em.getTransaction().commit();"
+date: 2011-03-15T18:36:00.000+01:00
+permalink: /2011/03/emgettransactioncommit.html
+blogger_id: "7397912876427122954"
+tags: ["tx"]
+---
+if you "manually" commit a transaction, you might get: <br />
+<br />
+<b>javax.ejb.EJBTransactionRolledbackException: Illegal to call this method from injected, managed EntityManager</b><br />
+<br />
+in this case you should annotate the method:<br />
+@TransactionManagement(TransactionManagementType.BEAN)<br />
+<br />
+to make the transaction management "manual".<br />
+<br />
+You can't have both worlds: either you let the container manage the "begin/end/rollback" lifecycle, or you manage it in its entirety.

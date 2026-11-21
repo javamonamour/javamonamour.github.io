@@ -1,0 +1,62 @@
+---
+layout: post
+title: "Pack and unpack"
+date: 2011-09-18T15:36:00.003+02:00
+permalink: /2011/09/pack-and-unpack.html
+blogger_id: "7740436366262869849"
+tags: ["pack"]
+---
+cd C:\Oracle2\Middleware\wlserver_10.3\common\bin<br />
+<br />
+<b>pack</b> -domain="c:\Oracle2\Middleware\user_projects\domains\osb_domain" -template="c:\temp\fanculo.jar" -template_name="template1" -managed=true<br />
+<br />
+read domain from "C:\Oracle2\Middleware\user_projects\domains\osb_domain"<br />
+succeed: read domain from "C:\Oracle2\Middleware\user_projects\domains\osb_domain"<br />
+set config option Managed to "true"<br />
+succeed: set config option Managed to "true"<br />
+write template to "C:\temp\fanculo.jar"<br />
+....................................................................................................<br />
+succeed: write template to "C:\temp\fanculo.jar"<br />
+close template<br />
+succeed: close template<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/82b24ae5fba30c7b.jpg" imageanchor="1" style=""><img border="0" height="227" width="320" src="/images/40ab3700d20e426a.jpg" /></a></div><br />
+<br />
+<b>unpack</b> -template="c:\temp\fanculo.jar" -domain="c:\Oracle2\Middleware\user_projects\domains\fanculo_domain"<br />
+<br />
+read template from "C:\temp\fanculo.jar"<br />
+succeed: read template from "C:\temp\fanculo.jar"<br />
+set config option DomainName to "osb_domain"<br />
+succeed: set config option DomainName to "osb_domain"<br />
+write Domain to "C:\Oracle2\Middleware\user_projects\domains\fanculo_domain"<br />
+warning:write Domain to "C:\Oracle2\Middleware\user_projects\domains\fanculo_domain"<br />
+<b>  The "JDBC" configuration in your domain is invalid. Try to resolve the issue by reviewing your script. The wizard will continue, but you may want to start the server in the domain and review the messages to identify the invalid configuration.<br />
+</b>...............................................................................................<br />
+succeed: write Domain to "C:\Oracle2\Middleware\user_projects\domains\fanculo_domain"<br />
+close template<br />
+succeed: close template<br />
+<br />
+cd C:\Oracle2\Middleware\user_projects\domains\fanculo_domain<br />
+startWebLogic.cmd<br />
+<br />
+<br />
+C:\Oracle2\Middleware\user_projects\domains\fanculo_domain\config\config.xml not found<br />
+<br />
+No config.xml was found.<br />
+Would you like the server to create a default configuration and boot? (y/n): n<br />
+18-Sep-2011 14:30:47 o'clock BST Critical WebLogicServer BEA-000362 Server failed. Reason:<br />
+<br />
+There are 1 nested errors:<br />
+<br />
+weblogic.management.internal.InteractiveConfigurationException: C:\Oracle\Middleware\user_projects\domains\fanculo_domain\config\config.xml not found.<br />
+<br />
+<br />
+I have really no clue what was wrong in my JDBC configuration....<br />
+<br />
+Anyway later I realized I am an idiot: if you specify "managed=true", your config.xml will not be included in the domain template. You must specify "managed=false" to recreate the entire domain. JDBC error apart (I had to remove manually the DS) things work.<br />
+<br />
+The official documentation is here:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E13179_01/common/docs103/pack/commands.html"><br />
+http://download.oracle.com/docs/cd/E13179_01/common/docs103/pack/commands.html</a>

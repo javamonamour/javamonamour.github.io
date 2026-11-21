@@ -1,0 +1,110 @@
+---
+layout: post
+title: "Groovy: parsing XML with namespaces"
+date: 2011-11-02T23:22:00.002+01:00
+permalink: /2011/11/groovy-parsing-xml-with-namespaces.html
+blogger_id: "7717383115513088246"
+tags: ["groovy"]
+blogger_comments:
+  - author: "Luciano"
+    date: 2011-11-08
+    html: "You can also initialize XmlSlurper to ignore Namespaces: http://groovy.codehaus.org/api/groovy/util/XmlSlurper.html#XmlSlurper(boolean, boolean)<br /><br />new XmlSlurper(false, false)<br /><br />Same goes for XmlParser:<br />http://groovy.codehaus.org/api/groovy/util/XmlParser.html#XmlParser(boolean, boolean)<br /><br />new XmlParser(false, false)<br /><br />In this way you can reference a node without having to declare the namespaces."
+  - author: "Anonymous"
+    date: 2015-06-14
+    html: "Luciano: good point. Can you please add a working example of your idea when adding a node with namespace in it is involved? thanks."
+---
+99% of the examples on the Internet show how to parse XML without namespaces.<br />
+<br />
+Unfortunately in real life 99% of the XML HAS namespaces :o(<br />
+<br />
+Here is an example, the source XML is:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;cus:Customizations xmlns:cus="http://www.bea.com/wli/config/customizations" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xt="http://www.bea.com/wli/config/xmltypes"&gt;
+  &lt;cus:customization xsi:type="cus:EnvValueCustomizationType"&gt;
+    &lt;cus:description/&gt;
+    &lt;cus:envValueAssignments&gt;
+      &lt;xt:envValueType&gt;UDDI Auto Publish&lt;/xt:envValueType&gt;
+      &lt;xt:location xsi:nil="true"/&gt;
+      &lt;xt:owner&gt;
+        &lt;xt:type&gt;ProxyService&lt;/xt:type&gt;
+        &lt;xt:path&gt;OSBProject1/ProxyService1&lt;/xt:path&gt;
+      &lt;/xt:owner&gt;
+      &lt;xt:value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;false&lt;/xt:value&gt;
+    &lt;/cus:envValueAssignments&gt;
+    &lt;cus:envValueAssignments&gt;
+      &lt;xt:envValueType&gt;Service URI&lt;/xt:envValueType&gt;
+      &lt;xt:location xsi:nil="true"/&gt;
+      &lt;xt:owner&gt;
+        &lt;xt:type&gt;ProxyService&lt;/xt:type&gt;
+        &lt;xt:path&gt;OSBProject1/ProxyService1&lt;/xt:path&gt;
+      &lt;/xt:owner&gt;
+      &lt;xt:value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;/OSBProject1/ProxyServicePippo&lt;/xt:value&gt;
+    &lt;/cus:envValueAssignments&gt;
+  &lt;/cus:customization&gt;
+  &lt;cus:customization xsi:type="cus:FindAndReplaceCustomizationType"&gt;
+    &lt;cus:description/&gt;
+    &lt;cus:query&gt;
+      &lt;xt:resourceTypes&gt;ProxyService&lt;/xt:resourceTypes&gt;
+      &lt;xt:envValueTypes&gt;UDDI Auto Publish&lt;/xt:envValueTypes&gt;
+      &lt;xt:envValueTypes&gt;Service URI&lt;/xt:envValueTypes&gt;
+      &lt;xt:refsToSearch xsi:type="xt:ResourceRefType"&gt;
+        &lt;xt:type&gt;ProxyService&lt;/xt:type&gt;
+        &lt;xt:path&gt;OSBProject1/ProxyService1&lt;/xt:path&gt;
+      &lt;/xt:refsToSearch&gt;
+      &lt;xt:includeOnlyModifiedResources&gt;false&lt;/xt:includeOnlyModifiedResources&gt;
+      &lt;xt:searchString&gt;Search String&lt;/xt:searchString&gt;
+      &lt;xt:isCompleteMatch&gt;false&lt;/xt:isCompleteMatch&gt;
+    &lt;/cus:query&gt;
+    &lt;cus:replacement&gt;Replacement String&lt;/cus:replacement&gt;
+  &lt;/cus:customization&gt;
+  &lt;cus:customization xsi:type="cus:ReferenceCustomizationType"&gt;
+    &lt;cus:description/&gt;
+  &lt;/cus:customization&gt;
+&lt;/cus:Customizations&gt;
+
+</pre><br />
+The Groovy-XmlParser is:<br />
+<br />
+<pre name="code" class="brush: java">
+def customizations = new XmlParser().parse("ALSBCustomizationFile.xml")
+def cus = new groovy.xml.Namespace("http://www.bea.com/wli/config/customizations")
+def xt = new groovy.xml.Namespace("http://www.bea.com/wli/config/xmltypes")
+def xsi = new groovy.xml.Namespace("http://www.w3.org/2001/XMLSchema-instance")
+
+customizations[cus.customization].each {
+    if (it.attributes()[xsi.type] == 'cus:EnvValueCustomizationType') {
+        println "FOUND!"
+    }
+
+    def values = it[cus.envValueAssignments][xt.envValueType]
+    for (value in values) {
+        print value
+    }
+}
+</pre><br />
+<br />
+Result:<br />
+<br />
+FOUND!<br />
+{http://www.bea.com/wli/config/xmltypes}envValueType[attributes={}; value=[UDDI Auto Publish]]{http://www.bea.com/wli/config/xmlty<br />
+pes}envValueType[attributes={}; value=[Service URI]]<br />
+<br />
+<br />
+The Groovy-XmlSlurper way is:<br />
+<br />
+<pre name="code" class="brush: java">
+def customizations = new XmlSlurper().parse("ALSBCustomizationFile.xml").declareNamespace(xt: 'http://www.bea.com/wli/config/xmltypes',xsi: 'http://www.w3.org/2001/XMLSchema-instance', cus : 'http://www.bea.com/wli/config/customizations')
+
+println customizations
+
+customizations.'cus:customization'.each {
+    println "UNO"
+ if (it.'@xsi:type' == "cus:EnvValueCustomizationType") {
+  println "TROVATO"
+ }
+ 
+}
+
+</pre><br />
+The very annoying difference between XmlParser and XmlSlurper is that in the first you use <b>ns.part</b> and in the other <b>ns:part</b>

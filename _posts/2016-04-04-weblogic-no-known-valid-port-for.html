@@ -1,0 +1,19 @@
+---
+layout: post
+title: "WebLogic: No known valid port for Default[t3]: 7001, No available router to destination."
+date: 2016-04-04T16:23:00.001+02:00
+permalink: /2016/04/weblogic-no-known-valid-port-for.html
+blogger_id: "3626923390477426721"
+tags: ["t3s"]
+---
+if you get a funny error like:
+
+<pre>
+The Message-Driven EJB failed while creating a JMS Connection ... java.io.IOException: No known valid port for: 'Default[t3]:t3(t3):169.133.134.123:7001:null ... No available router to destination.
+</pre>
+
+
+check Oracle Support document "JMS Servers Fail To Communicate via T3 in WebLogic Server (WLS): "No available router to destination" (Doc ID 948192.1)", it could be that you should declare t3s as default protocol in the config.xml section for the server.
+
+
+

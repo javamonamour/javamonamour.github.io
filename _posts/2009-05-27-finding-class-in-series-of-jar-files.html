@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Finding a class in a series of jar files"
+date: 2009-05-27T17:25:00.001+02:00
+permalink: /2009/05/finding-class-in-series-of-jar-files.html
+blogger_id: "7130849331519811732"
+---
+<b><span style="font-family:Verdana,Bold;font-size:130%;color:#9a0000;"><span style="font-size: 13pt; color: rgb(154, 0, 0); font-weight: bold;"> find . -name "*.jar" -print -exec jar tvf {} \; 2> /dev/null | grep WebServiceSessionManager</span></span></b>

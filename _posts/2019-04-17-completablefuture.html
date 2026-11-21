@@ -1,0 +1,57 @@
+---
+layout: post
+title: "CompletableFuture "
+date: 2019-04-17T16:07:00.000+02:00
+permalink: /2019/04/completablefuture.html
+blogger_id: "8893085078047468198"
+---
+<a href="https://www.callicoder.com/java-8-completablefuture-tutorial/">https://www.callicoder.com/java-8-completablefuture-tutorial/</a><br />
+<br />
+<pre>package com.example.demo;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+
+@SpringBootApplication
+public class DemoApplication implements CommandLineRunner {
+
+    public static void main(String[] args) {
+        SpringApplication.run(com.example.demo.DemoApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        CompletableFuture&lt;String&gt; completableFuture = new CompletableFuture&lt;String&gt;();
+        completableFuture.complete(&quot;Future&apos;s Result&quot;);
+
+        String result = completableFuture.get();
+        System.out.println(result);
+
+
+        CompletableFuture&lt;Void&gt; future = CompletableFuture.runAsync(new Runnable() {
+            @Override
+            public void run() {
+                // Simulate a long-running Job
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    throw new IllegalStateException(e);
+                }
+                System.out.println(&quot;I&apos;ll run in a separate thread than the main thread.&quot;);
+            }
+        });
+        // Block and wait for the future to complete
+        future.get();
+    }
+
+}
+
+</pre><br />
+<br />
+<br />
+<br />
+

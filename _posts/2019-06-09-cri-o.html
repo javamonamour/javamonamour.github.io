@@ -1,0 +1,42 @@
+---
+layout: post
+title: "CRI-O "
+date: 2019-06-09T09:49:00.001+02:00
+permalink: /2019/06/cri-o.html
+blogger_id: "875187390156701672"
+tags: ["cri-o", "docker", "kubernetes", "oci"]
+---
+<a href="https://cri-o.io/">https://cri-o.io/</a><br />
+<br />
+CRI-O = "Container Runtime Interface" "Open Container Initiative" <br />
+"a lightweight alternative to using Docker as the runtime for kubernetes"<br />
+<br />
+<a href="https://www.quora.com/How-is-CRI-O-different-from-Docker-technology">https://www.quora.com/How-is-CRI-O-different-from-Docker-technology</a><br />
+<br />
+"The CRI-O Container Engine is a implementation of a CRI (Kubernetes Container Runtime interface) that dedicated to Kubernetes. It implements only the features necessary to implement the CRI. Basically whatever Kubernetes needs. The goal to be as simple as possible and to never ever break Kubernetes. CRI-O is only for running containers in production. It runs OCI containers based on OCI images, which basically says it can run any container image sitting at Docker.io, Quay.IO, or any other container registry. It also launches OCI containers with runc.<br />
+<br />
+Docker has a whole bunch of different technology, but I am guessing you are asking about the Docker daemon. Docker daemon is a general purpose container engine that implements API for launching OCI Container using the same runc that CRI-O uses. Docker daemon supports multiple different orchestrators including the Docker Client, Docker Swarm, Kubernetes, Mesosphere. It also supports everything from playing with containers to building containers.<br />
+<br />
+The team behind CRI-O believes that building containers and developing and playing with containers should be done by different tools than the container engine that is used by Kubernetes. The CRI-O team has developed the Podman and Buildah container engines for developing/playing with containers and building container images.<br />
+<br />
+Since these three tasks are done separately CRI-O can run with much tighter security than is required for building and developing containers."<br />
+<br />
+<br />
+<br />
+<br />
+CRI-O and kubeadm<br />
+<br />
+<a href="https://katacoda.com/courses/kubernetes/getting-started-with-kubeadm-crio">https://katacoda.com/courses/kubernetes/getting-started-with-kubeadm-crio</a><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+What is a "pause" container and a "PID namespace sharing" ? <a href="https://www.ianlewis.org/en/almighty-pause-container">https://www.ianlewis.org/en/almighty-pause-container</a><br />
+<br />
+<br />
+What is Weave ? <a href="https://www.weave.works/docs/cloud/latest/overview/">https://www.weave.works/docs/cloud/latest/overview/</a><br />
+<br />
+What is a Nodeport ? <a href="https://kubernetes.io/docs/concepts/services-networking/service/#nodeport">https://kubernetes.io/docs/concepts/services-networking/service/#nodeport</a><br />
+<br />
+

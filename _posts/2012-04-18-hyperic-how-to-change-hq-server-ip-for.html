@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Hyperic, how to change HQ Server IP for an Agent"
+date: 2012-04-18T14:01:00.000+02:00
+permalink: /2012/04/hyperic-how-to-change-hq-server-ip-for.html
+blogger_id: "3706493990747532071"
+tags: ["hyperic"]
+---
+I have been torturing myself for ages about this simple question...<br />
+<br />
+just run<br />
+<b>hq-agent.sh setup</b><br />
+<br />
+but at the end of the process I get<br />
+<br />
+"Error updating agent: Unable to invoke 'updateAgent':  Permission denied"<br />
+<br />
+When I do this, it works:<br />
+<br />
+Would you like to re-setup the auth tokens [default=no]: <b>yes</b><br />
+<br />
+Would you like to re-setup the auth tokens [default=no]: yes<br />
+- Received temporary auth token from agent<br />
+- Registering agent with HQ<br />
+- HQ gave us the following agent token<br />
+    1334082450388-1632010252278915721-1721183443318423049<br />
+- Informing agent of new HQ server<br />
+- Validating<br />
+- Successfully setup agent

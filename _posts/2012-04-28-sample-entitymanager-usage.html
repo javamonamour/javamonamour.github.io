@@ -1,0 +1,79 @@
+---
+layout: post
+title: "Sample EntityManager usage in Java and Python WLST"
+date: 2012-04-28T03:45:00.004+02:00
+permalink: /2012/04/sample-entitymanager-usage.html
+blogger_id: "952816682137011465"
+tags: ["EntityManager", "JPA"]
+---
+In Eclipse, create a JDBC Connection<br />
+show view Data Source Explorer<br />
+new Connection Profile (enter parameters for your schema)<br />
+<br />
+New JPA project<br />
+JPA Tools, Generate Entities from Tables<br />
+<br />
+you should have a persistence.xml which contains<br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+ &lt;persistence-unit name="ToplinkTest" transaction-type="RESOURCE_LOCAL">
+  &lt;class>com.osb.reporting.WliQsReportAttribute&lt;/class>
+  &lt;class>com.osb.reporting.WliQsReportData&lt;/class>
+  &lt;properties>
+   &lt;property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+   &lt;property name="javax.persistence.jdbc.user" value="DEV_SOAINFRA"/>
+   &lt;property name="javax.persistence.jdbc.password" value="DEV_SOAINFRA"/>
+   &lt;property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver"/>
+  &lt;/properties>
+ &lt;/persistence-unit>
+&lt;/persistence>
+
+
+</pre><br />
+You can now code the client:<br />
+<br />
+<pre name="code" class="brush: java">package com.osb.reporting.client;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+
+import com.osb.reporting.WliQsReportAttribute;
+
+public class ReportingClient {
+ public static void main(String[] args) throws ClassNotFoundException {
+  EntityManagerFactory emf = Persistence.createEntityManagerFactory("ToplinkTest");
+  EntityManager em = emf.createEntityManager();
+  WliQsReportAttribute result = em.find(WliQsReportAttribute.class, "uuid:0e6fb58fc7c49289:5378b92d:134416bc5f5:-7fbe");
+  System.out.println(result.getMsgLabels());
+  Query fa = em.createQuery("select a from WliQsReportAttribute a");
+  List res = fa.getResultList();
+  for (Object el : res) {
+   System.out.println( ((WliQsReportAttribute)el).getMsgLabels());
+  }
+ }
+}
+
+</pre><br />
+<br />
+you will need to add the JDBC driver to the classpath, like<br />
+C:\bea1035\wlserver_10.3\server\ext\jdbc\oracle\11g\ojdbc5_g.jar<br />
+<br />
+In WLST, just add to the classpath the location from which you can access classes and META-INF (where persistence.xml is located).... like the build\classes directory.<br />
+<br />
+<br />
+<pre name="code" class="brush: java">package com.osb.reporting.client;
+
+from javax.persistence import *
+emf = Persistence.createEntityManagerFactory("CMBDModeling")
+em = emf.createEntityManager()
+q = em.createQuery("select envs from Nesoa2Env envs")
+res = q.getResultList()
+for i in res:
+   print i.envname
+</pre><br />
+so the message is: you can easily use JPA in WLST and get rid of all that horrible pain of reading property files, by accessing directly a DB

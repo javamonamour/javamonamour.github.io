@@ -1,0 +1,32 @@
+---
+layout: post
+title: "install kubectl and gcloud on CentOS"
+date: 2017-12-27T21:54:00.002+01:00
+permalink: /2017/12/install-kubectl-and-gcloud-on-centos.html
+blogger_id: "1099792122117151498"
+tags: ["kubernetes"]
+---
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl<br />
+chmod +x ./kubectl<br />
+sudo mv ./kubectl /usr/local/bin/kubectl<br />
+<br />
+python -V<br />
+<br />
+curl -LO https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-183.0.0-linux-x86_64.tar.gz<br />
+kubectl<br />
+ls -ltra<br />
+mkdir gcloud<br />
+mv google-cloud-sdk-183.0.0-linux-x86_64.tar.gz  gcloud/<br />
+cd gcloud<br />
+tar xvzf google-cloud-sdk-183.0.0-linux-x86_64.tar.gz <br />
+./google-cloud-sdk/install.sh<br />
+sudo reboot now<br />
+<br />
+<br />
+gcloud<br />
+<br />
+<br />
+see <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">https://kubernetes.io/docs/tasks/tools/install-kubectl/</a><br />
+see <a href="https://cloud.google.com/sdk/docs/quickstart-linux">https://cloud.google.com/sdk/docs/quickstart-linux</a><br />
+<br />
+

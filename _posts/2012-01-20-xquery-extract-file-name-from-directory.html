@@ -1,0 +1,13 @@
+---
+layout: post
+title: "XQuery, extract file name from directory"
+date: 2012-01-20T14:24:00.001+01:00
+permalink: /2012/01/xquery-extract-file-name-from-directory.html
+blogger_id: "3673734208392745969"
+---
+fn:tokenize(fn:replace($theDirectory, '\\', '/'), '/')[fn:last()]<br />
+<br />
+<br />
+input: C:\tmp\bla\po\in\if2  <br />
+<br />
+output: if2

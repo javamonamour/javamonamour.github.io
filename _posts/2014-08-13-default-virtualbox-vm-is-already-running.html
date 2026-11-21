@@ -1,0 +1,31 @@
+---
+layout: post
+title: "default: VirtualBox VM is already running."
+date: 2014-08-13T13:54:00.002+02:00
+permalink: /2014/08/default-virtualbox-vm-is-already-running.html
+blogger_id: "2297009775221521306"
+tags: ["vagrant"]
+---
+I have cloned an existing Vagrantfile, changed the properties "config.vm.box" and "config.vm.host_name", and done a "vagrant up" hoping to have a brand new VM available.  After all this is what Vagrant should be good at.
+<br/><br/>
+Nope. It keeps saying:
+<br/><br/>
+<pre>
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: VirtualBox VM is already running.
+</pre>
+<br/><br/>
+I had to do a "vagrant destroy" of my previously running VM, then a "vagrant up" of both.
+<br/><br/>
+<pre>
+ruby --version
+ruby 2.0.0p353 (2013-11-22) [x64-mingw32]
+
+vagrant --version
+Vagrant 1.6.3
+</pre>
+
+<br/><br/>
+There you have a workaround.... however I am quite skeptical that Vagrant "fails" on such a basic operation... I am NOT impressed... I am unconditionally unimpressed by whatever turns around Ruby, the language is way too unstable and buggish when you compare to Java... I really wish all this Puppet/Vagrant world had not used Ruby as implementation language...
+<br/><br/>
+

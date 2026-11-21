@@ -1,0 +1,48 @@
+---
+layout: post
+title: "Anatomy of a MDB"
+date: 2009-11-30T17:12:00.000+01:00
+permalink: /2009/11/anatomy-of-mdb.html
+blogger_id: "8672763349992641499"
+---
+<b>EJBRuntimeMBean</b> is the base Interface for all EJB-related MBeans.<br />
+<br />
+subinterfaces are: <br />
+<br />
+- <b>MessageDrivenEJBRuntimeMBean</b>, <b>EntityEJBRuntimeMBean</b> and <b>StatelessEJBRuntimeMBean</b>, which all contain a <b>EJBPoolRuntimeMBean</b>:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12839_01/apirefs.1111/e13945/weblogic/management/runtime/EJBPoolRuntimeMBean.html">http://download.oracle.com/docs/cd/E12839_01/apirefs.1111/e13945/weblogic/management/runtime/EJBPoolRuntimeMBean.html<br />
+</a><br />
+<br />
+with attributes:<br />
+<br />
+AccessTotalCount, BeansInUseCurrentCount, DestroyedTotalCount, MissTotalCount, PooledBeansCurrentCount, TimeoutTotalCount, WaiterCurrentCount<br />
+<br />
+- <b>StatefulEJBRuntimeMBean</b> contains instead a  <b>EJBCacheRuntimeMBean</b> (Stateful are cached, not pooled, since they contain stateful info which should not be discarded or shared) and  <b>EJBLockingRuntimeMBean</b><br />
+<br />
+All types of Bean contain a <b>EJBTransactionRuntimeMBean</b>.<br />
+<br />
+<br />
+How do I retrieve a MDB RuntimeMBean?<br />
+<br />
+From a DomainRuntimeMBean, retrieve a ServerRuntimeMBean, then its ApplicationRuntimeMBean[], then its ComponentRuntimeMBean[], and test if its type is EJBComponentRuntime, in this case you can cast it to EJBComponentRuntimeMBean<br />
+<br />
+Painful, no? Here is the code:<br />
+<br />
+<br />
+ public List<EJBComponentRuntimeMBean> getEBJs(String serverName) {<br />
+  List<EJBComponentRuntimeMBean> result = new ArrayList<EJBComponentRuntimeMBean>();<br />
+  ServerRuntimeMBean serverRuntimeMBean = getServerRuntimeMBean(serverName);<br />
+  if (serverRuntimeMBean != null) {<br />
+   ApplicationRuntimeMBean[] apps = serverRuntimeMBean.getApplicationRuntimes();<br />
+   for (ApplicationRuntimeMBean app : apps) {<br />
+    ComponentRuntimeMBean[] components = app.getComponentRuntimes();<br />
+    for (ComponentRuntimeMBean bean : components) {<br />
+     if (bean.getType().equals("EJBComponentRuntime")) {<br />
+       result.add((EJBComponentRuntimeMBean)bean);<br />
+     }<br />
+    }<br />
+   }<br />
+  }<br />
+  return result;<br />
+ }

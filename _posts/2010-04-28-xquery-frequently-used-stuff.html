@@ -1,0 +1,124 @@
+---
+layout: post
+title: "XQuery tutorial: frequently used stuff"
+date: 2010-04-28T17:05:00.001+02:00
+permalink: /2010/04/xquery-frequently-used-stuff.html
+blogger_id: "2382459789359637984"
+tags: ["XQuery"]
+---
+See here <a href="http://en.wikibooks.org/wiki/XQuery">http://en.wikibooks.org/wiki/XQuery</a>&nbsp; for a wealth of excellent examples.<br />
+<br />
+Also <a href="http://www.xqueryfunctions.com/xq/">http://www.xqueryfunctions.com/xq/</a>&nbsp; is wonderful.<br />
+<br />
+XQuery is a terrible pain in the knee, but if you get organized it's only a matter of copying/pasting/hacking.... <br />
+<br />
+<b>___________________</b><br />
+<br />
+<b>Variable substitution in a text: </b><br />
+<br />
+xquery version "1.0" encoding "Cp1252";<br />
+(:: pragma&nbsp; type="xs:anyType" ::)<br />
+<br />
+declare namespace xf = "http://tempuri.org/PVOSBProject1/XQExceptionHandling/";<br />
+<br />
+declare function xf:XQExceptionHandling($thefault as xs:string)<br />
+as element(*) {<br />
+&lt;ws:handleException xmlns:ws="http://com/pierre/ws"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;ws:fault&gt;<b>{$thefault}</b>&lt;/ws:fault&gt;<br />
+&lt;/ws:handleException&gt;&nbsp;&nbsp;&nbsp; <br />
+};<br />
+<br />
+<br />
+<b>declare variable $thefault as xs:string external;</b><br />
+<br />
+xf:XQExceptionHandling(<b>$thefault</b>)<br />
+<br />
+___________________<br />
+<br />
+if you want to pass any xml, use<br />
+declare variable $thefault as <b>element(*)</b> external;<br />
+<br />
+<br />
+______<br />
+<br />
+<br />
+if you callout a service expecting a String , you cannot pass an XML.... first you must <b>fn-bea:serialize</b>($thevariable)<br />
+<br />
+the function fn:string($body) will somehow generate a toString() of your XML<br />
+_____________<br />
+<br />
+Assume this is the $body:<br />
+<br />
+<br />
+&lt;soapenv:Body xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;<br />
+&nbsp; &lt;dbac:insertCompany xmlns:dbac="http://com/acme/dbaccess"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;dbac:company xmlns:java="java:com.acme.dbaccess"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;java:CreationDate&gt;3&lt;/java:CreationDate&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;java:Id&gt;2&lt;/java:Id&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;java:Name&gt;Pluto&lt;/java:Name&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/dbac:company&gt;<br />
+&nbsp; &lt;/dbac:insertCompany&gt;<br />
+&lt;/soapenv:Body&gt;<br />
+<br />
+<br />
+<b>$body/.&nbsp;</b> means all the body... equivalent to $body<br />
+<br />
+<b>$body/dbac:company</b> returns this:<br />
+<br />
+&lt;dbac:company&nbsp; &nbsp;&nbsp;&nbsp; xmlns:java="java:com.acme.dbaccess" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&nbsp; xmlns:dbac="http://com/acme/dbaccess"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:CreationDate&gt;3&lt;/java:CreationDate&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:Id&gt;2&lt;/java:Id&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:Name&gt;Pluto&lt;/java:Name&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/dbac:company&gt;<br />
+<br />
+<br />
+$<b>body/*/node()</b>&nbsp; also returns <br />
+<br />
+&lt;dbac:company&nbsp; &nbsp;&nbsp;&nbsp; xmlns:java="java:com.acme.dbaccess"  xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&nbsp;  xmlns:dbac="http://com/acme/dbaccess"&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;java:CreationDate&gt;3&lt;/java:CreationDate&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;java:Id&gt;2&lt;/java:Id&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;java:Name&gt;Pluto&lt;/java:Name&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;/dbac:company&gt;<br />
+<br />
+(be careful: $body/node() is different from $body/*/node() ) <br />
+<br />
+<b>&nbsp;$operation</b> will contain insertCompany<br />
+<br />
+&nbsp;<b>$body/node()</b> will return<br />
+&nbsp; &lt;dbac:insertCompany  xmlns:dbac="http://com/acme/dbaccess"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;dbac:company xmlns:java="java:com.acme.dbaccess"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &lt;java:CreationDate&gt;3&lt;/java:CreationDate&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;java:Id&gt;2&lt;/java:Id&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;java:Name&gt;Pluto&lt;/java:Name&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/dbac:company&gt;<br />
+&nbsp; &lt;/dbac:insertCompany&gt;<br />
+<br />
+use the condition <b>fn:compare($a, $b) = 0</b> to test equality of 2 strings<br />
+<br />
+<b>fn:name($body)</b> will return&nbsp; dbac:insertCompany<br />
+<br />
+<b>fn:local-name($body)</b> will return&nbsp; insertCompany<br />
+<br />
+<b>fn:node-name(</b><b>$body</b>): {http://com/acme/dbaccess}insertCompany<br />
+<br />
+___________<br />
+<br />
+XQuery: converting nodes in a CSV list<br />
+<br />
+I have this:<br />
+<br />
+&lt;getLocationsByLocationIds&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;string&gt;string_1&lt;/string&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;string&gt;string_2&lt;/string&gt;<br />
+&lt;/getLocationsByLocationIds&gt;<br />
+<br />
+<br />
+and I want to convert it into this:<br />
+string_1,string_2<br />
+<br />
+<br />
+use this:<br />
+<br />
+fn:string-join( $body/getLocationsByLocationIds/string, ',')<br />
+<br />
+___________

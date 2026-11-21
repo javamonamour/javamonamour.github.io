@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Oracle DB: find table holding foreign key constraint on another table"
+date: 2012-08-02T17:48:00.000+02:00
+permalink: /2012/08/oracle-db-find-table-holding-foreign.html
+blogger_id: "1162955493335210269"
+tags: ["oracledb"]
+---
+sometimes you want to truncate table BLA, and you get an erro message such as<br />
+"unable to delete because of some foreign key constraint".... and you don't have a clue which table is pointing to BLA...<br />
+<br />
+here is how to find out:<br />
+<br />
+<pre name="code" class="brush: java">select owner,constraint_name,constraint_type,table_name,r_owner,r_constraint_name
+  from all_constraints 
+ where constraint_type='R'
+   and r_constraint_name in (select constraint_name 
+                               from all_constraints 
+                              where constraint_type in ('P','U') 
+                                and table_name='BLA');
+
+</pre><br />
+
+Make sure you use the right CAPS.
+<br />
+(thanks to <a href="http://stackoverflow.com/questions/1143728/how-can-i-find-which-tables-reference-a-given-table-in-oracle-sql-developer">stackoverflow</a>)
+<br /><br />
+
+This is useful if you get a "ORA-02266: unique/primary keys in table referenced by enabled foreign keys".
+

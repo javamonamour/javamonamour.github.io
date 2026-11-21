@@ -1,0 +1,37 @@
+---
+layout: post
+title: "Bash: reading properties based on an ENV parameter"
+date: 2014-02-17T12:21:00.001+01:00
+permalink: /2014/02/bash-reading-properties-based-on-env.html
+blogger_id: "1194491376803797506"
+tags: ["bash"]
+---
+I hate bash, and I hate that there is not a standard way of reading property files based on 2 parameters: the property name, and the environment. And we are in 2014...flying people to Mars etc...and still hacking these very basic requirements.<br />
+<br />
+Here is a possible solution:<br />
+<br />
+create a config.sh executable file:<br />
+<br />
+<i>DEV_prop1=bla</i><br />
+<i>PROD_prop1=blu</i><br />
+<br />
+you have your environment name in a variable ENV<br />
+<br />
+ENV="DEV"<br />
+<br />
+you load all your properties:<br />
+<br />
+. ./config.sh&nbsp; (note the space after the first . !) <br />
+<br />
+then you get the property name with an "indirect referencing":<br />
+<br />
+<i>propertyname=${ENV}_prop1<br />
+myvalue="${!propertyname}";<br /></i>
+
+<br />
+
+There are many other ways (I hate the cat/grep/awk solution) but they all stink just the same.
+
+<br />
+Let's face it, bash stinks. Like a skunk.<br />
+ <div class="separator" style="clear: both; text-align: center;"><a href="/images/2099e8c25eb69462.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/4aa0de27716a3f13.jpg" /></a></div>

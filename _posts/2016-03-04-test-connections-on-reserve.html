@@ -1,0 +1,22 @@
+---
+layout: post
+title: "test-connections-on-reserve"
+date: 2016-03-04T09:42:00.001+01:00
+permalink: /2016/03/test-connections-on-reserve.html
+blogger_id: "1911921256629649468"
+tags: ["jdbc"]
+---
+If you get:
+
+<br/><br/>
+
+java.sql.SQLException: Protocol violation: [ 0, ] at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:536) 
+
+<br/>
+java.sql.SQLRecoverableException: Closed Connection at oracle.jdbc.driver.PhysicalConnection.needLine(PhysicalConnection.java:4220) at oracle.jdbc.driver.T4CXAResource.doStart(T4CXAResource.java:187)
+<br/>
+<br/>
+then make sure that /jdbc-data-source/jdbc-connection-pool-params/test-connections-on-reserve  is set to true
+<br/>
+
+

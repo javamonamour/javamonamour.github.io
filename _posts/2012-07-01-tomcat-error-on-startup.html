@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Tomcat error on startup: java.lang.NoSuchMethodError: javax.servlet.ServletContext.getSessionCookieConfig()"
+date: 2012-07-01T11:33:00.001+02:00
+permalink: /2012/07/tomcat-error-on-startup.html
+blogger_id: "6209417554653227781"
+tags: ["tomcat"]
+---
+java.lang.NoSuchMethodError: Caused by: java.lang.NoSuchMethodError: javax.servlet.ServletContext.getSessionCookieConfig()Ljavax/servlet/SessionCookieConfig;<br />
+<br />
+<i><br />
+Caused by: java.lang.NoSuchMethodError: javax.servlet.ServletContext.getSessionCookieConfig()Ljavax/servlet/SessionCookieConfig;<br />
+        at org.apache.catalina.deploy.WebXml.configureContext(WebXml.java:1309)<br />
+        at org.apache.catalina.startup.ContextConfig.webConfig(ContextConfig.java:1310)<br />
+        at org.apache.catalina.startup.ContextConfig.configureStart(ContextConfig.java:855)<br />
+        at org.apache.catalina.startup.ContextConfig.lifecycleEvent(ContextConfig.java:345)<br />
+        at org.apache.catalina.util.LifecycleSupport.fireLifecycleEvent(LifecycleSupport.java:119)<br />
+        at org.apache.catalina.util.LifecycleBase.fireLifecycleEvent(LifecycleBase.java:90)<br />
+        at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5161)<br />
+        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150)<br />
+<br />
+</i><br />
+<br />
+<br />
+The offending method is:<br />
+<br />
+SessionCookieConfig scc = context.getServletContext().getSessionCookieConfig();<br />
+<br />
+and context is passed as "configureContext(Context context)"<br />
+<br />
+and Context is "org.apache.catalina.Context"<br />
+<br />
+<br />
+I found out a different version of the javax.servlet package in wlfullclient.jar<br />
+<br />
+<br />
+<br />
+in the servlet-api.jar in Tomcat in the Interface javax.servlet.ServletContext you can find the method:<br />
+<br />
+public abstract SessionCookieConfig getSessionCookieConfig();<br />
+<br />
+<br />
+The error is triggered in org.apache.catalina.deploy.WebXml class, which is in catalina.jar.<br />
+ <br />
+<br />
+<br />
+<br />
+I have tried this and it doesn work:<br />
+<br />
+copy to tomcat/lib directory these files<br />
+javax.persistence-2.0.0.jar <a href="http://mvnrepository.com/artifact/org.eclipse.persistence/javax.persistence">http://mvnrepository.com/artifact/org.eclipse.persistence/javax.persistence</a><br />
+persistence-api-1.0.2.jar <a href="http://mvnrepository.com/artifact/javax.persistence/persistence-api">http://mvnrepository.com/artifact/javax.persistence/persistence-api</a><br />
+<br />
+<br />
+The only thing which works is detecting the extra jar introducing the wrong version of the javax.servlet package and get it out of the way.

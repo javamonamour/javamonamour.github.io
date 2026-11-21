@@ -1,0 +1,82 @@
+---
+layout: post
+title: "Java: what is your default timezone?"
+date: 2014-11-06T13:33:00.002+01:00
+permalink: /2014/11/java-what-is-your-default-timezone.html
+blogger_id: "6362433158666164498"
+tags: ["java", "oracledb", "timezone"]
+---
+cat MyTimezone.java
+<br/><br/>
+
+<pre class="brush: java">
+import java.util.TimeZone;
+
+public class  MyTimezone {
+    public static void main(String[] args) throws Exception {
+        TimeZone timeZone = TimeZone.getDefault();
+        System.out.println(timeZone);
+    }
+}
+</pre>
+<br/><br/>
+
+javac MyTimezone.java
+<br/><br/>
+
+java MyTimezone
+<br/><br/>
+on one machine I have:
+<br/><br/>
+<pre>
+sun.util.calendar.ZoneInfo[id="Europe/Zurich",offset=3600000,dstSavings=3600000,useDaylight=true,
+transitions=119,lastRule=java.util.SimpleTimeZone[id=Europe/Zurich,offset=3600000,dstSavings=3600000,
+useDaylight=true,startYear=0,startMode=2,startMonth=2,startDay=-1,startDayOfWeek=1,startTime=3600000,startTimeMode=2,endMode=2,
+endMonth=9,endDay=-1,endDayOfWeek=1,endTime=3600000,endTimeMode=2]]
+
+
+</pre>
+
+
+on another machine I have:
+<br/><br/>
+<pre>
+sun.util.calendar.ZoneInfo[id="Europe/Vaduz",offset=3600000,dstSavings=3600000,useDaylight=true,
+transitions=119,lastRule=java.util.SimpleTimeZone[id=Europe/Vaduz,offset=3600000,dstSavings=3600000,
+useDaylight=true,startYear=0,startMode=2,startMonth=2,startDay=-1,startDayOfWeek=1,startTime=3600000,startTimeMode=2,endMode=2,
+endMonth=9,endDay=-1,endDayOfWeek=1,endTime=3600000,endTimeMode=2]]
+</pre>
+
+<br/><br/>
+
+The second machine has timezone "Europe/Vaduz", and the Oracle DB doesn't recognize it:
+<pre>
+SELECT * FROM V$TIMEZONE_NAMES where TZNAME = 'Europe/Vaduz';
+</pre>
+
+nothing!
+
+<br/><br/>
+This explains why your JVM might get in trouble with the Oracle DB and you have to set explicitly the timezone yourself...
+<br/><br/>
+
+See also <a href="/2014/11/ora-01882-timezone-region-not-found.html">/2014/11/ora-01882-timezone-region-not-found.html</a>
+
+<br/><br/>
+Funnily:
+
+<pre>
+diff /usr/share/zoneinfo/Europe/Vaduz /etc/localtime
+
+diff /usr/share/zoneinfo/Europe/Zurich /etc/localtime
+</pre>
+<br/><br/>
+
+these 2 files are identical.
+
+<br/><br/>
+
+How does Java determine its default timezone from the Linux machine it's running on?
+<br/><br/>
+on RHEL, use redhat-config-date system-config-time timeconfig  tzselect 
+

@@ -1,0 +1,55 @@
+---
+layout: post
+title: "SOAPUI, setting dynamic properties with Groovy"
+date: 2012-07-23T16:38:00.000+02:00
+permalink: /2012/07/soapui-setting-dynamic-properties-with.html
+blogger_id: "8900695648379097006"
+tags: ["groovy", "soapui"]
+---
+I have a project POCO<br />
+and a Test Suite with a TestCase POCOTest<br />
+<br />
+In the TestCase I create a Groovy Script step:<br />
+<br />
+<br />
+<i>def project = context.testCase.testSuite.project<br />
+def tc = context.testCase<br />
+log.info project.name<br />
+log.info tc.name</i><br />
+<br />
+<br />
+<a href="/images/3cc0ad154ae6edb9.jpg" imageanchor="1"><img border="0" height="312" src="/images/964b850eb08f0c0e.jpg" width="640" /></a><br />
+<br />
+<br />
+<br />
+<br />
+see also:<br />
+<br />
+<a href="http://www.soapui.org/Scripting-Properties/tips-a-tricks.html">http://www.soapui.org/Scripting-Properties/tips-a-tricks.html</a><br />
+<br />
+<br />
+Now, if I want to set a property, I have a choice of TestCase, TestSuite, Project or Global properties.<br />
+<br />
+For instance, to set a new OrderID per each request:<br />
+<br />
+<i>import static java.util.UUID.randomUUID<br />
+def tc = context.testCase<br />
+uuid = randomUUID().toString()<br />
+testRunner.testCase.setPropertyValue( "OrderID", uuid )<br />
+log.info testRunner.testCase.getPropertyValue("OrderID")<br />
+</i><br />
+<br />
+After execution of this code (click the Run button in the Groovy Step editir), you have:<br />
+<br />
+<a href="/images/e28762e7e27218c2.jpg" imageanchor="1"><img border="0" height="546" src="/images/93d0dfce098ce78b.jpg" width="640" /></a><br />
+<br />
+<br />
+<br />
+now you can add other steps AFTER the Groovy Step, and in the XML requests you can put<br />
+<br />
+&lt;ret:OrderUUID&gt;${#TestCase#OrderID}&lt;/ret:OrderUUID&gt;<br />
+<br />
+<br />
+All the Steps will share the same value of OrderID.<br />
+<br />
+<a href="/images/e6439af18e05ac69.jpg" imageanchor="1"><img border="0" height="326" src="/images/b5b93f9ba4bd6df7.jpg" width="640" /></a>

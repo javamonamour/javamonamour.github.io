@@ -1,0 +1,24 @@
+---
+layout: post
+title: "GNOME desktop on Centos 7 docker"
+date: 2019-03-12T12:52:00.001+01:00
+permalink: /2019/03/gnome-desktop-on-centos-7-docker.html
+blogger_id: "7225389013845389629"
+tags: ["centos", "docker", "gnome"]
+---
+<a href="https://linuxconfig.org/how-to-install-gui-gnome-on-centos-7-linux-system">https://linuxconfig.org/how-to-install-gui-gnome-on-centos-7-linux-system</a><br />
+<br />
+open Git Bash<br />
+<br />
+winpty docker run -ti --name centos centos bash<br />
+#run all the commands to install GNOME<br />
+exit<br />
+docker start centos<br />
+winpty docker exec -ti centos bash<br />
+<br />
+#uptime gives you the number of days the HOST was up, not the container<br />
+uptime<br />
+<br />
+<br />
+<br />
+

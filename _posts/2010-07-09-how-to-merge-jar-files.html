@@ -1,0 +1,27 @@
+---
+layout: post
+title: "How to merge jar files"
+date: 2010-07-09T08:39:00.001+02:00
+permalink: /2010/07/how-to-merge-jar-files.html
+blogger_id: "6639127207766623579"
+tags: ["jar"]
+---
+I have done that painfully by hand as a part of a delivery process, then I have discovered that in Ant the "jar" task can do that for you:<br />
+<br />
+This will merge source1.jar and source2.jar into target.jar<br />
+<br />
+<pre name="code" class="brush: xml">
+<target name="merge" description="merge 3 jars together">
+ <jar destfile="${geoclient}/target.jar">
+     <zipfileset includes="**/*.*">
+       <fileset dir="${cohlib}" includes="source1.jar"/>
+     </zipfileset>
+     <zipfileset includes="**/*.*">
+    <fileset dir="${cohlib}" includes="source2.jar"/>
+     </zipfileset>
+  <fileset dir="build/classes"/>   
+  </jar>
+</target>
+
+
+</pre>

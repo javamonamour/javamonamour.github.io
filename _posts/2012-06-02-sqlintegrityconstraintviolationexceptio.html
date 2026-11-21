@@ -1,0 +1,158 @@
+---
+layout: post
+title: "SQLIntegrityConstraintViolationException while the LeaseManager updates the ACTIVE table"
+date: 2012-06-02T13:54:00.001+02:00
+permalink: /2012/06/sqlintegrityconstraintviolationexceptio.html
+blogger_id: "8835113522652332919"
+tags: ["cluster"]
+---
+<i> <br />
+<br />
+####&lt;May 31, 2012 11:14:06 AM CEST> &lt;Debug> &lt;ServerMigration> &lt;hqchacme105> &lt;osbpp1ms1> &lt;[ACTIVE] ExecuteThread: '32' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;553e43a3c186ec6d:58114d2:1379f528b89:-7ffd-0000000000008622> &lt;1338455646674> &lt;BEA-000000> &lt;Query: UPDATE ACTIVE SET TIMEOUT = ( (SYSDATE + (30/86400))) WHERE SERVER IN ('wlsserver.osbpp1ms1') AND INSTANCE ='-5605988896686436333/osbpp1ms1' AND DOMAINNAME='osbpp1do' AND CLUSTERNAME='osbpp1cl'><br />
+<br />
+####&lt;May 31, 2012 11:14:07 AM CEST> &lt;Debug> &lt;ServerMigration> &lt;hqchacme105> &lt;osbpp1ms1> &lt;[ACTIVE] ExecuteThread: '23' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;553e43a3c186ec6d:58114d2:1379f528b89:-7ffd-0000000000008626> &lt;1338455647328> &lt;BEA-000000> &lt;&lt;DatabaseLeasingBasis>: tryAcquire(service.SINGLETON_MASTER, 30000)><br />
+<br />
+####&lt;May 31, 2012 11:14:07 AM CEST> &lt;Debug> &lt;ServerMigration> &lt;hqchacme105> &lt;osbpp1ms1> &lt;[ACTIVE] ExecuteThread: '23' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;553e43a3c186ec6d:58114d2:1379f528b89:-7ffd-0000000000008626> &lt;1338455647329> &lt;BEA-000000> &lt;Query: DELETE FROM ACTIVE WHERE (SYSDATE > TIMEOUT) AND SERVER = 'service.SINGLETON_MASTER' AND DOMAINNAME='osbpp1do' AND CLUSTERNAME='osbpp1cl'><br />
+<br />
+####&lt;May 31, 2012 11:14:07 AM CEST> &lt;Debug> &lt;ServerMigration> &lt;hqchacme105> &lt;osbpp1ms1> &lt;[ACTIVE] ExecuteThread: '23' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;553e43a3c186ec6d:58114d2:1379f528b89:-7ffd-0000000000008626> &lt;1338455647331> &lt;BEA-000000> &lt;Query: INSERT INTO ACTIVE ( SERVER, INSTANCE, DOMAINNAME, CLUSTERNAME, TIMEOUT )  VALUES ( 'service.SINGLETON_MASTER' , '-5605988896686436333/osbpp1ms1' , 'osbpp1do' , 'osbpp1cl' , (SYSDATE + (30/86400)) )><br />
+<br />
+####&lt;May 31, 2012 11:14:07 AM CEST> &lt;Debug> &lt;ServerMigration> &lt;hqchacme105> &lt;osbpp1ms1> &lt;[ACTIVE] ExecuteThread: '23' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;553e43a3c186ec6d:58114d2:1379f528b89:-7ffd-0000000000008626> &lt;1338455647333> &lt;BEA-000000> &lt;Attempted Query: INSERT INTO ACTIVE ( SERVER, INSTANCE, DOMAINNAME, CLUSTERNAME, TIMEOUT )  VALUES ( 'service.SINGLETON_MASTER' , '-5605988896686436333/osbpp1ms1' , 'osbpp1do' , 'osbpp1cl' , (SYSDATE + (30/86400)) )><br />
+<br />
+####&lt;May 31, 2012 11:14:07 AM CEST> &lt;Debug> &lt;ServerMigration> &lt;hqchacme105> &lt;osbpp1ms1> &lt;[ACTIVE] ExecuteThread: '23' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;553e43a3c186ec6d:58114d2:1379f528b89:-7ffd-0000000000008626> &lt;1338455647334> &lt;BEA-000000> &lt;Unexpected exception<br />
+<br />
+java.sql.SQLIntegrityConstraintViolationException: ORA-00001: unique constraint (PP1_SOAINFRA.SYS_C0013550) violated<br />
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:457)<br />
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:405)<br />
+at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:889)<br />
+at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:476)<br />
+at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:204)<br />
+at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:540)<br />
+at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:217)<br />
+at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java:1079)<br />
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1466)<br />
+at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3752)<br />
+at oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OraclePreparedStatement.java:3887)<br />
+at oracle.jdbc.driver.OraclePreparedStatementWrapper.executeUpdate(OraclePreparedStatementWrapper.java:1508)<br />
+at weblogic.jdbc.wrapper.PreparedStatement.executeUpdate(PreparedStatement.java:172)<br />
+at weblogic.cluster.singleton.DatabaseLeasingBasis.assumeLease(DatabaseLeasingBasis.java:253)<br />
+at weblogic.cluster.singleton.DatabaseLeasingBasis.acquire(DatabaseLeasingBasis.java:88)<br />
+at weblogic.cluster.singleton.LeaseManager.timerExpired(LeaseManager.java:408)<br />
+at weblogic.timers.internal.TimerImpl.run(TimerImpl.java:273)<br />
+at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)<br />
+at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)<br />
+at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)<br />
+<br />
+<br />
+</i> <br />
+<br />
+this is the content of the ACTIVE table<br />
+<br />
+<br />
+<br />
+<i><br />
+"SERVER"            "INSTANCE"       "DOMAINNAME"            "CLUSTERNAME"            "TIMEOUT"<br />
+<br />
+"service.SINGLETON_MASTER"               "2372471525479840300/osbpp1ms2"     "osbpp1do"       "osbpp1cl"         31-MAY-12<br />
+<br />
+"wlsserver.osbpp1ms1"              "-5605988896686436333/osbpp1ms1"   "osbpp1do"       "osbpp1cl"         31-MAY-12<br />
+<br />
+"service.CLUSTER_MASTER"      "2372471525479840300/osbpp1ms2"     "osbpp1do"       "osbpp1cl"         31-MAY-12<br />
+<br />
+"wlsserver.osbpp1ms4"              "2967680027205630303/osbpp1ms4"     "osbpp1do"       "osbpp1cl"         31-MAY-12<br />
+<br />
+"wlsserver.osbpp1ms2"              "2372471525479840300/osbpp1ms2"     "osbpp1do"       "osbpp1cl"         31-MAY-12<br />
+<br />
+"wlsserver.osbpp1ms3"              "1002143801186479830/osbpp1ms3"     "osbpp1do"       "osbpp1cl"         31-MAY-12<br />
+<br />
+</i> <br />
+<br />
+<br />
+<br />
+and the constraint is:<br />
+<br />
+<br />
+<br />
+"CONSTRAINT_NAME" "CONSTRAINT_TYPE"    "SEARCH_CONDITION"                "R_OWNER"      "R_TABLE_NAME"                "R_CONSTRAINT_NAME"           "DELETE_RULE"                "STATUS"            "DEFERRABLE"  "VALIDATED"    "GENERATED"                "BAD"   "RELY"  "LAST_CHANGE"             "INDEX_OWNER"            "INDEX_NAME"               "INVALID"                "VIEW_RELATED"<br />
+<br />
+<br />
+"SYS_C0013550"             "Primary_Key"                ""           ""           ""           ""           ""           "ENABLED"        "NOT DEFERRABLE"                "VALIDATED"    "GENERATED NAME"    ""           ""           26-APR-12          "PP1_SOAINFRA"           "SYS_C0013550"                ""           ""<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+and the DDL is:<br />
+<br />
+<br />
+<br />
+--------------------------------------------------------<br />
+<br />
+--  DDL for Table ACTIVE<br />
+<br />
+--------------------------------------------------------<br />
+<br />
+<br />
+<br />
+CREATE TABLE "PP1_SOAINFRA"."ACTIVE"<br />
+<br />
+(           "SERVER" VARCHAR2(150 BYTE),<br />
+<br />
+"INSTANCE" VARCHAR2(100 BYTE),<br />
+<br />
+"DOMAINNAME" VARCHAR2(50 BYTE),<br />
+<br />
+"CLUSTERNAME" VARCHAR2(50 BYTE),<br />
+<br />
+"TIMEOUT" DATE<br />
+<br />
+) <br />
+<br />
+<br />
+CREATE UNIQUE INDEX "PP1_SOAINFRA"."SYS_C0013550" ON "PP1_SOAINFRA"."ACTIVE" ("SERVER", "DOMAINNAME", "CLUSTERNAME")<br />
+<br />
+<br />
+<br />
+ALTER TABLE "PP1_SOAINFRA"."ACTIVE" ADD PRIMARY KEY ("SERVER", "DOMAINNAME", "CLUSTERNAME");<br />
+<br />
+<br />
+<br />
+probably the DELETE doesn’t delete the row....<br />
+<br />
+<br />
+This is what the official documentation says:<br />
+<br />
+<br />
+<a href="http://docs.oracle.com/cd/E23549_01/relnotes.1111/e10133/ha.htm#CIHEJAHC">http://docs.oracle.com/cd/E23549_01/relnotes.1111/e10133/ha.htm#CIHEJAHC</a><br />
+<br />
+<br />
+<i><br />
+<br />
+6.1.14 Harmless SQLIntegrityConstraintViolationException Can be Received in a SOA Cluster<br />
+<br />
+The following SQLIntegrityConstraintViolationException can be received in a SOA cluster:<br />
+<br />
+[TopLink Warning]: 2010.04.11 14:26:53.941--UnitOfWork(275924841)--Exception<br />
+<br />
+[TOPLINK-4002] (Oracle TopLink - 11g Release 1 (11.1.1.3.0):<br />
+<br />
+Internal Exception: java.sql.SQLIntegrityConstraintViolationException:<br />
+<br />
+ORA-00001: unique constraint (JYIPS2RC4B49_SOAINFRA.SYS_C0035333) violated<br />
+<br />
+.<br />
+<br />
+.<br />
+<br />
+.<br />
+<br />
+This is not a bug. In a cluster environment, when the messages for the same group arrive on both the nodes, one node is bound to experience this exception for the first message. The application is aware of this exception and handles it properly. It does not break any functionality.<br />
+<br />
+This exception can also come on a single node after you restart the server and send the message for the existing group. Again, this exception will be experienced on the very first message.<br />
+<br />
+In summary, this exception is within the application design and does not impact any functionality. It is for this reason that you do not see this exception logged as severe in the soa-diagnostic logs.<br />
+<br />
+Toplink does, however, log it in its server logs.<br />
+</i><br />
+<br />
+<br />
+I hope this is our case... harmless....

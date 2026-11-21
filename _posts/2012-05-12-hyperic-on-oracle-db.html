@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Hyperic on Oracle DB"
+date: 2012-05-12T08:32:00.000+02:00
+permalink: /2012/05/hyperic-on-oracle-db.html
+blogger_id: "2171810078823647876"
+tags: ["hyperic"]
+---
+<a href="http://support.hyperic.com/display/DOC/Set+Up+Oracle">http://support.hyperic.com/display/DOC/Set+Up+Oracle</a><br />
+<br />
+(full DDL to create tablespaces at the bottom of the above document....)<br />
+<br />
+<b>create temporary tablespace TEMP_HQDB <br />
+tempfile 'TEMP_HQDB.DBF' size 2G extent management local;<br />
+</b><br />
+this will create a file<br />
+C:\oraclexe\app\oracle\product\10.2.0\server\database\TEMP_HQDB.DBF <br />
+<br />
+<br />
+create tablespace TS_HQDB logging datafile 'TS_HQDB.dbf' size 3g extent management local;<br />
+<br />
+this will create a file<br />
+C:\oraclexe\app\oracle\product\10.2.0\server\database\TS_HQDB.DBF <br />
+<br />
+This could take several minutes.<br />
+<br />
+<br />
+CREATE USER HQUSER IDENTIFIED BY HQPASSWORD DEFAULT TABLESPACE TS_HQDB;<br />
+GRANT CONNECT, RESOURCE, CREATE VIEW TO HQUSER;<br />
+<br />
+<br />
+copy ojdbc6.jar to the installer (what? you need to reinstall Hyperic Server to switch to Oracle DB? Oh no :o(((( ....)

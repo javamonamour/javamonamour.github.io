@@ -1,0 +1,17 @@
+---
+layout: post
+title: "Decrypting HTTPS traffic with Fiddler"
+date: 2017-11-15T12:07:00.000+01:00
+permalink: /2017/11/decrypting-https-traffic-with-fiddler.html
+blogger_id: "263704493047734394"
+tags: ["fiddler"]
+---
+A great feature provided by Fiddler (running only on Windows, though), and not available in Wireshark OOTB, <br />
+is the ability to capture and DECRYPT HTTPS traffic:<br />
+<br />
+<a href="http://docs.telerik.com/fiddler/Configure-Fiddler/Tasks/DecryptHTTPS">http://docs.telerik.com/fiddler/Configure-Fiddler/Tasks/DecryptHTTPS</a><br />
+<br />
+however, this will create a new Root CA and add it to your trusted CA store.... before you do this in your company, you might have a word with the Security folks, before you find Ulysses and all the other greek warriors looting your city of Troy...<br />
+<br />
+<br />
+

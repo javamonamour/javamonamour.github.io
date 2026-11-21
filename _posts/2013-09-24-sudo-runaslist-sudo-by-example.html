@@ -1,0 +1,56 @@
+---
+layout: post
+title: "sudo Runas_list (sudo by example)"
+date: 2013-09-24T17:03:00.002+02:00
+permalink: /2013/09/sudo-runaslist-sudo-by-example.html
+blogger_id: "760707259001567104"
+tags: ["sudo"]
+---
+I have 3 users "soa", "soa2", "soa3". I want to allow a user "myuser", member of the group "support", to run ANY script in /opt/oracle/usr folder, but ONLY impersonating the soa, soa2, soa3 user - the script should never been run as myuser user.
+<br/><br/>
+
+I create a group "support" and a user myuser:<br/>
+<pre>
+puppet apply -e "group {'support': ensure => present,}
+puppet apply -e "user {'myuser': ensure => present, gid => 'support', managehome => true}"
+</pre>
+<br/>
+then I edit my sudoers file: <br/>
+<pre>
+visudo -f /etc/sudoers
+</pre>
+<br/>
+and I enter
+<br/>
+<pre>
+Runas_Alias SOA = soa, soa2, soa3
+
+%support osb-vagrant= (SOA) /opt/oracle/usr/*
+</pre>
+
+<br/>
+
+"%support" means "any member of the support group"
+<br>
+"osb-vagrant=" means "only when the operator is logged on this hostname"
+<br>
+"(SOA)" means "only if the operator runs the command with a sudo -u soa|soa2|soa3 command"
+<br>
+"/opt/oracle/usr/*" means "operator can run any script in /opt/oracle/usr/ directory"
+<br><br>
+If you want to allow the operator to run the command without having to supply his password:
+
+<pre>
+%support osb-vagrant= (SOA) NOPASSWD: /opt/oracle/usr/*
+</pre>
+
+
+now if you "sudo su - myuser" and run "sudo -u soa /opt/oracle/usr/somescript.sh", you will be able to run the script impersonating the user "soa".
+
+<br><br>
+sudo is incredibly flexible
+
+
+
+
+

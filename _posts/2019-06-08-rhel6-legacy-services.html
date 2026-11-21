@@ -1,0 +1,88 @@
+---
+layout: post
+title: "RHEL6 legacy services "
+date: 2019-06-08T19:15:00.000+02:00
+permalink: /2019/06/rhel6-legacy-services.html
+blogger_id: "6708026244674833214"
+tags: ["init.d", "rhel6"]
+---
+just upgrade to RHEL7 please.... or RHEL8...<br />
+<br />
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/ch-services_and_daemons<br />
+<br />
+change keyboard to Swiss German:<br />
+<br />
+<b>vi /etc/sysconfig/keyboard</b><br />
+<br />
+<pre>KEYTABLE=”de_CH-latin1″
+MODEL=”pc105+inet”
+LAYOUT=”de_CH”
+KEYBOARDTYPE=”pc”
+</pre><br />
+<b>shutdown -r now</b><br />
+<br />
+<br />
+<b>cat /etc/inittab</b> should tell you id:5:initdefault:  which is the default runlevel<br />
+<br />
+<b>runlevel</b> checks current runlevel<br />
+<br />
+<b>system-config-services</b> UI utility to configure services<br />
+<br />
+service bla status<br />
+<br />
+services are defined in /etc/rc.d/init.d/<br />
+<br />
+ls /etc/xinetd.d here other services  <a href="https://en.wikipedia.org/wiki/Xinetd">https://en.wikipedia.org/wiki/Xinetd</a><br />
+<br />
+<b>ntsysv</b> to enable/disable services to startup ( ntsysv --level 35  will edit runlevel 3 and 5)<br />
+<br />
+<b>chkconfig --list</b> or <b>chkconfig --list httpd</b><br />
+<br />
+<b>chkconfig httpd on</b> or <b>chkconfig httpd on --level 35</b><br />
+<b>chkconfig httpd off</b> or <b>chkconfig httpd off --level 35</b><br />
+<br />
+service --status-all<br />
+<br />
+service httpd start<br />
+<br />
+<br />
+<br />
+<br />
+/var/lock/subsys/  -> " lock files created by their init scripts" <a href="https://linuxexplore.com/2014/03/19/use-of-subsystem-lock-files-in-init-script/">see here</a> <br />
+<br />
+<br />
+before start:<br />
+<b>if [ ! -f /var/lock/subsys/servicename ]; then<br />
+     start # start service here<br />
+fi</b><br />
+<br />
+at the end of start:<br />
+<b>touch /var/lock/subsys/servicename</b><br />
+<br />
+at the end of stop:<br />
+rm -f /var/lock/subsys/servicename<br />
+<br />
+WARNING: stale files could linger if abrupt shutdown -> always check also existence of PID (must write PID file)<br />
+<br />
+<br />
+What happens at boot?<br />
+/etc/rc.d/rc.sysinit<br />
+/etc/inittab<br />
+/etc/rc.d/rcN.d (N = current runlevel)<br />
+<br />
+<br />
+Template for service scripts is in /usr/share/doc/initscripts-*/sysvinitfiles<br />
+<br />
+sudo stat /proc/1/exe -> /sbin/init<br />
+stat /sbin/init -> /lib/systemd/systemd<br />
+/sbin/init --version <br />
+<br />
+<br />
+<br />
+/etc/rc.d/init.d/functions<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

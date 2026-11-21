@@ -1,0 +1,21 @@
+---
+layout: post
+title: "Oracle DB dates"
+date: 2012-06-25T22:27:00.000+02:00
+permalink: /2012/06/oracle-db-dates.html
+blogger_id: "7022862115657610439"
+tags: ["date", "oracledb"]
+---
+Official Doc on DATE datatype:<br />
+<br />
+<a href="http://docs.oracle.com/cd/B19306_01/server.102/b14220/datatype.htm#i1847">http://docs.oracle.com/cd/B19306_01/server.102/b14220/datatype.htm#i1847</a><br />
+<br />
+Use TO_CHAR(mydate, 'MM/DD/YYYY HH24:MI:SS') to display the Date<br />
+<br />
+WARNING: when you export your tables in Oracle SQL Developer using the "INSERT" format, DATE columns are TRUNCATED to midnigth, with a to_date('22-JUN-12','DD-MON-RR')  statement.<br />
+<br />
+<br />
+Use<br />
+TO_DATE('2012-08-13 11.20.00', 'YYYY-MM-DD HH24:MI:SS')<br />
+<br />
+to do the opposite conversion 

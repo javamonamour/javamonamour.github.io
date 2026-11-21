@@ -1,0 +1,18 @@
+---
+layout: post
+title: "Connecting to a RAC instance with Oracle SQL Developer"
+date: 2012-04-02T16:05:00.002+02:00
+permalink: /2012/04/connecting-to-rac-instance-with-oracle.html
+blogger_id: "4287785930551704816"
+tags: ["OracleRAC"]
+---
+New Connection<br />
+Connection Type: Advanced<br />
+in Custom JDBC URL enter:<br />
+<br />
+<br />
+jdbc:oracle:thin:@(DESCRIPTION=(LOAD_BALANCE=on)(FAILOVER=ON)(ENABLE=BROKEN)(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=myhost1-vip.acme.com)(PORT=1522))(ADDRESS=(PROTOCOL=TCP)(HOST=myhost2-vip.acme.com)(PORT=1522)))(CONNECT_DATA=(SERVICE_NAME=srv_osb)(FAILOVER_MODE=(TYPE=SELECT)(METHOD=BASIC)(DELAY=5)(RETRIES=36))))<br />
+<br />
+<br />
+<br />
+and.... it works! No need to set any special classpath.

@@ -1,0 +1,153 @@
+---
+layout: post
+title: "XML parsing with jackson fasterxml"
+date: 2018-05-03T04:35:00.000+02:00
+permalink: /2018/05/xml-parsing-with-jackson-fasterxml.html
+blogger_id: "9129157263189442499"
+tags: ["fasterxml", "jackson"]
+---
+The code is taken from the excellent <a href="http://www.baeldung.com/jackson-xml-serialization-and-deserialization">http://www.baeldung.com/jackson-xml-serialization-and-deserialization</a><br />
+<br />
+<br />
+All their source code is available in <a href="https://github.com/eugenp/tutorials/tree/master/jackson">https://github.com/eugenp/tutorials/tree/master/jackson</a><br />
+<br />
+<br />
+<pre class="brush: java">package org.pierre.xmlparsing;
+
+public class SimpleBean {
+    private int x = 1;
+    private int y = 2;
+ public int getX() {
+  return x;
+ }
+ public void setX(int x) {
+  this.x = x;
+ }
+ public int getY() {
+  return y;
+ }
+ public void setY(int y) {
+  this.y = y;
+ }
+    
+}
+
+</pre><pre class="brush: java">package org.pierre.xmlparsing;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import org.junit.jupiter.api.Test;
+import org.pierre.xmlparsing.SimpleBean;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
+public class XMLParsingTest {
+ /**
+  * convert Java bean into XML
+  * @throws JsonProcessingException
+  */
+ @Test
+ public void whenJavaSerializedToXmlStr_thenCorrect() throws JsonProcessingException {
+     XmlMapper xmlMapper = new XmlMapper();
+     String xml = xmlMapper.writeValueAsString(new SimpleBean());
+     assertNotNull(xml);
+     System.out.println(xml);
+ }
+
+ /**
+  * convert Java bean into xml and write to file
+  * @throws IOException
+  */
+ @Test
+ public void whenJavaSerializedToXmlFile_thenCorrect() throws IOException {
+     XmlMapper xmlMapper = new XmlMapper();
+     xmlMapper.writeValue(new File("simple_bean.xml"), new SimpleBean());
+     File file = new File("simple_bean.xml");
+     assertNotNull(file);
+ }
+ 
+ 
+ /**
+  * Convert Xml into Java bean 
+  * @throws IOException
+  */
+ @Test
+ public void whenJavaGotFromXmlStr_thenCorrect() throws IOException {
+     XmlMapper xmlMapper = new XmlMapper();
+     SimpleBean value = 
+       xmlMapper.readValue("<simplebean><x>1</x><y>2</y></SimpleBean>", 
+       SimpleBean.class);
+     assertTrue(value.getX() == 1 && value.getY() == 2);
+ }
+ 
+ /**
+  * Read XML file and convert to Java bean
+  * @throws IOException
+  */
+ @Test
+ public void whenJavaGotFromXmlFile_thenCorrect() throws IOException {
+     File file = new File("simple_bean.xml");
+     XmlMapper xmlMapper = new XmlMapper();
+     String xml = inputStreamToString(new FileInputStream(file));
+     SimpleBean value = xmlMapper.readValue(xml, SimpleBean.class);
+     assertTrue(value.getX() == 1 && value.getY() == 2);
+ }
+ 
+ public static String inputStreamToString(InputStream is) throws IOException {
+     StringBuilder sb = new StringBuilder();
+     String line;
+     BufferedReader br = new BufferedReader(new InputStreamReader(is));
+     while ((line = br.readLine()) != null) {
+         sb.append(line);
+     }
+     br.close();
+     return sb.toString();
+ }
+}
+
+</pre><br />
+the pom.xml is:<br />
+<br />
+<pre class="brush: xml">&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+ xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+ xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+ &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+ &lt;groupId&gt;org.pierre&lt;/groupId&gt;
+ &lt;artifactId&gt;pvnexus&lt;/artifactId&gt;
+ &lt;version&gt;1.0&lt;/version&gt;
+
+ &lt;build&gt;
+  &lt;sourceDirectory&gt;src/main/java&lt;/sourceDirectory&gt;
+  &lt;plugins&gt;
+   &lt;plugin&gt;
+    &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+    &lt;version&gt;3.7.0&lt;/version&gt;
+    &lt;configuration&gt;
+     &lt;source&gt;1.8&lt;/source&gt;
+     &lt;target&gt;1.8&lt;/target&gt;
+    &lt;/configuration&gt;
+   &lt;/plugin&gt;
+  &lt;/plugins&gt;
+ &lt;/build&gt;
+ &lt;dependencies&gt;
+  &lt;dependency&gt;
+   &lt;groupId&gt;com.fasterxml.jackson.dataformat&lt;/groupId&gt;
+   &lt;artifactId&gt;jackson-dataformat-xml&lt;/artifactId&gt;
+   &lt;version&gt;2.9.5&lt;/version&gt;
+  &lt;/dependency&gt;
+ &lt;/dependencies&gt;
+&lt;/project&gt;
+
+</pre><br />
+For more advanced cases you can annotate the Bean with @JsonProperty, but this is not required for basic parsing.<br />
+<br />
+

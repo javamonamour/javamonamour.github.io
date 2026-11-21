@@ -1,0 +1,36 @@
+---
+layout: post
+title: "OSB Datasources"
+date: 2012-01-31T16:52:00.000+01:00
+permalink: /2012/01/osb-datasources.html
+blogger_id: "2462325434674663162"
+tags: ["datasource", "OSB"]
+---
+sparse notes here....<br />
+<br />
+oracle.jdbc.driver.OracleDriver vs. oracle.jdbc.OracleDriver<br />
+<br />
+http://stackoverflow.com/questions/6202653/difference-between-oracle-jdbc-driver-classes<br />
+<br />
+so oracle.jdbc.driver.OracleDriver is deprecated, uh?<br />
+<br />
+http://docs.oracle.com/cd/E12840_01/wls/docs103/jdbc_drivers/oracle.html<br />
+<br />
+<br />
+<br />
+Which Oracle DB version am I using?<br />
+<br />
+SELECT version FROM v$instance;<br />
+<br />
+I get 11.2.0.3.0<br />
+<br />
+If you do "SELECT * FROM g$instance" in Oracle RAC you get the same view.<br />
+<br />
+<a href="http://docs.oracle.com/cd/E18283_01/appdev.112/e13995/oracle/jdbc/xa/client/OracleXADataSource.html">oracle.jdbc.xa.client.OracleXADataSource</a><br />
+<br />
+wlsbjmsrpDataSource: In the Driver field, select a supported non-XA driver<br />
+http://docs.oracle.com/cd/E12840_01/common/docs103/confgwiz/howdoi.html<br />
+<br />
+<br />
+For Supported Configurations Matrix: http://www.oracle.com/technetwork/middleware/ias/downloads/fusion-certification-100350.html<br />
+For OSB http://www.oracle.com/technetwork/middleware/ias/downloads/osb-11gr1certmatrix.xls

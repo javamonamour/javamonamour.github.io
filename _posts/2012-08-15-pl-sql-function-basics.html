@@ -1,0 +1,31 @@
+---
+layout: post
+title: "PL-SQL function, the basics"
+date: 2012-08-15T14:54:00.000+02:00
+permalink: /2012/08/pl-sql-function-basics.html
+blogger_id: "9023681851281423410"
+tags: ["PL-SQL"]
+---
+There are Procedures and Functions.<br />
+<br />
+A Function is declared like this:<br />
+<br />
+<pre>
+CREATE OR REPLACE FUNCTION SHOULDALERT 
+(
+  p_technicalmessageid IN VARCHAR2  
+) RETURN NUMBER IS 
+v_count integer;
+BEGIN
+  select count(*) into v_count from nesoa2_alert_instances where technicalmessageid = p_technicalmessageid 
+   and status in ('CREATED', 'PROCESSED') ;
+  return v_count;
+END SHOULDALERT;
+
+</pre><br />
+<br />
+and can be invoked as<br />
+<br />
+select SHOULDALERT('BLABLA^PuO20111212_164122_1640.txt^AVE^1344962989697') from dual;<br />
+<br />
+

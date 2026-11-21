@@ -1,0 +1,24 @@
+---
+layout: post
+title: "OSB encoding in XQuery"
+date: 2011-07-07T12:16:00.001+02:00
+permalink: /2011/07/osb-encoding-in-xquery.html
+blogger_id: "6735219542652272124"
+tags: ["encoding"]
+---
+All the XQuery files in $domain/osb/config/core are stored in UFT-8 encoding:<br />
+<br />
+?xml version="1.0" encoding="UFT-8"?<br />
+<br />
+When you edit the XQuery through the OSB console, the application will take care of encoding weird characters (â, é, ü...) into a sequence of bytes (3 bytes, I guess).<br />
+<br />
+If you have to edit manually the XQuery, and deploy it directly, YOU are responsible to encode the file. <br />
+<br />
+The simplest option is to use Notepad++ and do Encode/Convert to UTF-8<br />
+<br />
+If you deploy the XQuery with improper encoding, the server will not even start and throw horrible UTF8Decoder exceptions (!!!!).<br />
+<br />
+<br />
+Another alternative for encoding could be using the "file" Linux utility, but I haven't tested this.<br />
+<br />
+<a href="http://mindspill.net/computing/linux-notes/determine-and-change-file-character-encoding.html">http://mindspill.net/computing/linux-notes/determine-and-change-file-character-encoding.html</a>

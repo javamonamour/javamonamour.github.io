@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Singleton service in cluster to consume JMS messages with disaster recovery"
+date: 2016-01-15T17:39:00.002+01:00
+permalink: /2016/01/singleton-service-in-cluster-to-consume.html
+blogger_id: "2634266501411885821"
+tags: ["jms", "singleton"]
+---
+"We consume messages from a (MQ) queue
+<br/>
+We have two servers. One is the primary and consumes the messages. The secondary does not normally consume messages.
+<br/>
+If the primary server falls over (DR), then the secondary should start consuming the messages.
+<br/>
+How to implement this?
+<br/>
+"
+<br/><br/>
+
+register a custom Singleton service (message listener) on a cluster, as JMS listener of the Queue, with automated migration: assign it by default to a specific instance: if this instance fails, the singleton is reassigned to another instance. Automated migration is ensured by the DB leasing mechanism.
+<br/><br/>
+
+<a href="http://docs.oracle.com/cd/E24329_01/web.1211/e24425/service_migration.htm#CLUST373">http://docs.oracle.com/cd/E24329_01/web.1211/e24425/service_migration.htm#CLUST373</a>
+<br/>
+<a href="https://docs.oracle.com/middleware/1212/wls/WLACH/taskhelp/clusters/ConfigureSingletonService.html">https://docs.oracle.com/middleware/1212/wls/WLACH/taskhelp/clusters/ConfigureSingletonService.html</a>
+<br/>
+<a href="http://docs.oracle.com/cd/E24329_01/apirefs.1211/e24391/weblogic/cluster/singleton/SingletonService.html">http://docs.oracle.com/cd/E24329_01/apirefs.1211/e24391/weblogic/cluster/singleton/SingletonService.html</a>
+<br/>
+<a href="http://developsimpler.blogspot.ch/2012/03/weblogic-clusters-and-singleton-service.html">http://developsimpler.blogspot.ch/2012/03/weblogic-clusters-and-singleton-service.html</a>
+<br/>
+
+
+
+<a href="http://developsimpler.blogspot.ch/2012/03/weblogic-clusters-and-singleton-service.html">http://developsimpler.blogspot.ch/2012/03/weblogic-clusters-and-singleton-service.html</a>
+<br/>
+<a href="http://docs.oracle.com/html/E24401_02/taskhelp/clusters/ConfigureSingletonService.html">http://docs.oracle.com/html/E24401_02/taskhelp/clusters/ConfigureSingletonService.html</a>
+<br/>
+<br/>
+This should appear in your config.xml, after startup-class and before admin-server-name:
+<br/><br/>
+<pre class="brush: xml">
+
+  &lt;singleton-service>
+    &lt;name>Singleton Service-0&lt;/name>
+    &lt;class-name>com.pippo.pluto.MySingletonService&lt;/class-name>
+    &lt;cluster>Cluster-0&lt;/cluster>
+  &lt;/singleton-service>
+
+
+</pre>
+
+<br/><br/>
+
+
+
+

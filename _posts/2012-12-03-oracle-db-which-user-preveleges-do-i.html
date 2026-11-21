@@ -1,0 +1,36 @@
+---
+layout: post
+title: "oracle DB, which user privileges do I have?"
+date: 2012-12-03T14:56:00.000+01:00
+permalink: /2012/12/oracle-db-which-user-preveleges-do-i.html
+blogger_id: "4540653698303120603"
+tags: ["oracledb"]
+---
+select * from SESSION_PRIVS;<br />
+<br />
+CREATE SESSION<br />
+CREATE TABLE<br />
+CREATE VIEW<br />
+CREATE SEQUENCE<br />
+CREATE PROCEDURE<br />
+CREATE MATERIALIZED VIEW<br />
+CREATE TYPE<br />
+MANAGE ANY QUEUE<br />
+ENQUEUE ANY QUEUE<br />
+DEQUEUE ANY QUEUE<br />
+CREATE EVALUATION CONTEXT<br />
+CREATE RULE SET<br />
+CREATE RULE<br />
+CREATE JOB<br />
+<br />
+<br />
+<br />
+To assign a privilege to user PIPPO:<br />
+<br />
+GRANT CREATE JOB to PIPPO;<br />
+<br />
+see also<br />
+<br />
+<a href="http://docs.oracle.com/cd/B10500_01/server.920/a96521/privs.htm">http://docs.oracle.com/cd/B10500_01/server.920/a96521/privs.htm</a><br />
+<br />
+<br />

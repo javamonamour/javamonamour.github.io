@@ -1,0 +1,68 @@
+---
+layout: post
+title: "WebLogic: protect and secure JMS queues"
+date: 2013-05-12T20:16:00.000+02:00
+permalink: /2013/05/weblogic-protect-and-secure-jms-queues.html
+blogger_id: "6681221746057695005"
+tags: ["jms", "security", "weblogic"]
+---
+my first experiment is protecting the individual queue with a Security Policy "user= weblogic"
+<p/>
+
+<a href="/images/b29b97cf25fb0e46.jpg" imageanchor="1" ><img border="0" src="/images/e28ff8d7a2d89ad9.jpg" /></a>
+
+
+If I go to the monitoring tab and do "show messages"; I get this error:<p/>
+
+<pre>
+Access denied to resource: type=<jms>, application=ACMEJMSModule, destinationType=queue, resource=ACMEQ, action=browse
+Message icon - Error weblogic.management.ManagementException: Authorization failure.
+
+</pre>
+
+
+<p/>
+
+The same happens if instead of protecting the individual queue, I protect the JMSModule.
+<p/>
+
+CAVEAT: when you ADD the policy, the effect is immediate. When you REMOVE it, the restriction stays cached, and only a restart sets the resource free again.
+<p/><p/>
+
+
+Now you must enable a Business Service to WRITE to the JMS queue:
+
+<p/>
+
+<a href="http://docs.oracle.com/cd/E17904_01/doc.1111/e15866/transport_level.htm#i1078093">http://docs.oracle.com/cd/E17904_01/doc.1111/e15866/transport_level.htm#i1078093</a>
+
+<p/>
+
+a) create a service account, static, with the same username/password used to protect the JMS queue
+<p/>
+b) in the Business Service producing JMS messages, assign as "JMS Service Account" the above service account  
+
+<p/>
+c) in the Proxy Service consuming JMS messages, 
+<p/>assign as "JMS Service Account" the above service account  
+
+<p/>
+
+It can't be simpler than this.
+<p/>
+If I connect to Domain B to Domain A JMS queue (protected), I get an error:
+<p/>
+The Message-Driven EJB: RequestEJB-4191753809964957369-ea7ff4.13e88fddc7c.-7ef2 is unable to connect to the JMS destination: jms.jndi.dq.BLA.BLAQ. The Error was: weblogic.jms.common.JMSSecurityException: Access denied to resource: type=, application=BLAJMSModule, destinationType=queue, resource=BLAQ, action=receive Nested exception: weblogic.jms.common.JMSSecurityException: Access denied to resource: type=, application=BLAJMSModule, destinationType=queue, resource=BLAQ, action=receive
+<p/><p/>
+after creation of service account (static, username and password), the JMS Proxy Service on B connects fine on A:
+<p/>
+The Message-Driven EJB: RequestEJB-4191753809964957369-ea7ff4.13e88fddc7c.-7ef0 has connected/reconnected to the JMS destination: jms.jndi.dq.BLA.BLAQ
+<p/>
+strange, because here it says:
+<p/>
+<a href="http://docs.oracle.com/cd/E17904_01/doc.1111/e15867/service_accounts.htm">http://docs.oracle.com/cd/E17904_01/doc.1111/e15867/service_accounts.htm</a>
+<p/>
+<i>It cannot be used in outbound requests that authenticate Oracle Service Bus to a local or remote server or system resource, such as an FTP server or a JMS server.
+</i>
+
+

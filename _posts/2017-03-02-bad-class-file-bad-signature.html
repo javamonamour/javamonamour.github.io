@@ -1,0 +1,284 @@
+---
+layout: post
+title: "bad class file, bad signature"
+date: 2017-03-02T19:02:00.000+01:00
+permalink: /2017/03/bad-class-file-bad-signature.html
+blogger_id: "4812265099738970961"
+tags: ["java"]
+---
+We had an interesting case of an invalid class failing with version 12.1.3 of WebLogic (it was working with previous release)
+ 
+<pre class="brush: java">
+ 
+ 
+####&lt;Feb 27, 2017 7:46:40 AM CET&gt; &lt;Error&gt; &lt;Deployer&gt; &lt;myserver.pippo.com&gt; &lt;pippodomain&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1488178000430&gt; &lt;BEA-149205&gt; &lt;Failed to initialize the application &quot;PIPPO&quot; due to error weblogic.application.ModuleException: String index out of range: -1
+String index out of range: -1
+weblogic.application.ModuleException: String index out of range: -1
+String index out of range: -1
+        at weblogic.servlet.internal.WebAppModule.createModuleException(WebAppModule.java:1824)
+        at weblogic.servlet.internal.WebAppModule.init(WebAppModule.java:270)
+        at weblogic.servlet.internal.WebAppModule.init(WebAppModule.java:682)
+        at weblogic.application.internal.flow.ScopedModuleDriver.init(ScopedModuleDriver.java:162)
+        at weblogic.application.internal.ExtensibleModuleWrapper.init(ExtensibleModuleWrapper.java:98)
+        at weblogic.application.internal.flow.ModuleListenerInvoker.init(ModuleListenerInvoker.java:84)
+        at weblogic.application.internal.flow.InitModulesFlow.initModule(InitModulesFlow.java:288)
+        at weblogic.application.internal.flow.InitModulesFlow.initModules(InitModulesFlow.java:301)
+        at weblogic.application.internal.flow.InitModulesFlow.prepare(InitModulesFlow.java:329)
+        at weblogic.application.internal.BaseDeployment$1.next(BaseDeployment.java:706)
+        at weblogic.application.utils.StateMachineDriver.nextState(StateMachineDriver.java:42)
+        at weblogic.application.internal.BaseDeployment.prepare(BaseDeployment.java:237)
+        at weblogic.application.internal.EarDeployment.prepare(EarDeployment.java:61)
+        at weblogic.application.internal.DeploymentStateChecker.prepare(DeploymentStateChecker.java:158)
+        at weblogic.deploy.internal.targetserver.AppContainerInvoker.prepare(AppContainerInvoker.java:61)
+        at weblogic.deploy.internal.targetserver.AppDeployment.prepare(AppDeployment.java:155)
+        at weblogic.management.deploy.internal.DeploymentAdapter$1.doPrepare(DeploymentAdapter.java:39)
+        at weblogic.management.deploy.internal.DeploymentAdapter.prepare(DeploymentAdapter.java:191)
+        at weblogic.management.deploy.internal.AppTransition$1.transitionApp(AppTransition.java:21)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.prepare(ConfiguredDeployments.java:165)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:122)
+        at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:211)
+        at weblogic.management.deploy.internal.DeploymentServerService.start(DeploymentServerService.java:119)
+        at weblogic.server.AbstractServerService.postConstruct(AbstractServerService.java:78)
+        at sun.reflect.GeneratedMethodAccessor8.invoke(Unknown Source)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:606)
+        at org.glassfish.hk2.utilities.reflection.ReflectionHelper.invoke(ReflectionHelper.java:1017)
+        at org.jvnet.hk2.internal.ClazzCreator.postConstructMe(ClazzCreator.java:388)
+        at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:430)
+        at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+        at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+        at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+        at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+        at org.jvnet.hk2.internal.ServiceLocatorImpl.getService(ServiceLocatorImpl.java:606)
+        at org.jvnet.hk2.internal.ThreeThirtyResolver.resolve(ThreeThirtyResolver.java:77)
+        at org.jvnet.hk2.internal.ClazzCreator.resolve(ClazzCreator.java:231)
+        at org.jvnet.hk2.internal.ClazzCreator.resolveAllDependencies(ClazzCreator.java:254)
+        at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:413)
+        at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+        at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+        at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+        at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:87)
+        at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.oneJob(CurrentTaskFuture.java:1162)
+        at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.run(CurrentTaskFuture.java:1147)
+        at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$UpOneLevel.run(CurrentTaskFuture.java:753)
+        at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:553)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:311)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:263)
+Caused By: java.lang.StringIndexOutOfBoundsException: String index out of range: -1
+        at java.lang.String.substring(String.java:1911)
+        at weblogic.application.utils.annotation.ClassInfoImpl$MethodVisitorImpl.visitAnnotation(ClassInfoImpl.java:472)
+        at com.bea.objectweb.asm.ClassReader.b(Unknown Source)
+        at com.bea.objectweb.asm.ClassReader.accept(Unknown Source)
+        at com.bea.objectweb.asm.ClassReader.accept(Unknown Source)
+        at weblogic.application.utils.annotation.ClassInfoImpl.&lt;init&gt;(ClassInfoImpl.java:86)
+        at weblogic.application.utils.annotation.ClassInfoImpl.&lt;init&gt;(ClassInfoImpl.java:79)
+        at weblogic.application.utils.annotation.ClassfinderClassInfos.getClassInfoFromSource(ClassfinderClassInfos.java:325)
+        at weblogic.application.utils.annotation.ClassfinderClassInfos.populateClassInfos(ClassfinderClassInfos.java:278)
+        at weblogic.application.utils.annotation.ClassfinderClassInfos.&lt;init&gt;(ClassfinderClassInfos.java:72)
+        at weblogic.servlet.internal.War.initializeClassInfosIfNecessary(War.java:446)
+        at weblogic.servlet.internal.War.getAnnotatedClasses(War.java:376)
+        at weblogic.servlet.utils.WarUtils.isJsfApplication(WarUtils.java:260)
+        at weblogic.servlet.internal.WebAppModule.detectJsfApplication(WebAppModule.java:277)
+        at weblogic.servlet.internal.WebAppModule.init(WebAppModule.java:262)
+        at weblogic.servlet.internal.WebAppModule.init(WebAppModule.java:682)
+        at weblogic.application.internal.flow.ScopedModuleDriver.init(ScopedModuleDriver.java:162)
+        at weblogic.application.internal.ExtensibleModuleWrapper.init(ExtensibleModuleWrapper.java:98)
+        at weblogic.application.internal.flow.ModuleListenerInvoker.init(ModuleListenerInvoker.java:84)
+        at weblogic.application.internal.flow.InitModulesFlow.initModule(InitModulesFlow.java:288)
+        at weblogic.application.internal.flow.InitModulesFlow.initModules(InitModulesFlow.java:301)
+        at weblogic.application.internal.flow.InitModulesFlow.prepare(InitModulesFlow.java:329)
+        at weblogic.application.internal.BaseDeployment$1.next(BaseDeployment.java:706)
+        at weblogic.application.utils.StateMachineDriver.nextState(StateMachineDriver.java:42)
+        at weblogic.application.internal.BaseDeployment.prepare(BaseDeployment.java:237)
+        at weblogic.application.internal.EarDeployment.prepare(EarDeployment.java:61)
+        at weblogic.application.internal.DeploymentStateChecker.prepare(DeploymentStateChecker.java:158)
+        at weblogic.deploy.internal.targetserver.AppContainerInvoker.prepare(AppContainerInvoker.java:61)
+        at weblogic.deploy.internal.targetserver.AppDeployment.prepare(AppDeployment.java:155)
+        at weblogic.management.deploy.internal.DeploymentAdapter$1.doPrepare(DeploymentAdapter.java:39)
+        at weblogic.management.deploy.internal.DeploymentAdapter.prepare(DeploymentAdapter.java:191)
+        at weblogic.management.deploy.internal.AppTransition$1.transitionApp(AppTransition.java:21)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.prepare(ConfiguredDeployments.java:165)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:122)
+        at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:211)
+        at weblogic.management.deploy.internal.DeploymentServerService.start(DeploymentServerService.java:119)
+        at weblogic.server.AbstractServerService.postConstruct(AbstractServerService.java:78)
+        at sun.reflect.GeneratedMethodAccessor8.invoke(Unknown Source)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:606)
+        at org.glassfish.hk2.utilities.reflection.ReflectionHelper.invoke(ReflectionHelper.java:1017)
+        at org.jvnet.hk2.internal.ClazzCreator.postConstructMe(ClazzCreator.java:388)
+        at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:430)
+        at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+        at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+        at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+        at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+        at org.jvnet.hk2.internal.ServiceLocatorImpl.getService(ServiceLocatorImpl.java:606)
+        at org.jvnet.hk2.internal.ThreeThirtyResolver.resolve(ThreeThirtyResolver.java:77)
+        at org.jvnet.hk2.internal.ClazzCreator.resolve(ClazzCreator.java:231)
+        at org.jvnet.hk2.internal.ClazzCreator.resolveAllDependencies(ClazzCreator.java:254)
+        at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:413)
+        at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+        at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+        at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+        at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:87)
+        at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.oneJob(CurrentTaskFuture.java:1162)
+        at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.run(CurrentTaskFuture.java:1147)
+        at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$UpOneLevel.run(CurrentTaskFuture.java:753)
+        at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:553)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:311)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:263)
+&gt;
+ 
+</pre>
+ 
+ 
+<br/><br/>
+See also this previous post <a href="/2016/01/weblogic-deployment-fails.html">/2016/01/weblogic-deployment-fails.html</a>
+<br/>
+<br/>
+Problem is that WebLogic doesn't tell us which class is failing, so I had to patch this class
+<br/>
+<br/>
+<pre class="brush: java">
+package weblogic.utils.classloaders;
+ 
+import java.io.IOException;
+import java.security.cert.Certificate;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+ 
+public class JarSource
+  extends ZipSource
+{
+  private final JarFile jarFile;
+  private final JarEntry jarEntry;
+ 
+  public JarSource(JarFile jf, JarEntry je)
+  {
+    super(jf, je);
+    this.jarFile = jf;
+    this.jarEntry = je;
+    System.out.println("JarSource, jf=" + jf.getName() + " je=" + je);
+  }
+ 
+  public Manifest getManifest()
+    throws IOException
+  {
+    return this.jarFile.getManifest();
+  }
+ 
+  public Certificate[] getCertificates()
+  {
+    return this.jarEntry.getCertificates();
+  }
+}
+</pre>
+ 
+ 
+<br/><br/>
+adding a System.out.println(it's horrible but it works)
+<br/><br/>
+<br/>
+ 
+ 
+To check if the class is REALLY invalid I use this tester (bad class is com.pippo.web.util.Properties ):
+ 
+<pre class="brush: java">
+import com.pippo.web.util.Properties;
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Method;
+ 
+public class TestAnnotations {
+       public static void main(String[] args) throws Exception {
+             Class propertiesClass = com.pippo.web.util.Properties.class;
+             Annotation annos[] = propertiesClass.getAnnotations();
+             for (Annotation a : annos)
+                    System.out.println(a);
+            
+             for (Method m : propertiesClass.getMethods()) {
+                    System.out.println("parsing method " + m.getName());
+                    annos = m.getAnnotations();
+ 
+                    System.out.println("All annotations for method " + m.getName());
+                    for (Annotation a : annos) System.out.println(a);
+                   
+             }
+       }
+ 
+}
+</pre>
+ 
+ 
+<br/><br/>
+ 
+With Java 8 I get this:
+ 
+<br/><br/>
+parsing method setProperty
+All annotations for method setProperty
+parsing method getProperty
+All annotations for method getProperty
+parsing method getProperty
+All annotations for method getProperty
+parsing method load
+All annotations for method load
+parsing method load
+All annotations for method load
+parsing method save
+Exception in thread "main" java.lang.reflect.GenericSignatureFormatError: Signature Parse error: Expected Field Type Signature
+       Remaining input: =
+       at sun.reflect.generics.parser.SignatureParser.error(SignatureParser.java:124)
+       at sun.reflect.generics.parser.SignatureParser.parseFieldTypeSignature(SignatureParser.java:297)
+       at sun.reflect.generics.parser.SignatureParser.parseFieldTypeSignature(SignatureParser.java:283)
+       at sun.reflect.generics.parser.SignatureParser.parseTypeSignature(SignatureParser.java:485)
+       at sun.reflect.generics.parser.SignatureParser.parseTypeSig(SignatureParser.java:188)
+       at sun.reflect.annotation.AnnotationParser.parseSig(AnnotationParser.java:436)
+       at sun.reflect.annotation.AnnotationParser.parseAnnotation2(AnnotationParser.java:241)
+       at sun.reflect.annotation.AnnotationParser.parseAnnotations2(AnnotationParser.java:120)
+       at sun.reflect.annotation.AnnotationParser.parseAnnotations(AnnotationParser.java:72)
+       at java.lang.reflect.Executable.declaredAnnotations(Executable.java:599)
+       at java.lang.reflect.Executable.declaredAnnotations(Executable.java:597)
+       at java.lang.reflect.Executable.getDeclaredAnnotations(Executable.java:588)
+       at java.lang.reflect.Method.getDeclaredAnnotations(Method.java:630)
+       at java.lang.reflect.AccessibleObject.getAnnotations(AccessibleObject.java:207)
+       at TestAnnotations.main(TestAnnotations.java:16)
+ 
+<br/><br/>
+ 
+ 
+ 
+With Java 7 and 6 I get this when compiling:
+ 
+<br/><br/>
+TestAnnotations.java:1: cannot access com.pippo.web.util.Properties
+bad class file: com/pippo/web/util/Properties.class(com/pippo/web/util:Properties.class)
+bad signature: =
+                ¿I
+                  ^
+Please remove or make sure it appears in the correct subdirectory of the classpath.
+import com.pippo.web.util.Properties;
+                            ^
+<br/><br/>
+As a workaround, to avoid all this class scanning, you can try using -Dweblogic.servlet.DIDisabled=true or setting the metadata-complete attribute to true in the web.xml : <br/><br/>
+
+ 
+
+<a href="https://docs.oracle.com/cd/E24329_01/web.1211/e21049/annotateservlet.htm#WBAPP225">https://docs.oracle.com/cd/E24329_01/web.1211/e21049/annotateservlet.htm#WBAPP225</a>
+
+ 
+
+<br/><br/>
+
+
+ 

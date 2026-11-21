@@ -1,0 +1,66 @@
+---
+layout: post
+title: "How to invoke an operation with WLST and with Java"
+date: 2009-12-31T12:33:00.001+01:00
+permalink: /2009/12/how-to-invoke-operation-with-wlst.html
+blogger_id: "3036672751655423268"
+---
+Jython: <br />
+<br />
+from java.util import Hashtable<br />
+from javax.management import ObjectName<br />
+from javax.management.remote import JMXConnectorFactory<br />
+from javax.management.remote import JMXServiceURL<br />
+<br />
+serviceURL= JMXServiceURL("t3", "yourserver", 7001, "/jndi/weblogic.management.mbeanservers.runtime")<br />
+h= Hashtable()<br />
+h.put("java.naming.security.principal", "weblogic")<br />
+h.put("java.naming.security.credentials", "weblogic")<br />
+h.put("jmx.remote.protocol.provider.pkgs", "weblogic.management.remote")<br />
+connector = JMXConnectorFactory.connect(serviceURL, h)<br />
+connection = connector.getMBeanServerConnection()<br />
+<br />
+mbeanName= "com.bea:ServerRuntime=atlasadmin,Name=TimerService,ApplicationRuntime=Worklist_Console,Type=EJBTimerRuntime,EJBComponentRuntime=weblogic-timer-control.jar,StatelessEJBRuntime=TimerService"<br />
+mbeanObjName= ObjectName(mbeanName)<br />
+operationName= "activateDisabledTimers"<br />
+paramTypes = jarray.array([], Class.forName("java.lang.String"))<br />
+paramValues= jarray.array([], Class.forName("java.lang.Object"))<br />
+result=connection.invoke(mbeanObjName, operationName, paramValues, paramTypes);<br />
+<br />
+print result<br />
+<br />
+<br />
+<br />
+Java<br />
+<br />
+import java.util.Hashtable;<br />
+import javax.management.MBeanServerConnection;<br />
+import javax.management.ObjectName;<br />
+import javax.management.remote.JMXConnector;<br />
+import javax.management.remote.JMXConnectorFactory;<br />
+import javax.management.remote.JMXServiceURL;<br />
+import javax.naming.Context;<br />
+<br />
+class Test {<br />
+&nbsp;&nbsp;&nbsp; public static void main(String[] args) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Hashtable h = new Hashtable();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; h.put(Context.SECURITY_PRINCIPAL&nbsp; , "weblogic");<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; h.put(Context.SECURITY_CREDENTIALS, "weblogic");<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, "weblogic.management.remote");<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JMXServiceURL serviceURL= new JMXServiceURL("t3", "yourserver", 7001, "/jndi/weblogic.management.mbeanservers.runtime");<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JMXConnector connector = JMXConnectorFactory.connect(serviceURL, h);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; MBeanServerConnection connection = connector.getMBeanServerConnection();<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String mbeanName= "com.bea:ServerRuntime=atlasadmin,Name=TimerService,ApplicationRuntime=Worklist_Console,Type=EJBTimerRuntime,EJBComponentRuntime=weblogic-timer-control.jar,StatelessEJBRuntime=TimerService";<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ObjectName mbeanObjName= new ObjectName(mbeanName);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String operationName= "activateDisabledTimers";<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String[] paramTypes= new String[] {};<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Object[] paramValues= new Object[] {};<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Object result=connection.invoke(mbeanObjName, operationName, paramValues, paramTypes);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println("result="+result);<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } catch (Exception exc) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; exc.printStackTrace();<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp; }<br />
+}

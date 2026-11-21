@@ -1,0 +1,48 @@
+---
+layout: post
+title: "JavaEE 8 Archetype for microservice Airhacks Adam Bien"
+date: 2018-05-05T16:34:00.000+02:00
+permalink: /2018/05/javaee-8-archetype-for-microservice.html
+blogger_id: "8487433579264907241"
+tags: ["adambien", "microservice"]
+---
+JavaEE 8 Archetype is https://github.com/AdamBien/javaee8-essentials-archetype<br />
+<br />
+it uses docker, so I will try it on Linux VM.<br />
+<br />
+mvn archetype:generate -Dfilter=com.airhacks:javaee8-essentials-archetype<br />
+<br />
+I enter: 1,2, org.pierre, pvmicroservice, Y<br />
+<br />
+cd pvmicroservice/<br />
+<br />
+mvn package<br />
+copy the war from target to wildfly deployment folder<br />
+<br />
+http://localhost:8180/pvmicroservice/resources/ping<br />
+<br />
+now open the Dockerfile, change glassfish into wildfly, anc change second line adding chown:<br />
+FROM airhacks/wildfly<br />
+COPY --chown=serveradmin:serveradmin ./target/pvmicroservice.war ${DEPLOYMENT_DIR}<br />
+<br />
+<br />
+mvn clean install && docker build -t airhacks/pvworkshops .<br />
+docker run -d --name workshops -p 8082:8080 airhacks/pvworkshops:latest<br />
+docker exec -u root -ti workshops bash<br />
+docker logs workshops<br />
+<br />
+<br />
+http://localhost:8082/pvmicroservice/resources/ping<br />
+<br />
+<br />
+docker rm -f workshops <br />
+<br />
+<iframe width="600" height="400" src="https://www.youtube.com/embed/qQtF-Ks0c5U" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe><br />
+<br />
+<br />
+It talks for a while about some patterns implemented by Eclipse Microprofile <a href="https://projects.eclipse.org/proposals/eclipse-microprofile">https://projects.eclipse.org/proposals/eclipse-microprofile</a><br />
+<br />
+This is the Telemetry metrics project <a href="https://github.com/eclipse/microprofile-metrics">https://github.com/eclipse/microprofile-metrics</a><br />
+<br />
+<br />
+

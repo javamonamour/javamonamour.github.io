@@ -1,0 +1,16 @@
+---
+layout: post
+title: "Shell script to find all ports open by WL servers running"
+date: 2010-07-25T19:57:00.000+02:00
+permalink: /2010/07/shell-script-to-find-all-ports-open-by.html
+blogger_id: "1914811805436638554"
+tags: ["ports"]
+---
+ST is a string which distinguishes all servers belonging to a ST domain<br />
+<br />
+<br />
+<pre name="code" class="brush: bash">for i in `ps -ef | grep java | grep -v grep | grep ST | awk '{print $2}'`
+do
+    netstat -nap | grep "$i" | grep java
+done
+</pre>

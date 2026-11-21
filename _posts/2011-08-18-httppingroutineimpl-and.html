@@ -1,0 +1,52 @@
+---
+layout: post
+title: "HttpPingRoutineImpl  and wls_does_not_exist_url"
+date: 2011-08-18T22:37:00.003+02:00
+permalink: /2011/08/httppingroutineimpl-and.html
+blogger_id: "8735086895559266982"
+tags: ["HttpPingRoutineImpl"]
+---
+cd C:\Oracle2\Middleware\user_projects\domains\osb_domain\bin<br />
+setDomainEnv.cmd<br />
+<br />
+<br />
+<b>java weblogic.cluster.messaging.internal.HttpPingRoutineImpl -host localhost -port 7001</b><br />
+<br />
+if the server is running, this returns:<br />
+<i>HttpPing returns: 1</i><br />
+<br />
+otherwise <br />
+<i>HttpPing returns: 0</i><br />
+<br />
+<br />
+This routine try to establish a URLConnection to<br />
+http://host:port/wls_does_not_exist_url<br />
+<br />
+of course wls_does_not_exist_url simply doesn't exist, but if the WL server is running you get a  HTTP 404, while if it's not running you get an HTTP error code between 300 and 400, or between 500 and 600.<br />
+<br />
+This routing is used in the cluster members discovery mechanism.<br />
+<br />
+When you see "<b>starting remote group discovery</b>" in the log, you are in <br />
+weblogic.cluster.messaging.internal.GroupImpl, then calls PingRoutine.ping<br />
+<br />
+If the property weblogic.unicast.HttpPing is set, you use the HttpPingRoutine, otherwise the Socket-based PingRoutine<br />
+<br />
+To debug all the messages set the weblogic.debug.DebugUnicastMessaging property.<br />
+<br />
+You can set timeout values on these pings with these System properties:<br />
+<br />
+httpPing.connectTimeout (default "3000")<br />
+<br />
+httpPing.readTimeout (default "6000")<br />
+<br />
+<br />
+<br />
+There are some cluster parameters you can try to tune if your "starting remote group discovery" is taking too long:<br />
+<br />
+Member Warmup Timeout:<br />
+"Maximum number of seconds that a cluster member will wait to discover and synchronize with other servers in the cluster. Normally, the member will be able to sync in 30 seconds. If the value of this attribute is higher, that does not necessarily mean that it will take longer for the member to warmup. Instead it defines an upper bound on the time that a server will wait to sync with the servers that it has discovered. <b>If the value is set 0, servers will not attempt to discover other running server in the cluster during server initialization</b>"<br />
+<br />
+<br />
+<br />
+<br />
+

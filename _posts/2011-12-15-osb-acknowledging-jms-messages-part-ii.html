@@ -1,0 +1,36 @@
+---
+layout: post
+title: "OSB acknowledging JMS messages part II"
+date: 2011-12-15T09:49:00.000+01:00
+permalink: /2011/12/osb-acknowledging-jms-messages-part-ii.html
+blogger_id: "3394905921388508769"
+tags: ["acknowledgment"]
+---
+<a href="/2011/11/osb-and-jms-message-acknowledgement.html">see here my original post</a><br />
+<br />
+<a href="http://docs.oracle.com/cd/E17802_01/products/products/jms/javadoc-102a/javax/jms/Session.html">http://docs.oracle.com/cd/E17802_01/products/products/jms/javadoc-102a/javax/jms/Session.html</a><br />
+<br />
+3 modes of JMS message acknowledge:<br />
+<br />
+<i><b>AUTO_ACKNOWLEDGE</b><br />
+<br />
+public static final int AUTO_ACKNOWLEDGE<br />
+<br />
+    With this acknowledgement mode, the session automatically acknowledges a client's receipt of a message when it has either successfully returned from a call to receive or the message listener it has called to process the message successfully returns.<br />
+<br />
+<b>CLIENT_ACKNOWLEDGE</b><br />
+<br />
+public static final int CLIENT_ACKNOWLEDGE<br />
+<br />
+    With this acknowledgement mode, the client acknowledges a message by calling a message's acknowledge method. Acknowledging a message acknowledges all messages that the Session has consumed.<br />
+<br />
+    When client acknowledgment mode is used, a client may build up a large number of unacknowledged messages while attempting to process them. A JMS provider should provide administrators with a way to limit client over-run so that clients are not driven to resource exhaustion and ensuing failure when some resource they are using is temporarily blocked.<br />
+<br />
+<b>DUPS_OK_ACKNOWLEDGE</b><br />
+<br />
+public static final int DUPS_OK_ACKNOWLEDGE<br />
+<br />
+    This acknowledgement mode instructs the session to lazily acknowledge the delivery of messages. This is likely to result in the delivery of some duplicate messages if JMS fails, it should only be used by consumers that are tolerant of duplicate messages. Its benefit is the reduction of session overhead achieved by minimizing the work the session does to prevent duplicates.</i><br />
+<br />
+<br />
+My understanding is that AUTO_ACKNOWLEDGE means "ACKNOWLEDGE if the transaction was successful" (default behaviour, unless you "raise error" in OSB).

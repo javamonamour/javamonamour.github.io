@@ -1,0 +1,61 @@
+---
+layout: post
+title: "NUMA and JVM performance"
+date: 2015-06-15T14:12:00.001+02:00
+permalink: /2015/06/numa-and-jvm-performance.html
+blogger_id: "1372716706199321601"
+tags: ["JVM", "numa"]
+---
+Apparently <a href="https://docs.oracle.com/javase/7/docs/technotes/guides/vm/performance-enhancements-7.html">there is a 40% performance gain </a>to be made configuring the JVM to take advantage of the NUMA architecture. Just pass the -XX:+UseNUMA flag to your JVM.
+<br/><br/>
+
+To check if your hardware is NUMA enabled, run <a href="http://linux.die.net/man/8/numactl"><b>numactl</b></a>:
+
+<br/><br/>
+
+numactl --hardware 
+
+<br/><br/>
+
+For instance I get
+
+<br/><br/>
+
+
+<pre>
+available: 1 nodes (0)
+node 0 size: 15897 MB
+node 0 free: 344 MB
+node distances:
+node   0 
+  0:  10 
+
+</pre>
+
+
+<br/><br/>
+
+which probably means I have no NUMA since I have a single node. You can also run <b>numastat</b>.
+
+<br/><br/>
+
+It's interesting also to run taskset:
+
+<br/><br/>
+
+taskset -c -p 5794
+<br/><br/>
+
+pid 5794's current affinity list: 0-3
+
+<br/><br/>
+
+to determine to which CPUs a given process is associated. Apparently this is quite important for memory allocation/deallocation performance - I still don't understand how :o(
+
+<br/><br/>
+
+See also this <a href="http://www.glennklockwood.com/comp/affinity.php">http://www.glennklockwood.com/comp/affinity.php</a>
+
+<br/><br/>
+
+

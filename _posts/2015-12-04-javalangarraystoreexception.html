@@ -1,0 +1,93 @@
+---
+layout: post
+title: "java.lang.ArrayStoreException"
+date: 2015-12-04T15:29:00.000+01:00
+permalink: /2015/12/javalangarraystoreexception.html
+blogger_id: "7295965691415660342"
+tags: ["java"]
+---
+When creating an array, remember that it will be not of the type declared for the variable, but of the type decided in the initializer:
+
+<pre class="brush: java">
+
+
+public class ArrayStoreExceptinTest {
+ public static void main(String[] args) {
+  System.out.println("starting");
+
+  // test 1: all ok
+
+  Object[] myarray1 = new Object[2];
+  System.out.println("myarray1 " + myarray1.getClass().getName());
+  myarray1[0] = new Integer(0);
+  myarray1[1] = new String("");
+  myarray1[1] = new Integer(0);
+
+  // test 2: fails with java.lang.ArrayStoreException
+  try {
+   Object[] myarray2 = new String[2];
+   System.out.println("myarray2 " + myarray2.getClass().getName());
+   myarray2[0] = new Integer(0);
+  } catch (Exception e) {
+   e.printStackTrace();
+  }
+
+  // test 3: all ok
+  Animal[] myarray3 = new Animal[] { new Cat(), new Dog() };
+  System.out.println("myarray3 " + myarray3.getClass().getName());
+  myarray3[0] = new Dog();
+
+  try {
+   // test 4: fails with java.lang.ArrayStoreException
+   Animal[] myarray4 = new Cat[] { new Cat(), new Cat() };
+   System.out.println("myarray4 " + myarray4.getClass().getName());
+   myarray4[0] = new Dog();
+  } catch (Exception e) {
+   e.printStackTrace();
+  }
+
+ }
+}
+
+interface Animal {
+
+}
+
+class Dog implements Animal {
+
+}
+
+class Cat implements Animal {
+
+}
+
+
+</pre>
+
+<br/>
+this is the output:
+<br/>
+
+<pre>
+
+starting
+myarray1 [Ljava.lang.Object;
+myarray2 [Ljava.lang.String;
+java.lang.ArrayStoreException: java.lang.Integer
+ at ArrayStoreExceptinTest.main(ArrayStoreExceptinTest.java:18)
+myarray3 [LAnimal;
+myarray4 [LCat;
+java.lang.ArrayStoreException: Dog
+ at ArrayStoreExceptinTest.main(ArrayStoreExceptinTest.java:32)
+
+</pre>
+<br/>
+
+
+<br/>
+
+
+so if you initialize an Animal[] as a Cat[], you can't assign to a member a variable of type Dog, even if a Dog is an Animal...
+
+<br/>
+

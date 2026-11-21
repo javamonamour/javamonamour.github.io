@@ -1,0 +1,64 @@
+---
+layout: post
+title: "Getting started with Varnish on RHEL"
+date: 2014-03-28T23:38:00.003+01:00
+permalink: /2014/03/getting-started-with-varnish-on-rhel.html
+blogger_id: "2260969267555324832"
+tags: ["varnish"]
+---
+export http_proxy=http://myusername:mypassword@proxy.acme.com:8080<br />
+set HTTP_PROXY=http://myusername:mypassword@proxy.acme.com:8080<br />
+set HTTPS_PROXY=http://myusername:mypassword@proxy.acme.com:8080<br />
+<br />
+rpm --nosignature -i http://repo.varnish-cache.org/redhat/varnish-3.0/el5/noarch/varnish-release/varnish-release-3.0-1.el5.centos.noarch.rpm<br />
+<br />
+yum install varnish<br />
+<br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">Loaded plugins: product-id, rhnplugin, security, subscription-manager</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">Updating certificate-based repositories.</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">Unable to read consumer identity</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">drdb-rhel6 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp;871 B &nbsp; &nbsp; 00:00</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">epel-rhel6 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp;871 B &nbsp; &nbsp; 00:00</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">jenkins-rhel6 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| &nbsp;871 B &nbsp; &nbsp; 00:00</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">acme_v6 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | &nbsp;871 B &nbsp; &nbsp; 00:00</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">percona-rhel6 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| &nbsp;871 B &nbsp; &nbsp; 00:00</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">rhel-x86_64-server-6 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | 1.5 kB &nbsp; &nbsp; 00:00</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">rhel-x86_64-server-optional-6 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| 1.5 kB &nbsp; &nbsp; 00:00</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">rhel-x86_64-server-supplementary-6 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | 1.5 kB &nbsp; &nbsp; 00:00</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">varnish-3.0 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| &nbsp;951 B &nbsp; &nbsp; 00:00</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">varnish-3.0/primary &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| &nbsp;13 kB &nbsp; &nbsp; 00:00</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">http://repo.varnish-cache.org/redhat/varnish-3.0/el5/x86_64/repodata/primary.xml.gz: [Errno -1] Metadata file does not match checksum</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">Trying other mirror.</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">varnish-3.0/primary &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;| &nbsp;13 kB &nbsp; &nbsp; 00:00</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">http://repo.varnish-cache.org/redhat/varnish-3.0/el5/x86_64/repodata/primary.xml.gz: [Errno -1] Metadata file does not match checksum</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">Trying other mirror.</span><br />
+<span style="font-family: Courier New, Courier, monospace; font-size: xx-small;">Error: failure: repodata/primary.xml.gz from varnish-3.0: [Errno 256] No more mirrors to try.</span><br />
+<br />
+<br />
+Workaround:<br />
+vi /etc/yum.conf<br />
+add:<br />
+http_caching=packages<br />
+<br />
+then try again:<br />
+<br />
+yum install varnish<br />
+<br />
+service varnish start<br />
+<br />
+To start a HTTP server I use Python:<br />
+<a href="http://www.linuxjournal.com/content/tech-tip-really-simple-http-server-python">http://www.linuxjournal.com/content/tech-tip-really-simple-http-server-python</a><br />
+run it on 8080<br />
+<br />
+wget 127.0.0.1:8080<br />
+<br />
+if you get 503 Service Unavailable:<br />
+<br />
+vi /etc/varnish/default.vcl<br />
+backend default {<br />
+&nbsp; .host = "127.0.0.1";<br />
+&nbsp; .port = "8080";<br />
+}<br />
+service varnish stop<br />
+service varnish start<br />
+<br />

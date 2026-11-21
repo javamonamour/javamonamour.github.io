@@ -1,0 +1,154 @@
+---
+layout: post
+title: "Maven version sorting with Java 8"
+date: 2018-02-05T22:35:00.005+01:00
+permalink: /2018/02/maven-version-sorting-with-java-8.html
+blogger_id: "3777414074622659507"
+tags: ["maven", "sorting"]
+---
+You can easily sort versions in Maven using org.apache.maven.artifact.versioning.ComparableVersion :<br />
+<br />
+pom.xml:<br />
+<br />
+<pre class="brush: xml">&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;org.pierre&lt;/groupId&gt;
+  &lt;artifactId&gt;mavensort&lt;/artifactId&gt;
+  &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;
+  &lt;dependencies&gt;
+   &lt;dependency&gt;
+    &lt;groupId&gt;org.apache.maven&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-artifact&lt;/artifactId&gt;
+    &lt;version&gt;3.5.2&lt;/version&gt;
+   &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+&lt;/project&gt;
+</pre><br />
+<pre class="brush: java">package mavensort;
+
+import org.apache.maven.artifact.versioning.ComparableVersion;
+
+public class Artifact implements Comparable&lt;Artifact> {
+ int id;
+ String version;
+ public int getId() {
+  return id;
+ }
+ public void setId(int id) {
+  this.id = id;
+ }
+ public String getVersion() {
+  return version;
+ }
+ public void setVersion(String version) {
+  this.version = version;
+ }
+ public Artifact(int id, String version) {
+  super();
+  this.id = id;
+  this.version = version;
+ }
+
+ public int compareTo(Artifact o) {
+  
+  ComparableVersion cv1 = new ComparableVersion(version);
+  ComparableVersion cv2 = new ComparableVersion(o.getVersion());
+  int compareTo = cv1.compareTo(cv2);
+  System.out.println("compareTo " + version + " " + o.getVersion() + " " + compareTo);
+  return compareTo;
+ }
+ 
+
+}
+
+</pre><br />
+<pre class="brush: java">package mavensort;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import org.apache.maven.artifact.versioning.ComparableVersion;
+import org.junit.Test;
+
+public class ArtifactTest {
+
+ @Test
+ public void testSort() {
+  String version1 = "1.2";
+  ComparableVersion cv1 = new ComparableVersion(version1);
+  String version2 = "1.12";
+  ComparableVersion cv2 = new ComparableVersion(version2);
+  assert(cv1.compareTo(cv2) < 0);
+
+ }
+ 
+ @Test
+ public void testSortCollection() {
+  Artifact a1 = new Artifact(1, "1.2");
+  Artifact a2 = new Artifact(2, "1.12");
+  Artifact a3 = new Artifact(3, "0.12");
+  List&lt;Artifact> list = Arrays.asList(a1, a2, a3);
+  Supplier&lt;List&lt;Artifact>> supplier = () -> new ArrayList&lt;Artifact>();
+  List&lt;Artifact> sortedList = list.stream().sorted().collect(Collectors.toCollection(supplier));
+  sortedList.forEach(item -> System.out.println(item.version));
+  
+ }
+
+}
+
+</pre><br />
+The use of streams and Supplier just to sort a collection is voodoistic. One can simply code this:<br />
+<br />
+Collections.sort(list);<br />
+list.forEach(item -> System.out.println(item.version));<br />
+<br />
+<br />
+You can use also an external comparator:<br />
+<br />
+<pre class="brush: java">@Test
+ public void testSortCollectionExternalComparator() {
+  Artifact a1 = new Artifact(1, "1.2");
+  Artifact a2 = new Artifact(2, "1.12");
+  Artifact a3 = new Artifact(3, "0.12");
+  List&lt;Artifact> list = Arrays.asList(a1, a2, a3);
+  list.sort(new ArtifactComparator());
+  list.forEach(item -> System.out.println(item.version));
+  
+ }
+
+
+public class ArtifactComparator implements Comparator&lt;Artifact> {
+
+ @Override
+ public int compare(Artifact o1, Artifact o2) {
+  ComparableVersion cv1 = new ComparableVersion(o1.getVersion());
+  ComparableVersion cv2 = new ComparableVersion(o2.getVersion());
+  int compareTo = cv1.compareTo(cv2);
+  System.out.println("C2 compareTo " + o1.getVersion() + " " + o2.getVersion() + " " + compareTo);
+  return compareTo;
+ }
+
+}
+
+
+</pre><br />
+Maven dependency is <br />
+<br />
+&lt;dependency&gt;<br />
+ &lt;groupId&gt;org.apache.maven&lt;/groupId&gt;<br />
+ &lt;artifactId&gt;maven-core&lt;/artifactId&gt;<br />
+ &lt;version&gt;3.6.0&lt;/version&gt;<br />
+&lt;/dependency&gt;<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+The external dependency is not necessary, you can simply copy the class <a href="https://raw.githubusercontent.com/apache/maven/master/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/ComparableVersion.java">https://raw.githubusercontent.com/apache/maven/master/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/ComparableVersion.java</a>  into your project, luckily it has no other dependencies to other classes in the same package<br />
+<br />
+Ref: <a href="https://www.geeksforgeeks.org/collections-sort-java-examples/">https://www.geeksforgeeks.org/collections-sort-java-examples/</a>  for comparators<br />
+<br />
+

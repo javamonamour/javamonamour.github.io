@@ -1,0 +1,41 @@
+---
+layout: post
+title: "Groovy: how to parse all property files in a directory"
+date: 2010-09-12T15:25:00.000+02:00
+permalink: /2010/09/groovy-how-to-parse-all-property-files.html
+blogger_id: "3722380580604474761"
+tags: ["groovy"]
+---
+I also group the files by their suffix (dev2, dev3...)<br />
+and I print the property values, for names like admin_host, admin_port...<br />
+<br />
+<br />
+<pre name="code" class="brush: java">package com.acme.propertyprocessor
+import java.io.File;
+
+
+class PropertyProcessor {
+
+    static main(args) {
+        def envs = ["dev2", "dev3", "pp", "prod", "tst1", "tst2"];
+        envs.each { env->
+            println "<h1>" + env + "</h1>"
+            new File("c:/properties").eachFile() { file->
+                if (file.getName().startsWith(env)) {
+                    def prop = new Properties()
+                    prop.load(new FileInputStream(file))
+                    println prop.domain_prefix + " http://" + prop.admin_host + ":" + prop.admin_port + " http://" + prop.frontend_host + ":" + prop.frontend_port + " " + prop.ora_host1 + ":" + prop.ora_port + " " + prop.ora_user
+                                        
+                }
+            }   
+        }
+
+    }
+
+}
+
+</pre><br />
+<br />
+I suspect it could be made even simpler, for instance using eachFileMatch<br />
+<br />
+Groovy rocks! Too bad I still haven't found a really professional IDE.

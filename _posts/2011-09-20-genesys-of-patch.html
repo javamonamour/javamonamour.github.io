@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Genesys of a Patch"
+date: 2011-09-20T18:32:00.001+02:00
+permalink: /2011/09/genesys-of-patch.html
+blogger_id: "4394859756955844284"
+tags: ["patches"]
+---
+Put your patch JAR in <br />
+C:\pierre\bea103\utils\bsu\<b>cache_dir</b><br />
+The JAR should have a 4 letter DNA, like I85X.jar<br />
+This jar contains a <b>patch-descriptor.xml</b> and a bugXXXXXXXXX.jar<br />
+<br />
+Run C:\pierre\bea103\utils\bsu\bsu.cmd<br />
+Go on offline mode<br />
+Select a patch and "apply"<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/92cd1aa52214e39f.jpg" imageanchor="1" style=""><img border="0" height="289" width="320" src="/images/e1df8da81029c89c.jpg" /></a></div><br />
+<br />
+This will unzip the bugXXXXXXXXX.jar<br />
+to C:\pierre\bea103\patch_wls1030\<b>patch_jars</b><br />
+<br />
+and in C:\pierre\bea103\patch_wls1030\registry it will update a <b>patch-registry.xml</b> with a new patchInstallEntry <br />
+<br />
+It will also update the manifest.mf in C:\pierre\bea103\patch_wls1030\profiles\default\sys_manifest_classpath\<b>weblogic_patch.jar</b><br />
+<br />
+(this weblogic_patch.jar contains nothing but a manifest.mf file, its only purpose is to "include" the patches in the System Classpath when we start WLS)<br />
+<br />
+Probably all this will disappear with time as Oracle pushes a different Opatch tool - I don't know really. I was simply curious to understand how the patching mechanism works.

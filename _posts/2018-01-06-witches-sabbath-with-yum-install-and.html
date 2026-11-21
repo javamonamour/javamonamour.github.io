@@ -1,0 +1,114 @@
+---
+layout: post
+title: "Witches' Sabbath with yum install and docker"
+date: 2018-01-06T09:23:00.003+01:00
+permalink: /2018/01/witches-sabbath-with-yum-install-and.html
+blogger_id: "8198009345763532515"
+tags: ["docker", "yum"]
+---
+After a major CentOS update, when I "oc cluster up" I get this:<br />
+<br />
+<i>Error: Minor number must not contain leading zeroes "01"</i><br />
+<br />
+the usual "docker version mismatch" issue (go to hell OpenShift)<br />
+<br />
+So I "yum install docker" and I get this:<br />
+<br />
+<i>Loaded plugins: fastestmirror, langpacks<br />
+Loading mirror speeds from cached hostfile<br />
+* base: mirror.spreitzer.ch<br />
+* epel: ftp.nluug.nl<br />
+* extras: mirror.spreitzer.ch<br />
+* ius: mirror.amsiohosting.net<br />
+* updates: mirror.spreitzer.ch<br />
+Resolving Dependencies<br />
+--> Running transaction check<br />
+---> Package docker.x86_64 2:1.12.6-68.gitec8512b.el7.centos will be installed<br />
+--> Processing Dependency: docker-common = 2:1.12.6-68.gitec8512b.el7.centos for package: 2:docker-1.12.6-68.gitec8512b.el7.centos.x86_64<br />
+--> Processing Dependency: docker-client = 2:1.12.6-68.gitec8512b.el7.centos for package: 2:docker-1.12.6-68.gitec8512b.el7.centos.x86_64<br />
+--> Running transaction check<br />
+---> Package docker-client.x86_64 2:1.12.6-68.gitec8512b.el7.centos will be installed<br />
+---> Package docker-common.x86_64 2:1.12.6-68.gitec8512b.el7.centos will be installed<br />
+--> Processing Conflict: docker-ce-18.01.0.ce-0.1.rc1.el7.centos.x86_64 conflicts docker<br />
+--> Processing Conflict: docker-ce-18.01.0.ce-0.1.rc1.el7.centos.x86_64 conflicts docker-io<br />
+--> Finished Dependency Resolution<br />
+Error: docker-ce conflicts with 2:docker-1.12.6-68.gitec8512b.el7.centos.x86_64<br />
+You could try using --skip-broken to work around the problem<br />
+You could try running: rpm -Va --nofiles --nodigest<br />
+</i><br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/700756571cd7ec9b.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/c0d3541d9550f70b.jpg" width="285" height="400" data-original-width="1138" data-original-height="1600" /></a></div><br />
+<br />
+<br />
+I try "yum install docker --skip-broken" but I still get<br />
+<br />
+<i>Loaded plugins: fastestmirror, langpacks<br />
+Loading mirror speeds from cached hostfile<br />
+* base: mirror.spreitzer.ch<br />
+* epel: ftp.nluug.nl<br />
+* extras: mirror.spreitzer.ch<br />
+* ius: mirror.amsiohosting.net<br />
+* updates: mirror.spreitzer.ch<br />
+Resolving Dependencies<br />
+--> Running transaction check<br />
+---> Package docker.x86_64 2:1.12.6-68.gitec8512b.el7.centos will be installed<br />
+--> Processing Dependency: docker-common = 2:1.12.6-68.gitec8512b.el7.centos for package: 2:docker-1.12.6-68.gitec8512b.el7.centos.x86_64<br />
+--> Processing Dependency: docker-client = 2:1.12.6-68.gitec8512b.el7.centos for package: 2:docker-1.12.6-68.gitec8512b.el7.centos.x86_64<br />
+--> Running transaction check<br />
+---> Package docker-client.x86_64 2:1.12.6-68.gitec8512b.el7.centos will be installed<br />
+---> Package docker-common.x86_64 2:1.12.6-68.gitec8512b.el7.centos will be installed<br />
+--> Processing Conflict: docker-ce-18.01.0.ce-0.1.rc1.el7.centos.x86_64 conflicts docker<br />
+--> Processing Conflict: docker-ce-18.01.0.ce-0.1.rc1.el7.centos.x86_64 conflicts docker-io<br />
+extras/7/x86_64/filelists_db                                                                                                                             | 528 kB  00:00:00     <br />
+<br />
+Packages skipped because of dependency problems:<br />
+2:docker-1.12.6-68.gitec8512b.el7.centos.x86_64 from extras<br />
+2:docker-client-1.12.6-68.gitec8512b.el7.centos.x86_64 from extras<br />
+2:docker-common-1.12.6-68.gitec8512b.el7.centos.x86_64 from extras<br />
+</i><br />
+<br />
+<br />
+Then I do <b>yum list installed | grep docker</b> <br />
+<br />
+<i>docker-ce.x86_64                       18.01.0.ce-0.1.rc1.el7.centos   @docker-ce-test</i><br />
+<br />
+then <b>"yum remove docker-ce.x86_64"</b>  and <b>"yum install docker"</b> <br />
+<br />
+<br />
+<i>Installed:<br />
+docker.x86_64 2:1.12.6-68.gitec8512b.el7.centos                                                                                                                               <br />
+<br />
+Dependency Installed:<br />
+docker-client.x86_64 2:1.12.6-68.gitec8512b.el7.centos                                 docker-common.x86_64 2:1.12.6-68.gitec8512b.el7.centos                                <br />
+</i><br />
+<br />
+<br />
+and everything works again.<br />
+<br />
+<br />
+I used to love Docker, but since it was split in CE and EE they messed really hard. Too much greed for money and need to place expensive consultants. <br />
+<br />
+List of useful yum commands: <a href="https://www.thegeekstuff.com/2011/08/yum-command-examples/">https://www.thegeekstuff.com/2011/08/yum-command-examples/</a><br />
+<br />
+yum install bla<br />
+yum -y install bla<br />
+yum remove bla<br />
+yum update bla<br />
+yum search bla<br />
+yum info bla<br />
+yum list <br />
+yum list installed<br />
+#this to find which package a file belongs to<br />
+yum provides filename <br />
+<br />
+yum grouplist<br />
+yum groupinstall 'bla'<br />
+yum groupupdate 'bla'<br />
+yum groupremove 'bla'<br />
+<br />
+yum repolist<br />
+yum repolist all<br />
+yum --enablerepo=fedora-source install vim-X11.x86_64<br />
+<br />
+

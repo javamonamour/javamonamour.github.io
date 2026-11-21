@@ -1,0 +1,81 @@
+---
+layout: post
+title: "Swagger Editor and generation of a Java API for REST Nexus API"
+date: 2018-05-17T12:57:00.000+02:00
+permalink: /2018/05/swagger-editor-and-generation-of-java.html
+blogger_id: "7538295278147503190"
+tags: ["nexus", "REST", "swagger"]
+---
+first, let's run a docker container for swagger editor:<br />
+<br />
+<a href="https://hub.docker.com/r/swaggerapi/swagger-editor/">https://hub.docker.com/r/swaggerapi/swagger-editor/</a><br />
+<br />
+docker run -d --rm --name swaggereditor -p 9080:8080 swaggerapi/swagger-editor<br />
+<br />
+http://localhost:9080/<br />
+<br />
+<br />
+then http://localhost:8181/service/rest/swagger.json  (8181 is the Nexus port) , download the file, feed it into the swagger-editor (file , import file). Import URL will not work, apparently you must be authenticated in Nexus to be able to download it.<br />
+<br />
+then generate client /java , this will produce a java-client-generated.zip file with your Java client API. You extract this file, run "mvn install", then open the README.md to understand how it works...<br />
+<br />
+I create a Java project, add this maven dependency<br />
+<br />
+&lt;dependencies><br />
+&lt;dependency><br />
+&lt;groupId>io.swagger&lt;/groupId><br />
+&lt;artifactId>swagger-java-client&lt;/artifactId><br />
+&lt;version>1.0.0&lt;/version><br />
+&lt;scope>compile&lt;/scope><br />
+&lt;/dependency><br />
+&lt;/dependencies><br />
+<br />
+<br />
+then try this code:<br />
+<br />
+<pre class="brush: java">package nexusclient;
+
+import io.swagger.client.*;
+import io.swagger.client.auth.*;
+import io.swagger.client.model.*;
+import io.swagger.client.api.AssetsApi;
+
+public class NexucClientTest {
+ public static void main(String[] args) throws Exception {
+  AssetsApi apiInstance = new AssetsApi();
+  apiInstance.getApiClient().setBasePath("http://localhost:8181/service/rest");
+        String continuationToken = null;
+  PageAssetXO assets = apiInstance.getAssets("maven-central", continuationToken );
+  for (AssetXO asset :  assets.getItems()) {
+   System.out.println(asset.toString());
+  }
+
+ }
+
+}
+
+</pre><br />
+<br />
+<br />
+actually you don't even need to run swagger-editor locally, you can use the online version <a href="https://editor.swagger.io//?_ga=2.252946753.972179590.1526550450-1850471649.1526550450#/">https://editor.swagger.io//?_ga=2.252946753.972179590.1526550450-1850471649.1526550450#/</a><br />
+<br />
+<br />
+<br />
+To test, populate your nexus repos as explained here <a href="/2017/09/nexus-and-maven-setup.html">/2017/09/nexus-and-maven-setup.html</a><br />
+<br />
+<br />
+If you get a 403 Unauthorized, try assigning to the user "Anonymous" the role "nx2-repository-any-full" (=nx-repository-view-*-*-*) <br />
+<br />
+in the request.log you see this<br />
+<br />
+127.0.0.1 - - [18/Dec/2018:17:57:01 +0100] "GET /service/rest/v1/assets?repository=central HTTP/1.1" 200 - 4698 328 "Swagger-Codegen/1.0.0/java"<br />
+<br />
+<br />
+<br />
+Soem sample code is here<br />
+<br />
+<script src="https://gist.github.com/vernetto/a6c144fc01242978b174b2fecdae526b.js"></script><br />
+<br />
+<br />
+<br />
+

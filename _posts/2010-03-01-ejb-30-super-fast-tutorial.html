@@ -1,0 +1,63 @@
+---
+layout: post
+title: "EJB 3.0 super fast tutorial"
+date: 2010-03-01T05:50:00.000+01:00
+permalink: /2010/02/ejb-30-super-fast-tutorial.html
+blogger_id: "6125058023980322278"
+---
+Create an EJB project <b>PVEJB30Test</b>.<br />
+<br />
+Create an <b>Interface</b>- this will be the remote interface of your Stateless EJB:<br />
+<br />
+package com.pierre;<br />
+<br />
+public interface <b>Messenger </b>{<br />
+&nbsp;&nbsp;&nbsp; String getMessage(String name);<br />
+}<br />
+<br />
+<br />
+Create the <b>Implementation</b>:<br />
+<br />
+package com.pierre;<br />
+<br />
+import javax.ejb.Remote;<br />
+import javax.ejb.Stateless;<br />
+<br />
+@Stateless<br />
+@Remote(Messenger.class)<br />
+public class <b>MessengerSB </b>implements Messenger {<br />
+&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; public String getMessage(String name) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return "Ciao " + name;<br />
+&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp; <br />
+}<br />
+<br />
+<br />
+<br />
+Deploy your project to the WebLogic Server:<br />
+<br />
+You will magically get this:<br />
+<br />
+<span class="likeLabel">Application Name:</span> PVEJB30Test<br />
+<span class="likeLabel">EJB Module Name:</span>PVEJB30Test<br />
+<span class="likeLabel">Bean Name: </span>MessengerSB<br />
+<br />
+<br />
+Easy. It could be easier (for instance, not having to create the Interface) but it's easy.<br />
+<br />
+<br />
+In the JNDI tree you will get:<br />
+<br />
+<table class="formTable"><tbody>
+<tr class="rowEven" id="JNDIBindingPortletboundObject.bindName_row"><td><br />
+</td><td class="inputFieldRO"> <div>PVEJB30TestPVEJB30TestMessengerSB_Home (=<table class="formTable"><tbody>
+<tr class="rowOdd" id="JNDIBindingPortletboundObject.objectClass_row"><td><span class="likeLabel"></span></td><td class="inputFieldRO"> <div>weblogic.ejb.container.internal.StatelessEJBHomeImpl</div></td></tr>
+</tbody></table>)</div><div>&nbsp;</div><div>and</div><div><table class="formTable"><tbody>
+<tr class="rowEven" id="JNDIBindingPortletboundObject.bindName_row"><td><span class="likeLabel"></span></td><td class="inputFieldRO"> <div>PVEJB30TestPVEJB30TestMessengerSB_Messenger (=<table class="formTable"><tbody>
+<tr class="rowOdd" id="JNDIBindingPortletboundObject.objectClass_row"><td><span class="likeLabel"></span></td><td class="inputFieldRO"> <div>com.pierre.MessengerSB_hodc5c_MessengerImpl_1030_WLStub</div></td></tr>
+</tbody></table>)</div><div>&nbsp;</div><div>&nbsp;</div><div>If you specify</div><div> @Stateless(mappedName="Pippo")</div><div> </div><div>you will get this binding:</div><div><table class="formTable"><tbody>
+<tr class="rowEven" id="JNDIBindingPortletboundObject.bindName_row"><td><span class="likeLabel"></span></td><td class="inputFieldRO"> <div>Pippo#com.pierre.Messenger</div></td></tr>
+</tbody></table>&nbsp;</div><div> </div><div>&nbsp;</div></td></tr>
+</tbody></table></div></td></tr>
+</tbody></table>

@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Getting file info from JCA File Poller"
+date: 2011-11-06T17:11:00.000+01:00
+permalink: /2011/11/getting-file-info-from-jca-file-poller.html
+blogger_id: "1305609594668492209"
+tags: ["FileAdapter"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2014-07-02
+    html: "sorry Victor, are you asking how to ignore 0-length files?"
+  - author: "Anonymous"
+    date: 2014-07-02
+    html: "Hello<br /><br />How can I read only for FileAdapter files with data?"
+  - author: "vernetto"
+    date: 2014-07-03
+    html: "Hola Victor, mejor que me llames al +41766418183 o me escribes al publicpierre at gmail dot com asi nos ententemos mejor...<br /><br />ciao<br /><br />"
+  - author: "Anonymous"
+    date: 2014-07-03
+    html: "Yes.<br /><br />Excuse my English but I want to ignore the null reading files, and execute another task with these files"
+---
+logging $inbound/ctx:transport/ctx:request/tp:headers gives this:<br />
+<br />
+<pre name="code" class="style: xml">&lt;tran:headers xsi:type="jca:JCARequestHeadersXML" xmlns:jca="http://www.bea.com/wli/sb/transports/jca" xmlns:tran="http://www.bea.com/wli/sb/transports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+  &lt;tran:user-header name="jca.file.CreationTime" value="0"/&gt;
+  &lt;jca:SOAPAction&gt;Read&lt;/jca:SOAPAction&gt;
+  &lt;jca:jca.file.FileName&gt;po000000001.dat&lt;/jca:jca.file.FileName&gt;
+  &lt;jca:jca.file.Directory&gt;C:\acme\po\in&lt;/jca:jca.file.Directory&gt;
+  &lt;jca:jca.file.Size&gt;113&lt;/jca:jca.file.Size&gt;
+  &lt;jca:jca.file.Batch&gt;z_qjc5GlR6b6iHDgdbExXlDoQiEkb7g2BnTbpmrhd7E.&lt;/jca:jca.file.Batch&gt;
+  &lt;jca:jca.file.BatchIndex&gt;1&lt;/jca:jca.file.BatchIndex&gt;
+  &lt;jca:jca.file.LastModifiedTime&gt;1320482562574&lt;/jca:jca.file.LastModifiedTime&gt;
+&lt;/tran:headers&gt;
+
+</pre><br />
+<br />
+Filename can be retrieved this way:<br />
+<br />
+$inbound/ctx:transport/ctx:request/tp:headers/tp:headers/jca:jca.file.FileName/text()<br />
+<br />
+where<br />
+ctx="http://www.bea.com/wli/sb/context"<br />
+tp="http://www.bea.com/wli/sb/transports"<br />
+jca="http://www.bea.com/wli/sb/transports/jca"

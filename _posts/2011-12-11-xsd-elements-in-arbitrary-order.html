@@ -1,0 +1,32 @@
+---
+layout: post
+title: "XSD: elements in arbitrary order"
+date: 2011-12-11T15:08:00.004+01:00
+permalink: /2011/12/xsd-elements-in-arbitrary-order.html
+blogger_id: "7295217657664602465"
+tags: ["xsd"]
+---
+my situation is that I have child elements which can occur repeatedly in any order:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;root&gt;
+&nbsp;&lt;a&gt;bla&lt;/a&gt;
+&nbsp;&lt;b&gt;bli&lt;/b&gt;
+&nbsp;&lt;b&gt;blo&lt;/b&gt;
+&nbsp;&lt;a&gt;blu&lt;/a&gt;
+&nbsp;&lt;a&gt;ble&lt;/a&gt;
+&lt;/root&gt;
+</pre><br />
+Googling around I find this solution:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;xs:complextype mixed="true" name="p"&gt;
+&nbsp;&lt;xs:choice maxoccurs="unbounded" minoccurs="0"&gt;
+&nbsp;&nbsp;&lt;xs:element name="a"&gt;
+&nbsp;&nbsp;&lt;xs:element name="b"&gt;
+&nbsp;&lt;/xs:element&gt;&lt;/xs:element&gt;
+&lt;/xs:choice&gt;
+&lt;/xs:complextype&gt;
+
+</pre><br />
+&nbsp;it seems to work pretty well... <br />
+<br />
+my wish is that XSD contained a native construct like "anyorder", similar to "sequence" or "choice" or "all"

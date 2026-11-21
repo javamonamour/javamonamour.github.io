@@ -1,0 +1,16 @@
+---
+layout: post
+title: "BEA-010096 unable to connect to the JMS destination"
+date: 2012-02-19T09:43:00.000+01:00
+permalink: /2012/02/bea-010096-unable-to-connect-to-jms.html
+blogger_id: "2410083506334980560"
+tags: ["jms", "osb11"]
+---
+If your JMS proxy service is configured with a jms URI which doesn't match existing resources, you will get plenty of this in the logs:<br />
+<br />
+The Message-Driven EJB: RequestEJB-8751392536757391289--69cc26eb.1359130af7a.-7e0e is unable to connect to the JMS destination or bind to JCA resource adapter: jms.jndi.dq.ACME.ACMEQueue. Connection failed after 3,791 attempts. The MDB will attempt to reconnect/rebind every 10 seconds. This log message will repeat every 600 seconds until the condition clears.<br />
+<br />
+<br />
+It is advisable to grep BEA-010096  on the logs<br />
+<br />
+<a href="http://docs.oracle.com/cd/E13222_01/wls/docs91/messages/EJB.html">http://docs.oracle.com/cd/E13222_01/wls/docs91/messages/EJB.html</a>

@@ -1,0 +1,33 @@
+---
+layout: post
+title: "On the performance of JMS Messaging Bridges"
+date: 2009-12-10T13:01:00.001+01:00
+permalink: /2009/12/on-performance-of-jms-messaging-bridges.html
+blogger_id: "7498658399145690763"
+---
+from WebLogic manuals:<br />
+<br />
+<span style="font-size: x-large;"><span style="color: black; font-family: Arial; font-size: x-small;"><a href="http://download.oracle.com/docs/cd/E13222_01/wls/docs92/bridge/design.html#wp1173277">http://download.oracle.com/docs/cd/E13222_01/wls/docs92/bridge/design.html#wp1173277</a></span><br />
+<br />
+<span style="font-size: small;">When to Avoid using a Messaging Bridge </span><br />
+</span> <br />
+<span style="font-size: small;">Environment with low tolerance for message latency.  <strong>Messaging Bridges increase latency and may lower throughput</strong>.  Messaging bridges increase latency for messages as they introduce an extra  destination in the message path and may lower throughput because they forward  messages using a single thread.</span><br />
+<span style="color: blue;"> <span style="font-size: small;"><span style="color: black; font-family: Arial;">Forward messages between WebLogic  9.0 and higher domains—Use WebLogic Store-and-Forward. </span></span><br />
+<br />
+<span style="color: black; font-family: Arial;"><span class="009250811-10122009">and more:<br />
+</span></span><br />
+<br />
+<span style="color: black; font-family: Arial;"><span class="009250811-10122009"><a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/perform/bridgetuning.html">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/perform/bridgetuning.html</a></span></span><br />
+<br />
+<span class="009250811-10122009"><span style="color: black;"><strong>Avoid using a  Messaging Bridge if remote destinations are already highly available. JMS  clients can send directly to remote destinations</strong>. Use messaging bridge  in situations where remote destinations are not highly available, such as an  unreliable network or different maintenance schedules.</span></span><br />
+<span class="009250811-10122009"><span style="color: black;">Use the better performing  JMS SAF feature instead of using a Messaging Bridge when forwarding messages to  remote destinations. In general, a <strong>JMS SAF agent is significantly faster  than a Messaging Bridge.</strong> One exception is a configuration when sending  messages in a non-persistent exactly-once mode.</span></span><br />
+<br />
+<span class="009250811-10122009"><span style="color: black; font-family: Arial;">and more:<br />
+</span></span><br />
+<br />
+<span class="009250811-10122009"> <div class="pBody"><span style="color: black;"><strong>When the <code class="cCode">Exactly-once</code> quality of service is used, the bridge must  undergo a two-phase commit with both JMS servers in order to ensure the  transaction semantics and this operation can be very expensive</strong>.  However, unlike the other qualities of service, the bridge can batch multiple  operations together using <code class="cCode">Exactly-once</code> service.  </span><br />
+</div><div class="pBody"><a href="" name="wp1148775"></a><span style="color: black;">You may need to  experiment with this parameter to get the best possible performance. For  example, if the queue is not very busy or if non-persistent messages are used,  <code class="cCode">Exactly-once</code> batching may be of little benefit.  </span><br />
+</div><div class="pBody"><span style="color: black;"><strong>A quality of service of <code class="cHyperlinkCode"><a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/bridge/design.html#Exactly-once">Exactly-once</a></code>  has a significant effect on bridge performance.</strong> The bridge starts a new  transaction for each message and performs a two-phase commit across both JMS  servers involved in the transaction. Since the two-phase commit is usually the  most expensive part of the bridge transaction, as the number of messages being  processed increases, <strong>the bridge performance tends to decrease.</strong></span><br />
+</div><div class="pBody"><br />
+</div><div class="pBody"><span style="color: black;"><strong>&nbsp;</strong>  </span><br />
+</div></span></span>

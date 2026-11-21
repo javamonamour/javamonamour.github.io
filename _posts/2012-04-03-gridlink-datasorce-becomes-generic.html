@@ -1,0 +1,21 @@
+---
+layout: post
+title: "GridLink DataSorce becomes generic"
+date: 2012-04-03T11:02:00.002+02:00
+permalink: /2012/04/gridlink-datasorce-becomes-generic.html
+blogger_id: "240993608712885013"
+tags: ["gridlink"]
+---
+I have learned a funny thing: when you create a GridLink DataSource, and you don't enable FAN and ONS, the DataSource appears as "generic" in the "Summary of JDBC Data Sources"<br />
+<br />
+On the other hand, if you create a "generic" DataSorce, it still has a ONS tab, and if you enable ONS, the DataSorce magically becomes "gridlink". <br />
+<br />
+In fact even the WLST script necessary to create the resource is exactly the same - apart the extra instructions needed to set the ONS-FAN (Oracle Notification Service - Fast Application Notification) events. The only difference is the extra<br />
+<br />
+cmo.setFanEnabled(true)<br />
+cmo.setOnsNodeList('myoracledbserver.com:6200')<br />
+<br />
+<br />
+(see <a href="http://wlstbyexamples.blogspot.com/2011/02/unstoppable-datasources-from-weblogic.html">here for a complete script</a>)<br />
+<br />
+There is no createJDBCSystemResource specific to GridLink.

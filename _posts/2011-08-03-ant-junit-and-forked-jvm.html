@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Ant, Junit and the forked JVM"
+date: 2011-08-03T18:59:00.001+02:00
+permalink: /2011/08/ant-junit-and-forked-jvm.html
+blogger_id: "3251364781734141575"
+tags: ["ant", "junit"]
+---
+I have a classpath defined as:<br />
+<br />
+<br />
+&lt;path id="classpath.test"&gt;<br />
+&lt;fileset dir="lib"&gt;<br />
+&lt;include name="*.jar"/&gt;<br />
+&lt;/fileset&gt;<br />
+&lt;pathelement location="/path/to/user_projects/domains/acme_osb/config/osb/"/&gt;<br />
+&lt;/path&gt;<br />
+<br />
+<br />
+I can trace it this way:<br />
+<br />
+&lt;echo message="${toString:classpath.test}"/&gt;<br />
+<br />
+<br />
+and I use it in a junit task<br />
+<br />
+&lt;junit printsummary="true"&gt;<br />
+&lt;classpath refid="classpath.test" /&gt;<br />
+&lt;formatter type="brief" usefile="false"/&gt;<br />
+&lt;test name="com.acme.gu.ft.GUFT" outfile="junitout/GUFT"&gt;<br />
+&lt;formatter type="xml"/&gt;<br />
+&lt;/test&gt;<br />
+&lt;/junit&gt;<br />
+<br />
+<br />
+<br />
+The alarming thing is that the Unit test is run NOT with the classpath I specify (classpath.test), but with the classpath being used to run ant.<br />
+<br />
+I can trace it with <b>System.getProperty("java.class.path")</b><br />
+<br />
+<br />
+The only way to run the Unit Test with the new Classpath is by specifying fork="on"<br />
+<br />
+&lt;junit printsummary="true" fork="on"&gt;<br />
+<br />
+<br />
+one hour wasted for this....

@@ -1,0 +1,29 @@
+---
+layout: post
+title: "NodeManager: domain salt file not found"
+date: 2010-10-11T14:31:00.000+02:00
+permalink: /2010/10/nodemanager-domain-salt-file-not-found.html
+blogger_id: "1614396561707237036"
+tags: ["nodemanager"]
+---
+See <a href="http://download-llnw.oracle.com/docs/cd/E12840_01/wls/docs103/nodemgr/overview.html#wp1075039">here</a> the full story.<br />
+<br />
+startNodeManager.cmd is in C:\bea11\wlserver_10.3\server\bin<br />
+in the same dir is also nodemanager.properties WHICH IS NOT BEING USED!<br />
+<br />
+This file is configured to have:<br />
+DomainsFile=C\:\\bea11\\wlserver_10.3\\server\\bin\\nodemanager.domains<br />
+<br />
+<br />
+for some reason the nodemanager.domains is missing and this other is loaded:<br />
+C:\bea11\wlserver_10.3\common\nodemanager\nodemanager.domains<br />
+<br />
+<br />
+because NODEMGR_HOME=%WL_HOME%\common\nodemanager<br />
+where WL_HOME=C:\bea11\wlserver_10.3\<br />
+<br />
+Verify the <a href="http://download-llnw.oracle.com/docs/cd/E12840_01/wls/docs103/nodemgr/nodemgr_config.html#wp1100920">Domain name mappings</a>:<br />
+<br />
+if you are pointing to the wrong directory, where no valid domain exists, you will get this error emssage:<br />
+<br />
+java.io.FileNotFoundException: Domain directory 'C:\bea11\wlserver_10.3\common\nodemanager' invalid (domain salt file not found)

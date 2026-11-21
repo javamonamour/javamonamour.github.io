@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Monitoring OSB when monitoring is not enabled"
+date: 2011-09-27T15:45:00.000+02:00
+permalink: /2011/09/monitoring-osb-when-monitoring-is-not.html
+blogger_id: "4480449931936707799"
+tags: ["OSB"]
+---
+Monitoring is a very cool feature of OSB, you can tell any time what is going on in the bus.<br />
+<br />
+If you have no monitoring, there is still something you can do - apart thread dumps.<br />
+<br />
+Go to Server/Monitoring/Threads, and in the Customize Columns enable also <br />
+Module, Application and Work Manager<br />
+<br />
+Next to the thread you will see also&nbsp;something like&nbsp;<strong>ProxyService_MYPROXYBLA_Proxy270984</strong><br />
+which tells you which proxies are pumping right now.<br />
+<br />
+Better than nothing...

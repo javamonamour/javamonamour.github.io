@@ -1,0 +1,85 @@
+---
+layout: post
+title: "WebLogic Web Service: A jws BLA should have a package declaration"
+date: 2016-03-06T20:26:00.001+01:00
+permalink: /2016/03/weblogic-web-service-jws-bla-should.html
+blogger_id: "565002777596941148"
+tags: ["ws"]
+---
+
+<pre>
+
+Caused by: weblogic.wsee.ws.WsException: A jws [class PVWSImpl01] should have a package declaration.
+        at weblogic.wsee.deploy.DeployInfo.validate(DeployInfo.java:356)
+        at weblogic.wsee.jaxws.JAXWSDeployedServlet.init(JAXWSDeployedServlet.java:87)
+        at javax.servlet.GenericServlet.init(GenericServlet.java:244)
+        at weblogic.servlet.internal.StubSecurityHelper$ServletInitAction.run(StubSecurityHelper.java:343)
+        at weblogic.servlet.internal.StubSecurityHelper$ServletInitAction.run(StubSecurityHelper.java:294)
+        at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:326)
+        at weblogic.security.service.SecurityManager.runAsForUserCode(SecurityManager.java:196)
+        at weblogic.servlet.provider.WlsSecurityProvider.runAsForUserCode(WlsSecurityProvider.java:203)
+        at weblogic.servlet.provider.WlsSubjectHandle.run(WlsSubjectHandle.java:71)
+        at weblogic.servlet.internal.StubSecurityHelper.initServletInstance(StubSecurityHelper.java:99)
+        at weblogic.servlet.internal.StubSecurityHelper.createServlet(StubSecurityHelper.java:87)
+        at weblogic.servlet.internal.StubLifecycleHelper.createOneInstance(StubLifecycleHelper.java:71)
+        at weblogic.servlet.internal.StubLifecycleHelper.<init>(StubLifecycleHelper.java:57)
+        at weblogic.servlet.internal.StubLifecycleHelper.<init>(StubLifecycleHelper.java:31)
+        at weblogic.servlet.internal.ServletStubImpl.initStubLifecycleHelper(ServletStubImpl.java:673)
+        at weblogic.servlet.internal.ServletStubImpl.prepareServlet(ServletStubImpl.java:612)
+        at weblogic.servlet.internal.WebAppServletContext.preloadServlet(WebAppServletContext.java:2053)
+        at weblogic.servlet.internal.WebAppServletContext.loadServletsOnStartup(WebAppServletContext.java:2030)
+        at weblogic.servlet.internal.WebAppServletContext.preloadResources(WebAppServletContext.java:1919)
+        at weblogic.servlet.internal.WebAppServletContext.start(WebAppServletContext.java:3063)
+        at weblogic.servlet.internal.WebAppModule.startContexts(WebAppModule.java:1830)
+        at weblogic.servlet.internal.WebAppModule.start(WebAppModule.java:875)
+        at weblogic.application.internal.ExtensibleModuleWrapper$StartStateChange.next(ExtensibleModuleWrapper.java:360)
+        at weblogic.application.internal.ExtensibleModuleWrapper$StartStateChange.next(ExtensibleModuleWrapper.java:356)
+        at weblogic.application.utils.StateMachineDriver.nextState(StateMachineDriver.java:45)
+        at weblogic.application.internal.ExtensibleModuleWrapper.start(ExtensibleModuleWrapper.java:138)
+
+
+</pre>
+
+<br/><br/>
+as the error message says, it's compulsory to assign a package 
+(package com.bla.ws;) to your interface and implementation for your WebService and SEI.
+
+<br/><br/>
+
+<pre class="brush: java">
+
+package com.pierre.ws;
+
+import javax.jws.*;
+
+@WebService(portName = "PVWLSWS01Port", serviceName = "PVWLSWS01Service", targetNamespace = "http://com.pierre.ws/", endpointInterface = "com.pierre.ws.PVWLSWS01")
+public class PVWLSWS01Impl implements PVWLSWS01 {
+
+ public String hello(String name) {
+  System.out.println("Hello " + name);
+  return "Hello " + name;
+  
+ }
+}
+
+
+</pre>
+<pre class="brush: java">
+package com.pierre.ws;
+
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+
+@WebService(name = "PVWLSWS01", targetNamespace = "http://com.pierre.ws/")
+public interface PVWLSWS01 {
+
+ @WebMethod(operationName = "hello")
+ public String hello(String name);
+}
+</pre>
+
+<br/><br/>
+
+
+
+

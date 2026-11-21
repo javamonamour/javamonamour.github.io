@@ -1,0 +1,30 @@
+---
+layout: post
+title: "make logger.debug() obsolete"
+date: 2017-02-11T01:06:00.002+01:00
+permalink: /2017/02/make-loggerdebug-obsolete.html
+blogger_id: "5914491909056498095"
+tags: ["logging", "overops"]
+---
+IMHO logging is the weakest point in application development, the Cinderella of IT.
+<br/>
+Most people don't log enough information to enable effective troubleshooting, the context is lost, changing logging level in PROD is hell, if you enable debug level you end up being flooded with unwanted info, most of the time operators don't even have instructions on how to do it.
+<br/>
+Besides one is interested in knowing what happened immediately before an error occurred, so one should always have like a Flight Recorder with some history preceding the error and ready to be dumped when this happens.
+<br/>
+Also, frameworks like ByteBuddy or Btrace or AOP products allows you to dynamically define loggers... logging is a cross-cutting concern, it should not be interspersed in the business code cluttering it. Just define what to log in a separate module - configuration and convention over code.
+<br/>
+
+Here at OverOps they seem to bring some value:
+<br/><br/>
+<a href=" https://www.overops.com/java-monitoring">
+https://www.overops.com/java-monitoring</a>
+<br/>
+<br/>
+watch the short video:
+
+<br/>
+<br/>
+<iframe width="900" height="507" src="https://www.youtube.com/embed/xb8eP08b2iQ" frameborder="0" allowfullscreen></iframe>
+
+<br/>

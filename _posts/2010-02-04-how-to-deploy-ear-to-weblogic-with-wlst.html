@@ -1,0 +1,45 @@
+---
+layout: post
+title: "How to deploy a EAR to WebLogic with WLST"
+date: 2010-02-04T17:30:00.002+01:00
+permalink: /2010/02/how-to-deploy-ear-to-weblogic-with-wlst.html
+blogger_id: "498826096564177423"
+tags: ["deploy", "WLST"]
+---
+<a href="http://blogs.oracle.com/jamesbayer/2007/10/automate_wls_console_tasks_wit.html">http://blogs.oracle.com/jamesbayer/2007/10/automate_wls_console_tasks_wit.html</a><br />
+<br />
+excellent tutorial! As usual with James Bayer!<br />
+<br />
+In a nutshell:<br />
+<br />
+cd C:\beawli\user_projects\domains\JCRMIntegration_Domain\bin<br />
+setDomainEnv.cmd<br />
+java weblogic.WLST<br />
+connect( 'weblogic', 'weblogic', 't3://localhost:7001')<br />
+stopApplication('ACME_INTEG_EAR')<br />
+undeploy('ACME_INTEG_EAR')<br />
+deploy('ACME_INTEG_EAR', 'C:/TEMP/WORKSHOP_ACME_INTEG_EAR.ear', targets='AdminServer')<br />
+startApplication('ACME_INTEG_EAR')<br />
+disconnect()<br />
+<br />
+<br />
+<br />
+The complete script is:<br />
+<br />
+<pre name="code" class="brush: java">
+connect( 'weblogic', 'weblogic1', 't3://localhost:7001')
+try:
+   stopApplication('MQParserEAR')
+except:
+   print 'unable to stop'
+
+try:
+   undeploy('MQParserEAR')
+except:
+   print 'unable to undeploy'
+
+deploy('MQParserEAR', '/path/to/MQParserEAR/1.1.0-SNAPSHOT/MQParserEAR-1.1.0-SNAPSHOT.ear', targets='AdminServer')
+startApplication('MQParserEAR')
+disconnect()
+
+</pre>

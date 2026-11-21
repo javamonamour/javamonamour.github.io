@@ -1,0 +1,54 @@
+---
+layout: post
+title: "Struggling with Hyperic and WebLogic autodiscovery"
+date: 2010-03-26T21:02:00.002+01:00
+permalink: /2010/03/struggling-with-hyperic-and-weblogic.html
+blogger_id: "4392424001983543064"
+tags: ["hyperic"]
+blogger_comments:
+  - author: "Unknown"
+    date: 2010-05-28
+    html: "Weblogic 10/1031/1032 is autodiscovered by the new RC version of Hyperic 4.3.0."
+---
+This is an OLD post... <a href="/2012/04/installing-hyperic-server-on-windows.html">this NEW post</a> reports SUCCESS on the Hyperic-WebLogic front.<br />
+<br />
+I have been fighting for hours to setup WebLogic management with Hyperic.<br />
+Following the instructions here <a href="http://support.hyperic.com/display/hypcomm/Configure+HQ+Agent+to+Monitor+WebLogic+Server">http://support.hyperic.com/display/hypcomm/Configure+HQ+Agent+to+Monitor+WebLogic+Server</a><br />
+<br />
+I thought I am a man with average intelligence, so it would take not more than 5 minutes to setup Hyperic to monitor one of the most popular application server. It turns out to be a great challenge. The HQ Agent simply refuses to discover a running instance of WebLogic 10, and instead discovers everything about himself, showing a certain degree of self-referential behavior.<br />
+<br />
+Now, if I had to design a component who should autodiscover installed software, the LAST thing that would occur to me is asking the user to manually edit a <b>agent.properties</b> file and enter the installation directory of the product. <br />
+<br />
+Because, I should be able to do a "find / -name something" and <b>automatically discover</b> which instances of a given software are installed on the server.<br />
+<br />
+Excuse me if we are in 2010 so we assume that by now computers should be a bit more self-aware and independent from human intervention.<br />
+<br />
+So, I try this:<br />
+<br />
+java -jar /home/weblogic/hyperic/agent-4.2.0/bundles/agent-4.2.0-1260/pdk/lib/hq-product.jar -Dplugins.include=weblogic -Dadmin.username=weblogic -Dadmin.password=weblogic -m <b>discover</b><br />
+<br />
+and I get <b>0 servers discovered</b> - yet the server is up and running.<b><br />
+</b><br />
+Of course I have edited the agent.properties file to include <br />
+weblogic.installpath=/weblogic/bea10.3/wlserver_10.3/<br />
+<br />
+<br />
+I have the following values:<br />
+<br />
+<br />
+<i>&nbsp;You can now start your HQ agent by running this command:<br />
+<br />
+&nbsp; /home/weblogic/hyperic/agent-4.2.0/bin/hq-agent.sh start<br />
+<br />
+<br />
+&nbsp;You can now start your HQ server by running this command:<br />
+<br />
+&nbsp; /home/weblogic/hyperic/server-4.2.0/bin/hq-server.sh start<br />
+<br />
+<br />
+&nbsp;Once the HQ server reports that it has successfully started, you can log in<br />
+&nbsp;to your HQ server at:<br />
+<br />
+&nbsp; http://CRM-INTG-DEV.acme.com:7080/<br />
+&nbsp; username: hqadmin<br />
+&nbsp; password: hqadmin</i>

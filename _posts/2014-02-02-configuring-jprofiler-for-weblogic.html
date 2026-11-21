@@ -1,0 +1,172 @@
+---
+layout: post
+title: "Configuring JProfiler for WebLogic"
+date: 2014-02-02T10:17:00.000+01:00
+permalink: /2014/02/configuring-jprofiler-for-weblogic.html
+blogger_id: "178854680584502248"
+tags: ["jprofiler"]
+blogger_comments:
+  - author: "chetan gupta"
+    date: 2016-07-07
+    html: "awesome man, worked for me like a charm<br /><br />had to change &quot;JPROFILER_OPTIONS&quot; as well to my local location."
+---
+Download and install JProfiler 7.2 (the latest is 8 at the time of writing). Enter the licensing information. Run the Session/Integration/New Remote Integration.<br />
+<br />
+Then remote Application Server:
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+</div>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/214f45d825e3d933.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/8b60c7b163ffa3f5.png" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/63efe2e86a72ec38.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/11e7def5be82f224.png" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/15b92c402a5ecb3a.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/e555ac8a5b5d4ca2.png" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/ead4b88617ce4d2f.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/5f8d212c7e68b7b5.png" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/3df33c50e88cda69.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/2f1bea607554b969.png" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/8f129917e031817a.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/65c79ddbd3d2a9da.png" /></a></div>
+<br />
+this means that it will generate jprofiler_agent_linux-x64.tar.gz in c:\temp<br />
+you must previously have copied startWebLogic.sh (from the DOMAIN_HOME/bin folder) to your c:\temp folder. In the snapshot below I have tried with startManagedWebLogic.sh, but this is NOT recognized as a valid script.... please replace it with startWebLogic.sh script!<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/1d8a861c5197eb3f.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/f4f80a405d77fa44.png" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/5285b8455a2a1a69.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/42819b1e025f9115.png" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/d82c6bb9669ce7d6.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/6b8bb8d22a0bf648.png" /></a></div>
+<br />
+as said, startManagedWebLogic.sh is not recognized... use startWebLogic.sh instead!<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/3a5a9528742916ab.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/479b72445ece5d4a.png" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/44f619cc27869adb.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/1b1ae90866c6e9e7.png" /></a></div>
+<br />
+this time it will work:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/5156427dc1adc0d7.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/5d83ec4201801a0e.png" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/8b5aee6d0af71480.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/fffbf7795a771b2b.png" /></a></div>
+<br />
+<br />
+and at this point we are ready to attach:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/cbdabe9b0a33838a.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/78220be439fa4d25.png" /></a></div>
+<br />
+<br />
+but fiirst you must prepare the Application Server (the Managed Server)<br />
+<br />
+<br />
+sudo mkdir /opt/jprofiler<br />
+sudo chmod soa:soa /opt/jprofiler<br />
+<br />
+The file jprofiler_agent_linux-x64.tar.gz will be created in c:\temp. Copy it to the /opt/jprofiler folder, then:
+<br />
+<b>tar xvzf  jprofiler_agent_linux-x64.tar.gz
+
+
+&nbsp;</b><br />
+<br />
+and that's it for the libraries.<b> </b><br />
+<br />
+<b>The modification done in startWebLogic.sh is:</b>
+
+<b>&nbsp;</b><br />
+<b>added on top:</b><br />
+<i>JAVA_VENDOR=Sun
+
+<b>&nbsp;</b></i><br />
+<br />
+<b>added above this line: echo "starting weblogic with Java version:":</b>
+<br />
+<pre><i>JAVA_VM=
+export JAVA_VM
+JPROFILER_OPTIONS="-agentpath:/opt/jprofiler/bin/linux-x64/libjprofilerti.so=port=8849,nowait $JPROFILER_OPTIONS"
+export JPROFILER_OPTIONS</i>
+</pre>
+<br />
+<b>changed:</b>
+
+<br />
+<pre><i>echo "starting weblogic with Java version:"
+
+${JAVA_HOME}/bin/java ${JAVA_VM} -version
+
+if [ "${WLS_REDIRECT_LOG}" = "" ] ; then
+ echo "Starting WLS with line:"
+ echo "${JAVA_HOME}/bin/java ${JPROFILER_OPTIONS} ${JAVA_VM} ${MEM_ARGS} -Dweblogic.Name=${SERVER_NAME} -Djava.security.policy=${WL_HOME}/server/lib/weblogic.policy ${JAVA_OPTIONS} ${PROXY_SETTINGS} ${SERVER_CLASS}"
+ ${JAVA_HOME}/bin/java ${JPROFILER_OPTIONS} ${JAVA_VM} ${MEM_ARGS} -Dweblogic.Name=${SERVER_NAME} -Djava.security.policy=${WL_HOME}/server/lib/weblogic.policy ${JAVA_OPTIONS} ${PROXY_SETTINGS} ${SERVER_CLASS}
+else
+ echo "Redirecting output from WLS window to ${WLS_REDIRECT_LOG}"
+ ${JAVA_HOME}/bin/java ${JPROFILER_OPTIONS} ${JAVA_VM} ${MEM_ARGS} -Dweblogic.Name=${SERVER_NAME} -Djava.security.policy=${WL_HOME}/server/lib/weblogic.policy ${JAVA_OPTIONS} ${PROXY_SETTINGS} ${SERVER_CLASS}  &gt;"${WLS_REDIRECT_LOG}" 2&gt;&amp;1 
+fi</i>
+
+</pre>
+<br />
+The JPROFILER_OPTIONS add a agentpath pointing to the jprofiles libraries in charge of doing the instrumentation and profiling.<br />
+<br />
+BEWARE: if you copy the startWebLogic_jprofiler.sh from a different domain, make sure you change the DOMAIN_HOME !<br />
+<br />
+At this point we must change the startManagedWebLogic.sh and startWebLogic.sh scripts to add the JProfiler libraries.... we shall clone the existing scripts, to allow normal operations to be unaffected.<br />
+<br />
+cd DOMAIN_HOME/bin<br />
+cp startManagedWebLogic.sh startManagedWebLogic_jprofiler.sh
+<br />
+vi startManagedWebLogic_jprofiler.sh
+<br />
+change the 2 occurrences of startWebLogic.sh into startWebLogic_jprofiler.sh
+<br />
+<br />
+copy to DOMAIN_HOME/bin the startWebLogic_jprofiler.sh generated by the jprofiler wizard<br />
+<br />
+to start the profield server, run <b>./startManagedWebLogic_jprofiler.sh osbpp4ms1</b> (or whatever is your managed server name).<br />
+<br />
+In the logs you should see:<br />
+<br />
+<pre>JProfiler&gt; Protocol version 37
+JProfiler&gt; Using JVMTI
+JProfiler&gt; JVMTI version 1.1 detected.
+JProfiler&gt; 64-bit library
+JProfiler&gt; Don't wait for frontend to connect.
+JProfiler&gt; Starting up without initial configuration.
+JProfiler&gt; Listening on port: 8849.
+JProfiler&gt; Instrumenting native methods.
+JProfiler&gt; Can retransform classes.
+JProfiler&gt; Can retransform any class.
+JProfiler&gt; Native library initialized
+JProfiler&gt; VM initialized
+JProfiler&gt; Hotspot compiler enabled
+</pre>
+<br />
+<br />
+<br />
+And you are ready to connect and profile.<br />
+<br />
+Happy profiling!<br />
+<br />
+<br />

@@ -1,0 +1,19 @@
+---
+layout: post
+title: "weblogic.transaction.internal.AppSetRollbackOnlyException: setRollbackOnly called on transaction "
+date: 2017-07-27T09:39:00.001+02:00
+permalink: /2017/07/weblogictransactioninternalappsetrollba.html
+blogger_id: "8123264289221523250"
+tags: ["weblogic"]
+---
+If you get "weblogic.transaction.internal.AppSetRollbackOnlyException: setRollbackOnly called on transaction " in your application, and have no clue what is going on, in Oracle Support you find this article:
+<br/>
+
+"When setRollbackOnly() is Called in beforeCompletion() Synchronization Method , Thrown Exception Cannot be Obtained (Doc ID 1547327.1)"
+
+<br/>
+
+
+you should apply a patch 16509700 AND specify -Dweblogic.transaction.allowOverrideSetRollbackReason=true , or upgrade to WLS 12.1.3 
+
+

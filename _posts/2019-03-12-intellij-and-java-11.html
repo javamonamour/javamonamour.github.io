@@ -1,0 +1,45 @@
+---
+layout: post
+title: "IntelliJ, Eclipse and Java 11"
+date: 2019-03-12T15:02:00.000+01:00
+permalink: /2019/03/intellij-and-java-11.html
+blogger_id: "2053468481385179123"
+tags: ["eclipse", "intellij", "java11"]
+---
+<br />
+<a href="https://blog.jetbrains.com/idea/2018/06/java-11-in-intellij-idea-2018-2/">https://blog.jetbrains.com/idea/2018/06/java-11-in-intellij-idea-2018-2/</a><br />
+<br />
+you must install IDEA 2018.2 or greater. 2018.1 will not work, it supports only Java 10. It's a 500 MB monster so be patient.<br />
+<br />
+<a href="https://www.jetbrains.com/idea/download/">https://www.jetbrains.com/idea/download/</a> download 2018.3.5 here<br />
+<br />
+then configure the platform JDK with your installed JDK 11 (of course you must have installed this JDK from Oracle or OpenJDK!), with ALT-SHIFT-CONTROL-S (project structure/SDKs)<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/af9e311ee5c0df8c.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/dd581ab9fae86232.jpg" width="400" height="290" data-original-width="1029" data-original-height="745" /></a></div><br />
+then configure Java 11 level (File/Project Structure/Modules and File/Project Structure/Project)<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/6e343ca51d758105.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="747" data-original-width="1032" height="290" src="/images/ecd1adc6db070ebe.jpg" width="400" /></a></div><br />
+<br />
+also don't forget the bytecode level (File/Settings/Java Compiler):<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/596381be02ce2f0c.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/f80e1e116ebd0a6f.jpg" width="400" height="285" data-original-width="1083" data-original-height="772" /></a></div><br />
+<br />
+<br />
+<br />
+If you get the "invalid source release: 11" , it's possible that you misconfigured the "platform JDK"<br />
+<br />
+<br />
+<br />
+<br />
+For Eclipse it's much easier: install Eclipse 2018-09 (4.9), then install this add-on:<br />
+<br />
+<a href="https://marketplace.eclipse.org/content/java-11-support-eclipse-2018-09-49">https://marketplace.eclipse.org/content/java-11-support-eclipse-2018-09-49</a><br />
+<br />
+make sure you configure the JDK in the "installed JRA" preferences tab, <br />
+<br />
+and when you create a new project, select jdk11 and create the module-info by default.<br />
+All works fine. <br />
+<br />
+<br />
+

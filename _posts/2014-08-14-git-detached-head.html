@@ -1,0 +1,130 @@
+---
+layout: post
+title: "Git detached HEAD"
+date: 2014-08-14T11:16:00.003+02:00
+permalink: /2014/08/git-detached-head.html
+blogger_id: "3288347715927665648"
+tags: ["git"]
+---
+Normally I do all my git operations from command line. It might be more effort than using Eclipse/Geppetto plugin, but at least I know exactly what I am doing.
+<br/><br/>
+Recently I have made the terrible mistake of moving some files within the Geppetto (Eclipse) IDE.
+<br/><br/>
+Suddenly, the "HEAD detached" or "detached HEAD" message started appearing in my "git status":
+<br/><br/>
+<b>git status</b>
+<pre>
+HEAD detached at 05eff15
+</pre>
+<br/><br/>
+
+and when I commit stuff, it sure succeeds but it's in the detached head, not in my master branch:
+<br/><br/>
+<b>git commit -a -m " moved domains files"</b>
+<pre>
+
+[detached HEAD c67cdde]  moved domains files
+ 3 files changed, 82 insertions(+)
+</pre>
+<br/><br/>
+and when I try to push, I obviously get the message
+<br/><br/>
+<b>git push</b>
+<pre>
+
+fatal: You are not currently on a branch.
+To push the history leading to the current (detached HEAD)
+state now, use
+
+    git push origin HEAD:<name-of-remote-branch>
+</pre>
+<br/><br/>
+equally, pull --rebase will fail:
+<br/><br/>
+<b>git pull --rebase</b>
+<pre>
+
+
+From ssh://stash.acme.com:7999/pup/puppet-nesoav2
+   14bba35..05eff15  master     -> origin/master
+You are not currently on a branch. Please specify which
+branch you want to rebase against. See git-pull(1) for details.
+
+    git pull <remote> <branch>
+</pre>
+
+
+
+<br/><br/>
+
+So basically I am screwed, unless I can rejoin my master branch and put in it all the commits I have done in the meantime in the detached HEAD. Bugger. I really wished git gave some BIGGER warning, since you don't really want to work normally in a detached HEAD.
+
+<br/><br/>
+
+
+I do this: first I join again my master branch:
+<br/><br/>
+<b>git checkout master</b>
+<pre>
+
+Warning: you are leaving 3 commits behind, not connected to
+any of your branches:
+
+  c67cdde  moved domains files4b31fcfdd3893db49
+  1ab0beb  moved domains filesrnetto@nespresso.com>
+  ccdbcd0 usr files1:57:15 2014 +0200
+
+</pre>
+
+<br/><br/>
+ok this tells me that c67cdde is the hash of my last commit in detached HEAD.... let's go back to it:
+<br/><br/>
+<b>git checkout c67cdde</b>
+<pre>
+
+Note: checking out 'c67cdde'.
+
+You are in 'detached HEAD' state. 
+</pre>
+
+
+<br/><br/>
+
+then I create a new branch in which to commit that stuff:
+<br/><br/>
+<b>git checkout -b tmp</b>
+<pre>
+
+Switched to a new branch 'tmp'
+</pre>
+<br/><br/>
+
+
+<br/><br/>
+then I go back to master
+<br/><br/>
+
+<b>git checkout master</b>
+
+<br/><br/>
+and I merge the tmp branch
+<br/><br/>
+<b>git merge tmp</b>
+<pre>
+
+
+Updating 05eff15..c67cdde
+Fast-forward
+</pre>
+<br/><br/>
+
+I will confirm now that my latest commits are there in master:
+<br/><br/>
+
+<b>git log -3</b>
+
+<br/><br/>
+and I delete the now useless tmp branch
+
+<b>git branch -d tmp</b>
+

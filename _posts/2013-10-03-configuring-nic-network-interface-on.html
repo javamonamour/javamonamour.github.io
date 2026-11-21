@@ -1,0 +1,107 @@
+---
+layout: post
+title: "Configuring NIC network interface on RHEL"
+date: 2013-10-03T17:05:00.000+02:00
+permalink: /2013/10/configuring-nic-network-interface-on.html
+blogger_id: "181683129677614832"
+tags: ["ifconfig", "network", "rhel", "unix"]
+---
+Note: ipconfig is deprecated in favour of ip, however a lot of legacy code still uses it.
+<br/>
+
+
+<a href="http://www.cyberciti.biz/faq/rhel-centos-fedoracore-linux-network-card-configuration/">Very interesting tutorial here</a> and <a href="http://www.tecmint.com/create-multiple-ip-addresses-to-one-single-network-interface/">here</a>
+<br/>
+
+This is a UI to edit all configuration without requiring root privileges, bur probably if you are not root you won'et even be able to see any configuration values - forget about changing them:<br/><br/>
+/usr/sbin/system-config-network-tui
+<br/><br/>
+
+This is what you get:
+<br/><br/>
+<pre>
+
+
+âââââââââââ¤ Network Configuration âââââââââââ
+â                                           â
+â                                           â
+â Name                 eth0________________ â
+â Device               eth0________________ â
+â Use DHCP             [*]                  â
+â Static IP            ____________________ â
+â Netmask              ____________________ â
+â Default gateway IP   ____________________ â
+â Primary DNS Server   ____________________ â
+â Secondary DNS Server ____________________ â
+â                                           â
+â       ââââââ            ââââââââââ        â
+â       â Ok â            â Cancel â        â
+â       ââââââ            ââââââââââ        â
+â                                           â
+â                                           â
+âââââââââââââââââââââââââââââââââââââââââââââ
+
+</pre>
+
+
+
+<br/><br/>
+this is equivalent, but requires root privileges:<br/><br/>
+/usr/bin/system-config-network
+
+<br/><br/>
+
+They don't require a X-terminal session, they support a text-ui mode.
+<br/><br/>
+To manually hack the configuration:<br/>
+cd /etc/sysconfig/network-scripts/<br/>
+less ifcfg-eth0<br/>
+
+<pre>
+DEVICE="eth0"
+BOOTPROTO="dhcp"
+HWADDR="08:00:27:29:06:6F"
+IPV6INIT="yes"
+NM_CONTROLLED="yes"
+ONBOOT="yes"
+TYPE="Ethernet"
+UUID="ca6ef823-ed13-46ad-8a83-9d688f6cf239"
+</pre>
+
+<br/><br/>
+
+Some other "global" info is here: <br/>
+vi /etc/sysconfig/network
+
+<pre>
+NETWORKING=yes
+HOSTNAME=osb-vagrant.acme.com
+</pre>
+
+
+
+<br/>
+
+
+"/sbin/ip -o addr" displays all IPs 
+
+<br/>
+
+to add an extra IP, you must specify an interface eth0:N where N > 0:
+
+<pre>
+/sbin/ifconfig eth0:1 10.0.2.16 netmask 255.255.255.0
+</pre>
+<br/>
+(there is an implicit "up" at the end)
+<br/>
+
+Entering "/sbin/ifconfig eth0 10.0.2.16 netmask 255.255.255.0" will crash the NIC, removing the current primary address to replace with the new one.
+
+<br/><br/>
+
+
+
+
+
+

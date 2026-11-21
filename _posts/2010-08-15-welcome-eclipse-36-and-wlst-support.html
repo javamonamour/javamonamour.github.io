@@ -1,0 +1,83 @@
+---
+layout: post
+title: "Welcome Eclipse 3.6  and WLST support!"
+date: 2010-08-15T08:37:00.009+02:00
+permalink: /2010/08/welcome-eclipse-36-and-wlst-support.html
+blogger_id: "2581656606022018893"
+tags: ["eclipse36", "WLST"]
+---
+Eclipse 3.5 = GALILEO<br />
+Eclipse 3.6 = HELIOS <br />
+<br />
+here<br />
+<a href="http://www.oracle.com/technetwork/middleware/ias/downloads/wls-main-097127.html">http://www.oracle.com/technetwork/middleware/ias/downloads/wls-main-097127.html</a><br />
+download WLS 11gR1 BUT it's still with Eclipse 3.5.2 :o(<br />
+<br />
+here <a href="http://www.oracle.com/goto/oepe">www.oracle.com/goto/oepe</a> you get OEPE with 3.6, but not integrated with WebLogic.<br />
+Basically this is <a href="http://www.oracle.com/technetwork/developer-tools/eclipse/overview/index.html">http://www.oracle.com/technetwork/developer-tools/eclipse/overview/index.html</a><br />
+<br />
+here some comments:<br />
+<a href="http://www.infoq.com/news/2010/08/oracle_enterprise_pack_helios_ec">http://www.infoq.com/news/2010/08/oracle_enterprise_pack_helios_ec</a><br />
+<br />
+here<br />
+<a href="http://oracle.mobi/quickPage.html?page=15970&amp;content=41332731&amp;pageNum=-1">http://oracle.mobi/quickPage.html?page=15970&amp;content=41332731&amp;pageNum=-1</a><br />
+it says:<br />
+<br />
+<i>WebLogic Scripting Tool (WLST) features – bring new Oracle WebLogic Server administration support to Eclipse with:<br />
+Jython/Python IDE for WLST, based on PyDev – provides full syntax highlighting, validation, and code completion for WLST scripts;<br />
+Define and reuse WLST templates – accelerate WLST script editing;<br />
+Oracle WebLogic MBean explorer – visualizes the server MBean tree for easy drag and drop to the WLST script;<br />
+Integrated WLST console – provides script execution and debugging tools from within Eclipse in both online and offline modes;<br />
+WLST integrated help – makes it easy to access documentation for WLST commands.<br />
+</i><br />
+<br />
+<b>HOW TO USE IT?</b><br />
+<br />
+Create a Utility project, set a runtime target WL 11g patchset 2, choose the WL home.<br />
+Project, Project Facets, enable WLST.<br />
+New WLST script. Give a .py extension.<br />
+<br />
+<br />
+It opens a template:<br />
+<br />
+<br />
+<pre name= "code" class="brush: java">
+#Conditionally import wlstModule only when script is executed with jython
+if __name__ == '__main__': 
+    from wlstModule import *#@UnusedWildImport
+
+print 'starting the script ....'
+username = 'weblogic'
+password = 'welcome1'
+url='t3://localhost:7001'
+
+connect(username,password,url)
+
+
+edit()
+startEdit()
+
+
+try:
+    save()
+    activate(block="true")
+    print "script returns SUCCESS"   
+except Exception, e:
+    print e 
+    print "Error while trying to save and/or activate!!!"
+    dumpStack()
+    raise 
+    
+
+</pre><br />
+Do Show/View/ WLST Help.<br />
+<br />
+Search Eclipse help for WLST, there is interesting information.<br />
+<br />
+Start WebLogic, <br />
+Add the WL server to the list of servers in the Servers view,<br />
+then Window, Show View, <b>WebLogic MBean Explorer</b> <br />
+<br />
+Show/Console/WLST  and you go into wls:/offline <br />
+<br />
+To run the .py script, right-click, run as WLST Run, or WLST Debug.

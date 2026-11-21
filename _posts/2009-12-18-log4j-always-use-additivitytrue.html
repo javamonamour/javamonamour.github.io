@@ -1,0 +1,33 @@
+---
+layout: post
+title: "log4j: always use additivity=false"
+date: 2009-12-18T14:32:00.000+01:00
+permalink: /2009/12/log4j-always-use-additivitytrue.html
+blogger_id: "266975713887920319"
+---
+the logging code synchronizes on each category; you waste a lot of time - and risk to create serious contention - if you let every category to bubble up to "root".<br />
+<br />
+<br />
+<div><span style="color: blue; font-family: Arial; font-size: x-small;">Category.callAppenders : </span><br />
+</div><div><br />
+</div><div><span style="color: blue; font-family: Arial; font-size: x-small;">&nbsp;  public void callAppenders(LoggingEvent event) &nbsp; {<br />
+&nbsp;&nbsp;&nbsp; int writes =  0;</span><br />
+</div><div><br />
+</div><div><span style="color: blue; font-family: Arial; font-size: x-small;"><b>&nbsp;&nbsp;&nbsp; for (Category c = this; c != null; c = c.parent)&nbsp;</b>&nbsp;&nbsp;  {<br />
+<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; synchronized (c) {</b><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (c.aai !=  null)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; writes +=  c.aai.appendLoopOnAppenders(event);</span><br />
+</div><div><br />
+</div><div><span style="color: blue; font-family: Arial; font-size: x-small;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (!(c.<b>additive</b>)) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; monitorexit;  break label67:<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp; }</span><br />
+</div><div><br />
+</div><div><span style="color: blue; font-family: Arial; font-size: x-small;">&nbsp;&nbsp;&nbsp; if  (writes == 0)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label67:  this.repository.emitNoAppenderWarning(this);<br />
+&nbsp; }</span><br />
+</div><div><br />
+</div><div><span style="color: blue; font-family: Arial; font-size: x-small;">&nbsp;(thanks to Fabien for this finding)<br />
+</span><br />
+</div>

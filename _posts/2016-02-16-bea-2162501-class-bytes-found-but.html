@@ -1,0 +1,35 @@
+---
+layout: post
+title: "BEA-2162501 Class bytes found, but couldnt define class"
+date: 2016-02-16T16:50:00.002+01:00
+permalink: /2016/02/bea-2162501-class-bytes-found-but.html
+blogger_id: "7324000569281264425"
+---
+<pre>
+
+&lt;Feb 15, 2016 5:51:24 PM CET&gt; &lt;Error&gt; &lt;Class Loaders&gt; &lt;BEA-2162501&gt; &lt;Class bytes found, but couldnt define class, com.sun.faces.spi.InjectionProviderException due to the following error: {1}
+java.lang.ClassFormatError: Absent Code attribute in method that is not native or abstract in class file com/sun/faces/spi/InjectionProviderException
+ at java.lang.ClassLoader.defineClass1(Native Method)
+ at java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+ at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+ at weblogic.utils.classloaders.GenericClassLoader.defineClass(GenericClassLoader.java:412)
+ at weblogic.utils.classloaders.GenericClassLoader.findLocalClass(GenericClassLoader.java:366)
+ Truncated. see log file for complete stacktrace
+&gt; 
+
+
+</pre>
+
+
+<br/><br/>
+
+This error stems probably by the use of wrong JAR compiled with some JVM different from the one being used. Please check MANIFEST.MF file of the JAR and eventually recompile code.
+
+<br/><br/>
+
+Check also that the JAR from which you pick up the class (-verbose:class) contains the actual implementation of the class, and not only some abstract interface. You might have to review the way you package your code and define classpaths.
+<br/><br/>
+This discussion on JSF and Maven is interesting (scope=provided) 
+<a href="http://stackoverflow.com/questions/8081234/how-to-properly-install-and-configure-jsf-libraries-via-maven">http://stackoverflow.com/questions/8081234/how-to-properly-install-and-configure-jsf-libraries-via-maven</a>
+
+<br/><br/>

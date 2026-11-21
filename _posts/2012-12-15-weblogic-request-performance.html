@@ -1,0 +1,37 @@
+---
+layout: post
+title: "WebLogic Request Performance"
+date: 2012-12-15T08:43:00.000+01:00
+permalink: /2012/12/weblogic-request-performance.html
+blogger_id: "8688869485732586079"
+tags: ["performance", "weblogic"]
+---
+A great demo from Jambay: <br/>
+
+<iframe width="640" height="360" src="http://www.youtube.com/embed/vAVgbLdKbuc?feature=player_detailpage" frameborder="0" allowfullscreen></iframe>
+
+<br/><br/>
+
+<a href="http://docs.oracle.com/cd/E14571_01/web.1111/e13714/config_instrumentation.htm#CACDAHBC">and here is the official Oracle documentation</a>
+
+<br/><br/>
+
+
+By default you have a Diagnostic Module Module-FMWDFW containing whese watches:<br/><br/>
+
+UncheckedException = (SEVERITY = 'Error') AND ((MSGID = 'WL-101020') OR (MSGID = 'WL-101017') OR (MSGID = 'WL-000802') OR (MSGID = 'BEA-101020') OR (MSGID = 'BEA-101017') OR (MSGID = 'BEA-000802'))
+
+<br/><br/>
+
+Deadlock=((SEVERITY = 'Critical') OR (SEVERITY = 'Info')) AND ((MSGID = 'WL-000394') OR (MSGID = 'BEA-000394'))
+
+<br/><br/>
+
+StuckThread=(SEVERITY = 'Error') AND ((MSGID = 'WL-000337') OR (MSGID = 'BEA-000337'))
+
+
+<br/><br/>
+
+
+
+

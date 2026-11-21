@@ -1,0 +1,18 @@
+---
+layout: post
+title: "JMS bridges and Distributed Destinations"
+date: 2009-11-13T13:42:00.000+01:00
+permalink: /2009/11/jms-bridges-and-distributed.html
+blogger_id: "2340649582055067172"
+---
+<a href="http://download.oracle.com/docs/cd/E11035_01/wls100/bridge/bridgefaq.html">http://download.oracle.com/docs/cd/E11035_01/wls100/bridge/bridgefaq.html</a><br />
+<br />
+(quote)<br />
+Can the messaging bridge use distributed destinations as source and target destinations?<br />
+<br />
+Yes, the messaging bridge can send to and receive from distributed destinations. Bea recommends the following configurations:<br />
+<br />
+* If the source is distributed destination, the bridge is pinned to one of the members when it connects to the destination. It stays connected only to that member until it reconnects. This means that the bridge will not receive messages from the other members of the distributed destination. Therefore,<b> the best practice is to configure one bridge for each member of a distributed destinations</b> using the member's JNDIName.<br />
+<br />
+* If the target is a distributed destination, the best practice is <b>to send to the distributed destination using the distributed destination’s JNDIName and disable server affinity. This allows the distributed destination to load balance incoming messages.</b><br />
+(unquote)

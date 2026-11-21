@@ -1,0 +1,73 @@
+---
+layout: post
+title: "Installing Weblogic 11.1.6 with Java 7 in a few seconds "
+date: 2015-03-05T21:17:00.000+01:00
+permalink: /2015/03/installing-weblogic-1116-with-java-7-in.html
+blogger_id: "8790479226157670300"
+tags: ["biemond", "puppet", "vagrant", "weblogic"]
+---
+(maybe the few seconds is an overstatement....)
+<br/><br/>
+
+
+With the Biemond way (thank you Biemond you are a God):
+<br/><br/>
+<a href="http://git-scm.com/downloads">install git</a> and <a href="http://www.vagrantup.com/downloads.html">vagrant</a>
+<br/><br/>
+
+Download jdk-7u55-linux-x64.tar.gz from <a href="http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html#jdk-7u55-oth-JPR">http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html#jdk-7u55-oth-JPR</a>  
+<br />
+<br />
+
+<br />
+<br />
+
+Download UnlimitedJCEPolicyJDK7.zip (JCE Java Cryptographic Extensions) here <a href="http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html">http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html</a>
+<br />
+<br />
+Download wls1036_generic.jar from  <a href="http://www.oracle.com/technetwork/middleware/ias/downloads/wls-main-097127.html">http://www.oracle.com/technetwork/middleware/ias/downloads/wls-main-097127.html</a>  (choose "Oracle WebLogic Server 11gR1 (10.3.6) + Coherence -
+Package Installer"  for "Additional Platforms", where it says "File1 1 GB" )
+<br />
+<br />
+Download from <a href="https://support.oracle.com">https://support.oracle.com</a> the p17572726_1036_Generic.zip "Patch 17572726: SU Patch [FCX7]: WLS PATCH SET UPDATE 10.3.6.0.7" <a href="https://support.oracle.com/epmos/faces/PatchDetail?requestId=16925196&amp;_afrLoop=481943043189464&amp;patchId=17572726&amp;_afrWindowMode=0&amp;_adf.ctrl-state=jhdx9weyr_233 ">https://support.oracle.com/epmos/faces/PatchDetail?requestId=16925196&amp;_afrLoop=481943043189464&amp;patchId=17572726&amp;_afrWindowMode=0&amp;_adf.ctrl-state=jhdx9weyr_233 </a>
+<br />
+<br />
+Checkout the Biemond Vagrant from here <a href="https://github.com/biemond/biemond-orawls-vagrant">https://github.com/biemond/biemond-orawls-vagrant</a> (copy the http url from the "HTTPS clone URL" box)
+
+<br />
+<br />
+<b>git clone https://github.com/biemond/biemond-orawls-vagrant.git</b>
+
+<br />
+<br />
+put the downloaded jars and zips and tar.gz into /Users/edwin/software
+<br />
+<br />
+<b>vagrant up </b>
+<br />
+<br />
+It should all work. If not, use your brain.
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+If you don't want to use Biemond's Puppet module, but rather waste countless hours doing it manually, you can download a CentOS Appliance (OVA file)
+<br />
+<br />
+<a href="http://virtualboxes.org/images/centos/">http://virtualboxes.org/images/centos/</a>
+<br />
+<br />
+download <a href="https://s3-eu-west-1.amazonaws.com/virtualboxes.org/CentOS7-base.ova.torrent">https://s3-eu-west-1.amazonaws.com/virtualboxes.org/CentOS7-base.ova.torrent</a>  (you can download Free Download Manager to download it)
+<br />
+<br />
+Open VirtualBox, Import appliance, select the .ova file just downloaded
+<br />
+<br />
+See also
+<br />
+<br />
+<a href="/2014/09/weblogic-installing-weblogic-1035.html">/2014/09/weblogic-installing-weblogic-1035.html</a>
+<br />
+<br />

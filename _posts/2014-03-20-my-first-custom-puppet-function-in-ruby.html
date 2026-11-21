@@ -1,0 +1,46 @@
+---
+layout: post
+title: "My first custom Puppet function in Ruby"
+date: 2014-03-20T16:15:00.002+01:00
+permalink: /2014/03/my-first-custom-puppet-function-in-ruby.html
+blogger_id: "6477532627673796954"
+tags: ["puppet", "ruby"]
+---
+Here the doc <a href="http://docs.puppetlabs.com/guides/custom_functions.html">http://docs.puppetlabs.com/guides/custom_functions.html</a>
+<br/><br/>
+I thought this was Rocket Science, but it's quite simple, once you overcome the normal, healthy, instinctive repugnance for a stinky stupid language like Ruby. Anyway if you are already coping with Puppet, Ruby should not be worse.
+<br/><br/>
+
+Inside your Puppet module, create these folders: lib/puppet/parser/functions, and inside your function file "stage_from_domain.rb" (file name should match the function name, and extension = .rb).
+<br/><br/>
+The file should start with a "module Puppet::Parser::Functions" declaration (no clue why... just to make your pronounce some meaningless magic words initiating you to the Puppet Mysteries - luckily they don't ask you to kill a kitten).
+<br/><br/>
+The function returns a substring in the middle of a string. Since we RETURN a value, we must declare it as ":type => :rvalue":
+
+<pre>
+module Puppet::Parser::Functions
+  newfunction(:stage_from_domain, :type => :rvalue) do |args|
+    #e.g. domain_name='osbpr1do'
+    domain_name = args[0]
+    #we should remove the leading "osb" and the trailing "do"
+    if domain_name[0, 3] != 'osb'
+     raise ArgumentError, 'domain_name should start with osb' 
+    end
+    if domain_name[domain_name.length - 2, domain_name.length] != 'do'
+     raise ArgumentError, 'domain_name should end with do' 
+    end
+    domain_name[3, domain_name.length - 5]
+  end
+end
+
+
+</pre>
+
+
+The REALLY weirdo thing is how to return the value: simply end your function specifying the rvalue to return (in my case "domain_name[3, domain_name.length - 5]". No old-fashioned, READABLE "return" statements... who needs clarity....
+<br/><br/>
+
+
+
+That's all, you can now use the stage_from_domain function inside Puppet. Cool! Maybe after all I will be able to turn Puppet into something manageable... especially the day they will decide to support Groovy, instead of Stinking Ruby.
+

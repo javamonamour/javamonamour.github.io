@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Nexus OrientDB self-upgrading versions when run as root"
+date: 2018-05-17T17:13:00.000+02:00
+permalink: /2018/05/nexus-orientdb-self-upgrading-versions.html
+blogger_id: "7007272060041833264"
+tags: ["nexus"]
+---
+this is VERY weird..... be VERY careful not to run Nexus 3.10 NXRM as root, unless you have set the "run_as_user="centos" in nexus.rc <br />
+<br />
+org.sonatype.nexus.upgrade.internal.UpgradeServiceImpl - The database model for component is 1.12, but the latest supported by this version of nexus is 1.11<br />
+<br />
+https://issues.sonatype.org/browse/NEXUS-13098<br />
+<br />
+https://stackoverflow.com/questions/42951710/orientdb-corruption-state-in-nexus-repository-version-3-2-0-01<br />
+<br />
+https://support.sonatype.com/hc/en-us/articles/115002930827-Accessing-the-OrientDB-Console<br />
+<br />
+<br />
+start karaf console (vi nexus.vmoptions, set -Dkaraf.startLocalConsole=true then ./nexus run )<br />
+orient<br />
+connect plocal:data/db/config admin admin<br />
+update upgrade_model_versions set component='1.12'<br />
+<br />
+<br />
+restart nexus.... you will get the error<br />
+<br />
+Now you can't start again Nexus...you are screwed... you must use the orient console:<br />
+<br />
+java -jar ./lib/support/nexus-orient-console.jar<br />
+connect plocal:/home/centos/nexus310/sonatype-work/nexus3/db/config/ admin admin<br />
+update upgrade_model_versions set component='1.11'<br />
+<br />
+<br />
+<br />
+Issue was that we started nexus with the user "root" and we forgot to set the actual "run_as_user" in nexus.rc<br />
+Doing a chmod on all files in the karaf.data directory fixed the issue, without having to touch manually the oriondb<br />
+<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,34 @@
+---
+layout: post
+title: "Nice script to start WebLogic Admin Server"
+date: 2012-02-18T17:05:00.001+01:00
+permalink: /2012/02/nice-script-to-start-admin.html
+blogger_id: "694525661082625828"
+tags: ["startWebLogic", "weblogic"]
+---
+#!/bin/sh<br />
+<br />
+#declare variables<br />
+DOMAIN_HOME=/opt/oracle/domains/mydomain<br />
+SERVER_NAME=myAdminServer<br />
+<br />
+#verify if Domain Directory exists<br />
+<br />
+if [ ! -d $DOMAIN_HOME ] ; then<br />
+echo Domain directory $DOMAIN_HOME does not exist!<br />
+exit 1<br />
+fi<br />
+<br />
+#start admin in nohup, redirect stdout and stderro<br />
+nohup ${DOMAIN_HOME}/startWebLogic.sh > /var/log/weblogic/server/${SERVER_NAME}.out 2>&1 &<br />
+<br />
+#make sure that AdminServer has actually started<br />
+<br />
+servers=`jps -v | grep Server | grep $SERVER_NAME | wc -l`<br />
+if [ "servers" == "0" ] ; then<br />
+echo Server is not started<br />
+exit 1<br />
+fi<br />
+<br />
+#show all running weblogic servers<br />
+jps | grep Server

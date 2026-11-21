@@ -1,0 +1,249 @@
+---
+layout: post
+title: "BEA-000394 DEADLOCK DETECTED"
+date: 2011-09-18T16:08:00.001+02:00
+permalink: /2011/09/bea-000394-deadlock-detected.html
+blogger_id: "2153215736658166631"
+tags: ["deadlock"]
+---
+Some days ago a managed server went boom crash bang during a restart,<br />
+and there was an elegant message warning us of a deadlock.<br />
+<br />
+It's a lovely feature, but I still need to understand which service is monitoring the thread health.<br />
+<br />
+<br />
+&lt;Sep 14, 2011 9:29:27 AM BST&gt; &lt;Critical&gt; &lt;WebLogicServer&gt; &lt;BEA-000394&gt; &lt;<br />
+<br />
+ <br />
+<br />
+DEADLOCK DETECTED:<br />
+<br />
+==================<br />
+<br />
+ <br />
+<br />
+[deadlocked thread] [ACTIVE] ExecuteThread: '199' for queue: 'weblogic.kernel.Default (self-tuning)':<br />
+<br />
+----------------------------------------------------------------------------------------------------<br />
+<br />
+Thread '[ACTIVE] ExecuteThread: '199' for queue: 'weblogic.kernel.Default (self-tuning)'' is waiting to acquire lock 'java.util.concurrent.ConcurrentHashMap@d084be' that is held by thread '[ACTIVE] ExecuteThread: '15' for queue: 'weblogic.kernel.Default (self-tuning)''<br />
+<br />
+ <br />
+<br />
+Stack trace:<br />
+<br />
+------------<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.unbindHere(BasicNamingNode.java:587)<br />
+<br />
+            weblogic.jndi.internal.ServerNamingNode.unbindHere(ServerNamingNode.java:328)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.unbind(BasicNamingNode.java:561)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.unbind(BasicNamingNode.java:573)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.unbind(BasicNamingNode.java:573)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.unbind(BasicNamingNode.java:573)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.unbind(BasicNamingNode.java:573)<br />
+<br />
+            weblogic.jndi.internal.WLEventContextImpl.unbind(WLEventContextImpl.java:173)<br />
+<br />
+            weblogic.messaging.common.PrivilegedActionUtilities$4.run(PrivilegedActionUtilities.java:102)<br />
+<br />
+            weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)<br />
+<br />
+            weblogic.security.service.SecurityManager.runAs(Unknown Source)<br />
+<br />
+            weblogic.messaging.common.PrivilegedActionUtilities.unbindAsSU(PrivilegedActionUtilities.java:99)<br />
+<br />
+            weblogic.jms.common.SingularAggregatableManager.singularUnbind(SingularAggregatableManager.java:396)<br />
+<br />
+            weblogic.jms.frontend.FEConnection.removeClientID(FEConnection.java:387)<br />
+<br />
+            weblogic.jms.frontend.FEConnection.close(FEConnection.java:551)<br />
+<br />
+            weblogic.jms.frontend.FEConnection.normalClose(FEConnection.java:404)<br />
+<br />
+            weblogic.jms.frontend.FEConnection.invoke(FEConnection.java:1623)<br />
+<br />
+            weblogic.messaging.dispatcher.Request.wrappedFiniteStateMachine(Request.java:961)<br />
+<br />
+            weblogic.messaging.dispatcher.DispatcherServerRef.invoke(DispatcherServerRef.java:276)<br />
+<br />
+            weblogic.messaging.dispatcher.DispatcherServerRef.handleRequest(DispatcherServerRef.java:141)<br />
+<br />
+            weblogic.messaging.dispatcher.DispatcherServerRef.access$000(DispatcherServerRef.java:34)<br />
+<br />
+            weblogic.messaging.dispatcher.DispatcherServerRef$2.run(DispatcherServerRef.java:111)<br />
+<br />
+            weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)<br />
+<br />
+            weblogic.work.ExecuteThread.run(ExecuteThread.java:173)<br />
+<br />
+ <br />
+<br />
+[deadlocked thread] [ACTIVE] ExecuteThread: '15' for queue: 'weblogic.kernel.Default (self-tuning)':<br />
+<br />
+---------------------------------------------------------------------------------------------------<br />
+<br />
+Thread '[ACTIVE] ExecuteThread: '15' for queue: 'weblogic.kernel.Default (self-tuning)'' is waiting to acquire lock 'weblogic.cluster.ServiceAdvertiser@112bb58' that is held by thread '[ACTIVE] ExecuteThread: '9' for queue: 'weblogic.kernel.Default (self-tuning)''<br />
+<br />
+ <br />
+<br />
+Stack trace:<br />
+<br />
+------------<br />
+<br />
+            weblogic.cluster.ServiceAdvertiser.announceReplacement(ServiceAdvertiser.java:132)<br />
+<br />
+            weblogic.cluster.ServiceAdvertiser.retractService(ServiceAdvertiser.java:95)<br />
+<br />
+            weblogic.jndi.internal.ServerNamingNode.advertiseUnbinding(ServerNamingNode.java:347)<br />
+<br />
+            weblogic.jndi.internal.ServerNamingNode.unbindHere(ServerNamingNode.java:330)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.unbind(BasicNamingNode.java:561)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.unbind(BasicNamingNode.java:573)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.unbind(BasicNamingNode.java:573)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.unbind(BasicNamingNode.java:573)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.unbind(BasicNamingNode.java:573)<br />
+<br />
+            weblogic.jndi.internal.WLEventContextImpl.unbind(WLEventContextImpl.java:173)<br />
+<br />
+            weblogic.messaging.common.PrivilegedActionUtilities$4.run(PrivilegedActionUtilities.java:102)<br />
+<br />
+            weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)<br />
+<br />
+            weblogic.security.service.SecurityManager.runAs(Unknown Source)<br />
+<br />
+            weblogic.messaging.common.PrivilegedActionUtilities.unbindAsSU(PrivilegedActionUtilities.java:99)<br />
+<br />
+            weblogic.jms.common.SingularAggregatableManager.singularUnbind(SingularAggregatableManager.java:396)<br />
+<br />
+            weblogic.jms.common.SingularAggregatableManager.aggregatableDidBind(SingularAggregatableManager.java:479)<br />
+<br />
+            weblogic.jms.common.SingularAggregatable.onBind(SingularAggregatable.java:167)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.bindHere(BasicNamingNode.java:371)<br />
+<br />
+            weblogic.jndi.internal.ServerNamingNode.bindHere(ServerNamingNode.java:140)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.bind(BasicNamingNode.java:317)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.bind(BasicNamingNode.java:324)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.bind(BasicNamingNode.java:324)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.bind(BasicNamingNode.java:324)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.bind(BasicNamingNode.java:324)<br />
+<br />
+            weblogic.jndi.internal.WLEventContextImpl.bind(WLEventContextImpl.java:277)<br />
+<br />
+            weblogic.cluster.BasicServiceOffer.install(BasicServiceOffer.java:101)<br />
+<br />
+            weblogic.cluster.NodeInfo.install(NodeInfo.java:62)<br />
+<br />
+            weblogic.cluster.TreeManager.install(TreeManager.java:59)<br />
+<br />
+            weblogic.cluster.MemberServices.processOffer(MemberServices.java:64)<br />
+<br />
+            weblogic.cluster.RemoteMemberInfo.processAnnouncement(RemoteMemberInfo.java:297)<br />
+<br />
+            weblogic.cluster.AnnouncementManager$1.run(AnnouncementManager.java:195)<br />
+<br />
+            weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:321)<br />
+<br />
+            weblogic.security.service.SecurityManager.runAs(Unknown Source)<br />
+<br />
+            weblogic.cluster.AnnouncementManager.receiveAnnouncement(AnnouncementManager.java:186)<br />
+<br />
+            weblogic.cluster.AnnouncementMessage.execute(AnnouncementMessage.java:26)<br />
+<br />
+            weblogic.cluster.MulticastReceiver$1.run(MulticastReceiver.java:112)<br />
+<br />
+            weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)<br />
+<br />
+            weblogic.work.ExecuteThread.run(ExecuteThread.java:173)<br />
+<br />
+ <br />
+<br />
+[deadlocked thread] [ACTIVE] ExecuteThread: '9' for queue: 'weblogic.kernel.Default (self-tuning)':<br />
+<br />
+--------------------------------------------------------------------------------------------------<br />
+<br />
+Thread '[ACTIVE] ExecuteThread: '9' for queue: 'weblogic.kernel.Default (self-tuning)'' is waiting to acquire lock 'weblogic.cluster.NodeInfo@719870' that is held by thread '[ACTIVE] ExecuteThread: '15' for queue: 'weblogic.kernel.Default (self-tuning)''<br />
+<br />
+ <br />
+<br />
+Stack trace:<br />
+<br />
+------------<br />
+<br />
+            weblogic.cluster.NodeInfo.install(NodeInfo.java:61)<br />
+<br />
+            weblogic.cluster.TreeManager.install(TreeManager.java:59)<br />
+<br />
+            weblogic.cluster.MemberServices.processOffer(MemberServices.java:64)<br />
+<br />
+            weblogic.cluster.AnnouncementManager.announce(AnnouncementManager.java:126)<br />
+<br />
+            weblogic.cluster.ServiceAdvertiser.announceOffer(ServiceAdvertiser.java:111)<br />
+<br />
+            weblogic.cluster.ServiceAdvertiser.offerService(ServiceAdvertiser.java:71)<br />
+<br />
+            weblogic.cluster.ServiceAdvertiser.offerService(ServiceAdvertiser.java:46)<br />
+<br />
+            weblogic.jndi.internal.ServerNamingNode.advertiseBinding(ServerNamingNode.java:156)<br />
+<br />
+            weblogic.jndi.internal.ServerNamingNode.bindHere(ServerNamingNode.java:142)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.bind(BasicNamingNode.java:317)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.bind(BasicNamingNode.java:324)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.bind(BasicNamingNode.java:324)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.bind(BasicNamingNode.java:324)<br />
+<br />
+            weblogic.jndi.internal.BasicNamingNode.bind(BasicNamingNode.java:324)<br />
+<br />
+            weblogic.jndi.internal.WLEventContextImpl.bind(WLEventContextImpl.java:277)<br />
+<br />
+            weblogic.messaging.common.PrivilegedActionUtilities$3.run(PrivilegedActionUtilities.java:78)<br />
+<br />
+            weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)<br />
+<br />
+            weblogic.security.service.SecurityManager.runAs(Unknown Source)<br />
+<br />
+            weblogic.messaging.common.PrivilegedActionUtilities.bindAsSU(PrivilegedActionUtilities.java:75)<br />
+<br />
+            weblogic.jms.common.SingularAggregatableManager.singularBindFinish(SingularAggregatableManager.java:325)<br />
+<br />
+            weblogic.jms.frontend.FEConnection.setConnectionClientId(FEConnection.java:1165)<br />
+<br />
+            weblogic.jms.frontend.FEConnection.invoke(FEConnection.java:1613)<br />
+<br />
+            weblogic.messaging.dispatcher.Request.wrappedFiniteStateMachine(Request.java:961)<br />
+<br />
+            weblogic.messaging.dispatcher.DispatcherServerRef.invoke(DispatcherServerRef.java:276)<br />
+<br />
+            weblogic.messaging.dispatcher.DispatcherServerRef.handleRequest(DispatcherServerRef.java:141)<br />
+<br />
+            weblogic.messaging.dispatcher.DispatcherServerRef.access$000(DispatcherServerRef.java:34)<br />
+<br />
+            weblogic.messaging.dispatcher.DispatcherServerRef$2.run(DispatcherServerRef.java:111)<br />
+<br />
+            weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)<br />
+<br />
+            weblogic.work.ExecuteThread.run(ExecuteThread.java:173)<br />
+<br />
+ <br />
+<br />
+&gt;

@@ -1,0 +1,138 @@
+---
+layout: post
+title: "More on Debugging SAF on WebLogic"
+date: 2011-09-15T15:58:00.000+02:00
+permalink: /2011/09/more-on-debugging-saf-on-weblogic.html
+blogger_id: "3290198982019582541"
+tags: ["saf"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2014-01-14
+    html: "sorry mate, it was really a long time ago.... I can&#39;t remember the details. Should I suddenly recollect the solution, I will definitely post it here..."
+  - author: "Anonymous"
+    date: 2014-01-14
+    html: "Exact same thing happened to us..same two exceptions.  Ever come to a fix?"
+---
+<a href="/2011/09/troubleshooting-and-debugging-weblogic.html">see here my previous post<br />
+</a><br />
+<br />
+Enable all the SAF debugging flags. All the Debug messages belong to the <b>JMSSAF</b> group.<br />
+<br />
+When the remote destination (a Distributed Queue) becomes unavaliable, you should see - in the same Execute Thread:<br />
+<br />
+<pre>
+Forwarder is trying to forward the message &lt;703961.1316088865392.0&gt;ddExactlyOnceForwardHelper= weblogic.jms.forwarder.Forwarder$Subforwarder$DDExactlyOnceForwardHelper@1e2d461
+
+weblogic.jms.forwarder.dd.internal.DDLoadBalancerDelegateImpl@16a4d0a: loadBlance() for message = &lt;703961.1316088865392.0&gt;
+
+weblogic.jms.forwarder.dd.internal.DDLoadBalancerDelegateImpl@16a4d0a: loadBalance()for sequence number :124
+
+weblogic.jms.forwarder.dd.internal.DDLoadBalancerDelegateImpl@16a4d0a: loadbalance() : failedDDMeberInfo=&lt;DDMemnerInoImpl&gt; = { ddMemberConfigName=MyJMSModule!MyJMSServer@MyQueue, destinationType=javax.jms.Queue, JmsServerName=MyJMSServer
+
+DDLBTableImpl: removeFailedDDMemberInfo():  sequenceNumber= 124
+
+
+weblogic.jms.forwarder.dd.internal.DDLoadBalancerDelegateImpl@16a4d0a: findOrCreateDestination() :  ddMeberInfo=<DDMemnerInoImpl> = { ddMemberConfigName=MyJMSModule!MyJMSServer@MyQueue, destinationType=javax.jms.Queue, JmsServerName=MyJMSServer} dImpl =MyJMSModule!MyJMSServer@MyQueue
+
+weblogic.jms.forwarder.dd.internal.DDLoadBalancerDelegateImpl@16a4d0a: findOrCreateDestination() :  dImpl.isStale= truedImpl.id= &lt;2267211883542783366.18&gt;
+
+weblogic.jms.forwarder.dd.internal.DDLoadBalancerDelegateImpl@16a4d0a: findOrCreateDestination() :  about to create javax.jms.Queue for MyJMSServer/MyJMSModule!MyJMSServer@MyQueue
+
+</pre><br />
+and then a fantastic<br />
+<br />
+<pre>weblogic.jms.forwarder.dd.internal.DDLoadBalancerDelegateImpl@16a4d0a: loadbalance() : failed 
+weblogic.jms.common.LostServerException: [JMSClientExceptions:055169]Network connection to server was lost.
+ at weblogic.jms.client.JMSSession.checkClosed(JMSSession.java:4771)
+ at weblogic.jms.client.JMSSession.createDestination(JMSSession.java:3116)
+ at weblogic.jms.client.JMSSession.createQueue(JMSSession.java:2514)
+ at weblogic.jms.client.WLSessionImpl.createQueue(WLSessionImpl.java:938)
+ at weblogic.jms.forwarder.dd.internal.DDLoadBalancerDelegateImpl.findOrCreateDestination(DDLoadBalancerDelegateImpl.java:289)
+ at weblogic.jms.forwarder.dd.internal.DDLoadBalancerDelegateImpl.loadBalance(DDLoadBalancerDelegateImpl.java:193)
+ at weblogic.jms.forwarder.Forwarder$Subforwarder$DDExactlyOnceForwardHelper.getEndpoint(Forwarder.java:1124)
+ at weblogic.jms.forwarder.Forwarder$Subforwarder.getEndpoint(Forwarder.java:1037)
+ at weblogic.jms.forwarder.Forwarder$Subforwarder.forward(Forwarder.java:745)
+ at weblogic.jms.forwarder.Forwarder$Subforwarder.pushMessages(Forwarder.java:676)
+ at weblogic.messaging.util.DeliveryList.run(DeliveryList.java:263)
+ at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:516)
+ at weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)
+ at weblogic.work.ExecuteThread.run(ExecuteThread.java:173)
+Caused by: weblogic.jms.common.LostServerException: server connection in state STATE_NO_RETRY
+ at weblogic.jms.client.ReconnectController.attachReasonToException(ReconnectController.java:609)
+ at weblogic.jms.client.ReconnectController.analyzeExceptionAndReconnect(ReconnectController.java:540)
+ at weblogic.jms.client.ReconnectController.computeJMSSession(ReconnectController.java:630)
+ at weblogic.jms.client.WLSessionImpl.createQueue(WLSessionImpl.java:945)
+ ... 10 more
+Caused by: weblogic.jms.common.LostServerException: java.lang.Exception: weblogic.rjvm.PeerGoneException: ; nested exception is: 
+ java.io.EOFException
+ at weblogic.jms.client.JMSConnection.dispatcherPeerGone(JMSConnection.java:1436)
+ at weblogic.messaging.dispatcher.DispatcherWrapperState.run(DispatcherWrapperState.java:692)
+ at weblogic.messaging.dispatcher.DispatcherWrapperState.timerExpired(DispatcherWrapperState.java:617)
+ at weblogic.timers.internal.TimerImpl.run(TimerImpl.java:273)
+ ... 3 more
+Caused by: java.lang.Exception: weblogic.rjvm.PeerGoneException: ; nested exception is: 
+ java.io.EOFException
+ at weblogic.messaging.dispatcher.DispatcherWrapperState.onDisconnect(DispatcherWrapperState.java:396)
+ at weblogic.rjvm.RJVMImpl$DisconnectEventDeliverer.run(RJVMImpl.java:1647)
+ ... 3 more
+Caused by: weblogic.rjvm.PeerGoneException: ; nested exception is: 
+ java.io.EOFException
+ at weblogic.rjvm.RJVMImpl.gotExceptionReceiving(RJVMImpl.java:957)
+ at weblogic.rjvm.ConnectionManager.gotExceptionReceiving(ConnectionManager.java:1036)
+ at weblogic.rjvm.MsgAbbrevJVMConnection.gotExceptionReceiving(MsgAbbrevJVMConnection.java:459)
+ at weblogic.rjvm.t3.MuxableSocketT3.endOfStream(MuxableSocketT3.java:337)
+ at weblogic.socket.SocketMuxer.deliverExceptionAndCleanup(SocketMuxer.java:793)
+ at weblogic.socket.SocketMuxer.deliverEndOfStream(SocketMuxer.java:727)
+ at weblogic.socket.NTSocketMuxer.processSockets(NTSocketMuxer.java:92)
+ at weblogic.socket.SocketReaderRequest.run(SocketReaderRequest.java:29)
+ at weblogic.socket.SocketReaderRequest.execute(SocketReaderRequest.java:42)
+ at weblogic.kernel.ExecuteThread.execute(ExecuteThread.java:145)
+ at weblogic.kernel.ExecuteThread.run(ExecuteThread.java:117)
+Caused by: java.io.EOFException
+ ... 8 more
+
+</pre><br />
+<br />
+and then<br />
+<br />
+<br />
+DDLBTableImpl: addFailedDDMemberInfo():  sequenceNumber= 124 ddMemberInfo =<DDMemnerInoImpl> = { ddMemberConfigName=MyJMSModule!MyJMSServer@MyQueue, destinationType=javax.jms.Queue, JmsServerName=MyJMSServer}<br />
+<br />
+<br />
+Forwarder is trying to forward the message with id <703961.1316088865392.0> to MyJMSModule!MyJMSServer@MyQueue<br />
+<br />
+Forwarder failed to forward the message TextMessage[ID:&lt;703961.1316088865392.0&gt;, 33|1|0|0|0|0|0|0|0|0|0|0|0|0|0...] to MyJMSModule!MyJMSServer@MyQueue stopPipeline= false hasNonFailedDDMembers true isExactlyOnceDDForwarding true failureCount 0 <br />
+weblogic.jms.common.LostServerException: [JMSClientExceptions:055169]Network connection to server was lost.<br />
+ at weblogic.jms.client.JMSProducer.checkClosed(JMSProducer.java:1085)<br />
+ at weblogic.jms.client.JMSProducer.publicCheckClosed(JMSProducer.java:1090)<br />
+ at weblogic.jms.client.ReconnectController.checkClosedReconnect(ReconnectController.java:678)<br />
+ at weblogic.jms.client.WLProducerImpl.checkClosedReconnectGetProducer(WLProducerImpl.java:57)<br />
+ at weblogic.jms.client.WLProducerImpl.checkClosedReconnectGetProducer(WLProducerImpl.java:60)<br />
+ at weblogic.jms.client.WLProducerImpl.getUnitOfOrder(WLProducerImpl.java:479)<br />
+<br />
+<br />
+Negatively acknowledging 1 messages with delay 5000<br />
+<br />
+<br />
+<br />
+DDLBTableImpl: addFailedDDMemberInfo():  sequenceNumber= 124 ddMemberInfo =<DDMemnerInoImpl> = { ddMemberConfigName=MyJMSModule!MyJMSServer@MyQueue, destinationType=javax.jms.Queue, JmsServerName=MyJMSServer}<br />
+<br />
+weblogic.jms.forwarder.dd.internal.DDLoadBalancerDelegateImpl@16a4d0a: removeDestination() : ddMemberInfo = <DDMemnerInoImpl> = { ddMemberConfigName=MyJMSModule!MyJMSServer@MyQueue, destinationType=javax.jms.Queue, JmsServerName=MyJMSServer} persist=true<br />
+<br />
+weblogic.jms.forwarder.dd.internal.DDLoadBalancerDelegateImpl@16a4d0a: persistLoadBalancerInfo() : event = 2 ddMemberInfo=<DDMemnerInoImpl> = { ddMemberConfigName=MyJMSModule!MyJMSServer@MyQueue, destinationType=javax.jms.Queue, JmsServerName=MyJMSServer}<br />
+<br />
+DDLBTableImpl: removeDDMemberInfo():   ddMemberInfo= <DDMemnerInoImpl> = { ddMemberConfigName=MyJMSModule!MyJMSServer@MyQueue, destinationType=javax.jms.Queue, JmsServerName=MyJMSServer}<br />
+<br />
+checkSAFClosed got JMSException:<br />
+weblogic.jms.common.IllegalStateException: [JMSClientExceptions:055076]The session is closed<br />
+ at weblogic.jms.client.JMSSession.checkSAFClosed(JMSSession.java:4780)<br />
+ at weblogic.jms.client.WLSessionImpl.checkSAFClosed(WLSessionImpl.java:235)<br />
+ at weblogic.jms.forwarder.Forwarder$Subforwarder.handleForwardFailure(Forwarder.java:976)<br />
+ at weblogic.jms.forwarder.Forwarder$Subforwarder.forward(Forwarder.java:757)<br />
+ at weblogic.jms.forwarder.Forwarder$Subforwarder.pushMessages(Forwarder.java:676)<br />
+ at weblogic.messaging.util.DeliveryList.run(DeliveryList.java:263)<br />
+ at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:516)<br />
+ at weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)<br />
+ at weblogic.work.ExecuteThread.run(ExecuteThread.java:173)<br />
+ <br />
+Forwarder connectTarget()

@@ -1,0 +1,46 @@
+---
+layout: post
+title: "OSB and JMS message acknowledgement"
+date: 2011-11-25T17:37:00.001+01:00
+permalink: /2011/11/osb-and-jms-message-acknowledgement.html
+blogger_id: "2297537929152762847"
+tags: ["acknowledgment", "jms", "OSB"]
+---
+I am torturing myself over this problem:<br />
+<br />
+I have a JMS message that I want to FTP:<br />
+<br />
+<br />
+JMSQUEUE -> JMS_PS (validation, tranformation) -> FTP_BS<br />
+<br />
+If FTP_BS fails, I want to retry (redeliver) the message later<br />
+<br />
+If the validation/transformation fail, I don't want to retry the message.<br />
+<br />
+In both cases, I want to fail the transaction, so that the appropriate statistics are shown at monitoring level.<br />
+<br />
+It turns out that you cannot acknowledge a JMS message in OSB independently from the result of the transaction. <a href="https://forums.oracle.com/forums/thread.jspa?threadID=901203">Here it says</a>: OSB proxies always work in AUTO_ACKNOWLEDGE mode:<br />
+Tx rollback - > JMS message NOT ack'ed<br />
+Tx commit - > JMS message ack'ed<br />
+<br />
+<br />
+So, if you want to consume immediately the JMS message without retries, your only option is to "Reply with Success" in the error handler. <br />
+<br />
+If the fault happened in the FTP_BS, at monitoring level (Operations/Service Health) you will find the error reported. <br />
+If the fault happened in the JMS_PS and you replied with success, the error will not appear in the Monitoring page.<br />
+<br />
+A possible workaround could be:<br />
+never redeliver the JMS message, always acknowledge it, and upon FTP failure send the message to a RedeliveryQueue, from which it will be resubmitted in future (WebLogic supports delivery in future) to the main JMSQUEUE. Obviously this sucks.<br />
+<br />
+Another workaround is to introduce a second JMSQUEUE2:<br />
+JMSQUEUE -> JMS_PS (validation, tranformation) -> JMSQUEUE2 -> FTP_BS<br />
+<br />
+so that you separate validation/transformation from the FTPing.<br />
+This also sucks.<br />
+<br />
+I cannot think of any other workaround.<br />
+<br />
+Obviously this is not ideal, I hate committing a transaction when in reality we had a validation error, only for the sake of consuming immediately the JMS message.<br />
+I wish we had more control on the JMS message.<br />
+<br />
+Redelivery at FTP_BS level (retries) is not an option, because they will keep a transaction open for a long time.

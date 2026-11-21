@@ -1,0 +1,24 @@
+---
+layout: post
+title: "find: paths must precede expression"
+date: 2012-02-18T20:45:00.000+01:00
+permalink: /2012/02/find-paths-must-precede-expression.html
+blogger_id: "6924501317028211520"
+tags: ["find"]
+---
+the command<br />
+<i>find . </i><br />
+recursively print all files starting from current directory<br />
+<br />
+<i>find . -name *.txt</i><br />
+<br />
+should theoretically print only the .txt files.<br />
+<br />
+It fails from the shell prompt with<br />
+"find: paths must precede expression"<br />
+<br />
+this must be because the shell explodes *.txt before evaluating find.<br />
+<br />
+Workaround: enclose '*.txt' in quotes<br />
+<br />
+<i>find . -name '*.txt'</i>

@@ -1,0 +1,121 @@
+---
+layout: post
+title: "JSP to list all OSB Projects deployed on a WebLogic server"
+date: 2012-08-19T16:20:00.001+02:00
+permalink: /2012/08/jsp-to-list-all-osb-projects-deployed.html
+blogger_id: "198791040083245634"
+---
+<a href="http://stackoverflow.com/questions/7607918/weblogic-alsbconfigurationmbean-initialization">http://stackoverflow.com/questions/7607918/weblogic-alsbconfigurationmbean-initialization<br />
+</a><br />
+<br />
+<a href="http://docs.oracle.com/cd/E23943_01/apirefs.1111/e15033/com/bea/wli/sb/management/configuration/ALSBConfigurationMBean.html">ALSBConfigurationMBean<br />
+</a><br />
+<br />
+<br />
+Make sure you also have <br />
+<br />
+Oracle_OSB1\lib\sb-kernel-api.jar<br />
+Oracle_OSB1\modules\com.bea.common.configfwk_1.5.0.0.jar<br />
+<br />
+in your classpath.<br />
+<br />
+<br />
+<pre class="brush: java" name="code">package com.pierre.osb.doc;
+
+import java.util.Hashtable;
+import java.util.Set;
+
+import javax.management.JMX;
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
+import javax.naming.Context;
+
+import weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean;
+
+import com.bea.wli.config.Ref;
+import com.bea.wli.sb.management.configuration.ALSBConfigurationMBean;
+import com.bea.wli.sb.management.configuration.SessionManagementMBean;
+
+public class ListProjects {
+ 
+ String hostname = "acme.com";
+ int port = 7001;
+ String username = "Pierluigi";
+ String password = "weblogic1";
+
+ public static void main(String[] args) throws Exception {
+  ListProjects listProjects = new ListProjects();
+  listProjects.display();
+ }
+
+ public void display() throws Exception {
+
+  JMXServiceURL serviceURL = new JMXServiceURL("t3", hostname, port, "/jndi/" + DomainRuntimeServiceMBean.MBEANSERVER_JNDI_NAME);
+
+  Hashtable&lt;String, String&gt; h = new Hashtable&lt;String, String&gt;();
+
+  h.put(Context.SECURITY_PRINCIPAL, username);
+  h.put(Context.SECURITY_CREDENTIALS, password);
+  h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, "weblogic.management.remote");
+
+  JMXConnector conn = JMXConnectorFactory.connect(serviceURL, h);
+  System.out.println("connected");   
+
+  try {
+   System.out.println("Opened JMX connection to " + hostname + ":" + port + " as " + username);
+
+   // get mbean connection
+   MBeanServerConnection mbconn = conn.getMBeanServerConnection();
+
+   // Get SessionmanagementMBean
+   SessionManagementMBean sm = 
+    JMX.newMBeanProxy(mbconn, ObjectName.getInstance(SessionManagementMBean.OBJECT_NAME), SessionManagementMBean.class);
+
+   // Create a session
+   String sessionName = "MySession";           
+   sm.createSession(sessionName);
+
+   // Get the configuration MBean for the session, do stuff, and then discard the session.
+   try
+   {
+    System.out.println("Session exists? : " + sm.sessionExists(sessionName));
+
+    ALSBConfigurationMBean configMBean = 
+     JMX.newMBeanProxy(
+       mbconn, 
+       ObjectName.getInstance("com.bea:Name=" + ALSBConfigurationMBean.NAME + "." + sessionName + ",Type=" + ALSBConfigurationMBean.TYPE), 
+       ALSBConfigurationMBean.class
+     );
+
+    System.out.println("Got the config MBean for session: " + configMBean.getSession());
+
+    Set&lt;Ref&gt; refs = configMBean.getRefs(Ref.DOMAIN);
+    System.out.println("found " + refs.size() + " refs&lt;br&gt;");
+    for (Ref ref : refs) {
+     System.out.println(ref.getFullName() + " isProjectRef= " + ref.isProjectRef() + "&lt;br&gt;");
+    }
+   }
+   finally
+   {
+    // use activateSession to commit session changes instead
+    sm.discardSession(sessionName);
+   }
+  } finally {
+   conn.close();
+   System.out.println("Closed JMX connection");
+  }      
+ }
+}
+
+
+</pre>
+<br />
+Actually it seems to work with these JARs:<br />
+<br />
+<br />
+CL3Export.jar<br />CL3Nonexport.jar<br />com.bea.common.configfwk_1.5.0.0.jar<br />com.bea.core.common.security.api_1.0.0.0_6-1-0-0.jar<br />com.bea.core.descriptor_1.9.0.0.jar<br />com.bea.core.descriptor.wl_1.3.3.0.jar<br />com.bea.core.logging_1.8.0.0.jar<br />com.bea.core.management.core_2.8.0.0.jar<br />com.bea.core.management.jmx_1.4.1.0.jar<br />com.bea.core.messaging.kernel_1.8.0.0.jar<br />com.bea.core.store_1.7.0.0.jar<br />com.bea.core.timers_1.7.0.0.jar<br />com.bea.core.transaction_2.7.0.0.jar<br />com.bea.core.utils.classloaders_1.8.0.0.jar<br />com.bea.core.utils.expressions_1.4.0.0.jar<br />com.bea.core.utils.full_1.9.0.0.jar<br />com.bea.core.utils.wrapper_1.4.0.0.jar<br />com.bea.core.weblogic.lifecycle_1.4.0.0.jar<br />com.bea.core.weblogic.rmi.client_1.8.0.0.jar<br />com.bea.core.weblogic.rmi.client.ja_1.8.0.0.jar<br />com.bea.core.weblogic.security_1.0.0.0_6-1-0-0.jar<br />com.bea.core.weblogic.security.digest_1.0.0.0.jar<br />com.bea.core.weblogic.security.identity_1.1.2.1.jar<br />com.bea.core.weblogic.security.wls_1.0.0.0_6-1-0-0.jar<br />com.bea.core.weblogic.socket.api_1.2.0.0.jar<br />com.bea.core.weblogic.workmanager_1.9.0.0.jar<br />com.bea.core.weblogic.workmanager.ja_1.9.0.0.jar<br />connector.jar<br />dhbcore.jar<br />fscontext.jar<br />javax.jms_1.1.1.jar<br />JAXBClassesGeneration.jar<br />jms.jar<br />jndi.jar<br />jstl.jar<br />jta.jar<br />ldap.jar<br />org.eclipse.persistence_1.0.0.0_2-1.jar<br />sb-kernel-api.jar<br />standard.jar<br />weblogic.jar<br />wlclient.jar<br />
+<br />
+

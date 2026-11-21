@@ -1,0 +1,213 @@
+---
+layout: post
+title: "Java client for Websphere MQ"
+date: 2011-06-17T17:28:00.002+02:00
+permalink: /2011/06/java-client-for-websphere-mq.html
+blogger_id: "2574922732399516854"
+tags: ["MQ"]
+---
+PutMessage sends 10 messages to the queue<br />
+MQReader reads (and consumes) 1 message at a time (getAllMessages() still fails on the getQueueDepth()... investigating...)<br />
+<br />
+<br />
+<br />
+package <a href="http://com.acme.mq" target="_blank">com.acme.mq</a>;<br />
+<br />
+import com.ibm.mq.*;<br />
+<br />
+import java.io.*;<br />
+import static com.acme.mq.MQConstants.*;<br />
+<br />
+<br />
+public class PutMessage {<br />
+<br />
+    private String qManager = MQ_queueManager;<br />
+    private String qName = MQ_queue;<br />
+    private String qmessageFile = &quot;c:/pierre/mqfile.txt&quot;;<br />
+<br />
+<br />
+    public static void main(String args[]) throws Exception {<br />
+        System.out.println(&quot;java.library.path=&quot; + System.getProperty(&quot;java.library.path&quot;));<br />
+        PutMessage pM = new PutMessage();<br />
+<br />
+        pM.runNow();<br />
+    }<br />
+<br />
+    public void runNow() throws Exception {<br />
+            System.out.println(&quot;Connecting to queue manager: &quot; + qManager);<br />
+            MQQueueManager qMgr = MQReader.setup();<br />
+            int openOptions = 17;<br />
+            System.out.println(&quot;Accessing queue: &quot; + qName);<br />
+            MQQueue queue = qMgr.accessQueue(qName, openOptions);<br />
+            File file = new File(qmessageFile);<br />
+            for (int i = 0; i &lt; 10; i++) {<br />
+                String qmessage = getContents(file) + &quot; &quot; + i;<br />
+                MQMessage msg = new MQMessage();<br />
+                msg.writeString(qmessage);<br />
+                MQPutMessageOptions pmo = new MQPutMessageOptions();<br />
+                System.out.println(&quot;Sending message: &quot; + qmessage);<br />
+                queue.put(msg, pmo);<br />
+            }<br />
+            System.out.println(&quot;Closing the queue&quot;);<br />
+            queue.close();<br />
+            System.out.println(&quot;Disconnecting from the Queue Manager&quot;);<br />
+            qMgr.disconnect();<br />
+            System.out.println(&quot;Done!&quot;);<br />
+    }<br />
+<br />
+    private String getContents(File aFile) {<br />
+        StringBuffer contents;<br />
+        contents = new StringBuffer();<br />
+        BufferedReader input = null;<br />
+        try {<br />
+            input = new BufferedReader(new FileReader(aFile));<br />
+            for (String line = null; (line = input.readLine()) != null;) {<br />
+                contents.append(line);<br />
+                //contents.append(System.getProperty(&quot;line.separator&quot;));<br />
+            }<br />
+        } catch (FileNotFoundException ex) {<br />
+            ex.printStackTrace();<br />
+        } catch (IOException ex) {<br />
+            ex.printStackTrace();<br />
+        } finally {<br />
+            try {<br />
+                if (input != null)<br />
+                    input.close();<br />
+            } catch (IOException ex) {<br />
+                ex.printStackTrace();<br />
+            }<br />
+        }<br />
+<br />
+        return contents.toString();<br />
+    }<br />
+}<br />
+<br />
+<br />
+<br />
+<br clear="all"><br />
+package <a href="http://com.acme.mq" target="_blank">com.acme.mq</a>;<br />
+<br />
+import com.ibm.mq.*;<br />
+<br />
+import java.text.*;<br />
+import java.io.*;<br />
+import java.util.Hashtable;<br />
+import static com.acme.mq.MQConstants.*;<br />
+<br />
+public class MQReader {<br />
+      <br />
+    public static void main(String[] args) throws Exception {<br />
+        MQReader mqReader = new MQReader();<br />
+        mqReader.getMessage();<br />
+    }<br />
+<br />
+    <br />
+    public void getAllMessages() throws MQException, IOException {<br />
+        MQQueueManager qm = setup();<br />
+        int options = MQC.MQOO_INPUT_AS_Q_DEF | MQC.MQOO_INQUIRE;<br />
+        MQQueue q = qm.accessQueue(MQ_queue, options, null, null, null);<br />
+        int depth = q.getCurrentDepth();<br />
+        DecimalFormat indexFormat = new DecimalFormat(Integer.toString(depth).replaceAll(&quot;.&quot;, &quot;0&quot;));<br />
+        System.out.println(&quot;found messages &quot; + depth);<br />
+        <br />
+        for (int index = 0; index &lt; depth; index++) {<br />
+            MQMessage msg = new MQMessage();<br />
+            q.get(msg, new MQGetMessageOptions());<br />
+            int msgLength = msg.getMessageLength();<br />
+            String text = msg.readStringOfByteLength(msgLength);<br />
+            System.out.println(&quot;message#&quot; + index + &quot;  text=&quot; + text);<br />
+        }<br />
+    }<br />
+<br />
+<br />
+    <br />
+    public void getMessage() {<br />
+          try<br />
+          {<br />
+             MQQueueManager qm = setup();<br />
+             MQQueue q = qm.accessQueue(MQ_queue, MQC.MQOO_INPUT_AS_Q_DEF);<br />
+<br />
+             MQMessage msg = new MQMessage();<br />
+<br />
+             q.get(msg);<br />
+<br />
+             System.out.println(&quot;Message: &quot; + msg.readLine());<br />
+<br />
+             q.close();<br />
+             qm.disconnect();<br />
+          }<br />
+          catch(MQException e)<br />
+          {<br />
+             System.out.println(&quot;MQ Error: cc=&quot; + e.completionCode + &quot;, reason=&quot; + e.reasonCode);<br />
+          }<br />
+          catch(java.io.IOException e)<br />
+          {<br />
+             System.out.println(&quot;IO Error: &quot; + e);<br />
+          }         <br />
+    }<br />
+    <br />
+<br />
+<br />
+    public static MQQueueManager setup() throws MQException {<br />
+        MQEnvironment.hostname = MQ_hostname;<br />
+        MQEnvironment.channel = MQ_channel;<br />
+        MQEnvironment.port = MQ_port;<br />
+        Hashtable&lt;String, String&gt; props = new Hashtable&lt;String, String&gt;();<br />
+        props.put(MQC.TRANSPORT_PROPERTY, MQC.TRANSPORT_MQSERIES);<br />
+        MQEnvironment.properties = props;<br />
+        MQQueueManager qm = new MQQueueManager(MQ_queueManager);<br />
+        return qm;<br />
+    }<br />
+        <br />
+}<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+package <a href="http://com.acme.mq" target="_blank">com.acme.mq</a>;<br />
+<br />
+public class MQConstants {<br />
+    public static String MQ_hostname = &quot;<a href="http://bla.acme.com" target="_blank">bla.acme.com</a>&quot;;<br />
+    public static String MQ_channel = &quot;A123.TO.QMIA00D&quot;;<br />
+    public static int    MQ_port = 1435;<br />
+    public static String MQ_queueManager = &quot;QMIA00D&quot;;<br />
+    public static String MQ_queue = &quot;AQ.A123.BLA.NOTIFICATION.EVENT&quot;;<br />
+      <br />
+}<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+I have added to the classpath ALL the MQ jars I could find in my MQ installation...<br />
+<br />
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;<br />
+&lt;classpath&gt;<br />
+    &lt;classpathentry kind=&quot;src&quot; path=&quot;src&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;con&quot; path=&quot;org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/CL3Export.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/CL3Nonexport.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mq.axis2.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mq.commonservices.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mq.defaultconfig.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mq.headers.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mq.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mq.jmqi.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mq.jms.Nojndi.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mq.pcf.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mq.postcard.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mq.soap.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mq.tools.ras.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/com.ibm.mqjms.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/connector.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/dhbcore.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/fscontext.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/jms.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/jndi.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/jta.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/ldap.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/providerutil.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;lib&quot; path=&quot;lib/rmm.jar&quot;/&gt;<br />
+    &lt;classpathentry kind=&quot;output&quot; path=&quot;bin&quot;/&gt;<br />
+&lt;/classpath&gt;

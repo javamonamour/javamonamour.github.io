@@ -1,0 +1,42 @@
+---
+layout: post
+title: "CORBA vs SOAP, SOAP vs IIOP"
+date: 2010-09-25T22:24:00.005+02:00
+permalink: /2010/09/corba-vs-soap.html
+blogger_id: "2871674956946699280"
+tags: ["corba", "visibroker"]
+---
+CORBA vs SOAP, SOAP vs IIOP...<br />
+<br />
+I started my "carreer" in Distributed Computing back in 1997, as a Forte and Visibroker specialist.<br />
+<br />
+In Forte it was a matter of seconds to create a Distributed Object, deploy it to a cluster of servers, an create a client to invoke it.<br />
+<br />
+When it came to integrate Forte with Java, I fell immediately in love with IDL and ORBs.<br />
+Visibroker was loaded with features, and it would come with a idl2java tool to create Java stubs and invoke a CORBA service.<br />
+At that time I was in Bangalore, and I used to spend all my weekends at office experimenting with ORBs. A thrilling experience.<br />
+<br />
+<br />
+13 years after,<br />
+<br />
+IDL is gone and we have WSDLs and XSDs. IDL was simple, WSDL and XSDs are intricate.<br />
+<br />
+IIOP is gone and we have SOAP. IIOP was fast, SOAP is as slow as molassa.<br />
+<br />
+Performance is pathetic. Garbage collections through the roof.<br />
+<br />
+Standars are multiple. Each vendor implements its own flavour.<br />
+<br />
+Something went terribly wrong in the IT industry in the last 15 years.<br />
+<br />
+Read about performance here<br />
+<a href="http://manoftoday.wordpress.com/2006/09/29/in-depth-investigation-of-corba-vs-soap/">http://manoftoday.wordpress.com/2006/09/29/in-depth-investigation-of-corba-vs-soap/</a><br />
+<br />
+<br />
+I am 100% with the author of this post. I have worked with both IDL and SOAP and the former was orders of magnitude better specified and easier to use. The only good point of SOAP is that you can manually carve your payload with notepad, but is this a good reason to build your Enterprise Solution on top of it? On the contrary, it seems to me a proof that most developers will simply tinker and carve hand-crafted messages which can or cannot work according to the SOAP implementation.<br />
+<br />
+<a href="http://delusionofgrandeur.posterous.com/">Luciano</a> says that SOAP/WSDL is for the weak of mind, really cool people use REST + JSON. I will investigate the technology.<br />
+<br />
+Here <a href="http://thecoffman.com/2011/01/please-drop-the-soap/">http://thecoffman.com/2011/01/please-drop-the-soap/</a> another rant against SOAP.<br />
+<br />
+Every time I hear "SOAP and XML are cool" I kill a kitten.

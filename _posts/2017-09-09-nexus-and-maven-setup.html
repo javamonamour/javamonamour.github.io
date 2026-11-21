@@ -1,0 +1,37 @@
+---
+layout: post
+title: "Nexus and Maven (ST): setup"
+date: 2017-09-09T10:44:00.001+02:00
+permalink: /2017/09/nexus-and-maven-setup.html
+blogger_id: "1425280741411224652"
+tags: ["maven", "nexus"]
+---
+I have installed Maven (ST) in /home/centos/apache-maven-3.5.0/. <br />
+<br />
+My m2 repo is in /home/centos/.m2/repository <br />
+<br />
+To test the m2 repo, I "git clone https://github.com/gabrielf/maven-samples", then "mvn package" <br />
+<br />
+"ls /home/centos/.m2/repository" shows that stuff is actually pulled from the maven central repo https://repo.maven.apache.org/maven2/ , you should see plenty of this in the logs :  <br />
+<br />
+<i> "Downloading: https://repo.maven.apache.org/maven2/org/apache/maven/plugins/maven-resources-plugin/2.5/maven-resources-plugin-2.5.jar" </i> <br />
+<br />
+I edit the settings in /home/centos/apache-maven-3.5.0/conf/settings.xml to incorporate this setup  <a href="https://books.sonatype.com/nexus-book/3.0/reference/maven.html#maven-sect-single-group">https://books.sonatype.com/nexus-book/3.0/reference/maven.html#maven-sect-single-group</a>  <br />
+<br />
+I have installed Nexus in /home/centos/nexus30/.  Make sure you increase the file descriptors before you start. <br />
+<br />
+"cd /home/centos/nexus30/nexus-3.5.1-02/bin/" and "./nexus start".  <br />
+<br />
+Login at http://localhost:8081 using admin/admin123 , go to http://localhost:8081/#admin/repository/repositories and check that "maven central" is already preconfigured with http://localhost:8081/repository/maven-central/ URL. You can browse the Nexus content at http://localhost:8081/#browse/browse/components:maven-central  (it should be empty at this stage)  <br />
+<br />
+Clear the local Maven (ST) repo "rm -rf /home/centos/.m2/repository/*" and run again "mvn package". This time Maven should retrieve the artifacts from Nexus: <br />
+<br />
+<i> Downloaded: http://localhost:8081/repository/maven-public/org/apache/maven/plugins/maven-resources-plugin/2.5/maven-resources-plugin-2.5.pom  </i>   <br />
+<br />
+Browsing again http://localhost:8081/#browse/browse/components:maven-central  should show that all artifacts are cached in Nexus. <br />
+<br />
+In case of issues, check the logs /home/centos/nexus30/sonatype-work/nexus3/log (nexus.log, request.log, jvm.log) for details. <br />
+<br />
+Of course you can use the nexus docker way <a href="https://hub.docker.com/r/sonatype/nexus3/">https://hub.docker.com/r/sonatype/nexus3/</a><br />
+<br />
+PS:  (ST) stands for STINKS . Maven STINKS like a wet rotten dirty skunk. Use Gradle instead.       

@@ -1,0 +1,8 @@
+---
+layout: post
+title: "RESTful services in OSB"
+date: 2011-07-01T13:22:00.001+02:00
+permalink: /2011/07/restful-services-in-osb.html
+blogger_id: "6466316957125771064"
+---
+I am planning to do a monitoring console for OSB based on REST,<br>so that is can be easily operated from a browser.<br><br>In the meantime I have found these 2 posts:<br><br><a href="http://blogs.oracle.com/jamesbayer/entry/using_rest_with_oracle_service">http://blogs.oracle.com/jamesbayer/entry/using_rest_with_oracle_service</a><br>  <br><a href="http://biemond.blogspot.com/2009/05/osb-rest-service-with-xml-json-output.html">http://biemond.blogspot.com/2009/05/osb-rest-service-with-xml-json-output.html</a>  (more detailed)<br><br><a href="http://blogs.oracle.com/jeffdavies/entry/restful_services_with_oracle_s_1">http://blogs.oracle.com/jeffdavies/entry/restful_services_with_oracle_s_1</a><br>  <br>.... (just google OSB restful)<br><br><br>I have done a simple &quot;Any XML&quot; http proxy, which does a &quot;replace . in $body with &lt;hello&gt;Pierre&lt;/hello&gt; (replace node content)<br><br>and when I invoke it from the browser I get the XML on the web page. Cool! First step for a monitoring console.<br>   

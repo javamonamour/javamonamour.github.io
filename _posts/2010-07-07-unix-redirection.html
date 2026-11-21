@@ -1,0 +1,12 @@
+---
+layout: post
+title: "Unix redirection"
+date: 2010-07-07T20:02:00.001+02:00
+permalink: /2010/07/unix-redirection.html
+blogger_id: "2178060555413672243"
+tags: ["redirection", "unix"]
+---
+<pre>command 2>&1 > output.log (stdout and error to output.log)
+command 2> output.log (error to output.log, stdout to console)
+command 1> output.log 2> error.log (error to error.log, stdout to output.log)
+</pre>

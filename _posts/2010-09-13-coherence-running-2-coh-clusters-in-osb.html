@@ -1,0 +1,68 @@
+---
+layout: post
+title: "Coherence: running 2 coh clusters in OSB"
+date: 2010-09-13T14:42:00.003+02:00
+permalink: /2010/09/coherence-running-2-coh-clusters-in-osb.html
+blogger_id: "1838930240436787074"
+tags: ["javacallout"]
+blogger_comments:
+  - author: "morenji"
+    date: 2010-12-15
+    html: "ottimi tag!"
+---
+Step 1:<br />
+<br />
+backup the old library 3.5.2b463 existing at <br />
+/Oracle/Middleware/coherence_3.5/lib/<br />
+<br />
+and replace it with the "latest stable" <b>3.5.3/465p6</b><br />
+<br />
+We should definitely avoid using 2 different versions of Coherence for the OSB and the Custom cluster, just to make our life simpler.<br />
+<br />
+Now, OSB should start the internal Coherence cluster using the 3.5.3/465p6 version (check the MS logs)<br />
+<br />
+Step 2:<br />
+<br />
+put somewhere in the MS classpath the <b>tangosol-coherence-override.xml</b> for the Custom node.<br />
+This will not interfere with the built-in OSB Coherence, which is loading its config from<br />
+com.bea.alsb.coherence-impl.jar!/tangosol-coherence-override.xml and $DOMAIN_HOME/config/osb/coherence/osb-coherence-override.xml<br />
+<br />
+Check the line<br />
+<i>Created a new cluster "OSB-cluster" with Member(Id=1, Timestamp=bla, Address=127.0.0.1:7890..)</i><br />
+<br />
+<br />
+which corresponds to the $DOMAIN_HOME/config/osb/coherence/osb-coherence-override.xml settings<br />
+<br />
+<br />
+<br />
+Step 3:<br />
+<br />
+Add /Oracle/Middleware/coherence_3.5/lib/coherence.jar and /Oracle/Middleware/coherence_3.5/lib/je.jar to the MS classpath, so that we don't need to deploy these JARs in the OSB project making the JavaCallout to the Custom cluster.<br />
+REMEMBER: having these libraries in the CLASSPATH doesn't mean that the OSB internal cluster will load the Coherence classes in the System Classloader! The ALSB Coherence Cache Provider EAR specifies to load them in the EAR classloader!<br />
+<br />
+If you are using this utility, add to MS classpath also /coh-sl/lib/coherence-serialization-support.jar which contains the PofSerialized classes (they are available here <br />
+<a href="http://coherence.politext.info/pof-serializer-generator-java-apt-plugin">http://coherence.politext.info/pof-serializer-generator-java-apt-plugin</a> )<br />
+<br />
+<br />
+<br />
+Step 4:<br />
+code your Java callout class to return instances of<br />
+org.apache.xmlbeans.XmlObject<br />
+Library Path: /Oracle/Middleware/modules/com.bea.core.xml.xmlbeans_2.2.0.0.jar<br />
+<br />
+in practice:<br />
+<br />
+<pre class="brush: java" name="code">import org.apache.xmlbeans.XmlObject;
+
+public static XmlObject myJavaCallout() {
+.... invoke your code getting data from Coherence Cache....
+XmlObject returnObject = XmlObject.Factory.parse("<ciao><fanculo></fanculo></ciao>");
+return returnObject;
+
+</pre><br />
+<br />
+and make sure that in your OSB Java Callout you DON'T return by reference.<br />
+<br />
+<br />
+<br />
+You will see that at the first invocation of Coherence you will join the Coherence Cluster, from the second onwards this will not happen.

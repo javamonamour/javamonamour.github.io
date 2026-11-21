@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Extending WLST with custom Java classes - the case of JSON parsing"
+date: 2015-03-23T15:19:00.001+01:00
+permalink: /2015/03/extending-wlst-with-custom-java-classes.html
+blogger_id: "8355989188109850451"
+tags: ["json", "WLST"]
+---
+I have recently looked into how to "modernize" the WLST Jithon/Python version - still sadly a prehistoric 2.2.1, while the recent-most Python version is 3.4.2 (Oracle.... how about doing something about WLST? ).
+
+<br/><br/>
+
+Here is some instructions on how to try this upgrade - but it's not supported, so do it at your own risk.
+
+<br/>
+
+<a href="http://stackoverflow.com/questions/11881659/wlst-vs-jython-weblogic-10-3-3">http://stackoverflow.com/questions/11881659/wlst-vs-jython-weblogic-10-3-3</a>
+
+<br/><br/>
+
+This is an increasingly painful limitation of WLST, that it can't use any "modern" Python package, like <a href="https://docs.python.org/2/library/json.html">json</a>.
+
+
+<br/><br/>
+The good news is that it's relatively easy to expand WLST with any Java library you wish: just add the JAR to the CLASSPATH in /opt/oracle/middleware11g/wlserver_10.3/common/bin/wlst.sh, import the Java class with "from com.bla.mypackage import MyClass" and you can use the custom code.  
+
+<br/><br/>
+
+In case of json parsing, there is a popular <b>Google</b> GSON library you could incorporate:
+
+<br/><br/>
+<a href="http://search.maven.org/#artifactdetails|com.google.code.gson|gson|2.3.1|jar">http://search.maven.org/#artifactdetails|com.google.code.gson|gson|2.3.1|jar</a> which comes with a rich <a href="https://sites.google.com/site/gson/gson-user-guide">User Guide</a>
+
+<br/><br/>
+
+<a href="https://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/com/google/gson/Gson.html">The API of this GSON is here</a> ... it seems to be aimed at parsing a JSON string directly into a Java object... there doesn't seem to be room for a more casual, random approach.
+
+<br/><br/>
+The <b>Oracle</b> solution is more "casual" <a href="http://www.oracle.com/technetwork/articles/java/json-1973242.html">http://www.oracle.com/technetwork/articles/java/json-1973242.html</a> and reminiscent of a DOM approach to parsing... more suitable for a quickly hacked deserialization.
+
+<br/><br/>
+
+Anyway.... I wish I could simply use the Python JSON module...

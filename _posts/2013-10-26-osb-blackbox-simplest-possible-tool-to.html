@@ -1,0 +1,284 @@
+---
+layout: post
+title: "OSB Blackbox, the simplest possible tool to monitor in-flight requests"
+date: 2013-10-26T18:40:00.000+02:00
+permalink: /2013/10/osb-blackbox-simplest-possible-tool-to.html
+blogger_id: "2261770617237565504"
+tags: ["OSB"]
+---
+A common issue we have in PROD is that we have occasionally stuck threads and we don't have a clue which payload they are processing. 
+<br />
+In the logs, in the STUCK thread notification you get a Thread Name (Execute Thread 27...) and a long stacktrace from which you can only understand if it was processing a JMS message or a file, but not which Proxy Service was being executed.
+<br />
+We do log all incoming requests, but it is not immediate to associate the Stuck Thread to them.
+<br />
+So I have come up with a simple Custom XPath which should be invoked at the beginning of each Proxy Service - or simply in the MessageTracker service that we invoke to trace every incoming request - to store ThreadName, ProxyName (we call this "InterfaceID"), payload and some unique identifier (like PONumber, CustomerID....) that we call technicalMessageID and BusinessID.
+<br />
+This is the - REALLY bare bones - implementation:
+<br />
+<br />
+This is the Blackbox, the entry point of all our calls. It holds a RequestMap containing all our in-flight requests
+<br />
+<pre class="brush: java" name="code">package com.acme.osb.logging;
+
+import java.util.Date;
+
+import org.apache.xmlbeans.XmlObject;
+
+/**
+ * Keeps in memory the execution status of all current requests
+ * @author PIPPO
+ *
+ */
+public class Blackbox {
+ public static final RequestMap requests = new RequestMap();
+ 
+ /**
+  * Archive a request in our Map 
+  * @param threadName
+  * @param startTime
+  * @param interfaceId
+  * @param businessId
+  * @param payload
+  * @return
+  */
+ public static String trackRequest(String interfaceId, String technicalId, String businessId, XmlObject payload) {
+  String threadName = getThreadName(); 
+  return trackRequestWithThreadName(threadName, interfaceId, technicalId, businessId, payload);
+ }
+
+ public static String trackRequestWithThreadName(String threadName, String interfaceId, String technicalId, String businessId, XmlObject payload) {
+  RequestDescriptor rd = new RequestDescriptor(threadName, new Date(), interfaceId, technicalId, businessId, payload);
+  requests.put(threadName, rd);
+  return threadName;
+ }
+ 
+ public static String getThreadName() {
+  return Thread.currentThread().getName();
+ }
+ 
+ public static String dumpBlackbox() {
+  StringBuffer result = new StringBuffer();
+  result.append("size=").append(requests.size()).append("\n");
+  result.append(requests.toString());
+  return result.toString();
+ }
+ 
+ public static String clearBlackbox() {
+  requests.clear();
+  return "OK";
+ }
+ 
+}
+
+</pre>
+<br />
+<br />
+This is the RequestDescriptor, entry in the RequestMap to hold all info about an in-flight request 
+<br />
+<br />
+<pre class="brush: java" name="code">package com.acme.osb.logging;
+
+import java.util.Date;
+
+import org.apache.xmlbeans.XmlObject;
+
+/**
+ * Hold info about all incoming requests
+ * @author PIPPO
+ *
+ */
+public class RequestDescriptor {
+ String threadName;
+ Date startTime;
+ XmlObject payload;
+ String interfaceId;
+ String technicalId;
+ String businessId;
+ 
+ 
+ 
+ public RequestDescriptor(String threadName, Date startTime, String interfaceId, String technicalId, String businessId, XmlObject payload) {
+  super();
+  this.threadName = threadName;
+  this.startTime = startTime;
+  this.payload = payload;
+  this.interfaceId = interfaceId;
+  this.technicalId = technicalId;
+  this.businessId = businessId;
+ }
+
+
+
+ public String getThreadName() {
+  return threadName;
+ }
+
+
+
+ public void setThreadName(String threadName) {
+  this.threadName = threadName;
+ }
+
+
+
+ public Date getStartTime() {
+  return startTime;
+ }
+
+
+
+ public void setStartTime(Date startTime) {
+  this.startTime = startTime;
+ }
+
+
+
+ public XmlObject getPayload() {
+  return payload;
+ }
+
+
+
+ public void setPayload(XmlObject payload) {
+  this.payload = payload;
+ }
+
+
+
+ public String getInterfaceId() {
+  return interfaceId;
+ }
+
+
+
+ public void setInterfaceId(String interfaceId) {
+  this.interfaceId = interfaceId;
+ }
+
+
+
+ public String getBusinessId() {
+  return businessId;
+ }
+
+
+
+ public void setBusinessId(String businessId) {
+  this.businessId = businessId;
+ }
+
+
+
+ public String getTechnicalId() {
+  return technicalId;
+ }
+
+
+
+ public void setTechnicalId(String technicalId) {
+  this.technicalId = technicalId;
+ }
+
+
+
+ public String toString() {
+  return "threadName=" + threadName + ", startTime=" + startTime.toString() + ", interfaceId= " + interfaceId + ", technicalId=" + technicalId + ", businessId=" + businessId + ", payload=" + payload.xmlText();
+ }
+ 
+}
+
+</pre>
+<br />
+<br />
+This is the RequestMap, a simple collection with some utility method
+<br />
+<br />
+<pre class="brush: java" name="code">package com.acme.osb.logging;
+
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * A self-managing container of requests
+ * @author PIPPO
+ *
+ */
+
+public class RequestMap {
+ public static final int MAXSIZE = 100;
+ 
+ long numberOfRemoval = 0; 
+ 
+ public long getNumberOfRemoval() {
+  return numberOfRemoval;
+ }
+
+ public void setNumberOfRemoval(long numberOfRemoval) {
+  this.numberOfRemoval = numberOfRemoval;
+ }
+
+ ConcurrentHashMap<string requestdescriptor=""> requests = new ConcurrentHashMap<string requestdescriptor="">();
+
+ /**
+  * Add an element to the map, removing oldest element if maxsize is reached
+  * @param threadName
+  * @param rd
+  */
+ public void put(String threadName, RequestDescriptor rd) {
+  requests.put(threadName, rd);
+  if (requests.size() &gt; MAXSIZE) {
+   RequestDescriptor oldest = findOldestEntry();
+   requests.remove(oldest.getThreadName());
+   numberOfRemoval ++;
+  }
+ }
+ 
+ /**
+  * Return the entry with the oldest timestamp
+  * @return
+  */
+ public RequestDescriptor findOldestEntry() {
+  RequestDescriptor result = null;
+  Date oldestDate = new Date();
+  Enumeration<requestdescriptor> en = requests.elements();
+  while (en.hasMoreElements()) {
+   RequestDescriptor rd = en.nextElement(); 
+   if (rd.getStartTime().before(oldestDate)) {
+    oldestDate = rd.getStartTime();
+    result = rd;
+   }
+  }
+  return result;
+ }
+ 
+ public int size() {
+  return requests.size();
+ }
+ 
+ public String toString() {
+  StringBuffer result = new StringBuffer();
+  Enumeration<requestdescriptor> en = requests.elements();
+  while (en.hasMoreElements()) {
+   RequestDescriptor rd = en.nextElement();
+   result.append(rd.toString());
+  }
+  return result.toString();
+ }
+
+ public void clear() {
+  requests.clear();
+ }
+ 
+}
+
+
+</requestdescriptor></requestdescriptor></string></string></pre>
+<br />
+In the RequestMap I had to do some alchemy to make sure we never store more than 100 concurrent requests... I am paranoid about memory leaks!
+
+<br />
+You can expose the dumpBlackbox() method with a JMX agent, or more simply with a HTTP Proxy service. In case the WebLogic AppServer was completely unresponsive, probably JMX is more robust. An approach could be also to implement a "kill -3" (SIGBREAK) handler at JVM level - to dump not only the ThreadDump but also the OSB dump.<br />
+<br />
+NOTA BENE: if you have huge payloads, this could lead to a severe hit on your memory.... be careful... 

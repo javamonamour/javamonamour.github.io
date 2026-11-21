@@ -1,0 +1,23 @@
+---
+layout: post
+title: "weblogic, difference between Failed Reserve Request Count and Waiting For Connection Failure Total"
+date: 2014-03-20T16:42:00.000+01:00
+permalink: /2014/03/weblogic-difference-between-failed.html
+blogger_id: "1401078444347751259"
+tags: ["weblogic"]
+---
+weblogic, difference between Failed Reserve Request Count and Waiting For Connection Failure Total:
+
+<br><br>
+
+ 
+<b>JDBCDataSourceRuntimeMBean.FailedReserveRequestCount</b><br>
+The cumulative, running count of requests for a connection from this data source that could not be fulfilled.
+<br><br>
+<b>JDBCDataSourceRuntimeMBean.WaitingForConnectionFailureTotal</b><br>
+The cumulative, running count of requests for a connection from this data source that had to wait before getting a connection and eventually failed to get a connection.
+<br><br>
+
+I think the second is just a subset of the first (in fact in our server we have plenty of FailedReserveRequestCount, but no WaitingForConnectionFailureTotal). If a DB fails, surely you have the first error, never the second.
+
+

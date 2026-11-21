@@ -1,0 +1,381 @@
+---
+layout: post
+title: "Hyperic: my first WORKING plugin"
+date: 2012-05-13T15:04:00.000+02:00
+permalink: /2012/05/hyperic-my-first-working-plugin.html
+blogger_id: "9073353029745449052"
+tags: ["hyperic"]
+---
+(after 1 day of pain and sorrow)<br />
+<br />
+Run your test application:<br />
+<b><br />
+java -Dproc.java.home=C:\Oracle\Middleware\jdk160_24  -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=6969 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false com.acme.hqautomation.jmx.SimpleAgent</b><br />
+<br />
+and then run the monitoring plugin:<br />
+<br />
+<b>java -Dplugins.include=myfirstplugin -jar C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\hq-pdk-4.6.5.jar -m discover -a metric -Dlog=debug</b><br />
+<br />
+BEWARE! the xml filename must be myfirstplugin-plugin.xml (I think the idea of adding the -plugin is REALLY stupid anyway, and it's not explained in the doc)<br />
+<br />
+<br />
+Here is SimpleAgent<br />
+<br />
+<pre name="code" class="brush: java">
+package com.acme.jmx;
+import javax.management.*;
+import java.lang.management.*;
+
+
+public class SimpleAgent {
+   private MBeanServer mbs = null;
+
+   public SimpleAgent() {
+
+      // Get the platform MBeanServer
+       mbs = ManagementFactory.getPlatformMBeanServer();
+
+      // Unique identification of MBeans
+      Hello helloBean = new Hello();
+      ObjectName helloName = null;
+
+      try {
+         // Uniquely identify the MBeans and register them with the platform MBeanServer 
+         helloName = new ObjectName("SimpleAgent:name=hellothere");
+         mbs.registerMBean(helloBean, helloName);
+      } catch(Exception e) {
+         e.printStackTrace();
+      }
+   }
+
+   // Utility method: so that the application continues to run
+   private static void waitForEnterPressed() {
+      try {
+         System.out.println("Press  to continue...");
+         System.in.read();
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+    }
+
+   public static void main(String argv[]) {
+      SimpleAgent agent = new SimpleAgent();
+      System.out.println("SimpleAgent is running...");
+      SimpleAgent.waitForEnterPressed();
+   }
+}
+
+
+</pre><br />
+<br />
+Here is myfirstplugin-plugin.xml (the entity process-metrics.xml has been removed since I am not monitoring the process, only the jmx metrics)<br />
+<br />
+<pre name="code" class="brush: xml">
+&lt;?xml version="1.0"?>
+ 
+&lt;!DOCTYPE plugin>
+ 
+&lt;plugin package="org.hyperic.hq.plugin.java">
+ 
+&lt;classpath>
+&lt;include name="pdk/lib/mx4j"/>
+&lt;/classpath>
+ 
+&lt;filter name="template" value="${OBJECT_NAME}:${alias}"/>
+ 
+&lt;metrics name="Class Loading Metrics">
+&lt;metric name="Loaded Class Count" indicator="false" category="THROUGHPUT"/>
+&lt;metric name="Total Loaded Class Count" indicator="false" category="THROUGHPUT"/>
+&lt;metric name="Unloaded Class Count" indicator="false" category="THROUGHPUT"/>
+&lt;/metrics>
+ 
+&lt;metrics name="Compilation">
+&lt;metric name="Total Compilation Time" indicator="false" category="THROUGHPUT" collectionType="trendsup" units="ms"/>
+&lt;/metrics>
+ 
+&lt;metrics name="Garbage Collector">
+&lt;metric name="Collection Count" indicator="false" category="THROUGHPUT" collectionType="trendsup"/>
+&lt;metric name="Collection Time" indicator="false" category="THROUGHPUT" collectionType="trendsup"/>
+&lt;/metrics>
+ 
+&lt;metrics name="Memory">
+&lt;metric name="Object Pending Finalization Count" category="THROUGHPUT" indicator="false"/>
+&lt;/metrics>
+ 
+&lt;metrics name="Threading">
+&lt;metric name="Thread Count" category="UTILIZATION" indicator="false"/>
+&lt;metric name="Daemon Thread Count" category="UTILIZATION" indicator="false"/>
+&lt;/metrics>
+ 
+&lt;server name="Java" version="1.5.x">
+&lt;property name="HAS_BUILTIN_SERVICES" value="true"/>
+&lt;property name="VERSION_FILE" value="jre/lib/fontconfig.Sun.2003.bfc"/>
+&lt;property name="DEFAULT_PROGRAM" value="bin/java"/>
+&lt;property name="domain" value="Java"/>
+ 
+&lt;config>
+&lt;option name="jmx.url" description="JMX URL to MBeanServer"  default="service:jmx:rmi:///jndi/rmi://localhost:6969/jmxrmi"/>
+&lt;option name="jmx.username" description="JMX username" optional="true" default=""/>
+&lt;option name="jmx.password" description="JMX password" optional="true" default="" type="secret"/>
+&lt;!--option name="process.query" description="PTQL for Java Process" default="State.Name.eq=java,Args.*.ct=proc.java.home"/-->
+&lt;/config>
+ 
+&lt;!--metric name="Availability" template="sigar:Type=ProcState,Arg=%process.query%:State" indicator="true"/-->
+
+ 
+&lt;property name="OBJECT_NAME" value="java.lang:type=ClassLoading"/>
+ 
+&lt;metrics include="Class Loading Metrics"/>
+&lt;property name="OBJECT_NAME" value="java.lang:type=Compilation"/>
+ 
+&lt;metrics include="Compilation"/>
+&lt;property name="OBJECT_NAME" value="java.lang:type=Memory"/>
+ 
+&lt;plugin type="log_track" class="org.hyperic.hq.product.jmx.MxNotificationPlugin"/>
+ 
+&lt;property name="OBJECT_NAME" value="java.lang:type=Threading"/>
+&lt;metrics include="Threading"/>
+ 
+&lt;!-- derive installpath from JAVA_HOME env prop... -->
+&lt;property name="PROC_HOME_ENV" value="JAVA_HOME"/>
+ 
+&lt;!-- derive installpath from -Dproc.java.home=... -->
+&lt;property name="PROC_HOME_PROPERTY" value="proc.java.home"/>
+&lt;plugin type="autoinventory" class="org.hyperic.hq.product.jmx.MxServerDetector"/>
+&lt;plugin type="measurement" class="org.hyperic.hq.product.jmx.MxMeasurementPlugin"/>
+ 
+&lt;service name="Java GC">
+&lt;plugin type="autoinventory"/>
+&lt;property name="OBJECT_NAME" value="java.lang:type=GarbageCollector,name=*"/>
+&lt;metrics include="Garbage Collector"/>
+&lt;/service>
+&lt;/server>
+ 
+&lt;server name="Java" version="1.6.x" include="1.5.x">
+&lt;property name="VERSION_FILE" value="jre/lib/management-agent.jar"/>
+&lt;/server>
+ 
+&lt;!--
+ ==================== Plugin Help ===========================
+-->
+&lt;help name="Java">
+&lt;![CDATA[
+  &lt;p>
+  &lt;h3>Configure HQ for monitoring Java&lt;/h3>
+  &lt;/p>
+  &lt;p>
+  1) Add this line to the java options when executing the binary.
+  &lt;br>
+  "-Dcom.sun.management.jmxremote \
+  &lt;br>
+  -Dcom.sun.management.jmxremote.port=6969 \
+  &lt;br>
+  -Dcom.sun.management.jmxremote.ssl=false \
+  &lt;br>
+  -Dcom.sun.management.jmxremote.authenticate=false"
+  &lt;br>
+  &lt;/p>
+]]>
+&lt;/help>
+&lt;help name="Java 1.5.x" include="Java"/>
+&lt;help name="Java 1.6.x" include="Java"/>
+&lt;/plugin>
+
+
+</pre><br />
+<br />
+<br />
+In the autodiscovery, you should now find a "Java 1.6 C:\Oracle\Middleware\jdk160_24"  resource name, add it, then in the Inventory you should find 2 metrics:<br />
+<br />
+Java 1.6.x Copy Java GC<br />
+Java 1.6.x MarkSweepCompact Java GC<br />
+<br />
+<br />
+<br />
+The result of running the plugin tester is:<br />
+<br />
+<i><br />
+<br />
+<br />
+C:\Oracle\Middleware\jdk160_24\bin>java -Dplugins.include=myfirstplugin -jar C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\hq-pdk-4.6.5.jar -m discover -a metric -Dlog=debug<br />
+SLF4J: Class path contains multiple SLF4J bindings.<br />
+SLF4J: Found binding in [jar:file:/C:/pierre/hypericagent/agent-4.6.5-EE/bundles/agent-4.6.5/pdk/lib/slf4j-log4j12-1.6.1.jar!/org/slf4j/impl/StaticLoggerBinder.class]<br />
+SLF4J: Found binding in [jar:file:C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\slf4j-log4j12-1.6.1.jar!/org/slf4j/impl/StaticLoggerBinder.class]<br />
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.<br />
+INFO  [main] [ProductPluginManager] agent.pdkDir=C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk<br />
+INFO  [main] [ProductPluginManager] agent.pdkPluginDir=C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk/plugins<br />
+INFO  [main] [ProductPluginManager] agent.pdkWorkDir=C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk/work<br />
+DEBUG [main] [ProductPluginManager] Initializing in client mode (pdk=C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk)<br />
+INFO  [main] [ConfigTrackPluginManager] Running on Server, FileMonitor not initiated<br />
+DEBUG [main] [MIBTree] C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\mibs MIB dir does not exist<br />
+INFO  [main] [ProductPluginManager] Loading plugin: myfirstplugin-plugin.xml (C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\plugins)<br />
+DEBUG [main] [ProductPluginManager] Manifest retrieval had an exception (continuing): error in opening zip file<br />
+DEBUG [main] [PluginLoader] myfirstplugin-plugin.xml expanding C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\mx4j...<br />
+DEBUG [main] [PluginLoader] myfirstplugin-plugin.xml += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\mx4j\mx4j-3.0.1.jar<br />
+DEBUG [main] [PluginLoader] myfirstplugin-plugin.xml += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\mx4j\mx4j-jmx-3.0.1.jar<br />
+DEBUG [main] [PluginLoader] myfirstplugin-plugin.xml += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\mx4j\mx4j-remote-3.0.1.jar<br />
+DEBUG [main] [PluginLoader] myfirstplugin-plugin.xml += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\mx4j\mx4j-rjmx-2.1.1.jar<br />
+DEBUG [main] [PluginLoader] myfirstplugin-plugin.xml += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\mx4j\mx4j-tools-3.0.1.jar<br />
+INFO  [main] [ProductPluginManager] Loading plugin: netservices-plugin.jar (C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\plugins)<br />
+DEBUG [main] [ProductPluginManager]<br />
+--- Manifest entries for: jar:file:C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\plugins\netservices-plugin.jar!/ ---<br />
+Implementation-Title - Hyperic HQ Plugin - Net Services Plugin<br />
+Implementation-Version - 4.6.5<br />
+Implementation-Vendor-Id - org.hyperic.hq.plugin<br />
+Build-Jdk - 1.6.0_29<br />
+Built-By - bob<br />
+Manifest-Version - 1.0<br />
+Specification-Title - HQ Plugin<br />
+Created-By - Apache Maven<br />
+Specification-Version - 4.6.5<br />
+Build-Date - 20120301-1052<br />
+Archiver-Version - Plexus Archiver<br />
+<br />
+DEBUG [main] [ClientPluginDeployer] Unchanged file: C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\work\lib\netservices\dnsjava-2.0.6.jar<br />
+DEBUG [main] [PluginLoader] netservices-plugin.jar += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\work\lib\netservices\dnsjava-2.0.6.jar<br />
+INFO  [main] [MeasurementPlugin] Register TCP Socket proxy for domain: socket<br />
+INFO  [main] [MeasurementPlugin] Register HTTP proxy for domain: http<br />
+INFO  [main] [MeasurementPlugin] Register HTTP proxy for domain: url.availability<br />
+INFO  [main] [MeasurementPlugin] Register FTP proxy for domain: ftp<br />
+INFO  [main] [ProductPluginManager] Loading plugin: sqlquery-plugin.jar (C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\plugins)<br />
+DEBUG [main] [ProductPluginManager]<br />
+--- Manifest entries for: jar:file:C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\plugins\sqlquery-plugin.jar!/ ---<br />
+Implementation-Title - Hyperic HQ Plugin - SQL Query Plugin<br />
+Implementation-Version - 4.6.5<br />
+Implementation-Vendor-Id - org.hyperic.hq.plugin<br />
+Build-Jdk - 1.6.0_29<br />
+Built-By - bob<br />
+Manifest-Version - 1.0<br />
+Specification-Title - HQ Plugin<br />
+Created-By - Apache Maven<br />
+Specification-Version - 4.6.5<br />
+Build-Date - 20120301-1052<br />
+Archiver-Version - Plexus Archiver<br />
+<br />
+DEBUG [main] [PluginLoader] sqlquery-plugin.jar expanding C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\jdbc...<br />
+DEBUG [main] [PluginLoader] sqlquery-plugin.jar += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\jdbc\msbase-1.2.2.jar<br />
+DEBUG [main] [PluginLoader] sqlquery-plugin.jar += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\jdbc\mssqlserver-1.2.2.jar<br />
+DEBUG [main] [PluginLoader] sqlquery-plugin.jar += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\jdbc\msutil-1.2.2.jar<br />
+DEBUG [main] [PluginLoader] sqlquery-plugin.jar += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\jdbc\mysql-connector-java-commercial-5.1.10.jar<br />
+DEBUG [main] [PluginLoader] sqlquery-plugin.jar += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\jdbc\ojdbc5-11.2.0.2.0.jar<br />
+DEBUG [main] [PluginLoader] sqlquery-plugin.jar += C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\jdbc\postgresql-7.4.3.jar<br />
+INFO  [main] [SQLQueryMeasurementPlugin] Registered proxy for domain: sql<br />
+INFO  [main] [ProductPluginManager] Loading plugin: system-plugin.jar (C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\plugins)<br />
+DEBUG [main] [ProductPluginManager]<br />
+--- Manifest entries for: jar:file:C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\plugins\system-plugin.jar!/ ---<br />
+Implementation-Title - Hyperic HQ Plugin - System Plugin<br />
+Implementation-Version - 4.6.5<br />
+Implementation-Vendor-Id - org.hyperic.hq.plugin<br />
+Build-Jdk - 1.6.0_29<br />
+Built-By - bob<br />
+Manifest-Version - 1.0<br />
+Specification-Title - HQ Plugin<br />
+Created-By - Apache Maven<br />
+Specification-Version - 4.6.5<br />
+Build-Date - 20120301-1052<br />
+Archiver-Version - Plexus Archiver<br />
+<br />
+DEBUG [main] [SystemPlugin] sigar.mirror.procnet=null<br />
+DEBUG [main] [PluginDiscoverer] Adding Auto Scanners=[ServerSignature {stName=Java 1.5.x, match=[null], exclude=[null], regMatch=[null]}, ServerSignature {stName=Java 1.6.x, match=[null], exclude=[null], regMatch=[null]}]<br />
+DEBUG [main] [PluginDiscoverer] Adding Registry Scanners=[]<br />
+DEBUG [Thread-1] [NullScan] Running AutoServerDetector for: Java 1.5.x<br />
+DEBUG [Thread-1] [MxServerDetector] ptql=State.Name.sw=java,Args.*.sw=-Dproc.java.home= matched pids=[[J@12b6c89]<br />
+DEBUG [Thread-1] [MxServerDetector] C:\Oracle\Middleware\jdk160_24\jre\lib\fontconfig.Sun.2003.bfc does not exist, skipping<br />
+DEBUG [Thread-1] [NullScan] Running AutoServerDetector for: Java 1.6.x<br />
+DEBUG [Thread-1] [MxServerDetector] ptql=State.Name.sw=java,Args.*.sw=-Dproc.java.home= matched pids=[[J@e53220]<br />
+DEBUG [Thread-1] [MxServerDetector] classpath unchanged using: C:\Oracle\Middleware\jdk160_24<br />
+DEBUG [Thread-1] [MxUtil] ptql:State.Name.sw=java,Args.*.eq=-Dproc.java.home=C:\Oracle\Middleware\jdk160_24 resolved to vmid=7960, jmx.url=service:jmx:rmi://127.0.0.1/stub/rO0ABXNyAC5qYXZheC5tYW5hZ2VtZW50LnJlbW90ZS5ybWkuUk1JU2VydmVySW1wbF9TdHViAAAAAAAAAAICAAB4cgAaamF2YS5ybWkuc2VydmVyLlJlbW90ZVN0dWLp/tzJi+FlGgIAAHhyABxqYXZhLnJtaS5zZXJ2ZXIuUmVtb3RlT2JqZWN002G0kQxhMx4DAAB4cHc3AAtVbmljYXN0UmVmMgAADDEwLjYwLjE2MC40NgAA5W6mztbP3rJ3QmqDpA4AAAE3QdfsrYACAHg=<br />
+DEBUG [Thread-1] [MxServerDetector] Using the local pid to create jmx url: ptql:State.Name.sw=java,Args.*.eq=-Dproc.java.home=C:\Oracle\Middleware\jdk160_24<br />
+DEBUG [Thread-1] [WindowsRegistryScan] Windows Registry Scan starting...<br />
+DEBUG [Thread-1] [WindowsRegistryScan] Windows Registry Scan completed, took: 0<br />
+1 servers detected<br />
+<br />
+Server: CH30-0FRNC59 Java 1.6.x [C:\Oracle\Middleware\jdk160_24]<br />
+ AIID.....C:\Oracle\Middleware\jdk160_24<br />
+ config...<br />
+ product..jmx.url=ptql:State.Name.sw=java,Args.*.eq=-Dproc.java.home=C:\Oracle\Middleware\jdk160_24,<br />
+ metric...<br />
+ control..null<br />
+DEBUG [main] [MxUtil] ptql:State.Name.sw=java,Args.*.eq=-Dproc.java.home=C:\Oracle\Middleware\jdk160_24 resolved to vmid=7960, jmx.url=service:jmx:rmi://127.0.0.1/stub/rO0ABXNyAC5qYXZheC5tYW5hZ2VtZW50LnJlbW90ZS5ybWkuUk1JU2VydmVySW1wbF9TdHViAAAAAAAAAAICAAB4cgAaamF2YS5ybWkuc2VydmVyLlJlbW90ZVN0dWLp/tzJi+FlGgIAAHhyABxqYXZhLnJtaS5zZXJ2ZXIuUmVtb3RlT2JqZWN002G0kQxhMx4DAAB4cHc3AAtVbmljYXN0UmVmMgAADDEwLjYwLjE2MC40NgAA5W6mztbP3rJ3QmqDpA4AAAE3QdfsrYACAHg=<br />
+DEBUG [main] [MxUtil] created new JMXConnector url=service:jmx:rmi://127.0.0.1/stub/rO0ABXNyAC5qYXZheC5tYW5hZ2VtZW50LnJlbW90ZS5ybWkuUk1JU2VydmVySW1wbF9TdHViAAAAAAAAAAICAAB4cgAaamF2YS5ybWkuc2VydmVyLlJlbW90ZVN0dWLp/tzJi+FlGgIAAHhyABxqYXZhLnJtaS5zZXJ2ZXIuUmVtb3RlT2JqZWN002G0kQxhMx4DAAB4cHc3AAtVbmljYXN0UmVmMgAADDEwLjYwLjE2MC40NgAA5W6mztbP3rJ3QmqDpA4AAAE3QdfsrYACAHg=, classloader=sun.misc.Launcher$AppClassLoader@17182c1<br />
+Java 1.6.x Loaded Class Count:<br />
+   java.lang:type=ClassLoading:LoadedClassCount:jmx.url=ptql%3AState.Name.sw%3Djava%2CArgs.*.eq%3D-Dproc.java.home%3DC%3A\Oracle\Middleware\jdk160_24,jmx.username=%jmx.username%,jmx.password=<br />
+DEBUG [main] [UnitsFormat] format(1086.0) -> 1,086.0<br />
+   =>1,086.0&lt;=<br />
+Java 1.6.x Total Loaded Class Count:<br />
+   java.lang:type=ClassLoading:TotalLoadedClassCount:jmx.url=ptql%3AState.Name.sw%3Djava%2CArgs.*.eq%3D-Dproc.java.home%3DC%3A\Oracle\Middleware\jdk160_24,jmx.username=%jmx.username%,jmx.password=<br />
+DEBUG [main] [UnitsFormat] format(1086.0) -> 1,086.0<br />
+   =>1,086.0&lt;=<br />
+Java 1.6.x Unloaded Class Count:<br />
+   java.lang:type=ClassLoading:UnloadedClassCount:jmx.url=ptql%3AState.Name.sw%3Djava%2CArgs.*.eq%3D-Dproc.java.home%3DC%3A\Oracle\Middleware\jdk160_24,jmx.username=%jmx.username%,jmx.password=<br />
+DEBUG [main] [UnitsFormat] format(0.0) -> 0.0<br />
+   =>0.0&lt;=<br />
+Java 1.6.x Total Compilation Time:<br />
+   java.lang:type=Compilation:TotalCompilationTime:jmx.url=ptql%3AState.Name.sw%3Djava%2CArgs.*.eq%3D-Dproc.java.home%3DC%3A\Oracle\Middleware\jdk160_24,jmx.username=%jmx.username%,jmx.password=<br />
+DEBUG [main] [UnitsFormat] format(102.0) -> 102ms<br />
+   =>102ms&lt;=<br />
+Java 1.6.x Thread Count:<br />
+   java.lang:type=Threading:ThreadCount:jmx.url=ptql%3AState.Name.sw%3Djava%2CArgs.*.eq%3D-Dproc.java.home%3DC%3A\Oracle\Middleware\jdk160_24,jmx.username=%jmx.username%,jmx.password=<br />
+DEBUG [main] [UnitsFormat] format(17.0) -> 17.0<br />
+   =>17.0&lt;=<br />
+Java 1.6.x Daemon Thread Count:<br />
+   java.lang:type=Threading:DaemonThreadCount:jmx.url=ptql%3AState.Name.sw%3Djava%2CArgs.*.eq%3D-Dproc.java.home%3DC%3A\Oracle\Middleware\jdk160_24,jmx.username=%jmx.username%,jmx.password=<br />
+DEBUG [main] [UnitsFormat] format(16.0) -> 16.0<br />
+   =>16.0&lt;=<br />
+DEBUG [main] [PluginDiscoverer] Runtime discover for CH30-0FRNC59 Java 1.6.x, config=jmx.username=,jmx.password=******,jmx.url=ptql:State.Name.sw=java,Args.*.eq=-Dproc.java.home=C:\Oracle\Middleware\jdk160_24,log=debug,installpath=C:\Oracle\Middleware\jdk160_24,<br />
+DEBUG [main] [ProductPluginManager] No ProductPlugin found for: Java 1.6.x<br />
+DEBUG [main] [MxServerDetector] [discoverServices] serverConfig=platform.log_track.level=Warn,jmx.username=,platform.log_track.enable=true,jmx.password=******,platform.config_track.enable=true,log=debug,installpath=C:\Oracle\Middleware\jdk160_24,platform.fqdn=CH30-0FRNC59.euc.nestle.com,platform.type=Win32,platform.ip=127.0.0.1,platform.name=localhost,platform.log_track.eventlogs=System,jmx.url=ptql:State.Name.sw=java,Args.*.eq=-Dproc.java.home=C:\Oracle\Middleware\jdk160_24,<br />
+DEBUG [main] [MxUtil] ptql:State.Name.sw=java,Args.*.eq=-Dproc.java.home=C:\Oracle\Middleware\jdk160_24 resolved to vmid=7960, jmx.url=service:jmx:rmi://127.0.0.1/stub/rO0ABXNyAC5qYXZheC5tYW5hZ2VtZW50LnJlbW90ZS5ybWkuUk1JU2VydmVySW1wbF9TdHViAAAAAAAAAAICAAB4cgAaamF2YS5ybWkuc2VydmVyLlJlbW90ZVN0dWLp/tzJi+FlGgIAAHhyABxqYXZhLnJtaS5zZXJ2ZXIuUmVtb3RlT2JqZWN002G0kQxhMx4DAAB4cHc3AAtVbmljYXN0UmVmMgAADDEwLjYwLjE2MC40NgAA5W6mztbP3rJ3QmqDpA4AAAE3QdfsrYACAHg=<br />
+DEBUG [main] [MxUtil] created new JMXConnector url=service:jmx:rmi://127.0.0.1/stub/rO0ABXNyAC5qYXZheC5tYW5hZ2VtZW50LnJlbW90ZS5ybWkuUk1JU2VydmVySW1wbF9TdHViAAAAAAAAAAICAAB4cgAaamF2YS5ybWkuc2VydmVyLlJlbW90ZVN0dWLp/tzJi+FlGgIAAHhyABxqYXZhLnJtaS5zZXJ2ZXIuUmVtb3RlT2JqZWN002G0kQxhMx4DAAB4cHc3AAtVbmljYXN0UmVmMgAADDEwLjYwLjE2MC40NgAA5W6mztbP3rJ3QmqDpA4AAAE3QdfsrYACAHg=, classloader=sun.misc.Launcher$AppClassLoader@17182c1<br />
+DEBUG [main] [MxServerDetector] [discoverMxServices] url=ptql:State.Name.sw=java,Args.*.eq=-Dproc.java.home=C:\Oracle\Middleware\jdk160_24<br />
+DEBUG [main] [MxServerDetector] [discoverMxServices] objName=java.lang:type=Threading<br />
+DEBUG [main] [MxServerDetector] [discoverMxServices] objName=java.lang:type=Threading<br />
+DEBUG [main] [MxServerQuery] [findServices] servicePlugins={Java 1.6.x Java GC=null}<br />
+DEBUG [main] [MxServerQuery] [findServices] name=java.lang:type=GarbageCollector,*<br />
+DEBUG [main] [MxServerQuery] [findServices] services=(2)[java.lang:type=GarbageCollector,name=Copy, java.lang:type=GarbageCollector,name=MarkSweepCompact]<br />
+DEBUG [main] [MxServerDetector] discovered 2 services<br />
+DEBUG [main] [ProductPluginManager] No ControlPlugin found for: Java 1.6.x Java GC<br />
+DEBUG [main] [ProductPluginManager] No ControlPlugin found for: Java 1.6.x Java GC<br />
+DEBUG [main] [MxServerDetector] discovered 2 services<br />
+<br />
+Runtime Resource Report...<br />
+Platform=Win32, fqdn=CH30-0FRNC59.euc.nestle.com (Microsoft Windows 2008)<br />
+config...<br />
+product..null<br />
+metric...platform.log_track.level=Warn,platform.log_track.eventlogs=System,platform.log_track.enable=true,platform.config_track.enable=true,<br />
+control..null<br />
+cprops...cpuSpeed=4 @ 2394 MHz,secondaryDNS=160.213.132.241,defaultGateway=0.0.0.0,arch=x86,ram=2992 MB,vendor=Microsoft,vendorVersion=2008,primaryDNS=160.213.132.237,ip=10.60.160.46,version=6.0,<br />
+  CH30-0FRNC59 Java 1.6.x cprops:<br />
+  CH30-0FRNC59 Java 1.6.x services:<br />
+    CH30-0FRNC59 Java 1.6.x Copy Java GC<br />
+     config...<br />
+     product..name=Copy,<br />
+     metric...<br />
+     control..null<br />
+     rt.......null<br />
+Java 1.6.x Java GC Collection Count:<br />
+   java.lang:type=GarbageCollector,name=Copy:CollectionCount:jmx.url=ptql%3AState.Name.sw%3Djava%2CArgs.*.eq%3D-Dproc.java.home%3DC%3A\Oracle\Middleware\jdk160_24,jmx.username=%jmx.username%,jmx.password=<br />
+DEBUG [main] [UnitsFormat] format(8.0) -> 8.0<br />
+   =>8.0&lt;=<br />
+Java 1.6.x Java GC Collection Time:<br />
+   java.lang:type=GarbageCollector,name=Copy:CollectionTime:jmx.url=ptql%3AState.Name.sw%3Djava%2CArgs.*.eq%3D-Dproc.java.home%3DC%3A\Oracle\Middleware\jdk160_24,jmx.username=%jmx.username%,jmx.password=<br />
+DEBUG [main] [UnitsFormat] format(12.0) -> 12.0<br />
+   =>12.0&lt;=<br />
+    CH30-0FRNC59 Java 1.6.x MarkSweepCompact Java GC<br />
+     config...<br />
+     product..name=MarkSweepCompact,<br />
+     metric...<br />
+     control..null<br />
+     rt.......null<br />
+Java 1.6.x Java GC Collection Count:<br />
+   java.lang:type=GarbageCollector,name=MarkSweepCompact:CollectionCount:jmx.url=ptql%3AState.Name.sw%3Djava%2CArgs.*.eq%3D-Dproc.java.home%3DC%3A\Oracle\Middleware\jdk160_24,jmx.username=%jmx.username%,jmx.password=<br />
+DEBUG [main] [UnitsFormat] format(0.0) -> 0.0<br />
+   =>0.0&lt;=<br />
+Java 1.6.x Java GC Collection Time:<br />
+   java.lang:type=GarbageCollector,name=MarkSweepCompact:CollectionTime:jmx.url=ptql%3AState.Name.sw%3Djava%2CArgs.*.eq%3D-Dproc.java.home%3DC%3A\Oracle\Middleware\jdk160_24,jmx.username=%jmx.username%,jmx.password=<br />
+DEBUG [main] [UnitsFormat] format(0.0) -> 0.0<br />
+   =>0.0&lt;=<br />
+<br />
+C:\Oracle\Middleware\jdk160_24\bin><br />
+<br />
+</i>

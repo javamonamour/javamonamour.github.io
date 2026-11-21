@@ -1,0 +1,15 @@
+---
+layout: post
+title: "DbAdapter.rar: weblogic.application.ModuleException: weblogic.connector.exception.RAException: Jndi Name is null or empty."
+date: 2012-04-23T10:57:00.001+02:00
+permalink: /2012/04/dbadapterrar-weblogicapplicationmodulee.html
+blogger_id: "6425693407570768512"
+tags: ["DBAdapter"]
+---
+I have tried everything:<br />
+- deleted the deployment and redeployed again<br />
+- restarted the Managed Server<br />
+- visually checked the plan.xml <br />
+<br />
+<br />
+I am persuaded that the problem stems from Connection Factories referring to non -existing Datasources... and that the error message should actually be "unable to locate object bla in JNDI tree"..... and surely the error message is really poorly fomulated and gives you no clue of what went wrong.

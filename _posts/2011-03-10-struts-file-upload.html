@@ -1,0 +1,66 @@
+---
+layout: post
+title: "Struts File Upload"
+date: 2011-03-10T17:57:00.000+01:00
+permalink: /2011/03/struts-file-upload.html
+blogger_id: "2793435920133543807"
+tags: ["FileUpload"]
+---
+<a href="http://wiki.apache.org/struts/StrutsFileUpload">http://wiki.apache.org/struts/StrutsFileUpload</a><br />
+<br />
+in a nutshell:<br />
+<br />
+<br />
+in the JSP:<br />
+<br />
+<pre name="code" class="brush: xml">
+<form action="/product/doUpload" enctype="multipart/form-data" method="post"> 
+ <html:file property="theFile"/>
+        <input type="submit" value="Send">
+ 
+</form>
+</pre><br />
+in the Action:<br />
+<br />
+<pre name="code" class="brush: java">
+ProductUploadForm myForm = (ProductUploadForm) form;
+SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+
+
+
+// Process the FormFile
+FormFile myFile = myForm.getTheFile();
+String contentType = myFile.getContentType();
+String fileNameAbsolutePath    = myFile.getFileName();
+int fileSize       = myFile.getFileSize();
+
+logger.debug("uploading File Name: " + fileNameAbsolutePath + ", File Size: " + fileSize + ", contentType: " + contentType);
+String fileName = new File(fileNameAbsolutePath).getName();
+String newFileName = STAGING_DIR + fileName + sdf.format(new Date());
+
+try {
+ // copy the stream content to a File in a staging directory, adding timestamp to the file name
+ File f2 = new File(newFileName);
+ OutputStream out = new FileOutputStream(f2);
+ InputStream in = myFile.getInputStream();
+ byte[] buf = new byte[1024];
+
+ int len;
+
+ while ((len = in.read(buf)) > 0){
+  out.write(buf, 0, len);
+ }
+ in.close();
+ out.close();
+ logger.debug("finished copying File Name: " + fileNameAbsolutePath);
+} catch (Exception e) {
+ logger.error("problem uploading file name : " + fileNameAbsolutePath, e);
+}
+
+
+</pre><br />
+<br />
+and the Form contains an attribute<br />
+ private org.apache.struts.upload.FormFile theFile;<br />
+<br />
+with getter and setter

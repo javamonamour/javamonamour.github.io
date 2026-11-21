@@ -1,0 +1,42 @@
+---
+layout: post
+title: "WLI: how to clean up a WLI environment"
+date: 2009-11-19T15:16:00.000+01:00
+permalink: /2009/11/wli-how-to-clean-up-wli-environment.html
+blogger_id: "1810707566681363618"
+---
+- TERMINATE all processes (using for instance the WLI Console)<br />
+- purge all tasks<br />
+- stop all processes and task applications<br />
+- uninstall all processes and task applications<br />
+- stop application servers<br />
+- delete all this:<br />
+<br />
+    ¤ / pathToYourDomain / yourDomain /wliconfig /ProcessTypeProperties.xml<br />
+<br />
+    ¤ / pathToYourDomain / yourDomain /wliconfig /AppliServers /ProcessTypeProperties.xml<br />
+<br />
+    ¤ / pathToYourDomain / yourDomain /servers/ adminServer /cache/*<br />
+<br />
+    ¤ / pathToYourDomain / yourDomain /servers/ adminServer /tmp/*<br />
+<br />
+    ¤ / pathToYourDomain / yourDomain /servers/ appliServer /cache/*<br />
+<br />
+    ¤ / pathToYourDomain / yourDomain /servers/ appliServer /tmp/*<br />
+<br />
+    ¤ / pathToYourDomain / yourDomain /servers/ appliServer /stage<br />
+<br />
+<br />
+DB:<br />
+- you must disable constraints<br />
+- truncate all tables starting by JPD_* WLI_*, BUT WLI_CALENDAR and WLI_CALENDAR_SEQUENCE<br />
+<br />
+restart servers<br />
+ProcessTypeProperties.xml will be recreated<br />
+<br />
+<br />
+verify with WLI Console that no process nor process instance exist<br />
+<br />
+redeploy processes and tasks applications<br />
+<br />
+recreate all resources

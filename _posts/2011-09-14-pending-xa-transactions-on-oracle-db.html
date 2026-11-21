@@ -1,0 +1,37 @@
+---
+layout: post
+title: "Pending XA Transactions on Oracle DB"
+date: 2011-09-14T10:23:00.001+02:00
+permalink: /2011/09/pending-xa-transactions-on-oracle-db.html
+blogger_id: "507941294954782808"
+tags: ["xa"]
+---
+With the statement:<br />
+<br />
+SELECT formatid, globalid, branchid FROM SYS.DBA_PENDING_TRANSACTIONS;<br />
+select * from DBA_2PC_PENDING;<br />
+select * from V$GLOBAL_TRANSACTION<br />
+<br />
+<br />
+you should be able to extract info on the pending XA transactions.<br />
+<br />
+<a href="http://www.oracle.com/technetwork/database/clustering/overview/distributed-transactions-and-xa-163941.pdf">This is an excellent document</a> on the parameters regulating the timeout on Oracle DB with XA transactions <br />
+<br />
+<br />
+More interesting reading here:<br />
+<a href="http://download.oracle.com/docs/cd/B28359_01/appdev.111/b28424/adfns_xa.htm">http://download.oracle.com/docs/cd/B28359_01/appdev.111/b28424/adfns_xa.htm</a><br />
+<br />
+<br />
+two-phase commit = prepare + commit, then forget<br />
+<br />
+<br />
+DEFAULT_XA_TIMEOUT = 60<br />
+XA_SETTIMEOUT defaults to 60<br />
+DISTRIBUTED_LOCK_TIMEOUT specifies the amount of time (in seconds) for distributed transactions to wait for locked resources.<br />
+<br />
+<br />
+Generally, these timeouts should be set in the following order:  <br />
+1.  TM’s global transaction timeout (or the JTA timeout) <  <br />
+2.  SesTm and SesWt (Transaction Timeout for JDBC or PL/SQL) <  <br />
+3.  DISTRIBUTED_LOCK_TIMEOUT <  <br />
+4.  Either of CONNECT_TIME or IDLE_TIME

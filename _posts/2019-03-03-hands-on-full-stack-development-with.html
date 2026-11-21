@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Hands On Full Stack Development with Spring Boot 2.0 and React by Juha Hinkula"
+date: 2019-03-03T14:27:00.000+01:00
+permalink: /2019/03/hands-on-full-stack-development-with.html
+blogger_id: "8072431870094076767"
+tags: ["reactjs", "springboot"]
+---
+<div class="separator" style="clear: both; text-align: center;"><a href="https://www.packtpub.com/application-development/hands-full-stack-development-spring-boot-20-and-react" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/c95c447e9e875f96.png" width="259" height="320" data-original-width="302" data-original-height="373" /></a></div><br />
+<br />
+<br />
+you are warned: "incula" is a terrible word in Italian, so if you talk about this book with Italians you should be very careful.<br />
+<br />
+<a href="https://github.com/PacktPublishing/Hands-On-Full-Stack-Development-with-Spring-Boot-2.0-and-React">https://github.com/PacktPublishing/Hands-On-Full-Stack-Development-with-Spring-Boot-2.0-and-React</a> <br />
+<br />
+<br />
+Better to install MariaDB.<br />
+<br />
+If you want to change root password:<br />
+<br />
+cd D:\Program Files\MariaDB 10.3\bin<br />
+<br />
+<b>mysqladmin.exe --user=root --password=oldpassword password "newpassword"</b><br />
+<br />
+to connect<br />
+<br />
+<b>mysql -u root -p</b><br />
+<br />
+<b>create database cardb</b><br />
+<br />
+<br />
+<br />
+For chapter04, password can be replaced with "pippo" (bcrypted the value is $2a$04$ryGKh2NmcAj.dRzU/MDDVeTApJAMrfbyzVVGlclK8u/HLrTamBH5m )<br />
+<br />
+<br />
+curl -u admin:pippo http://localhost:8080/api (this will fail because you need a valid JWT token)<br />
+<br />
+then the POST to localhost:8080/login must have a body {"username": "admin", "password": "pippo" }<br />
+<br />
+and in the Authorization header you get Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImV4cCI6MTU1MTY0Nzg3OX0.DlHNCsxwasv4wjZcar2afWWx5ispQWFfIfL6NEnsrDYucLqPQWO53WcmUUDJfw12t0ux-9P-HzwF8qKnd1SNDg<br />
+<br />
+<br />
+

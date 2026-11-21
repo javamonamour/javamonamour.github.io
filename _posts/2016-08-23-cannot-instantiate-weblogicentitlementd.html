@@ -1,0 +1,72 @@
+---
+layout: post
+title: "Cannot instantiate weblogic.entitlement.data.ldap.EData"
+date: 2016-08-23T13:00:00.002+02:00
+permalink: /2016/08/cannot-instantiate-weblogicentitlementd.html
+blogger_id: "8781337384049427473"
+tags: ["solaris", "weblogic"]
+---
+We got an interesting failure on WebLogic startup:
+
+<pre>
+Cannot instantiate weblogic.entitlement.data.ldap.EData
+null
+java.lang.ExceptionInInitializerError
+ at com.octetstring.vde.util.guid.GuidGenerator.nextGuidInBytes(GuidGenerator.java:125)
+ at com.octetstring.vde.util.guid.Guid.<init>(Guid.java:84)
+ at com.octetstring.vde.backend.standard.BackendStandard.add(BackendStandard.java:379)
+ at com.octetstring.vde.backend.BackendHandler.add(BackendHandler.java:460)
+ at weblogic.ldap.EmbeddedLDAPConnection.add(EmbeddedLDAPConnection.java:1152)
+ Truncated. see log file for complete stacktrace
+
+Caused By: java.lang.NullPointerException
+ at java.lang.System.arraycopy(Native Method)
+ at com.octetstring.vde.util.guid.GuidParamGenerator.generateNodeID(GuidParamGenerator.java:47)
+ at com.octetstring.vde.util.guid.GuidStateManager.initializeGUIDParameters(GuidStateManager.java:59)
+ at com.octetstring.vde.util.guid.GuidStateManager.<init>(GuidStateManager.java:30)
+ at com.octetstring.vde.util.guid.GuidStateManager.<clinit>(GuidStateManager.java:23)
+ Truncated. see log file for complete stacktrace
+
+</pre>
+<br/>
+
+The getLocalHost test failed:
+<br/>
+<pre>
+
+bash-3.2$ cat TestMe.java
+ import java.net.InetAddress;
+ import java.net.UnknownHostException;
+
+public class TestMe {
+ public static void main(String[] args) throws UnknownHostException 
+{ System.out.println(InetAddress.getLocalHost()); } 
+}
+
+javac TestMe.java 
+ java -cp . TestMe
+
+Exception in thread "main" java.net.UnknownHostException: date: date
+ at java.net.InetAddress.getLocalHost(InetAddress.java:1430)
+ at TestMe.main(TestMe.java:6)
+
+</pre>
+
+
+
+
+
+<br/>
+
+
+It turned out that "hostname" prints "date" , instead of the actual hostname
+
+<br/>
+
+Checking into the usual files /etc/hosts /etc/inet/hosts /etc/hostname.vnet0 /etc/hostname.vnet1 (it's a Solaris box) didn't reveal anything strange.
+
+<br/>
+
+Up to the OS specialist to fix it.
+
+

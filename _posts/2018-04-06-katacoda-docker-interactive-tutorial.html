@@ -1,0 +1,94 @@
+---
+layout: post
+title: "Katacoda docker interactive tutorial"
+date: 2018-04-06T23:21:00.002+02:00
+permalink: /2018/04/katacoda-docker-interactive-tutorial.html
+blogger_id: "1497644003048876351"
+tags: ["docker", "katacoda"]
+---
+Katacoda is the best thing I have seen this year. IT teachers and IT books are made obsolete by this tool.<br />
+<br />
+<a href="https://www.katacoda.com/courses/docker/deploying-first-container">https://www.katacoda.com/courses/docker/deploying-first-container</a><br />
+<br />
+docker search redis<br />
+<br />
+docker run -d redis<br />
+<br />
+docker ps<br />
+<br />
+docker inspect 654e238d3bef<br />
+docker logs 654e238d3bef<br />
+<br />
+docker run -d --name redisHostPort -p 6379:6379 redis:latest<br />
+<br />
+docker run -d --name redisDynamic -p 6379 redis:latest<br />
+<br />
+docker port redisDynamic 6379<br />
+<br />
+docker run -d --name redisMapped -v /opt/docker/data/redis:/data redis<br />
+<br />
+docker run -d ubuntu ps<br />
+docker exec ubuntu bash<br />
+<br />
+Dockerfile<br />
+<pre>FROM nginx:alpine
+COPY . /usr/share/nginx/html
+</pre><br />
+docker build -t webserver-image:v1 .<br />
+<br />
+docker images<br />
+<br />
+docker run -d -p 80:80 webserver-image:v1<br />
+<br />
+curl docker<br />
+cat /etc/hosts<br />
+<pre>127.0.0.1       localhost
+::1     localhost ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+127.0.0.1       registry.test.training.katacoda.com
+172.17.0.51     host01 751a165ea438 st_4yzuip_d2d
+172.17.0.51     docker 751a165ea438 st_4yzuip_d2d
+172.17.0.36     e1c00230b89e
+</pre><br />
+to create data container:<br />
+docker create -v /config --name dataContainer busybox<br />
+<br />
+docker cp config.conf dataContainer:/config/<br />
+docker run --volumes-from dataContainer ubuntu ls /config<br />
+<br />
+to move the data container to another machine:<br />
+docker export dataContainer &gt; dataContainer.tar<br />
+docker import dataContainer.tar<br />
+<br />
+<br />
+<br />
+Networks<br />
+<br />
+docker network create backend-network<br />
+docker run -d --name=redis --net=backend-network redis<br />
+docker run --net=backend-network alpine env<br />
+docker run --net=backend-network alpine cat /etc/resolv.conf<br />
+<pre>nameserver 127.0.0.11
+options ndots:0
+</pre><br />
+docker run --net=backend-network alpine ping -c1 redis<br />
+docker network create frontend-network<br />
+docker network connect frontend-network redis<br />
+docker run -d -p 3000:3000 --net=frontend-network katacoda/redis-node-docker-example<br />
+curl docker:3000<br />
+<br />
+docker network create frontend-network2<br />
+docker network connect --alias db frontend-network2 redis<br />
+docker run --net=frontend-network2 alpine ping -c1 db<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

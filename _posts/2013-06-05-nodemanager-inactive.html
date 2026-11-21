@@ -1,0 +1,44 @@
+---
+layout: post
+title: "NodeManager inactive"
+date: 2013-06-05T17:06:00.001+02:00
+permalink: /2013/06/nodemanager-inactive.html
+blogger_id: "7644250584756302009"
+tags: ["nodemanager"]
+---
+On a 2 nodes cluster, for one node (machine) I was getting that NodeManager was Inactive/Unreachable:
+<br/><br/>
+
+<i>Could not execute command "getVersion" on the node manager. Reason: "Access to domain  for user BLA denied</i>
+<br/><br/>
+
+I have done the usual check on nodemanager.domains file.
+then googling I found this post 
+<a href="http://jvzoggel.wordpress.com/2011/08/19/oracle-weblogic-nodemanager-bea-300033/">http://jvzoggel.wordpress.com/2011/08/19/oracle-weblogic-nodemanager-bea-300033/</a>
+
+so I have edited:
+<br/><br/>
+vi /opt/oracle/domains/osbstg1do/config/nodemanager/nm_password.properties 
+<br/><br/>
+
+entering:
+<br/><br/>
+username=weblogic_nm<br/>
+password=weblogic_pw<br/>
+<br/><br/>
+
+
+and restarted the NodeManager. After restart the file contains only a line hashed=blablabla.
+
+
+<br/><br/>
+
+The same username/password must be entered in Domain/Security/General in "NodeManager Username" and "NodeManager Password"
+
+<br/><br/>
+
+
+See also <a href="/2011/09/nmconnect-nmstart-nmkill.html">/2011/09/nmconnect-nmstart-nmkill.html</a>
+
+
+

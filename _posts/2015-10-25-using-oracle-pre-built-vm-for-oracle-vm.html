@@ -1,0 +1,87 @@
+---
+layout: post
+title: "Using Oracle pre-built VM for Oracle VM Manager and Server"
+date: 2015-10-25T17:55:00.001+01:00
+permalink: /2015/10/using-oracle-pre-built-vm-for-oracle-vm.html
+blogger_id: "4375342090386244525"
+tags: ["oraclevm", "virtualbox"]
+---
+No need to install from scratch, you can use these 2 prebuilt VMs:
+<br/><br/>
+<a href="http://www.oracle.com/technetwork/server-storage/vm/template-1482544.html">http://www.oracle.com/technetwork/server-storage/vm/template-1482544.html</a>
+
+<br/><br/>
+
+I download and "import appliance" OracleVMManager3.2.4-b524.ova into VirtualBox. Check that you have 4 GB ram and accept EULA.
+
+<br/><br/>
+<i>
+Could not start the machine Oracle VM Manager 3.2.4-b524 because the following physical network interfaces were not found:
+<br/>
+eth0 (adapter 1)
+<br/>
+You can either change the machine's network settings or stop the machine.<br/>
+</i>
+
+
+
+<br/><br/>
+
+
+"change network settings" and use "host only network". Assign static IP 10.0.0.50, netmask 255.255.255.0, gateway 10.0.0.1, DNS server 10.0.0.1, hostname = ovmm.my.company.com (maybe also 192.168.56.1 could do for gateway and dns)
+
+<br/><br/>
+
+OVM should start.
+
+
+<br/><br/>
+
+Open firefox, log into https://localhost:7002/ovm/console with admin/Welcome1
+
+
+<br/><br/>
+
+If your screen gets locked, remember that ovm password is Welcome1.
+
+<br/><br/>
+
+Now you can import appliance OracleVMServer3.2.4-b525.ova in VirtualBox. 
+
+<br/><br/>
+<i>
+Could not start the machine Oracle VM Server 3.2.4-b525 because the following physical network interfaces were not found:
+<br/>
+eth0 (adapter 1), eth1 (adapter 2)
+<br/>
+You can either change the machine's network settings or stop the machine.
+<br/>
+</i>
+
+<br/><br/>
+assign "host only" in the vm settings.
+<br/><br/>
+
+Assign static IP 10.0.0.51, netmask 255.255.255.0, gateway 10.0.0.1, DNS server 10.0.0.1, hostname = ovms1.my.company.com
+<br/><br/>
+
+
+one the OVM Server is up, you can connect from the OVM Manager opening a terminal windowd : ssh root@10.0.0.51 (pw is ovsroot)
+<br/><br/>
+In reality one should use IPs in the range 192.168.56.*
+<br/><br/>
+
+<br/><br/>
+
+References
+<br/><br/>
+<a href="http://www.oracle.com/technetwork/systems/hands-on-labs/deploy-rac-ovm-cluster-2101019.html?msgid=3-9568010570#2">http://www.oracle.com/technetwork/systems/hands-on-labs/deploy-rac-ovm-cluster-2101019.html?msgid=3-9568010570#2</a>  cool lab on how to setup a OVMManager/Server environment.
+
+
+<br/><br/>
+
+
+
+
+
+

@@ -1,0 +1,27 @@
+---
+layout: post
+title: "WLST to create a WLS server"
+date: 2012-11-03T19:16:00.004+01:00
+permalink: /2012/11/wlst-to-create-wls-server.html
+blogger_id: "1822736668046103978"
+tags: ["WLST"]
+---
+<pre name="code" class="brush: java">
+
+connect("weblogic", "weblogic1", "t3://hostname.acme.com:7001")
+cd('/')
+SERVERNAME='osbts2ms2'
+HOST='hostname.acme.com'
+PORTNUMBER='8007'
+edit()
+startEdit()
+create(SERVERNAME, 'Server')
+cd('Servers/'+SERVERNAME)
+set('ListenAddress',HOST)
+set('ListenPort',PORTNUMBER)
+set('Machine', HOST)
+save()
+validate()
+activate()
+
+</pre>

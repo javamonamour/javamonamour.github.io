@@ -1,0 +1,66 @@
+---
+layout: post
+title: "Oracle nXSD in action: parsing EDI to XML"
+date: 2011-12-11T18:25:00.001+01:00
+permalink: /2011/12/oracle-nxsd-in-action-parsing-edi-to.html
+blogger_id: "577651446813502989"
+tags: ["nxsd"]
+---
+Schema level options:<br />
+<br />
+<a href="http://docs.oracle.com/cd/E21764_01/integration.1111/e10231/nfb.htm#CIAHDGJI">http://docs.oracle.com/cd/E21764_01/integration.1111/e10231/nfb.htm#CIAHDGJI</a><br />
+<br />
+Element level options:<br />
+<br />
+<a href="http://docs.oracle.com/cd/E21764_01/integration.1111/e10231/nfb.htm#CIACIJCF">http://docs.oracle.com/cd/E21764_01/integration.1111/e10231/nfb.htm#CIACIJCF</a><br />
+<br />
+lots of valuable examples here <br />
+<a href="http://otndnld.oracle.co.jp/document/products/as10g/101310/doc_cd/integrate.1013/b28994/nfb.htm#BGBBAJFD">http://otndnld.oracle.co.jp/document/products/as10g/101310/doc_cd/integrate.1013/b28994/nfb.htm#BGBBAJFD</a><br />
+<br />
+I have a EDI document, made by several fixed length segments.<br />
+Each segment starts with a fixed label.<br />
+Each segment contains multiple fixed length fields.<br />
+Segment can appear in groups (sequence of many segments).<br />
+Groups can appear multiple times.<br />
+<br />
+<br />
+Lesson learned:<br />
+<br />
+* since there is no fixed sequence of segments, you should use this construct<br />
+xsd:choice minOccurs="0" maxOccurs="1000"<br />
+xsd:element name="ACME0001" type="tns:ACME0001_Type" nxsd:startsWith="ACME0001"<br />
+<br />
+xsd:element name="ACME0002" type="tns:ACME0002_Type" nxsd:startsWith="ACME0002"<br />
+....<br />
+<br />
+<br />
+(using maxOccurs="unbounded" sends the nXSD parser into an infinite loop)<br />
+<br />
+<br />
+* segments who are not needed, should still be parsed, using a generic element:<br />
+<br />
+xsd:element name="ACME0001" type="tns:Any1064Block_Type" minOccurs="0" maxOccurs="10" nxsd:startsWith="ACME0001  "<br />
+<br />
+where Any1064Block_Type is:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;xsd:complexType name="Any1064Block_Type"&gt;
+      &lt;xsd:sequence&gt;
+        &lt;xsd:element name="DATA" type="xsd:string" nxsd:style="fixedLength" nxsd:length="1054"/&gt;
+      &lt;/xsd:sequence&gt;
+    &lt;/xsd:complexType&gt;
+
+</pre><br />
+where 1054 = 1064 (length of the segment)  - length of the "startsWith" element (ACME0001  )<br />
+<br />
+<br />
+<br />
+* if the data you are interested in are in the middle of a segment, you can "skip" the initial characters:<br />
+<br />
+xsd:element name="PONbr" type="xsd:string" minOccurs="1" nxsd:style="fixedLength" nxsd:length="35" <b>nxsd:skip="136"</b><br />
+<br />
+<br />
+* you should always consume each segment to its end, maybe using a "FLUFF" element just for the sake of telling the parser to skip data:<br />
+<br />
+xsd:element name="FLUFF2" type="xsd:string" minOccurs="1" nxsd:style="fixedLength" nxsd:length="883"<br />
+<br />
+failing to consume a segment to its exact end will stop the parser.

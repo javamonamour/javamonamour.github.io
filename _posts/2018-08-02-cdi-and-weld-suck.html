@@ -1,0 +1,40 @@
+---
+layout: post
+title: "CDI and WELD suck"
+date: 2018-08-02T17:36:00.001+02:00
+permalink: /2018/08/cdi-and-weld-suck.html
+blogger_id: "7400411373742553227"
+tags: ["cdi", "weld", "wildfly"]
+---
+A @Stateless bean could not be injected because not found by WELD<br />
+<br />
+<pre>org.jboss.weld.exceptions.DeploymentException: WELD-001408: Unsatisfied dependencies for type PersistenceService with qualifiers @Default
+  at injection point [BackedAnnotatedField] @Inject private com.pippo.pluto.paperino.rest.MafaldaController.persistenceService
+  at com.pippo.pluto.paperino.rest.MafaldaController.persistenceService(MafaldaController.java:0)
+
+ at org.jboss.weld.bootstrap.Validator.validateInjectionPointForDeploymentProblems(Validator.java:362)
+ at org.jboss.weld.bootstrap.Validator.validateInjectionPoint(Validator.java:284)
+ at org.jboss.weld.bootstrap.Validator.validateGeneralBean(Validator.java:137)
+ at org.jboss.weld.bootstrap.Validator.validateRIBean(Validator.java:158)
+ at org.jboss.weld.bootstrap.Validator.validateBean(Validator.java:501)
+ at org.jboss.weld.bootstrap.ConcurrentValidator$1.doWork(ConcurrentValidator.java:61)
+ at org.jboss.weld.bootstrap.ConcurrentValidator$1.doWork(ConcurrentValidator.java:59)
+ at org.jboss.weld.executor.IterativeWorkerTaskFactory$1.call(IterativeWorkerTaskFactory.java:62)
+ at org.jboss.weld.executor.IterativeWorkerTaskFactory$1.call(IterativeWorkerTaskFactory.java:55)
+ at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+ at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+ at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+ at java.lang.Thread.run(Thread.java:748)
+ at org.jboss.threads.JBossThread.run(JBossThread.java:320)
+</pre><br />
+<a href="https://docs.jboss.org/author/display/WFLY10/CDI+Reference">https://docs.jboss.org/author/display/WFLY10/CDI+Reference</a><br />
+<br />
+Even if the bean is a session bean, the archive (.jar) is not an “explicit bean archives (basically any archive containing the beans.xml file)“  because it doesn’t contain a beans.xml file (only the war file has a beans.xml file).<br />
+<br />
+Since CDI 1.1 an archive can be implicit : “An implicit bean archive is any archive that contains one or more classes annotated with a bean defining annotation (scope annotation) or one or more session beans.”. Implicit archives don’t need a beans.xml.<br />
+<br />
+But by default “implicit” is disabled! To enable it, you can either do the jboss-all.xml trick or do the “subsystem=weld:write-attribute(name=require-bean-descriptor,value=true)”  trick. See again <a href="https://docs.jboss.org/author/display/WFLY10/CDI+Reference">https://docs.jboss.org/author/display/WFLY10/CDI+Reference</a>  for more details.  Or, you can simply add a beans.xml to the JAR.<br />
+<br />
+<br />
+If all this sounds to you like complete chaos and needless complication, it’s because it is!<br />
+

@@ -1,0 +1,69 @@
+---
+layout: post
+title: "Nginx with LUA and Java handlers"
+date: 2018-05-25T07:55:00.002+02:00
+permalink: /2018/05/nginx-with-lua-and-java-handlers.html
+blogger_id: "7907694784902866482"
+tags: ["nginx"]
+---
+<a href="https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7">https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-centos-7</a><br />
+<br />
+sudo yum install epel-release<br />
+sudo yum install nginx<br />
+sudo systemctl start nginx<br />
+<br />
+nginx should now be running, enter http://localhost to test<br />
+<br />
+documents in /usr/share/nginx/html<br />
+<br />
+configuration in /etc/nginx/nginx.conf<br />
+<br />
+logs in /var/log/nginx/access.log<br />
+<br />
+sudo  ausearch -c 'nginx' --raw | audit2allow -M my-nginx<br />
+sudo semodule -i my-nginx.pp<br />
+#disable selinux<br />
+setenforce 0<br />
+<br />
+<br />
+<br />
+nginx with Docker https://hub.docker.com/_/nginx/<br />
+docker pull nginx<br />
+docker run --name nginx -d -p 10080:80 nginx<br />
+http://localhost:10080/<br />
+<br />
+<br />
+<br />
+Setup a reverse proxy:<br />
+sudo vi /etc/nginx/conf.d/mynexus.conf<br />
+<br />
+<pre>server{
+    listen 18081;
+    location / {
+        proxy_pass "http://localhost:8081";
+    }
+}
+</pre><br />
+systemctl stop nginx<br />
+systemctl start nginx<br />
+<br />
+you can now point your maven mirror in settings.xml to point to 18081 and intercept all requests to Nexus<br />
+<br />
+How to embed a Java handler in the loop ? <br />
+https://www.nginx.com/resources/wiki/modules/java_handler/ <br />
+http://nginx-clojure.github.io/ <br />
+<br />
+Handlers in Java implement this interface NginxJavaRingHandler<br />
+https://github.com/nginx-clojure/nginx-clojure/blob/master/src/java/nginx/clojure/java/NginxJavaRingHandler.java<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+Ref: quick quide to configure yourdomain.com <a href="https://www.godaddy.com/garage/how-to-install-and-configure-nginx-on-centos-7/">https://www.godaddy.com/garage/how-to-install-and-configure-nginx-on-centos-7/</a><br />
+<br />
+nginx as reverse proxy <a href="https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/">https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/</a><br />
+<br />
+<br />
+<br />
+

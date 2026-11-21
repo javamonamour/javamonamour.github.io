@@ -1,0 +1,59 @@
+---
+layout: post
+title: "Weblogic WLST from Java"
+date: 2009-02-14T10:51:00.001+01:00
+permalink: /2009/02/weblogic-wlst-from-java.html
+blogger_id: "4843651898926997359"
+tags: ["WLST"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2012-11-28
+    html: "thanks for straight example to connect weblogic server using wlst in java.<br /><br />Cheers,<br /><br />agus w"
+  - author: "Anonymous"
+    date: 2016-05-05
+    html: "thank for your topic,<br />but i&#39;m having a prolem about getting Role from java when using wlst.<br />my code following:<br /><br />------------------------------------------<br />import weblogic.management.scripting.utils.WLSTInterpreter;<br />import weblogic.management.scripting.WLST;<br />public class JavaTestWLST {<br /> <br />public JavaTestWLST() {<br /> // TODO Auto-generated constructor stub<br />}<br />public static void main(String[] args) {<br />  // TODO Auto-generated method stub <br />try {<br />WLST.ensureInterpreter();<br />WLSTInterpreter interpreter = WLST.getWLSTInterpreter();  <br />interpreter.exec(&quot;connect(&#39;admin&#39;,&#39;uatwlob1&#39;,&#39;t3://10.53.253.166:7001&#39;)&quot;); <br />interpreter.exec(&quot;ls()&quot;);<br />interpreter.exec(&quot;createAppRole(&#39;obi&#39;, &#39;MYROLE&#39;)&quot;);           <br />}<br />catch(Exception e){<br />     System.out.println(&quot;Exception:&quot;+e.toString());         <br />} <br />}<br />}<br /><br />-----------------------------------------------<br />I&#39;ve connected sussessfully but having a error.<br />Error: <br />Exception:Traceback (innermost last):<br />  File &quot;&quot;, line 1, in ?<br />NameError: listAppRoles<br /><br />Please help me <br />Thanks."
+---
+Another huge pain in the neck is having to write complex code in Python (or Jython, whatever).<br />
+<br />
+Why should I forgo my Eclipse IDE, with remote debugger, autocomplete, etc to use an unstable Dynamic language which fails without a warning?<br />
+<br />
+So for complex code involving Weblogic tasks, here is how you can generate and run Python statememts withing Java code:<br />
+<br />
+<br />
+<pre name="code" class="brush: java">
+package com.pierre.wlst;
+
+
+import weblogic.management.scripting.WLST;
+
+import weblogic.management.scripting.utils.WLSTInterpreter;
+
+
+public class WLSTWrapper {
+
+
+public static void main(String[] args) {
+
+WLSTWrapper wrapper = new WLSTWrapper();
+
+wrapper. doSomething();
+
+}
+
+public void doSomething() {
+
+WLST.ensureInterpreter();
+
+WLSTInterpreter interpreter = WLST.getWLSTInterpreter();
+
+interpreter.exec("connect('weblogic', 'weblogic', 'localhost:7001')");
+
+interpreter.exec("ls()");
+
+}
+
+}
+
+
+
+</pre>

@@ -1,0 +1,313 @@
+---
+layout: post
+title: "HPROF is your friend (if you REALLY have nothing else at hand)"
+date: 2016-02-03T12:12:00.002+01:00
+permalink: /2016/02/hprof-is-your-friend-if-you-really-have.html
+blogger_id: "7201910472002925183"
+tags: ["hprof"]
+---
+Official Java 7 doc <a href="https://docs.oracle.com/javase/7/docs/technotes/samples/hprof.html">https://docs.oracle.com/javase/7/docs/technotes/samples/hprof.html</a>
+<br/>
+<a href="http://www.oracle.com/technetwork/java/javase/tooldescr-136044.html#gblvj">http://www.oracle.com/technetwork/java/javase/tooldescr-136044.html#gblvj</a>
+
+
+Excellent also this article <a href="http://www.brendangregg.com/blog/2014-06-09/java-cpu-sampling-using-hprof.html">http://www.brendangregg.com/blog/2014-06-09/java-cpu-sampling-using-hprof.html</a>
+<br/><br/>
+
+I am using this stupid class to test:
+
+<pre class="brush: java">
+import java.util.HashMap;
+
+public class CUT {
+  public static void main(String[] args) {
+    try {
+      for (int i = 0; i < 10000; i++) {
+         Thread.sleep(1);
+         HashMap&lt;String, Object> m = new HashMap&lt;String, Object>();
+         m.put("1", new Object());
+      }
+    }
+    catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+}
+
+
+</pre>
+
+then I run
+
+<pre>
+javac -g CUT.java
+
+java -agentlib:hprof=cpu=samples CUT
+
+less java.hprof.txt 
+
+</pre>
+
+<br/><br/>
+
+this is what I get:
+<br/><br/>
+<pre>
+THREAD START (obj=50000193, id = 200001, name="main", group="main")
+THREAD END (id = 200001)
+THREAD START (obj=50000193, id = 200004, name="DestroyJavaVM", group="main")
+THREAD END (id = 200004)
+THREAD END (id = 200002)
+TRACE 300050:
+        java.lang.Thread.sleep(Thread.java:Unknown line)
+        CUT.main(CUT.java:7)
+TRACE 300014:
+        sun.usagetracker.UsageTrackerClient.getPropertyPrivileged(UsageTrackerClient.java:136)
+        sun.usagetracker.UsageTrackerClient.getPropertyPrivileged(UsageTrackerClient.java:132)
+        sun.usagetracker.UsageTrackerClient.<clinit>(UsageTrackerClient.java:109)
+        sun.misc.PostVMInitHook.trackJavaUsage(PostVMInitHook.java:28)
+TRACE 300026:
+        java.lang.System.arraycopy(System.java:Unknown line)
+        java.lang.String.getChars(String.java:826)
+        java.lang.AbstractStringBuilder.append(AbstractStringBuilder.java:422)
+        java.lang.StringBuffer.append(StringBuffer.java:272)
+TRACE 300042:
+        java.io.FilePermissionCollection.<init>(FilePermission.java:711)
+        java.io.FilePermission.newPermissionCollection(FilePermission.java:642)
+        java.security.Permissions.getPermissionCollection(Permissions.java:254)
+        java.security.Permissions.add(Permissions.java:132)
+TRACE 300051:
+        java.util.HashMap.putVal(HashMap.java:628)
+        java.util.HashMap.put(HashMap.java:611)
+        CUT.main(CUT.java:9)
+TRACE 300052:
+        java.util.HashMap.put(HashMap.java:611)
+        CUT.main(CUT.java:9)
+CPU SAMPLES BEGIN (total = 12) Wed Feb  3 06:07:50 2016
+rank   self  accum   count trace method
+   1 58.33% 58.33%       7 300050 java.lang.Thread.sleep
+   2  8.33% 66.67%       1 300014 sun.usagetracker.UsageTrackerClient.getPropertyPrivileged
+   3  8.33% 75.00%       1 300026 java.lang.System.arraycopy
+   4  8.33% 83.33%       1 300042 java.io.FilePermissionCollection.<init>
+   5  8.33% 91.67%       1 300051 java.util.HashMap.putVal
+   6  8.33% 100.00%       1 300052 java.util.HashMap.put
+CPU SAMPLES END
+
+</pre>
+
+<br/><br/>
+
+Using the other option
+<br/>
+<pre>
+java -agentlib:hprof=cpu=times CUT
+</pre>
+<br/>
+gives me
+
+<pre>
+
+THREAD START (obj=5000017d, id = 200002, name="HPROF gc_finish watcher", group="system")
+THREAD START (obj=5000017d, id = 200001, name="main", group="main")
+THREAD END (id = 200001)
+THREAD START (obj=5000017d, id = 200003, name="DestroyJavaVM", group="main")
+THREAD END (id = 200003)
+THREAD END (id = 200002)
+TRACE 301665:
+        CUT.main(CUT.java:Unknown line)
+TRACE 301663:
+        java.util.HashMap.putVal(HashMap.java:Unknown line)
+        java.util.HashMap.put(HashMap.java:Unknown line)
+        CUT.main(CUT.java:Unknown line)
+TRACE 301664:
+        java.util.HashMap.put(HashMap.java:Unknown line)
+        CUT.main(CUT.java:Unknown line)
+TRACE 301657:
+        java.util.HashMap.<init>(HashMap.java:Unknown line)
+        CUT.main(CUT.java:Unknown line)
+TRACE 301659:
+        java.util.HashMap.hash(HashMap.java:Unknown line)
+        java.util.HashMap.put(HashMap.java:Unknown line)
+        CUT.main(CUT.java:Unknown line)
+TRACE 301661:
+        java.util.HashMap.newNode(HashMap.java:Unknown line)
+        java.util.HashMap.putVal(HashMap.java:Unknown line)
+        java.util.HashMap.put(HashMap.java:Unknown line)
+        CUT.main(CUT.java:Unknown line)
+TRACE 301660:
+        java.util.HashMap.resize(HashMap.java:Unknown line)
+        java.util.HashMap.putVal(HashMap.java:Unknown line)
+        java.util.HashMap.put(HashMap.java:Unknown line)
+        CUT.main(CUT.java:Unknown line)
+TRACE 301662:
+        java.util.HashMap.afterNodeInsertion(HashMap.java:Unknown line)
+        java.util.HashMap.putVal(HashMap.java:Unknown line)
+        java.util.HashMap.put(HashMap.java:Unknown line)
+        CUT.main(CUT.java:Unknown line)
+TRACE 300952:
+        java.util.HashMap$Node.<init>(HashMap.java:Unknown line)
+        java.util.HashMap.newNode(HashMap.java:Unknown line)
+        java.util.HashMap.putVal(HashMap.java:Unknown line)
+        java.util.HashMap.put(HashMap.java:Unknown line)
+TRACE 301656:
+        java.util.AbstractMap.<init>(AbstractMap.java:Unknown line)
+        java.util.HashMap.<init>(HashMap.java:Unknown line)
+        CUT.main(CUT.java:Unknown line)
+TRACE 301658:
+        java.lang.String.hashCode(String.java:Unknown line)
+        java.util.HashMap.hash(HashMap.java:Unknown line)
+        java.util.HashMap.put(HashMap.java:Unknown line)
+        CUT.main(CUT.java:Unknown line)
+TRACE 300163:
+        java.lang.invoke.MethodHandle.<clinit>(MethodHandle.java:Unknown line)
+TRACE 300094:
+        java.lang.invoke.MethodHandleImpl.<clinit>(MethodHandleImpl.java:Unknown line)
+        java.lang.invoke.MethodHandle.<clinit>(MethodHandle.java:Unknown line)
+TRACE 300252:
+        java.lang.CharacterDataLatin1.getProperties(CharacterDataLatin1.java:Unknown line)
+        java.lang.CharacterDataLatin1.toLowerCase(CharacterDataLatin1.java:Unknown line)
+        java.lang.Character.toLowerCase(Character.java:Unknown line)
+        java.lang.Character.toLowerCase(Character.java:Unknown line)
+TRACE 301251:
+        sun.misc.PerfCounter.<init>(PerfCounter.java:Unknown line)
+        sun.misc.PerfCounter.newPerfCounter(PerfCounter.java:Unknown line)
+        sun.misc.PerfCounter$CoreCounters.<clinit>(PerfCounter.java:Unknown line)
+        sun.misc.PerfCounter.getReadClassBytesTime(PerfCounter.java:Unknown line)
+CPU TIME (ms) BEGIN (total = 11886) Wed Feb  3 06:21:21 2016
+rank   self  accum   count trace method
+   1 94.75% 94.75%       1 301665 CUT.main
+   2  1.10% 95.85%   10000 301663 java.util.HashMap.putVal
+   3  0.83% 96.69%   10000 301664 java.util.HashMap.put
+   4  0.75% 97.43%   10000 301657 java.util.HashMap.<init>
+   5  0.58% 98.01%   10000 301659 java.util.HashMap.hash
+   6  0.41% 98.43%   10000 301661 java.util.HashMap.newNode
+   7  0.27% 98.70%   10000 301660 java.util.HashMap.resize
+   8  0.24% 98.93%   10000 301662 java.util.HashMap.afterNodeInsertion
+   9  0.22% 99.15%   10016 300952 java.util.HashMap$Node.<init>
+  10  0.21% 99.36%   10000 301656 java.util.AbstractMap.<init>
+  11  0.15% 99.51%   10000 301658 java.lang.String.hashCode
+  12  0.04% 99.55%       1 300163 java.lang.invoke.MethodHandle.<clinit>
+  13  0.02% 99.57%       1 300094 java.lang.invoke.MethodHandleImpl.<clinit>
+  14  0.02% 99.59%      80 300252 java.lang.CharacterDataLatin1.getProperties
+  15  0.02% 99.60%       6 301251 sun.misc.PerfCounter.<init>
+CPU TIME (ms) END
+
+</pre>
+<br/>
+
+which SEEMS much more accurate.
+
+<br/>
+
+Heap Profiling uses this:
+<pre>
+java -agentlib:hprof=heap=sites CUT
+</pre>
+
+which gives (shortened form)
+
+<pre>
+TRACE 300318:
+        java.util.HashMap.resize(HashMap.java:703)
+        java.util.HashMap.putVal(HashMap.java:628)
+        java.util.HashMap.put(HashMap.java:611)
+        CUT.main(CUT.java:9)
+
+TRACE 300316:
+        java.util.AbstractMap.<init>(AbstractMap.java:73)
+        java.util.HashMap.<init>(HashMap.java:474)
+        CUT.main(CUT.java:8)
+
+TRACE 300186:
+        java.util.HashMap$Node.<init>(HashMap.java:284)
+        java.util.HashMap.newNode(HashMap.java:1734)
+        java.util.HashMap.putVal(HashMap.java:630)
+        java.util.HashMap.put(HashMap.java:611)
+
+
+(etc etc)
+
+SITES BEGIN (ordered by live bytes) Wed Feb  3 06:28:22 2016
+          percent          live          alloc'ed  stack class
+ rank   self  accum     bytes objs     bytes  objs trace name
+    1 39.18% 39.18%    800000 10000    800000 10000 300318 java.util.HashMap$Node[]
+    2 23.51% 62.69%    480000 10000    480000 10000 300316 java.util.HashMap
+    3 15.69% 78.38%    320384 10012    320384 10012 300186 java.util.HashMap$Node
+    4  7.84% 86.22%    160000 10000    160000 10000 300317 java.lang.Object
+    5  0.34% 86.56%      7000   53      7000    53 300011 char[]
+    6  0.07% 86.63%      1504    4      1504     4 300001 java.lang.Thread
+    7  0.06% 86.70%      1304   11      1304    11 300154 char[]
+    8  0.06% 86.76%      1296    3      1296     3 300000 java.lang.Thread
+    9  0.06% 86.82%      1248   11      1248    11 300172 char[]
+   10  0.06% 86.88%      1248   11      1248    11 300173 char[]
+   11  0.06% 86.94%      1240   10      1240    10 300176 char[]
+   12  0.05% 86.99%      1040    1      1040     1 300021 java.lang.invoke.MethodHandle[]
+
+
+</pre>
+
+<br/><br/>
+
+
+To get help do:
+<br/>
+java -agentlib:hprof=help
+
+
+
+<br/><br/>
+
+<pre>
+     HPROF: Heap and CPU Profiling Agent (JVMTI Demonstration Code)
+
+hprof usage: java -agentlib:hprof=[help]|[<option>=<value>, ...]
+
+Option Name and Value  Description                    Default
+---------------------  -----------                    -------
+heap=dump|sites|all    heap profiling                 all
+cpu=samples|times|old  CPU usage                      off
+monitor=y|n            monitor contention             n
+format=a|b             text(txt) or binary output     a
+file=<file>            write data to file             java.hprof[{.txt}]
+net=<host>:<port>      send data over a socket        off
+depth=<size>           stack trace depth              4
+interval=<ms>          sample interval in ms          10
+cutoff=<value>         output cutoff point            0.0001
+lineno=y|n             line number in traces?         y
+thread=y|n             thread in traces?              n
+doe=y|n                dump on exit?                  y
+msa=y|n                Solaris micro state accounting n
+force=y|n              force output to <file>         y
+verbose=y|n            print messages about dumps     y
+
+Obsolete Options
+----------------
+gc_okay=y|n
+
+Examples
+--------
+  - Get sample cpu information every 20 millisec, with a stack depth of 3:
+      java -agentlib:hprof=cpu=samples,interval=20,depth=3 classname
+  - Get heap usage information based on the allocation sites:
+      java -agentlib:hprof=heap=sites classname
+
+Notes
+-----
+  - The option format=b cannot be used with monitor=y.
+  - The option format=b cannot be used with cpu=old|times.
+  - Use of the -Xrunhprof interface can still be used, e.g.
+       java -Xrunhprof:[help]|[<option>=<value>, ...]
+    will behave exactly the same as:
+       java -agentlib:hprof=[help]|[<option>=<value>, ...]
+
+Warnings
+--------
+  - This is demonstration code for the JVMTI interface and use of BCI,
+    it is not an official product or formal part of the JDK.
+  - The -Xrunhprof interface will be removed in a future release.
+  - The option format=b is considered experimental, this format may change
+    in a future release.
+
+</pre>
+
+

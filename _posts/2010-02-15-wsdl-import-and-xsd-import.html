@@ -1,0 +1,16 @@
+---
+layout: post
+title: "WSDL import and XSD import"
+date: 2010-02-15T23:51:00.000+01:00
+permalink: /2010/02/wsdl-import-and-xsd-import.html
+blogger_id: "4705742177086499724"
+tags: ["wsdl"]
+---
+<a href="http://www.ibm.com/developerworks/xml/library/ws-tip-imports.html">http://www.ibm.com/developerworks/xml/library/ws-tip-imports.html</a><br />
+<br />
+an interesting article on the mysteries of WSDLs... its conclusions are:<br />
+<ul><li>It is a good practice to use XSD imports to import schema, and to use WSDL imports to import WSDL.</li>
+<li>It is a good practice to import all of the namespaces that you use.</li>
+<li>An attribute value of the import namespace must match the imported targetNamespace value.</li>
+<li>The primary purpose of an import statement is to import namespaces.  The <code>schemaLocation</code> and <code>location</code> attributes, though sometimes necessary, are really only hints.</li>
+</ul>

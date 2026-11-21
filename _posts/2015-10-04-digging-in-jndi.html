@@ -1,0 +1,105 @@
+---
+layout: post
+title: "Digging in JNDI"
+date: 2015-10-04T11:40:00.002+02:00
+permalink: /2015/10/digging-in-jndi.html
+blogger_id: "5240095384188190095"
+tags: ["JNDI"]
+---
+JNDI is a bit of a mystery for me...whenever I get an exception like:
+
+<br/><br/>
+javax.naming.NameNotFoundException: While trying to look up comp/env/jms/CF1 in /app/webapp/rocAdmin/1482669104.; remaining name "comp/env/jms/CF1" at weblogic.jndi.internal.BasicNamingNode.newNameNotFoundException(BasicNamingNode.java:1180) at weblogic.jndi.internal.ApplicationNamingNode.lookup(ApplicationNamingNode.java:143) at weblogic.jndi.internal.WLEventContextImpl.lookup(WLEventContextImpl.java:253) at weblogic.jndi.internal.WLContextImpl.lookup(WLContextImpl.java:426) at weblogic.jndi.factories.java.ReadOnlyContextWrapper.lookup(ReadOnlyContextWrapper.java:45) at weblogic.jndi.internal.AbstractURLContext.lookup(AbstractURLContext.java:130) at javax.naming.InitialContext.lookup(InitialContext.java:411)  ...
+<br/><br/>
+
+I scratch my head ...
+
+So I wrote some code to dump the content of the InitialContext (it runs in a EJB timer to avoid having to create a client:
+
+<pre class="brush= java">
+package com.pierre;
+
+import javax.ejb.Schedule;
+import javax.ejb.Stateless;
+import javax.ejb.Timer;
+import javax.naming.Binding;
+import javax.naming.InitialContext;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+
+@Stateless
+public class PVTimer {
+
+    /**
+     * Default constructor.
+     */
+    public PVTimer() {
+ // TODO Auto-generated constructor stub
+    }
+
+    @SuppressWarnings("unused")
+    @Schedule(second = "*/10", minute = "*", hour = "*", dayOfWeek = "*", dayOfMonth = "*", month = "*", year = "*", info = "MyTimer")
+    private void scheduledTimeout(final Timer t) {
+ System.out.println("@Schedule called at: " + new java.util.Date());
+ try {
+     System.out.println();
+     InitialContext ic = new InitialContext();
+     NamingEnumeration<Binding> names = ic.listBindings("");
+     printNames(names, "all");
+     NamingEnumeration<Binding> jms = ic.listBindings("jms");
+     printNames(jms, "jms");
+     System.out.println();
+ } catch (Throwable t1) {
+     t1.printStackTrace();
+ }
+
+    }
+
+    private void printNames(NamingEnumeration<Binding> names, String title)
+     throws NamingException {
+ int count = 1;
+ while (names.hasMore()) {
+     Binding next = names.next();
+     System.out.println(title + " " + count + " ToString=" + next.toString() + " Name=" + next.getName() + " Classname=" + next.getClassName() + " getObject=" + next.getObject());
+     count++;
+ }
+    }
+}
+</pre>
+
+<br/><br/>
+and this is the result:
+<br/><br/>
+
+<pre>
+all 1 ToString=weblogic: weblogic.jndi.internal.WLEventContextImpl:EventContext (weblogic) Name=weblogic Classname=weblogic.jndi.internal.WLEventContextImpl getObject=EventContext (weblogic)
+all 2 ToString=__WL_GlobalJavaApp: weblogic.jndi.internal.WLEventContextImpl:EventContext (__WL_GlobalJavaApp) Name=__WL_GlobalJavaApp Classname=weblogic.jndi.internal.WLEventContextImpl getObject=EventContext (__WL_GlobalJavaApp)
+all 3 ToString=PVEarPVEjbProject_jarPVStateless_PVStatelessRemote: com.pierre.PVStateless_fcmphc_PVStatelessRemoteImpl:com.pierre.PVStateless_fcmphc_PVStatelessRemoteImpl@e964ee Name=PVEarPVEjbProject_jarPVStateless_PVStatelessRemote Classname=com.pierre.PVStateless_fcmphc_PVStatelessRemoteImpl getObject=com.pierre.PVStateless_fcmphc_PVStatelessRemoteImpl@e964ee
+all 4 ToString=ejb: weblogic.jndi.internal.WLEventContextImpl:EventContext (ejb) Name=ejb Classname=weblogic.jndi.internal.WLEventContextImpl getObject=EventContext (ejb)
+all 5 ToString=jms: weblogic.jndi.internal.WLEventContextImpl:EventContext (jms) Name=jms Classname=weblogic.jndi.internal.WLEventContextImpl getObject=EventContext (jms)
+all 6 ToString=PVEarPVEjbProject_jarPVStateless_Home: weblogic.ejb.container.internal.StatelessEJBHomeImpl:weblogic.ejb.container.internal.StatelessEJBHomeImpl@f229af Name=PVEarPVEjbProject_jarPVStateless_Home Classname=weblogic.ejb.container.internal.StatelessEJBHomeImpl getObject=weblogic.ejb.container.internal.StatelessEJBHomeImpl@f229af
+all 7 ToString=javax: weblogic.jndi.internal.WLEventContextImpl:EventContext (javax) Name=javax Classname=weblogic.jndi.internal.WLEventContextImpl getObject=EventContext (javax)
+all 8 ToString=java:global: weblogic.jndi.internal.WLEventContextImpl:EventContext (java:global) Name=java:global Classname=weblogic.jndi.internal.WLEventContextImpl getObject=EventContext (java:global)
+all 9 ToString=mejbmejb_jarMejb_EO: weblogic.management.j2ee.mejb.Mejb_dj5nps_EOImpl:ClusterableRemoteRef(4485985896511196818S:169.254.152.121:pvdomain:AdminServer [4485985896511196818S:169.254.152.121:pvdomain:AdminServer/294])/294 Name=mejbmejb_jarMejb_EO Classname=weblogic.management.j2ee.mejb.Mejb_dj5nps_EOImpl getObject=ClusterableRemoteRef(4485985896511196818S:169.254.152.121:pvdomain:AdminServer [4485985896511196818S:169.254.152.121:pvdomain:AdminServer/294])/294
+all 10 ToString=_WL_internal_0Z7vb3dMvYJ62jEwg8odDkTCYHT0HwjvQwlqEb8FYeA1jZjPDZBGLEATyZk7rdEu: weblogic.jndi.internal.WLEventContextImpl:EventContext (_WL_internal_0Z7vb3dMvYJ62jEwg8odDkTCYHT0HwjvQwlqEb8FYeA1jZjPDZBGLEATyZk7rdEu) Name=_WL_internal_0Z7vb3dMvYJ62jEwg8odDkTCYHT0HwjvQwlqEb8FYeA1jZjPDZBGLEATyZk7rdEu Classname=weblogic.jndi.internal.WLEventContextImpl getObject=EventContext (_WL_internal_0Z7vb3dMvYJ62jEwg8odDkTCYHT0HwjvQwlqEb8FYeA1jZjPDZBGLEATyZk7rdEu)
+jms 1 ToString=PVQueue: weblogic.jms.common.DestinationImpl:SystemModule-0!Queue-0 Name=PVQueue Classname=weblogic.jms.common.DestinationImpl getObject=SystemModule-0!Queue-0
+jms 2 ToString=PVConnectionFactory: weblogic.jms.client.JMSXAConnectionFactory:weblogic.jms.client.JMSXAConnectionFactory@1a31048 Name=PVConnectionFactory Classname=weblogic.jms.client.JMSXAConnectionFactory getObject=weblogic.jms.client.JMSXAConnectionFactory@1a31048
+jms 3 ToString=PVConnectionFactoryLocal: weblogic.jms.client.JMSXAConnectionFactory:weblogic.jms.client.JMSXAConnectionFactory@10414e6 Name=PVConnectionFactoryLocal Classname=weblogic.jms.client.JMSXAConnectionFactory getObject=weblogic.jms.client.JMSXAConnectionFactory@10414e6
+
+</pre>
+
+
+<br/><br/>
+
+(I have a stateless EJB "PVStateless" in the same module , implementing a PVStatelessRemote interface.... plus a JMS queue "PVQueue" with JNDI name "jms/PVQueue" and a JMS CF "PVConnectionFactory" with JNDI name "jms/PVConnectionFactory"....
+
+
+<br/><br/>
+
+
+Interesting javadoc <a href="http://docs.oracle.com/javase/7/docs/api/javax/naming/Binding.html">http://docs.oracle.com/javase/7/docs/api/javax/naming/Binding.html</a> and <a href="http://docs.oracle.com/javase/7/docs/api/javax/naming/InitialContext.html">http://docs.oracle.com/javase/7/docs/api/javax/naming/InitialContext.html</a>
+
+<br/><br/>
+
+
+

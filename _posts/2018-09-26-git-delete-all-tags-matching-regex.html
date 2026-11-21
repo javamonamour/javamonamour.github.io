@@ -1,0 +1,22 @@
+---
+layout: post
+title: "git delete all tags matching a regex"
+date: 2018-09-26T17:36:00.001+02:00
+permalink: /2018/09/git-delete-all-tags-matching-regex.html
+blogger_id: "407014310982542651"
+tags: ["git"]
+---
+this will delete all remote tags containig the  "iap-copy" string (more complex cases can be achieved with egrep)<br />
+<br />
+<br />
+<pre class="brush: java">git clone myrepourl
+cd myproject
+git tag --list | grep iap-copy | sort > allnaughtytags.txt
+for mytag in `cat allnaughtytags.txt`; do git push --delete origin $mytag ; done 
+</pre><br />
+The method is very slow.... there are much faster ways, but this is very simple and reliable<br />
+<br />
+tested with git 1.9.4<br />
+<br />
+<br />
+

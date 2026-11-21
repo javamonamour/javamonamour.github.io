@@ -1,0 +1,74 @@
+---
+layout: post
+title: "startWeblogic.sh : The JRE was not found in directory ...."
+date: 2015-03-15T12:40:00.003+01:00
+permalink: /2015/03/startweblogicsh-jre-was-not-found-in.html
+blogger_id: "4000803656783023341"
+tags: ["weblogic"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2018-01-24
+    html: "better to reinstall everything from scratch.... or use some Docker WebLogic images available on hub.docker.com"
+  - author: "Anonymous"
+    date: 2018-01-24
+    html: "Even I am facing the same. I done everything to set. But still it is not working."
+---
+After installing WLS and creating a new domain, I do:
+<br/><br/>
+
+<pre>
+cd /opt/oracle/wlsdomains/domains/mydomain
+
+./startWebLogic.sh
+
+</pre>
+<br/><br/>
+
+and I get the stinky dreaded message:
+<br/><br/>
+
+<pre> 
+The JRE was not found in directory /usr/java/. (JAVA_HOME)
+Please edit your environment and set the JAVA_HOME
+variable to point to the root directory of your Java installation.
+
+</pre>
+
+<br/><br/>
+<br/><br/>
+First I check all the "*.properties" files in the binary installation contain the right JAVA_HOME :
+<pre>
+find /opt/oracle/middleware11g/ -name "*.properties" -exec cat {} \; | grep JAVA_HOME
+</pre>
+
+After a quick grep I find out that this messages comes from
+
+/opt/oracle/wlsdomains/domains/mydomain/bin/setDomainEnv.sh
+
+<br/><br/>
+I hack the file to contain:
+<pre>
+
+JAVA_VENDOR="Oracle"
+export JAVA_VENDOR
+
+BEA_JAVA_HOME="/usr/java/jdk1.7.0_55/"
+export BEA_JAVA_HOME
+
+SUN_JAVA_HOME="/usr/java/jdk1.7.0_55/"
+export SUN_JAVA_HOME
+
+</pre>
+<br/><br/>
+and also I make sure that the jdk installation belongs to the same user that installed WebLogic (it used to be root) and things now work fine.
+<br/><br/>
+I think the root issue is that I didn't specify the JAVA_HOME in the silent installation configuration xml:
+<br/><br/>
+See <a href="/2013/04/weblogic-silent-installation.html">/2013/04/weblogic-silent-installation.html</a> for a well tested silent installer.
+<br/><br/>
+
+I will spend the rest of the day pondering on why on Earth Oracle doesn't want to provide a single point of configuration for all Oracle products, rather than spreading around configuration in zillion of files.
+<br/><br/>
+
+
+

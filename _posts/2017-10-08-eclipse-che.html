@@ -1,0 +1,117 @@
+---
+layout: post
+title: "Eclipse CHE"
+date: 2017-10-08T10:03:00.000+02:00
+permalink: /2017/10/eclipse-che.html
+blogger_id: "3009768569675411822"
+tags: ["eclipseche"]
+---
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/17a6792c68162fdf.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/bfe66af565948a98.jpg" width="285" height="400" data-original-width="285" data-original-height="400" /></a></div><br />
+Sadly, CHE is not dedicated to greatly inspiring revolutionary leader Che Guevara, but to the city of Cherkasy (Ukraine) where most of the development is done. <br />
+<br />
+<a href="https://en.wikipedia.org/wiki/Eclipse_Che">https://en.wikipedia.org/wiki/Eclipse_Che</a><br />
+<br />
+<a href="https://eclipse.org/che/">https://eclipse.org/che/</a><br />
+<br />
+<b>docker run eclipse/che start</b><br />
+<br />
+Since I run from a VirtualBox VM on my Windows PUEAH host, I get this:<br />
+<br />
+<pre>INFO: Welcome to Eclipse Che!
+INFO: 
+INFO: You are missing a mandatory parameter:
+INFO:    1. Mount 'docker.sock' for accessing Docker with unix sockets.
+INFO:    2. Or, set DOCKER_HOST to Docker's location (unix or tcp).
+INFO: 
+INFO: Mount Syntax:
+INFO:    Start with 'docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock' ...
+INFO: 
+INFO: DOCKER_HOST Syntax:
+INFO:    Start with 'docker run -it --rm -e DOCKER_HOST=<daemon-location> ...'
+INFO: 
+INFO: Possible root causes:
+INFO:    1. Your admin has not granted permissions to /var/run/docker.sock.
+INFO:    2. You passed '--user uid:gid' with bad values.
+INFO:    3. Your firewall is blocking TCP ports for accessing Docker daemon.
+</pre><br />
+<br />
+now I try running this<br />
+<br />
+[centos@localhost ~]$ docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock eclipse/che start<br />
+<br />
+<pre>WARN: Bound 'eclipse/che' to 'eclipse/che:5.18.0'
+ WARNING: Usage of loopback devices is strongly discouraged for production use. Either use `--storage-opt dm.thinpooldev` or use `--storage-opt dm.no_warn_on_loop_devices=true` to suppress this warning.
+INFO: Welcome to Eclipse Che!
+INFO: 
+INFO: We could not detect a location to save data.
+INFO: Volume mount a local directory to ':/data'.
+INFO: 
+INFO: Simplest syntax:
+INFO:   docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock
+INFO:                       -v <your_local_path>:/data
+INFO:                          eclipse/che start
+INFO: 
+INFO: 
+INFO: Or, run with additional overrides:
+INFO:   docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock
+INFO:                       -v <your_local_path>:/data
+INFO:                       -v <your_instance_path>:/data/instance
+INFO:                       -v <your_backup_path>:/data/backup
+INFO:                          eclipse/che start
+
+</pre><br />
+so I do<br />
+<br />
+mkdir chedata<br />
+docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/centos/chedata:/data eclipse/che start <br />
+<br />
+<br />
+if you run "docker run --help", you learn that "-it" means "interactive tty" , "--rm" means "--rm , the container is removed when it exits",  -v bind mount a volume<br />
+<br />
+<br />
+at this point I still get an error:<br />
+<br />
+<pre>INFO: (che init): Installing configuration and bootstrap variables:
+INFO: (che init):   CHE_HOST=10.0.2.15
+INFO: (che init):   CHE_VERSION=5.18.0
+INFO: (che init):   CHE_CONFIG=/home/centos/chedata
+INFO: (che init):   CHE_INSTANCE=/home/centos/chedata/instance
+INFO: (che config): Generating che configuration...
+INFO: (che config): Customizing docker-compose for running in a container
+INFO: (che start): Preflight checks
+ WARNING: Usage of loopback devices is strongly discouraged for production use. Either use `--storage-opt dm.thinpooldev` or use `--storage-opt dm.no_warn_on_loop_devices=true` to suppress this warning.
+         mem (1.5 GiB):           [OK]
+         disk (100 MB):           [OK]
+         port 8080 (http):        [AVAILABLE]
+         conn (browser => ws):    [NOT OK]
+         conn (server => ws):     [NOT OK]
+
+
+ERROR: Try 'docker run <options> eclipse/che info --network' for more tests.
+
+</pre><br />
+so I run<br />
+<br />
+docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock -v /home/centos/chedata:/data eclipse/che info --network<br />
+<br />
+and I get this<br />
+<br />
+<pre>INFO: (che cli): 5.18.0 - using docker 17.09.0-ce / native
+INFO: 
+INFO: ---------------------------------------
+INFO: --------   CONNECTIVITY TEST   --------
+INFO: ---------------------------------------
+INFO: (che network): eclipse/che-ip:5.18.0: 10.0.2.15
+INFO: (che network): Browser => Workspace Agent (localhost): Connection failed
+INFO: (che network): Browser => Workspace Agent (10.0.2.15): Connection failed
+INFO: (che network): Server  => Workspace Agent (External IP): Connection failed
+INFO: (che network): Server  => Workspace Agent (Internal IP): Connection succeeded
+
+</pre><br />
+<br />
+<br />
+Probably I have to work a little on my VM network settings ... maybe some other time...<br />
+<br />
+<br />
+<br />
+

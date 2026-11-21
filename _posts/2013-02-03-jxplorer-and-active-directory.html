@@ -1,0 +1,42 @@
+---
+layout: post
+title: "JXPlorer and Active Directory"
+date: 2013-02-03T15:25:00.001+01:00
+permalink: /2013/02/jxplorer-and-active-directory.html
+blogger_id: "406826858146795313"
+tags: ["activedirectory", "LDAP"]
+---
+Open Windows Registry<br />
+<br />
+if you use IPass for security, you will find this entry:<br />
+<br />
+HKEY_CURRENT_USER\Software\IPass\ACME Remote Access\USID_ESP\Duplicates<br />
+<br />
+my content is:<br />
+<br />
+Pierluigi.Vernetto<br />
+acme.com<br />
+AQAAANDMnd8FFdERjHoAwE/Cl+sBAAAA blablablablablabla aplNL6C4QAAAAOVJbIYXyfadpr8WyifmtdhQAAADle2E4j9MsqLzd5hcZQE2+khYIlwA=<br />
+<br />
+pirillo<br />
+LDAP://<b>CN=pirillo,OU=HQ-Acme-Corporate,OU=Users and Groups,OU=HQ,OU=CTR,OU=Organizations,DC=acme,DC=com</b><br />
+ACMEUserAuthKey<br />
+<br />
+<br />
+copy the part in BOLD: CN=pirillo,OU=HQ-Acme-Corporate,OU=Users and Groups,OU=HQ,OU=CTR,OU=Organizations,DC=acme,DC=com
+<br />
+<br />
+Download JXplorer
+<br />
+<br />
+Address is ldap.hq.acme.com , port 389<br />
+<br />
+<br />
+Base DN: dc=acme,dc=com<br />
+<br />
+for password, use your own password
+<br />
+<br />
+<a href="/images/e5e1630db2fde073.jpg" imageanchor="1"><img border="0" src="/images/e5e1630db2fde073.jpg" /></a>
+<br />
+<br />

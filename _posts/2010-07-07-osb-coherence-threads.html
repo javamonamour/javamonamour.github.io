@@ -1,0 +1,42 @@
+---
+layout: post
+title: "OSB, Coherence threads"
+date: 2010-07-07T20:58:00.004+02:00
+permalink: /2010/07/osb-coherence-threads.html
+blogger_id: "4162513273136180197"
+tags: ["coherence"]
+---
+I am getting familiar now with the new Threads which appear in a Thread Dump when the built-in Coherence clustering is activated:<br />
+<br />
+Here are the Thread names... they are a LOT!<br />
+<br />
+<pre name="code"><b>Logger@9257178 3.5.3/465p2</b> (com/tangosol/coherence/component/util/Daemon.onWait(Daemon.CDB:18))
+
+<b>PacketListener1 </b>(com/tangosol/coherence/component/net/socket/UdpSocket.receive(UdpSocket.CDB:20))
+
+<b>PacketListenerN </b>(com/tangosol/coherence/component/net/socket/UdpSocket.receive(UdpSocket.CDB:20))
+
+
+<b>PacketReceiver </b>(com/tangosol/coherence/component/util/daemon/queueProcessor/packetProcessor/PacketReceiver.onWait(PacketReceiver.CDB:2))
+
+<b>PacketPublisher </b>(com/tangosol/coherence/component/util/daemon/queueProcessor/packetProcessor/PacketPublisher.onWait(PacketPublisher.CDB:2))
+
+
+<b>PacketSpeaker </b>(com/tangosol/coherence/component/util/queue/ConcurrentQueue.remove(ConcurrentQueue.CDB:7))
+
+
+<b>Cluster|Member(Id=1....)</b> (com/tangosol/coherence/component/util/daemon/queueProcessor/service/Grid.onWait(Grid.CDB:6))
+
+
+<b>TcpRingListener  </b>(com/tangosol/coherence/component/net/socket/TcpSocketAccepter.accept(TcpSocketAccepter.CDB:18))
+
+
+<b>Invocation:Management:EventDispatcher</b> (com/tangosol/coherence/component/util/daemon/queueProcessor/Service$EventDispatcher.onWait(Service.CDB:7))
+
+
+<b>Invocation:Management</b> (com/tangosol/coherence/component/util/daemon/queueProcessor/service/Grid.onWait(Grid.CDB:6))
+
+
+<b>DistributedCache:ORA-OSB-deployments</b>  (com/tangosol/coherence/component/util/daemon/queueProcessor/service/Grid.onWait(Grid.CDB:6))
+
+</pre>

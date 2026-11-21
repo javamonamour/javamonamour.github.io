@@ -1,0 +1,65 @@
+---
+layout: post
+title: "Apache http-client, customizing SSLSocketFactory"
+date: 2016-05-24T11:20:00.000+02:00
+permalink: /2016/05/apache-http-client-customizing.html
+blogger_id: "7147558320463571380"
+tags: ["socket", "ssl"]
+---
+Here the general documentation on Apache HTTP client <a href="https://hc.apache.org/httpcomponents-client-ga/">https://hc.apache.org/httpcomponents-client-ga/</a>
+<br/><br/>
+<a href="https://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/conn/scheme/SchemeSocketFactory.html">https://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/conn/scheme/SchemeSocketFactory.html
+</a>
+<br/><br/>
+
+<pre class="brush: java">
+    HttpContext context...
+    SchemeRegistry registry = getSchemeRegistry(context);
+    Scheme schm = registry.getScheme(target.getSchemeName());
+    SchemeSocketFactory sf = schm.getSchemeSocketFactory();
+</pre>
+
+
+<br/><br/>
+This example <a href="https://hc.apache.org/httpcomponents-client-ga/httpclient/examples/org/apache/http/examples/client/ClientCustomSSL.java">https://hc.apache.org/httpcomponents-client-ga/httpclient/examples/org/apache/http/examples/client/ClientCustomSSL.java</a> shows 
+
+<br/><br/>
+
+Specifically, it's interesting to look at their default implementation of <a href="https://docs.oracle.com/javase/7/docs/api/javax/net/ssl/HostnameVerifier.html">https://docs.oracle.com/javase/7/docs/api/javax/net/ssl/HostnameVerifier.html</a>  which is the org.apache.http.conn.ssl.BrowserCompatHostnameVerifier ( extends org.apache.http.conn.ssl.AbstractVerifier implements org.apache.http.conn.ssl.X509HostnameVerifier extends <a href="https://docs.oracle.com/javase/7/docs/api/javax/net/ssl/HostnameVerifier.html">javax.net.ssl.HostnameVerifier</a> )
+<br/><br/>
+
+The extra methods added by <a href="https://hc.apache.org/httpcomponents-client-ga/httpclient/apidocs/org/apache/http/conn/ssl/X509HostnameVerifier.html">org.apache.http.conn.ssl.X509HostnameVerifier</a> are:
+
+<pre>
+
+  public abstract void verify(String host, SSLSocket ssl)
+    throws IOException;
+  
+  public abstract void verify(String host, X509Certificate cert)
+    throws SSLException;
+  
+  public abstract void verify(String host, String[] cns, String[] subjectAlts)
+    throws SSLException;
+
+</pre>
+while the basic javax.net.ssl.HostnameVerifier contains only
+<br/>
+<pre>
+verify(String hostname, SSLSession session)
+</pre>
+<br/><br/>
+
+
+Remember!  javax.net.ssl.SSLSocketFactory is an ABSTRACT class.
+
+<br/><br/>
+
+For use within WebLogic, see <a href="http://docs.oracle.com/cd/E12839_01/core.1111/e10043/ohttps.htm#JISEC2046">http://docs.oracle.com/cd/E12839_01/core.1111/e10043/ohttps.htm#JISEC2046</a>, but the property HTTPClient.defaultHostnameVerifier  doesn't seem to work with Apache HTTPClient.
+<br/><br/>
+Also another interface exists weblogic.security.SSL.HostnameVerifier
+
+<br/><br/>
+
+
+
+

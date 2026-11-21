@@ -1,0 +1,30 @@
+---
+layout: post
+title: "MQ basic commands"
+date: 2011-06-06T22:39:00.000+02:00
+permalink: /2011/06/mq-basic-commands.html
+blogger_id: "3883970715246125591"
+tags: ["MQ"]
+---
+to create a Queue Manager:<br />
+crtmqm <queueManagername><br />
+<br />
+to start a Queue Manager:<br />
+strmqm <queueManagername><br />
+<br />
+to run MQSC:<br />
+runmqsc.exe <br />
+(wait for a while and hit "enter" to make sure it's ready)<br />
+<br />
+to create local queue:<br />
+DEFINE QLOCAL('mylocalqueue')<br />
+<br />
+<br />
+some definitions (from <a href="http://en.wikipedia.org/wiki/IBM_WebSphere_MQ">Wikipedia</a> ) :<br />
+<br />
+<b>Local queues</b> represent the location in which data is stored awaiting processing.<br />
+<br />
+<b>Remote queues</b> represent a queue on another queue manager<br />
+<br />
+<br />
+see <a href="http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.websphere.ii.replication.qrepl.doc/configuring/iiyrqwmqcsamples.html">here</a> for full list

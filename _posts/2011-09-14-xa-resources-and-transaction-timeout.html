@@ -1,0 +1,69 @@
+---
+layout: post
+title: "XA resources and Transaction Timeout"
+date: 2011-09-14T15:31:00.001+02:00
+permalink: /2011/09/xa-resources-and-transaction-timeout.html
+blogger_id: "7281313763880520660"
+tags: ["JTA"]
+---
+Interesting case:<br />
+<br />
+We had a couple of JMS messages stuck in a queue, and CPU 100%.<br />
+<br />
+JMS message state: receive transaction<br />
+<br />
+JMSXDeliveryCount 2060<br />
+<br />
+The transactions were of very long duration, above 100 seconds, and they would end with an application rollback (not a Timeout Rollback):<br />
+<br />
+<br />
+####&lt;Sep 13, 2011 12:00:12 AM BST&gt; &lt;Error&gt; &lt;EJB&gt; &lt;myserver.unix.acme.com&gt; &lt;pluto_AdminServer&gt; &lt;[ACTIVE] ExecuteThread: '11' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315868412458&gt; &lt;BEA-010026&gt; &lt;Exception occurred during commit of transaction Xid=BEA1-556D788B8665743465EB(33150705),Status=Rolled back. [Reason=oracle.jdbc.xa.OracleXAException],numRepliesOwedMe=0,numRepliesOwedOthers=0,seconds since begin=124,seconds left=60,XAServerResourceInfo[WLStore_pluto01_Domain__WLS_pluto_AdminServer]=(ServerResourceInfo[WLStore_pluto01_Domain__WLS_pluto_AdminServer]=(state=rolledback,assigned=pluto_AdminServer),xar=WLStore_pluto01_Domain__WLS_pluto_AdminServer28341129,re-Registered = false),XAServerResourceInfo[rmsscottish]=(ServerResourceInfo[rmsscottish]=(state=rolledback,assigned=pluto_AdminServer),xar=rmsscottish,re-Registered = false),SCInfo[pluto01_Domain+pluto_AdminServer]=(state=rolledback),local properties=({weblogic.jdbc.jta.rmsscottish=[ No XAConnection is attached to this TxInfo ]}),OwnerTransactionManager=ServerTM[ServerCoordinatorDescriptor=(CoordinatorURL=pluto_AdminServer+10.3.75.186:7001+pluto01_Domain+t3+, XAResources={WLStore_pluto01_Domain__WLS_pluto_AdminServer, WLStore_pluto01_Domain_FileStore, WLStore_pluto01_Domain_WseeFileStore, rmsscottish},NonXAResources={})],CoordinatorURL=pluto_AdminServer+10.3.75.186:7001+pluto01_Domain+t3+): weblogic.transaction.RollbackException: Could not prepare resource 'rmsscottish<br />
+at weblogic.transaction.internal.TransactionImpl.throwRollbackException(TransactionImpl.java:1818)<br />
+at weblogic.transaction.internal.ServerTransactionImpl.internalCommit(ServerTransactionImpl.java:336)<br />
+at weblogic.transaction.internal.ServerTransactionImpl.commit(ServerTransactionImpl.java:230)<br />
+at weblogic.ejb.container.internal.MDListener.execute(MDListener.java:500)<br />
+at weblogic.ejb.container.internal.MDListener.transactionalOnMessage(MDListener.java:371)<br />
+at weblogic.ejb.container.internal.MDListener.onMessage(MDListener.java:327)<br />
+at weblogic.jms.client.JMSSession.onMessage(JMSSession.java:4547)<br />
+at weblogic.jms.client.JMSSession.execute(JMSSession.java:4233)<br />
+at weblogic.jms.client.JMSSession.executeMessage(JMSSession.java:3709)<br />
+at weblogic.jms.client.JMSSession.access$000(JMSSession.java:114)<br />
+at weblogic.jms.client.JMSSession$UseForRunnable.run(JMSSession.java:5058)<br />
+at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:516)<br />
+at weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)<br />
+at weblogic.work.ExecuteThread.run(ExecuteThread.java:173)<br />
+Caused by: oracle.jdbc.xa.OracleXAException<br />
+at oracle.jdbc.xa.client.OracleXAResource.prepare(OracleXAResource.java:679)<br />
+at weblogic.jdbc.wrapper.VendorXAResource.prepare(VendorXAResource.java:70)<br />
+at weblogic.jdbc.jta.DataSource.prepare(DataSource.java:885)<br />
+at weblogic.transaction.internal.XAServerResourceInfo.prepare(XAServerResourceInfo.java:1277)<br />
+at weblogic.transaction.internal.XAServerResourceInfo.prepare(XAServerResourceInfo.java:500)<br />
+at weblogic.transaction.internal.ServerSCInfo$1.run(ServerSCInfo.java:361)<br />
+... 3 more<br />
+.&gt; <br />
+<br />
+<br />
+The transaction monitoring page would say:<br />
+<br />
+<br />
+This page shows information about current transactions coordinated by the server or in which server resources participate.<br />
+<br />
+Transaction statistics(Filtered - More Columns Exist)<br />
+<br />
+Transaction ID  Status  Seconds Active  XA Resources  Servers  <br />
+<br />
+BEA1-004042C8BFB5743465EB Active 178 {myds=ended, WLStore_pluto01_Domain__WLS_pluto_AdminServer=suspended} {pluto01_Domain+pluto_AdminServer=active} <br />
+<br />
+BEA1-004442C8BFB5743465EB Active 80 {myds=ended, WLStore_pluto01_Domain__WLS_pluto_AdminServer=suspended} {pluto01_Domain+pluto_AdminServer=active} <br />
+<br />
+<br />
+<br />
+It turns out that the Proxy Service consuming the messages has "Force XA transaction" set to true, and myds was a Data Source with a JDBC driver XA compliant, hence it was enrolled in the transaction even if the DB was used only for a lookup.<br />
+<br />
+I am persuaded that the DB was throwing an exception because it had already internally timed out the transaction (XA timeout is 60 seconds by default).<br />
+<br />
+Replacing the JDBC driver with a non-XA avoided enrolling the DB in the XA transaction, hence no more rollbacks.<br />
+<br />
+Incidentally when we first restarted the server, the transaction recovery service recovered the 2 previous transactions, and they got stuck because now the DS was not XA compliant any more. Restarting again fixed the problem, because all new transactions would not enroll the DB any more.<br />
+<br />
+Interestingly, the JTA timeout at domain level is set to 30 seconds, but this timeout doesn't refer to the whole duration of the 2 Phase Commit transaction, it refers only to the "prepare" phase. So the Transactions can well last 100 seconds without JTA complaining about it. What you should look at is the "abandon timeout period" which is by default enormously high.

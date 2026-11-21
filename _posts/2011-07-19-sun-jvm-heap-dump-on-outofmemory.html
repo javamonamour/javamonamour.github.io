@@ -1,0 +1,36 @@
+---
+layout: post
+title: "Sun JVM heap dump on OutOfMemory"
+date: 2011-07-19T16:01:00.003+02:00
+permalink: /2011/07/sun-jvm-heap-dump-on-outofmemory.html
+blogger_id: "5417269631488112392"
+tags: ["HeapDumpOnOutOfMemoryError", "oom"]
+---
+<a href="http://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html">http://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html</a><br />
+<br />
+<br />
+-XX:+HeapDumpOnOutOfMemoryError does the job!!!!<br />
+<br />
+<br />
+better to add also -XX:HeapDumpPath=/your/path/to/heapdump/dir<br />
+<br />
+(it should be a dir, not a file)<br />
+<br />
+<br />
+Ad the end of setDomainEnv.sh, put:<br />
+<br />
+<i><br />
+</i><i>if [[ "${SERVER_NAME}" == *as ]] <br />
+then<br />
+    MEM_ARGS="-Xms1g -Xmx1g -XX:MaxPermSize=512m"<br />
+else<br />
+    MEM_ARGS="-Xms2g -Xmx2g -XX:MaxPermSize=768m"<br />
+fi<br />
+<br />
+MEM_ARGS="${MEM_ARGS} -XX:+HeapDumpOnOutOfMemoryError 
+-XX:HeapDumpPath=${DOMAIN_HOME}  
+-Xloggc:/opt/var/log/weblogic/server/${SERVER_NAME}gc.log"<br />
+export JAVA_OPTIONS MEM_ARGS<br /><br />
+</i><br />
+<br />
+(this loggc option has the disadvantage that gc of multiple servers ends up in the same file... it can be improved... )

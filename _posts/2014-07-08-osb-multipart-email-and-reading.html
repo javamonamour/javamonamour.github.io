@@ -1,0 +1,37 @@
+---
+layout: post
+title: "OSB,  Multipart Email and reading attachments in IPad"
+date: 2014-07-08T16:11:00.001+02:00
+permalink: /2014/07/osb-multipart-email-and-reading.html
+blogger_id: "6429794887363240028"
+tags: ["OSB"]
+---
+How to send an email with attachment in OSB is already covered elsewhere.
+<br/><br/>
+However there are some caveats: some email clients like IPad/IPhone are really picky, and they don't handle correctly a PDF in attachment if the OSB default is used.
+<br/><br/> <a href="https://community.oracle.com/thread/2207461?tstart=0">Here it says</a>:
+<i>OSB when an attachment is present in the message, OSB is overrding the "Content-Type" property to "multipart/related" inspite of me setting the "Content-Type" property of HTTP Transport Header in OSB</i>
+<br/><br/>
+The problem is that an IPad seems to handle correctly only messages with "Content-Type" = multipart/alternative or multipart/mixed. So the only choice is to manufacture yourself the $body message to send to the SMTP Mail Business Service, by hardcoding the multipart/alternative. By no means you should have Content-ID around: IPad doesn't like them.
+<br/><br/>
+This is done in an Oracle Support article : Service Bus 11g: How to Send a Multipart Email (Doc ID 1561677.1)
+<br/><br/>
+To import the project in a OSB version prior to 11.1.1.6, in ExportInfo, change : imp:property name="productversion" value="11.1.1.5" and rejar everything.
+<br/><br/>
+
+Refer to <a href="http://en.wikipedia.org/wiki/MIME">http://en.wikipedia.org/wiki/MIME</a> for comprehensive explanation of MIME standards.
+
+<br/><br/>
+Gmail menu "show original" was essential to debug the actual email content.<br/><br/>
+
+See also <a href="http://support.apple.com/kb/TS1506">this article</a> where Apple support warns about possible issues with attachment... guys, how about testing better your code and make it more robust?
+
+<br/><br/>
+
+Also, always remember to delete $attachments variable before you route to BS !
+<br/><br/>
+
+One more thing: it seems that iOS changes the filename into filename="mime-attachment.pdf" for large PDF ( > 50 KB approximately). This is really really weird. no workaround so far. Not a HUGE issue, but still annoying. 
+Actually this seems to happen only if there is a space in the filename...
+
+

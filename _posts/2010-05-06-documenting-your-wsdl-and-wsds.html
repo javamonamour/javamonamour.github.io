@@ -1,0 +1,58 @@
+---
+layout: post
+title: "Documenting your WSDL and WSDs"
+date: 2010-05-06T13:50:00.003+02:00
+permalink: /2010/05/documenting-your-wsdl-and-wsds.html
+blogger_id: "8061667111995290786"
+tags: ["docflex", "wsdl"]
+---
+DocFlex/XML - XSDDoc - XML Schema Documentation Generator&nbsp;<br />
+<br />
+<br />
+<a href="http://www.filigris.com/products/docflex_xml/xsddoc/">http://www.filigris.com/products/docflex_xml/xsddoc/</a><br />
+<br />
+The command line options are here<br />
+<br />
+<a href="http://www.filigris.com/products/docflex_xml/docs/generator.php#cmdline">http://www.filigris.com/products/docflex_xml/docs/generator.php#cmdline</a><br />
+<br />
+<br />
+A sample "silent mode" generation command line is (for Widows):<br />
+<br />
+@echo off<br />
+set JAVA_HOME=C:\bea1035\jdk160_24<br />
+set DFH=%~dp0<br />
+if %DFH:~-1%==\ set DFH=%DFH:~0,-1%<br />
+set JAVA_OPTIONS=-Xms256m -Xmx512m<br />
+set CLASS_PATH=%DFH%\lib\xml-apis.jar;%DFH%\lib\xercesImpl.jar;%DFH%\lib\resolver.jar;%DFH%\lib\docflex-xml.jar<br />
+"%JAVA_HOME%\bin\java" %JAVA_OPTIONS% -cp "%CLASS_PATH%" com.docflex.xml.Generator -config config/generator.config -nodialog<br />
+<br />
+<br />
+<br />
+where the generator.config contains:<br />
+<br />
+#Sat Mar 17 23:41:30 CET 2012<br />
+<b>output.dir</b>=../out<br />
+output.format=HTML<br />
+output.launchViewer=false<br />
+template.1=../templates/XSDDoc/FramedDoc.tpl<br />
+template.2=../templates/XSDDoc/PlainDoc.tpl<br />
+template.3=../templates/XMLDoc/PlainDoc.tpl<br />
+template.4=../templates/XMLDoc/FramedDoc.tpl<br />
+template.5=../samples/sales/sales.tpl<br />
+template.6=../samples/personal/personal.tpl<br />
+xml.catalogs=urn\:docflex-com\:xml\:defaultcatalog<br />
+xml.files.1=../../acme/sss/ssssvn/SSS_CommonServices/Schemas/Service/ShopOrderService.xsd<br />
+xml.files.2=../../acme/sss/nesoawsdl/ShopOrderService.xsd<br />
+xml.files.3=http\://www.w3.org/2001/XMLSchema.xsd<br />
+xml.files.4=../samples/HumanEvolution/HumanEvolution.xsd<br />
+xml.files.5=../samples/sales/sales.xml<br />
+xml.files.6=../samples/sales/sales.xsd<br />
+xml.files.7=../samples/personal/personal.xml<br />
+<br />
+<br />
+<br />
+(this will generate only xml.files.1, all the rest seems to be ignored)<br />
+<br />
+what you need to set is:<br />
+output.dir -> where to write the generated HTML<br />
+xml.files.1 -> the root XSD to parse

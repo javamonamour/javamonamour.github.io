@@ -1,0 +1,41 @@
+---
+layout: post
+title: "tcpdump tutorial"
+date: 2012-09-30T10:32:00.001+02:00
+permalink: /2012/09/tcpdump-tutorial.html
+blogger_id: "8346458665358528345"
+tags: ["network", "tcpdump"]
+---
+<iframe allowfullscreen="allowfullscreen" frameborder="0" height="390" src="http://www.youtube.com/embed/KzJTyFxJKYA" width="640"></iframe>
+
+<br/>
+tcpdump -D
+<br/>
+tcpdump -i eth0 v
+<br/>
+tcpdump -i eth0 port http (to display only http traffic)
+<br/>
+tcpdump -n (to display numeric IPs)
+<br/>
+tcpdump -w session filename.log  (captures data to a file)
+<br/>
+tcpdump -r session filename.log  (displays the content of the captured session)
+<br/>
+
+This is a very concise excellent quick guide of the main commands:<br/>
+
+<a href="http://openmaniak.com/tcpdump.php">http://openmaniak.com/tcpdump.php</a>
+<br/>
+
+To use wireshark to view packets captured with tcpdump:<br/>
+
+tcpdump -i <interface> -s 65535 -w <some-file>
+
+<br/><br/>
+
+Tcpdum for Windows <a href="http://www.microolap.com/products/network/tcpdump/">available here</a>
+
+<br/>
+
+
+

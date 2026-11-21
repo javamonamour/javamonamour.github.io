@@ -1,0 +1,123 @@
+---
+layout: post
+title: "WebLogic and AspectJ"
+date: 2011-12-27T00:51:00.002+01:00
+permalink: /2011/12/weblogic-and-aspectj.html
+blogger_id: "6960582348639256945"
+tags: ["AOP", "aspectj", "weblogic"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2011-12-29
+    html: "Hello,<br /> Weblogic Server has a subsystem named WLDF, that allows you to define so called application-scoped instrumentation: you define AspectJ  pointcuts and use predifined actions like dump Stack, dump Method invocation params, etc.<br />Doc link: http://docs.oracle.com/cd/E17904_01/web.1111/e13714/deploying_app_modules.htm<br /><br />Regards,<br /> Dmitry"
+---
+Zillions of times I have wished in my life to be able to tell which methods are being executed in an application deployed in WLS, and the values of the parameters and return values. Call it "tracing method execution in weblogic".<br />
+If no debug statements exist in the WLS code or in the application, the only way is to weave the classes with some AOP product.<br />
+<br />
+So here I go:<br />
+<br />
+download AspectJ 1.7 <a href="http://www.eclipse.org/aspectj/">http://www.eclipse.org/aspectj/</a><br />
+<br />
+download WLS 12 <a href="http://www.oracle.com/technetwork/middleware/ias/downloads/wls-main-097127.html">http://www.oracle.com/technetwork/middleware/ias/downloads/wls-main-097127.html</a><br />
+<br />
+<br />
+about load-time weaving with a premain function using javaagent<br />
+<a href="http://www.eclipse.org/aspectj/doc/next/devguide/ltw-configuration.html">http://www.eclipse.org/aspectj/doc/next/devguide/ltw-configuration.html</a><br />
+<br />
+In setDomainEnv there is a property JAVA_PROFILE<br />
+I set it to <br />
+-javaagent:C:/apps/aspectj/lib/aspectjweaver.jar <br />
+<br />
+after checking the WLS classpath, I see that the . directory (C:\Oracle\Middleware\user_projects\domains\base_domain) is in the classpath (because I have a System Variable CLASSPATH=.)<br />
+I create then a C:\Oracle\Middleware\user_projects\domains\base_domain\META-INF\aop.xml file where I define an INLINE ASPECT (no need to precompile separately with ajc):<br />
+<br />
+<br />
+Here is the aspect, to be compiled and put in the classpath (you will need to add the AspectJ jars to the Eclipse project)<br />
+<br />
+<pre name="code" class="brush: java">package com.pierre.aop;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+
+
+@Aspect
+public abstract class AbstractAspect {
+
+
+@Before("execution(* *(..))")
+public void before(JoinPoint jp) {
+System.out.println("CIAOOOOO");
+}
+
+@Pointcut("execution(public * *(..))")
+public void anyPublicOperation() {
+System.out.println("anyPublicOperation");
+} 
+}
+</pre><br />
+and this is the aop.xml:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;aspectj&gt;
+
+&lt;aspects&gt;
+
+&lt;!-- define a concrete aspect inline --&gt;
+&lt;concrete-aspect name="com.pierre.aop.MyTracing" extends="com.pierre.aop.AbstractAspect"&gt;
+&lt;!--pointcut name="tracingScope" expression="within(com.pierre.*)"/--&gt;
+&lt;/concrete-aspect&gt;
+
+&lt;!-- Of the set of aspects declared to the weaver
+use aspects matching the type pattern "com.pierre..*" for weaving. --&gt;
+&lt;include within="com.pierre..*"/&gt;
+
+
+&lt;/aspects&gt;
+
+&lt;weaver options="-verbose"&gt;
+&lt;!-- Weave types that are within the javax.* or org.aspectj.*
+packages. Also weave all types in the foo package that do
+not have the @NoWeave annotation. --&gt;
+&lt;include within="com.pierre.*"/&gt;
+
+&lt;!-- Dump all types within the "somepack" package,
+both before are after they are woven,
+to the "./_ajdump" folder on disk (for diagnostic purposes) --&gt;
+&lt;dump within="com.pierre.*" /&gt;
+&lt;/weaver&gt;
+
+&lt;/aspectj&gt;
+</pre><br />
+for some reasons, it doesn't work....<br />
+I can see in the stdout:<br />
+<br />
+<i><br />
+[JspClassLoader@72d4e5] info AspectJ Weaver Version 1.7.0.M1 built on Friday Dec 16, 2011 at 16:56:09 GMT<br />
+[JspClassLoader@72d4e5] info register classloader weblogic.servlet.jsp.JspClassLoader@72d4e5<br />
+[JspClassLoader@72d4e5] info using configuration /C:/Oracle/Middleware/user_projects/domains/base_domain/META-INF/aop.xml<br />
+[JspClassLoader@72d4e5] info define aspect com.pierre.aop.MyTracing<br />
+[ChangeAwareClassLoader@f45732] info AspectJ Weaver Version 1.7.0.M1 built on Friday Dec 16, 2011 at 16:56:09 GMT<br />
+[ChangeAwareClassLoader@f45732] info register classloader weblogic.utils.classloaders.ChangeAwareClassLoader@f45732<br />
+[ChangeAwareClassLoader@f45732] info using configuration /C:/Oracle/Middleware/user_projects/domains/base_domain/META-INF/aop.xml<br />
+[ChangeAwareClassLoader@f45732] info define aspect com.pierre.aop.MyTracing<br />
+</i><br />
+<br />
+<br />
+My JSP does:<br />
+<br />
+AOPCUT aopcut = new AOPCUT();<br />
+aopcut.hello("pierre");<br />
+<br />
+where the AOPCUT class is<br />
+<br />
+package com.pierre.aop;<br />
+<br />
+public class AOPCUT {<br />
+<br />
+ public void hello(String message) {<br />
+  System.out.println("Hello " + message);<br />
+ }<br />
+ <br />
+}<br />
+<br />
+<br />
+and the interceptor gets called....

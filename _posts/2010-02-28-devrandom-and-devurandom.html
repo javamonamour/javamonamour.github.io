@@ -1,0 +1,16 @@
+---
+layout: post
+title: "replace /dev/random with /dev/urandom"
+date: 2010-02-28T16:23:00.000+01:00
+permalink: /2010/02/devrandom-and-devurandom.html
+blogger_id: "8823372925481697750"
+tags: ["random", "urandom"]
+---
+/dev/random can really slow down WebLogic startup on Linux;<br />
+/dev/urandom is much faster<br />
+<br />
+see here for a&nbsp; solution<br />
+<a href="http://www.itonguard.com/20090313/weblogic-starts-slow/">http://www.itonguard.com/20090313/weblogic-starts-slow/</a><br />
+<br />
+<br />
+add&nbsp; “-Djava.security.egd=<a href="file:///dev/urandom" rel="nofollow">file:/dev/./urandom</a>” (/dev/urandom does not work) to java parameters.

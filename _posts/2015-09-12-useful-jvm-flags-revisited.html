@@ -1,0 +1,117 @@
+---
+layout: post
+title: "Useful JVM flags, revisited"
+date: 2015-09-12T14:11:00.000+02:00
+permalink: /2015/09/useful-jvm-flags-revisited.html
+blogger_id: "7935597855551819329"
+tags: ["JVM"]
+---
+This guy Patrick Peschlow (possibly a superhuman, a hero.... most likely a German, only Germans can love so much classifications) did an amazing job at illustrating all (most of) the JVM flags.<br/>
+He explained it all in such a clear and precise way that I was about to cry for the emotion.<br/>
+<br/>
+<a href="https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-1-jvm-types-and-compiler-modes/">https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-1-jvm-types-and-compiler-modes/</a>
+<br/>
+<ul>
+<li>server and -client</li>
+<li>version and -showversion</li>
+<li>-Xint, -Xcomp, and -Xmixed</li>
+</ul>
+
+<br/><br/>
+<a href="https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-2-flag-categories-and-jit-compiler-diagnostics/">https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-2-flag-categories-and-jit-compiler-diagnostics/</a>
+<br/>
+<ul>
+<li>JVM flag categories</li>
+<li>-XX:+PrintCompilation and -XX:+CITime</li>
+<li>-XX:+UnlockExperimentalVMOptions</li>
+<li>-XX:+LogCompilation and -XX:+PrintOptoAssembly</li>
+</ul>
+<br/><br/>
+<a href="https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-3-printing-all-xx-flags-and-their-values/">https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-3-printing-all-xx-flags-and-their-values/</a>
+<br/>
+<ul>
+<li>-XX:+PrintFlagsFinal and -XX:+PrintFlagsInitial</li>
+<li>-XX:+PrintCommandLineFlags</li>
+</ul>
+<br/><br/>
+<a href="https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-4-heap-tuning/">https://blog.codecentric.de/en/2012/07/useful-jvm-flags-part-4-heap-tuning/</a>
+
+<br/>
+<ul>
+<li>-Xms and -Xmx (or: -XX:InitialHeapSize and -XX:MaxHeapSize)</li>
+<li>-XX:+HeapDumpOnOutOfMemoryError and -XX:HeapDumpPath</li>
+<li>-XX:OnOutOfMemoryError</li>
+<li>-XX:PermSize and -XX:MaxPermSize</li>
+<li>-XX:InitialCodeCacheSize and -XX:ReservedCodeCacheSize</li>
+<li>-XX:+UseCodeCacheFlushing</li>
+</ul>
+
+<br/><br/>
+<a href="https://blog.codecentric.de/en/2012/08/useful-jvm-flags-part-5-young-generation-garbage-collection/">https://blog.codecentric.de/en/2012/08/useful-jvm-flags-part-5-young-generation-garbage-collection/</a>
+<br/>
+<ul>
+<li>-XX:NewSize and -XX:MaxNewSize</li>
+<li>-XX:SurvivorRatio</li>
+<li>-XX:+PrintTenuringDistribution</li>
+<li>-XX:InitialTenuringThreshold, -XX:MaxTenuringThreshold and -XX:TargetSurvivorRatio</li>
+<li>-XX:+NeverTenure and -XX:+AlwaysTenure</li>
+</ul>
+<br/><br/>
+
+<a href="https://blog.codecentric.de/en/2013/01/useful-jvm-flags-part-6-throughput-collector/">https://blog.codecentric.de/en/2013/01/useful-jvm-flags-part-6-throughput-collector/</a>
+<br/>
+<ul>
+<li>Throughput vs. pause times</li>
+<li>Garbage collection on the HotSpot JVM</li>
+<li>-XX:+UseSerialGC</li>
+<li>-XX:+UseParallelGC</li>
+<li>-XX:+UseParallelOldGC</li>
+<li>-XX:ParallelGCThreads</li>
+<li>-XX:-UseAdaptiveSizePolicy</li>
+<li>-XX:GCTimeRatio</li>
+<li>-XX:MaxGCPauseMillis</li>
+</ul>
+<br/><br/>
+<a href="https://blog.codecentric.de/en/2013/10/useful-jvm-flags-part-7-cms-collector/">https://blog.codecentric.de/en/2013/10/useful-jvm-flags-part-7-cms-collector/</a>
+
+<br/>
+<ul>
+<li>-XX:+UseConcMarkSweepGC</li>
+<li>-XX:+UseParNewGC</li>
+<li>-XX:+CMSConcurrentMTEnabled</li>
+<li>-XX:ConcGCThreads</li>
+<li>-XX:CMSInitiatingOccupancyFraction</li>
+<li>-XX+UseCMSInitiatingOccupancyOnly</li>
+<li>-XX:+CMSClassUnloadingEnabled</li>
+<li>-XX:+CMSIncrementalMode</li>
+<li>-XX:+ExplicitGCInvokesConcurrent and -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses</li>
+<li>-XX:+DisableExplicitGC</li>
+
+</ul>
+<br/><br/>
+<a href="https://blog.codecentric.de/en/2014/01/useful-jvm-flags-part-8-gc-logging/">https://blog.codecentric.de/en/2014/01/useful-jvm-flags-part-8-gc-logging/</a>
+<br/>
+<ul>
+<li>-XX:+PrintGC</li>
+<li>-XX:+PrintGCDetails</li>
+<li>-XX:+PrintGCTimeStamps and -XX:+PrintGCDateStamps</li>
+<li>-Xloggc</li>
+
+</ul>
+
+<br/><br/>
+
+
+More References:
+<br/><br/>
+
+<a href="http://stas-blogspot.blogspot.de/2011/07/most-complete-list-of-xx-options-for.html">http://stas-blogspot.blogspot.de/2011/07/most-complete-list-of-xx-options-for.html</a>
+
+<br/><br/>
+Virtual Machine Garbage Collection Tuning <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/">https://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/</a>
+
+
+<br/><br/>
+
+
+

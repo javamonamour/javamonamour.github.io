@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Cluster Master, Singleton Master...."
+date: 2012-02-08T21:38:00.005+01:00
+permalink: /2012/02/cluster-master-singleton-master.html
+blogger_id: "5235272737522048631"
+tags: ["cluster"]
+---
+taking sparse notes here...<br />
+<br />
+<b>Cluster Master</b>:<br />
+<br />
+<a href="http://docs.oracle.com/cd/E21764_01/web.1111/e13709/migration.htm#i1034621">http://docs.oracle.com/cd/E21764_01/web.1111/e13709/migration.htm#i1034621</a><br />
+"Its role is to orchestrate the server migration process"<br />
+Reading this doc is like pure poetry.<br />
+<br />
+<br />
+<br />
+<b>Singleton Master</b>:<br />
+<br />
+<a href="http://docs.oracle.com/cd/E21764_01/web.1111/e13709/service_migration.htm#i1051470">http://docs.oracle.com/cd/E21764_01/web.1111/e13709/service_migration.htm#i1051470</a><br />
+<br />
+"The singleton master is a lightweight singleton service that monitors other services that can be migrated automatically."<br />
+<br />
+These services use the ACTIVE Database table to keep renewed the lease:<br />
+<br />
+CREATE TABLE ACTIVE (<br />
+SERVER VARCHAR2(150) NOT NULL,<br />
+INSTANCE VARCHAR2(100) NOT NULL,<br />
+DOMAINNAME VARCHAR2(50) NOT NULL,<br />
+CLUSTERNAME VARCHAR2(50) NOT NULL,<br />
+TIMEOUT DATE,<br />
+PRIMARY KEY (SERVER, DOMAINNAME, CLUSTERNAME)<br />
+);<br />
+<br />
+<br />
+see /opt/oracle/fmw11_1_1_5/wlserver_10.3/server/db/oracle/920/leasing.ddl<br />
+<br />
+and the content of the table looks like:<br />
+<br />
+<div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: xx-small;">"SERVER"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "INSTANCE"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "DOMAINNAME"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "CLUSTERNAME"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "TIMEOUT"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: xx-small;">"service.SINGLETON_MASTER"&nbsp;&nbsp;&nbsp; "2756549746869550668/osbpp1ms1""osbpp1do"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "osbpp1cl"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "06-MAY-12"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: xx-small;">"wlsserver.osbpp1ms4"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "-5012701700773599167/osbpp1ms4""osbpp1do"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "osbpp1cl"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "06-MAY-12"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: xx-small;">"service.CLUSTER_MASTER"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "2756549746869550668/osbpp1ms1""osbpp1do"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "osbpp1cl"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "06-MAY-12"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: xx-small;">"wlsserver.osbpp1ms2"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "1291378860276628438/osbpp1ms2""osbpp1do"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "osbpp1cl"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "06-MAY-12"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: xx-small;">"wlsserver.osbpp1ms1"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "2756549746869550668/osbpp1ms1""osbpp1do"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "osbpp1cl"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "06-MAY-12"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div><span style="font-size: xx-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">"wlsserver.osbpp1ms3"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "-2011604050071714597/osbpp1ms3""osbpp1do"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "osbpp1cl"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "06-MAY-12"&nbsp;&nbsp;&nbsp;</span></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+<br />
+<br />
+that is, one row per managed server in the cluster, plus a row for service.SINGLETON_MASTER and one for service.CLUSTER_MASTER (this is also telling us that both SINGLETON_MASTER and CLUSTER_MASTER are osbpp1ms1 in this case.

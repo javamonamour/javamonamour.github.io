@@ -1,0 +1,68 @@
+---
+layout: post
+title: "SCAN and REDIRECT with Oracle RAC"
+date: 2015-11-12T16:16:00.001+01:00
+permalink: /2015/11/scan-and-redirect-with-oracle-rac.html
+blogger_id: "4802911037121244904"
+tags: ["OracleRAC"]
+---
+If you access a ORACLE RAC, be aware that you must open a firewall rule not only for the SCAN listener, but also to all the RAC instances. Connections are NOT routed via the SCAN listeners, they are merely client-side redirected.
+<br />
+<br />
+Failure to do so will result in the connection fail with a Socket Timeout Exception. You will be puzzled because the telnet to the listener works... the problem is that your JDBC driver is trying to connect ALSO to the instance on a different IP (possibly also PORT...).... so you should test with telnet also the RAC instance!
+
+<br />
+<br />
+<pre class="brush: java">import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DBPing {
+        public static void main(String[] args) throws ClassNotFoundException, SQLException {
+                Class.forName("oracle.jdbc.driver.OracleDriver");
+                System.out.println("length " + args.length);
+                String user = args[0];
+                String password = args[1];
+                String url = args[2];
+                String now = new java.util.Date().toString();
+                System.out.println(now + " user= " + user + " password=" + password + " url=" + url);
+                java.sql.Connection conn = DriverManager.getConnection(url, user, password);
+                System.out.println("ok");
+        }
+}
+</pre>
+<br />
+<br />
+java -cp /acme/appsrv/bin/wl12.1a/oracle_common/modules/oracle.jdbc_12.1.0/ojdbc6.jar:/home/userpippo DBPing dbusername dbpassword "jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dbhostname-scan)(PORT=1522))(CONNECT_DATA=(SERVICE_NAME=myservicename)))" &amp;^
+
+<br />
+<br />
+The program will wait for connection for a while, then timeout. If you netstat BEFORE the timeout:
+
+<br />
+<br />
+netstat -an | grep 1522
+
+<br />
+<br />
+you will discover which IP corresponds to the RAC INSTANCE:
+
+<br />
+<br />
+tcp        0      1 10.11.12.13:59482         44.55.66.222:1522         SYN_SENT    
+
+<br />
+<br />
+What is 44.55.66.222 ? It's NOT the dbhostname-scan IP, but rather the IP of a RAC instance.... the SCAN listener tells the Oracle JDBC driver to do a redirect to a new IP/PORT where the RAC instance is running.
+<br />
+<br />
+What is SYN_SENT ? <a href="http://serverfault.com/questions/328361/tcptrack-shows-syn-sent-connections-does-that-mean-the-syn-package-reached-the">http://serverfault.com/questions/328361/tcptrack-shows-syn-sent-connections-does-that-mean-the-syn-package-reached-the</a> .... which means that the JDBC driver sent a SYN, but the server didn't reply (because the firewall blocked the communication).
+
+<br />
+<br />
+<a href="https://docs.oracle.com/database/121/JJDBC/scan.htm#JJDBC29152">Here some doc on SCAN</a>.
+
+<br />
+
+See also Oracle Support note "Port 1521 Open on Firewall But Unable to Connect Due to Errors: ORA-12535,TNS-12203 (Doc ID 361284.1)"
+
+<br />

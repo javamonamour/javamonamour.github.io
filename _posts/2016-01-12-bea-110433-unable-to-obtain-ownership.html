@@ -1,0 +1,54 @@
+---
+layout: post
+title: "BEA-110433 Unable to obtain ownership of the transaction log"
+date: 2016-01-12T17:17:00.000+01:00
+permalink: /2016/01/bea-110433-unable-to-obtain-ownership.html
+blogger_id: "9044583325611645382"
+tags: ["JTA", "migration"]
+---
+If you see "BEA-110433 Unable to obtain ownership of the transaction log", then
+
+<br/>
+
+<pre>
+
+&lt;Jan 12, 2016 3:41:57 PM CET&gt; &lt;Error&gt; &lt;JTA&gt; &lt;BEA-110433&gt; &lt;Unable to obtain ownership of the transaction log.&gt; 
+&lt;Jan 12, 2016 3:41:57 PM CET&gt; &lt;Critical&gt; &lt;JTA&gt; &lt;BEA-111009&gt; &lt;activateDeployments failed during initialization. Failing reason: 
+weblogic.server.ServiceFailureException: Cannot get ownership of Transaction Log.  Make sure that the Transaction Recovery Migratable Service is migrated back to the current server before restarting it.
+
+weblogic.server.ServiceFailureException: Cannot get ownership of Transaction Log.  Make sure that the Transaction Recovery Migratable Service is migrated back to the current server before restarting it.
+                at weblogic.transaction.internal.TransactionRecoveryService.checkTransactionLogOwnership(TransactionRecoveryService.java:408)
+                at weblogic.transaction.internal.TransactionRecoveryService.resume(TransactionRecoveryService.java:183)
+                at weblogic.transaction.internal.TransactionRecoveryService.initialize(TransactionRecoveryService.java:443)
+                at weblogic.transaction.internal.StartupClass.main(StartupClass.java:32)
+                at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+                Truncated. see log file for complete stacktrace
+&gt;
+
+
+</pre>
+
+<br/>
+then check your transaction-log-jdbc-store in the config.xml, make sure it's the same datasource used by data-source-for-automatic-migration, the auto-migration-table-name should be ACTIVE_SINGLETON_SERVICES, then drop this table and build it again with
+<br/>
+
+<pre>
+CREATE TABLE ACTIVE_SINGLETON_SERVICES (
+SERVER VARCHAR2(150) NOT NULL,
+INSTANCE VARCHAR2(100) NOT NULL,
+DOMAINNAME VARCHAR2(50) NOT NULL,
+CLUSTERNAME VARCHAR2(50) NOT NULL,
+TIMEOUT DATE,
+PRIMARY KEY (SERVER, DOMAINNAME, CLUSTERNAME)
+) ;
+</pre>
+
+
+<br/><br/>
+
+
+The root cause of this issue is often that the WLS servers are killed by operators rather than being "gracefully shutdown" as recommended by Oracle. For instance this happens when the Server is in Overload condition and the Graceful Shutdown times out (by default after 120 s). Thanks to Carlo for the explanation.
+<br/><br/>
+
+
+

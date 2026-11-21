@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Monitor cpu usage per thread in java..."
+date: 2014-11-17T12:49:00.000+01:00
+permalink: /2014/11/monitor-cpu-usage-per-thread-in-java.html
+blogger_id: "2460095326824181551"
+tags: ["JMX", "threads"]
+---
+There is <a href="http://stackoverflow.com/questions/755899/monitor-cpu-usage-per-thread-in-java">a thread on SO</a> , from which I discovered the TopThreads plugin for JConsole:
+<br />
+<br />
+<a href="http://arnhem.luminis.eu/new_version_topthreads_jconsole_plugin/">http://arnhem.luminis.eu/new_version_topthreads_jconsole_plugin/</a>
+
+<br />
+<br />
+jconsole -J-Djava.class.path=C:\Oracle\MIDDLE~1\JDK160~1\lib\jconsole.jar;C:\Oracle\MIDDLE~1\JDK160~1\lib\tools.jar;C:\Oracle\Middleware\wlserver_10.3\server\lib\wlfullclient.jar -J-Djmx.remote.protocol.provider.pkgs=weblogic.management.remote -pluginpath "c:\pierre\downloads\topthreads-1.1.jar" -debug
+
+<br />
+<br />
+in the jconsole output you should see "Plugin class net.luminis.jmx.topthreads.PluginAdapter loaded."
+
+<br />
+<br />
+and here you are: AWESOME!!!
+
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/1b4eba1e52847b63.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/60f1e0aec56b4347.png" height="345" width="640" /></a></div>
+<br />
+<br />
+Surely you can script it with ThreadJMX MBean, to create a monitoring tool, but this JConsole UI is so nice...
+
+<br />
+<br />
+
+Also great is this trick: run TOP, then SHIFT-H, take the decimal value of the threads who eat more CPU, <a href="http://www.binaryhexconverter.com/decimal-to-hex-converter">convert to HEX</a> and match it to the nid in a jstack threadDump <br/>
+
+<a href="http://code.nomad-labs.com/2010/11/18/identifying-which-java-thread-is-consuming-most-cpu/">http://code.nomad-labs.com/2010/11/18/identifying-which-java-thread-is-consuming-most-cpu/</a>

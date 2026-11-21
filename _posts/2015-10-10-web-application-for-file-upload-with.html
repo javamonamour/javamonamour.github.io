@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Web Application for File Upload with streaming"
+date: 2015-10-10T19:45:00.002+02:00
+permalink: /2015/10/web-application-for-file-upload-with.html
+blogger_id: "1294092674636963826"
+tags: ["FileUpload", "webapp"]
+---
+This gives you an entire working example (worth 1000 user manual pages) <a href="http://www.codejava.net/java-ee/servlet/apache-commons-fileupload-example-with-servlet-and-jsp">http://www.codejava.net/java-ee/servlet/apache-commons-fileupload-example-with-servlet-and-jsp</a> .... I have tested it and put in <a href="https://github.com/vernetto/WebFileUploader">https://github.com/vernetto/WebFileUploader</a> (just git clone it and run it).
+
+
+<br/><br/>
+Here the user guide of Apache FileUpload module:
+<br/><br/>
+<a href="http://commons.apache.org/proper/commons-fileupload/using.html">http://commons.apache.org/proper/commons-fileupload/using.html</a>
+
+<br/><br/>
+
+Create a webapp
+<br/><br/>
+Download commons-io jar <a href="http://commons.apache.org/proper/commons-io/download_io.cgi">http://commons.apache.org/proper/commons-io/download_io.cgi</a> and commons-fileupload jar <a href="http://commons.apache.org/proper/commons-fileupload/download_fileupload.cgi">http://commons.apache.org/proper/commons-fileupload/download_fileupload.cgi</a> and place them in WEB-INF/lib
+
+
+<br/><br/>
+
+Well actually rather than putting here snippets of code, here is the whole NON-Streaming example <a href="https://github.com/vernetto/WebFileUploader">https://github.com/vernetto/WebFileUploader</a> and here the STREAMING example <a href="https://github.com/vernetto/WebFileUploaderStreaming">https://github.com/vernetto/WebFileUploaderStreaming</a>
+<br/><br/>
+
+I have tested with a 4GB file and memory occupation on the server (and Garbage Collection) was really minimal... transfer speed was also decent (say 2 minutes for a 4GB file....).
+
+<br/><br/>
+Here <a href="https://raw.githubusercontent.com/vernetto/WebFileUploaderStreaming/master/WebFileUploaderStreaming.war">https://raw.githubusercontent.com/vernetto/WebFileUploaderStreaming/master/WebFileUploaderStreaming.war</a> you can download the war file directly.
+<br/><br/>

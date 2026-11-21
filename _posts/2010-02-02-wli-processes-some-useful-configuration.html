@@ -1,0 +1,53 @@
+---
+layout: post
+title: "WLI processes: some useful configuration"
+date: 2010-02-02T13:46:00.000+01:00
+permalink: /2010/02/wli-processes-some-useful-configuration.html
+blogger_id: "1267575241777056665"
+---
+in build/processoutput/WEB-INF you will find:<br />
+<br />
+<b>wli-processes.xml</b><br />
+<br />
+with things like:<br />
+<br />
+&lt;proc:ProcessManifest xmlns:proc="http://www.bea.com/wli/management/processmanifest"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;proc:project name="ACME_INTEG_WEB"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;proc:ProcessDefinitions&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;proc:Process ejbModuleName="ACME_INTEG_WEB_WLI_ComponentBeans" URI="/ACME_INTEG_WEB/processes/installmentWithDiscountInfo/ViewInstallmentWithDiscount.java" SVUID="0" stateless="true"/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;proc:Process ejbModuleName="ACME_INTEG_WEB_WLI_ComponentBeans" URI="/ACME_INTEG_WEB/processes/ViewMonthlyChargesProcess.java" SVUID="0" stateless="true"/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;proc:Process ejbModuleName="ACME_INTEG_WEB_WLI_ComponentBeans" URI="/ACME_INTEG_WEB/processes/UpdatePrepaidSubscriberProcess.java" SVUID="0" stateless="true"/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;proc:Process ejbModuleName="ACME_INTEG_WEB_WLI_ComponentBeans" URI="/ACME_INTEG_WEB/processes/UpdatePostpaidSubscriberProcess.java" SVUID="0" stateless="true"/&gt;<br />
+<br />
+<br />
+and <b>wli-subscriptions.xml</b><br />
+<br />
+&nbsp;&nbsp;&nbsp; &lt;man:project projectUri="ACME_INTEG_WEB"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;man:subscriptions jpdUri="/ACME_INTEG_WEB/processes/installmentWithDiscountInfo/ViewInstallmentWithDiscount.jpd"/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;man:subscriptions jpdUri="/ACME_INTEG_WEB/processes/ViewMonthlyChargesProcess.jpd"/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;man:subscriptions jpdUri="/ACME_INTEG_WEB/processes/UpdatePrepaidSubscriberProcess.jpd"/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;man:subscriptions jpdUri="/ACME_INTEG_WEB/processes/UpdatePostpaidSubscriberProcess.jpd"/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;man:subscriptions jpdUri="/ACME_INTEG_WEB/processes/UpdatePostpaidCustomerProcess.jpd"/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;man:subscriptions jpdUri="/ACME_INTEG_WEB/processes/UpdateInstallmentDiscount.jpd"/&gt;<br />
+<br />
+<br />
+<br />
+and <b>wlw-manifest.xml</b><br />
+<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp; &lt;con:project name="ACME_INTEG_WEB"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;con:async-request-queue&gt;ACME_INTEG_WEB.queue.AsyncDispatcher&lt;/con:async-request-queue&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;con:async-request-error-queue&gt;ACME_INTEG_WEB.queue.AsyncDispatcher_error&lt;/con:async-request-error-queue&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;con:top-level-component component-type="JPD" class-name="processes.installmentWithDiscountInfo.ViewInstallmentWithDiscount"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;con:external-callbacks/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;con:security-roles&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;con:role-name/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/con:security-roles&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/con:top-level-component&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;con:top-level-component component-type="JPD" class-name="processes.ViewMonthlyChargesProcess"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;con:external-callbacks/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;con:security-roles&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;con:role-name/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/con:security-roles&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/con:top-level-component&gt;

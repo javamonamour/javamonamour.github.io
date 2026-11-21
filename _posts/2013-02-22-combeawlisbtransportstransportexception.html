@@ -1,0 +1,37 @@
+---
+layout: post
+title: "com.bea.wli.sb.transports.TransportException: The configurations for the proxy service is in flux"
+date: 2013-02-22T12:39:00.001+01:00
+permalink: /2013/02/combeawlisbtransportstransportexception.html
+blogger_id: "2611634783989210503"
+tags: ["OSB"]
+---
+com.bea.wli.sb.transports.TransportException: The configurations for the proxy service is in flux
+<br/><br/>
+There is a Oracle Doc with ID 974538.1:<br/>
+<br/>
+The error message will come up when you try to update a proxy service while running a load test on the same proxy service or in a system under load. It is not considered a "best practice" to update proxy service under high load. So to avoid the situation please make sure that there is no dynamic update during the load test or under high load.
+
+<br/><br/>
+
+BEA-382013
+<br/><br/>
+ 
+
+Error: The configurations for the proxy service is in flux.
+<br/><br/>
+
+Description<br/><br/>
+
+ The processing of the message has failed in OSB runtime due to the fact that the configurations for the proxy service is in flux. This proxy is unable to send an outbound message to service "service" until the configuration stabilizes.
+<br/><br/>
+
+Action<br/><br/>
+
+ Wait until the configuration of OSB server stabilizes and retry sending the request.
+
+<br/><br/>
+
+
+
+

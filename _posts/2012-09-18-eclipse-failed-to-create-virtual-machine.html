@@ -1,0 +1,21 @@
+---
+layout: post
+title: "Eclipse failed to create virtual machine"
+date: 2012-09-18T11:52:00.000+02:00
+permalink: /2012/09/eclipse-failed-to-create-virtual-machine.html
+blogger_id: "6579536057446622468"
+tags: ["eclipse"]
+---
+I have downloaded the Scala IDE based on Eclipse here <a href="http://typesafe.com/stack/scala_ide_download">http://typesafe.com/stack/scala_ide_download</a><br />
+<br />
+<br />
+When I run it by double clicking on "Eclipse.exe", I get "Eclipse failed to create virtual machine".<br />
+<br />
+Just open eclipse.ini, and add these 2 lines at the top:<br />
+-vm<br />
+C:\Program Files\Java\jre6\bin\javaw.exe <br />
+(your mileage might vary)<br />
+<br />
+<br />
+Another good reason to shun Eclipse - I didn't need a new one, I already had thousands.<br />
+

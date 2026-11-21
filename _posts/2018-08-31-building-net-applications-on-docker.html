@@ -1,0 +1,22 @@
+---
+layout: post
+title: "building .net applications on a docker image"
+date: 2018-08-31T08:10:00.003+02:00
+permalink: /2018/08/building-net-applications-on-docker.html
+blogger_id: "1699096534141715581"
+tags: [".net", "docker"]
+---
+The pain is that you can't run a Windows docker image on Linux. And Microsoft images with the .net libraries are all Windows.<br />
+Like this one <a href="https://hub.docker.com/r/compulim/msbuild/">https://hub.docker.com/r/compulim/msbuild/</a><br />
+<br />
+BUT you can build a ubuntu-based docker builder image:<br />
+<br />
+<a href="https://medium.com/@hudsonmendes/build-net-4-5-on-linux-in-5-minutes-and-see-what-it-is-like-848ea45fc667">https://medium.com/@hudsonmendes/build-net-4-5-on-linux-in-5-minutes-and-see-what-it-is-like-848ea45fc667</a><br />
+<br />
+<br />
+it's available on docker hub as vernetto/ubuntudotnet:1.0<br />
+<br />
+Ref: how to push to docker hub <a href="https://ropenscilabs.github.io/r-docker-tutorial/04-Dockerhub.html">https://ropenscilabs.github.io/r-docker-tutorial/04-Dockerhub.html</a><br />
+<br />
+how to submit a container to an image and save it as tar <a href="https://docs.docker.com/engine/reference/commandline/save/#description">https://docs.docker.com/engine/reference/commandline/save/#description</a><br />
+

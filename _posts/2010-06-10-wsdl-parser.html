@@ -1,0 +1,130 @@
+---
+layout: post
+title: "WSDL Parser"
+date: 2010-06-10T19:17:00.004+02:00
+permalink: /2010/06/wsdl-parser.html
+blogger_id: "304456060260042223"
+tags: ["Woden", "wsdl_parser"]
+blogger_comments:
+  - author: "WebSphere Guy"
+    date: 2010-06-22
+    html: "Hi,<br /><br />Thanks for your sharing on how to get operations using woden. <br /><br />Do you know how to get the arguments / parameters for the operations given that the xsd schema for the wsdl is imported?<br />e.g."
+  - author: "vernetto"
+    date: 2010-07-01
+    html: "I am sorry WG, I have tried retrieving info about parameter names and types but I could not figure out how to do it... there is a promising getInterfaceMessageReferenceElements() retrieving a InterfaceMessageReferenceElement[] but then who knows..."
+---
+Since I am not a monkey (well, I am, but with some value added),<br />
+I don't like to type what I can generate. <br />
+<br />
+It happens often to have to generate the same kind of artifacts for each operation in a WSDL. <br />
+It becomes then very important to be able to<b> parse the WSLD</b> and find out all its components.<br />
+<br />
+Good <b>candidates </b>containing a WSDLDocument class are:<br />
+C:\bea11\oracle_common\modules\oracle.webservices_11.1.1\orawsdl.jar<br />
+C:\bea11\Oracle_OSB11\lib\modules\com.bea.alsb.resources.wsdl.jar<br />
+C:\bea11\Oracle_OSB11\lib\modules\com.bea.alsb.ws.schemas.wsdl.jar<br />
+<br />
+Also<br />
+<br />
+C:\bea11\jdk160_18\lib\tools.jar<br />
+or C:\bea11\jrockit_160_17_R28.0.0-679\lib\tools.jar<br />
+C:\bea11\modules\glassfish.jaxws.tools_1.0.0.0_2-1-5.jar<br />
+C:\bea11\oepe_11gR1PS2\plugins\org.apache.wsil4j_1.0.0.v200901211807.jar<br />
+C:\bea11\oepe_11gR1PS2\plugins\org.eclipse.wst.wsdl.validation_1.1.402.v200911251542.jar<br />
+C:\bea11\oepe_11gR1PS2\plugins\org.eclipse.wst.wsi_1.0.305.v200902181431.jar<br />
+C:\bea11\oracle_common\modules\oracle.webservices_11.1.1\oracle.webservices.standalone.client.jar<br />
+<br />
+C:\bea11\oracle_common\modules\sun.tools_1.6.0.jar<br />
+C:\bea11\Oracle_OSB11\lib\sb-kernel-resources.jar<br />
+<br />
+<br />
+I have tried some of them but could not make them work.<br />
+<br />
+<br />
+This <a href="http://oracled.wordpress.com/2009/02/04/parse-wsdl-effectively/">http://oracled.wordpress.com/2009/02/04/parse-wsdl-effectively/</a> gives some clues.<br />
+<br />
+<b>Oracle WSDL parser</b>: you get it by installing JDeveloper, it's in C:\beajdev11\jdeveloper\webservices\lib\wsdl.jar<br />
+<br />
+<b>Apache Woden</b> <a href="http://ws.apache.org/woden/userguide.html">http://ws.apache.org/woden/userguide.html</a><br />
+<br />
+<b>JWSDL </b><a href="http://wsdl4j.sourceforge.net/">http://wsdl4j.sourceforge.net/</a><br />
+<br />
+<br />
+Javadoc of Oracle WSDL parser is at<br />
+<a href="http://download-uk.oracle.com/docs/cd/A97688_16/generic.903/q20234/index.html">http://download-uk.oracle.com/docs/cd/A97688_16/generic.903/q20234/index.html</a><br />
+<br />
+<br />
+Using the <b>Oracle WSDL parser</b>, I get a<br />
+<br />
+<br />
+Exception in thread "Main Thread" oracle.wsdl.internal.WSDLException: oracle.xml.parser.v2.XMLParseException: Start of root element expected.<br />
+&nbsp;&nbsp;&nbsp; at oracle.wsdl.WSDLDocument.getDefinitions(WSDLDocument.java:105)<br />
+&nbsp;&nbsp;&nbsp; at com.acme.wsdl.WSDLParser.execute(WSDLParser.java:21)<br />
+&nbsp;&nbsp;&nbsp; at com.acme.wsdl.WSDLParser.main(WSDLParser.java:16)<br />
+<br />
+<br />
+I give up.<br />
+<br />
+I try <b>Woden </b>and I get:<br />
+<br />
+WSDLException: faultCode=INVALID_WSDL: Fatal WSDL error:<br />
+0:0,WSDL501,Expected a "{http://www.w3.org/ns/wsdl}description" element, but found a "{http://schemas.xmlsoap.org/wsdl/}definitions" element instead.: <br />
+<br />
+<br />
+Googling around I discover that this means that my WSDL is a 1.1 while <b>Woden processes only 2.0</b>.<br />
+<br />
+You can find here <a href="http://www.w3.org/2006/02/wsdl11to20.xsl">http://www.w3.org/2006/02/wsdl11to20.xsl</a> a <b>XSL converter from 1.1 to 2.0</b><br />
+Once converted 1.1 into 2.0 format, Woden manages to parse the WSDL but I get a warning:<br />
+<br />
+The targetNamespace 'http://www.acme.com/NGP3Geo/2010/06/10/GeoOsbService'<b> is not dereferencable</b>.<br />
+<br />
+which means (I think) that a URL connection open to retrieve the resource http://www.acme.com/NGP3Geo/2010/06/10/GeoOsbService gets a "connection refused" (to dereference= to access).<br />
+<br />
+This is a piece of code to <b>print all operations declared in a WSDL</b>:<br />
+<br />
+<br />
+package com.acme.wsdl;<br />
+<br />
+import org.apache.woden.WSDLException;<br />
+import org.apache.woden.WSDLFactory;<br />
+import org.apache.woden.WSDLReader;<br />
+import org.apache.woden.wsdl20.Description;<br />
+import org.apache.woden.wsdl20.xml.BindingElement;<br />
+import org.apache.woden.wsdl20.xml.DescriptionElement;<br />
+import org.apache.woden.wsdl20.xml.InterfaceElement;<br />
+import org.apache.woden.wsdl20.xml.InterfaceOperationElement;<br />
+import org.apache.woden.wsdl20.xml.ServiceElement;<br />
+<br />
+<br />
+<br />
+public class <b>WSDLParserApache </b>{<br />
+public static void main(String[] args) throws WSDLException {<br />
+&nbsp;&nbsp;&nbsp; WSDLParserApache wsdlParserApache = new WSDLParserApache();<br />
+&nbsp;&nbsp;&nbsp;&nbsp; wsdlParserApache.execute();<br />
+}<br />
+<br />
+public void execute() throws WSDLException {<br />
+<br />
+String filename1 = "C:/bea11/user_projects/workshops/default/GEO_OSB_Portal/WSDL/GEOOSBService20.WSDL";<br />
+<br />
+WSDLFactory factory = WSDLFactory.newInstance();<br />
+<br />
+WSDLReader reader = factory.newWSDLReader();<br />
+<br />
+reader.setFeature(WSDLReader.FEATURE_VALIDATION, true);<br />
+<br />
+String wsdlurl = filename1;<br />
+<br />
+DescriptionElement descElem = (DescriptionElement) reader.readWSDL(wsdlurl);<br />
+<br />
+InterfaceElement[] interfaces = descElem.getInterfaceElements();<br />
+<br />
+// getting all operations<br />
+for (InterfaceElement iface : interfaces) {<br />
+&nbsp;&nbsp; for (InterfaceOperationElement ioe : iface.getInterfaceOperationElements()) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println(ioe.getName().getLocalPart());<br />
+&nbsp;&nbsp; }<br />
+}<br />
+<br />
+}<br />
+}

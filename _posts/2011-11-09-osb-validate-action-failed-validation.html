@@ -1,0 +1,36 @@
+---
+layout: post
+title: "OSB Validate action failed validation"
+date: 2011-11-09T22:40:00.001+01:00
+permalink: /2011/11/osb-validate-action-failed-validation.html
+blogger_id: "753517103396645894"
+tags: ["OSB", "validation"]
+---
+The Exception logged is quite useless. You must examine the $fault in an error handler, to determine what went wrong:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;con:fault xmlns:con="http://www.bea.com/wli/sb/context"&gt;
+  &lt;con:errorCode&gt;BEA-382505&lt;/con:errorCode&gt;
+  &lt;con:reason&gt;OSB Validate action failed validation&lt;/con:reason&gt;
+  &lt;con:details&gt;
+    &lt;con1:ValidationFailureDetail xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config"&gt;
+      &lt;con1:message&gt;string length (4) is greater than maxLength facet (3) for UOMType in namespace http://acme.pippo.com/po&lt;/con1:message&gt;
+      &lt;con1:xmlLocation&gt;
+        &lt;po:UOM xmlns:po="http://acme.pippo.com/po"&gt;PAL&lt;/po:UOM&gt;
+      &lt;/con1:xmlLocation&gt;
+      &lt;con1:message&gt;string length (4) is greater than maxLength facet (3) for UOMType in namespace http://acme.pippo.com/po&lt;/con1:message&gt;
+      &lt;con1:xmlLocation&gt;
+        &lt;po:UOM xmlns:po="http://acme.pippo.com/po"&gt;PAL&lt;/po:UOM&gt;
+      &lt;/con1:xmlLocation&gt;
+    &lt;/con1:ValidationFailureDetail&gt;
+  &lt;/con:details&gt;
+  &lt;con:location&gt;
+    &lt;con:node&gt;PPL_acme_PO_FFMW_FilePoller_file&lt;/con:node&gt;
+    &lt;con:pipeline&gt;PPL_acme_PO_FFMW_FilePoller_file_request&lt;/con:pipeline&gt;
+    &lt;con:stage&gt;Validation&lt;/con:stage&gt;
+    &lt;con:path&gt;request-pipeline&lt;/con:path&gt;
+  &lt;/con:location&gt;
+&lt;/con:fault&gt;
+
+</pre><br />
+<br />
+For some funny reason, the error message and location are repeated twice.

@@ -1,0 +1,29 @@
+---
+layout: post
+title: "WLST: No stack trace available"
+date: 2012-08-10T19:58:00.000+02:00
+permalink: /2012/08/wlst-no-stack-trace-available.html
+blogger_id: "4495653359414588238"
+tags: ["WLST"]
+---
+I am not a WLST pro, and I am still learning on the field...<br />
+<br />
+something really frustrating is that I normally do:<br />
+<br />
+try:<br />
+   bla...<br />
+except:<br />
+   dumpStack()<br />
+<br />
+<br />
+thinking that dumpStack would be the equivalent of e.printStackTrace() in Java...<br />
+but most of the time I get the message "No stack trace available".<br />
+How irritating...<br />
+<br />
+So the only solution I have found is to use<br />
+<br />
+<pre>except Exception, inst:
+    print('unable to create     JMSModule ' + jmsModule)
+    print inst
+    print sys.exc_info()[0]
+</pre>

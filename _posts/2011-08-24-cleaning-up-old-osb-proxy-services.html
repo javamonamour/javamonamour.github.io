@@ -1,0 +1,46 @@
+---
+layout: post
+title: "Cleaning up old OSB Proxy Services"
+date: 2011-08-24T00:07:00.001+02:00
+permalink: /2011/08/cleaning-up-old-osb-proxy-services.html
+blogger_id: "428236411974658860"
+tags: ["OSB"]
+---
+OSB old proxy services still lingering around in deployments:<br />
+<br />
+Sometimes even if you delete a Proxy Service, the deployment remains in the console:<br />
+C:\Oracle2\Middleware\user_projects\domains\osb_domain\sbgen\_ALSB_1314101342219.ear<br />
+<br />
+even if the ear file doesn't exist;<br />
+in config.xml you find:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;app-deployment&gt;
+    &lt;name&gt;_ALSB_1314101342219&lt;/name&gt;
+    &lt;target&gt;myCluster&lt;/target&gt;
+    &lt;module-type&gt;ear&lt;/module-type&gt;
+    &lt;source-path&gt;sbgen\_ALSB_1314101342219.ear&lt;/source-path&gt;
+    &lt;sub-deployment&gt;
+      &lt;name&gt;ejb.jar&lt;/name&gt;
+      &lt;target&gt;myCluster&lt;/target&gt;
+    &lt;/sub-deployment&gt;
+    &lt;plan-dir&gt;osb\config\plan&lt;/plan-dir&gt;
+    &lt;plan-path&gt;Plan-_ALSB_1314101342219.ear.xml&lt;/plan-path&gt;
+    &lt;security-dd-model&gt;DDOnly&lt;/security-dd-model&gt;
+    &lt;staging-mode&gt;nostage&lt;/staging-mode&gt;
+  &lt;/app-deployment&gt;
+</pre><br />
+workaround: just delete the entry from config.xml.<br />
+<br />
+you should also remove the associated plan:<br />
+<br />
+C:\Oracle2\Middleware\user_projects\domains\osb_domain\osb\config\plan\Plan-_ALSB_1314101342219.ear.xml<br />
+
+<br />
+
+anyway all those EARs are normally deployed with staging-mode=stage (the case above is an exception), so you should check also in the DOMAIN_HOME/servers/SERVERNAME/stage folder. See also  <a href="http://docs.oracle.com/cd/E23943_01/web.1111/e13702/deploy.htm#i1027041">http://docs.oracle.com/cd/E23943_01/web.1111/e13702/deploy.htm#i1027041</a><br /><br />
+
+<i>
+The Administration Server first copies the deployment unit source files to the staging directories of target servers. (The staging directory is named stage by default, and it resides under the target server's root directory.)
+The target servers then deploy using their local copy of the deployment files. 
+</i>
+

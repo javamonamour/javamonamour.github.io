@@ -1,0 +1,26 @@
+---
+layout: post
+title: "shell input validation"
+date: 2018-08-22T20:13:00.003+02:00
+permalink: /2018/08/shell-input-validation.html
+blogger_id: "2472070377818342342"
+tags: ["shell"]
+---
+shell scripting STINKS, and to make it better we should at least make it more robust.<br />
+<br />
+For instance by validating input parameters<br />
+<br />
+Arrays are a great and simple way to achieve this.<br />
+<br />
+<pre class="brush: java">
+array=(pippo pluto topolino)
+printf '%s ' "${array[@]}"
+printf  '\n'
+value=puppo
+if [[ ! " ${array[@]} " =~ " ${value} " ]]; then
+  echo "array doesnt contain value $value"
+fi
+
+
+</pre><br />
+

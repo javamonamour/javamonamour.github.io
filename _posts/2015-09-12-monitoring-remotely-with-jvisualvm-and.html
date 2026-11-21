@@ -1,0 +1,47 @@
+---
+layout: post
+title: "monitoring remotely with jvisualvm and jstatd"
+date: 2015-09-12T17:23:00.002+02:00
+permalink: /2015/09/monitoring-remotely-with-jvisualvm-and.html
+blogger_id: "6370138002773566943"
+tags: ["jstatd. jvisualvm"]
+---
+If you run jstatd on a machine, you will get:
+<br/><br/>
+<pre>
+could not create remote object
+access denied ("java.util.PropertyPermission" "java.rmi.server.ignoreSubClasses" "write")
+java.security.AccessControlException: access denied ("java.util.PropertyPermission" "java.rmi.server.ignoreSubClasses" "write")
+        at java.security.AccessControlContext.checkPermission(AccessControlContext.java:372)
+        at java.security.AccessController.checkPermission(AccessController.java:559)
+        at java.lang.SecurityManager.checkPermission(SecurityManager.java:549)
+        at java.lang.System.setProperty(System.java:783)
+        at sun.tools.jstatd.Jstatd.main(Jstatd.java:139)
+
+</pre>
+
+<br/><br/>
+
+So, create a jstatd.policy file and enter:<br/>
+<pre>
+grant codebase "file:D:/pierre/Java/jdk1.7.0_79/lib/tools.jar" {
+permission java.security.AllPermission;
+};
+
+</pre>
+<br/>
+
+(<a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/PolicyFiles.html">full documentation of policy files here</a> )
+<br/><br/>
+
+then run "jstatd -J-Djava.security.policy=jstatd.policy"
+<br/><br/>
+
+Now in jvisualvm you can add remote host, then right-click on the host, "add jstatd connection" and this will connect to the default 1099 port on remote host (it's a RMI server, so it uses the default RMI port)
+<br/><br/>
+use "jps <remotehost>" from your local machine to check that the jstatd is actually reachable.
+<br/><br/>
+
+See also <a href="http://www.nljug.org/nieuws/blog-profiling-remote-jvm-using-visualvm/">http://www.nljug.org/nieuws/blog-profiling-remote-jvm-using-visualvm/</a> for a more complete list of options. Particularly useful the -p <PORT> option and the -J-Djava.rmi.server.hostname=x.x.x.x .
+
+

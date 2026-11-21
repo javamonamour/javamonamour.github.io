@@ -1,0 +1,98 @@
+---
+layout: post
+title: "The IO operation failed. BINDING.JCA-11096"
+date: 2012-05-22T15:29:00.005+02:00
+permalink: /2012/05/io-operation-failed-bindingjca-11096.html
+blogger_id: "3047807342136024305"
+tags: ["ftpadapter"]
+---
+We are using a JCA FTPAdapter,and occasionally, under load, the FTPMove operation fails:<br />
+<br />
+<pre>Unable to delete file '/messages/somefile.xml'; FTP command DELE returned unexpected reply code : 550
+
+
+
+WSIF JCA Execute of operation ''FTPMove'' failed due to: The IO operation failed.
+The IO operation failed.
+The "OPER[NOOP][S-&gt;R,T-&gt;R]" IO operation for "/messages/somefile.xml" failed.
+; nested exception is: 
+ BINDING.JCA-11096
+The IO operation failed.
+The IO operation failed',null,null,null);
+
+</pre><br />
+<br />
+Looking in the oracle.tip.adapter.ftp.outbound.FTPIoOperation, I find out that "S-&gt;R,T-&gt;R" means "Source=Remote, Target=Remote - in fact we are moving files on the remote destination only.<br />
+<br />
+<br />
+and I see in the logs:<br />
+<br />
+<pre>Error deleting file from FTP Server.
+Error deleting file from FTP Server.
+Unable to delete file from server.
+Please ensure whether the remote file has delete permission.
+
+        at oracle.tip.adapter.ftp.FTPClient.deleteFile(FTPClient.java:1362)
+        at oracle.tip.adapter.ftp.FTPAgent.deleteFile(FTPAgent.java:736)
+        at oracle.tip.adapter.ftp.outbound.FTPIoOperation.deleteFile(FTPIoOperation.java:188)
+        at oracle.tip.adapter.ftp.outbound.FTPIoOperation.ioOnly(FTPIoOperation.java:174)
+
+</pre><br />
+and in this case the code executed is:<br />
+<br />
+<br />
+if(!alreadyMoved &amp;&amp; success &amp;&amp; move)<br />
+try<br />
+{<br />
+deleteFile(fs.getSourceAgent(), spec, fInfo);<br />
+}<br />
+catch(Exception e)<br />
+{<br />
+throw new FileRetriableResourceException(11096, new Object[] {<br />
+(new StringBuilder()).append("OPER[NOOP][").append(mode).append("]").toString(), (new StringBuilder()).append(targetDir).append("/").append(targetFile).toString()<br />
+}, e);<br />
+}<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+Error "Please ensure whether the remote file has delete permission" is 11434<br />
+<br />
+<br />
+The delete is actually done in oracle.tip.adapter.ftp.FTPClient:<br />
+<br />
+<pre class="brush: java" name="code">public boolean deleteFile(FTPManagedConnection managedConnection, String file)
+        throws IOException, ResourceException
+    {
+        Socket controlSocket = managedConnection.getControlSocket();
+        String replyStr = dele(controlSocket, file);
+        int rc = getReplyCode(replyStr, m_ftpDesc.ftpHost);
+        log((new StringBuilder()).append("FTPClient.deleteFile(): ").append(replyStr).toString(), 102);
+        if(!m_ftpReplyValidator.isValidDELEReturnCode(rc))
+        {
+            log((new StringBuilder()).append("Unable to delete file '").append(file).append("'; ").append("FTP command DELE returned unexpected reply code : ").append(rc).toString(), 100);
+            FileResourceException frex = new FileResourceException(11434);
+            frex.setEISErrorCode(String.valueOf(rc));
+            frex.setEISErrorMessage(replyStr);
+            throw frex;
+        } else
+        {
+            return true;
+        }
+    }
+</pre><br />
+in oracle.tip.adapter.ftp.FTPReply I find out that:<br />
+<br />
+public static final int FILE_UNAVAILABLE = 550;<br />
+<br />
+<br />
+<br />
+still no clue on what goes wrong...<br />
+<br />
+<br />
+I understand that there is a <a href="http://www.nsftools.com/tips/RawFTP.htm#RNTO">FTP RNTO</a> mode, if you want to enable, specify the JCA activation property UseFtpRenameOperation=true or UseNativeRenameOperation=true.<br />
+This will entail using a move() operation rather than a copy followed by a delete (you have to look at FTPIoOperation.ioOnly() method).<br />
+<br />
+<br />
+PS I discovered after a lot of pain that we were generating twice the same filename on the destination.... not a good idea...

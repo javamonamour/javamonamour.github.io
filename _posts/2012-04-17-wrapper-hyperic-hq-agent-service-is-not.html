@@ -1,0 +1,55 @@
+---
+layout: post
+title: "wrapper  | The Hyperic HQ Agent service is not installed"
+date: 2012-04-17T23:12:00.000+02:00
+permalink: /2012/04/wrapper-hyperic-hq-agent-service-is-not.html
+blogger_id: "5494320090931599285"
+tags: ["hyperic"]
+---
+First of all, Run As Administrator.<br />
+<br />
+<br />
+<b>hq-agent.bat install</b><br />
+wrapper  | Hyperic HQ Agent service installed.<br />
+<br />
+<b><br />
+hq-agent.bat start</b><br />
+wrapper  | Starting the Hyperic HQ Agent service...<br />
+wrapper  | Waiting to start...<br />
+wrapper  | Hyperic HQ Agent started.<br />
+- No token file found, waiting for Agent to initialize<br />
+[ Running agent setup ]<br />
+Should Agent communications to HQ be unidirectional [default=no]:<br />
+<br />
+<br />
+<br />
+What is the HQ server IP address: 10.60.188.193<br />
+Should Agent communications to HQ always be secure [default=yes]:<br />
+What is the HQ server SSL port [default=7443]:<br />
+- Testing secure connection ... Success<br />
+What is your HQ login [default=hqadmin]:<br />
+What is your HQ password:<br />
+<br />
+What IP should HQ use to contact the agent [default=10.60.188.193]:<br />
+What port should HQ use to contact the agent [default=2144]:<br />
+- Received temporary auth token from agent<br />
+- Registering agent with HQ<br />
+The server to agent communication channel is using a self-signed certificate and could not be verifi<br />
+ed<br />
+Are you sure you want to continue connecting? [default=no]: yes<br />
+- HQ gave us the following agent token<br />
+    1334696759417-1107302852316448320-217456217152137655<br />
+- Informing agent of new HQ server<br />
+- Validating<br />
+- Successfully setup agent<br />
+<br />
+<br />
+<br />
+It works like a breeze, and the HQ server immediately discovers:<br />
+<br />
+Microsoft Windows 2008  <br />
+Weblogic Admin 1...main AdminServer  <br />
+PostgreSQL 8.2  <br />
+Tomcat 6.0<br />
+Oracle 10g<br />
+Agent 4.6.5

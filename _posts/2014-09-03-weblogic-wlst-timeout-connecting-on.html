@@ -1,0 +1,27 @@
+---
+layout: post
+title: "WebLogic: WLST timeout connecting on a secure port"
+date: 2014-09-03T09:56:00.002+02:00
+permalink: /2014/09/weblogic-wlst-timeout-connecting-on.html
+blogger_id: "1563118063355772576"
+tags: ["ssl", "weblogic"]
+---
+Connecting to a WebLogic server on a SSL port, although highly recommended by Oracle, can have a major drawback: it's damn slow to establish connection.
+<br />
+<br />
+AFAIK there is no way to speed this up. I have tried the customary "urandom" optimization, to no avail.
+<br />
+<br />
+So I had to increase the "SSL Login Timeout" (server/configuration/tuning).
+<br />
+<br />
+<i>"Specifies the number of milliseconds that WebLogic Server waits for an SSL connection before timing out. SSL connections take longer to negotiate than regular connections."</i>
+<br />
+<br />
+in WLST:
+
+<br /><br />
+<pre class="brush: java">serverName = 'osbts1do'
+cd('/Servers/' + serverName + '/SSL/' + serverName)
+cmo.setLoginTimeoutMillis(30000)
+</pre>

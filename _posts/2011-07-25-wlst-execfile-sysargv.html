@@ -1,0 +1,40 @@
+---
+layout: post
+title: "wlst execfile sys.argv"
+date: 2011-07-25T15:07:00.001+02:00
+permalink: /2011/07/wlst-execfile-sysargv.html
+blogger_id: "6229773094653363008"
+tags: ["WLST"]
+---
+<i>execfile('import.py')</i><br />
+<br />
+fails with a <i>exceptions.IndexError</i> because the import.py does a<br />
+<br />
+<i>importToALSBDomain(sys.argv[1])</i><br />
+<br />
+<br />
+and nothing is specified for sys.argv[1]<br />
+<br />
+Unfortunately <br />
+<br />
+execfile('import.py import.properties')<br />
+<br />
+doesn't work <br />
+<i>IOError: File not found - import.py import.properties (No such file or directory)</i><br />
+<br />
+nor <br />
+<br />
+<i>execfile('import.py', 'import.properties')</i><br />
+<br />
+it gives me a<br />
+<i>sequence subscript must be integer or slice</i><br />
+<br />
+(god only knows what it is trying to do)<br />
+<br />
+<br />
+All in all, it seems that the only way to pass parameters to a script is by invoking it directly from the command line (java weblogic.WLST import.py import.properties)<br />
+or using the Ant equivalent.<br />
+<br />
+It could be worse... it could be raining...<br />
+<br />
+<object style="height: 390px; width: 640px"><param name="movie" value="http://www.youtube.com/v/9AFf0ysgNiM?version=3"><param name="allowFullScreen" value="true"><param name="allowScriptAccess" value="always"><embed src="http://www.youtube.com/v/9AFf0ysgNiM?version=3" type="application/x-shockwave-flash" allowfullscreen="true" allowScriptAccess="always" width="640" height="390"></object>

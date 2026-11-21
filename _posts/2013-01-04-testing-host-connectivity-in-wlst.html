@@ -1,0 +1,96 @@
+---
+layout: post
+title: "Testing host connectivity in WLST"
+date: 2013-01-04T13:46:00.002+01:00
+permalink: /2013/01/testing-host-connectivity-in-wlst.html
+blogger_id: "8126266023052269696"
+tags: ["WLST"]
+---
+<a href="http://stackoverflow.com/questions/89228/calling-an-external-command-in-python">Excellent post </a>on all the possible ways to invoke a OS command in Python/WLST
+
+<br/><br/>
+
+Since in WLST we don't have the option to use "subprocess" (please Oracle there is no need to upgrade WLST to more recent versions of Python, you could sprain an ankle doing that and it's too dangerous), we must use <a href="http://docs.python.org/2/library/os.html#os-newstreams">os.popen(command)</a>.
+
+<br/><br/>
+
+Problem with popen is that stderr is not captured, so I found it easier to redirect stderr to stdout
+
+<br/><br/>
+
+
+<pre name="code" class="brush: java">
+
+import os
+
+def pingHost(hostname):
+    cmd = 'ping -c 4 ' + hostname + ' 2>&1'
+    success = False
+    result = ''
+    for line in os.popen(cmd).readlines():
+        result = result + line  
+        if "4 packets transmitted, 4 received" in line:
+            success = True
+    
+    return success, result 
+
+
+</pre>
+
+<br/><br/><br/><br/>
+
+To test the actual connection, <a href="http://docs.python.org/release/2.3/lib/socket-example.html">we should use a socket</a>
+
+Since I don't have netcat or nmap, I am using plain old stinky telnet.
+<br/>
+<pre>
+export HOST='myhost.acme.com'
+export PORT=1522
+sleep 5 | telnet $HOST $PORT
+</pre>
+
+this will ensure that the process will be terminated (no hanging, no need to inject a CTRL-] and quit via expect) within 5 seconds.
+
+
+<br/><br/><br/>
+
+this will return 1 if connection was successful, 0 otherwise:
+<br/>
+sleep 5 | telnet $HOST $PORT | grep -v "Connection refused" | grep "Connected to" | grep -v grep | wc -l
+
+<br/><br/>
+
+The alternative (faster, no need for timeouts) is using Python sockets:
+<br/><br/>
+<pre>
+import socket
+host = 'myhost.acme.com'
+port = 1522
+s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+connect=s.connect((host,port))
+</pre>
+
+<br/><br/>
+
+
+so this function works very well:
+
+<pre>
+import socket
+
+def connectToHost(hostname, port):
+    try:
+        s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        connect=s.connect((hostname, int(port)))
+        s.close()
+        return True
+    except:
+        return False
+
+</pre>
+
+<br/><br/>
+
+
+Make sure you cast port into a int, otherwise you will get the infamous "Address must be a tuple of (hostname, port)" error.
+

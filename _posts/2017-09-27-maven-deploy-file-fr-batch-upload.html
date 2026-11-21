@@ -1,0 +1,41 @@
+---
+layout: post
+title: "Maven deploy-file for batch upload"
+date: 2017-09-27T21:54:00.000+02:00
+permalink: /2017/09/maven-deploy-file-fr-batch-upload.html
+blogger_id: "2822465599429509053"
+tags: ["maven", "nexus"]
+---
+Unfortunately in the Nexus 3.5 and 3.6 version there is no batch upload of artifacts (in Nexus 2.X it was much easier: just rsync your Maven repo and "rebuild index"<br />
+<br />
+<a href="http://maven.apache.org/plugins/maven-deploy-plugin/deploy-file-mojo.html">http://maven.apache.org/plugins/maven-deploy-plugin/deploy-file-mojo.html</a><br />
+<br />
+git clone https://github.com/gabrielf/maven-samples<br />
+<br />
+git clone https://github.com/ronbadur/maven-artifacts-uploader<br />
+<br />
+I start nexus with https://github.com/sonatype/docker-nexus3<br />
+<br />
+sample command:<br />
+<br />
+mvn -e -X deploy:deploy-file -q -DpomFile=/home/centos/myrepo/org/vafer/jdependency/1.1/jdependency-1.1.pom -Dfile=/home/centos/myrepo/org/vafer/jdependency/1.1/jdependency-1.1.jar -DrepositoryId=nexus -Durl=http://localhost:8081/repository/maven-releases/ -Dpackaging=jar <br />
+<br />
+<br />
+maven's settings.xml should contain<br />
+<br />
+<pre class="brush: xml">&lt;server&gt;
+      &lt;id&gt;nexus&lt;/id&gt;
+      &lt;username&gt;admin&lt;/username&gt;
+      &lt;password&gt;admin123&lt;/password&gt;
+    &lt;/server&gt;
+
+</pre>
+<br />
+<br />
+<br />
+If you get "ReasonPhrase: Repository does not allow updating assets: maven-releases." , make sure you set "allow redeploy" in the Deployment policy"<br />
+<br />
+If you get "Cannot deploy artifact from the local repository:" it's because your source file is inside the .m2/repository folder - which is forbidden <br />
+<br />
+See Sonatype help on this topic <a href="https://support.sonatype.com/hc/en-us/articles/213465818-How-can-I-programmatically-upload-an-artifact-into-Nexus-2-">https://support.sonatype.com/hc/en-us/articles/213465818-How-can-I-programmatically-upload-an-artifact-into-Nexus-2-</a><br />
+<br />

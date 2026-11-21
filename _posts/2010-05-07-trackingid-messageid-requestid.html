@@ -1,0 +1,34 @@
+---
+layout: post
+title: "TrackingId, MessageId, RequestId, CorrelationId...."
+date: 2010-05-07T11:16:00.000+02:00
+permalink: /2010/05/trackingid-messageid-requestid.html
+blogger_id: "6700243658403794172"
+tags: ["tracking"]
+---
+I am fascinated by the topic of TRACKING MESSAGES. I feel that one of the biggest mistakes in a SOA environment is the failure to provide an instantaneous way to uniquely identify an interaction (request) with the system and tracking it across all the bloody infinity of interconnected systems.<br />
+<br />
+One thing that I have clear in mind is that one should label the Originated Message with a unique RequestId, and use MessageId and CorrelationId purely to correlate request-response in Asynchronous leg on the entire message trip (the concept of JMSMessageID and JMSCorrelationID is explained here <a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/interopjms/MsgIDPatternforJMS.html">http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/interopjms/MsgIDPatternforJMS.html</a> ).<br />
+<br />
+There doesn't seem to be a standardization on message tracking information format. <br />
+<br />
+A nice way of tracking messages could be this<br />
+<br />
+<a href="http://eelzinga.wordpress.com/2009/07/17/oracle-service-bus-xquery-and-optional-parameters/">http://eelzinga.wordpress.com/2009/07/17/oracle-service-bus-xquery-and-optional-parameters/</a><br />
+<br />
+<br />
+&lt;soap:Header&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;slg:CustomHeader xmlns:slg="http://www.it.eye.nl/services/CustomHeader"&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;slg:CorrelationId&gt;3253252er5235432&lt;/slg:CorrelationId&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;slg:MessageType&gt;iDOC&lt;/slg:MessageType&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;slg:TimeStamp&gt;2001-12-17T09:30:47Z&lt;/slg:TimeStamp&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;slg:Status&gt;OK&lt;/slg:Status&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;slg:Direction/&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/slg:CustomHeader&gt;<br />
+&lt;/soap:Header&gt;<br />
+<br />
+In OSB, you have a variable <b>$messageID</b> (format is 6192059538496460915-f22b838.1287d7f67bd.-7f76) which can be used to uniquely identify any message inside the OSB.<br />
+Beware! If PS1 invokes PS2, a new messageID will be generated inside PS2, so you cannot use messageID to track a global message flow inside OSB (do you have a reason for that? Perhaps...).<br />
+<br />
+<br />
+to be continued...

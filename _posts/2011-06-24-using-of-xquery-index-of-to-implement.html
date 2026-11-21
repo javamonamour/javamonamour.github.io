@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Using of XQuery index-of to implement a quick lookup service"
+date: 2011-06-24T12:10:00.002+02:00
+permalink: /2011/06/using-of-xquery-index-of-to-implement.html
+blogger_id: "6261877739220331257"
+---
+Locating an element based on a value can be very expensive (full table scan each time)<br />
+<br />
+this:<br />
+$retrievePtcarSummaryResponse1/ns0:RetrievePtcarSummaryResult/ns0:PtcarSummary<b>[ns0:Id=$item]</b><br />
+is very slow if you have a lot of PtcarSummary.<br />
+<br />
+<br />
+I have tried to implement a lookup mechanism by building a sequence of the values being looked up:<br />
+<br />
+let $mySequence := $retrievePtcarSummaryResponse1/ns0:RetrievePtcarSummaryResult/ns0:PtcarSummary/ns0:Id/text()<br />
+<br />
+<br />
+this will build a sequence made by all Id in all the PtcarSummary<br />
+<br />
+<br />
+then using <br />
+<br />
+for $item in 1 to $myMax<br />
+         let $pos := fn:index-of($mySequence, xs:string($item))<br />
+    return <br />
+     if ($pos) then<br />
+     $retrievePtcarSummaryResponse1/ns0:RetrievePtcarSummaryResult/ns0:PtcarSummary<b>[$pos]</b><br />
+     else <br />
+......<br />
+<br />
+<br />
+I was hoping to optimize the search.<br />
+Bummer.<br />
+I keep getting OutOfMemoryException for large (1600) sequences.<br />
+<br />
+In fact I read <a href="http://exist.2174344.n4.nabble.com/length-limit-on-constructed-sequences-td3248468.html">here</a> that sequences are quite poor in memory allocation.... bummer....<br />
+<br />
+I was hoping XQuery was a SQL for XML, but it is not. <br />
+SQL support indexes - without them any DB would be stuck.<br />
+XQuery support for indexes is extremely limited - the language doesn&#39;t even support a HashMap, for Christ sake....

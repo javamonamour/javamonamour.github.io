@@ -1,0 +1,26 @@
+---
+layout: post
+title: "BEA-2165021 ResourceManagement is not enabled in this JVM"
+date: 2016-01-06T11:19:00.001+01:00
+permalink: /2016/01/bea-2165021-resourcemanagement-is-not.html
+blogger_id: "5769164633608189692"
+tags: ["JVM"]
+---
+Starting WLS 12.2.1 with a JDK 8 I get this INFO message:
+
+<br/><br/>
+
+&lt;Info&gt; &lt;RCM&gt; &lt;BEA-2165021&gt; &lt;&quot;ResourceManagement&quot; is not enabled in this JVM. Enable &quot;ResourceManagement&quot; to use the WebLogic Server &quot;Resource Consumption Management&quot; feature. To enable &quot;ResourceManagement&quot;, you must specify the following JVM options in the WebLogic Server instance in which the JVM runs: -XX:+UnlockCommercialFeatures -XX:+ResourceManagement.&gt; 
+
+
+<br/><br/>
+
+here <a href="https://docs.oracle.com/javase/8/docs/technotes/tools/enhancements-8.html">https://docs.oracle.com/javase/8/docs/technotes/tools/enhancements-8.html</a> they say "##The options -XX:+ResourceManagement and -XX:ResourceManagementSampleInterval=value have been added. Resource Management is a commercial feature."
+<br/><br/>
+I think this has nothing to do with the try-with-resources clause.
+<br/><br/>
+Euphemistically speaking, there doesn't seem to be lot of documentation on this -XX:+ResourceManagement flag...
+
+<br/><br/>
+
+

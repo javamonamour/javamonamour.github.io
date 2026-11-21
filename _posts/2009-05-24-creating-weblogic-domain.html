@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Creating a Weblogic Domain"
+date: 2009-05-24T23:39:00.000+02:00
+permalink: /2009/05/creating-weblogic-domain.html
+blogger_id: "3215591363218393060"
+---
+the easiest way is to enter this command in an empty directory, after having run setWLEnv.sh:<br /><br />java -Dweblogic.Domain=pippodomain -Dweblogic.Name=pipposerver -Dweblogic.management.username=weblogic -Dweblogic.management.password=weblogic -Dweblogic.ListenPort=7001 weblogic.Server

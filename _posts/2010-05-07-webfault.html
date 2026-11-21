@@ -1,0 +1,236 @@
+---
+layout: post
+title: "Exception Handling in Web Services.... AKA Web Services suck - big time."
+date: 2010-05-07T15:57:00.000+02:00
+permalink: /2010/05/webfault.html
+blogger_id: "5493136993676617268"
+tags: ["fault", "wsdl"]
+---
+I have a WebService with a WebMethod<br />
+<br />
+@<b>WebMethod</b><br />
+public void updateCompany(Company company) throws CompanyException<br />
+<br />
+<br />
+where<br />
+public class <b>CompanyException extends Exception</b><br />
+<br />
+<br />
+this generates this WSDL:<br />
+<br />
+<i>&nbsp;&nbsp;&nbsp; &lt;s0:operation name="updateCompany" parameterOrder="parameters"&gt;</i><br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;s0:input message="s1:updateCompany"/&gt;</i><br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;s0:output message="s1:updateCompanyResponse"/&gt;</i><br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;s0:<b>fault </b>message="s1:<b>CompanyException</b>" name="CompanyException"/&gt;</i><br />
+<i>&nbsp;&nbsp;&nbsp; &lt;/s0:operation&gt;</i><br />
+<br />
+______________________<br />
+<br />
+If I have 2 exceptions:<br />
+public void updateCompany(Company company) throws <b>CompanyException</b>, <b>NamingException</b><br />
+<br />
+I get 2 faults<br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;s0:fault message="s1:<b>CompanyException</b>" name="CompanyException"/&gt;</i><br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;s0:fault message="s1:<b>NamingException</b>" name="NamingException"/&gt;</i><br />
+<br />
+______________________<br />
+<br />
+If I add the annotation javax.xml.ws.WebFault:<br />
+@<b>WebFault</b>(name="<b>companyFault</b>")<br />
+<br />
+before the public class CompanyException extends Exception, the WSDL SHOULD become<br />
+<br />
+<i>&nbsp;&nbsp;&nbsp; &lt;s0:operation name="updateCompany"  parameterOrder="parameters"&gt;</i><br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;s0:input message="s1:updateCompany"/&gt;</i><br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;s0:output message="s1:updateCompanyResponse"/&gt;</i><br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;s0:fault message="s1:<b>companyFault</b>"  name="<b>companyFault</b>"/&gt;</i><br />
+<i>&nbsp;&nbsp;&nbsp; &lt;/s0:operation&gt;</i><br />
+<br />
+or something like that.... but unfortunately with WebLogic this doesn't seem to affect the WSDL!<br />
+<br />
+______________________<br />
+<br />
+Anyhow, if you construct the CompanyException without invoking the super(String message) constructor,<br />
+you will get this:<br />
+<br />
+<i>&lt;env:Body&gt;<br />
+<br />
+&lt;env:Fault&gt;<br />
+&lt;<b>faultcode</b>&gt;<b>env:Server</b>&lt;/faultcode&gt;<br />
+&lt;<b>faultstring</b>/&gt;<br />
+<br />
+&lt;detail&gt;<br />
+&lt;com:string xsi:nil="true"/&gt;<br />
+&lt;/detail&gt;<br />
+&lt;/env:Fault&gt;<br />
+&lt;/env:Body&gt;</i><br />
+<i><br />
+</i><br />
+<br />
+otherwise, if you do super(message),and you invoke<br />
+<br />
+<i>Java: </i><br />
+throw new CompanyException("<i><b>UNABLE_TO_EXECUTE_SQL"</b></i>) <br />
+<br />
+<i>SOAP Fault:</i><br />
+<br />
+<i>&lt;env:Fault&gt;<br />
+&lt;faultcode&gt;env:Server&lt;/faultcode&gt;<br />
+&lt;<b>faultstring</b>&gt;<b>UNABLE_TO_EXECUTE_SQL</b>&lt;/faultstring&gt;<br />
+<br />
+&lt;detail&gt;<br />
+&lt;com:string&gt;UNABLE_TO_EXECUTE_SQL&lt;/com:string&gt;<br />
+&lt;/detail&gt;<br />
+&lt;/env:Fault&gt;<br />
+&lt;/env:Body&gt;</i><br />
+<br />
+______________________<br />
+<br />
+If your exception extends <b>WebServiceException</b>, AND you do super(message), you get something really exciting:<br />
+<br />
+<br />
+<i>&lt;env:Body&gt;<br />
+<br />
+&lt;env:Fault&gt;<br />
+&lt;<b>faultcode</b>&gt;<b>env:Server</b>&lt;/faultcode&gt;<br />
+<br />
+&lt;<b>faultstring</b>&gt;<br />
+Failed to invoke end component com.acme.dbaccess.CompanyDBWS (POJO), operation=insertCompany<br />
+&nbsp;-&gt; Failed to invoke method<br />
+&nbsp;-&gt; UNABLE_TO_EXECUTE_SQL<br />
+&lt;/faultstring&gt;<br />
+<br />
+&lt;detail&gt;<br />
+<br />
+&lt;bea_fault:stacktrace&gt;<br />
+com.acme.dbaccess.CompanyException: UNABLE_TO_EXECUTE_SQL<br />
+<br />
+&nbsp;&nbsp;&nbsp; at com.acme.dbaccess.CompanyDBWS.insertCompany(CompanyDBWS.java:81)<br />
+<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+..................<br />
+&nbsp;&nbsp;&nbsp; at weblogic.work.ExecuteThread.run(ExecuteThread.java:173)<br />
+<br />
+&lt;/bea_fault:stacktrace&gt;<br />
+&lt;/detail&gt;<br />
+&lt;/env:Fault&gt;<br />
+&lt;/env:Body&gt;</i><br />
+<br />
+<br />
+Better still if you use the <b>super(message, Throwable)</b> so you get also the stacktrace of the original exception!<br />
+<br />
+YET the fault generated is not very usable.... the faultstring is very dirty and the faultcode useless....<br />
+I need to find a better way of doing this...<br />
+<br />
+<br />
+______________________<br />
+<br />
+<br />
+Now, if your service throws an <b>Unchecked Exception</b> (like <b>NullPointerException</b>), you will still get something decent:<br />
+<br />
+<i>Java: </i><br />
+throw new NullPointerException("I am a NPE") ;<br />
+<br />
+<i>SOAP Fault:</i><br />
+<br />
+&lt;env:Envelope&gt;<br />
+<br />
+&lt;env:Body&gt;<br />
+&lt;env:Fault&gt;<br />
+&lt;<b>faultcode</b>&gt;<b>env:Server</b>&lt;/faultcode&gt;<br />
+&lt;<b>faultstring</b>&gt;<br />
+Failed to invoke end component com.acme.dbaccess.CompanyDBWS (POJO), operation=updateCompany<br />
+&nbsp;-&gt; Failed to invoke method<br />
+&nbsp;-&gt; I am a NPE<br />
+&lt;/faultstring&gt;<br />
+&lt;<b>detail</b>&gt;<br />
+&lt;<b>bea_fault:stacktrace</b>&gt;<br />
+java.lang.NullPointerException: I am a NPE<br />
+<br />
+&nbsp;&nbsp;&nbsp; at com.acme.dbaccess.CompanyDBWS.updateCompany(CompanyDBWS.java:25)<br />
+<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+..............<br />
+&nbsp;&nbsp;&nbsp; at weblogic.work.ExecuteThread.run(ExecuteThread.java:173)<br />
+<br />
+&lt;/bea_fault:stacktrace&gt;<br />
+&lt;/detail&gt;<br />
+&lt;/env:Fault&gt;<br />
+&lt;/env:Body&gt;<br />
+&lt;/env:Envelope&gt;<br />
+<br />
+<br />
+_____________________________<br />
+<br />
+If I extend CompanyException from <b>SOAPException</b>, I get this fault:<br />
+<br />
+&lt;env:Envelope&gt;<br />
+&lt;env:Body&gt;<br />
+&lt;env:Fault&gt;<br />
+&lt;faultcode&gt;env:Server&lt;/faultcode&gt;<br />
+&lt;faultstring&gt;UNABLE_TO_UPDATE&lt;/faultstring&gt;<br />
+&lt;detail&gt;<br />
+&lt;java:CompanyException/&gt;<br />
+&lt;/detail&gt;<br />
+&lt;/env:Fault&gt;<br />
+&lt;/env:Body&gt;<br />
+&lt;/env:Envelope&gt;<br />
+<br />
+that is, the Fault message is cleary readable (UNABLE_TO_UPDATE) but I have lost the Stacktrace.<br />
+<br />
+_____________________________<br />
+<br />
+On the whole, my impression is that Exception (Fault) generation and handling is, as everything else in WS, very poorly specified and implemented. Compare it to the level of technology in Java and you will only cry and feel lost in hyperspace with WS.<br />
+<br />
+Let's face it, when you come from a Java background, you feel that Web Service technology has been designed by a bunch of fat old drunkards in a brothel running wildly after some young cheerful ladies in pink pajamas... two organs require a lot of blood: the brain and the penis, and we can only operate one at a time.<br />
+<br />
+_______________<br />
+<br />
+It is very educational to look at how a SOAP call is executed inside WebLogic:<br />
+<br />
+&nbsp;&nbsp;&nbsp; JavaClassComponent.invoke(String, Object[], MessageContext) line: 124&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; ComponentHandler.handleRequest(MessageContext) line: 84&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; HandlerIterator.handleRequest(MessageContext, int) line: 141&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; ServerDispatcher.dispatch() line: 114&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; WsSkel.invoke(Connection, WsPort) line: 80&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; SoapProcessor.handlePost(BaseWSServlet, HttpServletRequest, HttpServletResponse) line: 66&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; <b>SoapProcessor.process(</b>HttpServletRequest, HttpServletResponse, BaseWSServlet) line: 44&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; BaseWSServlet$AuthorizedInvoke.run() line: 285&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; WebappWSServlet(BaseWSServlet).service(HttpServletRequest, HttpServletResponse) line: 169&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; WebappWSServlet(HttpServlet).service(ServletRequest, ServletResponse) line: 820&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; StubSecurityHelper$ServletServiceAction.run() line: 227&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; StubSecurityHelper.invokeServlet(ServletRequest, HttpServletRequest, ServletRequestImpl, ServletResponse, HttpServletResponse, Servlet) line: 125&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; ServletStubImpl.execute(ServletRequest, ServletResponse, FilterChainImpl) line: 292&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; ServletStubImpl.execute(ServletRequest, ServletResponse) line: 175&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; WebAppServletContext$ServletInvocationAction.run() line: 3498&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; AuthenticatedSubject.doAs(AbstractSubject, PrivilegedAction) line: 321&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; SecurityManager.runAs(AuthenticatedSubject, AuthenticatedSubject, PrivilegedAction) line: not available&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; WebAppServletContext.securedExecute(HttpServletRequest, HttpServletResponse, boolean) line: 2180&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; WebAppServletContext.execute(ServletRequestImpl, ServletResponseImpl) line: 2086&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; ServletRequestImpl.run() line: 1406&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; ExecuteThread.execute(Runnable) line: 201&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; ExecuteThread.run() line: 173&nbsp;&nbsp;&nbsp; <br />
+<br />
+MOST LIKELY it's the SoapProcessor who maps the Java Exception to the SOAP Fault.... ah, if only I had the source code!<br />
+_______________<br />
+<br />
+JAX-WS specs define at least 4 exceptions (see http://www.ibm.com/developerworks/webservices/library/ws-jaxws-faults/index.html):<br />
+<br />
+<code>SOAPFaultException</code><br />
+<code>javax.xml.ws.WebServiceException</code><br />
+<code>ExecutionException</code><br />
+<code>javax.xml.soap.SOAPException (one is redefined also in XMLBeans)</code><br />
+<br />
+<br />
+<code>all this is simply ridiculous. Things have seriously gone out of control in WS technology. </code><code>&nbsp;</code><code>&nbsp;</code><br />
+<br />
+This post <a href="http://io.typepad.com/eben_hewitt_on_java/2009/07/using-soap-faults-and-exceptions-in-java-jaxws-web-services.html">http://io.typepad.com/eben_hewitt_on_java/2009/07/using-soap-faults-and-exceptions-in-java-jaxws-web-services.html</a>&nbsp; is excellent, yet I keep HATING this technology. I am a strong believer of <b>Convention Over Configuration</b> and when I see all the verbosity in WS it makes me mad.<br />
+<br />
+<code><i>If builders built buildings the way programmers wrote programs, then the first woodpecker that came along would destroy civilization</i>. (</code>Weinberg's Second Law<code>)</code><br />
+<code><br />
+</code><br />
+<code><i>Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away. (Antoine de Saint-Exupery, French writer)</i><br />
+<br />
+</code><br />
+<code><br />
+</code>

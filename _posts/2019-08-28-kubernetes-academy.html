@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Kubernetes academy"
+date: 2019-08-28T21:20:00.001+02:00
+permalink: /2019/08/kubernetes-academy.html
+blogger_id: "428839132877629645"
+tags: ["kubernetes"]
+---
+<a href="https://kubernetes.academy/lessons/introduction-to-kubectl">https://kubernetes.academy/lessons/introduction-to-kubectl</a>  awesome productivity tips from John Harris<br />
+<br />
+<pre class="brush: bash">source < (kubectl completion bash)
+
+kubectx
+
+kubens
+
+kube-ps1 + kubeon
+
+#doc on a k8s object
+kubectl explain pod.spec.containers.ports
+
+#grep json
+kubectl get pod -n kube-system kube-scheduler-master -ojson | jq .metadata.labels
+
+#show custom columns
+kubectl get pod -n kube-system kube-scheduler-master -o custom-columns=NAME:.metadata.name,NS:.metadata.namespace
+
+
+#show labels
+
+kubectl get pod -n kube-system --show-labels
+
+#show column with value of given label
+
+kubectl get pod -n kube-system -L k8s-app
+
+#filter by label value
+
+kubectl get pod -n kube-system -l k8s-app=kube-dns -L k8s-app
+
+#sort by
+
+get pod -n kube-system -l k8s-app=kube-dns --sort-by='{.status.containerStatuses[*].restartCount}'
+
+#trace execution (very verbose)
+
+get pod -n kube-system -l k8s-app=kube-dns --sort-by='{.status.containerStatuses[*].restartCount}' -v10
+
+</pre>
+
+
+<a href="https://kubernetes.academy/lessons/introduction-to-ingress">https://kubernetes.academy/lessons/introduction-to-ingress</a>  
+<br />
+<br />
+

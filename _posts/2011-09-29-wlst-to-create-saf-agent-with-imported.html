@@ -1,0 +1,83 @@
+---
+layout: post
+title: "WLST to create a SAF Agent with an Imported Destination (Queue)"
+date: 2011-09-29T11:06:00.000+02:00
+permalink: /2011/09/wlst-to-create-saf-agent-with-imported.html
+blogger_id: "4064072037591596041"
+tags: ["saf"]
+---
+<pre name="code" class="brush: java">
+edit()
+startEdit()
+
+#SAF Agent
+cd('/')
+cmo.createSAFAgent('SAFAgent-0')
+
+cd('/SAFAgents/SAFAgent-0')
+set('Targets',jarray.array([ObjectName('com.bea:Name=AdminServer,Type=Server')], ObjectName))
+cmo.setServiceType('Sending-only')
+
+#JMS Module
+cd('/')
+cmo.createJMSSystemResource('SystemModule-0')
+
+cd('/SystemResources/SystemModule-0')
+set('Targets',jarray.array([ObjectName('com.bea:Name=AdminServer,Type=Server')], ObjectName))
+
+#Remote SAF Context
+cd('/JMSSystemResources/SystemModule-0/JMSResource/SystemModule-0')
+cmo.createSAFRemoteContext('RemoteSAFContext-0')
+
+cd('/JMSSystemResources/SystemModule-0/JMSResource/SystemModule-0/SAFRemoteContexts/RemoteSAFContext-0/SAFLoginContext/RemoteSAFContext-0')
+cmo.setLoginURL('t3://yourtargethost:7011')
+cmo.setUsername('weblogic')
+cmo.setPassword('weblogic')
+
+#Subdeployment
+cd('/SystemResources/SystemModule-0')
+cmo.createSubDeployment('sd')
+
+cd('/SystemResources/SystemModule-0/SubDeployments/sd')
+set('Targets',jarray.array([ObjectName('com.bea:Name=AdminServer,Type=Server')], ObjectName))
+
+cd('/SystemResources/SystemModule-0')
+set('Targets',jarray.array([ObjectName('com.bea:Name=AdminServer,Type=Server')], ObjectName))
+
+#SAF imported destinations
+cd('/JMSSystemResources/SystemModule-0/JMSResource/SystemModule-0')
+cmo.createSAFImportedDestinations('SAFImportedDestinations-0')
+
+cd('/JMSSystemResources/SystemModule-0/JMSResource/SystemModule-0/SAFImportedDestinations/SAFImportedDestinations-0')
+cmo.setJNDIPrefix('SAFImportedDestinations')
+cmo.setSAFRemoteContext(getMBean('/JMSSystemResources/SystemModule-0/JMSResource/SystemModule-0/SAFRemoteContexts/RemoteSAFContext-0'))
+cmo.setSAFErrorHandling(None)
+cmo.setTimeToLiveDefault(0)
+cmo.setUseSAFTimeToLiveDefault(false)
+cmo.setDefaultTargetingEnabled(true)
+
+#SAF Queue
+cmo.createSAFQueue('SAFQueue-0')
+
+
+cd('/JMSSystemResources/SystemModule-0/JMSResource/SystemModule-0/SAFImportedDestinations/SAFImportedDestinations-0/SAFQueues/SAFQueue-0')
+cmo.setRemoteJNDIName('your.remote.queue')
+
+cmo.setNonPersistentQos('At-Least-Once')
+cmo.setTimeToLiveDefault(0)
+cmo.setUseSAFTimeToLiveDefault(false)
+cmo.setLocalJNDIName('your.remote.queue.locally')
+cmo.setUnitOfOrderRouting('Hash')
+
+cd('/JMSSystemResources/SystemModule-0/JMSResource/SystemModule-0/SAFImportedDestinations/SAFImportedDestinations-0/MessageLoggingParams/SAFImportedDestinations-0')
+cmo.setMessageLoggingEnabled(false)
+cmo.setMessageLoggingEnabled(true)
+cmo.setMessageLoggingFormat('%header%,JMSCorrelationID,JMSDeliveryMode,JMSDestination,JMSExpiration,JMSMessageID,JMSPriority,JMSRedelivered,JMSReplyTo,JMSTimestamp,JMSType,%properties%')
+
+
+cd('/')
+
+
+activate()
+
+</pre>

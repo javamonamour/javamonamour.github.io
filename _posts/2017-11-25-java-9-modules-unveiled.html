@@ -1,0 +1,166 @@
+---
+layout: post
+title: "Java 9 modules unveiled"
+date: 2017-11-25T05:10:00.000+01:00
+permalink: /2017/11/java-9-modules-unveiled.html
+blogger_id: "262994128071957941"
+tags: ["java9", "module"]
+---
+Presentation by Mark Reinhold - author of most documentation in openJDK <a href="http://openjdk.java.net/projects/jigsaw/">http://openjdk.java.net/projects/jigsaw/</a><br />
+<br />
+<iframe width="800" height="600" src="https://www.youtube.com/embed/rFhhLXcOBsk" frameborder="0" gesture="media" allowfullscreen></iframe><br />
+<br />
+<br />
+<br />
+On CentOS 7, to install Java 9:<br />
+<br />
+<br />
+wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/9.0.1+11/jdk-9.0.1_linux-x64_bin.rpm"<br />
+<br />
+sudo yum install jdk-9.0.1_linux-x64_bin.rpm<br />
+<br />
+rm jdk-9.0.1_linux-x64_bin.rpm<br />
+<br />
+at this point, java9 is installed in /usr/java/jdk-9.0.1/bin/java<br />
+<br />
+<br />
+<script src="https://gist.github.com/vernetto/6ca14374e059cca1b0503cc8f8dd6ea4.js"></script><br />
+<br />
+<br />
+<br />
+./jshell<br />
+3 + 4<br />
+String x = "foo"<br />
+x.substring(1,3)<br />
+x.getClass()<br />
+x.getClass().getModule()<br />
+x.getClass().getModule().getClass()<br />
+import java.sql.*;<br />
+Timestamp t = new Timestamp(0)<br />
+t.getClass()<br />
+t.getClass().getModule()<br />
+CTRL-D to exit<br />
+<br />
+<br />
+if you type<br />
+./java -help<br />
+<br />
+you get some new options related to modules:<br />
+<br />
+<i><br />
+<br />
+java [options] -m <module>[/<mainclass>] [args...]<br />
+java [options] --module <module>[/<mainclass>] [args...]<br />
+(to execute the main class in a module)<br />
+<br />
+Arguments following the main class, -jar <jarfile>, -m or --module<br />
+<module>/<mainclass> are passed as the arguments to main class.<br />
+<br />
+-p <module path><br />
+--module-path <module path>...<br />
+A : separated list of directories, each directory<br />
+is a directory of modules.<br />
+--upgrade-module-path <module path>...<br />
+A : separated list of directories, each directory<br />
+is a directory of modules that replace upgradeable<br />
+modules in the runtime image<br />
+--add-modules <module name>[,<module name>...]<br />
+root modules to resolve in addition to the initial module.<br />
+<module name> can also be ALL-DEFAULT, ALL-SYSTEM,<br />
+ALL-MODULE-PATH.<br />
+--list-modules<br />
+list observable modules and exit<br />
+-d <module name><br />
+--describe-module <module name><br />
+describe a module and exit<br />
+--dry-run     create VM and load main class but do not execute main method.<br />
+The --dry-run option may be useful for validating the<br />
+command-line options such as the module system configuration.<br />
+--validate-modules<br />
+validate all modules and exit<br />
+The --validate-modules option may be useful for finding<br />
+conflicts and other errors with modules on the module path.<br />
+<br />
+<br />
+</i><br />
+<br />
+<br />
+<br />
+<br />
+mkdir -p src/org/openjdk/hello<br />
+vi org/openjdk/hello/Main.java<br />
+<br />
+<i><br />
+package org.openjdk.hello;<br />
+public class Main {<br />
+public static void main(String[] args) {<br />
+System.out.println("ciao");<br />
+}<br />
+}<br />
+</i><br />
+<br />
+<br />
+export PATH=/usr/java/jdk-9.0.1/bin/:$PATH<br />
+javac -d classes src/org/openjdk/hello/Main.java<br />
+java -cp classes/ org.openjdk.hello.Main<br />
+mkdir lib<br />
+jar --create --file lib/hello.jar -C classes .<br />
+ls lib<br />
+java -cp lib/hello.jar org.openjdk.hello.Main<br />
+<br />
+vi src/module-info.java<br />
+<br />
+module org.openjdk.hello {<br />
+}<br />
+<br />
+<br />
+javac -d classes src/org/openjdk/hello/Main.java src/module-info.java<br />
+ls classes<br />
+jar --create --file lib/hello.jar -C classes .<br />
+jar tf lib/hello.jar<br />
+<br />
+javap classes/module-info.class <br />
+<i><br />
+Compiled from "module-info.java"<br />
+module org.openjdk.hello {<br />
+requires java.base;<br />
+}<br />
+</i><br />
+<br />
+java --module-path lib -m org.openjdk.hello/org.openjdk.hello.Main<br />
+<br />
+java --module-path lib --describe-module org.openjdk.hello<br />
+<i><br />
+org.openjdk.hello file:///home/centos/java9code/lib/hello.jar<br />
+requires java.base mandated<br />
+contains org.openjdk.hello<br />
+</i><br />
+<br />
+jar --create --file lib/hello.jar --main-class org.openjdk.hello.Main -C classes .<br />
+java --module-path lib -m org.openjdk.hello<br />
+<br />
+rm -rf classes/<br />
+mv src org.openjdk.hello<br />
+mkdir src<br />
+mv org.openjdk.hello src/<br />
+<br />
+I AM GIVING UP HERE!<br />
+<br />
+java --list-modules<br />
+<br />
+<br />
+<br />
+Here the specifications <a href="http://openjdk.java.net/projects/jigsaw/spec/sotms/">http://openjdk.java.net/projects/jigsaw/spec/sotms/</a><br />
+<br />
+Interesting reading about module vs jar : <a href="https://softwareengineering.stackexchange.com/a/313545">https://softwareengineering.stackexchange.com/a/313545</a> by Neil Bartlett<br />
+<br />
+<a href="https://stackoverflow.com/a/46514067/651288">https://stackoverflow.com/a/46514067/651288</a> also interesting<br />
+<br />
+<br />
+<a href="https://en.wikipedia.org/wiki/Java_Platform_Module_System">https://en.wikipedia.org/wiki/Java_Platform_Module_System</a><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

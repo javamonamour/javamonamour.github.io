@@ -1,0 +1,135 @@
+---
+layout: post
+title: "Security and Authentication in JCA FTP File Adapter"
+date: 2011-11-14T00:39:00.003+01:00
+permalink: /2011/11/security-and-authentication-in-jca-ftp.html
+blogger_id: "2398753920780271264"
+tags: ["FileAdapter", "JCA"]
+blogger_comments:
+  - author: "Unknown"
+    date: 2013-08-29
+    html: "Hi PIERLUIGI VERNETTO,<br /><br />I have came across your blog and found that the issue which is mentioned here is quite similar to the issue which we are in right now.<br /><br />We are using FTP syncread operation to read a file from the FTP location in binary format and we have created the credential mapping where wls user is weblogic,eis user  eis password ,but we are observing that some soa instance are able to login with  and are able to login to FTP and read the file but some of other soa instances are using weblogic to login to the FTP server and we are getting the below error in logs <br /><br />Caused by: BINDING.JCA-11439<br />Error in logging in.<br />Error in logging in.<br />Unable to log in to the server.<br />Please ensure userid and password specified to login to the server is correct.<br /><br />at oracle.tip.adapter.ftp.FTPClient.regularLogin(FTPClient.java:1630)<br />at oracle.tip.adapter.ftp.FTPClient.login(FTPClient.java:1593)<br />at oracle.tip.adapter.ftp.FTPAgent.login(FTPAgent.java:1170)<br />at oracle.tip.adapter.ftp.FTPAgent.preCall(FTPAgent.java:1632)<br />at oracle.tip.adapter.ftp.FTPAgent.validateOutputDir(FTPAgent.java:1230)<br />at oracle.tip.adapter.file.outbound.FileInteraction.validateDirectory(FileInteraction.java:2676)<br />at oracle.tip.adapter.file.outbound.FileInteraction.executeFileWrite(FileInteraction.java:547)<br />at oracle.tip.adapter.ftp.outbound.FTPInteraction.execute(FTPInteraction.java:251)<br />at oracle.tip.adapter.sa.impl.fw.wsif.jca.WSIFOperation_JCA.performOperation(WSIFOperation_JCA.java:529)<br />... 62 more<br /><br />Also it is not desired that weblogic should be send to the FTP server as username for login,as it is a WLS user and on the FTP server side there is no user weblogic.the behavior is also not uniform and there is no pattern.<br /><br />Please advice us on this issue.<br /><br />Thanks,<br />Harender Singh"
+---
+I have setup a Credential Mapping to be able to do a Opaque FTP Put with the JCA FTP Adapter, as <a href="http://download.oracle.com/docs/cd/E15523_01/integration.1111/e10231/adptr_file.htm#BABEJEGD">documented here</a><br />
+<br />
+It maps a WebLogic user into a FTP EIS User.<br />
+<br />
+I still get an authentication error:<br />
+<br />
+<i><br />
+<br />
+####&lt;13-Nov-2011 22:26:29 o'clock CET&gt; &lt;Error&gt; &lt;WliSbTransports&gt; &lt;pierrepc&gt; &lt;osb_server1&gt; &lt;[ACTIVE] ExecuteThread: '17' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;anonymous&gt;&gt; &lt;BEA1-07F5BFB39FA8A589D5FB&gt; &lt;9218d6466d04a9d6:4f7d3afe:1339e75d3c7:-8000-00000000000000e4&gt; &lt;1321219589928&gt; &lt;BEA-381502&gt; &lt;Exception in JmsInboundMDB.onMessage: com.bea.wli.sb.transports.TransportException: &lt;jca-transport-application-error xmlns="http://www.bea.com/wli/sb/transports/jca"&gt;<br />
+&lt;jca-transport-error-message&gt;Invoke JCA outbound service failed with application error&lt;/jca-transport-error-message&gt;<br />
+&lt;jca-runtime-fault-detail&gt;<br />
+&lt;eis-error-code&gt;501&lt;/eis-error-code&gt;<br />
+&lt;eis-error-message&gt;501 Syntax error&lt;/eis-error-message&gt;<br />
+&lt;exception&gt;com.bea.wli.sb.transports.jca.JCATransportException: oracle.tip.adapter.sa.api.JCABindingException: oracle.tip.adapter.sa.impl.fw.ext.org.collaxa.thirdparty.apache.wsif.WSIFException: servicebus:/WSDL/Phoenix_PurchaseOrder/WriteToWMOS_FTP [ Put_ptt::Put(opaque) ] - WSIF JCA Execute of operation 'Put' failed due to: Error in logging in.<br />
+Error in logging in.<br />
+Unable to log in to the server.<br />
+; nested exception is: <br />
+BINDING.JCA-11439<br />
+Error in logging in.<br />
+Error in logging in.<br />
+Unable to log in to the server.<br />
+Please ensure userid and password specified to login to the server is correct.<br />
+<br />
+</i><br />
+<br />
+<br />
+To understand what is going on, I enable debug flag alsb-jca-framework-adapter-debug <a href="http://docs.oracle.com/cd/E14571_01/doc.1111/e15866/jca.htm">as explained here</a><br />
+<br />
+<br />
+<br />
+All I get is :<br />
+<br />
+<i><br />
+<br />
+<br />
+Caused by: BINDING.JCA-11439<br />
+Error in logging in.<br />
+Error in logging in.<br />
+Unable to log in to the server.<br />
+Please ensure userid and password specified to login to the server is correct.<br />
+<br />
+at oracle.tip.adapter.ftp.FTPClient.regularLogin(FTPClient.java:1630)<br />
+at oracle.tip.adapter.ftp.FTPClient.login(FTPClient.java:1593)<br />
+at oracle.tip.adapter.ftp.FTPAgent.login(FTPAgent.java:1170)<br />
+at oracle.tip.adapter.ftp.FTPAgent.preCall(FTPAgent.java:1632)<br />
+at oracle.tip.adapter.ftp.FTPAgent.validateOutputDir(FTPAgent.java:1230)<br />
+at oracle.tip.adapter.file.outbound.FileInteraction.validateDirectory(FileInteraction.java:2676)<br />
+at oracle.tip.adapter.file.outbound.FileInteraction.executeFileWrite(FileInteraction.java:547)<br />
+at oracle.tip.adapter.ftp.outbound.FTPInteraction.execute(FTPInteraction.java:251)<br />
+at oracle.tip.adapter.sa.impl.fw.wsif.jca.WSIFOperation_JCA.performOperation(WSIFOperation_JCA.java:529)<br />
+... 62 more<br />
+<br />
+<br />
+</i><br />
+<br />
+<br />
+and there is no way to log the actual username/password it is using to login into the FTP server<br />
+<br />
+<br />
+I am using Filezilla Server, I disable the Miscellaneous/Don't show password in logs, and I enable logging on the server.<br />
+<br />
+What I find is disconcerting:<br />
+<br />
+<i><br />
+(000033) 13-11-2011 21:46:48 - (not logged in) (127.0.0.1)&gt; USER<br />
+(000033) 13-11-2011 21:46:48 - (not logged in) (127.0.0.1)&gt; 501 Syntax error<br />
+</i><br />
+<br />
+while the normal sequence should be:<br />
+<br />
+<i><br />
+(000037) 13-11-2011 21:57:07 - (not logged in) (fe80::5950:1b46:fefe:aa61)&gt; USER someuser<br />
+(000037) 13-11-2011 21:57:07 - (not logged in) (fe80::5950:1b46:fefe:aa61)&gt; 331 Password required for someuser<br />
+(000037) 13-11-2011 21:57:07 - (not logged in) (fe80::5950:1b46:fefe:aa61)&gt; PASS somepassword<br />
+(000037) 13-11-2011 21:57:07 - someuser (fe80::5950:1b46:fefe:aa61)&gt; 230 Logged on<br />
+</i><br />
+<br />
+normally after USER I should see a username.... this means that the mapping fails.<br />
+<br />
+The case is <a href="https://forums.oracle.com/forums/thread.jspa?threadID=2123457">reported here</a> <br />
+<br />
+<br />
+I notice that the log statement reports "anonymous". If you go to deployment, FtpAdapter, Security, Principal you can set "weblogic" and principal, and make sure that you also use weblogic in the Credential Mapping.<br />
+This is not enough.<br />
+<br />
+In the $inbound of the OSB request I notice:<br />
+<br />
+<br />
+&lt;con:security&gt;<br />
+&lt;con:transportClient&gt;<br />
+&lt;con:username&gt;&lt;anonymous&gt;&lt;/con:username&gt;<br />
+&lt;/con:transportClient&gt;<br />
+&lt;/con:security&gt;<br />
+<br />
+<br />
+<br />
+so I create a weblogicServiceAccount for username weblogic, associate it to the Proxy JMS Service Account  (hoping to make the OSB proxy "run as" the weblogic username, but I get this in the logs:<br />
+<br />
+<i><br />
+ServiceAccountRuntimeManagerImpl.getUsernamePasswordCredential = this: com.bea.wli.sb.svcacct.ServiceAccountRuntimeManagerImpl@17d3da <br />
+<br />
+Could not find credentials on admin server: java.lang.IllegalArgumentException: com.bea.wli.sb.management.configuration.ServiceAccountRuntime is not an interface<br />
+<br />
+com.bea.wli.sb.svcacct.ServiceAccountRuntimeCache@1e49c6b$ServiceAccountRuntimeCache.get(Acme_PurchaseOrder/weblogicServiceAccount)<br />
+<br />
+ServiceAccountRuntimeCache.get(Acme_PurchaseOrder/weblogicServiceAccount) returned ServiceAccountRuntime[Acme_PurchaseOrder/weblogicServiceAccount]<br />
+</i><br />
+<br />
+<br />
+and the $inbound still shows anonymous user<br />
+<br />
+<br />
+<b>Anyway, at the end I do:<br />
+<br />
+Deployments/FtpAdapter/Security/Credential Mapping/New/Unauthenticated User and I map it to the FTP user.... works like magic!</b><br />
+<br />
+The alternative is to specify a username/password in the JCA Outbound Connection Pool instance properties (there are 55 properties, only 10 shown in the first page... they are in alphabetical order, so yuoi must go to the last page)<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/bc54502c981efe98.jpg" imageanchor="1"><img border="0" height="329" src="/images/902887fd99d02f17.jpg" width="640" /></a></div><br />
+<br />
+<br />
+One day I will figure out how to attach a WebLogic principal to an incoming JMS request...  security has always been my Achilles' heel

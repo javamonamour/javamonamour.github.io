@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Bash script to find the location of the currently running script"
+date: 2010-02-10T17:13:00.001+01:00
+permalink: /2010/02/bash-script-to-find-location-of.html
+blogger_id: "1761314704041948095"
+tags: ["bash", "dirname", "readlink"]
+---
+#!/bin/bash<br />
+#==========================<br />
+# bash - find path to script<br />
+#==========================<br />
+abspath="$(cd "${0%/*}" 2&gt;/dev/null; echo "$PWD"/"${0##*/}")"<br />
+<br />
+# to get the path only - not the script name - add<br />
+path_only=`dirname "$abspath"`<br />
+<br />
+#display the paths to prove it works<br />
+echo $abspath<br />
+echo $path_only<br />
+<br />
+(not my script, I have copied from here <a href="http://forums.macosxhints.com/archive/index.php/t-73839.html">http://forums.macosxhints.com/archive/index.php/t-73839.html</a> )<br />
+<br />
+<br />
+Otherwise, this is much simpler:<br />
+<br />
+SCRIPT=`readlink -f $0`<br />
+SCRIPTPATH=`dirname $SCRIPT`<br />
+echo $SCRIPTPATH

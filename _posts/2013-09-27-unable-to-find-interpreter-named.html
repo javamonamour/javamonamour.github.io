@@ -1,0 +1,15 @@
+---
+layout: post
+title: "Unable to find interpreter named WebLogic 10.3.5 WLST"
+date: 2013-09-27T10:43:00.002+02:00
+permalink: /2013/09/unable-to-find-interpreter-named.html
+blogger_id: "1271158809256633525"
+tags: ["eclipse", "WLST"]
+---
+If you get this error message <br/>
+Unable to find interpreter named WebLogic 10.3.5 WLST
+<br/>
+in an Eclipse project containing WLST code, chances are that you forgot to configure a Runtime.
+<br/>
+Windows/Preferences, search for "runtime", add an Oracle runtime pointing to your local installation of WebLogic, and wait for Eclipse to reconfigure WLST interpreter.
+<br/>

@@ -1,0 +1,96 @@
+---
+layout: post
+title: "REST Management Services in weblogic reverse engineered"
+date: 2019-09-19T04:25:00.001+02:00
+permalink: /2019/09/rest-management-services-in-weblogic.html
+blogger_id: "7208461172452961503"
+tags: ["weblogic"]
+---
+wls-management-services.war<br />
+<br />
+only Administrator and Operator can invoke<br />
+<br />
+weblogic.management.rest.Application main entry point<br />
+<br />
+weblogic.management.rest.bean.utils.load.BuiltinResourceInitializer  : all the MBeans are loaded here<br />
+<br />
+<br />
+weblogic.management.runtime.ServerRuntimeMBean<br />
+<br />
+<br />
+<br />
+weblogic.management.rest.wls.resources.server.ShutdownServerResource  this is the REST endpoint<br />
+<br />
+@POST<br />
+@Produces({"application/json"})<br />
+public Response shutdownServer(@QueryParam("__detached") @DefaultValue("false") boolean detached, @QueryParam("force") @DefaultValue("false") boolean force, @PathParam("server") String name) throws Exception {<br />
+return this.getJobResponse(name, ServerOperationUtils.shutdown(this.getRequest(), name, detached, force), new ShutdownJobMessages(this));<br />
+}<br />
+<br />
+<br />
+<br />
+weblogic.management.rest.wls.utils.ServerOperationUtils<br />
+<br />
+<br />
+<br />
+<br />
+From MBean:<br />
+<br />
+com.bea.console.actions.core.server.lifecycle.Lifecycle$AdminServerShutdownJob<br />
+<br />
+http://localhost:7001/console/jsp/core/server/lifecycle/ConsoleShutdown.jsp<br />
+<br />
+weblogic.t3.srvr.GracefulShutdownRequest<br />
+weblogic.t3.srvr.ServerGracefulShutdownTimer<br />
+<br />
+<br />
+<br />
+via JMX:<br />
+<br />
+weblogic.management.mbeanservers.runtime.RuntimeServiceMBean extends Service : String OBJECT_NAME = "com.bea:Name=RuntimeService,Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean"<br />
+<br />
+public interface ServerRuntimeMBean extends RuntimeMBean, HealthFeedback, ServerStates, ServerRuntimeSecurityAccess <br />
+void shutdown(int var1, boolean var2, boolean var3) throws ServerLifecycleException;<br />
+<br />
+<br />
+<br />
+<a href="https://docs.oracle.com/middleware/1221/wls/WLAPI/weblogic/management/runtime/ServerRuntimeMBean.html#shutdown_int__boolean__boolean_">https://docs.oracle.com/middleware/1221/wls/WLAPI/weblogic/management/runtime/ServerRuntimeMBean.html#shutdown_int__boolean__boolean_</a><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+For a list of REST Examples see also https://docs.oracle.com/middleware/12212/wls/WLRUR/WLRUR.pdf<br />
+<br />
+<br />
+----------------------------------------------------------------------<br />
+Asynchronously force shutdown a server<br />
+----------------------------------------------------------------------<br />
+curl -v \<br />
+--user operator:operator123 \<br />
+-H X-Requested-By:MyClient \<br />
+-H Accept:application/json \<br />
+-H Content-Type:application/json \<br />
+-d "{}" \<br />
+-H "Prefer:respond-async" \<br />
+-X POST http://localhost:7001/management/weblogic/latest/domainRuntime/<br />
+serverLifeCycleRuntimes/Cluster1Server2/forceShutdown<br />
+<br />
+HTTP/1.1 202 Accepted<br />
+Location: http://localhost:7001/management/weblogic/latest/domainRuntime/<br />
+serverLifeCycleRuntimes/Cluster1Server2/tasks/_3_forceShutdown<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

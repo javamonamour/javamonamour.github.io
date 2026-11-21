@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Avoiding overload"
+date: 2009-11-06T16:40:00.000+01:00
+permalink: /2009/11/avoiding-overload.html
+blogger_id: "592489479072575308"
+---
+<a href="http://download.oracle.com/docs/cd/E12839_01/web.1111/e13701/overload.htm">http://download.oracle.com/docs/cd/E12839_01/web.1111/e13701/overload.htm</a><br /><br /><br />in a nutshell:<br /><br />* limit the number of execute threads with JVM properties:<br />-Dweblogic.threadpool.MinPoolSize=x<br />-Dweblogic.threadpool.MaxPoolSize=y<br /><br />* create a Network Channel and assign to it a "Maximum Connected Clients"<br /><br />* in configuration / overload, set "Shared Capacity For Work Managers"<br /><br />* for WebApps, set the max-in-memory-sessions in the deployment descriptor<br /><br />* create a global Work Manager called default, and assign constraints to it<br /><br />(see <a href="http://download.orajavascript:void(0)cle.com/docs/cd/E11035_01/wls100/config_wls/self_tuned.html">http://download.oracle.com/docs/cd/E11035_01/wls100/config_wls/self_tuned.html</a>)<br /><br /><br />In post 8.1 WebLogic, the threads belong to a unique queue weblogic.kernel.Default.

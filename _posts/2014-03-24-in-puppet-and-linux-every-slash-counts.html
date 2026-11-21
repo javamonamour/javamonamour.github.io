@@ -1,0 +1,37 @@
+---
+layout: post
+title: "in Puppet (and Linux) every slash counts"
+date: 2014-03-24T18:31:00.001+01:00
+permalink: /2014/03/in-puppet-and-linux-every-slash-counts.html
+blogger_id: "2197519969859518333"
+tags: ["puppet", "symlink"]
+---
+I was creating a symbolic link:
+<br/>
+
+<pre>
+
+  file { "/opt/oracle/java/" :
+    ensure => link,
+    target => "/usr/lib/jvm/java-1.6.0-sun.x86_64/",
+  }
+
+</pre>
+
+<br/>
+
+on a machine where such a link was already defined, but without the trailing / ( /usr/lib/jvm/java-1.6.0-sun.x86_64 ).
+<br/>
+Much to my surprise, Puppet acted on that link by changing it to /usr/lib/jvm/java-1.6.0-sun.x86_64/ (trailing /) ... as there were any difference between the two.
+<br/><br/>
+Funnily, Linux itself shows a different entry after the change:
+<br/>
+before:<br/>
+<i>lrwxrwxrwx  1 soa soa   34 Mar 24 18:27 java -> /usr/lib/jvm/java-1.6.0-sun.x86_64</i>
+<br/>
+after<br/><br/>
+<i>lrwxrwxrwx  1 soa soa   34 Mar 24 18:27 java -> /usr/lib/jvm/java-1.6.0-sun.x86_64/</i>
+<br/><br/>
+
+
+Well.... I think WWII was worse...

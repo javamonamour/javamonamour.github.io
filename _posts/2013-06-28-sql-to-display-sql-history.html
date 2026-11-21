@@ -1,0 +1,56 @@
+---
+layout: post
+title: "SQL to display SQL history"
+date: 2013-06-28T20:04:00.001+02:00
+permalink: /2013/06/sql-to-display-sql-history.html
+blogger_id: "2996220504403865746"
+tags: ["sql"]
+---
+<br/><br/>
+
+This to display all SQL statements processed in Oracle DB withing a certain range of time and coming from certain machines:
+ <br/><br/>
+
+<pre>
+
+select a.sql_id,a.sql_text,b.cnt from dba_hist_sqltext a, 
+(
+select sql_id,count(1) cnt from 
+(
+select session_id,sql_id,machine,sample_time,count(1) from 
+(
+select * from dba_hist_active_sess_history
+where 
+sample_time between to_date('19/06/2013 07:00','dd/mm/yyyy hh24:mi') and to_date('19/06/2013 10:00','dd/mm/yyyy hh24:mi')
+and program = 'JDBC Thin Client' 
+and machine like 'myhost1%'
+--and rownum < 10
+)
+where sql_id is not null
+group by session_id,sql_id,machine,sample_time
+order by sample_time asc
+) group by sql_id) b
+where a.sql_id(+)=b.sql_id
+
+
+</pre>
+
+<br/><br/>
+
+if you simply want the active sessions:
+
+<br/><br/>
+
+<pre>
+
+select * from dba_hist_active_sess_history
+where 
+sample_time between to_date('19/06/2013 07:00','dd/mm/yyyy hh24:mi') and to_date('19/06/2013 10:00','dd/mm/yyyy hh24:mi')
+and program = 'JDBC Thin Client' 
+and machine like 'myhost1%'
+
+</pre>
+
+<br/><br/>
+
+

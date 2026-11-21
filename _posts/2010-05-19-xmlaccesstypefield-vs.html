@@ -1,0 +1,23 @@
+---
+layout: post
+title: "XmlAccessType.FIELD vs XmlAccessType.PROPERTY"
+date: 2010-05-19T13:58:00.000+02:00
+permalink: /2010/05/xmlaccesstypefield-vs.html
+blogger_id: "8056541373056619969"
+tags: ["jaxb"]
+blogger_comments:
+  - author: "Unknown"
+    date: 2010-05-19
+    html: "Great approach"
+---
+As a Java guy, I feel disturbed by using XmlAccessType.FIELD<br />
+(see <br />
+<a href="http://java.sun.com/javase/6/docs/api/javax/xml/bind/annotation/XmlAccessType.html">http://java.sun.com/javase/6/docs/api/javax/xml/bind/annotation/XmlAccessType.html</a> )<br />
+in JAXB while "exposing" a JavaBean as a XML data type.<br />
+<br />
+XmlAccessType.FIELD will expose ANY Java attribute, even the private ones, even those that you didn't mean to expose, UNLESS you annotate them as @XmlTransient .<br />
+<br />
+<br />
+MY vision, which I assume matches the JavaBean vision, is that you expose only properties which are explicitly associated with a getter (setter if they are writable), and that you should really never access directly the attribute as a field. This leads to a more method-centric programming style, as opposed to a data-centric programming style.<br />
+<br />
+For this reason, I privilege the XmlAccessType.PROPERTY approach.

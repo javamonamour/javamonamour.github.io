@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Web Service Service in a SOA Composite with SOA Suite"
+date: 2011-01-27T22:09:00.000+01:00
+permalink: /2011/01/web-service-service-in-soa-composite.html
+blogger_id: "3459084022842827785"
+tags: ["SOASuite"]
+---
+Interestingly, you must call the exposed service the same way you call the service in the WSLD - the published service name will match the name you give to the component, and should match the service name in the WSDL.<br />
+<br />
+I have discovered that if you change the name later, Jdeveloper doesn't adjust the "binding.ws port" clause in the service definition inside the composite.xml. You must fix it manually otherwise you will never be able to deploy your composite (you can build the SAR file but not deploy.... :o( )

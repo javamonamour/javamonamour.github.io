@@ -1,0 +1,36 @@
+---
+layout: post
+title: "OSB: how to automate the build and deploy of projects"
+date: 2010-05-04T11:44:00.006+02:00
+permalink: /2010/05/osb-how-to-automate-build-and-deploy-of.html
+blogger_id: "5019565912118231451"
+tags: ["OSB", "WLST"]
+---
+Very good coverage of the topic here:<br />
+<br />
+<a href="http://www.insemble.com/oracleservicebus-deployment.html">http://www.insemble.com/oracleservicebus-deployment.html</a><br />
+<br />
+and here<br />
+<br />
+<a href="http://biemond.blogspot.com/2010/07/osb-11g-ant-deployment-scripts.html">http://biemond.blogspot.com/2010/07/osb-11g-ant-deployment-scripts.html</a><br />
+<br />
+<br />
+here, <br />
+<a href="http://www.apress.com/book/downloadfile/4472">http://www.apress.com/book/downloadfile/4472</a><br />
+<br />
+in the Administration folder, file ImportProject.java you will find examples of how to use<br />
+<a href="http://download.oracle.com/docs/cd/E21043_01/apirefs.1111/e15033/com/bea/wli/sb/management/configuration/ALSBConfigurationMBean.html">ALSBConfigurationMBean</a>. Interesting also this  <a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/javadoc/com/bea/wli/sb/management/configuration/SessionManagementMBean.html">SessionManagementMBean</a><br />
+<br />
+in the same folder, look at import.py and export.py for how to do the same thing with Python.<br />
+<br />
+Equally, here<br />
+<a href="http://www.oracle.com/technetwork/middleware/service-bus/overview/index.html">http://www.oracle.com/technetwork/middleware/service-bus/overview/index.html</a><br />
+<br />
+they give you this<br />
+<a href="https://soasamples.samplecode.oracle.com/files/documents/660/866/IMPORT-EXPORT.zip">https://soasamples.samplecode.oracle.com/files/documents/660/866/IMPORT-EXPORT.zip</a><br />
+project which does the same.<br />
+<br />
+Remember to add to your classpath <br />
+com.bea.common.configfwk_1.2.1.0.jar <br />
+and<br />
+sb-kernel-api.jar

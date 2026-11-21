@@ -1,0 +1,71 @@
+---
+layout: post
+title: "docker insecure registry"
+date: 2017-12-21T04:37:00.001+01:00
+permalink: /2017/12/docker-insecure-registry.html
+blogger_id: "4399483966749433319"
+tags: ["docker", "openshift"]
+---
+I have been tortured for a long time by this:<br />
+<br />
+<b>sudo oc cluster up</b><br />
+<i><br />
+[sudo] password for centos: <br />
+Starting OpenShift using openshift/origin:v3.7.0 ...<br />
+-- Checking OpenShift client ... OK<br />
+-- Checking Docker client ... OK<br />
+-- Checking Docker version ... OK<br />
+-- Checking for existing OpenShift container ... OK<br />
+-- Checking for openshift/origin:v3.7.0 image ... OK<br />
+-- Checking Docker daemon configuration ... FAIL<br />
+<b>   Error: did not detect an --insecure-registry argument on the Docker daemon<br />
+   Solution:<br />
+<br />
+     Ensure that the Docker daemon is running with the following argument:<br />
+      --insecure-registry 172.30.0.0/16<br />
+</b><br />
+</i><br />
+<br />
+<br />
+<br />
+"docker info" will output you a wealth of information, including this:<br />
+<br />
+Insecure Registries:<br />
+ 127.0.0.0/8<br />
+<br />
+<br />
+( you can use <b>docker info | grep -A 4 -i insecure</b> )<br />
+<br />
+So the only way to start Openshift Cluster was <br />
+<br />
+sudo oc cluster up --skip-registry-check=true<br />
+<br />
+<br />
+It turned out that https://stackoverflow.com/questions/42211380/add-insecure-registry-to-docker to add the extra entry for insecure-registry one should <br />
+<br />
+sudo vi /etc/docker/daemon.json<br />
+<br />
+and enter this:<br />
+<br />
+{<br />
+    "insecure-registries" : [ "172.30.0.0/16" ]<br />
+}<br />
+<br />
+<br />
+<b>sudo systemctl daemon-reload<br />
+sudo systemctl restart docker<br />
+sudo oc cluster down<br />
+sudo oc cluster up<br />
+</b><br />
+<br />
+<br />
+and no more errors! Great!<br />
+<br />
+To the Openshift lazy developers: in future please provide also a hint how to troubleshoot the issue... it would save a LOT of time to us frustrated users.<br />
+<br />
+The more I use Openshift the more it feels like a huge Goldberg machine, a Zeppelin.<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/7216d090a1bf05b8.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/eb005821c42d1d31.jpg" width="400" height="225" data-original-width="936" data-original-height="527" /></a></div><br />
+<br />
+<br />
+

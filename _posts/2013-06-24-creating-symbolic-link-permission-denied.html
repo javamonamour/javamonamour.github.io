@@ -1,0 +1,35 @@
+---
+layout: post
+title: "creating symbolic link, Permission denied"
+date: 2013-06-24T20:25:00.001+02:00
+permalink: /2013/06/creating-symbolic-link-permission-denied.html
+blogger_id: "7084140853332852086"
+---
+The situation is:
+
+ls -ltr /opt/oracle/
+<br/>
+java -> /usr/lib/jvm/java-1.6.0-sun-1.6.0.45.x86_64
+<br/><br/>
+
+where /usr/lib/jvm/java-1.6.0-sun.x86_64 -> /usr/lib/jvm/java-1.6.0-sun-1.6.0.45.x86_64 
+
+and I issue 
+<br/>
+ln -s  /usr/lib/jvm/java-1.6.0-sun.x86_64 /opt/oracle/java
+<br/>
+because I want /opt/oracle/java to point to /usr/lib/jvm/java-1.6.0-sun.x86_64 and not to /usr/lib/jvm/java-1.6.0-sun-1.6.0.45.x86_64 (I need an extra level of indirection)
+
+<br/>
+
+The funny thing is that I get a:
+<br/>
+ln: creating symbolic link `/opt/oracle/java/java-1.6.0-sun.x86_64' to `/usr/lib/jvm/java-1.6.0-sun.x86_64': Permission denied
+<br/>
+
+This is because PROBABLY the ln command goes ahead resolving /opt/oracle/java, and to avoid a recursive situation it backs up.
+<br/>
+
+Just do an "unlink /opt/oracle/java" before the ln, and you will be fine.
+
+

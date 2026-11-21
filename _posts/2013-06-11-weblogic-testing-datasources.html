@@ -1,0 +1,32 @@
+---
+layout: post
+title: "WebLogic,  Testing Datasources"
+date: 2013-06-11T13:02:00.003+02:00
+permalink: /2013/06/weblogic-testing-datasources.html
+blogger_id: "5314318200854216451"
+tags: ["WLST"]
+---
+<pre>
+print 'starting the script ....'
+username = 'weblogic'
+password = 'weblogic1'
+urls=['t3://server1.acme.com:7001', 't3://server2.acme.com:8001', 't3://server2.acme.com:8001']
+servers=['osbts4as', 'osbts4ms1', 'osbts4ms2']
+
+for index in range(0, 3):
+    url=urls[index]
+    myserver=servers[index]
+    print "connecting to ", url
+    connect(username,password,url)
+    serverRuntime()
+    cd('/JDBCServiceRuntime/' + myserver)
+    allRuntimes=cmo.getJDBCDataSourceRuntimeMBeans()
+    for tmpDS in allRuntimes:
+        print "testing", tmpDS
+        print tmpDS.testPool()
+        print "testing", tmpDS, " success"
+
+  
+</pre>
+
+

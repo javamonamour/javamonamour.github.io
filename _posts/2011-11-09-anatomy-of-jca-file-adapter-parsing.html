@@ -1,0 +1,86 @@
+---
+layout: post
+title: "Anatomy of a JCA File Adapter parsing failure"
+date: 2011-11-09T09:51:00.003+01:00
+permalink: /2011/11/anatomy-of-jca-file-adapter-parsing.html
+blogger_id: "1289571012674534243"
+tags: ["FileAdapter", "nxsd", "rejectedMessageHandler"]
+---
+If you submit a "broken" file to a File Adapter associated to a nXSD transformation, you might expect something like this to happen (see after).<br />
+<br />
+To be noticed:<br />
+<br />
+* eventually, the file is moved to the error directory<br />
+<br />
+* The entry point to the translation is <b>oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.translateFromNative<br />
+</b><br />
+<br />
+* The exception is a ORABPEL-11168<br />
+* The Proxy Service is not invoked, so there is no way to trace this error in OSB.<br />
+<br />
+* To trace the error, you must implement a RejectedMessageHandler<br />
+* In alternative, you could "grep" the logs for ORABPEL-11168 with WLDF, but this solution really sucks<br />
+<br />
+So implementing a RejectedMessageHandler seems to me the best way to trace the error. This requires more investigation.<br />
+<br />
+<br />
+&lt;08-Nov-2011 22:39:57 o'clock CET&gt; &lt;Info&gt; &lt;JCA_FRAMEWORK_AND_ADAPTER&gt; &lt;pierrepc&gt; &lt;osb_server1&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;9218d6466d04a9d6:5003231f:133830ed055:-8000-0000000000000031&gt; &lt;1320788397613&gt; &lt;BEA-000000&gt; &lt;Error while translating inbound file : po00000BROKEN.dat<br />
+ORABPEL-11168<br />
+<br />
+Error while reading native data.<br />
+[Line=1, Col=1] Expected "," for the data starting at the specified position, while trying to read the data for "element with name OrderNumber", using "style" as "terminated" and "terminatedBy" as ",", but not found.<br />
+Ensure that ",", exists for the data starting at the specified position.<br />
+<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDStyleBasedReader.readTerminatedStyle(NXSDStyleBasedReader.java:338)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.readTerminatedStyle(NXSDTranslatorImpl.java:2771)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.readNativeData(NXSDTranslatorImpl.java:2841)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.processScalarType(NXSDTranslatorImpl.java:3600)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.processElement(NXSDTranslatorImpl.java:3800)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.parseNXSD(NXSDTranslatorImpl.java:1327)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.processGroup(NXSDTranslatorImpl.java:3705)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.parseNXSD(NXSDTranslatorImpl.java:1334)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.processComplexType(NXSDTranslatorImpl.java:3841)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.parseNXSD(NXSDTranslatorImpl.java:1330)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.processElement(NXSDTranslatorImpl.java:3806)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.parseNXSD(NXSDTranslatorImpl.java:1327)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.processGroup(NXSDTranslatorImpl.java:3705)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.parseNXSD(NXSDTranslatorImpl.java:1334)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.processComplexType(NXSDTranslatorImpl.java:3841)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.parseNXSD(NXSDTranslatorImpl.java:1330)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.processElement(NXSDTranslatorImpl.java:3806)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.parseNXSD(NXSDTranslatorImpl.java:1327)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.doTranslateFromNative(NXSDTranslatorImpl.java:846)<br />
+at oracle.tip.pc.services.translation.xlators.nxsd.NXSDTranslatorImpl.translateFromNative(NXSDTranslatorImpl.java:602)<br />
+at oracle.tip.adapter.file.inbound.InboundTranslatorDelegate.xlate(InboundTranslatorDelegate.java:314)<br />
+at oracle.tip.adapter.file.inbound.InboundTranslatorDelegate.doXlate(InboundTranslatorDelegate.java:121)<br />
+at oracle.tip.adapter.file.inbound.ProcessorDelegate.doXlate(ProcessorDelegate.java:388)<br />
+at oracle.tip.adapter.file.inbound.ProcessorDelegate.process(ProcessorDelegate.java:174)<br />
+at oracle.tip.adapter.file.inbound.ProcessWork.run(ProcessWork.java:349)<br />
+at weblogic.work.ContextWrap.run(ContextWrap.java:41)<br />
+at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)<br />
+at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)<br />
+at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)<br />
+&gt; <br />
+####&lt;08-Nov-2011 22:39:57 o'clock CET&gt; &lt;Info&gt; &lt;JCA_FRAMEWORK_AND_ADAPTER&gt; &lt;pierrepc&gt; &lt;osb_server1&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;9218d6466d04a9d6:5003231f:133830ed055:-8000-0000000000000031&gt; &lt;1320788397614&gt; &lt;BEA-000000&gt; &lt;Since a translation exception was thrown, this indicates that  it is a non-debatching scenario.&gt; <br />
+####&lt;08-Nov-2011 22:39:57 o'clock CET&gt; &lt;Info&gt; &lt;JCA_FRAMEWORK_AND_ADAPTER&gt; &lt;pierrepc&gt; &lt;osb_server1&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;9218d6466d04a9d6:5003231f:133830ed055:-8000-0000000000000031&gt; &lt;1320788397615&gt; &lt;BEA-000000&gt; &lt;Failed to translate file : {C:\acme\ffmw\po\in\po00000BROKEN.dat}&gt; <br />
+####&lt;08-Nov-2011 22:39:57 o'clock CET&gt; &lt;Info&gt; &lt;JCA_FRAMEWORK_AND_ADAPTER&gt; &lt;pierrepc&gt; &lt;osb_server1&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;9218d6466d04a9d6:5003231f:133830ed055:-8000-0000000000000031&gt; &lt;1320788397615&gt; &lt;BEA-000000&gt; &lt;Sending message to Adapter Framework for rejection to user-configured rejection handlers  : {<br />
+file=C:\acme\ffmw\po\in\po00000BROKEN.dat, Exception=ORABPEL-11168<br />
+<br />
+Error while reading native data.<br />
+[Line=1, Col=1] Expected "," for the data starting at the specified position, while trying to read the data for "element with name OrderNumber", using "style" as "terminated" and "terminatedBy" as ",", but not found.<br />
+Ensure that ",", exists for the data starting at the specified position.<br />
+<br />
+}&gt; <br />
+####&lt;08-Nov-2011 22:39:57 o'clock CET&gt; &lt;Warning&gt; &lt;JCA_FRAMEWORK_AND_ADAPTER&gt; &lt;pierrepc&gt; &lt;osb_server1&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;9218d6466d04a9d6:5003231f:133830ed055:-8000-0000000000000031&gt; &lt;1320788397616&gt; &lt;BEA-000000&gt; &lt;onReject: The resource adapter 'File Adapter' requested handling of a malformed inbound message. However, the following activation property has not been defined: 'rejectedMessageHandlers'. Please define it and redeploy. Will use the default Rejection Directory file://jca\Read\rejectedMessages for now.&gt; <br />
+####&lt;08-Nov-2011 22:39:57 o'clock CET&gt; &lt;Warning&gt; &lt;JCA_FRAMEWORK_AND_ADAPTER&gt; &lt;pierrepc&gt; &lt;osb_server1&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;9218d6466d04a9d6:5003231f:133830ed055:-8000-0000000000000031&gt; &lt;1320788397616&gt; &lt;BEA-000000&gt; &lt;onReject: Sending invalid inbound message to Rejection Handler: &gt; <br />
+####&lt;08-Nov-2011 22:39:57 o'clock CET&gt; &lt;Info&gt; &lt;JCA_FRAMEWORK_AND_ADAPTER&gt; &lt;pierrepc&gt; &lt;osb_server1&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;9218d6466d04a9d6:5003231f:133830ed055:-8000-0000000000000031&gt; &lt;1320788397618&gt; &lt;BEA-000000&gt; &lt;Handing rejected message to DEFAULT rejection handler: file://jca\Read\rejectedMessages since none of the configured rejection handlers [] succeeded.&gt; <br />
+####&lt;08-Nov-2011 22:39:57 o'clock CET&gt; &lt;Info&gt; &lt;JCA_FRAMEWORK_AND_ADAPTER&gt; &lt;pierrepc&gt; &lt;osb_server1&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;9218d6466d04a9d6:5003231f:133830ed055:-8000-0000000000000031&gt; &lt;1320788397622&gt; &lt;BEA-000000&gt; &lt;Copying file :C:\acme\ffmw\po\in\po00000BROKEN.dat to user-defined archive directory for files with errors :C:\acme\ffmw\po\error&gt;<br />
+<br />
+<br />
+<br />
+See also <a href="http://docs.oracle.com/cd/E12839_01/integration.1111/e10231/life_cycle.htm#BABBHJEA">this Oracle documentation</a> on the rejectedMessageHandler topic<br />
+<br />
+<i>Errors or faults arising after the message is posted to Service Infrastructure layer are not rejected. These faulted messages are handled by the Service Infrastructure components and will not be considered as rejected messages.<br />
+<br />
+Adapters and other binding components (for example, WS Binding Component) reject messages which error out at the binding level, that is, before entering the Service Infrastructure layer. All rejected messages are stored in the Database with payload.<br />
+</i>

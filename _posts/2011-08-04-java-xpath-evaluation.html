@@ -1,0 +1,46 @@
+---
+layout: post
+title: "Java XPath evaluation"
+date: 2011-08-04T18:24:00.000+02:00
+permalink: /2011/08/java-xpath-evaluation.html
+blogger_id: "7978706087004034950"
+tags: ["NamespaceContext", "XPath", "XPathExpression"]
+---
+I have put together a simple XPath parser.<br />
+<br />
+Everything is  very easy as long as you don't use Namespaces.<br />
+<br />
+<a href="http://stackoverflow.com/questions/914013/namespacecontext-and-using-namespaces-with-xpath">Here is a very nice trick</a> to extract a NamespaceContext from the document you are parsing.<br />
+<br />
+The alternative is providing your own implementation of <b>NamespaceContext</b>, either <a href="http://xml.apache.org/xalan-j/xpath_apis.html">this way</a> (see "public class MyNamespaceContext")  or <a href="http://illegalargumentexception.blogspot.com/2009/05/java-using-xpath-with-namespaces-and.html">as shown in this post with NamespaceContextMap class</a><br />
+<br />
+My first instance was using:<br />
+<br />
+<i>Document xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);<br />
+<br />
+XPath xPath =  XPathFactory.newInstance().newXPath();<br />
+NamespaceContext nsContext = new NamespaceContextMap("foo", "http://foo","bar", "http://bar", "def", "http://def");<br />
+<br />
+xPath.setNamespaceContext(nsContext);<br />
+String expression = ".//con3:xqueryTransform/con3:resource[1]/@ref";<br />
+XPathExpression xPathExpression = xPath.compile(expression);<br />
+return xPathExpression.evaluate(xmlDocument, XPathConstants.STRING);<br />
+</i><br />
+<br />
+<br />
+<br />
+Well, it doesn' work. Using "Document xmlDocument" in xPathExpression.evaluate fails to interpret namespaces.<br />
+<br />
+I had to convert it to:<br />
+InputSource inputSource  = new InputSource(xmlFile);<br />
+...<br />
+return xPathExpression.evaluate(inputSource, XPathConstants.STRING);<br />
+<br />
+<br />
+to make it work.<br />
+<br />
+Amazing.<br />
+<br />
+2 hours wasted.<br />
+<br />
+I love XML, Xpaths and so on. What a solid technology.

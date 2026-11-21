@@ -1,0 +1,22 @@
+---
+layout: post
+title: "SiteScope and configuring a MDB for monitoring"
+date: 2009-11-30T17:49:00.000+01:00
+permalink: /2009/11/sitescope-and-configuring-mdb-for.html
+blogger_id: "2225953147582822183"
+---
+Are you lost? That's normal.... SiteScope is designed with that purpose in mind.<br />
+<br />
+When adding a counter, search for:<br />
+<br />
+com.bea.YOURSERVERNAME.APPLICATION_NAME.MODULE_NAME.<br />
+EJBPoolRuntime.JAR_NAME.MODULE_NAME.BeansInUseCount <br />
+<br />
+(or whatever other attribute)<br />
+<br />
+practical example:<br />
+<br />
+com.bea/ACMEappli2/InfoHostingProcessesMdbBean_jms/infoHostingProcessesQueue/InfoHostingProcessesMdbBean_jms/infoHostingProcessesQueue/infoHostingProcesses/EJBPoolRuntime/infoHostingProcesses.jar/BeansInUseCurrentCount<br />
+<br />
+<br />
+Easy, isn't it?

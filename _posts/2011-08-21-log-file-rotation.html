@@ -1,0 +1,48 @@
+---
+layout: post
+title: "Log file rotation"
+date: 2011-08-21T13:57:00.000+02:00
+permalink: /2011/08/log-file-rotation.html
+blogger_id: "5331959323521729534"
+tags: ["logrotation"]
+---
+In the Managed Server configuration, Logging,  "Log file name" you can assign a file name. <br />
+If you say<br />
+"logs/myserver.log"<br />
+<br />
+it will generate rotated filenames like<br />
+<br />
+myserver.log00001<br />
+<br />
+<br />
+You can insert a timestamp information in the file name. <br />
+<br />
+Example:<br />
+myserver_%yyyy%_%MM%_%dd%_%hh%_%mm%.log  <br />
+<br />
+The documentation says:<br />
+<br />
+<i>"To include a time and date stamp in the file name when the log file is rotated, add java.text.SimpleDateFormat variables to the file name. Surround each variable with percentage (%) characters.<br />
+<br />
+For example, if the file name is defined to be myserver_%yyyy%_%MM%_%dd%_%hh%_%mm%.log, the log file will be named myserver_yyyy_mm_dd_hh_mm.log.<br />
+<br />
+When the log file is rotated, the rotated file name contains the date stamp. For example, if the log file is rotated for the first time on 2 April, 2003 at 10:05 AM, the log file that contains the old messages will be named myserver_2003_04_02_10_05.log00001."<br />
+<br />
+</i><br />
+<br />
+If you do not include a time and date stamp, the rotated log files are numbered in order of creation. For example, myserver.log00007.<br />
+<br />
+However this is slightly incorrect:<br />
+myserver_%yyyy%_%MM%_%dd%_%hh%_%mm%.log<br />
+<br />
+generates a rotated log file:<br />
+myserver_2011_08_21_12_22.log<br />
+<br />
+and not<br />
+myserver_2011_08_21_12_22.log00001<br />
+as the documentation says.<br />
+<br />
+Anyway the "Limit number of retained files" is respected, even is the progressive number is not the extension.<br />
+<br />
+<br />
+

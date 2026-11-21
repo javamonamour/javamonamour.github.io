@@ -1,0 +1,39 @@
+---
+layout: post
+title: "Minikube on Centos"
+date: 2019-01-23T08:11:00.000+01:00
+permalink: /2019/01/minikube-on-centos.html
+blogger_id: "4448266532713185284"
+tags: ["kubernetes", "minikube"]
+---
+I want to have a "mini" version of Kubernetes on my Centos laptop.<br />
+<br />
+I would prefer not to install an Hypervisor, since k8s can use "--vm-driver=none"...<br />
+but I give it a try to install VirtualBox <a href="https://www.itzgeek.com/how-tos/linux/centos-how-tos/install-virtualbox-4-3-on-centos-7-rhel-7.html">https://www.itzgeek.com/how-tos/linux/centos-how-tos/install-virtualbox-4-3-on-centos-7-rhel-7.html</a><br />
+<br />
+After installing VirtualBox,  I can proceed with minikube<br />
+<br />
+https://kubernetes.io/docs/tasks/tools/install-minikube/<br />
+<br />
+<br />
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 \<br />
+&& chmod +x minikube<br />
+<br />
+sudo cp minikube /usr/local/bin && rm minikube<br />
+<br />
+<b>minikube version</b><br />
+minikube version: v0.33.1<br />
+<br />
+minikube start<br />
+<br />
+I get "Error parsing version semver:  Version string empty"<br />
+<br />
+<br />
+kubectl cluster-info<br />
+kubectl get nodes<br />
+<br />
+<br />
+<br />
+I can try also with "minikube start --vm-driver=none", which however requires docker<br />
+<br />
+

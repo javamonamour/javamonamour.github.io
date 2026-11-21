@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Velocity and rendering JSONObjects or Java Beans"
+date: 2018-11-24T16:04:00.003+01:00
+permalink: /2018/11/velocity-and-rendering-jsonobjects-or.html
+blogger_id: "8638293050691005980"
+tags: ["fasterxml", "json", "velocity"]
+---
+You can use a Velocity template to render either a JsonNode or its corresponding Java bean, <br />
+without changing the velocity template.<br />
+<br />
+Code is available <a href="https://github.com/vernetto/velocityjson">https://github.com/vernetto/velocityjson</a> here (the .wm file location is hardcoded with a Widows machine, sorry!)<br />
+<br />
+<script src="https://gist.github.com/vernetto/d85c8e96437a4e7236af011d11384904.js"></script><br />
+<br />
+and the full code is visible here <a href="https://github.com/vernetto/velocityjson/blob/master/src/main/java/com/example/demo/VelocityApplication.java">https://github.com/vernetto/velocityjson/blob/master/src/main/java/com/example/demo/VelocityApplication.java</a><br />
+<br />
+BEWARE the velocity template is stored under the resources folder<br />
+<br />
+The only funny thing is that in the JsonNode the values retain the ""

@@ -1,0 +1,130 @@
+---
+layout: post
+title: "Setting up HAFileAdapter with Oracle RAC DB"
+date: 2012-04-28T18:29:00.002+02:00
+permalink: /2012/04/setting-up-hafileadapter-with-oracle.html
+blogger_id: "5390908445244695293"
+tags: ["HAFileAdapter"]
+---
+Create these DataSources:<br />
+<br />
+the first is :<br />
+<br />
+dsname=SOADataSource   (local, non XA)<br />
+dsjndi=jdbc/SOALocalTxDataSource<br />
+dstype=GridLink<br />
+dsSupportsGlobalTransactions=true<br />
+dsXAType=OnePhaseCommit<br />
+dsDriverName=oracle.jdbc.OracleDriver<br />
+dsFanEnabled=true<br />
+dsOnsNodeList=myrachost.com:6200<br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version='1.0' encoding='UTF-8'?>
+&lt;jdbc-data-source xmlns="http://xmlns.oracle.com/weblogic/jdbc-data-source" xmlns:sec="http://xmlns.oracle.com/weblogic/security" xmlns:wls="http://xmlns.oracle.com/weblogic/security/wls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.oracle.com/weblogic/jdbc-data-source http://xmlns.oracle.com/weblogic/jdbc-data-source/1.0/jdbc-data-source.xsd">
+  &lt;name>SOADataSource&lt;/name>
+  &lt;jdbc-driver-params>
+    &lt;url>jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=myrachost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=srv_osb)))&lt;/url>
+    &lt;driver-name>oracle.jdbc.OracleDriver&lt;/driver-name>
+    &lt;properties>
+      &lt;property>
+        &lt;name>user&lt;/name>
+        &lt;value>pp1_soainfra&lt;/value>
+      &lt;/property>
+    &lt;/properties>
+    &lt;password-encrypted>{AES}rnUdIazVyMYKqcFXg55eXdPGyxefK6Mr9fqUglWFhm8=&lt;/password-encrypted>
+  &lt;/jdbc-driver-params>
+  &lt;jdbc-connection-pool-params>
+    &lt;test-table-name>SQL SELECT 1  FROM DUAL&lt;/test-table-name>
+  &lt;/jdbc-connection-pool-params>
+  &lt;jdbc-data-source-params>
+    &lt;jndi-name>jdbc/SOALocalTxDataSource&lt;/jndi-name>
+  &lt;/jdbc-data-source-params>
+  &lt;jdbc-oracle-params>
+    &lt;fan-enabled>true&lt;/fan-enabled>
+    &lt;ons-node-list>myrachost:6200&lt;/ons-node-list>
+    &lt;ons-wallet-file>&lt;/ons-wallet-file>
+  &lt;/jdbc-oracle-params>
+&lt;/jdbc-data-source>
+
+</pre><br />
+and the second is:<br />
+<br />
+dsname=SOAXADataSource (global (XA))<br />
+dsjndi= jdbc/SOADataSource<br />
+dstype=GridLink<br />
+dsXAType=TwoPhaseCommit<br />
+dsDriverName=oracle.jdbc.xa.client.OracleXADataSource<br />
+dsFanEnabled=true<br />
+dsOnsNodeList=myrachost.com:6200<br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version='1.0' encoding='UTF-8'?>
+&lt;jdbc-data-source xmlns="http://xmlns.oracle.com/weblogic/jdbc-data-source" xmlns:sec="http://xmlns.oracle.com/weblogic/security" xmlns:wls="http://xmlns.oracle.com/weblogic/security/wls" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.oracle.com/weblogic/jdbc-data-source http://xmlns.oracle.com/weblogic/jdbc-data-source/1.0/jdbc-data-source.xsd">
+  &lt;name>SOAXADataSource&lt;/name>
+  &lt;jdbc-driver-params>
+    &lt;url>jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=myrachost)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=srv_osb)))&lt;/url>
+    &lt;driver-name>oracle.jdbc.xa.client.OracleXADataSource&lt;/driver-name>
+    &lt;properties>
+      &lt;property>
+        &lt;name>user&lt;/name>
+        &lt;value>pp1_soainfra&lt;/value>
+      &lt;/property>
+    &lt;/properties>
+    &lt;password-encrypted>{AES}LjuMmp4BvBf23878ydOfK2XcBMyZTjGDf2lP1NTn2raU=&lt;/password-encrypted>
+  &lt;/jdbc-driver-params>
+  &lt;jdbc-connection-pool-params>
+    &lt;test-table-name>SQL SELECT 1  FROM DUAL&lt;/test-table-name>
+  &lt;/jdbc-connection-pool-params>
+  &lt;jdbc-data-source-params>
+    &lt;jndi-name>jdbc/SOADataSource&lt;/jndi-name>
+    &lt;global-transactions-protocol>TwoPhaseCommit&lt;/global-transactions-protocol>
+  &lt;/jdbc-data-source-params>
+  &lt;jdbc-oracle-params>
+    &lt;fan-enabled>true&lt;/fan-enabled>
+    &lt;ons-node-list>myrachost:6200&lt;/ons-node-list>
+    &lt;ons-wallet-file>&lt;/ons-wallet-file>
+  &lt;/jdbc-oracle-params>
+&lt;/jdbc-data-source>
+
+
+</pre><br />
+<br />
+now you can move to the eis/HAFileAdapter and configure it like this:<br />
+<br />
+controlDir=/opt/oracle/domains/myydomain/shared/apps/fileadapter/controlDir (this is on a shared drive)<br />
+<br />
+inboundDataSource=jdbc/SOADataSource<br />
+outboundDataSource=jdbc/SOADataSource<br />
+outboundDataSourceLocal=jdbc/SOALocalTxDataSource<br />
+outboundLockTypeForWrite=oracle<br />
+<br />
+<br />
+The mutex - allowing the HAFileAdapters to coordinate with each other and avoid picking up the same file - is based on 2 DB tables:<br />
+<br />
+describe <b>FILEADAPTER_IN</b><br />
+Name               Null     Type           <br />
+------------------ -------- -------------- <br />
+FULL_PATH          NOT NULL VARCHAR2(4000) <br />
+ROOT_DIRECTORY     NOT NULL VARCHAR2(3000) <br />
+FILE_DIRECTORY     NOT NULL VARCHAR2(3000) <br />
+FILE_NAME          NOT NULL VARCHAR2(1000) <br />
+FILE_ENDPOINT_GUID NOT NULL VARCHAR2(2000) <br />
+FILE_LAST_MODIFIED          NUMBER         <br />
+FILE_READONLY               CHAR(1)        <br />
+FILE_PROCESSED              CHAR(1)        <br />
+CREATED            NOT NULL NUMBER         <br />
+UPDATED                     NUMBER      <br />
+<br />
+<br />
+describe <b>FILEADAPTER_MUTEX</b><br />
+Name               Null     Type           <br />
+------------------ -------- -------------- <br />
+MUTEX_ID           NOT NULL VARCHAR2(4000) <br />
+MUTEX_CREATED               TIMESTAMP(6)   <br />
+MUTEX_LAST_UPDATED          TIMESTAMP(6)   <br />
+MUTEX_SEQUENCE              NUMBER      <br />
+<br />
+<br />
+<br />
+It's all, folks! Don't forget to test!<br />
+<br />
+<a href="/2011/10/high-availability-file-adapter-in-osb.html">See also here for first approach</a>

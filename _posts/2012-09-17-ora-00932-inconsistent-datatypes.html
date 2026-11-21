@@ -1,0 +1,54 @@
+---
+layout: post
+title: "ORA-00932: inconsistent datatypes: expected NUMBER got INTERVAL DAY TO SECOND"
+date: 2012-09-17T21:34:00.000+02:00
+permalink: /2012/09/ora-00932-inconsistent-datatypes.html
+blogger_id: "7513570505983278275"
+tags: ["oracledb"]
+---
+It looks like you are trying to do maths (+, -) with TIMESTAMP.<br />
+TIMESTAMP doesn't like that. you should CAST the TIMESTAMP to DATE:<br />
+<br />
+rather than <br />
+bla - blu (where bla and blu are TIMESTAMP) <br />
+do<br />
+CAST (bla as DATE) - CAST (blu as DATE)<br />
+and you will get a NUMBER (multiply it by 3600 * 24 and you will turn it into seconds)<br />
+<br />
+BUT<br />
+you will lose the millisecond info<br />
+<br />
+Here you have the <a href="http://docs.oracle.com/cd/B19306_01/server.102/b14200/sql_elements001.htm">definition of the TIMESTAMP</a><br />
+<br />
+In alternative, you should rather EXTRACT each component of the DIFFERENCE (day, hours, minutes, seconds) and do the match with them:<br />
+<br />
+as explained here<br />
+<br />
+<a href="http://www.dbforums.com/oracle/1602071-difference-between-two-timestamps.html">http://www.dbforums.com/oracle/1602071-difference-between-two-timestamps.html</a><br />
+<br />
+<pre name="code" class="brush: java">CREATE OR REPLACE FUNCTION timestamp_diff
+(
+start_time_in TIMESTAMP
+, end_time_in TIMESTAMP
+)
+RETURN NUMBER
+AS
+l_days NUMBER;
+l_hours NUMBER;
+l_minutes NUMBER;
+l_seconds NUMBER;
+l_milliseconds NUMBER;
+BEGIN
+SELECT extract(DAY FROM end_time_in-start_time_in)
+, extract(HOUR FROM end_time_in-start_time_in)
+, extract(MINUTE FROM end_time_in-start_time_in)
+, extract(SECOND FROM end_time_in-start_time_in)
+INTO l_days, l_hours, l_minutes, l_seconds
+FROM dual;
+
+l_milliseconds := l_seconds*1000 + l_minutes*60*1000 + l_hours*60*60*1000 + l_days*24*60*60*1000;
+RETURN l_milliseconds;
+
+END;
+</pre><br />
+

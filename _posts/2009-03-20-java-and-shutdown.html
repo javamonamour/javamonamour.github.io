@@ -1,0 +1,14 @@
+---
+layout: post
+title: "Java and Shutdown"
+date: 2009-03-20T16:09:00.000+01:00
+permalink: /2009/03/java-and-shutdown.html
+blogger_id: "613610611882927108"
+tags: ["control-c"]
+---
+you can add a shutdown handler:<div><br />
+</div><div>Runtime.getRuntime().addShutdownHook(sh);<br />
+</div><div><br />
+</div><div>where sh is a Thread</div><div><br />
+</div><div>Problem is, in Unix it works only with CTRL-C, not witk kill -9 or kill -8 (abort).</div><div><br />
+</div><div>In Windows, if I terminate my JVM with Eclipse's "terminate" button, the hook is not executed.</div>

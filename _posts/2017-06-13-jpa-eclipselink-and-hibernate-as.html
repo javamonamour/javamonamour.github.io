@@ -1,0 +1,69 @@
+---
+layout: post
+title: "JPA, EclipseLink and Hibernate as a persistence provider"
+date: 2017-06-13T17:58:00.001+02:00
+permalink: /2017/06/jpa-eclipselink-and-hibernate-as.html
+blogger_id: "8395737127712325831"
+tags: ["hibernate"]
+---
+a customer was getting
+<br/>
+
+<pre>
+ weblogic.management.DeploymentException: 
+
+ java.lang.ClassCastException: org.eclipse.persistence.jpa.jpql.parser.NullExpression 
+cannot be cast to org.eclipse.persistence.jpa.jpql.parser.IdentificationVariable
+ at org.eclipse.persistence.internal.jpa.jpql.DeclarationResolver$DeclarationVisitor.visit(DeclarationResolver.java:626)
+ at org.eclipse.persistence.jpa.jpql.parser.RangeVariableDeclaration.accept(RangeVariableDeclaration.java:98)
+ at org.eclipse.persistence.internal.jpa.jpql.DeclarationResolver$DeclarationVisitor.visit(DeclarationResolver.java:577)
+ at org.eclipse.persistence.jpa.jpql.parser.IdentificationVariableDeclaration.accept(IdentificationVariableDeclaration.java:71)
+ at org.eclipse.persistence.internal.jpa.jpql.DeclarationResolver$DeclarationVisitor.visit(DeclarationResolver.java:566)
+
+</pre>
+<br/>
+using eclipselink.jar version 2.5.2 as part of the WLS distribution.
+<br/>
+he finally made it work by using
+<br/>
+weblogic-application.xml  :
+<br/>
+<pre class:"brush: xml">
+
+&lt;prefer-application-packages&gt;
+  &lt;package-name&gt;com.google.collections&lt;/package-name&gt;
+  &lt;package-name&gt;com.google.common&lt;/package-name&gt;
+  &lt;package-name&gt;org.hibernate.*&lt;/package-name&gt;
+  &lt;package-name&gt;javax.validation&lt;/package-name&gt;
+&lt;/prefer-application-packages&gt;
+
+</pre>
+
+
+
+
+
+<br/><br/>
+
+change the pom.xml to get extra dependency
+<pre class:"brush: xml">
+&lt;dependency&gt;
+  &lt;groupId&gt;org.hibernate&lt;/groupId&gt;
+  &lt;artifactId&gt;hibernate-validator&lt;/artifactId&gt;
+  &lt;version&gt;5.3.5.Final&lt;/version&gt;
+&lt;/dependency&gt;
+
+
+</pre>
+<br/><br/>
+
+and in persistence.xml 
+
+<pre class:"brush: xml">
+&lt;provider&gt;org.hibernate.ejb.HibernatePersistence&lt;/provider&gt;
+
+</pre>
+
+
+<br/><br/>
+

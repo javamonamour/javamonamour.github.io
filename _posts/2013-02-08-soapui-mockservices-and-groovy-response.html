@@ -1,0 +1,106 @@
+---
+layout: post
+title: "SOAPUI MockServices and Groovy Response"
+date: 2013-02-08T14:47:00.002+01:00
+permalink: /2013/02/soapui-mockservices-and-groovy-response.html
+blogger_id: "5650310296106362320"
+tags: ["groovy", "mockrunner", "soapui"]
+---
+Suppose you have a request like this:
+<br/><br/>
+
+<pre name="code" class="brush: xml">
+
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   &lt;soapenv:Header/>
+   &lt;soapenv:Body>
+      &lt;IdentifyCustomer>
+         &lt;WebIdentification>
+            &lt;Email>vernetto@yahoo.com&lt;/Email>
+            &lt;Password>ciao&lt;/Password>
+         &lt;/WebIdentification>
+      &lt;/IdentifyCustomer>
+   &lt;/soapenv:Body>
+&lt;/soapenv:Envelope>
+
+</pre>
+
+<br/><br/>
+and you must return this response whenever the email contains "@yahoo.com":
+
+<br/><br/>
+
+<pre name="code" class="brush: xml">
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   &lt;soapenv:Header/>
+   &lt;soapenv:Body>
+      &lt;IdentifyCustomerResponse>
+         &lt;!--You have a CHOICE of the next 2 items at this level-->
+         &lt;IdentificationSuccessful>
+            &lt;MarketID>2&lt;/MarketID>
+            &lt;CustomerID>123456&lt;/CustomerID>
+         &lt;/IdentificationSuccessful>
+      &lt;/IdentifyCustomerResponse>
+   &lt;/soapenv:Body>
+&lt;/soapenv:Envelope>   
+</pre>
+
+<br/><br/>
+
+and this response whenever the email contains "@gmail.com":
+
+<br/><br/>
+
+<pre name="code" class="brush: xml">
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   &lt;soapenv:Header/>
+   &lt;soapenv:Body>
+      &lt;IdentifyCustomerResponse>
+         &lt;IdentificationFailed>
+            &lt;ErrorCode>CUSTOMER_NOT_FOUND&lt;/ErrorCode>
+            &lt;ErrorDescription>we cannot find this customer&lt;/ErrorDescription>
+         &lt;/IdentificationFailed>
+      &lt;/IdentifyCustomerResponse>
+   &lt;/soapenv:Body>
+&lt;/soapenv:Envelope>
+</pre>
+
+<br/><br/>
+
+You can create a MockService and customize the MockResponse <a href="http://www.soapui.org/Getting-Started/mock-services/4-Customizing-a-MockResponse.html">http://www.soapui.org/Getting-Started/mock-services/4-Customizing-a-MockResponse.html</a>
+
+<br/><br/>
+
+this is the script:
+
+<br/><br/>
+
+<pre name="code" class="brush: java">
+
+def groovyUtils = new com.eviware.soapui.support.GroovyUtils( context )
+def holder = groovyUtils.getXmlHolder( mockRequest.requestContent ) 
+def email = holder.getNodeValue("//Email")
+
+if (email.contains("@yahoo.com")) {
+ context.setProperty( "myresponse", "&lt;IdentificationSuccessful>&lt;MarketID>2&lt;/MarketID>&lt;CustomerID>123456&lt;/CustomerID>&lt;/IdentificationSuccessful>" )
+}
+else {
+ context.setProperty( "myresponse", "&lt;IdentificationFailed>&lt;ErrorCode>CUSTOMER_NOT_FOUND&lt;/ErrorCode>&lt;ErrorDescription>we cannot find this customer&lt;/ErrorDescription>&lt;/IdentificationFailed>" )
+}
+
+</pre>
+
+<br/><br/>
+and this the Groovy Response
+<br/><br/>
+<pre name="code" class="brush: xml">
+
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   &lt;soapenv:Header/>
+   &lt;soapenv:Body>
+      &lt;IdentifyCustomerResponse>
+  ${myresponse}
+      &lt;/IdentifyCustomerResponse>
+   &lt;/soapenv:Body>
+&lt;/soapenv:Envelope>
+</pre>

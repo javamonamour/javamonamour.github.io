@@ -1,0 +1,48 @@
+---
+layout: post
+title: "Nexus 2.14 not starting \"No such file or directory\""
+date: 2017-10-04T12:44:00.000+02:00
+permalink: /2017/10/nexus-214-not-starting-no-such-file-or.html
+blogger_id: "4499898958702971552"
+tags: ["nexus"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2019-08-09
+    html: "Thanks! This helped me quickly solve my issue."
+---
+scary, all of a sudden I get in the wrapper.log file:<br />
+<br />
+jvm 1    | wrapper  | Unable to start JVM: No such file or directory (2)<br />
+<br />
+this is really unimpressive, a decent coder would AT LEAST tell you "WHICH file or directory" could not be found.... but most developers are just selfish jerks who don't care about operations.<br />
+<br />
+I edit the "bin/nexus" script to put a "set -x" at the beginning, and I discover that the command used to execute the wrapper is<br />
+<br />
+/u01/app/admrun/nexus-java/bin/../bin/jsw/linux-x86-64/wrapper /u01/app/admrun/nexus-java/bin/../bin/jsw/conf/wrapper.conf wrapper.syslog.ident=nexus wrapper.pidfile=/u01/app/admrun/nexus-java/bin/../bin/jsw/linux-x86-64/nexus.pid wrapper.daemonize=TRUE<br />
+<br />
+<br />
+if you run the command with wrapper.daemonize=FALSE you can see the errors directly in the console - which is easier to debug.<br />
+<br />
+useful post here <a href="https://stackoverflow.com/questions/29355815/error-in-sonar-startup-unable-to-start-jvm-no-such-file-or-directory-2">https://stackoverflow.com/questions/29355815/error-in-sonar-startup-unable-to-start-jvm-no-such-file-or-directory-2</a><br />
+<br />
+there I discover that there is an extra parameter wrapper.java.command, and in fact in wrapper.conf I see<br />
+<br />
+<pre># Set the JVM executable
+# (modify this to absolute path if you need a Java that is not on the OS path)
+wrapper.java.command=java
+</pre><br />
+<br />
+in fact, I don't have "java" in my path:<br />
+<br />
+<pre>which java
+/usr/bin/which: no java in (/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/u01/app/admrun/bin)
+</pre><br />
+<br />
+I try to set it to "wrapper.java.command=/u01/app/java/jdk1.8.0_45/bin/java" and it magically works<br />
+<br />
+All this is really, really sad. A start script should CLEARLY validate all preconditions and give a very explanatory message stating what is wrong and how to fix it. Pathetic.<br />
+<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,55 @@
+---
+layout: post
+title: "WebLogic JNDIServiceLocator "
+date: 2015-10-09T15:55:00.000+02:00
+permalink: /2015/10/weblogic-jndiservicelocator.html
+blogger_id: "3435598493284228603"
+tags: ["rjvm", "weblogic"]
+---
+Today there was a JNDI lookup failing across 2 clusters hosted on same machine but different NIC: 
+
+<br/>
+<pre>WLS_FW.JNDIServiceLocator BEA-000000
+Error loading /somepath from 111.222.123.123:6481
+java.lang.NullPointerException
+ at weblogic.utils.io.ChunkedDataOutputStream.writeUTFChars(ChunkedDataOutputStream.java:181)
+ at weblogic.utils.io.ChunkedDataOutputStream.writeUTF(ChunkedDataOutputStream.java:141)
+ at weblogic.workarea.StringWorkContext.writeContext(StringWorkContext.java:32)
+ at weblogic.rjvm.MsgAbbrevOutputStream.writeContext(MsgAbbrevOutputStream.java:124)
+ at weblogic.rjvm.MsgAbbrevOutputStream$NestedObjectOutputStream.writeContext(MsgAbbrevOutputStream.java:751)
+ at weblogic.workarea.spi.WorkContextEntryImpl.write(WorkContextEntryImpl.java:85)
+ at weblogic.workarea.WorkContextLocalMap.sendRequest(WorkContextLocalMap.java:150)
+ at weblogic.rmi.provider.WorkServiceContext.writeExternal(WorkServiceContext.java:56)
+ at java.io.ObjectOutputStream.writeExternalData(ObjectOutputStream.java:1458)
+ at java.io.ObjectOutputStream.writeOrdinaryObject(ObjectOutputStream.java:1429)
+ at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1177)
+ at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:347)
+ at weblogic.rjvm.MsgAbbrevOutputStream.writeObject(MsgAbbrevOutputStream.java:627)
+ at weblogic.rjvm.MsgAbbrevOutputStream.marshalUserCustomCallData(MsgAbbrevOutputStream.java:357)
+ at weblogic.rjvm.BasicOutboundRequest.transferThreadLocalContext(BasicOutboundRequest.java:126)
+ at weblogic.rmi.internal.BasicRemoteRef.getOutboundRequest(BasicRemoteRef.java:204)
+ at weblogic.rmi.cluster.ClusterableRemoteRef.invoke(ClusterableRemoteRef.java:465)
+ at weblogic.rmi.cluster.ClusterableRemoteRef.invoke(ClusterableRemoteRef.java:285)
+ at weblogic.jndi.internal.ServerNamingNode_12130_WLStub.lookup(Unknown Source)
+ at weblogic.jndi.internal.WLContextImpl.lookup(WLContextImpl.java:440)
+ at weblogic.jndi.internal.WLContextImpl.lookup(WLContextImpl.java:426)
+
+</pre>
+
+<br/><br/>
+
+The issue is still under investigation... these flags might help:
+<pre>
+-Dweblogic.kernel.debug=true
+-Dweblogic.debug.DebugConnection=true 
+-Dweblogic.StdoutDebugEnabled=true 
+-Dweblogic.log.LogSeverity=Debug 
+-Dweblogic.log.LoggerSeverity=Debug
+
+</pre>
+<br/><br/>
+
+I could not find documentation of how internally WebLogic implements the RJVM communication protocol...
+<br/><br/>
+
+

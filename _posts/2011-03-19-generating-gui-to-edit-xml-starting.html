@@ -1,0 +1,49 @@
+---
+layout: post
+title: "Generating a GUI to edit XML, starting from XSD"
+date: 2011-03-19T16:20:00.007+01:00
+permalink: /2011/03/generating-gui-to-edit-xml-starting.html
+blogger_id: "5690636696589569047"
+tags: ["excel", "jaxfront", "xml"]
+---
+When you give your customer a XML-based interface, you better help him produce the XML, at least for testers to play with your service.... not everybody is comfortable with XMLSpy (besides, its licence is VERY expensive).<br />
+<br />
+I have tried Excel as a XML editor, but it flattens a complex graph to a single row,<br />
+so every repetead dependent object occupies a new row and forces you to repeat the master object data (sucks).<br />
+Besides when you try to export XML it keeps saying:<br />
+<br />
+Cannot save or export XML data. The XML maps in this workbook are not exportable<br />
+<br />
+I have tried adding ID to help Excel track dependent objects:<br />
+<br />
+at the end of your complex type, add:<br />
+<br />
+xs:attribute name="id" type="<b>xs:ID</b>" use="required"<br />
+<br />
+and the ancestor should have:<br />
+<br />
+xs:attribute name="idref" type="<b>xs:IDREF</b>" use="required"<br />
+<br />
+here some examples (really cool musing over Schema Design):<br />
+<a href="http://www.xfront.com/GlobalVersusLocal.html">http://www.xfront.com/GlobalVersusLocal.html</a><br />
+<br />
+<br />
+<br />
+<br />
+<a href="http://www.w3.org/TR/2004/WD-xml-id-20040407/">here</a> how to define an id <br />
+<br />
+P1 is a good ID<br />
+1 is NOT a good ID<br />
+<br />
+IDs must be unique in the document, otherwise you get a validation error<br />
+<br />
+Still Excel gets confused and gives unhelpful error messages when exporting.<br />
+<br />
+Looking for some better way to visually edit I found <a href="http://www.jaxfront.org/">JAXFront</a><br />
+<br />
+<a href="http://www.jaxfront.com/viewlet/XUIEditor_viewlet_swf.html">Here</a> an excellent demo of <b>JaxFront XUIeditor</b><br />
+<br />
+<a href="http://www.jaxfront.org/pages/overview_faq.html">here</a> the FAQs; My first question was : does it generate Java code, And the answer is: no, it generates a XUI file which is then run my the JaxFront engine.<br />
+<br />
+<br />
+I have tested on my XSD and the result was quite satisfactory.

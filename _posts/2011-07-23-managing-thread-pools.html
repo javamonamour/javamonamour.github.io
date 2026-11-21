@@ -1,0 +1,26 @@
+---
+layout: post
+title: "Managing Thread Pools"
+date: 2011-07-23T19:39:00.000+02:00
+permalink: /2011/07/managing-thread-pools.html
+blogger_id: "6063766368185011977"
+tags: ["multithreading"]
+---
+I have copied and run a sample program as from <a href="http://www.deitel.com/articles/java_tutorials/20051126/JavaMultithreading_Tutorial_Part4.html">here</a><br />
+<br />
+<br />
+<br />
+here the <a href="http://download.oracle.com/javase/6/docs/api/java/util/concurrent/ExecutorService.html">ExecutorService</a><br />
+<br />
+particularly valuable are the isTerminated() and awaitTermination(long timeout, TimeUnit unit) methods.<br />
+<br />
+Fantastic also the possibilily to submit a task and monitor its execution with a Future object.<br />
+<br />
+There is also an API to schedule a task in the future, without having to use a java.util.Timer or a framework like Quartz:<br />
+<br />
+<a href="http://download.oracle.com/javase/6/docs/api/java/util/concurrent/ScheduledThreadPoolExecutor.html">http://download.oracle.com/javase/6/docs/api/java/util/concurrent/ScheduledThreadPoolExecutor.html</a><br />
+<br />
+<br />
+Anyway using a ThreadPoolExecutor is far superior to allocating and managing directly Threads yourself (never again a new Thread(this) !)<br />
+<br />
+<a href="http://download.oracle.com/javase/6/docs/api/java/util/concurrent/ThreadPoolExecutor.html">http://download.oracle.com/javase/6/docs/api/java/util/concurrent/ThreadPoolExecutor.html</a>

@@ -1,0 +1,37 @@
+---
+layout: post
+title: "SQLServerDriver timeout"
+date: 2013-06-11T15:43:00.003+02:00
+permalink: /2013/06/sqlserverdriver-timeout.html
+blogger_id: "8772627205804542955"
+tags: ["jdbc"]
+---
+<a href="http://docs.oracle.com/cd/E21764_01/web.1111/e13753/mssqlserver.htm#i1074598">http://docs.oracle.com/cd/E21764_01/web.1111/e13753/mssqlserver.htm#i1074598</a>
+
+<br/><br/>
+LoginTimeout The amount of time, in seconds, that the driver waits for a connection to be established before timing out the connection request.<br/>
+Valid Values 0| x where x is a number of seconds.<br/>
+If set to 0, the driver does not time out a connection request.<br/>
+If set to x, the driver waits for the specified number of seconds before returning control to the application and throwing a timeout exception.<br/>
+Default: 0<br/>
+Data Type: int<br/>
+<br/><br/>
+
+QueryTimeout Sets the default query timeout (in seconds) for all statements created by a connection.<br/>
+Valid Values: -1 |0 | x where x is a number of seconds.<br/>
+If set to x, the driver uses the value as the default timeout for any statement created by the connection. To override the default timeout value set by this connection option, call the Statement.setQueryTimeout() method to set a timeout value for a particular statement.<br/>
+If set to -1, the query timeout functionality is disabled. The driver silently ignores calls to the Statement.setQueryTimeout() method.<br/>
+If set to 0 (the default), the default query timeout is infinite (the query does not time out).<br/>
+Default: 0<br/>
+Data Type: int<br/>
+<br/><br/>
+
+After you apply these settings QueryTimeout=60 and LoginTimeout=30 to the weblogic.jdbc.sqlserver.SQLServerDriver, you get this error message on test:
+<br/><br/>
+
+Connection test failed with the following exception: weblogic.common.resourcepool.ResourceDeadException: 0:weblogic.common.ResourceException: Could not create pool connection. The DBMS driver exception was: [FMWGEN][SQLServer JDBC Driver]Login has timed out.
+
+<br/><br/>
+
+
+

@@ -1,0 +1,23 @@
+---
+layout: post
+title: "Puppet: usermod: user is currently logged in"
+date: 2013-07-08T19:31:00.001+02:00
+permalink: /2013/07/puppet-usermod-user-is-currently-logged.html
+blogger_id: "4761311117474875060"
+tags: ["puppet"]
+---
+If you are provisioning a node, and this entails changing something os a user (in my case, the home directory), usermod could fail with the message
+<br/><br/>
+"usermod: user BLA is currently logged in"
+<br/><br/>
+
+Run "who" or "w" to determine if this is the case.
+<br/><br/>
+
+If not, run "ps -ef -grep BLA" or better "ps U BLA" to determine if the user is running processes. If yes, kill them all.
+<br/><br/>
+
+
+
+
+

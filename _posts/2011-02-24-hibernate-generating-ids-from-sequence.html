@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Hibernate generating IDs from a Sequence"
+date: 2011-02-24T16:50:00.000+01:00
+permalink: /2011/02/hibernate-generating-ids-from-sequence.html
+blogger_id: "7478362215310730425"
+tags: ["hibernate", "sequence"]
+---
+on the Entity:<br />
+<br />
+@Id<br />
+@SequenceGenerator(name="PRODUCT_PROID_GENERATOR", sequenceName="PRO_ID_SEQ")<br />
+@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="PRODUCT_PROID_GENERATOR")<br />
+@Column(name="PRO_ID", unique=true, nullable=false, precision=12)<br />
+private long proId;<br />
+<br />
+and on the DB:<br />
+<br />
+CREATE SEQUENCE PRO_ID_SEQ MINVALUE 1 START WITH 1 INCREMENT BY 1;<br />
+<br />
+<br />
+<br />
+funnily the values assigned are:<br />
+1050<br />
+50<br />
+100<br />
+<br />
+here a decent explanation about hilo :<br />
+<a href="https://forum.hibernate.org/viewtopic.php?f=9&t=1005635&view=next">https://forum.hibernate.org/viewtopic.php?f=9&t=1005635&view=next</a><br />
+<br />
+<br />
+<br />
+so adding allocationSize=1 to @SequenceGenerator brings the behaviour back to normal

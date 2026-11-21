@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Reply with failure and the JCA Adapter"
+date: 2011-11-22T18:18:00.001+01:00
+permalink: /2011/11/reply-with-failure-and-jca-adapter.html
+blogger_id: "6004713417018000087"
+tags: ["errorhandling", "OSB"]
+---
+In a fault handler, we decide to fail the Transaction by using the "Reply with failure" Action.<br />
+<br />
+For HTTP Proxy Services, this returns a HTTP 500 error code to the caller. For JMS, it will set the JMS_BEA_Error to true.<br />
+<br />
+For JCA File Adapter Proxy Services, this mechanism doesn't work. The adapter doesn't receive the information that the Transaction failed (even if I set the Proxy as "Transaction required" and "Same Transaction for Response"). The file is archived and not sent to the Error directory.<br />
+<br />
+The funny thing is that I have enabled all the debug flags for weblogic.jca , plus all the alsbdebug.xml flags... and it shows clearly that the isFailure=true, the message "OSB is rolling back a transaction BEA1-xxxx started by it", YET the AlsbJcaFrameworkAdapter says "successfully sent message to Adapter Framework".<br />
+<br />
+If you want the Transaction to fail, the only way is to "Raise Error" in the Error Handler - or simply don't "Reply" at all.<br />
+<br />
+Probably this (weird) behaviour will be addressed in future. JCA in OSB was introduced recently. IMHO the current behavious quite counter-intuitive.

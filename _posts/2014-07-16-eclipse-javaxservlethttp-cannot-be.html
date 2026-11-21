@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Eclipse, javax.servlet.http cannot be resolved to a type"
+date: 2014-07-16T10:31:00.000+02:00
+permalink: /2014/07/eclipse-javaxservlethttp-cannot-be.html
+blogger_id: "6499567950801153689"
+tags: ["eclipse"]
+---
+So, in StinkEclipse, editing a WebApplication, in a JSP you make a reference to javax.servlet.http.HttpServletRequest and you get a red "javax.servlet.http cannot be resolved to a type".
+
+<br />
+<br />
+I guess this is because even in 2014 they maintain this stupid division between JSE and JEE, making your life so miserable. So HTTP is part of JEE and not available by default. Why this, I guess to save a few bytes. Morons.
+<br />
+<br />
+This is the solution in 3 steps
+<br />
+<br />
+in the Eclipse Windows Preferences
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/9d94e51d690d5b59.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/e16b17b7fcf8bc4f.png" /></a></div>
+<br />
+<br />
+in your project properties
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/bcab231dca1e4aa1.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/24bc774642304806.png" /></a></div>
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/b6f03e27b1d26a96.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/92607a3a3fafb496.png" /></a></div>
+<br />
+<br />
+Guys at Eclipse, this is really a friendly advice, have you considered some other hobby, like knitting, or bicycle repair? At least you would not do so much damage to the developers community... and leave IDE development to the real pros, like IntelliJ or Netbeans people...
+
+<br />
+<br />
+No, wait, a failed bike repair could kill someone.... better if you stick to IDEs...<br />
+<br />

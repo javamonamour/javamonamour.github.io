@@ -1,0 +1,34 @@
+---
+layout: post
+title: "Primefaces gmap"
+date: 2017-11-25T21:52:00.001+01:00
+permalink: /2017/11/primefaces-gmap.html
+blogger_id: "1588376072065738968"
+tags: ["primefaces"]
+---
+&lt;h:head&gt;<br />
+&lt;script src=&quot;http://maps.google.com/maps/api/js?sensor=false&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;<br />
+<br />
+<br />
+&lt;p:gmap center=&quot;41.381542, 2.122893&quot; zoom=&quot;15&quot; type=&quot;HYBRID&quot; style=&quot;width:100%;height:400px&quot; /&gt;<br />
+<br />
+<br />
+<a href="https://developer.mozilla.org/en-US/docs/Mozilla/Debugging/Debugging_JavaScript">https://developer.mozilla.org/en-US/docs/Mozilla/Debugging/Debugging_JavaScript</a>  enable browser console:<br />
+about:config<br />
+devtools.chrome.enabled  set it to true<br />
+<br />
+then Ctrl-Shift-J (in firefox)<br />
+<br />
+<br />
+"Google Maps API error: MissingKeyMapError https://developers.google.com/maps/documentation/javascript/error-messages#missing-key-map-error"  js:38<br />
+"Google Maps API warning: NoApiKeys https://developers.google.com/maps/documentation/javascript/error-messages#no-api-keys"  util.js:246<br />
+"Google Maps API warning: SensorNotRequired https://developers.google.com/maps/documentation/javascript/error-messages#sensor-not-required"<br />
+<br />
+<br />
+in reality one should provide a key<br />
+<br />
+&lt;script src=&quot;http://maps.google.com/maps/api/js?key=MY_API_KEY&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;<br />
+<br />
+<a href="https://developers.google.com/maps/documentation/javascript/get-api-key?utm_source=geoblog&utm_medium=social&utm_campaign=2016-geo-na-website-gmedia-blogs-us-blogPost&utm_content=TBC">https://developers.google.com/maps/documentation/javascript/get-api-key?utm_source=geoblog&utm_medium=social&utm_campaign=2016-geo-na-website-gmedia-blogs-us-blogPost&utm_content=TBC</a><br />
+<br />
+

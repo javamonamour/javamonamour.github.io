@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Getting started with OpenShift"
+date: 2017-08-26T21:09:00.001+02:00
+permalink: /2017/08/getting-started-with-openshift.html
+blogger_id: "6789476095247939781"
+tags: ["openshift"]
+---
+you can try installing on your local machine: install Vagrant <a href="https://www.vagrantup.com/downloads.html">https://www.vagrantup.com/downloads.html</a>
+<br />
+<br />
+install virtualbox <a href="https://www.virtualbox.org/wiki/Downloads">https://www.virtualbox.org/wiki/Downloads</a>
+<br />
+<br />
+clone this github repo <a href="https://github.com/openshift/origin">https://github.com/openshift/origin</a> and vagrant up... good luck! On Windows the clone fails because of a filename too long issue (hello Microsoft????&nbsp; ) .
+<br />
+<br />
+Another way is to test directly on AWS:
+<br />
+<br />
+<a href="https://aws.amazon.com/about-aws/whats-new/2016/06/red-hat-openshift-on-the-aws-cloud-quick-start-reference-deployment/">https://aws.amazon.com/about-aws/whats-new/2016/06/red-hat-openshift-on-the-aws-cloud-quick-start-reference-deployment/</a> , go through the AWS guide "red-hat-openshift-on-the-aws-cloud" <a href="https://s3.amazonaws.com/quickstart-reference/openshift/doc/red-hat-openshift-on-the-aws-cloud.pd">https://s3.amazonaws.com/quickstart-reference/openshift/doc/red-hat-openshift-on-the-aws-cloud.pd</a>f and discover that this quickstart is no longer available (hello, Amazon??? Why don't you tell it on the home page?? ). 
+<br />
+<br />
+Check out on <a href="https://aws.amazon.com/quickstart/">https://aws.amazon.com/quickstart/</a> for available quickstarts - there is no Openshift quickstart! This world is a chaos, a Cambrian explosion of products which end up in a total mess, fish with wings and trunks like elephants, and survive only one generation or the space of a few months.
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/34b4ae6c86185e4c.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="1076" data-original-width="1234" height="349" src="/images/262797055ec6569b.jpg" width="400" /></a></div>
+<br />
+About AWS, I discover another document <a href="https://access.redhat.com/documentation/en-us/reference_architectures/2017/html/deploying_openshift_container_platform_3.5_on_amazon_web_services">https://access.redhat.com/documentation/en-us/reference_architectures/2017/html/deploying_openshift_container_platform_3.5_on_amazon_web_services</a>/ but it's a bit long reading...
+<br />
+<br />
+Anyway in the meantime I discover that the Vagrantfile VirtualBox approach has been DROPPED <a href="https://blog.openshift.com/goodbye-openshift-all-in-one-vm-hello-minishift/">https://blog.openshift.com/goodbye-openshift-all-in-one-vm-hello-minishift/</a> in favour of Minishift (one more extinct species, whose fossil debris still clutter the digital space...)... too bad that the online book "OpenShift for developers" has not been updated, and I have wasted 3 hours of my life to discover that the "all in one" approach is dead...Grant Shipley and Graham Dumpleton, how about taking care of your creation? 
+<br />
+<br />

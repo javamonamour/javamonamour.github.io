@@ -1,0 +1,71 @@
+---
+layout: post
+title: "Crash Recovery with NodeManager"
+date: 2013-02-06T12:23:00.001+01:00
+permalink: /2013/02/crash-recovery-with-nodemanager.html
+blogger_id: "8259910826783145128"
+tags: ["nodemanager", "weblogic"]
+---
+<a href="http://docs.oracle.com/cd/E12839_01/web.1111/e13740/overview.htm">http://docs.oracle.com/cd/E12839_01/web.1111/e13740/overview.htm</a>
+
+<br/><br/>
+
+<pre>
+Node Manager and System Crash Recovery
+
+To ensure that Node Manager properly restarts servers after a system crash, you must perform the following:
+
+    Ensure that CrashRecoveryEnabled is set to true.
+
+    The CrashRecoveryEnabled configuration property allows Node Manager to restart servers after a system crash. The property is not enabled by default.
+    You should start the Administration Server via Node Manager.
+    All managed servers should be started via the Administration Server. You can accomplish this via WLST or the Administration Console.
+
+After the system is restarted, Node Manager checks each managed domain specified in the nodemanager.domains file to determine if there are any server instances that were not cleanly shutdown. This is determined by the presence of any lock files which are created by Node Manager when a WebLogic Server process is created. This lock file contains the process identifier for WebLogic Server startup script. If the lock file exists, but the process ID is not running, Node Manager will attempt to automatically restart the server.
+
+If the process is running, Node Manager performs an additional check to access the management servlet running in the process to verify that the process corresponding to the process ID is a WebLogic Server instance.
+Note:  When Node Manager performs a check to access the management servlet, an alert may appear in the server log regarding improper credentials.
+
+</pre>
+<br/>
+
+When you run startNodeManager.sh you will see "Automatically restarting server process as part of crash recovery"
+<br/>
+and then it fails with:
+<br/>
+<pre>
+Fatal error in node manager server
+java.lang.NullPointerException
+        at weblogic.nodemanager.server.ServerManager.getStartCallbacks(ServerManager.java:187)
+        at weblogic.nodemanager.server.AbstractServerManager.startServer(AbstractServerManager.java:211)
+        at weblogic.nodemanager.server.ServerManager.isCrashRecoveryNeeded(ServerManager.java:157)
+        at weblogic.nodemanager.server.AbstractServerManager.initialize(AbstractServerManager.java:99)
+        at weblogic.nodemanager.server.AbstractServerManager.<init>(AbstractServerManager.java:63)
+        at weblogic.nodemanager.server.ServerManager.<init>(ServerManager.java:38)
+        at weblogic.nodemanager.server.DomainManager.initialize(DomainManager.java:96)
+        at weblogic.nodemanager.server.DomainManager.<init>(DomainManager.java:60)
+        at weblogic.nodemanager.server.NMServer.initDomains(NMServer.java:220)
+        at weblogic.nodemanager.server.NMServer.start(NMServer.java:197)
+        at weblogic.nodemanager.server.NMServer.main(NMServer.java:377)
+        at weblogic.NodeManager.main(NodeManager.java:31)
+
+
+</pre>
+
+<br/>
+
+Possibly the status of a server is determined by the servername.state (not sure):<br/>
+
+
+<br/>
+cd /opt/oracle/domains/osbpr1do/servers/osbpr1ms2/data/nodemanager
+<br/>
+
+cat osbpr1ms2.state<br/>
+FORCE_SHUTTING_DOWN:Y:N<br/>
+<br/><br/>
+cat osbpr1ms2.pid<br/>
+24767<br/>
+
+
+

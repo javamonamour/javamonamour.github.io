@@ -1,0 +1,36 @@
+---
+layout: post
+title: "WebLogic: validating config.xml"
+date: 2016-02-12T09:28:00.000+01:00
+permalink: /2016/02/weblogic-validating-configxml.html
+blogger_id: "6173980258466062414"
+tags: ["weblogic"]
+---
+config.xml requires several XSDs to be validated:
+
+
+<pre>
+ xsi:schemaLocation="http://xmlns.oracle.com/weblogic/security/xacml http://xmlns.oracle.com/weblogic/security/xacml/1.0/xacml.xsd
+                            http://xmlns.oracle.com/weblogic/domain http://xmlns.oracle.com/weblogic/1.0/domain.xsd
+                            http://xmlns.oracle.com/weblogic/security http://xmlns.oracle.com/weblogic/1.0/security.xsd
+                            http://xmlns.oracle.com/weblogic/security/wls http://xmlns.oracle.com/weblogic/security/wls/1.0/wls.xsd
+                            http://xmlns.oracle.com/weblogic/security/providers/passwordvalidator                             http://xmlns.oracle.com/weblogic/security/providers/passwordvalidator/1.0/passwordvalidator.xsd"
+
+</pre>
+
+<br/>
+For the exact location of these files check here:
+<br/>
+<a href="http://docs.oracle.com/cd/E28280_01/web.1111/e13716/config_files.htm#DOMCF128">http://docs.oracle.com/cd/E28280_01/web.1111/e13716/config_files.htm#DOMCF128</a>  for 10.3.6
+
+<br/>
+namely: WL_HOME/server/lib/schema/weblogic-domain-binding.jar and diagnostics-binding.jar and the names are schema-0.xsd and schema-1.xsd (not a great idea IMHO to rename those files...)
+
+<br/>
+
+
+<br/>
+
+
+
+

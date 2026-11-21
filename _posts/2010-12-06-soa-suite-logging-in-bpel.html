@@ -1,0 +1,30 @@
+---
+layout: post
+title: "SOA Suite - logging in BPEL"
+date: 2010-12-06T14:32:00.003+01:00
+permalink: /2010/12/soa-suite-logging-in-bpel.html
+blogger_id: "4699045422073069708"
+tags: ["BPEL", "logging"]
+blogger_comments:
+  - author: "Jan van Zoggel"
+    date: 2016-11-18
+    html: "Thanx Pier! What I needed :)"
+---
+I was wondering how to log debug information in a BPEL process, <br />
+and <a href="http://mazanatti.info/index.php?/archives/48-SOA-Suite-11g-how-to-use-its-native-logging-mechanism.html">here</a> I found an excellent article on using a Java embedded action.... great stuff, Brazilian friend, bem feito!<br />
+<br />
+Just code this into a Java Embedded activity:<br />
+<br />
+<pre name="code" class="brush: java">Object countLines = getVariableData("countLines");   
+  
+System.out.println("IN LOOP countLines=" + countLines);
+
+/* writes to the audit trail - will then be visible in BPEL console at runtime*/
+addAuditTrailEntry("countLines is: " + countLines);
+
+
+</pre><br />
+<br />
+<a href="http://blog.andrade.inf.br/2010/09/generating-custom-logs-with-log4j.html">This</a> article seems to be interesting on how to use log4j from a BPEL process<br />
+<br />
+See also <a href="/2011/01/oraclexmlparserv2xmlelement-debugging.html">here</a> for more on logging XML in BPEL

@@ -1,0 +1,136 @@
+---
+layout: post
+title: "Counting JMS messages present in a JMS Queue"
+date: 2012-01-29T15:05:00.004+01:00
+permalink: /2012/01/counting-jms-messages-present-in-jms.html
+blogger_id: "3398706460259526771"
+tags: ["jms", "JMX", "MBean"]
+---
+here we show 2 ways:<br />
+<br />
+(I have a wlsbJMSServer JMSServer, a uoo JMSModule, a uooq JNDI name for the Queue)<br />
+<br />
+<b>WLST</b><br />
+<br />
+connect(....)<br />
+<br />
+cd serverRuntime:/JMSRuntime/AdminServer.jms/JMSServers/wlsbJMSServer/Destinations/uoo!uooq<br />
+<br />
+<br />
+the cmo is:<br />
+<br />
+[MBeanServerInvocationHandler]com.bea:ServerRuntime=AdminServer,Name=uoo!uooq,Type=JMSDestinationRuntime,JMSServerRuntime=wlsbJMSServer<br />
+<br />
+<b>cmo.getMessagesCurrentCount()</b><br />
+<br />
+<br />
+<br />
+<b>Java</b><br />
+<br />
+<pre name="code" class="brush: java">package com.acme.gu.jms;
+
+import java.util.Properties;
+
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import weblogic.management.runtime.JMSDestinationRuntimeMBean;
+import weblogic.jms.extensions.JMSRuntimeHelper;
+
+public class JMSJMX {
+ public static void main(String[] args) throws NamingException, JMSException {
+  JMSJMX jmsjmx = new JMSJMX();
+  jmsjmx.countMessages();
+ }
+ 
+ public void countMessages() throws NamingException, JMSException {
+  Properties env = new Properties();
+  env.put(Context.PROVIDER_URL, "t3://localhost:7001");
+  env.put(Context.SECURITY_PRINCIPAL, "weblogic");
+  env.put(Context.SECURITY_CREDENTIALS, "weblogic1");
+  env.put(Context.INITIAL_CONTEXT_FACTORY, "weblogic.jndi.WLInitialContextFactory");
+  InitialContext ctx = new InitialContext(env);
+
+  Destination queue = (Destination) ctx.lookup("uooq");
+
+  JMSDestinationRuntimeMBean destMBean = JMSRuntimeHelper.getJMSDestinationRuntimeMBean(ctx, queue);
+  
+  System.out.println("count: " + destMBean.getMessagesCurrentCount());
+ }
+ 
+}
+
+</pre><br />
+<br />
+<br />
+see also:<br />
+<br />
+<br />
+<a href="http://docs.oracle.com/cd/E11035_01/wls100/javadocs_mhome/weblogic/management/runtime/JMSDestinationRuntimeMBean.html">http://docs.oracle.com/cd/E11035_01/wls100/javadocs_mhome/weblogic/management/runtime/JMSDestinationRuntimeMBean.html</a><br />
+<br />
+<a href=" http://docs.oracle.com/cd/E12840_01/wls/docs103/javadocs/weblogic/jms/extensions/JMSRuntimeHelper.html"><br />
+http://docs.oracle.com/cd/E12840_01/wls/docs103/javadocs/weblogic/jms/extensions/JMSRuntimeHelper.html</a><br />
+<br />
+<br />
+If you want to invoke the same code in OSB, you can use this variant:<br />
+<br />
+<pre name="code" class="brush: java">package com.acme.gu.jms;
+
+ /**
+  * Method to be run inside a Container
+  * @param jndis
+  * @return
+  * @throws NamingException 
+  * @throws JMSException 
+  */
+ public static String countCurrentMessages(String[] jndis) throws NamingException, JMSException {
+  StringBuffer result = new StringBuffer();
+  InitialContext ctx = new InitialContext();
+
+   
+  for (int count = 0; count < jndis.length; count++) {
+   Destination queue = (Destination) ctx.lookup(jndis[count]);
+   JMSDestinationRuntimeMBean destMBean = JMSRuntimeHelper.getJMSDestinationRuntimeMBean(ctx, queue);
+   result.append(Long.toString(destMBean.getMessagesCurrentCount()));
+   if (count < jndis.length - 1) {
+    result.append(",");
+   }
+  }
+
+
+  return result.toString();
+
+ }
+</pre>
+And you invoke it with a Java Callout, passing in input a Sequence
+
+('jndi1', 'jndi2')
+
+which is converted automatically in a String[]
+
+I am returning a CSV list (String), because a String[] as a return parameter in converted into a Java object, which is not easy to access in OSB.
+
+Make sure you associate a Service Account (static) to the Java Callout, because when you create a new InitialContext without associating credentials, OSB attaches an anonymous user and you get an error:
+
+
+<i>
+
+ Callout to java method "public static java.lang.String[] com.acme.gu.jms.JMSJMX.countCurrentMessages(java.lang.String[]) throws javax.naming.NamingException,javax.jms.JMSException" resulted in exception: javax.naming.NoPermissionException: User &lt;anonymous> does not have permission on weblogic.management.adminhome to perform lookup operation.
+weblogic.jms.common.JMSException: javax.naming.NoPermissionException: User &lt;anonymous> does not have permission on weblogic.management.adminhome to perform lookup operation.
+ at weblogic.jms.extensions.JMSRuntimeHelper.getJMSDestinationRuntimeMBean(JMSRuntimeHelper.java:458)
+ at com.acme.gu.jms.JMSJMX.countCurrentMessages(JMSJMX.java:49)
+ at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+ at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+ at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+ at java.lang.reflect.Method.invoke(Method.java:597)
+ at stages.transform.runtime.JavaCalloutRuntimeStep$1.run(JavaCalloutRuntimeStep.java:173)
+
+</i>
+
+<br/>
+<br />
+<br />
+The alternative is to enable "Anonymous Admin Lookup Enabled" in "View Domain-wide Security Settings" in WebLogic console.

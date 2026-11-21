@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Jenkins blueocean plugin with Docker"
+date: 2018-01-10T11:51:00.000+01:00
+permalink: /2018/01/jenkins-blueocean-plugin-with-docker.html
+blogger_id: "8863498482104577440"
+tags: ["blueocean", "jenkins"]
+---
+<a href="https://jenkins.io/doc/book/blueocean/getting-started/">https://jenkins.io/doc/book/blueocean/getting-started/</a> and here the Docker installation instructions <a href="https://jenkins.io/doc/book/installing/#docker">https://jenkins.io/doc/book/installing/#docker</a><br />
+<br />
+Here all the Docker images <a href="https://hub.docker.com/r/jenkinsci/blueocean/tags/">https://hub.docker.com/r/jenkinsci/blueocean/tags/</a><br />
+<br />
+<br />
+Then I run this:<br />
+<br />
+( <a href="http://devdocs.io/docker~1.12/engine/reference/commandline/run/index">http://devdocs.io/docker~1.12/engine/reference/commandline/run/index</a>  I am using Docker 1.12 )<br />
+<br />
+docker run -u root -d -p 8080:8080 -p 50000:50000 -v jenkins-data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/blueocean <br />
+<br />
+port 50000 is needed only if you plan to use slave build agents<br />
+<br />
+(I had to remove --rm otherwise I get Conflicting options: --rm and -d )<br />
+<br />
+docker ps  gives you the containerid -> docker exec -ti 03e820715e74 bash<br />
+<br />
+cat /var/jenkins_home/secrets/initialAdminPassword<br />
+copy and paste in localhost:8080  to unlock Jenkins<br />
+<br />
+<br />
+<br />
+<br />
+<a href="https://jenkins.io/doc/book/installing/#docker">https://jenkins.io/doc/book/installing/#docker</a> 

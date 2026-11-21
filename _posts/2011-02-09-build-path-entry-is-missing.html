@@ -1,0 +1,21 @@
+---
+layout: post
+title: "Build path entry is missing: org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"
+date: 2011-02-09T13:45:00.001+01:00
+permalink: /2011/02/build-path-entry-is-missing.html
+blogger_id: "3118483690041061511"
+tags: ["eclipse", "JRE"]
+---
+Build path entry is missing: org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6<br />
+<br />
+<br />
+go to the project's .classpath file, <br />
+you find:<br />
+<br />
+<i>classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/<b>JavaSE-1.6</b>"<br />
+</i><br />
+<br />
+<br />
+make sure that <b>JavaSE-1.6</b> is actually registered as a JVM in your Eclipse.<br />
+<br />
+Otherwise you might have to change it, using for instance J2SE-1.5

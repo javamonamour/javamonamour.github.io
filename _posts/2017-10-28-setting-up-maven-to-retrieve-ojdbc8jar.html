@@ -1,0 +1,41 @@
+---
+layout: post
+title: "Setting up Maven to retrieve ojdbc8.jar"
+date: 2017-10-28T13:39:00.000+02:00
+permalink: /2017/10/setting-up-maven-to-retrieve-ojdbc8jar.html
+blogger_id: "6347106109625765814"
+tags: ["jdbc", "JPA", "maven"]
+---
+googling around in StackOverflow there is a huge variety of approaches to this very common problem: you must add the artifact to your build, but it's not available in Maven Central.... what to do?<br />
+<br />
+Some resort to downloading it manually and deploying it to the local Maven repo. Some even include the file in their WEB-INF/lib folder in their SCM project. Some use some third party public repositories (like Atlassian, code.lds.org, ... ) who graciously host these artifacts....  all fine when you play on your PC, but in a serious company with strict security control all this would not be allowed. Some folks simply cowboy-style put it somewhere in their HD and add the external JAR to Eclipse.... what happens next, they don't really care, as long as it works on their machine.<br />
+<br />
+Oracle hosts these artifacts in their Public Oracle Maven repository, but you need to authenticate yourself (for which reason, it's totally obscure to me!)<br />
+<br />
+<a href="https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9016">https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm#MAVEN9016</a>  here how to setup maven to connect to the Oracle repo (basically: in settings.xml you have to declare the server maven.oracle.com authenticating with your user, the in your pom.xml you must declare a rerpository with id matching this maven.oracle.com server, then a pluginRepository with id again maven.oracle.com. At this point you can declare the dependency <br />
+<br />
+<pre class="brush: xml">&lt;dependency&gt;
+   &lt;groupId&gt;com.oracle.jdbc&lt;/groupId&gt;
+   &lt;artifactId&gt;ojdbc8&lt;/artifactId&gt;
+   &lt;version&gt;12.2.0.1&lt;/version&gt;
+  &lt;/dependency&gt;
+</pre><br />
+This post explains it in a lot of detail <a href="https://blogs.oracle.com/dev2dev/get-oracle-jdbc-drivers-and-ucp-from-oracle-maven-repository-without-ides">https://blogs.oracle.com/dev2dev/get-oracle-jdbc-drivers-and-ucp-from-oracle-maven-repository-without-ides</a><br />
+<br />
+To make things much more complicated, the repository is not browsable <a href="https://maven.oracle.com/com/oracle/ojdbc8/">https://maven.oracle.com/com/oracle/ojdbc8/</a> ... how to determine it content, no clue!<br />
+<br />
+<br />
+See also <a href="https://stackoverflow.com/questions/9898499/oracle-jdbc-ojdbc6-jar-as-a-maven-dependency]">https://stackoverflow.com/questions/9898499/oracle-jdbc-ojdbc6-jar-as-a-maven-dependency]</a> and <a href="https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository">https://stackoverflow.com/questions/1074869/find-oracle-jdbc-driver-in-maven-repository</a><br />
+<br />
+<a href="https://mvnrepository.com/artifact/com.oracle/ojdbc6/12.1.0.1-atlassian-hosted ">https://mvnrepository.com/artifact/com.oracle/ojdbc6/12.1.0.1-atlassian-hosted </a> to get ojdbc6.jar from maven (atlassian hosted!)<br />
+<br />
+<a href="https://developer.atlassian.com/docs/advanced-topics/working-with-maven/atlassian-maven-repositories">https://developer.atlassian.com/docs/advanced-topics/working-with-maven/atlassian-maven-repositories</a>  to configure atlassian repo in pom.xml<br />
+<br />
+<br />
+<br />
+IMPORTANT: when running in Eclipse, make sure you are NOT using the Embedded installation of Maven while you are configuring an EXTERNAL Maven configuration.... this multiplicity of installations and configurations only makes the developer's life more miserable.... IMHO it's better to have an independent, external, universal installation rather than an embedded one.... again another major fuck-up in Eclipse design. Forget Eclipse, use Netbeans and Intellij.<br />
+<br />
+<br />
+CODE: a working pom.xml is available here https://github.com/vernetto/JavaMonAmour/tree/master/oracletest<br />
+<br />
+

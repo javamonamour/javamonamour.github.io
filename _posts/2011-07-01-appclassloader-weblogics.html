@@ -1,0 +1,8 @@
+---
+layout: post
+title: "AppClassLoader, Weblogic's ChangeAwareClassLoader and Fast-Swap"
+date: 2011-07-01T13:16:00.001+02:00
+permalink: /2011/07/appclassloader-weblogics.html
+blogger_id: "910244494596086715"
+---
+I have run a heap analysis on my OSB instance after a heavy load test,<br>and I see that the objects in memory have been instantiated respectively by:<br><br><b>sun.misc.Launcher$AppClassLoader</b> @ 0x781d06da8 (71%)<br><br>  &lt;system class loader&gt; (11%)<br><br><b>weblogic.utils.classloaders.ChangeAwareClassLoader </b>@ 0x783701a80 (6%)<br><br>weblogic.utils.classloaders.ChangeAwareClassLoader @ 0x78319d9a0 (4%)<br><br>weblogic.utils.classloaders.ChangeAwareClassLoader @ 0x78310ae60 (3%)<br>  <br>weblogic.utils.classloaders.GenericClassLoader @ 0x7828bef88 (1%)<br><br>weblogic.utils.classloaders.GenericClassLoader @ 0x7849ed9d8 (1%)<br><br><br>so I wondered what is the weblogic ChangeAwareClassLoader <br><br> a very interesting article on the subject:<br> <a href="http://blog.eisele.net/2009/02/weblogic-server-quicker-development.html">http://blog.eisele.net/2009/02/weblogic-server-quicker-development.html</a><br><br>Actually by reading this <a href="http://en.wikipedia.org/wiki/Java_Classloader">http://en.wikipedia.org/wiki/Java_Classloader</a>  I assume that &quot;sun.misc.Launcher$AppClassLoader&quot; and &quot;&lt;system class loader&gt;&quot; should be the same thing...; to be investigated!<br>  

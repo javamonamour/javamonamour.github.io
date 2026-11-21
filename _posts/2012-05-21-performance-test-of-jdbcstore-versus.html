@@ -1,0 +1,40 @@
+---
+layout: post
+title: "Performance test of JDBCStore versus Local FileStore vs NFS FileStore"
+date: 2012-05-21T19:41:00.003+02:00
+permalink: /2012/05/performance-test-of-jdbcstore-versus.html
+blogger_id: "9106204715939462961"
+tags: ["filestore", "JDBCStore", "jms"]
+---
+- created <b>JDBCStore </b>PerfTestJDBCStore1,2,3,4 in PROD, based on  SOADataSource (RAC) and targeted to osbpr1ms1, 2, 3, 4 migratable<br />
+- created PerfTestJMSServer1,2,3,4  based on PerfTestJDBCStore1, 2, 3, 4 <br />
+- created   PerfTestJMSModule  , subdeployment PerfTestSD  with targets PerfTestJMSServer1,2,3,4<br />
+-  created PerfTestJMSDQ, Uniform Distributed Queue , targetd PerfTestJMSServer1, 2,3,4<br />
+<br />
+created a project JMSPerfTest with a PS PerfTestJMSPS <b>reading from the queue</b> (jms://pippo2-osbpr1ms1.acme.com:8001,pippo2-osbpr1ms2.acme.com:8001,pippo2-osbpr1ms3.acme.com:8001,pippo2-osbpr1ms4.acme.com:8001/weblogic.jms.XAConnectionFactory/jms.PerfTestJMSDQ) <b>and routing to a BS PerfTestJMSBS which writes to the same queue</b> <br />
+jms://pippo2-osbpr1ms1.acme.com:8001,pippo2-osbpr1ms2.acme.com:8001,pippo2-osbpr1ms3.acme.com:8001,pippo2-osbpr1ms4.acme.com:8001/weblogic.jms.XAConnectionFactory/jms.PerfTestJMSDQ<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/afb2ca6ad35f4ecb.jpg" imageanchor="1" style=""><img border="0" height="152" width="150" src="/images/459b424a2067d919.jpg" /></a></div><br />
+<br />
+In practice the <b>system reads and writes to the same queue</b>, like a cat spinning on itself trying to catch his own tail (dogs do this more than cats)<br />
+<br />
+I trigger the system by dropping a jmsmessage in each separate instance of the Distributed Queue. The message says “<hello Praveen/>”. It’s of type String and it’s Persistent.<br />
+<br />
+I enable monitoring on the PS.  I observe <b>74K messages per minute</b>.<br />
+<br />
+<br />
+I do the same by using a <b>local FileStore instead of the JDBC store</b>. The file location is /opt/oracle/domains/osbpr1do/servers/osbpr1ms1,2,3,4/data/store (local, no NFS)<br />
+<br />
+I restart the managed servers just in case. <br />
+Observed speed is <b>600K messages per minute!</b><br />
+<br />
+<br />
+A third experiment  is done with <b>FileStore pointing to the NFS store</b>:<br />
+/opt/oracle/domains/osbpr1do/shared/store/jms<br />
+Thruput: <b>140K messages per minute</b>.<br />
+<br />
+Morale is:<br />
+- all 3 setups (JDBCStore, Local FileStore, NFS FileStore) seem MORE than fast enough for our needs<br />
+- Local FileStore is faster, then NFS FileStore, then JDBCStore<br />
+<br />
+I haven’t tested scenarios with Transactions Required.

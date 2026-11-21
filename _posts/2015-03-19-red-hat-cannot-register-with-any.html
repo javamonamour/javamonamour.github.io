@@ -1,0 +1,69 @@
+---
+layout: post
+title: "Red Hat: cannot register with any organizations"
+date: 2015-03-19T16:02:00.002+01:00
+permalink: /2015/03/red-hat-cannot-register-with-any.html
+blogger_id: "6622161563101168853"
+tags: ["rhel"]
+---
+on RHEL 7.0 I keep getting the same error when I try to update a little my packages:
+
+<br/><br/>
+
+[root@wltemplate ~]# yum install telnet
+
+<pre>
+Failed to set locale, defaulting to C
+Loaded plugins: product-id, subscription-manager
+This system is not registered to Red Hat Subscription Management. 
+You can use subscription-manager to register.
+   
+No package telnet available.
+Error: Nothing to do
+
+
+[root@wltemplate ~]# subscription-manager register --username pirla.vernetto 
+--password blablabla --auto-attach
+
+pirla.vernetto cannot register with any organizations.
+
+</pre>
+
+<br/><br/>
+I have desperately tried to add some Organization (like "the Sons of the Desert") in the RHEL portal profile page, but I could not find any ...
+
+<br/><br/>
+
+<div class="separator" style="clear: both; text-align: center;"><a href="http://imgc.allpostersimages.com/images/P-473-488-90/67/6718/K5LA100Z/posters/sons-of-the-desert-stan-laurel-oliver-hardy-1933.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://imgc.allpostersimages.com/images/P-473-488-90/67/6718/K5LA100Z/posters/sons-of-the-desert-stan-laurel-oliver-hardy-1933.jpg" /></a></div>
+
+<br/><br/>
+
+I keep fighting on it....
+
+<br/><br/>
+
+Ok it turned out (thanks to the timely response from RHAT Support) that the username (pirla.vernetto) I was using was INCORRECT (how about a "unkown username" error message??? ).
+
+<br/><br/>
+So this time around it DOES work:
+<br/><br/>
+
+
+<pre>
+The system has been registered with ID: blablabla123456 
+Installed Product Current Status:
+Product Name: Red Hat Enterprise Linux Server
+Status:       Subscribed
+
+</pre>
+
+
+<br/><br/><br/><br/>
+
+PPS it seems I (idiot me) had 2 accounts, with different username but the same email (!!!).... and only one of the 2 was enabled to register the RHEL 7.0 product!!! I have to admit that RHEL support was BRILLIANT and they replied immediately to my questions...
+
+<br/><br/>
+
+
+
+

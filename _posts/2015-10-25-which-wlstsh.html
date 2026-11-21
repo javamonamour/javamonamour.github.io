@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Which wlst.sh?"
+date: 2015-10-25T18:00:00.001+01:00
+permalink: /2015/10/which-wlstsh.html
+blogger_id: "3572076738915114557"
+tags: ["wlst.sh"]
+---
+I have installed only OSB (if you install SOA Suite, you will get more instances of wlst.sh :o) )<br />
+<br />
+cd $ORACLE_HOME<br />
+<br />
+find . -name wlst.sh<br />
+<br />
+<i>./Oracle_OSB1/harvester/wlst.sh<br />
+./Oracle_OSB1/common/bin/wlst.sh<br />
+./wlserver_10.3/common/bin/wlst.sh<br />
+./oracle_common/common/bin/wlst.sh<br />
+</i><br />
+<br />
+So, which one are you supposed to use?<br />
+<br />
+<br />
+There is also a <br />
+<br />
+./oracle_common/common/bin/setWlstEnv.sh<br />
+<br />
+which is invoked by everybody.<br />
+<br />
+<br />
+When using OSB, you should use the ./Oracle_OSB1/common/bin/wlst.sh<br />
+Remember that you should first change dir:<br />
+<br />
+cd ./Oracle_OSB1/common/bin/<br />
+. ./wlst.sh<br />
+<br />
+this gives me a "command not found /bin/java "<br />
+<br />
+So I do <br />
+<br />
+cd $DOMAIN_HOME<br />
+. ./setDomainEnv.sh<br />
+java weblogic.WLST

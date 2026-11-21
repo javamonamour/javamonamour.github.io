@@ -1,0 +1,97 @@
+---
+layout: post
+title: "Centos 7 gnome-shell high CPU on VirtualBox"
+date: 2018-11-06T05:05:00.003+01:00
+permalink: /2018/11/centos-7-gnome-shell-high-cpu-on.html
+blogger_id: "8834557423306503639"
+tags: ["centos", "virtualbox"]
+---
+top shows very high CPU usage. and UI is very very slow. <br />
+<br />
+googling around, they say it's probably doing "software" rendering. it makes sense because CPU goes higher when I move something on the screen<br />
+<br />
+in /var/log/Xorg.0.log I find this:<br />
+<br />
+(EE) Failed to load module "vboxvideo" (module does not exist, 0)<br />
+(II) AIGLX: Screen 0 is not DRI2 capable<br />
+(EE) AIGLX: reverting to software rendering<br />
+<br />
+<br />
+To investigate, I run <br />
+sudo glxinfo <br />
+sudo lshw -C video<br />
+sudo yum list | grep libnvidia<br />
+sudo yum list | grep libegl<br />
+<br />
+<br />
+the output of glxinfo is <br />
+<br />
+<pre>name of display: :0
+display: :0  screen: 0
+direct rendering: Yes
+server glx vendor string: Chromium
+server glx version string: 1.3 Chromium
+server glx extensions:
+    GLX_ARB_get_proc_address, GLX_ARB_multisample, 
+    GLX_EXT_texture_from_pixmap, GLX_SGIX_fbconfig
+client glx vendor string: Chromium
+client glx version string: 1.3 Chromium
+client glx extensions:
+    GLX_ARB_get_proc_address, GLX_ARB_multisample, 
+    GLX_EXT_texture_from_pixmap, GLX_SGIX_fbconfig
+GLX version: 1.3
+GLX extensions:
+    GLX_ARB_get_proc_address, GLX_ARB_multisample, 
+    GLX_EXT_texture_from_pixmap, GLX_SGIX_fbconfig
+OpenGL vendor string: Humper
+OpenGL renderer string: Chromium
+OpenGL version string: 2.1 Chromium 1.9
+OpenGL shading language version string: 4.30 - Build 10.18.15.4248
+OpenGL extensions:
+    GL_ARB_depth_texture, GL_ARB_draw_buffers, GL_ARB_fragment_program, 
+    GL_ARB_fragment_shader, GL_ARB_multisample, GL_ARB_multitexture, 
+    GL_ARB_occlusion_query, GL_ARB_pixel_buffer_object, 
+    GL_ARB_point_parameters, GL_ARB_point_sprite, GL_ARB_shader_objects, 
+    GL_ARB_shading_language_100, GL_ARB_shadow, GL_ARB_texture_border_clamp, 
+    GL_ARB_texture_compression, GL_ARB_texture_cube_map, 
+    GL_ARB_texture_env_add, GL_ARB_texture_env_combine, 
+    GL_ARB_texture_env_crossbar, GL_ARB_texture_env_dot3, 
+    GL_ARB_texture_float, GL_ARB_texture_mirrored_repeat, 
+    GL_ARB_texture_non_power_of_two, GL_ARB_texture_rectangle, 
+    GL_ARB_transpose_matrix, GL_ARB_vertex_buffer_object, 
+    GL_ARB_vertex_program, GL_ARB_vertex_shader, GL_ARB_window_pos, 
+    GL_CR_bounding_box, GL_CR_cursor_position, GL_CR_head_spu_name, 
+    GL_CR_performance_info, GL_CR_print_string, GL_CR_readback_barrier_size, 
+    GL_CR_saveframe, GL_CR_server_id_sharing, GL_CR_server_matrix, 
+    GL_CR_state_parameter, GL_CR_synchronization, GL_CR_tile_info, 
+    GL_CR_tilesort_info, GL_CR_window_size, GL_EXT_blend_color, 
+    GL_EXT_blend_equation_separate, GL_EXT_blend_func_separate, 
+    GL_EXT_blend_minmax, GL_EXT_blend_subtract, GL_EXT_clip_volume_hint, 
+    GL_EXT_compiled_vertex_array, GL_EXT_draw_range_elements, 
+    GL_EXT_fog_coord, GL_EXT_framebuffer_blit, GL_EXT_framebuffer_object, 
+    GL_EXT_multi_draw_arrays, GL_EXT_secondary_color, GL_EXT_shadow_funcs, 
+    GL_EXT_stencil_two_side, GL_EXT_stencil_two_side, GL_EXT_stencil_wrap, 
+    GL_EXT_texture3D, GL_EXT_texture_compression_s3tc, 
+    GL_EXT_texture_edge_clamp, GL_EXT_texture_env_add, 
+    GL_EXT_texture_env_combine, GL_EXT_texture_filter_anisotropic, 
+    GL_EXT_texture_lod_bias, GL_EXT_texture_rectangle, GL_EXT_texture_sRGB, 
+    GL_IBM_texture_mirrored_repeat, GL_NV_texgen_reflection, 
+    GL_SGIS_generate_mipmap, GL_SGIS_texture_edge_clamp
+
+1 GLX Visuals
+    visual  x   bf lv rg d st  colorbuffer  sr ax dp st accumbuffer  ms  cav
+  id dep cl sp  sz l  ci b ro  r  g  b  a F gb bf th cl  r  g  b  a ns b eat
+----------------------------------------------------------------------------
+0x021 24 tc  0  32  0 r  y y   8  8  8  8 .  .  0 24  8 16 16 16 16  0 0 None
+
+1 GLXFBConfigs:
+    visual  x   bf lv rg d st  colorbuffer  sr ax dp st accumbuffer  ms  cav
+  id dep cl sp  sz l  ci b ro  r  g  b  a F gb bf th cl  r  g  b  a ns b eat
+----------------------------------------------------------------------------
+0x021 24 tc  0  32  0 r  y .   8  8  8  8 .  .  0 24  8  0  0  0  0  1 1 None
+</pre><br />
+On VirtualBox, 3D acceleration is enabled.<br />
+<br />
+So far no clue... the world of Linux Video drivers is amazingly complex... too complex for a simple human like me...<br />
+<br />
+

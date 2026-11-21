@@ -1,0 +1,22 @@
+---
+layout: post
+title: "What to monitor in an Application Server"
+date: 2009-11-30T15:29:00.000+01:00
+permalink: /2009/11/what-to-monitor-in-jms-queues.html
+blogger_id: "6777519937474571096"
+---
+<b>EJBCache</b> (ActivationCount CacheAccessCount CachedBeansCurrentCount CacheHitCount PassivationCount)<br />
+<br />
+<b>EJBLocking</b> (LockEntriesCurrentCount LockManagerAccessCount TimeoutTotalCount WaiterCurrentCount WaiterTotalCount)<br />
+<br />
+<b>EJBPool</b> (BeansInUseCount IdleBeansCount TimeoutTotalCount WaiterTotalCount)<br />
+<br />
+<b>EJBTransactions</b> (TransactionsCommittedTotalCount TransactionsRolledBackTotalCount TransactionsTimedOutTotalCount)<br />
+<br />
+<b>JDBC</b> (ActiveConnectionsCurrentCount ActiveConnectionsHighCount ConnectionsTotalCount LeakedConnectionCount MaxCapacity WaitingForConnectionCurrentCount WaitingForConnectionHighCount WaitSecondsHighCount)<br />
+<br />
+<b>JMS</b> (MessagesCurrentCount MessagesHighCount MessagesPendingCount MessagesReceivedCount BytesCurrentCount BytesHighCount BytesPendingCount BytesReceivedCount)<br />
+<br />
+<b>JRockit</b> (JvmProcessorLoad AllProcessorsAverageLoad TotalGarbageCollectionTime)<br />
+<br />
+<b>ThreadPool</b> (busyThrdCurrCnt idleThrdCurrCnt totalThrdCurrCnt standbyThrdCurrCnt stuckThrdCurrCnt queueLength)

@@ -1,0 +1,139 @@
+---
+layout: post
+title: "Kubernetes cheat sheet 1"
+date: 2019-03-03T18:38:00.000+01:00
+permalink: /2019/03/kubernetes-cheat-sheets.html
+blogger_id: "3750711031678229311"
+tags: ["kubernetes"]
+---
+<a href="https://kubernetes.io/docs/reference/kubectl/cheatsheet/">https://kubernetes.io/docs/reference/kubectl/cheatsheet/</a><br />
+<br />
+alias k=kubectl<br />
+<br />
+<h2>PODS</h2><br />
+<a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/">https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/</a><br />
+<br />
+kubectl run nginx --image=nginx<br />
+<br />
+<b><br />
+kubectl create -f nginx.yml</b><br />
+<br />
+<pre>apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  containers:
+    - name: nginx-container
+      image: nginx
+</pre><br />
+<br />
+<b>kubectl describe pods nginx-pod</b><br />
+<br />
+<br />
+<b>kubectl get pods -o wide</b><br />
+<br />
+<b>kubectl edit pod nginx-pod</b><br />
+<br />
+<b>kubectl delete pod nginx-pod</b><br />
+<br />
+<br />
+<b>kubectl get pod pod-name -o yaml > pod-definition.yaml</b><br />
+<br />
+<h2>Replication Controller</h2><br />
+<b>kubectl create -f rc-definition.yml</b><br />
+<br />
+<pre>apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: nginx
+  spec:
+    replicas: 3
+    selector:
+      app: nginx
+    template:
+      metadata:
+        name: nginx
+        labels:
+          app: nginx
+      spec:
+        containers:
+          - name: nginx
+            image: nginx
+            ports:
+              - containerPort: 80
+</pre><br />
+<b>kubectl get rc</b><br />
+<br />
+<br />
+<h2>Replica Set</h2><br />
+kubectl create -f rs-definition.yml<br />
+<br />
+<pre>apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: frontend
+  labels:
+    app: guestbook
+    tier: frontend
+spec:
+# modify replicas according to your case
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+      tier: frontend
+    spec:
+      containers:
+        - name: php-redis
+          image: gcr.io/google_samples/gb-frontend:v3
+</pre><br />
+<b>kubectl get replicaset</b><br />
+<br />
+<b>kubectl describe replicaset</b><br />
+<br />
+<b>kubectl replace</b><br />
+<br />
+<b>kubectl scale --replicas=3 rs/myrs</b><br />
+<br />
+<b>kubectl get rs myrs -o yaml</b><br />
+<br />
+<br />
+<h2>Deployments</h2><br />
+<a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">https://kubernetes.io/docs/concepts/workloads/controllers/deployment/</a><br />
+<br />
+kubectl create -f mydeployment.yml<br />
+<pre>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+  spec:
+    replicas: 3
+    selector:
+      matchLabels:
+        app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.7.9
+          ports:
+            - containerPort: 80
+</pre><br />
+<b>kubectl get all</b><br />
+<br />
+<br />
+<br />
+<br />
+An overall good explanation of Kubernetes is here <a href="https://dzone.com/storage/assets/11459286-dzone-refcard292-advancedkubernetes314.pdf">https://dzone.com/storage/assets/11459286-dzone-refcard292-advancedkubernetes314.pdf</a><br />
+<br />
+<br />
+

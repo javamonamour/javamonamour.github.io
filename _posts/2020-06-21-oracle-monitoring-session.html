@@ -1,0 +1,17 @@
+---
+layout: post
+title: "Oracle monitoring session"
+date: 2020-06-21T07:09:00.004+02:00
+permalink: /2020/06/oracle-monitoring-session.html
+blogger_id: "5854548396926342751"
+tags: ["oracledb"]
+---
+<br />
+<a href="https://orahow.com/find-long-running-queries-in-oracle/">https://orahow.com/find-long-running-queries-in-oracle/</a><br />
+<br />
+<a href="http://www.dba-oracle.com/t_find_long_running_sql_queries.htm">http://www.dba-oracle.com/t_find_long_running_sql_queries.htm</a><br />
+<br />
+WITH blocked_resources AS (select id1 ,id2 ,SUM(ctime) as blocked_secs ,COUNT(1) as blocked_count ,type from v$lock where request > 0 group by type,id1,id2 ) ,blockers AS (select L.id1, L.id2, L.type, L.sid ,BR.blocked_secs ,BR.blocked_count from v$lock L ,blocked_resources BR where BR.type = L.type and BR.id1 = L.id1 and BR.id2 = L.id2 and L.lmode > 0 and L.block <> 0 ) select /*+ MERGE(@"SEL$22") MERGE(@"SEL$109DB78D") MERGE(@"SEL$5") MERGE(@"SEL$38") MERGE(@"SEL$470E2127") MERGE(@"SEL$7286615E") MERGE(@"SEL$62725911") MERGE(@"SEL$2EC965E0") MERGE(@"SEL$C8360722") MERGE(@"SEL$874CA85A") MERGE(@"SEL$74A24351") MERGE(@"SEL$71D7A081") MERGE(@"SEL$7") MERGE(@"SEL$24") CARDINALITY(@"SEL$AF73C875" "S"@"SEL$4" 1000) CARDINALITY(@"SEL$AF73C875" "R"@"SEL$4" 1000) */ B.id1||'_'||B.id2||'_'||S.sid||'_'||S.serial# as id ,'SID,SERIAL:'||S.sid||','||S.serial#||',LOCK_TYPE:'||B.type||',PROGRAM:'||S.program||',MODULE:'||S.module||',ACTION:'||S.action||',MACHINE:'||S.machine||',OSUSER:'||S.osuser||',USERNAME:'||S.username as info ,B.blocked_secs ,B.blocked_count from v$session S ,blockers B where B.sid = S.sid; <br />
+<br />
+<br />
+Recommended the use of TOAD for DBA (Database browser)

@@ -1,0 +1,16 @@
+---
+layout: post
+title: "OSB, alerts not being generated in Proxy Service when using \"direct call\""
+date: 2012-05-03T06:45:00.002+02:00
+permalink: /2012/05/osb-alerts-not-being-generated-in-proxy.html
+blogger_id: "7350287340366552390"
+tags: ["alerts", "jms", "OSB"]
+---
+I have tested the scenario, with a Any XML Proxy Service.<br />
+the JMS with the PS is generated only when, testing through the test console, I uncheck the "direct call" option....don't ask me why...<br />
+<br />
+I haven't tried using the weblogic.jms.ConnectionFactory rather than the weblogic.jms.XAConnectionFactory, nor have I played with the transaction options...<br />
+<br />
+you can get the OSB project here http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBArtifacts/sbconfigAlertTest.jar<br />
+<br />
+just create a jms queue with jndi name jms.testme

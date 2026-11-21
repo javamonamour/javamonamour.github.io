@@ -1,0 +1,88 @@
+---
+layout: post
+title: "Web Application to upload a file to any directory"
+date: 2012-01-11T20:38:00.000+01:00
+permalink: /2012/01/web-application-to-upload-file-to-any.html
+blogger_id: "3206598986800403424"
+tags: ["upload"]
+---
+<a href="http://www.roseindia.net/jsp/file_upload/Sinle_upload.xhtml.shtml">http://www.roseindia.net/jsp/file_upload/Sinle_upload.xhtml.shtml</a><br />
+<br />
+<br />
+on multipart/form-data:<br />
+<br />
+<a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.2">http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4.2</a><br />
+<br />
+if you add in the index.jsp<br />
+<br />
+&lt;tr&gt;<br />
+&lt;td&gt;&lt;b&gt;Choose the destination directory:&lt;/b&gt;&lt;/td&gt;<br />
+&lt;td&gt;<br />
+&lt;select name="targetDirectory"&gt;<br />
+&lt;option value="c:/tmp"&gt;c:/tmp&lt;/option&gt;<br />
+&lt;option value="c:/temp"&gt;c:/temp&lt;/option&gt;<br />
+&lt;/select&gt; <br />
+&lt;/td&gt;<br />
+&lt;/tr&gt;<br />
+<br />
+<br />
+and you do:<br />
+<br />
+<br />
+Object targetDirectoryAttribute = request.getAttribute("targetDirectory");<br />
+String targetDirectoryParameter = request.getParameter("targetDirectory");<br />
+System.out.println("targetDirectoryAttribute=" + targetDirectoryAttribute);<br />
+System.out.println("targetDirectoryParameter=" + targetDirectoryParameter);<br />
+<br />
+they are both null<br />
+<br />
+<br />
+<br />
+on how to read parameters in a multipart/form-data form:<br />
+<br />
+<a href="http://www.jguru.com/faq/view.jsp?EID=1045507">http://www.jguru.com/faq/view.jsp?EID=1045507</a><br />
+<br />
+<a href="http://commons.apache.org/fileupload/">http://commons.apache.org/fileupload/</a><br />
+<br />
+<a href="http://commons.apache.org/fileupload/using.html">interesting code snippets here</a><br />
+<br />
+invoke readHeaders() in org.apache.commons.fileupload.MultipartStream<br />
+<br />
+looks too complicated...<br />
+<br />
+<br />
+I would rather use<br />
+<br />
+<a href="http://www.servlets.com/cos/javadoc/com/oreilly/servlet/MultipartRequest.html">http://www.servlets.com/cos/javadoc/com/oreilly/servlet/MultipartRequest.html</a><br />
+<br />
+getParameter(java.lang.String name) <br />
+<br />
+so I download <a href="http://www.servlets.com/cos/cos-26Dec2008.zip">http://www.servlets.com/cos/cos-26Dec2008.zip</a><br />
+<br />
+but, wait a minute, I find this<br />
+<a href="http://stackoverflow.com/questions/3238103/extracting-parameters-of-a-httprequest-when-form-type-is-multipart">http://stackoverflow.com/questions/3238103/extracting-parameters-of-a-httprequest-when-form-type-is-multipart<br />
+</a><br />
+<br />
+<a href="http://commons.apache.org/fileupload/apidocs/org/apache/commons/fileupload/servlet/ServletFileUpload.html">http://commons.apache.org/fileupload/apidocs/org/apache/commons/fileupload/servlet/ServletFileUpload.html</a><br />
+<br />
+<a href="http://commons.apache.org/fileupload/apidocs/org/apache/commons/fileupload/disk/DiskFileItemFactory.html">http://commons.apache.org/fileupload/apidocs/org/apache/commons/fileupload/disk/DiskFileItemFactory.html</a><br />
+<br />
+<br />
+Some other posts on the topic:<br />
+<br />
+<a href="http://stackoverflow.com/questions/1545717/issue-with-multipart-form-data">http://stackoverflow.com/questions/1545717/issue-with-multipart-form-data</a><br />
+<a href="http://www.blogger.com/goog_1732742324"><br />
+</a><br />
+<a href="http://stackoverflow.com/questions/1748259/get-form-parameters-from-multipart-request-without-getting-the-files">http://stackoverflow.com/questions/1748259/get-form-parameters-from-multipart-request-without-getting-the-files</a><br />
+<br />
+<a href="http://stackoverflow.com/questions/3238103/extracting-parameters-of-a-httprequest-when-form-type-is-multipart">http://stackoverflow.com/questions/3238103/extracting-parameters-of-a-httprequest-when-form-type-is-multipart</a><br />
+<br />
+Eventually I give up on all those horrible libraries, and I add a second for an a onclick javascript to add in the HTTP query the directory info...<br />
+<br />
+See the working result here:<br />
+<br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/fileUpload/index.jsp">http://javatoolsforweblogic.googlecode.com/svn/trunk/fileUpload/index.jsp</a><br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/fileUpload/single_upload_page.jsp">http://javatoolsforweblogic.googlecode.com/svn/trunk/fileUpload/single_upload_page.jsp</a><br />
+<br />
+<br />
+Anyway this is disgusting, the way this HTTP Java Servlet technology turns simple things in a total nightmare.... no wonder people turn to other technologies...

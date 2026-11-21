@@ -1,0 +1,52 @@
+---
+layout: post
+title: "Puppet: minimalistic custom fact"
+date: 2014-09-14T11:20:00.001+02:00
+permalink: /2014/09/puppet-minimalistic-custom-fact.html
+blogger_id: "1589648165649276346"
+tags: ["puppet"]
+---
+in your module, create a lib/facter folder.<br/>
+There, create a customxpathversion.rb file containing this code:<br/>
+<br/>
+
+<pre>
+require 'puppet'
+
+Facter.add("customxpathversion") do
+  setcode 'cat /opt/oracle/scripts/config/customxpathversion.txt'
+end
+</pre>
+
+<br/><br/>
+where the file customxpathversion.txt contains "1.10"
+<br/><br/>
+
+
+Now if in your puppet code you do 
+<pre>
+notify { "${::customxpathversion}" : }
+</pre>
+<br/><br/>
+
+you get 1.10
+<br/><br/>
+
+Of course one should handle errors etc. But it works and I don't have to bother about $LOAD_PATH. From command line "facter customxpathversion" will not work because probably it's not in the LOAD_PATH.
+<br/>
+
+<a href="https://docs.puppetlabs.com/facter/2.2/custom_facts.html">Here the whole documentation</a>
+
+Update: you can use this custom fact from the facter command line if you set the FACTERLIB environment variable:
+
+<pre>
+find / -name customxpathversion*
+
+/tmp/vagrant-puppet-3/modules-0/pippo/lib/facter/customxpathversion.rb
+^C
+[soa@osb-vagrant ~]$ export FACTERLIB=/tmp/vagrant-puppet-3/modules-0/pippo/lib/facter/
+[soa@osb-vagrant ~]$ facter customxpathversion
+1.10
+
+</pre>
+

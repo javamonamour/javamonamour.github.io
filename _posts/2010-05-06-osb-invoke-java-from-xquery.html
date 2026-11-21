@@ -1,0 +1,15 @@
+---
+layout: post
+title: "OSB: invoke Java from XQuery"
+date: 2010-05-06T11:17:00.000+02:00
+permalink: /2010/05/osb-invoke-java-from-xquery.html
+blogger_id: "1604104766479216037"
+tags: ["OSB", "XQuery"]
+---
+<div class="" style="color: #ff6600; font-family: Arial,Helvetica,Sans-Serif; font-weight: bold; margin-left: 10px; margin-top: 10px;"><a href="http://www.devx.com/tips/Tip/33279%20">http://www.devx.com/tips/Tip/33279 </a></div><div class="" style="color: #ff6600; font-family: Arial,Helvetica,Sans-Serif; font-weight: bold; margin-left: 10px; margin-top: 10px;">&nbsp;</div><div class="" style="color: #ff6600; font-family: Arial,Helvetica,Sans-Serif; font-weight: bold; margin-left: 10px; margin-top: 10px;">Call a Java Method from XQuery </div><div class="" style="padding: 10px;">This tip shows you how to develop  XQuery queries that may call any other method. The method called in this  tip is <span class="pf">java.lang.Math.random</span>: <pre><code></code></pre><pre><code>
+declare namespace m="java:java.lang.Math";
+
+let $r:=m:random()
+return $r</code></pre><pre><code>
+</code></pre><pre><code>
+</code></pre><pre><code>This unfortunately doesn't seem to work in OSB 3.0 .... bugger....</code></pre><pre><code>I am told that in OSB 11g you can extend XQuery writing custom Java functions...&nbsp;</code></pre><pre><code>extensibility mechanism, where are you... XQuery is waiting it since 2002....&nbsp;</code></pre><pre><code>I see really a huge community interest in this technology :o(</code></pre></div>

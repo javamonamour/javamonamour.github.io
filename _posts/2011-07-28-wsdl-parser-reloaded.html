@@ -1,0 +1,31 @@
+---
+layout: post
+title: "WSDL parser reloaded"
+date: 2011-07-28T10:01:00.001+02:00
+permalink: /2011/07/wsdl-parser-reloaded.html
+blogger_id: "8972150244266212260"
+tags: ["wsdl_parser"]
+---
+<a href="/2010/06/wsdl-parser.html">Here</a> a previous post on the topic<br />
+<br />
+Here the WSDL 1.1 Schema:<br />
+<a href="http://schemas.xmlsoap.org/wsdl/">http://schemas.xmlsoap.org/wsdl/</a><br />
+<br />
+<br />
+Import it into a Eclipse Web Service project (it has all the facets needed for JAXB)<br />
+and generate JAXB classes (I use org.example.wsdl package)<br />
+<br />
+Trying to unmarshal a WSDL, I get a <br />
+<br />
+java.lang.ClassCastException: javax.xml.bind.JAXBElement<br />
+<br />
+(see <a href="http://stackoverflow.com/questions/707084/class-cast-exception-when-trying-to-unmarshall-xml">here</a>)<br />
+<br />
+so I choose a better API for Unmarshaller (don(t try to understand; just make it work)<br />
+<br />
+<br />
+And.... <a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/WSDLParser/org/example/wsdl/WSDLParser.java">here is the WSDLParser</a>!<br />
+<br />
+In reality as you start working with TDefinitions you realize that it's quite difficult to extract the information you need, because the <a href="http://schemas.xmlsoap.org/wsdl">http://schemas.xmlsoap.org/wsdl</a> schema is VERY abstract.<br />
+<br />
+As usual, simple things made complicated by academics.

@@ -1,0 +1,8 @@
+---
+layout: post
+title: "WebLogic: unable to log into console"
+date: 2009-11-11T12:06:00.001+01:00
+permalink: /2009/11/weblogic-unable-to-log-into-console.html
+blogger_id: "2406369241456456537"
+---
+if you can't login into your console and you get a message:<br /><br />"It's likely that this condition is the result of a configuration problem"<br /><br />and a "response has already been committed" in the logs,<br /><br />search in your $DOMAIN_HOME/pending directory and remove what might be there. Also, clean your config.xml from any garbage, and copy it to any other nodes.<br /><br />If this still fails, empty all "stage" and "tmp" directories.

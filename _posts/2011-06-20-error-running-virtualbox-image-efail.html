@@ -1,0 +1,12 @@
+---
+layout: post
+title: "error running a VirtualBox image: E_FAIL 0x80004005"
+date: 2011-06-20T08:48:00.001+02:00
+permalink: /2011/06/error-running-virtualbox-image-efail.html
+blogger_id: "448265800847405192"
+blogger_comments:
+  - author: "Anonymous"
+    date: 2011-06-24
+    html: "32 bit systems have the 4GB memory constraint"
+---
+unknown error creating VM: VERR_VMX_MSR_LOCKED_OR_DISABLED<br>Component: Console<br><br>Interface :<br>    <br><br>IConsole {515e8e8d-f932-4d8e-9f32-79a52aead882}<br><br><br>0x80004005 is a Windows error meaning &quot;unspecified error&quot;<br>  <br><br><br><br>Reducing the Virtual Machine memory to less than 4GB seems to fix the problem...<br><br>now I get FATAL: No bootable medium found! System halted.<br><br><br><br> 

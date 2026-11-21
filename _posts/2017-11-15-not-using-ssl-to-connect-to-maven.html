@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Not using SSL to connect to Maven? dilettante (=amateur) !"
+date: 2017-11-15T21:04:00.002+01:00
+permalink: /2017/11/not-using-ssl-to-connect-to-maven.html
+blogger_id: "8182591608161845154"
+tags: ["gpg", "maven", "nexus", "pgp"]
+---
+<a href="https://max.computer/blog/how-to-take-over-the-computer-of-any-java-or-clojure-or-scala-developer/">https://max.computer/blog/how-to-take-over-the-computer-of-any-java-or-clojure-or-scala-developer/</a><br />
+<br />
+If you want to play a trick on your friends, you can use Dilettante to man-in-the-middle a Maven Repository request and inject some bad behaviour, the source code is here <a href="https://github.com/mveytsman/dilettante">https://github.com/mveytsman/dilettante</a> but don't do in your company, you might not win friends.<br />
+<br />
+Very interesting reading <a href="https://stackoverflow.com/a/24987915/651288">https://stackoverflow.com/a/24987915/651288</a><br />
+<br />
+You can upgrade your URL to HTTPS at no cost (it used to be a paying service) <a href="https://support.sonatype.com/hc/en-us/articles/213465458">https://support.sonatype.com/hc/en-us/articles/213465458</a><br />
+<br />
+Use this https://repo1.maven.org/maven2/ , not http://repo1.maven.org/maven2/<br />
+<br />
+To run a verification of your build dependent artifacts:<br />
+<br />
+mvn com.github.s4u.plugins:pgpverify-maven-plugin:check<br />
+<br />
+you can create locally a gpg key:<br />
+<br />
+gpg<br />
+gpg --gen-key<br />
+gpg --list-keys<br />
+gpg --list-secret-keys<br />
+<br />
+to verify a component:<br />
+gpg --verify plexus-cipher-1.7.jar.asc plexus-chipher-1.7.jar<br />
+<br />
+<br />
+Very good article on XBI (cross build injection) <a href="http://branchandbound.net/blog/security/2012/03/crossbuild-injection-how-safe-is-your-build/">http://branchandbound.net/blog/security/2012/03/crossbuild-injection-how-safe-is-your-build/</a><br />
+<br />
+and about verifying components using MIT key repo : <a href="http://branchandbound.net/blog/security/2012/08/verify-dependencies-using-pgp/">http://branchandbound.net/blog/security/2012/08/verify-dependencies-using-pgp/</a><br />
+<br />
+<br />
+Interesting Maven plugin to whitelist components in a build <a href="http://gary-rowe.com/agilestack/2013/07/03/preventing-dependency-chain-attacks-in-maven/">http://gary-rowe.com/agilestack/2013/07/03/preventing-dependency-chain-attacks-in-maven/</a><br />
+<br />
+and here another similar Maven plugin to check PGP signature <a href="https://www.simplify4u.org/pgpverify-maven-plugin/index.html">https://www.simplify4u.org/pgpverify-maven-plugin/index.html</a><br />
+<br />
+<br />
+

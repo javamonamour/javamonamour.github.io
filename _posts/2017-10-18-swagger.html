@@ -1,0 +1,51 @@
+---
+layout: post
+title: "Swagger"
+date: 2017-10-18T09:52:00.002+02:00
+permalink: /2017/10/swagger.html
+blogger_id: "2131293899038959774"
+tags: ["swagger"]
+---
+<a href="http://petstore.swagger.io/">http://petstore.swagger.io/</a> automatically generated console, documenting the interfaces and allowing you to test them.... better than the WSDL-based test client generator... but I wonder how much work is needed, I would hate to have to manually edit YAML files to generate this UI...<br />
+<br />
+short and sweet presentation (skip first 3 minutes)<br />
+<br />
+<iframe width="854" height="480" src="https://www.youtube.com/embed/wC5hxY0RItQ" frameborder="0" allowfullscreen></iframe><br />
+<br />
+<br />
+<br />
+A live example here, using Spring Boot<br />
+<br />
+git clone https://github.com/TechPrimers/spring-boot-swagger-example.git<br />
+cd spring-boot-swagger-example<br />
+mvn spring-boot:run<br />
+<br />
+in your browser put http://localhost:8088/swagger-ui.html<br />
+<br />
+<br />
+<iframe width="854" height="480" src="https://www.youtube.com/embed/HHyjWc0ASl8" frameborder="0" allowfullscreen></iframe><br />
+<br />
+<br />
+<br />
+<br />
+Main annotations are:<br />
+<br />
+io.swagger.annotations.Api  (class level)<br />
+<br />
+io.swagger.annotations.ApiOperation , io.swagger.annotations.ApiResponses, io.swagger.annotations.ApiResponse at method level<br />
+<br />
+io.swagger.annotations.ApiModelProperty at field level<br />
+<br />
+<br />
+and to document the Site:<br />
+springfox.documentation.spring.web.plugins.Docket<br />
+springfox.documentation.swagger2.annotations.EnableSwagger2<br />
+etc etc<br />
+<br />
+all the rest are org.springframework.web.bind.annotation annotations (GetMapping, PathVariable, RequestMapping, RestController) <br />
+<br />
+<br />
+This is a good tutorial <a href="https://jmchung.github.io/blog/2013/12/14/integrating-swagger-into-jax-rs-with-java-ee-6-specification/">https://jmchung.github.io/blog/2013/12/14/integrating-swagger-into-jax-rs-with-java-ee-6-specification/</a><br />
+<br />
+<br />
+

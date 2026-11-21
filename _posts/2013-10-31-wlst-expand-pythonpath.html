@@ -1,0 +1,79 @@
+---
+layout: post
+title: "WLST: expand the PYTHONPATH "
+date: 2013-10-31T12:19:00.002+01:00
+permalink: /2013/10/wlst-expand-pythonpath.html
+blogger_id: "1890234509320581178"
+tags: ["WLST"]
+---
+Official doc here: <a href="http://docs.python.org/2/tutorial/modules.html#the-module-search-path">http://docs.python.org/2/tutorial/modules.html#the-module-search-path</a>
+
+<br/>
+
+I run this test:
+
+<pre>
+
+/opt/oracle/fmw11_1_1_5/osb/common/bin/wlst.sh
+
+wls:/offline> print sys.path
+
+
+['/opt/oracle/fmw11_1_1_5/wlserver_10.3/server/lib/weblogic.jar/Lib'
+ '__classpath__'
+ '/opt/oracle/fmw11_1_1_5/wlserver_10.3/server/lib/weblogic.jar'
+ '/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/wlst/modules/jython-modules.jar/Lib'
+ '/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/wlst'
+ '/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/wlst/lib'
+ '/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/wlst/modules'
+ '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst'
+ '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/lib'
+ '/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/modules'
+ '/opt/oracle/fmw11_1_1_5/oracle_common/common/script_handlers'
+ '/opt/oracle/fmw11_1_1_5/osb/common/wlst'
+ '/opt/oracle/fmw11_1_1_5/osb/common/wlst/lib'
+ '/opt/oracle/fmw11_1_1_5/osb/common/wlst/modules'
+ '.']
+
+
+</pre>
+
+<br/><br/>
+
+
+not all those folder/files actually exist by default:
+
+<br/><br/>
+
+/opt/oracle/fmw11_1_1_5/oracle_common/common/wlst/modules , 
+/opt/oracle/fmw11_1_1_5/osb/common/wlst/modules 
+<br/>
+<br/>
+don't exist... 
+<br/>
+but 
+<br/>
+/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/wlst/modules 
+<br/>
+exists, and that's where I would put my own modules.
+
+<br/>
+
+
+However, you can RUNTIME add modules. I put a module cmdb.py in /opt/oracle/usr. It contains a function "getwhoami":
+
+<pre>
+sys.path.append('/opt/oracle/usr')
+wls:/offline> from cmdb import getwhoami
+wls:/offline> print getwhoami()
+soa
+</pre>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,194 @@
+---
+layout: post
+title: "Wildfly quickstarts part 1"
+date: 2017-10-08T19:00:00.001+02:00
+permalink: /2017/10/wildfly-quickstarts.html
+blogger_id: "1037931951836863907"
+tags: ["wildfly"]
+---
+git clone https://github.com/wildfly/quickstart<br />
+<br />
+<h1>helloworld</h1><br />
+<a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld">https://github.com/wildfly/quickstart/tree/11.x/helloworld</a>  technologies=CDI,Servlet<br />
+<br />
+<a href="http://localhost:8080/helloworld">http://localhost:8080/helloworld</a><br />
+<br />
+@javax.inject.Inject<br />
+mvn wildfly:deploy<br />
+mvn wildfly:undeploy<br />
+mvn dependency:sources<br />
+<br />
+<br />
+<h1>helloworld-ws</h1><br />
+<a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld-ws">https://github.com/wildfly/quickstart/tree/11.x/helloworld-ws</a> technologies=JAX-WS  has Arquillan tests<br />
+<br />
+<a href="http://localhost:8080/helloworld-ws/">http://localhost:8080/helloworld-ws/</a><br />
+<br />
+#to run arquillan tests<br />
+mvn clean verify -Parq-remote  <br />
+<br />
+@javax.jws.WebService<br />
+@javax.jws.WebMethod<br />
+<br />
+javax.xml.ws.Service<br />
+<br />
+https://github.com/jboss-developer/jboss-developer-shared-resources/blob/master/guides/RUN_ARQUILLIAN_TESTS.md#run-the-arquillian-tests<br />
+<br />
+<br />
+<br />
+<h1>helloworld-rs</h1><br />
+<a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld-rf">https://github.com/wildfly/quickstart/tree/11.x/helloworld-rf</a> technologies=CDI,JAX-RS<br />
+<br />
+<br />
+<a href="http://localhost:8080/helloworld-rs/rest/json">http://localhost:8080/helloworld-rs/rest/json</a><br />
+<br />
+<br />
+javax.ws.rs.core.Application<br />
+javax.ws.rs.ApplicationPath @ApplicationPath("rest")<br />
+javax.ws.rs.GET<br />
+javax.ws.rs.Path<br />
+javax.ws.rs.Produces  @Produces({ "application/json" })  @Produces({ "application/xml" })<br />
+javax.inject.Inject<br />
+<br />
+<br />
+<br />
+<h1>helloworld-singleton</h1><br />
+<a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld-singleton">https://github.com/wildfly/quickstart/tree/11.x/helloworld-singleton</a> technologies=EJB,Singleton,JSF <br />
+<br />
+<a href="http://localhost:8080/helloworld-singleton">http://localhost:8080/helloworld-singleton</a><br />
+<br />
+javax.ejb.Singleton<br />
+javax.inject.Named<br />
+<br />
+@Named = @Component in Spring. @Inject = @Autowired in Spring<br />
+<br />
+<br />
+<h1>helloworld-ssl</h1><br />
+<a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld-ssl">https://github.com/wildfly/quickstart/tree/11.x/helloworld-ssl</a> technologies: SSL,Undertow<br />
+<br />
+<br />
+<a href="http://localhost:8443/helloworld-ssl/HelloWorld">http://localhost:8443/helloworld-ssl/HelloWorld</a><br />
+<br />
+<br />
+<h1>helloworld-mutual-ssl-secured</h1><br />
+<a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld-mutual-ssl-secured">https://github.com/wildfly/quickstart/tree/11.x/helloworld-mutual-ssl-secured</a> technologies=Mutual SSL, Security, Undertow<br />
+<br />
+BTW it's very similar to helloworld-mutual-ssl<br />
+<br />
+<h1>helloworld-classfiletransformer</h1><br />
+<a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld-classfiletransformer">https://github.com/wildfly/quickstart/tree/11.x/helloworld-classfiletransformer</a> technologies: EJB, javassist  it's about byte code manipulation and intercepting method calls<br />
+<br />
+javax.ejb.Stateless<br />
+javax.annotation.security.PermitAll<br />
+<br />
+<br />
+<h1>helloworld-html5</h1><br />
+<a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld-html5">https://github.com/wildfly/quickstart/tree/11.x/helloworld-html5</a> Technologies: CDI, JAX-RS, HTML5<br />
+<br />
+<a href="http://localhost:8080/helloworld-html5/">http://localhost:8080/helloworld-html5/</a><br />
+<br />
+<pre>curl -i -X POST http://localhost:8080/helloworld-html5/hello/json/pierluigi
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    29  100    29    0     0     29      0  0:00:01 --:--:--  0:00:01   142HTTP/1.1 200 OK
+Connection: keep-alive
+X-Powered-By: Undertow/1
+Server: WildFly/11
+Content-Type: application/json
+Content-Length: 29
+Date: Sat, 07 Oct 2017 21:36:41 GMT
+</pre><br />
+JQuery<br />
+javax.ws.rs.PathParam<br />
+<br />
+<br />
+remarkable the Arquillan functional tests to be found in the embedded helloworld-html5-test-webdriver <a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld-html5/functional-tests">https://github.com/wildfly/quickstart/tree/11.x/helloworld-html5/functional-tests</a><br />
+<br />
+mvn clean verify -Parq-remote  // to run tests on an already started remote server <br />
+mvn clean verify -Parq-managed // to start a server and run tests in it<br />
+<br />
+tests will probably fail because they take too long...<br />
+<br />
+<br />
+<br />
+<h1>helloworld-jms</h1><br />
+<a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld-jms">https://github.com/wildfly/quickstart/tree/11.x/helloworld-jms</a> Technologies: JMS <br />
+<br />
+<br />
+javax.jms.ConnectionFactory;<br />
+javax.jms.Destination;<br />
+javax.jms.JMSConsumer;<br />
+javax.jms.JMSContext;<br />
+javax.naming.Context;<br />
+javax.naming.InitialContext;<br />
+javax.naming.NamingException;<br />
+<br />
+<br />
+org.wildfly.naming.client.WildFlyInitialContextFactory<br />
+<br />
+Since the JBoss console doesn't have a tool to browse JMS queues (WebLogic console is sooo much better) one can use HermesJMS or this little tool <a href="http://www.mastertheboss.com/jboss-server/jboss-jms/a-jms-browser-for-jboss-wildfly">http://www.mastertheboss.com/jboss-server/jboss-jms/a-jms-browser-for-jboss-wildfly</a> available here <a href="https://github.com/fmarchioni/mastertheboss/tree/master/JMSBrowser">https://github.com/fmarchioni/mastertheboss/tree/master/JMSBrowser</a><br />
+<br />
+git clone https://github.com/fmarchioni/mastertheboss.git<br />
+cd mastertheboss/JMSBrowser<br />
+mvn clean install wildfly:deploy<br />
+<br />
+and then http://localhost:8080/JMSBrowser/  (in my case, it can't find the test queue, no idea why)<br />
+<br />
+HermesJMS really stinks and I can't make it works (maybe not meant to run with Java 8)... another tools is jmstoolbox <a href="https://sourceforge.net/projects/jmstoolbox/files/v4.4/">https://sourceforge.net/projects/jmstoolbox/files/v4.4/</a><br />
+<br />
+<br />
+<br />
+<h1>helloworld-mbean</h1><br />
+<a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld-mbean">https://github.com/wildfly/quickstart/tree/11.x/helloworld-mbean</a> Technologies: CDI, JMX, MBean<br />
+<br />
+http://localhost:8080/helloworld-mbean-webapp<br />
+<br />
+javax.enterprise.inject.spi.BeanManager<br />
+javax.enterprise.inject.spi.BeforeBeanDiscovery<br />
+javax.enterprise.inject.spi.Extension<br />
+javax.enterprise.inject.spi.Bean<br />
+javax.enterprise.event.Observes<br />
+<br />
+javax.enterprise.context.spi.CreationalContext<br />
+java.lang.management.ManagementFactory<br />
+javax.annotation.PostConstruct<br />
+javax.annotation.PreDestroy<br />
+javax.management.MBeanServer<br />
+javax.management.ObjectName<br />
+<br />
+<br />
+<h1>helloworld-mdb</h1><br />
+<a href="http://localhost:8080/helloworld-mdb/HelloWorldMDBServletClient">http://localhost:8080/helloworld-mdb/HelloWorldMDBServletClient</a><br />
+<br />
+<br />
+javax.jms.JMSDestinationDefinition<br />
+javax.jms.JMSDestinationDefinitions <a href="https://docs.oracle.com/javaee/7/api/javax/jms/JMSDestinationDefinition.html">https://docs.oracle.com/javaee/7/api/javax/jms/JMSDestinationDefinition.html</a><br />
+<br />
+javax.servlet.annotation.WebServlet <a href="http://docs.oracle.com/javaee/7/api/javax/servlet/annotation/WebServlet.html">http://docs.oracle.com/javaee/7/api/javax/servlet/annotation/WebServlet.html</a><br />
+<br />
+<br />
+javax.annotation.Resource<br />
+javax.ejb.MessageDriven<br />
+javax.jms.Message<br />
+javax.jms.MessageListener<br />
+javax.ejb.ActivationConfigProperty<br />
+<br />
+<br />
+<h1>helloworld-mdb-propertysubstitution</h1><br />
+<a href="https://github.com/wildfly/quickstart/tree/11.x/helloworld-mdb-propertysubstitution">https://github.com/wildfly/quickstart/tree/11.x/helloworld-mdb-propertysubstitution</a> Technologies: JMS, EJB, MDB<br />
+<br />
+<a href="http://localhost:8080/helloworld-mdb-propertysubstitution/HelloWorldMDBServletClient">http://localhost:8080/helloworld-mdb-propertysubstitution/HelloWorldMDBServletClient</a><br />
+<br />
+about "MDB annotation property substitution" :<br />
+<a href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html/Development_Guide/Enable_EJB_and_MDB_Property_Substitution_in_an_Application.html">https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.3/html/Development_Guide/Enable_EJB_and_MDB_Property_Substitution_in_an_Application.html<br />
+</a><br />
+<br />
+<br />
+the MDB connection properties are given in the standalone.xml in the system-properties, and you use variable substitution<br />
+@ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = "${property.helloworldmdb.queue}")<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

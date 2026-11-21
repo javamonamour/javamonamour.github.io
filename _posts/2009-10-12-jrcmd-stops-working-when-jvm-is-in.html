@@ -1,0 +1,9 @@
+---
+layout: post
+title: "jrcmd stops working when jvm is in outofmemory"
+date: 2009-10-12T09:30:00.001+02:00
+permalink: /2009/10/jrcmd-stops-working-when-jvm-is-in.html
+blogger_id: "7474141522660670143"
+tags: ["jrcmd"]
+---
+jrcmd 25629 help<br />25629:<br />25629: Unable to open socket file: target process not responding or HotSpot VM not loaded<br /><br /><br />this while on the Weblogic Server we had:<br /><br /> &lt;BEA-000110&gt; &lt;Multicast socket receive error: java.lang.OutOfMemoryError: mmAllocObject - Object size: 144<br />java.lang.OutOfMemoryError: mmAllocObject - Object size: 144<br />        at java.lang.Class.getDeclaredMethods0(Native Method)<br />        at java.lang.Class.privateGetDeclaredMethods(Class.java:2395)<br />        at java.lang.Class.getDeclaredMethod(Class.java:1907)<br />        at java.io.ObjectStreamClass.getInheritableMethod(ObjectStreamClass.java:1321)<br />        at java.io.ObjectStreamClass.access$2200(ObjectStreamClass.java:52)<br />        at java.io.ObjectStreamClass$2.run(ObjectStreamClass.java:432)<br />        at java.io.ObjectStreamClass.&lt;init&gt;(ObjectStreamClass.java:400)<br />        at java.io.ObjectStreamClass.initNonProxy(ObjectStreamClass.java:531)<br />        at java.io.ObjectInputStream.readObject(ObjectInputStream.java:348)<br />        at weblogic.cluster.MulticastReceiver.dispatch(MulticastReceiver.java:109)<br />        at weblogic.cluster.MulticastManager.run(MulticastManager.java:469)<br />        at java.lang.Thread.run(Thread.java:595)

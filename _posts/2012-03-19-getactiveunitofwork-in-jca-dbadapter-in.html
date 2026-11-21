@@ -1,0 +1,34 @@
+---
+layout: post
+title: "GetActiveUnitOfWork in JCA DbAdapter in Polling batching mode"
+date: 2012-03-19T16:55:00.002+01:00
+permalink: /2012/03/getactiveunitofwork-in-jca-dbadapter-in.html
+blogger_id: "5070869597099803072"
+tags: ["DBAdapter"]
+---
+We were getting this error:<br />
+<br />
+<br />
+<i><br />
+com.bea.wli.sb.transports.jca.JCATransportException: oracle.tip.adapter.sa.api.JCABindingException: oracle.tip.adapter.sa.impl.fw.ext.org.collaxa.thirdparty.apache.wsif.WSIFException: servicebus:/WSDL/POSTXMLBatchPOC/Adapter/InsertIntoBatchOrders [ InsertIntoBatchOrders_ptt::InsertIntoBatchOrders(InputParameters,OutputParameters) ] - WSIF JCA Execute of operation 'InsertIntoBatchOrders' failed due to: Could not create/access the TopLink Session.<br />
+This session is used to connect to the datastore.<br />
+Caused by java.lang.NullPointerException.<br />
+; nested exception is: <br />
+BINDING.JCA-11622<br />
+Could not create/access the TopLink Session.<br />
+This session is used to connect to the datastore.<br />
+Caused by java.lang.NullPointerException.<br />
+You may need to configure the connection settings in the deployment descriptor (i.e. DbAdapter.rar#META-INF/weblogic-ra.xml) and restart the server.  This exception is considered not retriable, likely due to a modelling mistake.<br />
+</i><br />
+<br />
+<br />
+<br />
+Setting the property GetActiveUnitOfWork to false fixed the issue.<br />
+<br />
+The <a href="http://docs.oracle.com/cd/E15523_01/integration.1111/e10231/adptr_db.htm">official Oracle doc</a> says:<br />
+<br />
+<i>GetActiveUnitOfWork is an advanced setting that forces all invoke activities in the same global transaction to use the same SQL connection if going to the same database. This makes it easier to guarantee that later invoke activities can see the changes of earlier invoke activities, but you may not need to set this at all (if using emulated two-phase commit, it should automatically be the same connection). Another difference is that for MERGE and INSERT, all changes are not written until the global transaction commits, so this setting also changes the timing of when WRITE operations occur.<br />
+</i><br />
+<br />
+<br />
+The Datasource driver is a oracle.jdbc.xa.client.OracleXADataSource.... in the DbAdapter the Datasource ConnectionFactory is set with the xADataSourceName....

@@ -1,0 +1,16 @@
+---
+layout: default
+---
+{% for post in paginator.posts %}
+<article class="excerpt">
+  <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
+  <p class="meta">{{ post.date | date: "%A, %B %-d, %Y" }}</p>
+  <div class="post-body">{{ post.content }}</div>
+  {% include labels.html labels=post.tags %}
+</article>
+{% endfor %}
+<nav class="prevnext">
+{% if paginator.previous_page %}<a href="{{ paginator.previous_page_path }}">&laquo; Newer posts</a>{% endif %}
+<span>Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
+{% if paginator.next_page %}<a href="{{ paginator.next_page_path }}">Older posts &raquo;</a>{% endif %}
+</nav>

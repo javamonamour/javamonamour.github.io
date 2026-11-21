@@ -1,0 +1,62 @@
+---
+layout: post
+title: "creating a domain with WLST"
+date: 2019-11-14T17:23:00.001+01:00
+permalink: /2019/11/creating-domain-with-wlst.html
+blogger_id: "827374479389964560"
+tags: ["weblogic", "WLST"]
+---
+<br />
+in WLS 12.1 + the config.sh script no longer supports a silent installation<br />
+<br />
+./config.sh -silent -response response_file<br />
+<br />
+see Document "Can config.sh be Run in Silent or Non-GUI Mode in Weblogic 12c ? (Doc ID 2370636.1) "<br />
+<br />
+"The configuration tool only works in GUI mode with 12.1.x and above. In order to create a domain without using a GUI the WLST tool will need to be used. "<br />
+<br />
+<br />
+this is really stupid, 99% of Linux machines are headless<br />
+<br />
+and using UI defeats automation<br />
+<br />
+<br />
+<br />
+here how to create a domain with WLST:<br />
+<br />
+<a href="https://docs.oracle.com/middleware/1221/wls/WLSTG/domains.htm#WLSTG429">https://docs.oracle.com/middleware/1221/wls/WLSTG/domains.htm#WLSTG429</a><br />
+<br />
+but when you do:<br />
+<br />
+<b>selectTemplate('Base WebLogic Server Domain')</b><br />
+<br />
+you get a<br />
+<br />
+<pre>Caused by: com.oracle.cie.domain.script.ScriptException: 60708: Template not found.
+
+60708: Found no templates with Base WebLogic Server Domain name and null version
+
+60708: Select a different template.
+
+        at com.oracle.cie.domain.script.ScriptExecutor.selectTemplate(ScriptExecutor.java:556)
+
+        at com.oracle.cie.domain.script.jython.WLScriptContext.selectTemplate(WLScriptContext.java:580)
+</pre><br />
+<br />
+do a <b>showAvailableTemplates</b>()<br />
+<br />
+<i><br />
+'20849: Available templates.\n20849: Currently available templates for loading: WebLogic Advanced Web Services for JAX-RPC Extension:12.2.1.3.0\nWebLogic Advanced Web Services for JAX-WS Extension:12.2.1.3.0\nWebLogic JAX-WS SOAP/JMS Extension:12.2.1.3.0\nBasic WebLogic Server Domain:12.2.1.3.0\nWebLogic Coherence Cluster Extension:12.2.1.3.0\n\n20849: No action required.\n'<br />
+</i><br />
+<br />
+<br />
+so the solution is <br />
+<br />
+<br />
+<b>selectTemplate('Basic WebLogic Server Domain', '12.2.1.3.0')</b><br />
+<br />
+<br />
+To find out more info on the domain template (like wls.jar) open its template-info.xml<br />
+<br />
+<br />
+

@@ -1,0 +1,108 @@
+---
+layout: post
+title: "Security and dealing with cursors in WLST"
+date: 2013-02-02T21:23:00.001+01:00
+permalink: /2013/02/dealing-with-cursors-in-wlst.html
+blogger_id: "5505204792109629950"
+tags: ["security", "WLST"]
+---
+<pre name="code" class="brush: java">
+username = 'Pierluigi'
+password = 'weblogic1'
+url='t3://myserver.acme.com:7001'
+connect(username,password,url)
+atnr=cmo.getSecurityConfiguration().getDefaultRealm().lookupAuthenticationProvider('DefaultAuthenticator')
+</pre>
+
+<br/><br/>
+
+at this point I want to see all the groups to which a given user 'chennapa' belongs:<br/><br/>
+<pre>
+atnr.listMemberGroups('chennapa')
+</pre>
+<br/>
+<b>'Cursor_181'</b>
+
+<br/><br/>
+
+what whall I do with this bloody 'Cursor_181' ???<br/>
+
+As <a href="http://docs.oracle.com/cd/E15051_01/wls/docs103/config_scripting/config_WLS.html">very well explained here</a>, I need some special instruction to iterate over the cursor:<br/><br/>
+
+the instructions are haveCurrent, advance and close <br/><br/>
+
+<pre>
+cursor=atnr.listMemberGroups('chennapa')
+while atnr.haveCurrent(cursor):
+    print atnr.getCurrentName(cursor)
+    atnr.advance(cursor)
+
+atnr.close(cursor)
+</pre>
+
+
+<pre>
+
+ viewMBean(atnr)
+Attribute Names and Values
+--------------------------
+MaxGroupHierarchiesInCache                   100
+KeepAliveEnabled                             false
+SupportedImportFormats                       java.lang.String[DefaultAtn]
+SupportedImportConstraints                   java.lang.String[]
+Description                                  WebLogic Authentication Provider
+ControlFlag                                  SUFFICIENT
+GroupHierarchyCacheTTL                       60
+PropagateCauseForLoginException              false
+PasswordDigestEnabled                        false
+MaxGroupMembershipSearchLevel                0
+EnableGroupMembershipLookupHierarchyCaching  true
+SupportedUserAttributeNames                  java.lang.String[displayname, employeenumber, employeetype, givenname, homephone, mail, title, preferredlanguage, departmentnumber, facsimiletelephonenumber, mobile, pager, telephonenumber, postaladdress, street, l, st, postofficebox, c, homepostaladdress]
+SupportedExportFormats                       java.lang.String[DefaultAtn]
+Name                                         DefaultAuthenticator
+UseRetrievedUserNameAsPrincipal              true
+SupportedExportConstraints                   java.lang.String[users, groups, passwords]
+ProviderClassName                            weblogic.security.providers.authentication.DefaultAuthenticationProviderImpl
+Realm                                        Security:Name=myrealm
+GroupMembershipSearching                     unlimited
+Version                                      1.0
+MinimumPasswordLength                        8
+------------------------
+Operations on this MBean
+------------------------
+setGroupDescription
+changeUserPassword
+setUserDescription
+listMemberGroups
+removeMemberFromGroup
+groupExists
+getGroupDescription
+advance
+getUserDescription
+haveCurrent
+listGroupMembers
+unSet
+getSupportedUserAttributeType
+getUserAttributeValue
+wls_getDisplayName
+userExists
+close
+isSet
+createGroup
+listGroups
+resetUserPassword
+createUser
+removeUser
+addMemberToGroup
+listAllUsersInGroup
+setUserAttributeValue
+importData
+isMember
+removeGroup
+listUsers
+exportData
+isUserAttributeNameSupported
+getCurrentName
+
+</pre>
+

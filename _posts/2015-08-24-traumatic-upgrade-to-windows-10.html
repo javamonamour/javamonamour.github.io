@@ -1,0 +1,21 @@
+---
+layout: post
+title: "Traumatic upgrade to Windows 10"
+date: 2015-08-24T07:32:00.002+02:00
+permalink: /2015/08/traumatic-upgrade-to-windows-10.html
+blogger_id: "5877472219223129073"
+tags: ["windows10"]
+---
+I deeply, deeply fear Microsoft so I have postponed the upgrade. But curiosity is human and I caved in... 
+<br/>
+Much to my surprise the update worked, but after the update nothing was working :o)) ... everything was just "not responding".
+<br/>
+Finally I restarted, opened powershell as administrator (it took me ages just to do that, as nothing was working) and pasted this command
+<br/>
+Get-AppXPackage -AllUsers | Foreach {Add-AppxPackage -DisableDevelopmentMode -Register "$($_.InstallLocation)\AppXManifest.xml"}
+
+
+<br/>
+
+Surprisingly, things seem to work much better. However if I could go back in time I would NOT upgrade... who knows what other surprises are still waiting me....
+

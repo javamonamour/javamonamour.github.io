@@ -1,0 +1,182 @@
+---
+layout: post
+title: "OSB customization from a environment dependent property file with WLST"
+date: 2011-08-12T14:19:00.002+02:00
+permalink: /2011/08/osb-customization-from-environment.html
+blogger_id: "75209227594353752"
+tags: ["customization", "OSB"]
+---
+I proceed as follows:<br />
+<br />
+- create customization file from OSB console<br />
+- replace all environment dependent values (mostly URIs) with tokens:<br />
+<br />
+{$REPLACE_PROPERTY_MQ_QUEUE}<br />
+<br />
+- create a import.properties."env" file ("env" depends on the environment you are targetting)<br />
+<br />
+in this property file you have:<br />
+<br />
+<i>adminUrl=t3://localhost:7009<br />
+importUser=pierluigi<br />
+importPassword=welcome1<br />
+<br />
+customizationFile=ALSBCustomizationFile.xml<br />
+<br />
+REPLACE_PROPERTY_MQ_QUEUE=VALUE_TO_BE_USED_IN_THIS_ENV<br />
+#here all other properties, they must start with REPLACE_PROPERTY_<br />
+REPLACE_PROPERTY_HOST=acme.com<br />
+</i><br />
+<br />
+run the customize.py script :<br />
+<br />
+<i>cd $DOMAIN_HOME/wlstscripts<br />
+<br />
+. $DOMAIN_HOME/bin/setDomainEnv.sh<br />
+<br />
+java weblogic.WLST customize.py dev<br />
+</i><br />
+<br />
+for tst, the file will be import.properties.tst and you call<br />
+<br />
+java weblogic.WLST customize.py tst <br />
+<br />
+customize.py (largely copied from import.py provided by Oracle):<br />
+<br />
+<pre name="code" class="brush: java">from java.util import HashMap
+from java.util import HashSet
+from java.util import ArrayList
+from java.io import FileInputStream
+
+from com.bea.wli.sb.util import Refs
+from com.bea.wli.config.customization import Customization
+from com.bea.wli.sb.management.importexport import ALSBImportOperation
+
+import fileinput
+
+
+import sys
+
+#=======================================================================================
+# Entry function to customize a ALSB domain
+#=======================================================================================
+
+def customizeDomain(envname):
+    try:
+        SessionMBean = None
+        importConfigFile = 'import.properties.' + envname
+        print 'Loading Deployment config from :', importConfigFile
+        exportConfigProp = loadProps(importConfigFile)
+        adminUrl = exportConfigProp.get("adminUrl")
+        importUser = exportConfigProp.get("importUser")
+        importPassword = exportConfigProp.get("importPassword")
+
+        customFile = exportConfigProp.get("customizationFile")
+
+        connectToServer(importUser, importPassword, adminUrl)
+
+        print 'Attempting to customize ALSB Admin Server listening on :', adminUrl
+
+
+        configProperties = loadProps('import.properties.' + envname)
+
+        #select only properties starting with REPLACE_
+        mylist = Properties()
+        for property in configProperties:
+            if property.startswith('REPLACE_'):
+                mylist.put(property, configProperties.get(property))
+
+
+
+        targetCustomizationFile = customFile + envname + '.xml'	 
+
+        output=open(targetCustomizationFile, 'w')
+
+        #read all lines and replace all tokens
+        for line in fileinput.input([customFile]):
+           for property in mylist:
+               line = line.replace('{$' + property + '}', mylist.get(property))
+           output.write(line)
+
+        output.close()
+
+		
+		
+        sessionName = createSessionName()
+        print 'Created session', sessionName
+        SessionMBean = getSessionManagementMBean(sessionName)
+        print 'SessionMBean started session'
+        ALSBConfigurationMBean = findService(String("ALSBConfiguration.").concat(sessionName), "com.bea.wli.sb.management.configuration.ALSBConfigurationMBean")
+        print "ALSBConfiguration MBean found", ALSBConfigurationMBean
+       
+
+        #customize if a customization file is specified
+        #affects only the created resources
+        if customFile != None :
+            print 'Loading customization File', targetCustomizationFile
+            iStream = FileInputStream(targetCustomizationFile)
+            customizationList = Customization.fromXML(iStream)
+            ALSBConfigurationMBean.customize(customizationList)
+
+        SessionMBean.activateSession(sessionName, "Complete customization using wlst")
+
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+        if SessionMBean != None:
+            SessionMBean.discardSession(sessionName)
+        raise
+
+#=======================================================================================
+# Utility function to load properties from a config file
+#=======================================================================================
+
+def loadProps(configPropFile):
+    propInputStream = FileInputStream(configPropFile)
+    configProps = Properties()
+    configProps.load(propInputStream)
+    return configProps
+
+#=======================================================================================
+# Connect to the Admin Server
+#=======================================================================================
+
+def connectToServer(username, password, url):
+    connect(username, password, url)
+    domainRuntime()
+
+
+#=======================================================================================
+# Utility function to create an arbitrary session name
+#=======================================================================================
+def createSessionName():
+    sessionName = String("SessionScript"+Long(System.currentTimeMillis()).toString())
+    return sessionName
+
+#=======================================================================================
+# Utility function to load a session MBeans
+#=======================================================================================
+def getSessionManagementMBean(sessionName):
+    SessionMBean = findService("SessionManagement", "com.bea.wli.sb.management.configuration.SessionManagementMBean")
+    SessionMBean.createSession(sessionName)
+    return SessionMBean
+
+
+
+# IMPORT script init
+try:
+    # import the service bus configuration
+    # argv[1] is the environment you are customizing
+    customizeDomain(sys.argv[1])
+
+except:
+    print "Unexpected error: ", sys.exc_info()[0]
+    dumpStack()
+    raise
+
+
+</pre><br />
+<br />
+<br />
+The WLST task can be run from Ant of course...<br />
+<br />
+

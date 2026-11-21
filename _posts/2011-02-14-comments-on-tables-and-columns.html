@@ -1,0 +1,17 @@
+---
+layout: post
+title: "Comments on Tables and Columns"
+date: 2011-02-14T10:18:00.001+01:00
+permalink: /2011/02/comments-on-tables-and-columns.html
+blogger_id: "2129622904654661590"
+tags: ["DBAnnotate"]
+---
+One can stick a comment to a COLUMN or TABLE<br />
+<br />
+<a href="http://ss64.com/ora/comment.html">http://ss64.com/ora/comment.html</a><br />
+<br />
+This is an excellent candidate to "annotate" a schema and having an automated tool process it and generate all the Entities and DAOs, using for instance the<br />
+<a href="http://download.oracle.com/javase/6/docs/api/java/sql/DatabaseMetaData.html">http://download.oracle.com/javase/6/docs/api/java/sql/DatabaseMetaData.html</a> class to introspect a schema....<br />
+<br />
+One can ask: why don't you create a metamodel and generate the DDL from it, rather than trying to express everything in DDL?<br />
+Here is why: DDL is too essential to risk missing some feature by inventing a metamodel. I would rather have the DDL as the FOUNDATION of my application, rather than an artifact gnerated by some script. I think DBAs would agree with me.

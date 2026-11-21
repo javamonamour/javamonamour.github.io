@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Hacking users in WebLogic"
+date: 2016-05-26T12:23:00.001+02:00
+permalink: /2016/05/hacking-users-in-weblogic.html
+blogger_id: "5994944263566166872"
+tags: ["embeddedLDAP", "sha1", "weblogic"]
+---
+vi $DOMAIN_HOME/security/DefaultAuthenticatorInit.ldift
+<br/>
+
+insert this:
+
+<br/>
+
+<pre>
+
+dn: uid=PIPPO,ou=people,ou=@realm@, dc=@domain@
+description: Test generated user
+objectclass: inetOrgPerson
+objectclass: organizationalPerson
+objectclass: person
+objectclass: top
+cn: S107077
+sn: S107077
+userpassword: {ssha}blablabla
+uid: PIPPO
+objectclass: wlsUser
+wlsMemberOf: cn=Administrators,ou=groups,ou=@realm@,dc=@domain@
+
+</pre>
+
+<br/>
+
+<br/>
+PIPPO should become an Administrative user
+
+
+<br/>
+<br/>
+
+ssha passwords (ssha being a variant of <a href="https://en.wikipedia.org/wiki/SHA-1">SHA1</a>) can be generated with openssh <a href="http://www.openldap.org/faq/data/cache/347.html">http://www.openldap.org/faq/data/cache/347.html</a>  or with Python/WLST
+
+

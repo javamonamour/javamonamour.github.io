@@ -1,0 +1,82 @@
+---
+layout: post
+title: "OSB: Dynamic Routing at test"
+date: 2010-05-10T14:27:00.000+02:00
+permalink: /2010/05/osb-dynamic-routing-at-test.html
+blogger_id: "1560258993208910724"
+tags: ["dynamic_routing", "OSB"]
+blogger_comments:
+  - author: "Janne"
+    date: 2015-01-14
+    html: "Hi,<br /><br />this works for me too:<br /><br />1) assign full business service path to variable theBS = prjFoo/BS/bsvcFoo (WITHOUT quotes)<br />2) in Dynamic Routing use: ...{$theBS}...<br /><br />Janne"
+---
+I have defined a Business Service TestUpdateDB/BS/CompanyDBBS&nbsp; (TestUpdateDB is the project name BS the folder name, CompanyDBBS the Business Service.... you are supposed to OMIT the .biz at the end of the BS).<br />
+<br />
+If I configure the Dynamic Routing node with this Service field:<br />
+<br />
+<i>&lt;ctx:route&gt;</i><br />
+<i>&lt;ctx:service isProxy='false'&gt;TestUpdateDB/BS/CompanyDBBS&lt;/ctx:service&gt;</i><br />
+<i>&lt;ctx:operation&gt;updateCompany&lt;/ctx:operation&gt;</i><br />
+<i>&lt;/ctx:route&gt;</i><br />
+<br />
+it works,<br />
+<br />
+if I declare a variable $theBS = the xml above (WITHOUT USING QUOTES!)&nbsp; and I use the variable in the Service field, it doesn't work. I have tried $theBS and data($theBS), always the same error.<br />
+Either I get<br />
+<br />
+<i>Error preparing message for dispatch</i><br />
+<br />
+or <br />
+<br />
+<i>The TokenIterator does not correspond to a XmlObject value</i><br />
+<br />
+Anyway as very well explained in Oracle Samples:<br />
+<br />
+OSB supports two methods to perform dynamic Service invocation:<br />
+1. URI Override using Route Options<br />
+2. Dynamic Routing/Publish<br />
+<br />
+check the example"Dynamic Service Invocation" here<br />
+<a href="http://www.oracle.com/technology/sample_code/products/osb/index.html">http://www.oracle.com/technology/sample_code/products/osb/index.html</a><br />
+that is:<br />
+<a href="http://www.oracle.com/technology/sample_code/products/osb/samples/DYNAMIC-DISPATCH.zip">http://www.oracle.com/technology/sample_code/products/osb/samples/DYNAMIC-DISPATCH.zip</a><br />
+<br />
+<br />
+To make it work, I did it this way:<br />
+<br />
+assign 'TestUpdateDB/BS/CompanyDBBS'&nbsp; (with quotes) to variable theBS<br />
+<br />
+and use this in the Dynamic Routing node:<br />
+<br />
+&lt;ctx:route&gt;<br />
+&lt;ctx:service isProxy='false'&gt;{data($theBS)}&lt;/ctx:service&gt;<br />
+&lt;ctx:operation&gt;updateCompany&lt;/ctx:operation&gt;<br />
+&lt;/ctx:route&gt;<br />
+<br />
+(don't forget the {} ) <br />
+<br />
+<br />
+Another alternative is to write an XQueryand use it in the Dynamic Routing service field:<br />
+<br />
+(:: pragma bea:global-element-return element="ns0:route" location="../../CommonResources/XSD/DynamicRouting.xsd" ::)<br />
+<br />
+declare namespace ns0 = "http://www.bea.com/wli/sb/context";<br />
+declare namespace xf = "http://tempuri.org/TestUpdateDB/XQuery/routeToDynamicService/";<br />
+<br />
+declare function xf:routeToDynamicService($string1 as xs:string,<br />
+&nbsp;&nbsp;&nbsp; $string2 as xs:string)<br />
+&nbsp;&nbsp;&nbsp; as element(ns0:route) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <ns0:route><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <ns0:service isproxy="false">{ $string1 }</ns0:service><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <ns0:operation>{ $string2 }</ns0:operation><br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </ns0:route><br />
+};<br />
+<br />
+declare variable $string1 as xs:string external;<br />
+declare variable $string2 as xs:string external;<br />
+<br />
+xf:routeToDynamicService($string1, $string2)<br />
+<br />
+where string1 is the URI and string2 the operation<br />
+<br />
+(I have unzipped all the XSDs from the jar provided by Oracle and put them in CommonResources/XSD)

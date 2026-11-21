@@ -1,0 +1,119 @@
+---
+layout: post
+title: "Oracle DB, SessionTimeZone, and Java"
+date: 2012-11-07T21:54:00.000+01:00
+permalink: /2012/11/oracle-db-sessiontimezone-and-java.html
+blogger_id: "3457490155071034716"
+---
+this SQL:<br />
+<br />
+<i>select SESSIONTIMEZONE from dual;</i><br />
+<br />
+returns "Europe/Berlin"<br />
+<br />
+(see&nbsp;<a href="http://docs.oracle.com/cd/B28359_01/server.111/b28286/functions150.htm">http://docs.oracle.com/cd/B28359_01/server.111/b28286/functions150.htm</a>&nbsp;)<br />
+<br />
+"<code style="background-color: white; color: #222222; font-size: 12px;">SESSIONTIMEZONE</code><span style="background-color: white; color: #222222; font-family: Tahoma, sans-serif; font-size: x-small; line-height: 19px;">&nbsp;returns the time zone of the current session. The return type is a time zone offset (a character type in the format&nbsp;</span><code style="background-color: white; color: #222222; font-size: 12px;">'[+|]TZH:TZM'</code><span style="background-color: white; color: #222222; font-family: Tahoma, sans-serif; font-size: x-small; line-height: 19px;">) or a time zone region name, depending on how the user specified the session time zone value in the most recent&nbsp;</span><code style="background-color: white; color: #222222; font-size: 12px;">ALTER</code><span style="background-color: white; color: #222222; font-family: Tahoma, sans-serif; font-size: x-small; line-height: 19px;">&nbsp;</span><code style="background-color: white; color: #222222; font-size: 12px;">SESSION</code><span style="background-color: white; color: #222222; font-family: Tahoma, sans-serif; font-size: x-small; line-height: 19px;">&nbsp;statement....&nbsp;</span><span style="background-color: white; color: #222222; font-family: Tahoma, sans-serif; font-size: x-small; line-height: 19px;">using the&nbsp;</span><code style="background-color: white; color: #222222; font-size: 12px;">ORA_SDTZ</code><span style="background-color: white; color: #222222; font-family: Tahoma, sans-serif; font-size: x-small; line-height: 19px;">&nbsp;environment variable&nbsp;</span><span style="background-color: white; color: #222222; font-family: Tahoma, sans-serif; font-size: x-small; line-height: 19px;">"</span><br />
+<span style="background-color: white; color: #222222; font-family: Tahoma, sans-serif; font-size: x-small; line-height: 19px;"><br /></span>
+<span style="color: #222222; font-family: Tahoma, sans-serif; font-size: x-small;"><span style="line-height: 19px;">The JDBC driver sets on the Session some&nbsp;</span></span><span style="background-color: white; font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 13px;">date/time session parameters:</span><br />
+<a href="http://docs.oracle.com/cd/E13222_01/wls/docs100/jdbc_drivers/oracle.html">http://docs.oracle.com/cd/E13222_01/wls/docs100/jdbc_drivers/oracle.html</a><br />
+<br />
+<br />
+<br />
+<div class="MsoNormal">
+<span style="color: #1f497d;">This code:&nbsp;</span></div>
+<div class="MsoNormal">
+<br /></div>
+<div class="MsoNormal">
+<b><span lang="EN-US" style="color: #7f0055; font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;">import</span></b><span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">
+java.util.Calendar;</span><span lang="EN-US" style="font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<br /></div>
+<div class="MsoNormal">
+<b><span lang="EN-US" style="color: #7f0055; font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;">public</span></b><span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;"> </span><b><span lang="EN-US" style="color: #7f0055; font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;">class</span></b><span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">
+TimeZoneHelper {</span><span lang="EN-US" style="font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<br /></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">&nbsp;&nbsp;&nbsp; </span><b><span lang="EN-US" style="color: #7f0055; font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;">public</span></b><span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;"> </span><b><span lang="EN-US" style="color: #7f0055; font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;">static</span></b><span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;"> String <span style="background: silver; mso-highlight: silver;">getTimeZoneInfo</span>()</span><span lang="EN-US" style="font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">&nbsp;&nbsp;&nbsp; {</span><span lang="EN-US" style="font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String
+result = </span><span lang="EN-US" style="color: #2a00ff; font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;">""</span><span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">;</span><span lang="EN-US" style="font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Calendar
+now = Calendar.<i>getInstance</i>();</span><span lang="EN-US" style="font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; result +=
+now.getTimeZone();</span><span lang="EN-US" style="font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; result += </span><span lang="EN-US" style="color: #2a00ff; font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;">"_"</span><span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">; </span><span lang="EN-US" style="font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; result +=
+now.getTime();</span><span lang="EN-US" style="font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><b><span lang="EN-US" style="color: #7f0055; font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;">return</span></b><span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;"> result;</span><span lang="EN-US" style="font-family: &quot;Courier New&quot;; font-size: 10.0pt; mso-ansi-language: EN-US;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="font-family: 'Courier New'; font-size: 10pt;">&nbsp;&nbsp;&nbsp; </span><span style="font-family: 'Courier New'; font-size: 10pt;">}</span><span style="font-family: &quot;Courier New&quot;; font-size: 10.0pt;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<span style="font-family: 'Courier New'; font-size: 10pt;">}</span><span style="font-family: &quot;Courier New&quot;; font-size: 10.0pt;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<br /></div>
+<div class="MsoNormal">
+<br /></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="color: #1f497d; mso-ansi-language: EN-US; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin; mso-themecolor: dark2;">returns this:<o:p></o:p></span></div>
+<div class="MsoNormal">
+<br /></div>
+<div class="MsoNormal">
+<br /></div>
+<table border="0" cellpadding="0" cellspacing="0" class="MsoNormalTable">
+ <tbody>
+<tr>
+  <td style="padding: 0cm 0cm 0cm 0cm;"><br />
+  <div class="MsoNormal">
+<br /></div>
+<table border="0" cellpadding="0" cellspacing="0" class="MsoNormalTable">
+   <tbody>
+<tr>
+    <td style="padding: 0cm 0cm 0cm 19.0pt;"></td><td style="padding: 0cm 0cm 0cm 0cm;" valign="top"><div class="MsoNormal">
+<span lang="EN-US" style="font-family: &quot;Times New Roman&quot;,&quot;serif&quot;; font-size: 12.0pt; mso-ansi-language: EN-US; mso-fareast-language: FR-CH;">sun.util.calendar.ZoneInfo[id="Europe/Zurich",offset=3600000,dstSavings=3600000,useDaylight=true,transitions=119,lastRule=java.util.SimpleTimeZone[id=Europe/Zurich,offset=3600000,dstSavings=3600000,useDaylight=true,startYear=0,startMode=2,startMonth=2,startDay=-1,startDayOfWeek=1,startTime=3600000,startTimeMode=2,endMode=2,endMonth=9,endDay=-1,endDayOfWeek=1,endTime=3600000,endTimeMode=2]]_Wed
+    Nov 07 22:45:56 CET 2012<o:p></o:p></span></div>
+</td>
+   </tr>
+</tbody></table>
+<div class="MsoNormal">
+<br /></div>
+<table border="0" cellpadding="0" cellspacing="0" class="MsoNormalTable">
+   <tbody>
+<tr>
+    <td style="padding: 0cm 0cm 0cm 0cm;"></td>
+    <td nowrap="" style="padding: 0cm 0cm 0cm 0cm;" valign="top">
+    <div class="MsoNormal">
+<br /></div>
+</td></tr>
+</tbody></table>
+</td></tr>
+</tbody></table>
+<div class="MsoNormal">
+<span lang="EN-US" style="color: #1f497d; mso-ansi-language: EN-US; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin; mso-themecolor: dark2;">I understand that
+there is a JVM property –</span><span lang="EN-US" style="background: #EEEEEE; color: #444444; font-family: Consolas; font-size: 9.0pt; mso-ansi-language: EN-US;">
+Duser.timezone</span>=’BLA’&nbsp; <span lang="EN-US" style="color: #1f497d; mso-ansi-language: EN-US; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin; mso-themecolor: dark2;"><o:p></o:p></span></div>
+<div class="MsoNormal">
+<a href="http://stackoverflow.com/questions/2493749/how-to-set-a-jvm-timezone-properly"><span lang="EN-US">http://stackoverflow.com/questions/2493749/how-to-set-a-jvm-timezone-properly</span></a><o:p></o:p></div>
+<div class="MsoNormal">
+<br /></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="color: #1f497d; mso-ansi-language: EN-US; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin; mso-themecolor: dark2;">or better still you
+can do <o:p></o:p></span></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="color: #1f497d; mso-ansi-language: EN-US; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin; mso-themecolor: dark2;">export
+TZ="IST"<o:p></o:p></span></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="color: #1f497d; mso-ansi-language: EN-US; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin; mso-themecolor: dark2;"><br /></span></div>
+<div class="MsoNormal">
+<span lang="EN-US" style="color: #1f497d; mso-ansi-language: EN-US; mso-ascii-font-family: Calibri; mso-ascii-theme-font: minor-latin; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-theme-font: minor-bidi; mso-fareast-font-family: Calibri; mso-fareast-theme-font: minor-latin; mso-hansi-font-family: Calibri; mso-hansi-theme-font: minor-latin; mso-themecolor: dark2;">on the shell prompt
+before you start WLS...<o:p></o:p></span></div>
+<br />
+<br />

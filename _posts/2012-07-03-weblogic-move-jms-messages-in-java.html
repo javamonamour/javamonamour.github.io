@@ -1,0 +1,76 @@
+---
+layout: post
+title: "WebLogic, move JMS messages in Java"
+date: 2012-07-03T17:29:00.000+02:00
+permalink: /2012/07/weblogic-move-jms-messages-in-java.html
+blogger_id: "3175497528899731483"
+tags: ["jms"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2015-08-23
+    html: "the answer was already in my previous comment: not while you are handling the message. Just copy the message to the other queue (by creating a new message) and consume the message. No need to MOVE."
+  - author: "Menaka"
+    date: 2015-08-23
+    html: "IS there other way to move message from one queue to another? Please let me know"
+  - author: "vernetto"
+    date: 2015-08-23
+    html: "dear friend from India, you are trying to move a JMS message to a queue before it has been consumed (acknowledged)... I am not sure this is supported in JEE... normally you would simply Create a new message and post it to a queue, then consume the old message (it&#39;s automatically acknowledged by the MDB, so no need to explicitly acknowledge). COPY+DELETE is equivalent to a MOVE. Just don&#39;t try to move the message while you are processing it..."
+  - author: "Menaka"
+    date: 2015-08-23
+    html: "Hi,<br /><br />Thanks for the reply<br />I got jmsmessageid, but the messages are not moved to the destination queue. could you please help me out<br /><br />package com.xxx.util;<br /><br />public class MoveMessages implements MessageListener { <br /> <br /> public final static String JNDI_FACTORY=&quot;weblogic.jndi.WLInitialContextFactory&quot;;<br /> public final static String JMS_FACTORY=&quot;mslv/oms/oms1/internal/jms/ConnectionFactory&quot;;<br /> public final static String QUEUE1=&quot;oracle/communications/ordermanagement/OrderResponseQueue&quot;;<br /> public final static String QUEUE2=&quot;oracle/communications/ordermanagement/OrderRequestQueue&quot;;<br /> private QueueConnectionFactory qconFactory;<br /> private QueueConnection qcon;<br /> private QueueSession qsession;<br /> private QueueReceiver qreceiver;<br /> private QueueSender qsender;<br /> private Queue fromQueue;<br /> private Queue toQueue;<br /> private boolean quit = false;<br /> <br /> String output_file_name = &quot;c:\\\\Samples.txt&quot;;<br /> Write_To_Text_File data = new Write_To_Text_File(output_file_name,false);<br /> <br />  <br /><br /> public void onMessage(Message msg)<br /> {                       <br /> try {<br /> String msgText;<br /> long timeStamp = 0;<br /> String jmsmessageid = msg.getJMSMessageID();<br /> InitialContext ic = null;<br /> try {<br />  ic = getInitialContext(&quot;t3://xxx:7007&quot;);<br /> } catch (NamingException e1) {<br />  // TODO Auto-generated catch block<br />  e1.printStackTrace();<br /> }<br /> if (msg instanceof TextMessage)<br /> {<br /> msgText = ((TextMessage)msg).getText();<br /> timeStamp = ((TextMessage)msg).getJMSTimestamp();<br /> Timestamp stamp = new Timestamp(timeStamp);<br /> Date date = new Date(stamp.getTime());<br /> System.out.println(&quot;\\n\\t&lt;Msg_Receiver&gt; &quot;+ jmsmessageid );<br /> <br /> JMSDestinationRuntimeMBean reprocessQueueMBean = JMSRuntimeHelper.getJMSDestinationRuntimeMBean(ic, fromQueue);<br /> JMSDestinationRuntimeMBean intermediateQueueMBean = JMSRuntimeHelper.getJMSDestinationRuntimeMBean( ic, toQueue);<br /> try {<br />  System.out.println(&quot;Menaka&quot; );<br />  reprocessQueueMBean.moveMessages(&quot;JMSMessageID = &#39;&quot; + jmsmessageid + &quot;&#39;&quot;, intermediateQueueMBean. );<br /> } catch (ManagementException e) {<br />  // TODO Auto-generated catch block<br />  e.printStackTrace();<br /> }<br /> <br /> }<br /> else<br /> {<br /> msgText = msg.toString();<br /> }<br /> System.out.println(&quot;\\n\\t&lt;Msg_Receiver&gt; &quot;+ msgText );<br /> <br /> if (msgText.equalsIgnoreCase(&quot;quit&quot;))<br /> {<br /> synchronized(this)<br /> {<br /> quit = true;<br /> this.notifyAll(); // Notify main thread to quit<br /> }<br /> }<br /> }<br /> catch (JMSException jmse)<br /> {<br /> jmse.printStackTrace();<br /> }<br /> }<br /> public void init(Context ctx, String moveFromQueueName, String moveToQueueName) throws NamingException, JMSException<br /> {<br /> qconFactory = (QueueConnectionFactory) ctx.lookup(JMS_FACTORY);<br /> qcon = qconFactory.createQueueConnection();<br /> qsession = qcon.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);<br /> fromQueue = (Queue) ctx.lookup(moveFromQueueName);<br /> toQueue = (Queue) ctx.lookup(moveToQueueName);<br /> qreceiver = qsession.createReceiver(fromQueue);<br /> qsender = qsession.createSender(toQueue);<br /> qreceiver.setMessageListener(this);<br /> qcon.start();<br /> }<br /><br /> public void close()throws JMSException<br /> {<br /> qreceiver.close();<br /> qsession.close();<br /> qcon.close();<br /> }<br /><br /> public static void main(String[] args) throws Exception<br /> {<br />  /* if (args.length != 1)<br /> {<br /> System.out.println(&quot;Usage: java QueueReceive WebLogicURL&quot;);<br /> return;<br /> }*/<br /> <br /> InitialContext ic = getInitialContext(&quot;t3://xxx.qc.bell.ca:7007&quot;);<br /> MoveMessages qr = new MoveMessages();  <br /> qr.init(ic, QUEUE1, QUEUE2);<br /> <br /><br /> <br /> System.out.println(&quot;JMS Ready To Receive Messages (To quit, send a \\&quot;quit\\&quot; message from QueueSender.class).&quot;);<br /> <br /> synchronized(qr)<br /> {<br /> while (! qr.quit)<br /> {<br /> try<br /> {<br /> qr.wait();<br /> }<br /> catch (InterruptedException ie)<br /> {}<br /> }<br /> }<br /> qr.close();<br /> }<br /><br />}<br />"
+  - author: "Menaka"
+    date: 2015-08-23
+    html: "This comment has been removed by the author."
+  - author: "Menaka"
+    date: 2015-08-23
+    html: "This comment has been removed by the author."
+  - author: "vernetto"
+    date: 2015-08-23
+    html: "the code above is to move a specific message..... you can find the jmsmessageid using a queue browser (HermesJMS or use standard QueueBrowser from Java) or even using WebLogic console JMS queue browser.<br /><br />"
+  - author: "Menaka"
+    date: 2015-08-23
+    html: "Hi,<br /><br />Could you please tell me how to get jmsmessageid in the above code or post the full code.<br /><br />Thanks,<br />Marguerite"
+---
+Here how to move JMS messages in WLST <a href="/2011/09/wlst-move-jms-messages.html">/2011/09/wlst-move-jms-messages.html</a><br />
+<br />
+<br />
+Here the Javadoc of the JMSDestinationRuntimeMBean.moveMessages():<br />
+<br />
+<a href="http://docs.oracle.com/cd/E24001_01/apirefs.1111/e13951/mbeans/JMSDestinationRuntimeMBean.html?skipReload=true#moveMessages">http://docs.oracle.com/cd/E24001_01/apirefs.1111/e13951/mbeans/JMSDestinationRuntimeMBean.html?skipReload=true#moveMessages<br />
+</a><br />
+<br />
+<br />
+selector is "JMSMessageID = '${jmsmessageid}'"<br />
+<br />
+javax.management.openmbean.CompositeData you can get it with the JMSDestinationRuntimeMBean.getDestinationInfo() method.<br />
+<br />
+<br />
+<br />
+So this code will work:<br />
+<br />
+<pre name="code" class="brush: java">
+// ctx is a proper InitialContext
+
+  String destinationJNDI = request.getParameter("destinationJNDI");
+  String intermediateJNDI = destinationJNDI.replace("ReprocessQ", "Q");
+  String jmsmessageid = request.getParameter("jmsmessageid");
+  javax.jms.Queue queue = (javax.jms.Queue) ctx.lookup(destinationJNDI);
+  javax.jms.Queue intermediateQueue = (javax.jms.Queue) ctx.lookup(intermediateJNDI);
+    
+  // lookup the queue connection factory
+  QueueConnectionFactory queueConnFactory = (QueueConnectionFactory) ctx.lookup(WEBLOGIC_JMS_XA_CONNECTION_FACTORY);
+  // create a queue connection
+  QueueConnection queueConn = queueConnFactory.createQueueConnection();
+  // create a queue session
+  Session queueSession = queueConn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+  
+  // start the connection
+  queueConn.start();
+  
+  JMSDestinationRuntimeMBean reprocessQueueMBean = JMSRuntimeHelper.getJMSDestinationRuntimeMBean( ctx, queue);
+  JMSDestinationRuntimeMBean intermediateQueueMBean = JMSRuntimeHelper.getJMSDestinationRuntimeMBean( ctx, intermediateQueue);
+  // see http://docs.oracle.com/cd/E24001_01/apirefs.1111/e13951/mbeans/JMSDestinationRuntimeMBean.html?skipReload=true#moveMessages
+  reprocessQueueMBean.moveMessages("JMSMessageID = '" + jmsmessageid + "'", intermediateQueueMBean.getDestinationInfo());
+
+
+</pre>

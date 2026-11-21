@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Of Ant, Python and Shell Scripts"
+date: 2009-05-22T09:46:00.000+02:00
+permalink: /2009/05/of-ant-python-and-shell-scripts.html
+blogger_id: "413301640091253527"
+---
+I am working on a project where people are building Weblogic domains using a mixture of Ant, Python (for WLST) and Unix Shell Scripts. It's very difficult to maintain.<br /><br />Problem 1: some variables are retrieved directly from property files, some are passed as parameters with really cumbersome code. Hard to read and to debug<br /><br />Problem 2: Ant allows little or no flow control, and limited variable manipulation. I recommend using the ant-contrib project, which at least provides you with if and foreach statements, which are really the basis for any intelligent coding. Also, using the scripting (beanshell) capability of Ant could help<br /><br />Problem 3: Python is a scripting language, which means no compilation, no debugger etc.<br /><br />Problem 4: Unix scripting is basically impossible to unittest, and difficult to debug, forget about refactoring<br /><br /><br />On the whole, a more general issue: so far, Administration Guys had to rely on a series of terrible technologies, which kill productivity. When I have Java and Eclipse, why should I code in XML (Ant) or in Python or in Unix Shell? I can be 10 times more productive using the right tools and languages.... so, why? There is a huge technology gap here waiting to be filled by a new smart standard.

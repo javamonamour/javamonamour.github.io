@@ -1,0 +1,26 @@
+---
+layout: post
+title: "Oracle Database requirements for a OSB domain"
+date: 2012-12-06T11:09:00.002+01:00
+permalink: /2012/12/oracle-database-requirements-for-osb.html
+blogger_id: "3674979686563285169"
+tags: ["oracledb", "OSB"]
+---
+This is the official documentation:<br/>
+<a href="http://docs.oracle.com/html/E18558_01/fusion_requirements.htm#BABFDFDD">http://docs.oracle.com/html/E18558_01/fusion_requirements.htm#BABFDFDD</a>  , section  "RCU Requirements for Oracle Databases"  <br/>
+<br/>
+and we need only these components:<br/>
+SOA Infrastructure<br/>
+User Messaging Server (ORASDPM)<br/>
+Metadata Services (MDS)<br/>
+<br/><br/>
+which entails these requirements:<br/>
+<br/>
+- processes: 200<br/>
+- Character set is AL32UTF8.<br/>
+- The SHARED_POOL_SIZE is greater than or equal to 147456KB.<br/>
+- The SGA_MAX_SIZE is greater than or equal to 147456KB.<br/>
+- The DB_BLOCK_SIZE is greater than or equal to 8KB<br/>
+<br/><br/>
+
+

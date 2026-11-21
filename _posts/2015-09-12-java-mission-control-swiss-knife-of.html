@@ -1,0 +1,95 @@
+---
+layout: post
+title: "Java Mission Control, the Swiss Knife of Monitoring"
+date: 2015-09-12T23:23:00.001+02:00
+permalink: /2015/09/java-mission-control-swiss-knife-of.html
+blogger_id: "5698052469266644180"
+tags: ["jmc"]
+---
+I have extensively used JRockit Mission Control and really missed when I moved to Sun-JVM projects.... now that we use WebLogic 12 we have Java 1.7 (> u40) and so we can use Java Mission Control (JMC), which is exactly like the JRockit version..... with its fantastic Flight Recorder...
+
+<br/><br/>
+
+Awesome presentation here ( a  bit blabla in the first few minutes.... just be patient...)
+<br/>
+<iframe width="854" height="480" src="https://www.youtube.com/embed/WMEpRUgp9Y4" frameborder="0" allowfullscreen></iframe>
+
+<br/><br/>
+
+Here the code used in the example:
+
+<pre class="brush: java">
+package com.pierre;
+
+public class DeadlockGenerator {
+    private static class AllocThread extends Thread {
+ public void run() {
+     while (true) {
+  Thread.yield();
+  try {
+      sleep(20 * 1000);
+  } catch (Exception e) {
+
+  }
+  for (int i = 0; i < 40000; i++) {
+      char[] tmp = new char[1024 * 1024];
+      tmp[1] = 'a';
+  }
+     }
+ }
+    }
+
+    private static class LockerThread extends Thread {
+ Object l1;
+ Object l2;
+
+ public void init(Object lock1, Object lock2) {
+     l1 = lock1;
+     l2 = lock2;
+ }
+
+ public void run() {
+     while (true) {
+  synchronized (l1) {
+      try {
+   Thread.sleep(1000);
+      } catch (InterruptedException e) {
+      }
+      ;
+  }
+  synchronized (l2) {
+      try {
+   Thread.sleep(1000);
+      } catch (InterruptedException e) {
+      }
+      ;
+  }
+  System.out.println("Got one!");
+     }
+ }
+    }
+
+    public static void main(String[] args) {
+ AllocThread allocThread = new AllocThread();
+ Object lock1 = new Object();
+ Object lock2 = new Object();
+ LockerThread first = new LockerThread();
+ LockerThread second = new LockerThread();
+ first.init(lock1, lock2);
+ second.init(lock2, lock1);
+ allocThread.start();
+ first.start();
+ second.start();
+
+    }
+}
+
+
+</pre>
+<br/><br/>
+This video is much shorter and at the end it shows how to solve locking issues
+<br/><br/>
+<iframe width="854" height="480" src="https://www.youtube.com/embed/qytuEgVmhsI" frameborder="0" allowfullscreen></iframe>
+<br/><br/>
+
+

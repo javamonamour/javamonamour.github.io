@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Calling an Oracle Stored Procedure in Java or in Python"
+date: 2013-11-12T04:28:00.001+01:00
+permalink: /2013/11/calling-oracle-stored-procedure-in-java.html
+blogger_id: "8670115441485719462"
+tags: ["oracledb", "WLST"]
+---
+I needed to schedule the execution of a Stored Procedure from a cron job.... somebody advised me to use a Java class to do that.
+
+<br/>
+It proved to be really cumbersome... I have followed <a href="http://www.mkyong.com/jdbc/jdbc-callablestatement-stored-procedure-in-parameter-example/">this example</a> and it's working, but it's very verbose and ugly.
+<br/>
+Also, in Java there is no built-in support for getopt style of reading CLI parameters, and using the gnu getopt library seemed overkill to me.
+
+<br/>
+So at the end I will keep using good old zxJDBC from a Python (WLST) script, which supports stored procedures in a VERY simple way:
+
+<a href="http://www.jython.org/archive/21/docs/zxjdbc.html">http://www.jython.org/archive/21/docs/zxjdbc.html</a>
+
+<pre class="brush: java">
+db = zxJDBC.connect(...)
+c = db.cursor()
+params = [None]
+c.callproc("funcout", params)
+</pre>
+
+
+<br/>
+The only disturbing thing is that the startup time for WLST is a bit long, much longer than for a JVM.... but who cares, really, for a job who has to be called once every 10 minutes...
+
+<br/>

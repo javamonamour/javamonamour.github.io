@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Unable to connect to the Oracle WSM Policy Manager"
+date: 2013-05-24T16:40:00.001+02:00
+permalink: /2013/05/unable-to-connect-to-oracle-wsm-policy.html
+blogger_id: "8593859320538791872"
+tags: ["OWSM"]
+---
+on a OSB domain with OWSM installed, we had this error when editing the policies associated to a WSDL-based service:
+
+
+<br/><br/>
+
+<pre>
+
+
+
+oracle.wsm.policymanager.PolicyManagerException: WSM-02120 : Unable to connect to the Oracle WSM Policy Manager due to the following error "javax.naming.CommunicationException [Root exception is java.net.ConnectException: t3s://acme.com:8002: Destination unreachable; nested exception is:
+javax.net.ssl.SSLKeyException: [Security:090477]Certificate chain received from hqchnesoa102.acme.com - 10.53.5.192 was not trusted causing SSL handshake failure.; No available router to destination]". [Possible Cause : Destination unreachable; nested exception is:
+javax.net.ssl.SSLKeyException: [Security:090477]Certificate chain received from hqchnesoa102.acme.com - 10.53.5.192 was not trusted causing SSL handshake failure.; No available router to destination]
+
+</pre>
+
+
+
+<br/><br/>
+
+The root cause was that the Admin server was using a Demo Identity and trust store, while the Managed Servers were using a Custom one. Setting the Admin the same way as the Managed fixed the issue.
+<br/><br/><br/><br/>
+
+
+

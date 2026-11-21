@@ -1,0 +1,21 @@
+---
+layout: post
+title: "WLST to monitor all Datasources on all Managed Servers by connecting only to the Admin"
+date: 2013-11-22T14:24:00.003+01:00
+permalink: /2013/11/wlst-to-monitor-all-datasources-on-all.html
+blogger_id: "8703970802843086933"
+tags: ["WLST"]
+---
+<pre>
+#connect to the admin server
+
+domainRuntime()
+allservers=ls('/ServerRuntimes/', returnMap='true')
+for server in allservers:
+    allds = ls('/ServerRuntimes/' + server + '/JDBCServiceRuntime/' + server + '/JDBCDataSourceRuntimeMBeans', returnMap='true')
+    for ds in allds:
+        cd ('/ServerRuntimes/' + server + '/JDBCServiceRuntime/' + server + '/JDBCDataSourceRuntimeMBeans/' + ds)
+        print server, ds, cmo.getActiveConnectionsCurrentCount()
+
+
+</pre>

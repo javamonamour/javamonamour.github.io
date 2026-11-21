@@ -1,0 +1,128 @@
+---
+layout: post
+title: "Installing SOA Suite, cheatsheet"
+date: 2011-08-31T23:06:00.000+02:00
+permalink: /2011/08/installing-soa-suite-cheatsheet.html
+blogger_id: "4209997915366017918"
+tags: ["SOASuite"]
+---
+After installing OracleXE 10g Express Edition,<br />
+run SQLPlus<br />
+conn system/oracle (or whatever password)<br />
+show parameter processes<br />
+<br />
+by default “processes” should be 40. We should make it 300:<br />
+<br />
+alter system set processes=300 scope=spfile;<br />
+<br />
+conn / as sysdba<br />
+shutdown immediate<br />
+<br />
+startup<br />
+<br />
+conn / as sysdba<br />
+<br />
+show parameter sga<br />
+<br />
+(sga_target should be 768MB)<br />
+alter system set sga_target=350M scope=spfile;<br />
+alter system set sga_max_size=350M scope=spfile;<br />
+shutdown immediate<br />
+startup<br />
+<br />
+INSTALLATION WEBLOGIC WLS<br />
+<br />
+Make sure you have a JDK in C:\Oracle\Middleware\jdk160_18<br />
+<br />
+In your environment variables:<br />
+set JAVA_HOME=C:\Oracle\Middleware\jdk160_18<br />
+set PATH=%JAVA_HOME%\bin;%PATH%<br />
+(ou bien<br />
+set JAVA_HOME=“C:\Program Files\Java\jre6_64bit”<br />
+set PATH=%JAVA_HOME%\bin;%PATH%<br />
+)<br />
+<br />
+To verify, type “java -version” and make sure it's a 1.6<br />
+<br />
+To install WLS:<br />
+<br />
+java -jar wls1033_generic.jar<br />
+<br />
+specify target directory C:\Oracle1\Middleware<br />
+<br />
+INSTALLATION OSB<br />
+<br />
+After installation of WLS, you can install OSB:<br />
+path/to/ofm_osb_generic_11.1.1.3.0_disk1_1of1/osb/Disk1/setup.exe<br />
+<br />
+when asked JDK, enter C:\Oracle\Middleware\jdk160_18<br />
+<br />
+unckeck “IDE Oracle Service Bus” and “Oracle Service Bus Examples”<br />
+<br />
+as target directory specify C:\Oracle1\Middleware\<br />
+<br />
+At the end of the installation you should have a C:\Oracle1\Middleware\Oracle_OSB1 directory<br />
+<br />
+INSTALLATION SOA SUITE<br />
+<br />
+At this point let's install Oracle SOA Suite:<br />
+<br />
+path/to/ofm_soa_generic_11.1.1.2.0_disk1_1of1/osb/Disk1/setup<br />
+<br />
+Just give same parameters as for OSB installation.<br />
+<br />
+At this point let's install the patchset path/to 11.3: /ofm_soa_generic_11.1.1.3.0_disk1_1of1/osb/Disk1/setup<br />
+<br />
+To create the DB schemas in Oracle, run rcu.bat<br />
+point to localhost:1521<br />
+username: sys<br />
+as role, choose SYSDBA<br />
+<br />
+ignore the warning about the ENCODING AL32UTF8, and the “DB version not supported” warning<br />
+<br />
+choose “DEV” as a prefix, so as to distinguish the tables belonging to this environment<br />
+<br />
+choose<br />
+DEV_SOAINFRA<br />
+DEV_ORASDPM<br />
+DEV_MDS<br />
+<br />
+choose “use same password for all schemas”<br />
+<br />
+accept DEV_IASTEMP as temporary tablespace<br />
+<br />
+Now you can create a domain:<br />
+<br />
+cd C:\Oracle1\Middleware\wlserver_10.3\common\bin\<br />
+config.cmd<br />
+<br />
+choose: “Oracle Enterprise Manager”,<br />
+“Oracle SOA Suite”,<br />
+“Oracle Service Bus Extension, Single Domain”<br />
+“Oracle WSM Policy Manager”<br />
+“Oracle Service Bus OWSM Extension”<br />
+<br />
+and all the components selected by default with the above options (JAX_RPC, JRF).<br />
+<br />
+name the domain soadev<br />
+<br />
+choose development mode and the usual JDK C:\Oracle\Middleware\jdk160_18<br />
+<br />
+for DB sconfiguration, select all schemas, and set “localhost” for host name, and XE for Service Name, Select “Oracle” as provider, and “Oracle Driver (thin) for instance connections” as driver.<br />
+<br />
+make sure that OSB JMS Reporting Provider points to SOA_INFRA<br />
+<br />
+remove creation of Managed Server (we shall create only AdminServer)<br />
+<br />
+Open C:\Oracle1\Middleware\user_projects\domains\soadev\bin<br />
+setSOADomainEnv.cmd<br />
+<br />
+set DEFAULT_MEM_ARGS=”-Xms1024m -Xmx1024m”<br />
+set PORT_MEM_ARGS=-Xms768m -Xmx1536m<br />
+<br />
+do startWebLogic.cmd<br />
+<br />
+For JDeveloper, in jdev.conf you might have to set:<br />
+AddVMOption -XX:MaxPermSize=128M<br />
+AddVMOption -Xmx512M<br />
+AddVMOption -Xms512M

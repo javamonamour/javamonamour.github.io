@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Installing Puppet on Ubuntu"
+date: 2013-04-21T19:26:00.001+02:00
+permalink: /2013/04/installing-puppet-on-ubuntu.html
+blogger_id: "8968744788968263502"
+---
+<a href="http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html">Instructions are here</a>
+<br/><br/>
+
+Download http://apt.puppetlabs.com/puppetlabs-release-stable.deb and put it on your vbox 
+<br/>
+
+sudo dpkg -i puppetlabs-release-stable.deb
+<br/>
+puppet help
+<br/>
+puppet --version
+<br/><br/>
+One can install the "free learn puppet VM" : <a href="http://info.puppetlabs.com/download-learning-puppet-VM.html">http://info.puppetlabs.com/download-learning-puppet-VM.html</a> (Vbox or VM)
+
+<br/><br/><br/><br/>
+
+to dry run a puppet manifest:<br/>
+<i>puppet apply --noop default.pp</i>
+<br/><br/>
+run facter to gather info on your system:
+<br/>
+<i>facter</i>
+<br/><br/>
+
+to run a class in a manifest:
+
+<pre>
+include pippo
+
+class pippo {
+
+}
+</pre>
+
+<br/><br/>
+
+
+<br/><br/>
+
+

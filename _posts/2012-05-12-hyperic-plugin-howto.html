@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Hyperic Plugin HowTo"
+date: 2012-05-12T13:29:00.004+02:00
+permalink: /2012/05/hyperic-plugin-howto.html
+blogger_id: "2874255448062562820"
+tags: ["hyperic"]
+---
+<a href="http://support.hyperic.com/display/hyperforge/Deploying+Plugins+-+Basic+How+To">http://support.hyperic.com/display/hyperforge/Deploying+Plugins+-+Basic+How+To</a><br />
+<br />
+<br />
+you must deploy the plugin on both the server and agent side<br />
+<br />
+server and agent: <br />
+<br />
+Windows<br />
+C:\pierre\hypericserver\server-4.6.5-EE\hq-engine\hq-server\webapps\ROOT\WEB-INF\hq-plugins<br />
+c:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\plugins<br />
+<br />
+Linux<br />
+/opt/hyperic/server/server-4.6.5-EE/hq-engine/hq-server/webapps/ROOT/WEB-INF/hq-plugins<br />
+/opt/hyperic/agent/agent-4.6.5-EE/bundles/agent-4.6.5/pdk/plugins<br />
+<br />
+<br />
+<br />
+http://support.hyperic.com/display/DOCS46/JMX+Plugin+Tutorial<br />
+<br />
+see immediately this for help <a href="http://communities.vmware.com/message/1939306">http://communities.vmware.com/message/1939306</a><br />
+"I tried running the commands with the argument -Dproc.java.home=<install path to the applications JDK> and it is able to match the processes running."<br />
+<br />
+(of course Hyperic documentation make a lot of blablabla but they forget to tell you clearly how to set each property, and leave to you the reverse engineering of their product...)<br />
+<br />
+this is a SERVER plugin ("Java"), exposing SERVICES ("Java GC")<br />
+<br />
+Here how to get the HQ source code:<br />
+svn co http://svn.hyperic.org/projects/hq/trunk hyperic-hq<br />
+<br />
+<br />
+How to have SIGAR discover a WebLogic server:<br />
+<br />
+ps State.Name.eq=java,CredName.User.eq=soa,Args.*.ct=-Dweblogic.Name=osbpp1ms1<br />
+<br />
+where osbpp1ms1 is the server name

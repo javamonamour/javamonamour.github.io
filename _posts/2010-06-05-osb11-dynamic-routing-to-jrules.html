@@ -1,0 +1,76 @@
+---
+layout: post
+title: "OSB dynamic routing to JRules"
+date: 2010-06-05T15:20:00.001+02:00
+permalink: /2010/06/osb11-dynamic-routing-to-jrules.html
+blogger_id: "1932800792623521539"
+tags: ["jrules", "osb11"]
+---
+We want to provide a generic proxy to invoke JRules.<br />
+<br />
+We provide a routing table in a <b>jrulesEndpointLookupTable</b> XQuery:<br />
+<br />
+&lt;operations&gt;<br />
+&lt;operation&gt;<br />
+&lt;name&gt;<b>checkemployee</b>&lt;/name&gt;<br />
+&lt;endpoint&gt;http://localhost:8080/DecisionService/ws/PV01_RuleApp/1.0/PV01_RuleProject/1.0&lt;/endpoint&gt;<br />
+&lt;/operation&gt;<br />
+<br />
+&lt;operation&gt;<br />
+&lt;name&gt;<b>checkcompany</b>&lt;/name&gt;<br />
+&lt;endpoint&gt;http://localhost:8080/DecisionService/ws/PV01_RuleApp/1.0/PV01_RuleProjectCompany/1.0&lt;/endpoint&gt;<br />
+&lt;/operation&gt;<br />
+<br />
+<br />
+&lt;/operations&gt;<br />
+<br />
+<br />
+where we identify each Ruleset with an identifier (<b>checkemployee</b>).<br />
+The Request payload will specify this identifier (<b>jrulesOperation</b>), together with the <b>JRules payload</b>:<br />
+<br />
+&lt;xsd:element name="DecisionServiceRequest"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;xsd:complexType&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;xsd:sequence&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;xsd:element name="<b>jrulesOperation</b>" type="xsd:string"/&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;xsd:element name="<b>jrulesPayload</b>" type="xsd:anyType"/&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/xsd:sequence&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/xsd:complexType&gt;<br />
+&lt;/xsd:element&gt;<br />
+<br />
+<br />
+This is a sample payload:<br />
+<br />
+&lt;dec:DecisionServiceRequest xmlns:dec="http://www.ilog.com/rules/DecisionService"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;dec:jrulesOperation&gt;checkemployee&lt;/dec:jrulesOperation&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;dec:jrulesPayload&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;<b>par:employeeRequest</b> xmlns:par="http://www.ilog.com/rules/param" xmlns:emp="http://www.acme.com/Employee"&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;emp:EmployeeRequest&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;emp:SSN&gt;1234-56-7890&lt;/emp:SSN&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;emp:name&gt;Pierre&lt;/emp:name&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;emp:dateOfBirth&gt;1961-02-11&lt;/emp:dateOfBirth&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;emp:employeeType&gt;none&lt;/emp:employeeType&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;emp:salary&gt;20&lt;/emp:salary&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/emp:EmployeeRequest&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/par:employeeRequest&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/dec:jrulesPayload&gt;<br />
+&lt;/dec:DecisionServiceRequest&gt;<br />
+<br />
+where <b>par:employeeRequest</b> is the verbalization of the input parameter in JRules.<br />
+<br />
+The OSB proxy service must:<br />
+<br />
+- extract the jrulesOperation (checkemployee) and payload:<br />
+<br />
+$body/dec:DecisionServiceRequest/dec:jrulesOperation/text() <br />
+$body/dec:DecisionServiceRequest/dec:jrulesPayload/node() <br />
+<br />
+- do a lookup on the <b>jrulesEndpointLookupTable</b>  to determine the endpoint:<br />
+<br />
+$jrulesEndpointTable/operation[name=$jrulesOperation]/endpoint/text() <br />
+<br />
+- do a Service Callout by using the Routing Option element to set the URI<br />
+<br />
+<br />
+- return as a body the response from JRules:<br />
+<br />
+replace . in variable body with variable jrulesResponse

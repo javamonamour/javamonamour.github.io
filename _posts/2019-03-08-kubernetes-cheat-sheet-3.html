@@ -1,0 +1,95 @@
+---
+layout: post
+title: "Kubernetes cheat sheet 3"
+date: 2019-03-08T11:31:00.000+01:00
+permalink: /2019/03/kubernetes-cheat-sheet-3.html
+blogger_id: "4109333303208019532"
+tags: ["kubernetes"]
+---
+<br />
+<h2>Network Policies</h2><br />
+kubectl get networkpolicy<br />
+<br />
+kubectl describe networkpolicy<br />
+<br />
+<pre>Name:         payroll-policy
+Namespace:    default
+Created on:   2019-03-08 08:47:51 +0000 UTC
+Labels:       &lt;none>
+Annotations:  &lt;none>
+Spec:
+  PodSelector:     name=payroll
+  Allowing ingress traffic:
+    To Port: 8080/TCP
+    From:
+      PodSelector: name=internal
+  Allowing egress traffic:
+    &lt;none> (Selected pods are isolated for egress connectivity)
+  Policy Types: Ingress
+
+</pre><br />
+<pre>apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: internal-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      name: internal
+  policyTypes:
+  - Egress
+  - Ingress
+  ingress:
+    - {}
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          name: mysql
+    ports:
+    - protocol: TCP
+      port: 3306
+
+  - to:
+    - podSelector:
+        matchLabels:
+          name: payroll
+    ports:
+    - protocol: TCP
+      port: 8080
+
+</pre><br />
+<br />
+<br />
+<h2>VOLUMES</h2><br />
+<br />
+<a href="https://portworx.com/basic-guide-kubernetes-storage/">https://portworx.com/basic-guide-kubernetes-storage/</a> good article<br />
+<br />
+<a href="https://kubernetes.io/docs/concepts/storage/volumes/">https://kubernetes.io/docs/concepts/storage/volumes/</a><br />
+<br />
+<br />
+<a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/">https://kubernetes.io/docs/concepts/storage/persistent-volumes/</a><br />
+<br />
+<pre>
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: task-pv
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    volumeID: vol-867g5kii
+    fsType: ext4
+
+</pre><br />
+<a href="https://github.com/kodekloudhub/kubernetes-challenge-1-wordpress">https://github.com/kodekloudhub/kubernetes-challenge-1-wordpress</a><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

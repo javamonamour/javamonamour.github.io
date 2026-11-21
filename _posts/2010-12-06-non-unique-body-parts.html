@@ -1,0 +1,15 @@
+---
+layout: post
+title: "Non unique body parts!"
+date: 2010-12-06T00:55:00.001+01:00
+permalink: /2010/12/non-unique-body-parts.html
+blogger_id: "8134373725519926174"
+tags: ["wsdl"]
+---
+If you get this message, you better fix it, don't rely on SOAPAction for dispatching. Every operation should have a unique body structure, carrying as root element the operation name.<br />
+<br />
+Most likely, the mistake has been: <br />
+declaring multiple wsdl:message  with the same "part" structure.<br />
+See <a href="/2010/06/helloworld-wsdl.html">here</a> for a template you can use to write your WSDL.<br />
+<br />
+I know, WSDL are a pain in the neck, especially the 1.1 version.

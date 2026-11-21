@@ -1,0 +1,23 @@
+---
+layout: post
+title: "Installing WebLogic: no space left on device"
+date: 2013-11-18T10:15:00.001+01:00
+permalink: /2013/11/installing-weblogic-no-space-left-on.html
+blogger_id: "4289322039966081941"
+tags: ["weblogic"]
+---
+if you run the generic installer, be aware that it will unzip a load of stuff in the /tmp directory. 
+<br/>
+You might get a "no space left on device".
+<br/>
+Run "df -m" to check how much space you have on /tmp... I guess it should be some 1.5 G at least.
+
+<br/>
+<br/>
+If you can't increase /tmp, the workaround is to specify a tmpdir:
+<br/><br/>
+java <b>-Djava.io.tmpdir=/vagrant</b> -jar /opt/oracle/software/wls1035_generic.jar -mode=silent -silent_xml=/opt/oracle/bin/software/silent_${SOA_USER}.xml
+<br/><br/>
+
+
+

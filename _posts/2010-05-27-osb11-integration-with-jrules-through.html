@@ -1,0 +1,68 @@
+---
+layout: post
+title: "OSB integration with JRules through SOAP or EJB"
+date: 2010-05-27T13:25:00.001+02:00
+permalink: /2010/05/osb11-integration-with-jrules-through.html
+blogger_id: "675782977258036128"
+tags: ["jrules", "osb11"]
+---
+First, let's get familiar with this new baby, JRules; this can be done simply by playing with her.<br />
+<br />
+Documentation:<br />
+<a href="http://publib.boulder.ibm.com/infocenter/brjrules/v7r0/index.jsp">http://publib.boulder.ibm.com/infocenter/brjrules/v7r0/index.jsp</a><br />
+<br />
+Download JRules 7.0 binaries (including Tomcat, Derby etc):<br />
+<br />
+https://www14.software.ibm.com/webapp/iwm/web/reg/download.do?source=swg-iwilogjt70&amp;S_PKG=dl&amp;S_TACT=104CBW71&lt;=en_US&amp;cp=UTF-8&amp;dlmethod=http<br />
+<br />
+<br />
+(you need to have an account with IBM, it's free anyhow)<br />
+<br />
+<br />
+You can deploy JRules to WebLogic - it's only a bunch of EARs. In this case you access this way:<br />
+http://localhost:7001/res<br />
+<br />
+The Console gives you:<br />
+<br />
+<b>Explorer </b>- this contains the <b>Navigator</b>, to display the <b>RuleApps </b>and the <b>Decision Services</b><br />
+You can Create a <b>RuleApp</b>, add <b>RuleSet </b>to a RuleApp by provinding a <span class="nowrapColumn"><b>Ruleset Archive</b>.</span><br />
+<br />
+Decision Warehouse<br />
+<br />
+Diagnostics<br />
+<br />
+Server Info<br />
+<br />
+<br />
+In WebLogic console, view the JNDI tree and you will see this:<br />
+<br />
+Binding Name: eis.XUConnectionFactory<br />
+<br />
+Class: ilog.rules.res.xu.cci.<b>IlrXUConnectionFactory</b><br />
+<br />
+<br />
+Unfortunately the JRules manual says:<br />
+<br />
+"EJB3 bindings are supported for the JBoss 4.2/5.0, WebSphere 7;0 application servers."<br />
+<br />
+which doesn't sound good if you use WebLogic. <br />
+<br />
+<br />
+Anyway ilog/rules/res/xu/cci/<b>IlrXUConnectionFactory</b>.class is in these 2 JARs:<br />
+<br />
+C:\Program Files\IBM\WebSphereILOGJRules702\executionserver\lib\jrules-res-execution.jar:<br />
+C:\Program Files\IBM\WebSphereILOGJRules702\executionserver\lib\jrules-res-session-java.jar:<br />
+<br />
+Here<br />
+http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m2/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global1674.html<br />
+<br />
+it mentions:<br />
+"how to execute a simple stateless rule session on a Java EE application server...by using a Java client."<br />
+<br />
+and here<br />
+<br />
+<a href="http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m2/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global308.html">http://publib.boulder.ibm.com/infocenter/brjrules/v7r0m2/index.jsp?topic=/com.ibm.websphere.ilog.jrules.doc/Content/Business_Rules/Documentation/_pubskel/JRules/ps_JRules_Global308.html</a><br />
+<br />
+a promising tutorial on how to invoke JRules from WebLogic Workshop.<br />
+<br />
+WIP....

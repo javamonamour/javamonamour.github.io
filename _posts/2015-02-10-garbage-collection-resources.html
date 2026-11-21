@@ -1,0 +1,94 @@
+---
+layout: post
+title: "Garbage Collection Resources"
+date: 2015-02-10T15:25:00.003+01:00
+permalink: /2015/02/garbage-collection-resources.html
+blogger_id: "3039602810895584300"
+tags: ["gc"]
+---
+If you are confronted with a JVM crash in PROD, you might want first to read some documents on GC.
+<br/><br/>
+http://www.oracle.com/technetwork/java/javase/gc-tuning-6-140523.html for Java 6, very well explained conceptually. 
+<br/><br/>
+
+<a href="http://www.fasterj.com/articles/oraclecollectors1.shtml">http://www.fasterj.com/articles/oraclecollectors1.shtml</a> brillant lookup of the main flags available, and possible combination of GC for yound and old generation (Java 7)
+
+<br/><br/>
+
+<a href="http://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html">http://www.oracle.com/technetwork/java/javase/tech/vmoptions-jsp-140102.html</a> list of all JDK 7 options.
+
+<br/><br/>
+
+To test the options, you can run InfiniteLoop.java :
+
+<pre class="brush: java">
+
+public class InfiniteLoop {
+    public static void main(String[] args) throws Exception {
+        for (;;) {Thread.sleep(1000);}
+    }
+}
+</pre>
+<br/><br/>
+and run jconsole....in the "threads" tab you have a nice summary of the Eden Space, Survivor Space, Old Gen.
+
+<br/><br/>
+you can also run jinfo:
+
+<pre>
+jinfo -flag UseParallelGC 3797
+jinfo -flag MinHeapFreeRatio 3797
+jinfo -flag UseSerialGC 3797
+
+</pre>
+
+<br/><br/>
+where 3797 is the process PID.
+<br/><br/>
+Attempts to change GC strategy runtime : 
+<br/><br/>
+jinfo -flag +UseSerialGC 3797 
+<br/><br/>
+will miserably fail:
+<br/><br/>
+<pre>
+Exception in thread "main" java.io.IOException: Command failed in target VM
+ at sun.tools.attach.BsdVirtualMachine.execute(BsdVirtualMachine.java:208)
+ at sun.tools.attach.HotSpotVirtualMachine.executeCommand(HotSpotVirtualMachine.java:217)
+ at sun.tools.attach.HotSpotVirtualMachine.setFlag(HotSpotVirtualMachine.java:190)
+ at sun.tools.jinfo.JInfo.flag(JInfo.java:129)
+ at sun.tools.jinfo.JInfo.main(JInfo.java:76)
+
+</pre>
+
+<br/><br/>
+
+On a different topic, read also:
+<br/><br/>
+1 - <a href="http://www.oracle.com/technetwork/java/javase/crashes-137240.html">http://www.oracle.com/technetwork/java/javase/crashes-137240.html</a> this document about troubleshooting system crashes
+<br/><br/>
+2 - <a href="http://www.oracle.com/technetwork/java/hotspotfaq-138619.html">http://www.oracle.com/technetwork/java/hotspotfaq-138619.html</a> this interesting FAQ list
+<br/><br/>
+3 - this document <a href="http://www.oracle.com/technetwork/java/jdk50-ts-guide-149808.pdf">http://www.oracle.com/technetwork/java/jdk50-ts-guide-149808.pdf</a> (a bit outdated) about jmap, jinfo, jstack etc
+
+<br/><br/>
+4 - <a href="http://www.oracle.com/technetwork/java/javase/index-137495.html">http://www.oracle.com/technetwork/java/javase/index-137495.html</a> this one repeats more or less - with more details - the info in the above document n. 3
+
+<br/><br/>
+
+Priceless are these commands:
+
+<pre>
+jmap -heap 3843
+jmap -histo 3843
+jmap -permstat 3843
+jmap -dump:file=dump.map 3843
+jhat -port 7401 dump.map (at this point open your browser at localhost:7401)
+
+jstat -gc 3843
+jstat -printcompilation 3843
+
+jstat -gcutil 3843 250 7
+
+
+</pre>

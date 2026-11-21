@@ -1,0 +1,40 @@
+---
+layout: post
+title: "Another nightmare on Remote Desktop Street"
+date: 2014-12-02T18:22:00.000+01:00
+permalink: /2014/12/another-nightmare-on-remote-desktop.html
+blogger_id: "580112586767111608"
+tags: ["remotedesktop"]
+---
+Remote Desktop is a stinky piece of code, you can see it by how little it helps you troubleshooting when it fails connecting. The error message is laughable in its generality.
+<br/><br/>
+
+First make sure it's actually listening:
+<br/><br/>
+netstat -an | find "3389"
+<br/><br/>
+
+where 3389 is the default port. Don't try to find it in HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\TerminalServer\WinStations\RDP-Tcp\PortNumber because for instance on my WIndows 7 Enteprise this folder doesn't even exist.
+
+<br/><br/>
+You can go <a href="http://www.7tutorials.com/enabling-remote-desktop-connections-windows-7">through these troubleshooting steps</a> 
+
+<br/><br/>
+
+in my case, I had followed these instructions
+
+<pre>
+Log into the server and press Windows key + R then type MMC.exe .
+Click on File > Add/Remove Snap-in > click on Group Policy Object > Add> Finish > OK.
+Double click on Local Computer Policy > double click on Computer Configuration > Administrative Templates > Windows Components > Remote Desktop Services > Remote Desktop Session Host > Connections.
+Limit Number of Connections = 999999.
+
+</pre>
+<br/><br/>
+MMC is Microsoft Management Console - a replacement for direct Registry Manipulation. It stinks, like all Windows UI.
+<br/><br/>
+
+I have done that, and it stopped working. Then I have done exactly the same manipulation, and checking if the flag "remote desktop enabled" was set, and it was not! Enabling it again fixes the issue. This MCC.exe utility is confusing to say the least... just don't play with it...
+
+
+

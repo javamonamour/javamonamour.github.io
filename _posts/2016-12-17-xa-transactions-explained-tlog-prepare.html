@@ -1,0 +1,31 @@
+---
+layout: post
+title: "XA transactions explained : TLOG, prepare, recover, determiner"
+date: 2016-12-17T18:40:00.001+01:00
+permalink: /2016/12/xa-transactions-explained-tlog-prepare.html
+blogger_id: "6756294986695540618"
+tags: ["tlog", "xa"]
+---
+<a href="https://blogs.oracle.com/WebLogicServer/entry/exiting_new_jta_12_1">https://blogs.oracle.com/WebLogicServer/entry/exiting_new_jta_12_1</a>
+<br/><br/>
+about the "removal of TX logging feature" <br/><br/>
+<iframe width="850" height="480" src="https://www.youtube.com/embed/uo9OyCMehOM" frameborder="0" allowfullscreen></iframe>
+<br/><br/>
+
+and more in detail
+<br/><br/>
+<iframe width="1280" height="720" src="https://www.youtube.com/embed/x9FfocgPv3A" frameborder="0" allowfullscreen></iframe>
+<br/><br/>
+
+great explanation by Monica Riccelli!
+<br/><br/>
+in WLS 12.2.1, check in Cluster/JTA the properties "Write recovery logs when determiners configured" and "determiner".
+
+<br/><br/>
+Use: -Dweblogic.debug.DebugJTAXA=true -Dweblogic.debug.DebugJTA2PC=true -Dweblogic.debug.DebugJTARecovery=true (see <a href="https://blogs.oracle.com/vijaya/entry/weblogic_server_debug_flags_jta">https://blogs.oracle.com/vijaya/entry/weblogic_server_debug_flags_jta</a> )
+
+<br/><br/>
+Plus: Cluster Transaction Affinity explained here <a href="http://docs.oracle.com/middleware/1213/wls/WLJTA/trxcon.htm#WLJTA386">http://docs.oracle.com/middleware/1213/wls/WLJTA/trxcon.htm#WLJTA386</a>
+
+
+<br/><br/>

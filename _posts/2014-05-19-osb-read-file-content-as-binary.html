@@ -1,0 +1,42 @@
+---
+layout: post
+title: "OSB, read file content as binary response from HTTP"
+date: 2014-05-19T16:48:00.000+02:00
+permalink: /2014/05/osb-read-file-content-as-binary.html
+blogger_id: "2691381433644512334"
+tags: ["OSB"]
+blogger_comments:
+  - author: "Luthra.Ankit"
+    date: 2016-02-24
+    html: "<b>  how to assign binary content to a variable ? </b>"
+---
+The trick is:
+<br/><br/>
+<ul>
+<li>Create a "Messaging Service" Business Service</li>
+<li>Request type = None</li>
+<li>Response type = Binary</li>
+<li>HTTP method = GET</li>
+</ul>
+
+<br/><br/>
+the GET method becomes available only when you choose "request type = None", otherwise you have only POST, PUT and DELETE.
+<br/><br/>
+
+This will return a binary-content response variable that you can process as a Java byte[].
+<br/><br/>
+
+Service Callout will not work with such a BS, because it's Request Type = None. If you try doing it, you get "A callout cannot invoke a one-way operation". Try rather Route.
+<br/><br/>
+
+Forcing a GET HTTP Method to a BS with "Request Type = String", you get this error message:
+<br/><br/>
+"[WliSbTransports:381333]HTTP method "GET" is only allowed for Service Type any xml or messaging type with none as the request type."
+<br/><br/>
+
+
+If you get NullPointerException, try applying Patch 12362492 - patching /opt/oracle/fmw11_1_1_5/osb/lib/sb-transports-main.jar - it worked for us.
+
+
+
+

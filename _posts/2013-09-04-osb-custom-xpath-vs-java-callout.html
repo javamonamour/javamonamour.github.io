@@ -1,0 +1,55 @@
+---
+layout: post
+title: "OSB: Custom XPath vs Java Callout classloader difference"
+date: 2013-09-04T18:34:00.001+02:00
+permalink: /2013/09/osb-custom-xpath-vs-java-callout.html
+blogger_id: "4974338073521476907"
+tags: ["customXpath", "javacallout", "OSB"]
+---
+the Custom Xpath classloader doesn't access the jars in the domain lib folder (like /opt/oracle/domains/osbpl1do/lib folder), while the java callout does. So a function might work when invoked by JavaCallout, but give a nasty error from a customxpath:
+
+<pre>
+ java.lang.ClassNotFoundException: org.apache.commons.codec.binary.Hex
+ at weblogic.utils.classloaders.GenericClassLoader.findLocalClass(GenericClassLoader.java:297)
+ at weblogic.utils.classloaders.GenericClassLoader.findClass(GenericClassLoader.java:270)
+ at java.lang.ClassLoader.loadClass(ClassLoader.java:306)
+ at java.lang.ClassLoader.loadClass(ClassLoader.java:247)
+ at weblogic.utils.classloaders.GenericClassLoader.loadClass(GenericClassLoader.java:179)
+
+</pre>
+
+
+<br/>
+If you need some common libraries in a Custom Xpath, you better add the jar explicitly to the JVM classpath 
+
+
+<br/>
+<pre>
+vi /opt/oracle/domains/osbpl1do/bin/setDomainEnv.sh
+
+EXT_POST_CLASSPATH=/opt/oracle/domains/osbpl1do/lib/commons-codec-1.4.jar
+</pre>
+
+restart your managed server
+
+<br/>
+Check the JVM classpath:<br/>
+<pre>
+pid="the managed server pid"
+jinfo -sysprops ${pid} | grep java.class.path | awk -F'=' '{print $2}'
+</pre>
+<br/>
+this gives me this new classpath:
+<br/>
+
+<pre>
+....many more
+/opt/oracle/fmw11_1_1_5/wlserver_10.3/server/lib/xqrl.jar
+/opt/oracle/domains/osbpl1dom/lib/commons-codec-1.4.jar
+/opt/oracle/fmw11_1_1_5/patch_wls1035/profiles/default/sys_manifest_classpath/weblogic_patch.jar
+....many more
+</pre>
+
+<br/>
+<a href="http://docs.oracle.com/cd/E15051_01/wls/docs103/programming/classloading.html">For more on WebLogic classloader, see here</a>
+

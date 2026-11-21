@@ -1,0 +1,8 @@
+---
+layout: post
+title: "SSH and SSHExec from Java client"
+date: 2009-06-18T19:20:00.000+02:00
+permalink: /2009/06/ssh-from-java.html
+blogger_id: "8205275572777165029"
+---
+you can reuse the existing Ant implementation of SSHExec:<br /><br />import org.apache.tools.ant.Project;<br />import org.apache.tools.ant.taskdefs.optional.ssh.SSHExec;<br /><br />public class UnixShellTest {<br />   public static void main(String[] args) throws Exception {<br />       UnixShellTest shellTest = new UnixShellTest();<br />       shellTest.test();<br />   }<br /><br />   private void test() throws Exception {<br />       Project p = new Project();<br />       final SSHExec sshexec = new SSHExec();<br />       sshexec.setProject(p);<br />       sshexec.setCommand("ls");<br />       sshexec.setHost("yourunixhosthere");<br />       sshexec.setPassword("yourunixpassword");<br />       sshexec.setUsername("yourunixusername");<br />       sshexec.setTrust(true);<br />       sshexec.setOutputproperty("result");<br />       sshexec.execute();<br />       String result = sshexec.getProject().getProperty("result");<br />       System.out.println("result= " + result);<br />   }<br />}

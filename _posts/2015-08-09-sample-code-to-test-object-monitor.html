@@ -1,0 +1,107 @@
+---
+layout: post
+title: "Sample code to test an object monitor"
+date: 2015-08-09T22:16:00.001+02:00
+permalink: /2015/08/sample-code-to-test-object-monitor.html
+blogger_id: "8050066128216354531"
+tags: ["threaddump"]
+---
+<pre class="brush: java">
+package com.pierre;
+
+public class LockGeneration {
+ public static Object myMonitor = new Object();
+
+ public static void main(String[] args) throws InterruptedException {
+  T1 t1 = new T1();
+  T2 t2 = new T2();
+  t1.start();
+  t2.start();
+  for (;;) {
+   Thread.sleep(1000);
+  }
+ }
+
+}
+
+class T1 extends Thread {
+
+ @Override
+ public void run() {
+  System.out.println("T1 started");
+  super.run();
+  for (;;) {
+   try {
+    synchronized (LockGeneration.myMonitor) {
+     Thread.sleep(1030);
+    }
+    Thread.sleep(10);
+   } catch (InterruptedException e) {
+    // TODO Auto-generated catch block
+    e.printStackTrace();
+   }
+  }
+ }
+
+}
+
+class T2 extends Thread {
+
+ @Override
+ public void run() {
+  System.out.println("T2 started");
+  super.run();
+  for (;;) {
+   try {
+    synchronized (LockGeneration.myMonitor) {
+     Thread.sleep(1050);
+    }
+    Thread.sleep(10);
+   } catch (InterruptedException e) {
+    // TODO Auto-generated catch block
+    e.printStackTrace();
+   }
+  }
+ }
+
+}
+</pre>
+
+<br/><br/>
+
+a thread dump will show for instance:
+<br/><br/>
+
+<pre>
+"Thread-1" prio=6 tid=0x000000001b9be000 nid=0x3c4c waiting for monitor entry [0x000000001c57f000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+ at com.pierre.T2.run(LockGeneration.java:48)
+ - waiting to lock <0x0000000755ecf6b0> (a java.lang.Object)
+
+   Locked ownable synchronizers:
+ - None
+
+"Thread-0" prio=6 tid=0x000000001b9bd000 nid=0x513c waiting on condition [0x000000001c47f000]
+   java.lang.Thread.State: TIMED_WAITING (sleeping)
+ at java.lang.Thread.sleep(Native Method)
+ at com.pierre.T1.run(LockGeneration.java:27)
+ - locked <0x0000000755ecf6b0> (a java.lang.Object)
+
+   Locked ownable synchronizers:
+ - None
+
+</pre>
+
+<br/><br/>
+so the thread (T1 in this case) holding the lock on the object monitor will show <b>"locked < OBJECT ID > " </b> (the TD shows also the TYPE of the lock, a java.lang.Object)
+
+<br/><br/>
+the thread T1 when sleeping will be in TIMED_WAITING (= wait for on a notification but with a timeout), and waiting on condition
+<br/><br/>
+the thread T2 waiting to acquire the lock will be in <b>BLOCKED (on object monitor)</b> and waiting to lock <0x0000000755ecf6b0> (which is the same OBJECT ID held by T1.
+
+<br/><br/>
+
+
+
+

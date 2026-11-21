@@ -1,0 +1,86 @@
+---
+layout: post
+title: "WebLogic, debugging authorization issues"
+date: 2013-10-22T11:45:00.001+02:00
+permalink: /2013/10/weblogic-debugging-authorization-issues.html
+blogger_id: "3296920024916091889"
+tags: ["security", "weblogic"]
+---
+In weblogic server debug flags page, enable atz, and make yure your logging level is debug. IMPORTANT: to troubleshoot console issues, you should enable the flags and logs on the ADMIN, not on the Managed server.
+
+<br/>
+
+For each operation you do on the console, you should see an entry like this,
+this one is for user weblogic, which is an Administrator:
+<br/>
+<i>
+####&lt;Oct 22, 2013 11:13:21 AM CEST> &lt;Debug> &lt;SecurityAtz> &lt;hqchacme104> &lt;osbpl1ms1> &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;9455361429c2e897:-165939bd:141df6a556f:-8000-000000000000003e> &lt;1382433201784> &lt;BEA-000000> &lt;XACML Authorization isAccessAllowed(): input arguments:> 
+<br/>
+####&lt;Oct 22, 2013 11:13:21 AM CEST> &lt;Debug> &lt;SecurityAtz> &lt;hqchacme104> &lt;osbpl1ms1> &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;9455361429c2e897:-165939bd:141df6a556f:-8000-000000000000003e> &lt;1382433201784> &lt;BEA-000000> &lt; Subject: 4
+<br/>
+ Principal = weblogic.security.principal.WLSUserImpl("weblogic")<br/>
+ Principal = weblogic.security.principal.WLSGroupImpl("Administrators")<br/>
+ Principal = weblogic.security.principal.WLSGroupImpl("IntegrationAdministrators")<br/>
+ Principal = weblogic.security.principal.WLSGroupImpl("AdminChannelUsers")<br/>
+> 
+
+</i>
+<br/>
+and then it will tell you: <br/>
+<pre>Roles:AdminChannelUser, Anonymous, IntegrationAdmin, Admin</pre>
+
+<br/>
+
+then something about the resource you are trying to access:
+
+<br/>
+<i>
+Resource: type=&lt;jmx>, operation=get, application=, mbeanType=weblogic.management.runtime.ServerRuntimeMBean, target=PendingRestartSystemResources
+</i>
+
+<br/>
+
+then the policy applying to that resource:
+<br/>
+<i>
+urn:bea:xacml:2.0:entitlement:resource:type@E@Fjmx@G@M@Ooperation@Eget, 1.0 evaluates to Permit
+</i>
+<br/>
+
+the result of checking the policy:
+<br/>
+<pre>
+XACML Authorization isAccessAllowed(): returning PERMIT
+</pre>
+<br/>
+and again:
+<br/>
+<i>
+com.bea.common.security.internal.service.AccessDecisionServiceImpl.isAccessAllowed AccessDecision returned PERMIT
+</i>
+<br/>
+
+
+
+In case something goes wrong, you will get the dreaded
+<pre>
+XACML Authorization isAccessAllowed(): returning DENY
+</pre>
+
+
+and
+<br/>
+<i>
+urn:bea:xacml:2.0:entitlement:resource:type@E@Fjmx@G@M@Ooperation@Einvoke@M@Oapplication@E@M@OmbeanType@Eweblogic.management.mbeanservers.edit.ConfigurationManagerMBean, 1.0 evaluates to Deny
+</i>
+<br/>
+where at the beginning we have the policy name: urn:bea:xacml:2.0:entitlement:resource:type@E@Fjmx@
+<br/>
+
+
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+---
+layout: post
+title: "Creating dynamically a CLASSPATH in Unix"
+date: 2009-05-25T15:44:00.001+02:00
+permalink: /2009/05/creating-dynamically-classpath-in-unix.html
+blogger_id: "4171440723867552618"
+tags: ["unix"]
+---
+buildClassPath() {<br />        jar_dir=$1<br />        if [ $# -ne 1 ]; then<br />                echo "Jar directory must be specified."<br />                exit 1<br />        fi<br />        class_path=<br />        c=1<br />        for i in `ls $jar_dir/*.jar`<br />        do<br />                if [ "$c" -eq "1" ]; then<br />                        class_path=${i}<br />                        c=2<br />                else<br />                        class_path=${class_path}:${i}<br />                fi<br />        done<br />        echo $class_path<br />        #return $class_path<br />}<br /><br /><br />CP=`buildClassPath /data/software/cruisecontrol-bin-2.8.2/lib`

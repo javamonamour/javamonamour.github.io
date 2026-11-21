@@ -1,0 +1,28 @@
+---
+layout: post
+title: "com.oracle.bpel.client.BPELFault selectionFailure"
+date: 2011-01-25T20:17:00.000+01:00
+permalink: /2011/01/comoraclebpelclientbpelfault.html
+blogger_id: "3196082527513706044"
+tags: ["BPEL"]
+---
+{% raw %}the entire error message was:<br />
+<br />
+<i> 25-Jan-2011 18:54:26 o'clock WET   Error   oracle.soa.bpel.engine.xml   BEA-000000   <br />
+com.oracle.bpel.client.BPELFault: faultName: {{http://schemas.xmlsoap.org/ws/200<br />
+3/03/business-process/}selectionFailure}<br />
+messageType: {{http://schemas.oracle.com/bpel/extension}RuntimeFaultMessage}<br />
+        at com.collaxa.cube.engine.ext.bpel.common.BPELWMPHelper.evalFromValue(BPELWMPHelper.java:368)<br />
+        at com.collaxa.cube.engine.ext.bpel.v1.wmp.BPEL1AssignWMP.__executeStatements(BPEL1AssignWMP.java:137)<br />
+        at com.collaxa.cube.engine.ext.bpel.common.wmp.BaseBPELActivityWMP.perform(BaseBPELActivityWMP.java:158)</i><br />
+        <br />
+<br />
+<br />
+going in the BPEL Instance flow trace, the actual error is traced:<br />
+<br />
+<i>Error in evaluate  from  expression at line "151". The result contains 5 nodes for the XPath expression : "/ns7:Root-Element/ns7:Books/ns7:BOOK_NO".<br />
+</i><br />
+<br />
+basically I had to specify an index in the XPath to return only 1 element....<br />
+<br />
+If you don't provide a fault handler, the actual cause is not logged in the logs...{% endraw %}

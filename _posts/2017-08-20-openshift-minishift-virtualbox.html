@@ -1,0 +1,47 @@
+---
+layout: post
+title: "OpenShift, Minishift, VirtualBox"
+date: 2017-08-20T03:38:00.000+02:00
+permalink: /2017/08/openshift-minishift-virtualbox.html
+blogger_id: "6512716711802312673"
+tags: ["openshift"]
+---
+Excellent VERY quick introduction to <a href="https://docs.openshift.com/">OpenShift</a>:
+<br />
+<br />
+<iframe allowfullscreen="" frameborder="0" height="468" src="https://www.youtube.com/embed/aZ40GobvA1c" width="749"></iframe>
+
+<br />
+<br />
+I am following this nice introduction to OpenShift <a href="https://www.udemy.com/openshift-developers-workshop/">https://www.udemy.com/openshift-developers-workshop/</a> with github <a href="https://github.com/drizzleconsulting">https://github.com/drizzleconsulting</a>
+<br />
+<br />
+Download and install VirtualBox <a href="https://www.virtualbox.org/wiki/Downloads">https://www.virtualbox.org/wiki/Downloads</a>
+
+<br />
+<br />
+Install Docker <a href="https://docs.docker.com/docker-for-windows/">https://docs.docker.com/docker-for-windows/</a>
+<br />
+<br />
+Download and unzip Minishift <a href="https://github.com/minishift/minishift/releases">https://github.com/minishift/minishift/releases</a>
+<br />
+<br />
+If you get this error
+<br />
+<br />
+<pre>.\minishift.exe start
+-- Installing default add-ons ... OK
+-- Checking if Hyper-V driver is configured ... FAIL
+   Hyper-V virtual switch is not set
+</pre>
+<br />
+<br />
+it means that maybe Docker is not installed
+<br />
+<br />
+When I try to install Docker, it tells me "HyperV is not available on Home editions, please use Docker Toolbox" - which uses <a href="https://www.virtualbox.org/">Oracle VirtualBox</a> instead of <a href="https://en.wikipedia.org/wiki/Hyper-V">HyperV</a>
+<br />
+<br />
+Since I have Windows 10 Home and I don't want to waste 170 USD to buy Windows Enterprise, I am installing Docker Toolbox <a href="https://docs.docker.com/toolbox/overview/#whats-in-the-box">https://docs.docker.com/toolbox/overview/#whats-in-the-box</a>  but it still doesn't work... it seems that really only the Windows 10 PRO using Hyper-V works.... what a waste of time to try to make stuff work on Windows...
+<br />
+<br />

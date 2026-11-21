@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Bash shell tricks"
+date: 2010-07-31T12:16:00.005+02:00
+permalink: /2010/07/tarring-files-recursively-with-filter.html
+blogger_id: "455015841832095147"
+tags: ["find", "grep", "tar", "xargs"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2010-08-03
+    html: "Your use of xargs may be dangerous. If you have more files that will fit on a single line, your tar will be overwritten and only contain the last files.<br /><br />Your last use of xargs with grep may fail because of the separator problem. See here why http://en.wikipedia.org/wiki/Xargs#The_separator_problem <br /><br />Consider using GNU Parallel http://www.gnu.org/software/parallel/ instead.<br /><br />Watch the intro video to GNU Parallel at http://www.youtube.com/watch?v=OpaiGYxkSuQ"
+---
+<span style="font-weight:bold;">Tarring files recursively with filter</span><br />
+<br />
+to create:<br />
+find . -name *.out | xargs tar cvf cohservernodes.tar<br />
+<br />
+to append:<br />
+find . -name *.log | xargs tar rvf cohservernodes.tar<br />
+<br />
+to list:<br />
+tar tf cohservernodes.tar<br />
+<br />
+<br />
+<span style="font-weight:bold;">Find a text in files, recursively:</span><br />
+<br />
+find . | xargs grep -s whatever<br />
+<br />
+<br />
+<br />
+find and replace recursively<br />
+<br />
+for file in $(grep -il "whatever" *.txt)<br />
+do<br />
+sed -e "s/Hello/Goodbye/ig" $file > /tmp/tempfile.tmp<br />
+mv /tmp/tempfile.tmp $file<br />
+done<br />
+<br />
+how about:<br />
+<br />
+<i>perl -p -i -e 's/oldstring/newstring/g' `find ./ -name *.html`</i><br />
+<br />
+the above command works very well, but if you try<br />
+<br />
+<i>perl -p -i -e 's/oldstring/newstring/g' `find ./ -name *`</i><br />
+<br />
+you get the error:<br />
+<br />
+Can't do inplace edit: bla is not a regular file, &lt;> line<br />
+<br />
+because it tries to change also the directories<br />
+<br />
+To do a find excluding directories you must do this (add -type f):<br />
+<br />
+<i>perl -p -i -e 's/oldstring/newstring/g' `find ./ -name * -type f`</i>

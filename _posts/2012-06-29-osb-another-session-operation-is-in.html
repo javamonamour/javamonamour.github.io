@@ -1,0 +1,34 @@
+---
+layout: post
+title: "OSB Another session operation is in progress. Please retry later."
+date: 2012-06-29T15:10:00.002+02:00
+permalink: /2012/06/osb-another-session-operation-is-in.html
+blogger_id: "4708194255061854554"
+tags: ["OSB"]
+---
+<a href="http://docs.oracle.com/cd/E17904_01/relnotes.1111/e10133/osb.htm">http://docs.oracle.com/cd/E17904_01/relnotes.1111/e10133/osb.htm</a><br />
+<br />
+<i><br />
+28.2.2 Session Activation Error Message in Firefox<br />
+<br />
+When activating an Oracle Service Bus session in Firefox, session activation takes longer than three minutes and you see an error message stating, "Another session operation is in progress. Please retry later."<br />
+<br />
+The error message is harmless, and you can ignore it. The server is still processing the session activation, and you can wait for activation to finish.<br />
+<br />
+The error message occurs when the Firefox network connection is set to "Manual proxy configuration" and the "HTTP Proxy" value is used for all listed protocols. The message is triggered by Firefox's auto-refresh occurring in conjunction with the proxy settings.<br />
+<br />
+If you want to ensure the error message does not appear rather than ignoring it, change the Firefox proxy settings to another option, such as "Auto-detect proxy settings for this network" or "Automatic proxy configuration URL." To access these options in Firefox, choose Tools > Options > Advanced > Network > Settings.<br />
+<br />
+</i><br />
+<br />
+This is  not our case. I go to $DOMAIN_HOME/osb/config/sessions and there are 2 active sessions, deadlocking each other. You should see a folder for each username who was activating a session.<br />
+<br />
+Shut down the Admin, and manually delete both of those folders in $DOMAIN_HOME/osb/config/sessions/ .<br />
+<br />
+Then try again to create and activate a session. The first time is will silenty fail, the second it will work.<br />
+<br />
+If you get this message:<br />
+<br />
+"[DeploymentService:290036]Deployment for request id '1340973258338' is deferred since target 'osbpr1ms1' is disconnected."<br />
+<br />
+it means you must probably restart some server - no worries.

@@ -1,0 +1,60 @@
+---
+layout: post
+title: "Mac install Windows USB drive NTFS in read write mode"
+date: 2015-03-08T09:37:00.001+01:00
+permalink: /2015/03/mac-install-windows-usb-drive-ntfs-in.html
+blogger_id: "1874981327511944748"
+tags: ["mac"]
+---
+This is probably one of the first things you have to learn about Mac.... it took me one month of Mac usage to actually figure it out.
+<br/><br/>
+
+
+<a href="http://osxdaily.com/2013/10/02/enable-ntfs-write-support-mac-os-x/">http://osxdaily.com/2013/10/02/enable-ntfs-write-support-mac-os-x/</a>
+
+<br/><br/>
+my USB drive is called 2TBSMALL:
+
+<br/><br/>
+<pre>
+diskutil info /Volumes/2TBSMALL | grep UUID 
+#(the result for me is 1B5A8C6C-616A-4537-B0F2-B9D13ADE305B)
+
+sudo nano /etc/fstab
+#(enter this line, then CTRL-O and CTRL-X)
+UUID=1B5A8C6C-616A-4537-B0F2-B9D13ADE305B none ntfs rw,auto,nobrowse
+
+#eject the Drive and insert it again. It should NOT appear in finder - don't panic it's in /Volumes.
+
+#run the Disk Utility and make sure the drive is in R/W mode
+
+#then create a link on the Desktop 
+sudo ln -s /Volumes/DRIVENAME ~/Desktop/DRIVENAME
+#type fn-F11 to show desktop
+</pre>
+
+<br/><br/>
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/987800c1d3c94187.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/b7965a88cd13e467.jpg" /></a></div>
+
+
+<br/><br/>
+
+If this doesn't work, from terminal run "dmesg", in my logs I could find this error:
+
+<br/><br/>
+ntfs_system_inodes_get(): $LogFile is not clean.  Mount in Windows.
+
+
+<br/><br/>
+
+so I put the Drive in Windows, run the "fix errors" utility, done a safe eject and opla', in Mac it worked!
+
+<br/><br/>
+
+
+PS all this obviously STINKS big time, and it proves that Apple and Microsoft are just 2 Corporations who make the planet a miserable place to live.<b> We would be much better off in a planet without Masters and without Slaves, and possibly without Gods and without States - and of course without Armies</b>.
+<br/><br/>
+
+PPS another RANT: how can someone make a keyboard without curly and square braces and pipe sign? Well, Apple did it! Brilliant! IQ below 80...
+
+

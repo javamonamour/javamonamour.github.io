@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Python/Jithon version associated to WLST"
+date: 2013-06-29T07:22:00.001+02:00
+permalink: /2013/06/pythonjithon-version-associated-to-wlst.html
+blogger_id: "6623160781559471118"
+tags: ["WLST"]
+---
+<br/><br/>
+It's becoming a real issue to have to use such an old version of Python, 2.2, in WLST. There are lovely products like SQLAlchemy that we cannot use with such an old version.
+
+<br/><br/>
+
+I have opened an SR with Oracle, they say that it's a common request, they will provide an update in the future, and any version of Python other than the one shipped with WebLogic is unsupported.
+
+<br/><br/>
+
+Since we use WLST merely for configuration tasks, it's quite easy to check if it's doing the right thing: just check the configuration XML generated.
+
+<br/><br/>
+
+Anyway here we are not willing to hack the product and risk a legal suit. It's awkward to code in 2.2 when there is a 2.7 available, but such is life.
+
+

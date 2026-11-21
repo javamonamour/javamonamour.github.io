@@ -1,0 +1,37 @@
+---
+layout: post
+title: "joy of Openshift SCC"
+date: 2019-10-15T12:20:00.002+02:00
+permalink: /2019/10/joy-of-openshift-scc.html
+blogger_id: "5288404097869451373"
+tags: ["openshift"]
+---
+if you do <br />
+<br />
+oc describe project<br />
+<br />
+you will see 2 annotations<br />
+<br />
+openshift.io/sa.scc.supplemental-groups=1000800000/10000<br />
+openshift.io/sa.scc.uid-range=1000800000/10000<br />
+<br />
+<br />
+Even if you specify a "USER 10001" in your Dockerfile, your actual uid will be remapped withing the range specified by those 2 annotations (the second parameter "/10000" is the block length! meaning that you can have 10000 different users starting from uid 1000800000 ) :<br />
+<br />
+<pre>
+sh-4.2$ id
+uid=1000800000(root) gid=0(root) groups=0(root),1000800000
+sh-4.2$ id root
+uid=0(root) gid=0(root) groups=0(root)
+
+</pre><br />
+and in order for this new user to be a first class citizen in your Linux, you must run a uid_entrypoint script to append it to /etc/passwd <br />
+<br />
+for more details:<br />
+<br />
+<a href="https://docs.openshift.com/enterprise/3.1/architecture/additional_concepts/authorization.html">https://docs.openshift.com/enterprise/3.1/architecture/additional_concepts/authorization.html</a><br />
+<br />
+<a href="https://docs.openshift.com/container-platform/3.11/creating_images/guidelines.html#openshift-specific-guidelines">https://docs.openshift.com/container-platform/3.11/creating_images/guidelines.html#openshift-specific-guidelines</a><br />
+<br />
+<br />
+

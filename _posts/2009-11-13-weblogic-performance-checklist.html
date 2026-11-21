@@ -1,0 +1,11 @@
+---
+layout: post
+title: "WebLogic Performance checklist"
+date: 2009-11-13T14:45:00.000+01:00
+permalink: /2009/11/weblogic-performance-checklist.html
+blogger_id: "294128596418923506"
+---
+Pinned-To-Thread on JDBC Connection Pool : to enable <br />
+<br />
+<div dir="ltr" id="result_box">"Set XA Transaction Timeout" and "XA Transaction Timeout" sets the timeout on this resource. It is advisable to define it explicitly and must be greater than the overall timeout of the transaction (and therefore higher than the overall timeout of JTA or of timeout of the EJB that initiated the transaction).<br />
+</div>

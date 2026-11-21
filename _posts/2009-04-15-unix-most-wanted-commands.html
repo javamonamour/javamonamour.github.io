@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Unix most wanted commands"
+date: 2009-04-15T11:29:00.000+02:00
+permalink: /2009/04/unix-most-wanted-commands.html
+blogger_id: "6929787487781507884"
+---
+ps -fu beasvbd  (lists the processes run by a given user)<br /><br />find ./ -name *.jar | while read LINE; do echo $LINE;jar -tvf $LINE | grep TransactionSynchronizationRegistry; done  (find in which jar a given class is)<br /><br /><br />find / -name startNodeManager.sh 2> /dev/null  doesn't display error messages

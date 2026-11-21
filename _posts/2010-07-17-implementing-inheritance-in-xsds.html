@@ -1,0 +1,52 @@
+---
+layout: post
+title: "Implementing inheritance in XSDs"
+date: 2010-07-17T11:53:00.001+02:00
+permalink: /2010/07/implementing-inheritance-in-xsds.html
+blogger_id: "6216272577385322746"
+tags: ["extension", "xsd"]
+---
+this structure:<br />
+<br />
+<pre name="code" class="brush: xml"><xs:complexType name="TAG">
+ </xs:complexType>
+
+
+
+ <xs:element name="TAGA">
+  <xs:complexType>
+  <xs:complexContent>
+  <xs:extension base="TAG">
+   <xs:sequence>
+    <xs:element name="TransactionType" type="xs:string"/>
+
+   </xs:sequence>
+   </xs:extension>
+  </xs:complexContent>
+   </xs:complexType>
+
+</pre><br />
+<br />
+will generate this Java code:<br />
+<br />
+<pre name="code" class="brush: java">@XmlType(name = "TAG")
+public class TAG {
+
+
+}
+
+@XmlRootElement(name = "TAGA")
+
+public class TAGA
+    extends TAG
+{
+    @XmlElement(name = "TransactionType", required = true)
+    protected String transactionType;
+
+}
+</pre><br />
+<br />
+<br />
+This is an excellent way to model in XSD while keeping good OO practices.<br />
+<br />
+You can also factor out in TAG the elements common to all subclasses, exactly as you should do in Java. Be careful with sequence ordering though.

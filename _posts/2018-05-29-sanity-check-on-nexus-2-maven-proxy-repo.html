@@ -1,0 +1,106 @@
+---
+layout: post
+title: "Sanity check on a Nexus 2 Maven Proxy repo"
+date: 2018-05-29T17:56:00.003+02:00
+permalink: /2018/05/sanity-check-on-nexus-2-maven-proxy-repo.html
+blogger_id: "9022927226669914578"
+tags: ["maven", "nexus"]
+---
+The task is: verify that all the JARs in a Nexus 2 repo are still in Maven Central.<br />
+<br />
+I did a <br />
+find /path/to/nexusdata/central -name "*.jar" > alljarsfiltered.txt<br />
+<br />
+<br />
+and then run this Java application:<br />
+<br />
+<br />
+<pre class="brush: java">package mavenchecker;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
+public class MavenChecker {
+ public static ArrayList&lt;String&gt; errors = new ArrayList&lt;String&gt;();
+ public static ArrayList&lt;String&gt; nonexisting = new ArrayList&lt;String&gt;();
+ static int count  = 0;
+
+ public static void main(String[] args) {
+
+  String fileName = &quot;/home/centos/Downloads/alljarsfiltered.txt&quot;;
+  
+  // read file into stream, try-with-resources
+  try (Stream&lt;String&gt; stream = Files.lines(Paths.get(fileName)).parallel()) {
+
+   stream.forEach((line) -&gt; checkLine(line));
+   
+
+  } catch (IOException e) {
+   e.printStackTrace();
+  }
+
+  for (String error : errors) {
+   System.out.println(&quot;ERROR : &quot; + error);
+  }
+
+  for (String nonexistingItem : nonexisting) {
+   System.out.println(&quot;nonexisting : &quot; + nonexistingItem);
+  }
+
+ }
+
+ private static void checkLine(String line) {
+  count++;
+  if (count % 100 == 0) {
+   System.out.println(&quot;COUNT &quot; + count);
+  }
+  if (!line.endsWith(&quot;.jar&quot;))
+   return;
+
+  String gavstring = line.replace(&quot;/path/to/nexusdata/central/&quot;, &quot;&quot;);
+  String[] parts = gavstring.split(&quot;/&quot;);
+  int len = parts.length;
+  if (len &lt; 4) {
+   System.err.println(&quot;invalid length for gavstring &quot; + gavstring + &quot; len = &quot; + len + &quot; should be at least 4&quot;);
+   errors.add(gavstring);
+  } else {
+   String filename = parts[len - 1];
+   String version = parts[len - 2];
+   String artifactid = parts[len - 3];
+   String group = String.join(&quot;.&quot;, Arrays.copyOfRange(parts, 0, len - 3));
+   String message = &quot;filename=&quot; + filename + &quot; group=&quot; + group + &quot; artifactid=&quot; + artifactid + &quot; version=&quot; + version;
+   //System.out.println(message);
+   boolean exists = exists(&quot;https://repo.maven.apache.org/maven2/&quot; + gavstring);
+   if (!exists) nonexisting.add(gavstring);
+   
+   
+  }
+
+ }
+ 
+ public static boolean exists(String URLName){
+     try {
+       HttpURLConnection.setFollowRedirects(false);
+       // note : you may also need
+       //        HttpURLConnection.setInstanceFollowRedirects(false)
+       HttpURLConnection con =
+          (HttpURLConnection) new URL(URLName).openConnection();
+       con.setRequestMethod(&quot;HEAD&quot;);
+       return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
+     }
+     catch (Exception e) {
+        e.printStackTrace();
+        return false;
+     }
+   }
+
+}
+
+
+</pre>

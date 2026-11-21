@@ -1,0 +1,24 @@
+---
+layout: post
+title: "weblogic.management.provider.EditSaveChangesFailedException "
+date: 2013-11-27T10:15:00.003+01:00
+permalink: /2013/11/weblogicmanagementprovidereditsavechang.html
+blogger_id: "1420311131438393221"
+tags: ["weblogic"]
+---
+I try to activate a session in WLS, and I get this 
+<br/>
+java.lang.RuntimeException: weblogic.management.provider.EditSaveChangesFailedException 
+<br/>
+caused by
+<br/>
+<br/><i>
+java.io.IOException: No such file or directory at java.io.UnixFileSystem.createFileExclusively(Native Method) at java.io.File.createNewFile(File.java:883) at weblogic.management.provider.internal.DescriptorHelper.getRecoveryFileForNewFile(DescriptorHelper.java:205) at weblogic.management.provider.internal.DescriptorHelper.saveDescriptorTree(DescriptorHelper.java:122) at weblogic.management.provider.internal.DescriptorHelper.saveDescriptorTree(DescriptorHelper.java:49) at weblogic.management.provider.internal.EditAccessImpl.saveChanges(EditAccessImpl.java:704) ... 133 more 
+</i>
+<br/><br/>
+
+
+It turned out that the file system was full :o(
+<br/><br/>
+No disk space monitoring? Ahi Ahi Ahi....
+<br/><br/>

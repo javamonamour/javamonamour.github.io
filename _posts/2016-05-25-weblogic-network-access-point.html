@@ -1,0 +1,37 @@
+---
+layout: post
+title: "WebLogic network-access-point"
+date: 2016-05-25T13:43:00.000+02:00
+permalink: /2016/05/weblogic-network-access-point.html
+blogger_id: "5952747695270993878"
+tags: ["network", "weblogic"]
+---
+If you need to invoke operations (EJB, WS...) on a specific IP different from the main listen address / port of WLS, you can create inside config.xml a network-access-point and give it a mnemonic name like "INT-Channel" :
+<br />
+
+<pre class="brush: xml">
+   &lt;network-access-point&gt;
+      &lt;name&gt;INT-Channel&lt;/name&gt;
+      &lt;protocol&gt;t3s&lt;/protocol&gt;
+      &lt;listen-address&gt;1.2.3.4&lt;/listen-address&gt;
+      &lt;enabled&gt;true&lt;/enabled&gt;
+      &lt;two-way-ssl-enabled&gt;true&lt;/two-way-ssl-enabled&gt;
+      &lt;client-certificate-enforced&gt;true&lt;/client-certificate-enforced&gt;
+    &lt;/network-access-point&gt; 
+
+</pre>
+
+<br />
+and configure your component in your weblogic-ejb-jar.xml with a clause:
+<br />
+<pre class="brush: xml">
+&lt;weblogic-enterprise-bean&gt;
+     &lt;network-access-point&gt;INT-Channel&lt;/network-access-point&gt;
+&lt;/weblogic-enterprise-bean&gt;
+</pre>
+<br />
+see <a href="https://docs.oracle.com/cd/E11035_01/wls100/ejb/DDreference-ejb-jar.html#network-access-point">https://docs.oracle.com/cd/E11035_01/wls100/ejb/DDreference-ejb-jar.html#network-access-point</a>
+
+
+<br />
+<br />

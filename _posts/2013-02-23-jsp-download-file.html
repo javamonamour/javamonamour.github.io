@@ -1,0 +1,45 @@
+---
+layout: post
+title: " JSP download file"
+date: 2013-02-23T22:28:00.000+01:00
+permalink: /2013/02/jsp-download-file.html
+blogger_id: "8532010750196577675"
+tags: ["jsp"]
+---
+<pre>
+
+
+<%
+
+ response.setContentType("application/xml"); 
+ response.setHeader("Content-Disposition", "attachment;filename=myxmlfile.xml"); 
+
+ File file = new File("myxmlfile.xml");
+ FileInputStream fileIn = new FileInputStream(file);
+ ServletOutputStream outstream = response.getOutputStream();
+  
+ byte[] outputByte = new byte[4096];
+ //copy binary contect to output stream
+ int byteRead;
+ while( ( byteRead = fileIn.read(outputByte, 0, 4096)) != -1)
+ {
+  outstream.write(outputByte, 0, byteRead);
+ }
+ fileIn.close();
+ outstream.flush();
+ outstream.close();
+
+
+ %>        
+
+</pre>
+
+<br/><br/>
+For binary files, use:<br/>
+response.setContentType("application/x-download");
+<br/>
+rather than<br/>
+response.setContentType("application/xml"); <br/>
+
+
+

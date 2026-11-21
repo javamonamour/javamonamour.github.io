@@ -1,0 +1,61 @@
+---
+layout: post
+title: "saltstack getting started"
+date: 2019-09-01T20:14:00.001+02:00
+permalink: /2019/09/saltstack-getting-started.html
+blogger_id: "6580506410038667856"
+tags: ["saltstack"]
+---
+curl -L https://bootstrap.saltstack.com -o install_salt.sh<br />
+<br />
+sudo sh install_salt.sh -M  #install master and minion on same node<br />
+<br />
+/etc/salt<br />
+<br />
+/etc/salt/minion<br />
+master: localhost<br />
+id: myminion<br />
+<br />
+sudo systemctl restart salt-minion <br />
+sudo systemctl restart salt-master <br />
+sudo salt-key<br />
+sudo salt-key -a myminion (then type Y)<br />
+<br />
+sudo salt '*' test.ping<br />
+<br />
+sudo salt-call sys.doc test.ping<br />
+<br />
+sudo salt '*' cmd.run_all 'echo HELLO'<br />
+<br />
+#list matcher<br />
+sudo salt -L 'myminion' test.ping<br />
+<br />
+sudo salt '*' grains.item os<br />
+<br />
+sudo salt '*' grains.items<br />
+<br />
+sudo salt --grain 'os:CentOS' test.ping<br />
+<br />
+#custom grains<br />
+cat /etc/salt/grains<br />
+<br />
+#list all execution modules<br />
+sudo salt '*' sys.list_modules<br />
+<br />
+sudo salt '*' pkg.install htop<br />
+<br />
+sudo salt '*' state.sls apache<br />
+<br />
+<br />
+<br />
+<br />
+Ref:<br />
+<br />
+Colton Meyes - Learning Saltstack (Packt Publishing), really direct and hands-on book.<br />
+<br />
+(PS I had a quick look at "Mastering Saltstack" by Packt, it's waaay too abstract and blablaistic.<br />
+<br />
+<a href="https://docs.saltstack.com/en/latest/">https://docs.saltstack.com/en/latest/</a><br />
+<br />
+<br />
+

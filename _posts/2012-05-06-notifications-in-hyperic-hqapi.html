@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Notifications in Hyperic HQApi"
+date: 2012-05-06T14:24:00.000+02:00
+permalink: /2012/05/notifications-in-hyperic-hqapi.html
+blogger_id: "2573720684508934106"
+tags: ["hyperic"]
+---
+Normally in the HQ GUI you can setup an email notification, in this example the user "pippo" would be notified:<br />
+<br />
+<pre name="code" class="brush: java">AlertDefinition d = new AlertDefinition();
+AlertAction emailAlertAction = new AlertAction();
+
+emailAlertAction.setClassName("com.hyperic.hq.bizapp.server.action.email.EmailAction");
+
+AlertActionConfig alertActionConfigNotifyTypes = new AlertActionConfig();
+alertActionConfigNotifyTypes.setKey("notifyType");
+alertActionConfigNotifyTypes.setValue("users");
+
+AlertActionConfig alertActionConfigNames = new AlertActionConfig();
+alertActionConfigNotifyTypes.setKey("names");
+alertActionConfigNotifyTypes.setValue("pippo");
+
+emailAlertAction.getAlertActionConfig().add(alertActionConfigNotifyTypes);
+emailAlertAction.getAlertActionConfig().add(alertActionConfigNames);
+
+d.getAlertAction().add(emailAlertAction);
+</pre><br />
+Unfortunately in Hyperic 4.5.3 this doesn't seem to work (see also <a href="https://jira.hyperic.com/browse/HQAPI-147">https://jira.hyperic.com/browse/HQAPI-147</a>)<br />
+<br />
+The only way which seems to work in HQApi is by escalation:<br />
+<br />
+<pre name="code" class="brush: xml">    &lt;AlertDefinition mtime="1336305843209" ctime="1336305430467" id="10745" name="[Down]" description="[Down]" priority="2" enabled="true" active="true" frequency="0" count="0" range="0" willRecover="true" notifyFiltered="false" controlFiltered="false">
+        &lt;Resource id="12473" name="/tmp/hyperictestdir"/>
+        &lt;Escalation id="10001" name="ACME Project Team Escalation" description="" pauseAllowed="true" maxPauseTime="9223372036854775807" notifyAll="false" repeat="true"/>
+        &lt;AlertCondition required="true" type="1" thresholdValue="0.0" thresholdComparator="=" thresholdMetric="Availability"/>
+    &lt;/AlertDefinition>
+
+</pre><br />
+The escalation "ACME Project Team Escalation" must have been previously setup in Administration / Escalation Schemes Configuration<br />
+or with the org.hyperic.hq.hqapi1.EscalationApi.createEscalation() API<br />
+<br />
+You can also retrieve existing escalations by name with EscalationApi.getEscalation(String name)

@@ -1,0 +1,164 @@
+---
+layout: post
+title: "yum fails installing git on RHEL: There was an error communicating with RHN"
+date: 2013-11-02T18:03:00.001+01:00
+permalink: /2013/11/yum-fails-installing-git-on-rhel-there.html
+blogger_id: "718524856072312880"
+tags: ["rhel"]
+---
+<b>yum install git-core</b>
+<br/>
+<pre>
+Loaded plugins: product-id, rhnplugin, security
+There was an error communicating with RHN.
+RHN Satellite or RHN Classic support will be disabled.
+Error communicating with server. The message was:
+Name or service not known
+Setting up Install Process
+No package git-core available.
+Error: Nothing to do
+</pre>
+
+First I check in 
+<b>cat /etc/yum.conf</b>
+
+<pre class="brush: plain">
+[main]
+cachedir=/var/cache/yum/$basearch/$releasever
+keepcache=0
+debuglevel=2
+logfile=/var/log/yum.log
+exactarch=1
+obsoletes=1
+gpgcheck=1
+plugins=1
+installonly_limit=3
+
+#  This is the default, if you make this bigger yum won't see if the metadata
+# is newer on the remote and so you'll "gain" the bandwidth of not having to
+# download the new metadata and "pay" for it by yum not having correct
+# information.
+#  It is esp. important, to have correct metadata, for distributions like
+# Fedora which don't keep old packages around. If you don't like this checking
+# interupting your command line usage, it's much better to have something
+# manually check the metadata once an hour (yum-updatesd will do this).
+# metadata_expire=90m
+
+# PUT YOUR REPOS HERE OR IN separate files named file.repo
+# in /etc/yum.repos.d
+
+</pre>
+<br/>
+and nothing seems wrong.<br/>
+Then I check in <br/>
+<b>cat /etc/sysconfig/rhn/up2date</b>
+
+<br/>
+
+<pre class="brush: plain">
+
+# Automatically generated Red Hat Update Agent config file, do not edit.
+# Format: 1.0
+tmpDir[comment]=Use this Directory to place the temporary transport files
+tmpDir=/tmp
+
+disallowConfChanges[comment]=Config options that can not be overwritten by a config update action
+disallowConfChanges=noReboot;sslCACert;useNoSSLForPackages;noSSLServerURL;serverURL;disallowConfChanges
+
+skipNetwork[comment]=Skips network information in hardware profile sync during registration.
+skipNetwork=0
+
+stagingContent[comment]=Retrieve content of future actions in advance
+stagingContent=1
+
+networkRetries[comment]=Number of attempts to make at network connections before giving up
+networkRetries=1
+
+hostedWhitelist[comment]=RHN Hosted URL's
+hostedWhitelist=
+
+enableProxy[comment]=Use a HTTP Proxy
+enableProxy=0
+
+writeChangesToLog[comment]=Log to /var/log/up2date which packages has been added and removed
+writeChangesToLog=0
+
+serverURL[comment]=Remote server URL (use FQDN)
+serverURL=http://pluto.pippo.com/XMLRPC
+
+proxyPassword[comment]=The password to use for an authenticated proxy
+proxyPassword=
+
+stagingContentWindow[comment]=How much forward we should look for future actions. In hours.
+stagingContentWindow=24
+
+proxyUser[comment]=The username for an authenticated proxy
+proxyUser=
+
+versionOverride[comment]=Override the automatically determined system version
+versionOverride=
+
+sslCACert[comment]=The CA cert used to verify the ssl server
+sslCACert=/usr/share/rhn/RHNS-CA-CERT
+
+retrieveOnly[comment]=Retrieve packages only
+retrieveOnly=0
+
+debug[comment]=Whether or not debugging is enabled
+debug=0
+
+httpProxy[comment]=HTTP proxy in host:port format, e.g. squid.redhat.com:3128
+httpProxy=
+
+useNoSSLForPackages[comment]=Use the noSSLServerURL for package, package list, and header fetching (disable Akamai)
+useNoSSLForPackages=0
+
+systemIdPath[comment]=Location of system id
+systemIdPath=/etc/sysconfig/rhn/systemid
+
+enableProxyAuth[comment]=To use an authenticated proxy or not
+enableProxyAuth=0
+
+noReboot[comment]=Disable the reboot actions
+noReboot=0
+
+</pre>
+
+
+The "serverURL=http://pluto.pippo.com/XMLRPC" looks suspicious, since I am not in the pippo.com network...there must be some proxy issue here... but enableProxy is 0!!!
+<br/><br/>
+
+I find <a href="https://access.redhat.com/site/documentation/en-US/Red_Hat_Network_Satellite/5.1.1/html/Client_Configuration_Guide/s2-client-config-file.html">some light here</a>. But they don't say what the "default Red Hat Network URL" is... bloody hell...
+<br/><br/>
+If I comment out the serverURL I get:
+<pre>
+
+yum install git-core
+Loaded plugins: product-id, rhnplugin, security
+There was an error communicating with RHN.
+RHN Satellite or RHN Classic support will be disabled.
+
+Error Message:
+        Please run rhn_register as root on this client
+Error Class Code: 9
+Error Class Info: Invalid System Credentials.
+Explanation:
+     An error has occurred while processing your request. If this problem
+     persists please enter a bug report at bugzilla.redhat.com.
+     If you choose to submit the bug report, please be sure to include
+     details of what you were trying to do when this error occurred and
+     details on how to reproduce this problem.
+
+</pre>
+
+<br/><br/>
+
+Ok it looks like I need some good RH training...
+
+<br/><br/>
+
+
+
+
+
+

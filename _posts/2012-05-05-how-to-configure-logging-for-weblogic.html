@@ -1,0 +1,68 @@
+---
+layout: post
+title: "How to configure the logging for the WebLogic console"
+date: 2012-05-05T18:24:00.000+02:00
+permalink: /2012/05/how-to-configure-logging-for-weblogic.html
+blogger_id: "5549927567935770864"
+tags: ["log4j", "weblogic"]
+---
+Having notied that in the access.log of the admin I can't see anything related to /console (only /sbconsole is there), I do a little investigation. No logging configuration is possible via the WebLogic console itself.<br />
+<a href="https://forums.oracle.com/forums/thread.jspa?threadID=766868">Here they give</a> more info on the console application (4th post):<br />
+<br />
+"What the console is depends on which version of WebLogic Server you are running.<br />
+<br />
+Before 7, the console was a Swing app.<br />
+<br />
+In 7 and 8.1, the console was a webapp, and indeed used applets in several places, such as the nav tree and performance graphs. It never actually reads config.xml, but instead interacts with an mbean server to obtain the configuration and runtime structure.<br />
+<br />
+In 9.0, the console became a JEE Portal application that contained multiple webapps, and no longer uses any applets in the base console. (Some extensions use applets.) It continues to interact with several MBean Servers to obtain domain structure and runtime statistics.<br />
+<br />
+Assuming that you're using a recent release, you can find the deployed console application binaries in WL_HOME/server/lib/consoleapp, and can look at the descriptors, portal configuration files, style sheets, and other artifacts in there.<br />
+<br />
+If there is anything particular that you are trying to accomplish, I'd be happy to work with you to share the relevant console algorithms and perhaps code snippets which could help.<br />
+<br />
+--<br />
+Loren Konkus<br />
+Staff Software Engineer<br />
+BEA Systems, Inc."<br />
+<br />
+<br />
+<br />
+<br />
+cd /opt/oracle/fmw11_1_1_5_32bit/wlserver_10.3/server/lib/consoleapp<br />
+cat ./consolehelp/WEB-INF/classes/log4j.properties<br />
+<br />
+<pre># WLS Admin console log4j configuration file
+
+# Create one appender, one called stdout
+# and set default level to DEBUG
+log4j.rootLogger=WARN, stdout
+
+# Make Apache classes quiet by default
+log4j.logger.org.apache = ERROR
+#log4j.logger.org.apache.beehive.netui.pageflow = INFO
+log4j.logger.org.apache.beehive.netui.pageflow.scoping.internal = ERROR
+log4j.logger.org.apache.beehive.netui.pageflow.internal.AdapterManager = FATAL
+log4j.logger.com.bea.console.internal=ERROR
+log4j.logger.com.bea.console.utils.MBeanUtils=ERROR
+log4j.logger.com.bea.console.utils.MasterControlProgram = ERROR
+log4j.logger.com.bea.console.utils.ConsoleMessagesBackingFile = ERROR
+log4j.logger.com.bea.console.actions.messages.MessagesAction = ERROR
+log4j.logger.com.bea.console.actions.BaseConsoleAction = ERROR
+log4j.logger.org.apache.struts.validator=ERROR
+log4j.logger.com.bea.console.utils.MBeanChangeManager=ERROR
+#log4j.logger.com.bea.console.utils.UsageRecorder = INFO
+log4j.logger.com.bea.console.actions = ERROR
+log4j.logger.com.bea.console.utils = ERROR
+
+# Configure the stdout appender to go to the ConsoleLogHandler
+# This will delegate to a WLS Catalog Logger and end up in the admin server log
+log4j.appender.stdout=com.bea.console.utils.ConsoleLogHandler
+
+</pre><br />
+The consoleapp will be deployed to<br />
+$DOMAIN_HOME/servers/AdminServer/tmp/_WL_internal/consoleapp<br />
+<br />
+but don't expect to find log4j there....<br />
+<br />
+Finally, it's still a bit of a mystery...

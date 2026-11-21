@@ -1,0 +1,13 @@
+---
+layout: post
+title: "Property setBatchSize is not defined for oracle.tip.adapter.file.inbound.FileActivationSpec"
+date: 2011-01-20T19:00:00.000+01:00
+permalink: /2011/01/property-setbatchsize-is-not-defined.html
+blogger_id: "8107426263579314904"
+tags: ["BatchSize", "FileAdapter", "OSB"]
+---
+<i>Invalid JCA transport endpoint configuration, exception: javax.resource.ResourceException: BINDING.JCA-12532 Cannot set JCA WSDL Property. Error while setting JCA WSDL Property. Property setBatchSize is not defined for oracle.tip.adapter.file.inbound.FileActivationSpec Please verify the spelling of the property. </i><br />
+<br />
+<br />
+Unfortunately in OSB 11.1.1.3 BatchSize is not supported (unlike in SOA Suite).<br />
+I think in 11.1.1.4 it is.

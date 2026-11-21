@@ -1,0 +1,57 @@
+---
+layout: post
+title: "Hyperic SIGAR PTQL (Process Table Query Language)"
+date: 2012-05-09T06:41:00.001+02:00
+permalink: /2012/05/hyperic-sigar-ptql-process-table-query.html
+blogger_id: "8690042495032141542"
+tags: ["hyperic", "SIGAR"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2016-09-28
+    html: "good job, I was wondering if it&#39;s possible to use SIGAR to collect process table information and write it into openTSDB? if yes could you please show me how to do it or you can recommend me some links.<br />thanks in advance<br /><br />"
+---
+<b>java -jar /opt/hyperic/agent/agent-4.6.5-EE/bundles/agent-4.6.5/pdk/lib/sigar-1.6.4.jar<br />
+</b><br />
+<br />
+to find a WebLogic process:<br />
+<br />
+<b>ps State.Name.eq=java,CredName.User.eq=soa,Args.*.ct=-Dweblogic.Name=osbdv2ms1</b><br />
+<br />
+<br />
+<br />
+to find all processes:<br />
+<b>ps</b><br />
+<br />
+<br />
+to find all Java processes:<br />
+<b>ps State.Name.eq=java</b><br />
+<br />
+<i><br />
+sigar> ps State.Name.eq=java<br />
+6300    pvernet 09:08   1.2G     81M    -       R       0:15    java:weblogic.Server<br />
+9512    ???     ???     340M    107M    -       R       ???     java<br />
+7728    ???     ???     311M     42M    -       R       ???     java<br />
+4784    ???     ???     908M    325M    -       R       ???     java<br />
+4512    pvernet 10:30   262M     18M    -       R       0:1     java:org.hyperic.sigar.cmd.Runner<br />
+<br />
+</i><br />
+<br />
+<br />
+you can do <b>ps 6300</b><br />
+<i><br />
+sigar> ps 6300<br />
+6300    pvernet 09:08   1.2G     82M    -       R       0:15    java:weblogic.Server<br />
+</i><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<a href="http://support.hyperic.com/display/SIGAR/PTQL">Official doc of Process Table Query Language</a><br />
+<br />
+<a href="http://www.hyperic.com/products/sigar">SIGAR doc</a> (SIGAR=System Information Gatherer)<br />
+<br />
+You even have a <a href="http://www.hyperic.com/support/docs/sigar/org/hyperic/sigar/cmd/Ps.html">SIGAR API</a>

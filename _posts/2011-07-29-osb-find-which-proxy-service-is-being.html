@@ -1,0 +1,47 @@
+---
+layout: post
+title: "OSB find which Proxy Service is being invoked"
+date: 2011-07-29T11:58:00.002+02:00
+permalink: /2011/07/osb-find-which-proxy-service-is-being.html
+blogger_id: "2450631585800298220"
+tags: ["inbound", "OSB"]
+---
+I am a bit unsure how better to identify the Message Flow which is currently being executed; <br />
+The $inbound variable is:<br />
+<br />
+<pre name="code" class="brush: java">
+&lt;con:endpoint name="ProxyService$pierreTests$identifyFlow$identifyFlowPS" xmlns:con="http://www.bea.com/wli/sb/context"&gt;
+      &lt;con:service/&gt;
+      &lt;con:transport&gt;
+        &lt;con:uri&gt;/pierreTests/identifyFlow/identifyFlowPS&lt;/con:uri&gt;
+        &lt;con:mode&gt;request-response&lt;/con:mode&gt;
+         &lt;bla/&gt;
+&lt;/con:transport&gt;
+&lt;/con:endpoint&gt;
+
+</pre><br />
+so, if you use the name attribute of inbound you have this Xquery:<br />
+<br />
+<br />
+<pre name="code" class="brush: java">xquery version "1.0" encoding "Cp1252";
+(:: pragma  parameter="$anyType1" type="xs:anyType" ::)
+
+declare namespace xf = "http://tempuri.org/PVTests/getOriginFromInbound/";
+declare namespace con = "http://www.bea.com/wli/sb/context";
+declare namespace tran = "http://www.bea.com/wli/sb/transports";
+
+declare function xf:getEndpointFromInbound($inbound1 as element())
+    as xs:string {
+       let $myendpoint := $inbound1/./@name
+       return
+       fn:tokenize($myendpoint, '\$')[last()]
+};
+
+declare variable $inbound1 as element() external;
+
+xf:getEndpointFromInbound($inbound1)
+
+</pre><br />
+result=identifyFlowPS<br />
+<br />
+This method is far better than using the transport/uri, since the latter is present only in HTTP Proxies, while the inbound/@name is present in ALL proxies.

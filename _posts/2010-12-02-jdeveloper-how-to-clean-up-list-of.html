@@ -1,0 +1,29 @@
+---
+layout: post
+title: "JDeveloper : how to clean up the list of recent Applications"
+date: 2010-12-02T16:14:00.000+01:00
+permalink: /2010/12/jdeveloper-how-to-clean-up-list-of.html
+blogger_id: "9010385629420137985"
+tags: ["JDeveloper"]
+---
+Jdeveloper, how to clear application data.<br />
+<br />
+Jdeveloper keeps some IDE-related data here:<br />
+<br />
+C:\Users\pierre\AppData\Roaming\JDeveloper\system11.1.1.3.37.56.60\o.ide\preferences.xml<br />
+C:\Users\pierre\AppData\Roaming\JDeveloper\system11.1.1.3.37.56.60\o.ide\<br />
+windowinglayout.xml<br />
+<br />
+<br />
+C:\Users\pierre\AppData\Roaming\JDeveloper\system11.1.1.3.37.56.60\o.ide\projects\index2.xml<br />
+and other files in this directory<br />
+<br />
+<br />
+<br />
+C:\Users\pierre\AppData\Roaming\JDeveloper\system11.1.1.3.37.56.60\o.jdeveloper\applications.xml<br />
+<br />
+C:\Users\pierre\AppData\Roaming\JDeveloper\system11.1.1.3.37.56.60\o.jdeveloper\ide.properties<br />
+<br />
+<br />
+<br />
+I have experimentally found that cleaning all the "Item" elements in C:\Users\pierre\AppData\Roaming\JDeveloper\system11.1.1.3.37.56.60\o.jdeveloper\applications.xml does the trick of cleaning your environment from old Applications.

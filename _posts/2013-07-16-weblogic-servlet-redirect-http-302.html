@@ -1,0 +1,73 @@
+---
+layout: post
+title: "weblogic servlet redirect HTTP 302"
+date: 2013-07-16T13:52:00.001+02:00
+permalink: /2013/07/weblogic-servlet-redirect-http-302.html
+blogger_id: "6817537828539680106"
+tags: ["servlet"]
+---
+If you deploy a WebApp, in a WebLogic cluster with a FrontEnd HTTP Host set (a loadbalancer typically), the Servlet will generate a redirect if the URL doesn't end with a /:
+
+<br/>
+
+
+<pre>
+
+ wget "http://acme2-osbpr1ms2.acme.com:8001/gridlinkha"                                                            --2013-07-16 13:46:54--  http://acme2-osbpr1ms2.acme.com:8001/gridlinkha
+Resolving acme2-osbpr1ms2.acme.com... 10.11.5.181
+Connecting to acme2-osbpr1ms2.acme.com|10.11.5.181|:8001... connected.
+HTTP request sent, awaiting response... 302 Moved Temporarily
+Location: http://acmev2.acme.com/gridlinkha/ [following]
+--2013-07-16 13:46:54--  http://acmev2.acme.com/gridlinkha/
+Resolving acmev2.acme.com... 10.11.5.35
+Connecting to acmev2.acme.com|10.11.5.35|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1308 (1.3K) [text/html]
+Saving to: `index.html.2'
+
+100%[=====================================================================================================>] 1,308       --.-K/s   in 0s
+
+2013-07-16 13:46:54 (96.0 MB/s) - `index.html.2' saved [1308/1308]
+
+
+</pre>
+
+<br/>
+
+but if you append a /, the HTTP 302 is not generated.
+
+<br/>
+
+
+<pre>
+
+wget "http://acme2-osbpr1ms2.acme.com:8001/gridlinkha/"
+
+
+--2013-07-16 13:50:26--  http://acme2-osbpr1ms2.acme.com:8001/gridlinkha/
+Resolving acme2-osbpr1ms2.acme.com... 10.11.5.181
+Connecting to acme2-osbpr1ms2.acme.com|10.11.5.181|:8001... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1308 (1.3K) [text/html]
+Saving to: `index.html.3'
+
+100%[=====================================================================================================>] 1,308       --.-K/s   in 0s
+
+2013-07-16 13:50:26 (113 MB/s) - `index.html.3' saved [1308/1308]
+
+</pre>
+
+
+<br/>
+<br/>
+
+It took me forever, and <a href="http://stackoverflow.com/questions/5154760/http-302-error-while-accessing-web-application-deployed-on-oracle-weblogic-10-3">this post</a>, to figure it out.
+
+
+
+<br/>
+<br/>
+
+
+Oracle support says that by using virtualhost you can avoid redirect.
+

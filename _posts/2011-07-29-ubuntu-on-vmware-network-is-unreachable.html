@@ -1,0 +1,35 @@
+---
+layout: post
+title: "ubuntu on vmware: network is unreachable"
+date: 2011-07-29T14:05:00.000+02:00
+permalink: /2011/07/ubuntu-on-vmware-network-is-unreachable.html
+blogger_id: "3177151194809583175"
+tags: ["eth0"]
+---
+Crap, yesterday my Ubuntu 10.4 on VMPlayer was working ALMOST filne,<br />
+today I get "network is unreachable" whenever I ping anything.<br />
+My VM is set to use NAT.<br />
+<br />
+I do:<br />
+<br />
+<b>cat /etc/network/interfaces</b><br />
+<br />
+<i>auto lo<br />
+iface lo inet loopback</i><br />
+<br />
+<br />
+hey, where is eth0?<br />
+<br />
+<a href="http://www.cyberciti.biz/faq/setting-up-an-network-interfaces-file/">Here</a> some example, so I "chmod 777" and I add to the file:<br />
+<br />
+auto eth0<br />
+iface eth0 inet dhcp<br />
+<br />
+<br />
+and I <br />
+<b>sudo /etc/init.d/networking restart</b><br />
+(it takes a while)<br />
+<br />
+(same can be done with the menu Preferences/Network)<br />
+<br />
+This seems to take care of some issues.

@@ -1,0 +1,34 @@
+---
+layout: post
+title: "Intellij Java remote debug with SSH tunnel "
+date: 2023-03-11T08:23:00.008+01:00
+permalink: /2023/03/intellij-java-remote-debug-with-ssh.html
+blogger_id: "2538464003660890138"
+tags: ["debugging", "remote", "sshtunnel"]
+---
+This is the simplest explanation how to do it:
+<br />
+<a href="https://arjon.es/2014/remote-debug-of-a-java-app-using-ssh-tunneling-without-opening-server-ports/">https://arjon.es/2014/remote-debug-of-a-java-app-using-ssh-tunneling-without-opening-server-ports/</a>    (it is a bit confusing, as is uses localhost for both remote and local)
+<br />
+and 
+<br />
+<a href="https://www.revsys.com/writings/quicktips/ssh-tunnel.html">https://www.revsys.com/writings/quicktips/ssh-tunnel.html</a>   which clearly runs the ssh command locally forwarding to remote and highlights the role of -N parameter)
+
+<br />
+also worth reading:
+<br />
+
+<a href="https://www.jetbrains.com/help/idea/remote-debugging-via-ssh-tunnel.html#troubleshooting">https://www.jetbrains.com/help/idea/remote-debugging-via-ssh-tunnel.html#troubleshooting</a> this is about PHP debugging
+<br /><br />
+
+
+SSH tunneling explained visually <a href="https://www.youtube.com/watch?v=N8f5zv9UUMI">https://www.youtube.com/watch?v=N8f5zv9UUMI</a>  
+
+<br /><br />
+
+this command does the trick:
+<br />
+
+ssh -f user@personal-server.com -L 9999:personal-server.com:9999 -N  
+
+

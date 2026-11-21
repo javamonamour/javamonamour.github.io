@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Hyperic HQApi and the Groovy Console"
+date: 2012-04-22T21:33:00.005+02:00
+permalink: /2012/04/hyperic-hqapi.html
+blogger_id: "4985539656610127828"
+tags: ["hyperic"]
+---
+HQApi documentation <a href="http://support.hyperic.com/display/EVO/Introduction+to+HQApi">here</a><br />
+<br />
+"HQApi allows you to circumvent the Hyperic user interface and directly access Hyperic Server functionality. " ... great, I love it!<br />
+<br />
+Let's get our hands dirty....<br />
+<br />
+On HQ Console, Click on Administration, Groovy Console...<br />
+<br />
+type:<br />
+print 'ciao'<br />
+return 'pippo'<br />
+<br />
+and click "execute"... great, in the "result" tab I see "pippo".... where is "ciao" though? I can't find the stdout of "Server for Hyperic HQ" Windows service.<br />
+<br />
+Scripts are stored in a temporary file C:\pierre\hypericserver\server-4.6.5-EE\hq-engine\hq-server\temp\gcon3792879954783360219.tmp<br />
+<br />
+I click on "HQ Web Services Api" and download the hqapi1-client-5.0.0.tar.gz<br />
+<br />
+The most common useful classes to run the examples in Hyperic site are in <br />
+<br />
+&lt;classpathentry kind="lib" path="C:/pierre/workspace/Hyperic/lib/hqapi1-client-5.0.0/hqapi1-5.0.0.jar"/><br />
+&lt;classpathentry kind="lib" path="C:/pierre/workspace/Hyperic/lib/hqapi1-client-5.0.0/hqapi1-tools-5.0.0.jar"/><br />
+&lt;classpathentry kind="lib" path="C:/pierre/hypericserver/server-4.6.5-EE/hq-engine/hq-server/webapps/ROOT/WEB-INF/lib/hq-rendit-4.6.5.jar"/><br />
+&lt;classpathentry kind="lib" path="C:/pierre/hypericserver/server-4.6.5-EE/hq-engine/hq-server/webapps/ROOT/WEB-INF/lib/hq-server-4.6.5.jar"/><br />
+&lt;classpathentry kind="lib" path="C:/pierre/hypericserver/server-4.6.5-EE/hq-engine/hq-server/webapps/ROOT/WEB-INF/lib/httpclient-4.1.1.jar"/><br />
+&lt;classpathentry kind="lib" path="C:/pierre/hypericserver/server-4.6.5-EE/hq-engine/hq-server/webapps/ROOT/WEB-INF/lib/httpcore-4.1.jar"/><br />
+&lt;classpathentry kind="lib" path="C:/pierre/hypericagent/agent-4.6.5-EE/bundles/agent-4.6.5/pdk/lib/httpmime-4.1.1.jar"/><br />
+&lt;classpathentry kind="lib" path="C:/pierre/hypericserver/server-4.6.5-EE/hq-engine/hq-server/webapps/ROOT/WEB-INF/lib/activemq-all-5.3.0.jar"/><br />
+&lt;classpathentry kind="lib" path="C:/pierre/workspace/Hyperic/lib/hqapi1-client-4.3.0/lib/spring-core-3.0.1.RELEASE.jar"/><br />
+&lt;classpathentry kind="lib" path="C:/pierre/hypericserver/server-4.6.5-EE/lib/commons-codec-1.1.jar"/><br />
+<br />
+<br />
+<br />
+Some Groovy Console samples are here:<br />
+<br />
+<a href="http://support.hyperic.com/display/hyperforge/Groovy+Snippets">http://support.hyperic.com/display/hyperforge/Groovy+Snippets</a>

@@ -1,0 +1,119 @@
+---
+layout: post
+title: "SOAPUI, JUnit and functional tests"
+date: 2010-07-04T05:46:00.008+02:00
+permalink: /2010/07/soapui-junit-and-functional-tests.html
+blogger_id: "1301191305944885691"
+tags: ["junit", "soapui"]
+blogger_comments:
+  - author: "Luciano"
+    date: 2010-07-04
+    html: "Groovy can be easily refactored, try out the Intellij Plugin or the Eclipse one.<br />groovyc --&gt; compiles groovy code to Java bytecode."
+  - author: "stokito"
+    date: 2013-12-30
+    html: "Here is working example<br />https://github.com/stokito/soapui-junit"
+---
+Lovely tutorials by Meera Subbarao on SOAP-UI for functional tests:<br />
+<br />
+<a href="http://soa.dzone.com/articles/functional-web-services-1">http://soa.dzone.com/articles/functional-web-services-1</a><br />
+<br />
+<a href="http://soa.dzone.com/articles/draft-functional-web-services--0">http://soa.dzone.com/articles/draft-functional-web-services--0</a><br />
+<br />
+<a href="http://soa.dzone.com/articles/functional-web-services-testin-1">http://soa.dzone.com/articles/functional-web-services-testin-1</a><br />
+<br />
+<br />
+More here<br />
+<a href="http://www.soapui.org/Getting-Started/functional-testing.html">http://www.soapui.org/Getting-Started/functional-testing.html</a><br />
+<br />
+and with Maven:<br />
+<br />
+<a href="http://technology.amis.nl/blog/7408/automatic-testing-oracle-service-bus-using-hudson-maven-and-soapui">http://technology.amis.nl/blog/7408/automatic-testing-oracle-service-bus-using-hudson-maven-and-soapui</a><br />
+<br />
+<br />
+<br />
+On running SOAPUI tests from JUnit (Hudson):<br />
+<br />
+where every SOAPUI project is executed in its own JUnit test, to make it easier to identify problems:<br />
+<br />
+<pre class="brush: java" name="code">package dk.acme.dmr.service.test.integration;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import com.eviware.soapui.tools.SoapUITestCaseRunner;
+
+/**
+ * Run SOAPUI project files as test cases.
+ * 
+ * @author Acme A/S
+ * @version 1.0
+ * @since 1.0
+ */
+@RunWith(value = Parameterized.class)
+public class SoapUITest {
+  // The folder must be relative to this project
+  private final static String SOAPUI_PROJECT_DIR = "src/test/resources/";
+
+  private final static String ENDPOINT_VAR       = "endpoint";
+
+  private final String        soapUiFileName;
+
+  public SoapUITest(String soapUiFileName) {
+    this.soapUiFileName = soapUiFileName;
+  }
+
+  @Parameterized.Parameters
+  public static Collection&lt;Object[]&gt; soapUIprojectFiles() {
+    File folder = new File(SOAPUI_PROJECT_DIR);
+    OnlyExt onlyXml = new OnlyExt(".xml");
+    String[] soapuiProjs = folder.list(onlyXml);
+    List&lt;Object[]&gt; ret = new ArrayList&lt;Object[]&gt;();
+    for (String s : soapuiProjs) {
+      ret.add(new Object[] { s });
+    }
+    return ret;
+
+  }
+
+  @Test
+  public void soapUITest() throws Exception {
+
+    SoapUITestCaseRunner runner = new SoapUITestCaseRunner();
+    runner.setProjectProperties(new String[] { new String(ENDPOINT_VAR + "=http://myserver:9001") });
+    runner.setOutputFolder(System.getProperty("user.dir") + "/soapui-errors");
+    runner.setProjectFile(SOAPUI_PROJECT_DIR + "/" + soapUiFileName);
+
+    runner.run();
+
+  }
+
+  static class OnlyExt implements FilenameFilter {
+    private final String ext;
+
+    public OnlyExt(String _ext) {
+      ext = _ext;
+    }
+
+    public boolean accept(File dir, String name) {
+
+      return name.endsWith(ext);
+    }
+  }
+
+}
+
+
+
+
+
+</pre><br />
+<br />
+I am still NOT persuaded that using SOAPUI for functional tests is better than using JUnit and Java stubs. If you go beyond the basics, SOAPUI and Groovy can be even more complex than the Java solution. I simply cannot accept writing complex code in a language that cannot be compiled and easily refactored.

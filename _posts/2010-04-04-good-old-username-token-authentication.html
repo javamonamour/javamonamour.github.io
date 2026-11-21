@@ -1,0 +1,40 @@
+---
+layout: post
+title: "Good old Username Token authentication model for Web Services"
+date: 2010-04-04T13:23:00.000+02:00
+permalink: /2010/04/good-old-username-token-authentication.html
+blogger_id: "8574332511225920336"
+tags: ["usernametoken", "ws-security"]
+---
+Some practical documentation here:<br />
+<br />
+<a href="http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.express.doc/info/exp/ae/cwbs_usernametokenv6.html">http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.express.doc/info/exp/ae/cwbs_usernametokenv6.html</a><br />
+<br />
+and also an interesting podcast here<br />
+<br />
+<a href="http://channel9.msdn.com/shows/ARCast+with+Ron+Jacobs/ARCast-Securing-Web-Services-with-the-Username-Token-in-WSE-30-Part-1/">http://channel9.msdn.com/shows/ARCast+with+Ron+Jacobs/ARCast-Securing-Web-Services-with-the-Username-Token-in-WSE-30-Part-1/</a><br />
+<br />
+on X509 PKI certificate and Username Token.<br />
+<br />
+In a nutshell:<br />
+<br />
+Kerberos and X509 are brokered authentication,&nbsp; you present a token which vouches that you have gone somewhere else through an authentication process<br />
+<br />
+Username Token is direct authentication<br />
+<br />
+A X509 contains a certificate which has a public key that can be used by the recipient to encrypt messages that can be only decrypted by the X509 originator.<br />
+<br />
+The official OASIS documentation (interesting reading)<br />
+<br />
+<br />
+<a href="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0.pdf">http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0.pdf</a><br />
+<br />
+An example of SOAP request with unencrypted Username token (thanks Tom Gullo, <a href="http://www.jroller.com/tgullo/">http://www.jroller.com/tgullo/</a>, god bless your excellent recipes)<br />
+<br />
+<a href="http://www.jroller.com/tgullo/resource/UsernamePasswordRequest.xml.txt">http://www.jroller.com/tgullo/resource/UsernamePasswordRequest.xml.txt</a><br />
+<br />
+and encoded<br />
+<br />
+<a href="http://www.jroller.com/tgullo/resource/EncryptedUsernamePasswordRequest.xml.txt">http://www.jroller.com/tgullo/resource/EncryptedUsernamePasswordRequest.xml.txt</a><br />
+<br />
+(it's really verbose, oh my god, I wonder about the performance impact)

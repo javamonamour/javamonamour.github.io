@@ -1,0 +1,21 @@
+---
+layout: post
+title: "weblogic.messaging.dispatcher.DispatcherWrapper"
+date: 2011-09-08T17:42:00.000+02:00
+permalink: /2011/09/weblogicmessagingdispatcherdispatcherwr.html
+blogger_id: "1179878843613090239"
+tags: ["jms"]
+---
+when you have a cluster with multiple (say 3) members, you will find 3 entries in the JNDI tree of each member, under weblogic.messaging.dispatcher:<br />
+<br />
+<em>S:ms1</em><br />
+<em>Binding Name: weblogic.messaging.dispatcher.S:ms1&nbsp;&nbsp;</em><br />
+<em>Class: weblogic.jms.dispatcher.DispatcherWrapper</em><br />
+<br />
+Same for ms2 and ms3. This as long as the servers are RUNNING.<br />
+<br />
+The weblogic.jms.dispatcher.DispatcherWrapper seems to do a basic task: marshalling and unmarshalling objects over RMI.<br />
+<br />
+<br />
+<br />
+This feature is heavily used across the frawework: think of Distributed Destinations where a topic message must be replicated across the cluster.

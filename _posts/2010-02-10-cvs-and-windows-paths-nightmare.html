@@ -1,0 +1,81 @@
+---
+layout: post
+title: "CVS and Windows paths... the nightmare reloaded"
+date: 2010-02-10T12:53:00.000+01:00
+permalink: /2010/02/cvs-and-windows-paths-nightmare.html
+blogger_id: "2666925294355338330"
+tags: ["cvs"]
+---
+if some smart guy installed CVS on Windows (using cvsnt) and mapped a repository using a full path name, such as d:\cvsroot.... well, you MIGHT be able to access to it from Windows CVS Client, but forget about accessing from Unix... I have tried everything and it simply doesn't work.<br />
+The final solution is:<br />
+tar and feather the guy who made this mapping, and create a mapping without the d:\ <br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:JCRMTools/mycvsusername:mypwd@10.20.30.40:d:/cvsroot" login<br />
+Logging in to :pserver:weblogic@jcrmtools:2401/mycvsusername:mypwd@10.20.30.40:d:/cvsroot<br />
+CVS password:<br />
+Unknown host JCRMTools.<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40:d:/cvsroot" login<br />
+cvs login: CVSROOT may only specify a positive, non-zero, integer port (not `d:').<br />
+cvs login: Perhaps you entered a relative pathname?<br />
+cvs [login aborted]: Bad CVSROOT: `:pserver:mycvsusername:mypwd@10.20.30.40:d:/cvsroot'.<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40:/home/CVS" login<br />
+Logging in to :pserver:mycvsusername@10.20.30.40:2401/home/CVS<br />
+/home/CVS: no such repository<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40:/" login<br />
+Logging in to :pserver:mycvsusername@10.20.30.40:2401/<br />
+/: no such repository<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40:/cvsroot" login<br />
+Logging in to :pserver:mycvsusername@10.20.30.40:2401/cvsroot<br />
+/cvsroot: no such repository<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40:/CVS" login<br />
+Logging in to :pserver:mycvsusername@10.20.30.40:2401/CVS<br />
+/CVS: no such repository<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40:d//cvsroot" login<br />
+cvs login: CVSROOT may only specify a positive, non-zero, integer port (not `d').<br />
+cvs login: Perhaps you entered a relative pathname?<br />
+cvs [login aborted]: Bad CVSROOT: `:pserver:mycvsusername:mypwd@10.20.30.40:d//cvsroot'.<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40:/d//cvsroot" login<br />
+Logging in to :pserver:mycvsusername@10.20.30.40:2401/d//cvsroot<br />
+/d//cvsroot: no such repository<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40:/d/cvsroot" login<br />
+Logging in to :pserver:mycvsusername@10.20.30.40:2401/d/cvsroot<br />
+/d/cvsroot: no such repository<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40://d/cvsroot" login<br />
+Logging in to :pserver:mycvsusername@10.20.30.40:2401//d/cvsroot<br />
+//d/cvsroot: no such repository<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40:/d:/cvsroot" login<br />
+Logging in to :pserver:mycvsusername@10.20.30.40:2401/d:/cvsroot<br />
+/d:/cvsroot: no such repository<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40:/d:cvsroot" login<br />
+Logging in to :pserver:mycvsusername@10.20.30.40:2401/d:cvsroot<br />
+/d:cvsroot: no such repository<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40:/d:\cvsroot" login<br />
+Logging in to :pserver:mycvsusername@10.20.30.40:2401/d:\cvsroot<br />
+/d:\cvsroot: no such repository<br />
+<br />
+[weblogic@CRM-INTG-DEV ~]$ cvs -d ":pserver:mycvsusername:mypwd@10.20.30.40://d:\cvsroot" login<br />
+Logging in to :pserver:mycvsusername@10.20.30.40:2401//d:\cvsroot<br />
+//d:\cvsroot: no such repository<br />
+<br />
+<br />
+<br />
+Furthermore, if you do (Hudson does it to check if anything new has been committed since the last build)<br />
+<br />
+[weblogic@CRM-INTG-DEV ACME_INTEG_EAR]$ cvs -q -z3 update -PdC -D "Wednesday, February 10, 2010 1:01:29 PM UTC"<br />
+<br />
+and you get: <br />
+cvs server: cannot open directory . for empty check: Input/output error<br />
+then you might have to give Full Control to Everyone on the TEMP directory used by CVSNT on the server....<br />
+<br />
+CVS, who needs enemies when I have a friend like you!

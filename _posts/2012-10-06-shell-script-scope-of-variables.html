@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Shell script, scope of variables"
+date: 2012-10-06T09:33:00.001+02:00
+permalink: /2012/10/shell-script-scope-of-variables.html
+blogger_id: "3527968820411766512"
+---
+recently I was maintaining shell scripts written in a very sloppy way by a (luckily) gone consultant.
+<br/>
+
+First, the standard way of reading the content of a file in shell scripts is:<br/>
+
+<pre>
+counter=0
+while read line 
+do
+   echo $line
+   counter=`expr $counter + 1`
+done < myfile.txt
+echo $counter
+
+</pre>
+
+<br/>
+
+For some funny reason (arrogance and ignorance) the consultant had instead written:<br/>
+
+<pre>
+cat myfile.txt | while read line 
+do
+   echo $line
+   counter=`expr $counter + 1`
+done
+echo $counter
+
+</pre>
+
+<br/><br/>
+
+
+The big problem with pipes is that they are executed in a subshell, and they don't access the same variable space of the main shell.... so the above code will always print 0 (zero) as the value of the counter. 
+<br/>
+
+No workaround found so far. Just don't use pipes.
+
+
+

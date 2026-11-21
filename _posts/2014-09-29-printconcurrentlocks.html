@@ -1,0 +1,39 @@
+---
+layout: post
+title: "Java JVM Flag PrintConcurrentLocks"
+date: 2014-09-29T11:56:00.001+02:00
+permalink: /2014/09/printconcurrentlocks.html
+blogger_id: "3157427898992491076"
+tags: ["JVM"]
+---
+When all hell break loose and you have threads hanging waiting for a lock, it's PARAMOUNT to be able to determine WHO is holding that lock.<br />
+<br />
+<br />
+By default, the option -XX:+PrintConcurrentLocks is not enabled. if you enable it, and you do a "kill -3 PID", you should get for each thread the list of locks being held. This option "should be" safe in PROD, despite of the Oracle warnings.
+<br />
+<br />
+However, you can get the same info using
+<br />
+<pre>jstack -l PID</pre>
+<br />
+<pre>"Reference Handler" daemon prio=10 tid=0x000000004e8b6000 nid=0x48c8 in Object.wait() [0x000000004104b000]
+   java.lang.Thread.State: WAITING (on object monitor)
+        at java.lang.Object.wait(Native Method)
+        - waiting on <0x0000000782f36550> (a java.lang.ref.Reference$Lock)
+        at java.lang.Object.wait(Object.java:485)
+        at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:116)
+        - locked <0x0000000782f36550> (a java.lang.ref.Reference$Lock)
+
+   Locked ownable synchronizers:
+        - None
+
+<!--0x0000000782f36550--><!--0x0000000782f36550--></0x0000000782f36550></0x0000000782f36550></pre>
+<br />
+<br />
+The "Locked ownable synchronizers:" bit is the one you would get extra by using the PrintConcurrentLocks flag.
+
+<br />
+<br />
+Anyway this is only a superficial analysis... luckily working with OSB I never had to deal with locking issues...
+so I cannot claim to be an expert.
+

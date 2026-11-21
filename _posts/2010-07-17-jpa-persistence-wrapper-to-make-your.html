@@ -1,0 +1,22 @@
+---
+layout: post
+title: "JPA persistence: a wrapper to make your life a bit easier"
+date: 2010-07-17T16:00:00.001+02:00
+permalink: /2010/07/jpa-persistence-wrapper-to-make-your.html
+blogger_id: "9165143815949241376"
+tags: ["JPA"]
+---
+EntityManager is not exactly the friendliest beast... it acts of its own will, and its inferface is very restricted to few methods.<br />
+<br />
+Here<br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/JPAPersistence/GEOPersistenceHandler.java">http://javatoolsforweblogic.googlecode.com/svn/trunk/JPAPersistence/GEOPersistenceHandler.java</a><br />
+<br />
+and here<br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/JPAPersistence/GEOPersistenceHandlerTest.java">http://javatoolsforweblogic.googlecode.com/svn/trunk/JPAPersistence/GEOPersistenceHandlerTest.java</a><br />
+<br />
+a wrapper to enable you to use the JPA interface with more understandeable behaviour.<br />
+<br />
+"Force" means: insert if it doesn't exist, update if it exists<br />
+"Insert" means: insert if it doesn't exist, exception if it exists<br />
+"Update" means: update if it exist, exception if it doesn't exist<br />
+"Delete" means: delete if it exist, exception if it doesn't exist

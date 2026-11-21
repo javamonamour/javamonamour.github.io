@@ -1,0 +1,30 @@
+---
+layout: post
+title: "error in finding weblogic.Home"
+date: 2012-07-08T12:41:00.002+02:00
+permalink: /2012/07/error-in-finding-weblogichome.html
+blogger_id: "1046651857817037103"
+tags: ["WLST"]
+---
+java.lang.RuntimeException: error in finding weblogic.Home<br />
+weblogic.Home.getInstance(Home.java:91)<br />
+weblogic.Home.getPath(Home.java:97)<br />
+weblogic.Home.getFile(Home.java:102)<br />
+weblogic.management.scripting.utils.WLSTInterpreter.<init>(WLSTInterpreter.java:116)<br />
+weblogic.management.scripting.utils.WLSTInterpreter.<init>(WLSTInterpreter.java:76)<br />
+<br />
+<br />
+To check what is wrong, I do<br />
+cd $DOMAIN_HOME<br />
+. ./bin/setDomainEnv.sh<br />
+<br />
+then I examine the properties with "set":<br />
+<br />
+ALSB_HOME=/opt/oracle/fmw11_1_1_5/osb<br />
+BEA_HOME=/opt/oracle/fmw11_1_1_5<br />
+WLS_HOME=/opt/oracle/fmw11_1_1_5/wlserver_10.3/server<br />
+<br />
+so all I need to do is to add<br />
+JAVA_OPTS=-Dweblogic.home=/opt/oracle/fmw11_1_1_5/wlserver_10.3 -Dbea.home=/opt/oracle/fmw11_1_1_5/ <br />
+<br />
+to my catalina.sh

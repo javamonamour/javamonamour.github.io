@@ -1,0 +1,76 @@
+---
+layout: post
+title: "Remote debug Wildfly with Eclipse, KeycloakPrincipal"
+date: 2017-11-17T13:18:00.001+01:00
+permalink: /2017/11/remote-debug-wildfly-with-eclipse.html
+blogger_id: "2850193164559269064"
+tags: ["keycloak", "wildfly"]
+---
+./standalone.bat --debug<br />
+<br />
+This generates <br />
+<i><br />
+<br />
+JAVA_OPTS: "-Dprogram.name=standalone.bat -Xms64M -Xmx512M -XX:MetaspaceSize=96M -XX:MaxMetaspaceSize=256m -Djava.net.preferIPv4Stack=true -Djboss.modules.system.pkgs=org.jboss.byteman <b>-agentlib:jdwp=transport=dt_socket,address=8787,server=y,suspend=n"</b><br />
+<br />
+===============================================================================<br />
+<br />
+<b>Listening for transport dt_socket at address: 8787</b><br />
+<br />
+</i><br />
+<br />
+In fact, in standalone.bat you find this code:<br />
+<br />
+<pre class="brush: java">rem Set debug settings if not already set
+if "%DEBUG_MODE%" == "true" (
+   echo "%JAVA_OPTS%" | findstr /I "\-agentlib:jdwp" > nul
+  if errorlevel == 1 (
+     set "JAVA_OPTS=%JAVA_OPTS% -agentlib:jdwp=transport=dt_socket,address=%DEBUG_PORT_VAR%,server=y,suspend=n"
+  ) else (
+     echo Debug already enabled in JAVA_OPTS, ignoring --debug argument
+  )
+)
+
+</pre><br />
+You can now follow these instructions <a href="https://www.eclipse.org/jetty/documentation/9.4.x/debugging-with-eclipse.html">https://www.eclipse.org/jetty/documentation/9.4.x/debugging-with-eclipse.html</a> to configure Eclipse,<br />
+or simply <br />
+<br />
+right-click on project in eclipse, Debug as, Remote Java Application, then you get this dialog<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/fbba89b589baebbf.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/b3a7c33277fe28f9.jpg" width="640" height="520" data-original-width="633" data-original-height="514" /></a></div><br />
+so I can trace this code:<br />
+<br />
+<br />
+<br />
+public String getPrincipalName(HttpServletRequest request) {<br />
+KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal)request.getUserPrincipal();<br />
+return keycloakPrincipal != null ? keycloakPrincipal.getKeycloakSecurityContext().toString() : "unauthenticated" ;<br />
+}<br />
+<br />
+<br />
+and discover this:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/22252edf971cc0e7.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/d82ed70837d4f2a3.jpg" width="640" height="284" data-original-width="1105" data-original-height="491" /></a></div><br />
+<br />
+In a ManagedBean you can inject a Principal, and Wildfly will take care of it transparently:<br />
+<br />
+@Named<br />
+@RequestScoped<br />
+public class EventViewBean {<br />
+@Inject Principal principal;<br />
+<br />
+public void getPrincipal() {<br />
+System.out.println("principal class name is " + principal.getClass().gtName());<br />
+}<br />
+}<br />
+<br />
+<br />
+This will print a: <br />
+<br />
+org.jboss.weld.security.Principal$$Proxy$_$$_Weld$Proxy$<br />
+<br />
+<br />
+and not - as expected - a <a href="http://www.keycloak.org/docs-api/3.2/javadocs/org/keycloak/KeycloakPrincipal.html">http://www.keycloak.org/docs-api/3.2/javadocs/org/keycloak/KeycloakPrincipal.html</a> who however also implements the <a href="https://docs.oracle.com/javase/7/docs/api/java/security/Principal.html">https://docs.oracle.com/javase/7/docs/api/java/security/Principal.html</a> interface<br />
+<br />
+<br />
+

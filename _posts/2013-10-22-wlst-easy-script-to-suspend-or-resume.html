@@ -1,0 +1,47 @@
+---
+layout: post
+title: "WLST: easy script to suspend or resume consumption from JMS queues"
+date: 2013-10-22T16:50:00.001+02:00
+permalink: /2013/10/wlst-easy-script-to-suspend-or-resume.html
+blogger_id: "5453615136442412681"
+tags: ["jms", "weblogic"]
+---
+The painful thing of the traditional WLST scripts is is having to pass the JMSModule, JMSRuntime etc.
+<br/>
+This script simply searches all available queues anywhere on a ManagedServer until it finds a match.
+<br/>
+<pre name="code" class="brush: java">
+
+def controlConsumption(queue, suspend):
+    found = False
+    serverRuntime()
+    myjmsruntimes = ls('/JMSRuntime/', returnMap='true')
+    for myjmsruntime in myjmsruntimes:
+        myjmsservers = ls('/JMSRuntime/' + myjmsruntime + '/JMSServers', returnMap='true')
+        for myjmsserver in myjmsservers:
+          jmsserverroot = '/JMSRuntime/' + myjmsruntime + '/JMSServers/' + myjmsserver + '/'
+          cd(jmsserverroot) 
+          cd('Destinations')
+          mydestinations = ls('c', returnMap='true')
+          #print mydestinations
+          for mydestination in mydestinations:
+            if (mydestination.endswith('@' + queue)):
+              found = True
+              #print "cding into", jmsserverroot + mydestination
+              cd(jmsserverroot + 'Destinations/' + mydestination)
+              if (suspend): 
+                  cmo.pauseConsumption()
+                  print "\n##############\nconsumption paused on ", mydestination, "\n##############\n"
+              else:
+                  cmo.resumeConsumption()
+                  print "\n##############\nconsumption resumed on ", mydestination, "\n##############\n"
+    if (not found):
+        print "ERROR: queue ", queue, " could not be found"                          
+
+
+</pre>
+
+<br/>
+where queue is just the Queue name (not the JNDI), and suspend is True or False.
+
+<br/>

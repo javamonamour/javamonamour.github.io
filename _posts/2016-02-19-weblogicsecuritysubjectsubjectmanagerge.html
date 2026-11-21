@@ -1,0 +1,60 @@
+---
+layout: post
+title: "weblogic.security.subject.SubjectManager.getSubjectManager  hangs when using wrong JDK"
+date: 2016-02-19T18:34:00.000+01:00
+permalink: /2016/02/weblogicsecuritysubjectsubjectmanagerge.html
+blogger_id: "8397650652145624003"
+tags: ["security", "weblogic"]
+blogger_comments:
+  - author: "hdohlmann"
+    date: 2016-02-29
+    html: "Downgraded from 8?<br />Hmm, not an option. Must look for other solutions..."
+  - author: "vernetto"
+    date: 2016-02-29
+    html: "I have switched to JDK 7... must be Update 91 or so..."
+  - author: "hdohlmann"
+    date: 2016-02-29
+    html: "I have the exact same issue.<br />Am running jdk 1.8.0.72.<br />Which JDK did you switch to?"
+  - author: "Anonymous"
+    date: 2016-08-29
+    html: "Got the same error (with Java8 and Java7), the underlying issue is that no SubjectManager is installed yet, and then there is a &quot;wait&quot; on the thread, until somebody installs one...<br /><br />The solution for me was to include a component in the classpath that installs a SubjectManager -- and it must be *before* WebLogic in the classpath.<br /><br />Magic, in 2016 :)"
+  - author: "Jivi"
+    date: 2016-09-16
+    html: "That worked for me.<br />Thanks a lot for pointing me in the right direction Daniel!"
+  - author: "raveendra"
+    date: 2023-11-29
+    html: "I get the same issue while shifting an application from Java 7 to javai , that connects weblogic. Can some one detail the fix done please ?"
+---
+Trying to connect from Eclipse to a WLS, Java client for EJB, using 2 way SSL and t3s, we get a stuck thread on this:
+<br/>
+
+<pre>
+
+"main" #1 prio=5 os_prio=0 tid=0x000000000263f000 nid=0x12900 in Object.wait() [0x0000000002a6d000]
+   java.lang.Thread.State: WAITING (on object monitor)
+ at java.lang.Object.wait(Native Method)
+ - waiting on <0x00000000d8d00d00> (a java.lang.Object)
+ at java.lang.Object.wait(Object.java:502)
+ at weblogic.security.subject.SubjectManager.getSubjectManager(SubjectManager.java:277)
+ - locked <0x00000000d8d00d00> (a java.lang.Object)
+ at weblogic.security.subject.SubjectManager$GetKernelIdentityAction.run(SubjectManager.java:440)
+ at weblogic.security.service.SecurityManager.getKernelIdentity(SecurityManager.java:164)
+ at weblogic.security.service.GetKernelIdentityAction.run(GetKernelIdentityAction.java:25)
+ at java.security.AccessController.doPrivileged(Native Method)
+ at weblogic.jndi.WLSJNDIEnvironmentImpl.<clinit>(WLSJNDIEnvironmentImpl.java:57)
+ at java.lang.Class.forName0(Native Method)
+ at java.lang.Class.forName(Class.java:264)
+ at weblogic.jndi.internal.JNDIEnvironment.getJNDIEnvironment(JNDIEnvironment.java:37)
+ at weblogic.jndi.Environment.<clinit>(Environment.java:92)
+
+...
+
+</pre>
+
+<br/>
+
+The issue was solved changing JDK
+
+<br/>
+
+

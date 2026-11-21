@@ -1,0 +1,200 @@
+---
+layout: post
+title: "ORA-01031: insufficient privileges creating a JDBCStore"
+date: 2016-06-08T11:02:00.002+02:00
+permalink: /2016/06/ora-01031-insufficient-privileges.html
+blogger_id: "4776933596947420877"
+tags: ["JDBCStore"]
+---
+<pre>
+
+&lt;Jun 8, 2016 9:12:41 AM CEST&gt; &lt;Error&gt; &lt;Store&gt; &lt;BEA-280072&gt; &lt;JDBC store &quot;PIPPOJDBCStore&quot; failed to open table &quot;PIPPO_myhostname_WLStore&quot;.
+weblogic.store.io.jdbc.JDBCStoreException: [Store:280065][Store:280068]JDBC store failed to initialize. It did not find its database table and failed trying to create a new empty table using the commands in file &quot;/weblogic/store/io/jdbc/ddl/oracle.ddl&quot;. (server=&quot;PIPPO_myhostname&quot; store=&quot;PIPPOJDBCStore&quot; table=&quot;PIPPO_myhostname_WLStore&quot;):(Linked Cause, &quot;java.sql.SQLSyntaxErrorException: ORA-01031: insufficient privileges
+&quot;)
+        at weblogic.store.io.jdbc.JDBCStoreIO.createTable(JDBCStoreIO.java:881)
+        at weblogic.store.io.jdbc.JDBCStoreIO.open(JDBCStoreIO.java:538)
+        at weblogic.store.internal.PersistentStoreImpl.recoverStoreConnections(PersistentStoreImpl.java:476)
+        at weblogic.store.internal.PersistentStoreImpl.open(PersistentStoreImpl.java:453)
+        at weblogic.store.admin.AdminHandler.activate(AdminHandler.java:129)
+        at weblogic.store.admin.JDBCAdminHandler.activate(JDBCAdminHandler.java:73)
+        at weblogic.management.utils.GenericManagedDeployment.activate(GenericManagedDeployment.java:158)
+        at weblogic.management.utils.GenericDeploymentManager.activate(GenericDeploymentManager.java:184)
+        at weblogic.management.utils.GenericManagedService.activateDeployment(GenericManagedService.java:211)
+        at weblogic.management.utils.GenericServiceManager.activateDeployment(GenericServiceManager.java:131)
+        at weblogic.management.internal.DeploymentHandlerHome.invokeHandlers(DeploymentHandlerHome.java:823)
+        at weblogic.management.internal.DeploymentHandlerHome.activateInitialDeployments(DeploymentHandlerHome.java:666)
+        at weblogic.management.internal.DeploymentHandlerHome.activateInitialDeployments(DeploymentHandlerHome.java:627)
+        at weblogic.management.deploy.internal.DeploymentAdapter$2.doPrepare(DeploymentAdapter.java:101)
+        at weblogic.management.deploy.internal.DeploymentAdapter.prepare(DeploymentAdapter.java:191)
+        at weblogic.management.deploy.internal.AppTransition$1.transitionApp(AppTransition.java:21)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.prepare(ConfiguredDeployments.java:165)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:122)
+        at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:211)
+        at weblogic.management.deploy.internal.DeploymentServerService.start(DeploymentServerService.java:119)
+        at weblogic.server.AbstractServerService.postConstruct(AbstractServerService.java:78)
+        at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:606)
+        at org.glassfish.hk2.utilities.reflection.ReflectionHelper.invoke(ReflectionHelper.java:1017)
+        at org.jvnet.hk2.internal.ClazzCreator.postConstructMe(ClazzCreator.java:388)
+        at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:430)
+        at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+        at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+        at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+        at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+        at org.jvnet.hk2.internal.ServiceLocatorImpl.getService(ServiceLocatorImpl.java:606)
+        at org.jvnet.hk2.internal.ThreeThirtyResolver.resolve(ThreeThirtyResolver.java:77)
+        at org.jvnet.hk2.internal.ClazzCreator.resolve(ClazzCreator.java:231)
+        at org.jvnet.hk2.internal.ClazzCreator.resolveAllDependencies(ClazzCreator.java:254)
+        at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:413)
+        at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+        at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+        at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+        at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:87)
+        at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.oneJob(CurrentTaskFuture.java:1162)
+        at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.run(CurrentTaskFuture.java:1147)
+        at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:553)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:311)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:263)
+
+Caused By: java.sql.SQLSyntaxErrorException: ORA-01031: insufficient privileges
+
+        at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:450)
+        at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:399)
+        at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:1059)
+        at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:522)
+        at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:257)
+        at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:587)
+        at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:210)
+        at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:30)
+        at oracle.jdbc.driver.T4CStatement.executeForRows(T4CStatement.java:931)
+        at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1150)
+        at oracle.jdbc.driver.OracleStatement.executeInternal(OracleStatement.java:1792)
+        at oracle.jdbc.driver.OracleStatement.execute(OracleStatement.java:1745)
+        at oracle.jdbc.driver.OracleStatementWrapper.execute(OracleStatementWrapper.java:334)
+        at weblogic.jdbc.wrapper.Statement.execute(Statement.java:490)
+        at weblogic.store.io.jdbc.ReservedConnection.executeDDLString(ReservedConnection.java:1169)
+        at weblogic.store.io.jdbc.ReservedConnection.executeDDLStream(ReservedConnection.java:1141)
+        at weblogic.store.io.jdbc.JDBCStoreIO.createTable(JDBCStoreIO.java:870)
+        at weblogic.store.io.jdbc.JDBCStoreIO.open(JDBCStoreIO.java:538)
+        at weblogic.store.internal.PersistentStoreImpl.recoverStoreConnections(PersistentStoreImpl.java:476)
+        at weblogic.store.internal.PersistentStoreImpl.open(PersistentStoreImpl.java:453)
+        at weblogic.store.admin.AdminHandler.activate(AdminHandler.java:129)
+        at weblogic.store.admin.JDBCAdminHandler.activate(JDBCAdminHandler.java:73)
+        at weblogic.management.utils.GenericManagedDeployment.activate(GenericManagedDeployment.java:158)
+        at weblogic.management.utils.GenericDeploymentManager.activate(GenericDeploymentManager.java:184)
+        at weblogic.management.utils.GenericManagedService.activateDeployment(GenericManagedService.java:211)
+        at weblogic.management.utils.GenericServiceManager.activateDeployment(GenericServiceManager.java:131)
+        at weblogic.management.internal.DeploymentHandlerHome.invokeHandlers(DeploymentHandlerHome.java:823)
+        at weblogic.management.internal.DeploymentHandlerHome.activateInitialDeployments(DeploymentHandlerHome.java:666)
+        at weblogic.management.internal.DeploymentHandlerHome.activateInitialDeployments(DeploymentHandlerHome.java:627)
+        at weblogic.management.deploy.internal.DeploymentAdapter$2.doPrepare(DeploymentAdapter.java:101)
+        at weblogic.management.deploy.internal.DeploymentAdapter.prepare(DeploymentAdapter.java:191)
+        at weblogic.management.deploy.internal.AppTransition$1.transitionApp(AppTransition.java:21)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.prepare(ConfiguredDeployments.java:165)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:122)
+        at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:211)
+        at weblogic.management.deploy.internal.DeploymentServerService.start(DeploymentServerService.java:119)
+        at weblogic.server.AbstractServerService.postConstruct(AbstractServerService.java:78)
+        at sun.reflect.GeneratedMethodAccessor9.invoke(Unknown Source)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.lang.reflect.Method.invoke(Method.java:606)
+        at org.glassfish.hk2.utilities.reflection.ReflectionHelper.invoke(ReflectionHelper.java:1017)
+        at org.jvnet.hk2.internal.ClazzCreator.postConstructMe(ClazzCreator.java:388)
+        at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:430)
+        at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+        at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+        at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+        at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+        at org.jvnet.hk2.internal.ServiceLocatorImpl.getService(ServiceLocatorImpl.java:606)
+        at org.jvnet.hk2.internal.ThreeThirtyResolver.resolve(ThreeThirtyResolver.java:77)
+        at org.jvnet.hk2.internal.ClazzCreator.resolve(ClazzCreator.java:231)
+        at org.jvnet.hk2.internal.ClazzCreator.resolveAllDependencies(ClazzCreator.java:254)
+        at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:413)
+        at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+        at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+        at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+        at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+        at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:87)
+        at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.oneJob(CurrentTaskFuture.java:1162)
+        at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.run(CurrentTaskFuture.java:1147)
+        at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:553)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:311)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:263)
+&gt; 
+
+
+
+
+</pre>
+
+in com.bea.core.store.jdbc_4.0.0.0.jar you find the \weblogic\store\io\jdbc\ddl\oracle.ddl file
+
+
+<pre>
+
+# WebLogic JDBC Store DDL for Oracle
+# Copyright (c) 2003 by BEA, Inc., All Rights Reserved
+
+CREATE TABLE $TABLE (
+  id     int  not null primary key,
+  type   int  not null,
+  handle int  not null,
+  record long raw not null
+);
+
+
+
+</pre>
+
+The configuration in config.xml is:
+<br/><br/>
+<pre  class="brush: xml">
+
+&lt;jms-server&gt;
+&lt;name&gt;puppo_PlatformJMSserver&lt;/name&gt;
+&lt;target&gt;pippo_myhostname&lt;/target&gt;
+&lt;persistent-store&gt;PUPPOJDBCStore&lt;/persistent-store&gt;
+&lt;temporary-template-resource xsi:nil=&quot;true&quot;&gt;&lt;/temporary-template-resource&gt;
+&lt;temporary-template-name xsi:nil=&quot;true&quot;&gt;&lt;/temporary-template-name&gt;
+&lt;/jms-server&gt;
+
+
+&lt;jms-system-resource&gt;
+&lt;name&gt;PUPPOqueue&lt;/name&gt;
+&lt;target&gt;pippo_myhostname&lt;/target&gt;
+&lt;sub-deployment&gt;
+&lt;name&gt;PUPPOqueuesubdeployment&lt;/name&gt;
+&lt;target&gt;puppo_PlatformJMSserver&lt;/target&gt;
+&lt;/sub-deployment&gt;
+&lt;descriptor-file-name&gt;jms/PUPPOqueue-jms.xml&lt;/descriptor-file-name&gt;
+&lt;/jms-system-resource&gt;
+
+  &lt;jdbc-store&gt;
+    &lt;name&gt;PUPPOJDBCStore&lt;/name&gt;
+    &lt;prefix-name&gt;PIPPO_myhostname_&lt;/prefix-name&gt;
+    &lt;data-source&gt;JDBCStoreDS&lt;/data-source&gt;
+    &lt;target&gt;pippo_myhostname&lt;/target&gt;
+  &lt;/jdbc-store&gt;
+
+
+</pre>
+
+<br/><br/>
+The whole JDBCStore story is documented here <a href="http://docs.oracle.com/cd/E12840_01/wls/docs103/config_wls/store.html#wp1143086">http://docs.oracle.com/cd/E12840_01/wls/docs103/config_wls/store.html#wp1143086</a>
+<br/><br/>
+
+
+
+So the solution is that either the DBA grant the user associated to the JDBCStoreDS the right to create tables, or they create the table themselves using the DDL above...
+
+
+
+

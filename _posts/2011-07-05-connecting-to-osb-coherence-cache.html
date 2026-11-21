@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Connecting to OSB Coherence cache cluster"
+date: 2011-07-05T18:13:00.001+02:00
+permalink: /2011/07/connecting-to-osb-coherence-cache.html
+blogger_id: "1365569259161504109"
+tags: ["coherence", "OSB"]
+---
+cp $ORACLE_HOME/coherence_3.6/coherence.sh $ORACLE_HOME/coherence_3.6/cohosb.sh <br />
+<br />
+vi $ORACLE_HOME/coherence_3.6/cohosb.sh <br />
+<br />
+change JAVA_OPTS this way:<br />
+<br />
+JAVA_OPTS="-Xms$MEMORY -Xmx$MEMORY -Dtangosol.coherence.distributed.localstorage=$STORAGE_ENABLED -Dtangosol.coherence.localhost=localhost -Dtangosol.coherence.localport=7890 -Dtangosol.coherence.clusteraddress=224.3.6.0 -Dtangosol.coherence.clusterport=36000 -Dtangosol.coherence.cluster=OSB-cluster -Dtangosol.coherence.wka=127.0.0.1 -Dtangosol.coherence.wka.port=7890"<br />
+<br />
+<br />
+I have managed to discover all these parameters by:<br />
+<br />
+cp $ORACLE_HOME/oracle_common/modules/oracle.coherence_3.6/<b>coherence.jar</b> .<br />
+cp "$ORACLE_HOME/user_projects/domains/a087_osb/servers/AdminServer/tmp/_WL_user/ALSB Coherence Cache Provider/sm027g/APP-INF/lib/<b>com.bea.alsb.coherence-impl.jar</b>" .<br />
+<br />
+jar xvf coherence.jar tangosol-coherence.xml<br />
+jar xvf coherence.jar tangosol-coherence-override-dev.xml<br />
+jar xvf com.bea.alsb.coherence-impl.jar tangosol-coherence-override.xml<br />
+cp $ORACLE_HOME/user_projects/domains/a087_osb/config/osb/coherence/osb-coherence-override.xml .<br />
+<br />
+<br />
+and examining their settings (the only one that really matters is the tangosol-coherence.xml)<br />
+<br />
+<br />
+Once you run it, you should see that it is the member number 2 of the OSB-cluster.<br />
+<br />
+<br />
+Here <a href="http://coherence.oracle.com/display/COH35UG/Command+Line+Setting+Override+Feature">http://coherence.oracle.com/display/COH35UG/Command+Line+Setting+Override+Feature</a> the list of all thee available command line properties

@@ -1,0 +1,8 @@
+---
+layout: post
+title: "FileDataIndexer"
+date: 2009-10-22T16:13:00.000+02:00
+permalink: /2009/10/filedataindexer.html
+blogger_id: "7758057787602685818"
+---
+weblogic.diagnostics.archive.filestore.FileDataIndexer seems to generate plenty of garbage in memory<br /><br /><br />try using<br />-D_Offline_FileDataArchive=true<br /><br />-Dcom.bea.wlw.netui.disableInstrumentation=true<br /><br /><br />also, com.bea.wli.bpm.runtime.ProcessVariableValueImpl seems to generate a lot of garbage

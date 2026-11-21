@@ -1,0 +1,31 @@
+---
+layout: post
+title: "screen : how to run long running linux commands who survive also a VDI crash"
+date: 2018-02-09T11:21:00.002+01:00
+permalink: /2018/02/screen-how-to-run-long-running-linux.html
+blogger_id: "8686217981755527763"
+tags: ["screen"]
+---
+<a href="https://www.rackaid.com/blog/linux-screen-tutorial-and-how-to/">https://www.rackaid.com/blog/linux-screen-tutorial-and-how-to/</a><br />
+<br />
+example:<br />
+<br />
+screen<br />
+CTRL-A c  (create new window)<br />
+top<br />
+CTRL-A c (create new window)<br />
+ls<br />
+CTRL-A n (next window)<br />
+You are now back in “top”<br />
+<br />
+<br />
+Restart VDI<br />
+<br />
+Login again<br />
+<br />
+screen –r  (reattach)<br />
+<br />
+<br />
+<br />
+With screen you can also open several terminal sessions from the same login, and tab through them with CTRL-A n<br />
+

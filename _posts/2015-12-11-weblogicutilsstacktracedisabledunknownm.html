@@ -1,0 +1,15 @@
+---
+layout: post
+title: "weblogic.utils.StackTraceDisabled.unknownMethod()"
+date: 2015-12-11T12:08:00.001+01:00
+permalink: /2015/12/weblogicutilsstacktracedisabledunknownm.html
+blogger_id: "2380465105683870181"
+---
+in recent (>= 12.1.2 ) versions of WLS, as stated in Oracle Doc ID 1624363.1:
+<br/>
+"In production mode of WLS 12.1.2, the full Java exception stack trace  is not returned to the ejb caller when an exception is thrown."
+<br/>
+so all you get on the client is a "weblogic.utils.StackTraceDisabled.unknownMethod()"
+<br/>
+Just add -Dweblogic.PrintStackTraceInProduction=true  (I guess both on the client and on the server, if they are on different WLS instances...)
+ <br/>

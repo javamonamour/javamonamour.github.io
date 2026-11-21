@@ -1,0 +1,49 @@
+---
+layout: post
+title: "WLST and getopt - parsing command line arguments"
+date: 2012-08-22T18:29:00.003+02:00
+permalink: /2012/08/wlst-and-getopt-parsing-command-line.html
+blogger_id: "7453732325563520418"
+tags: ["WLST"]
+---
+This is far from ideal but it works:<br />
+<br />
+<pre name="code">import getopt
+env = None
+password = None
+list = None
+
+opts, args = getopt.getopt(sys.argv[1:], "e:p:l:")
+for opt, arg in opts:
+    print opt, arg
+    if opt in "-e":
+        env = arg
+    if opt in "-p":
+        password = arg
+    if opt in "-l":
+        list = arg
+
+
+print "env", env
+print "password", password
+print "list", list
+
+</pre><br />
+java weblogic.WLST testgetopts.py -e pippo -l cino,cano<br />
+<br />
+the output is:<br />
+<br />
+<br />
+-e pippo<br />
+-l cino,cano<br />
+env pippo<br />
+password None<br />
+list cino,cano<br />
+<br />
+<br />
+Later, you can check if an argument has been passed by<br />
+<br />
+<pre>if password is None:
+    print "missing argument password"        
+</pre><br />
+

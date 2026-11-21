@@ -1,0 +1,22 @@
+---
+layout: post
+title: "DevPollSocketMuxer was built on Apr 25 2007 15:08:20.... why should I care?"
+date: 2011-08-18T22:46:00.000+02:00
+permalink: /2011/08/devpollsocketmuxer-was-built-on-apr-25.html
+blogger_id: "442632308792023401"
+tags: ["DevPollSocketMuxer", "PosixSocketMuxer"]
+---
+As explained very well by Jose Kuzhivelil <br />
+<a href="http://jojovedder.blogspot.com/2009/05/weblogic-socket-muxers-are-not-stuck.html">http://jojovedder.blogspot.com/2009/05/weblogic-socket-muxers-are-not-stuck.html</a><br />
+<br />
+<i>"The socket Muxer manages the server’s existing socket connections.<br />
+It first determines which sockets have incoming requests waiting to be processed. It then reads enough data to determine the protocol and dispatches the socket to an appropriate runtime layer based on the protocol.<br />
+In the runtime layer, the socket muxer threads determine which execute thread queue to be used and delegates the request accordingly."</i><br />
+<br />
+Another great post on the Muxer topic is this<br />
+<br />
+<a href="http://m-button.blogspot.com/2008/08/how-does-weblogic-handle-socket-muxers.html">http://m-button.blogspot.com/2008/08/how-does-weblogic-handle-socket-muxers.html</a><br />
+<br />
+An alternative to DevPollSocketMuxer is PosixSocketMuxer on Unix, and NTSocketMuxer on Windows<br />
+<br />
+

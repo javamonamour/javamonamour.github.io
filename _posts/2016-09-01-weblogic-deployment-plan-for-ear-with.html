@@ -1,0 +1,98 @@
+---
+layout: post
+title: "WebLogic deployment plan for a EAR with EJB deployed in a WAR and not in a separate JAR module"
+date: 2016-09-01T11:04:00.001+02:00
+permalink: /2016/09/weblogic-deployment-plan-for-ear-with.html
+blogger_id: "8592399362458021828"
+tags: ["deploy", "weblogic"]
+---
+<a href="https://docs.oracle.com/cd/E19798-01/821-1841/gippi/index.html">https://docs.oracle.com/cd/E19798-01/821-1841/gippi/index.html</a>
+<br/><br/>
+
+"To include enterprise bean class files in a WAR module, the class files should be in the WEB-INF/classes directory.
+
+To include a JAR file that contains enterprise beans in a WAR module, add the JAR to the WEB-INF/lib directory of the WAR module.
+
+WAR modules that contain enterprise beans do not require an ejb-jar.xml deployment descriptor. If the application uses ejb-jar.xml, it must be located in the WAR module’s WEB-INF directory.
+"
+
+<br/><br/>
+
+
+
+
+in this case you MUST put an empty weblogic-ejb-jar.xml in the WAR's file WEB-INF directory:
+<br/><br/>
+
+
+<pre class="brush: xml">
+
+&lt;weblogic-ejb-jar xmlns=&quot;http://www.bea.com/ns/weblogic/weblogic-ejb-jar&quot;
+xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+xsi:schemaLocation=&quot;http://www.bea.com/ns/weblogic/weblogic-ejb-jar http://www.bea.com/ns/weblogic/weblogic-ejb-jar/1.0/weblogic-ejb-jar.xsd&quot;&gt;
+&lt;/weblogic-ejb-jar&gt;
+
+
+
+</pre>
+
+<br/><br/>
+
+
+then you can provide a deployment plan plan.xml :
+<br/><br/>
+<pre class="brush: xml">
+
+&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;deployment-plan xmlns=&quot;http://xmlns.oracle.com/weblogic/deployment-plan&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:schemaLocation=&quot;http://xmlns.oracle.com/weblogic/deployment-plan http://xmlns.oracle.com/weblogic/deployment-plan/1.0/deployment-plan.xsd&quot;&gt;
+  &lt;application-name&gt;PippoApplication.ear&lt;/application-name&gt;
+  &lt;variable-definition&gt;
+    &lt;variable&gt;
+      &lt;name&gt;WeblogicEnterpriseBean_com.pippo.PippoBean_CreateAsPrincipalName_14562212116401&lt;/name&gt;
+      &lt;value&gt;SERVERSTARTUP.CREATE.PRINCIPAL&lt;/value&gt;
+    &lt;/variable&gt;
+  &lt;/variable-definition&gt;
+  &lt;module-override&gt;
+    &lt;module-name&gt;PippoDashboard.war&lt;/module-name&gt;
+    &lt;module-type&gt;war&lt;/module-type&gt;
+    &lt;module-descriptor external=&quot;false&quot;&gt;
+      &lt;root-element&gt;weblogic-ejb-jar&lt;/root-element&gt;
+      &lt;uri&gt;WEB-INF/weblogic-ejb-jar.xml&lt;/uri&gt;
+      &lt;variable-assignment&gt;
+        &lt;name&gt;WeblogicEnterpriseBean_com.pippo.PippoBean_CreateAsPrincipalName_14562212116401&lt;/name&gt;
+        &lt;xpath&gt;/weblogic-ejb-jar/weblogic-enterprise-bean/[ejb-name=&quot;PippoBean&quot;]/create-as-principal-name&lt;/xpath&gt;
+      &lt;/variable-assignment&gt;
+    &lt;/module-descriptor&gt;
+    &lt;module-descriptor external=&quot;false&quot;&gt;
+      &lt;root-element&gt;ejb-jar&lt;/root-element&gt;
+      &lt;uri&gt;META-INF/ejb-jar.xml&lt;/uri&gt;
+    &lt;/module-descriptor&gt;
+  &lt;/module-override&gt;
+  &lt;config-root&gt;/path/to/envconfig/deployplans/&lt;/config-root&gt;
+&lt;/deployment-plan&gt;
+
+
+</pre>
+
+and in the config.xml you configure the deployment plan:
+<br/>
+<pre class="brush: xml">
+
+  &lt;app-deployment&gt;
+    &lt;name&gt;PippoApplication&lt;/name&gt;
+    &lt;target&gt;mywlsserver&lt;/target&gt;
+    &lt;module-type&gt;ear&lt;/module-type&gt;
+    &lt;source-path&gt;/path/to/PippoApplication.ear&lt;/source-path&gt;
+    &lt;deployment-principal-name&gt;PIPPO.deployment.principal&lt;/deployment-principal-name&gt;
+    &lt;plan-dir&gt;/path/to/plan&lt;/plan-dir&gt;
+    &lt;plan-path&gt;/path/to/envconfig/deployplans/plan.xml&lt;/plan-path&gt;
+    &lt;security-dd-model&gt;Advanced&lt;/security-dd-model&gt;
+    &lt;staging-mode&gt;nostage&lt;/staging-mode&gt;
+  &lt;/app-deployment&gt;
+
+
+</pre>
+
+
+
+

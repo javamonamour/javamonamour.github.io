@@ -1,0 +1,32 @@
+---
+layout: post
+title: "JRockit crash resolved"
+date: 2009-11-13T15:20:00.000+01:00
+permalink: /2009/11/jrockit-crash-resolved.html
+blogger_id: "8462253531489034214"
+---
+if your dump file contains something like:<br />
+<br />
+Thread Stack Trace:<br />
+at known_ld_opt+685()@0x2b36a098d091<br />
+at strength_reduction_generic+158()@0x2b36a098d287<br />
+at <b>optStrengthReduction</b>+152()@0x2b36a098d36b<br />
+at <b>optmanOptimizeMIR</b>+330()@0x2b36a0935cd7<br />
+at generateMethodWithStage+102()@0x2b36a08212b7<br />
+at cmgrGenerateMethodFromPhase+216()@0x2b36a0822126<br />
+at cmgrGenerateNormalMethod+91()@0x2b36a082122d<br />
+at cmgrGenerateCode+209()@0x2b36a08210c1<br />
+at generate_code2+205()@0x2b36a09048a3<br />
+at codegenThread+1006()@0x2b36a0904f45<br />
+at tsiCallStartFunction+67()@0x2b36a08dd5cb<br />
+at tsiThreadStub+308()@0x2b36a08de7d5<br />
+at ptiThreadStub+14()@0x2b36a09468a6<br />
+at start_thread+199()@0x3def806367<br />
+<br />
+<br />
+a workaround could be that you add the method reported by the<br />
+Method       : <br />
+line to an exclusion file myOptfile, which tells JRockit which methods it should NOT optimize.<br />
+<br />
+then start your application with the flags <br />
+-Xverbose:opt -Djrockit.optfile=myOptfile

@@ -1,0 +1,171 @@
+---
+layout: post
+title: "Securing WLI processes and Web Services"
+date: 2010-03-14T11:04:00.000+01:00
+permalink: /2010/03/securing-wli-processes-and-web-services.html
+blogger_id: "9175080634131512349"
+tags: ["keytool"]
+---
+add this annotation to your process:<br />
+<br />
+@<b>WSSecurityService</b>(file="mypolicy.xml")<br />
+<br />
+<br />
+and the file contains:<br />
+<br />
+<br />
+&lt;?xml version="1.0" ?&gt;<br />
+&lt;wsSecurityPolicy xsi:schemaLocation="WSSecurity-policy.xsd"<br />
+xmlns="http://www.bea.com/2003/03/wsse/config"<br />
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;<br />
+&lt;wsSecurityIn&gt;<br />
+&lt;token tokenType="username" /&gt;<br />
+&lt;<b>encryptionRequired</b>&gt;<br />
+&lt;decryptionKey&gt;<br />
+&lt;<b>alias</b>&gt;client1&lt;/alias&gt;<br />
+&lt;password&gt;password&lt;/password&gt;<br />
+&lt;/decryptionKey&gt;<br />
+&lt;/encryptionRequired&gt;<br />
+&lt;signatureRequired&gt;true&lt;/signatureRequired&gt;<br />
+&lt;/wsSecurityIn&gt;<br />
+&lt;/wsSecurityPolicy&gt;<br />
+<br />
+<br />
+The entire XSD is here: <a href="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/ws-securitypolicy.xsd">http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/ws-securitypolicy.xsd</a><br />
+<br />
+you will get this exception when invoking your process from SOAP client:<br />
+<br />
+<br />
+weblogic.webservice.server.ConfigException: Key for alias 'client1' <b>does not exist in server key store </b>(C:\beawli\WLSERV~1.3\server\lib\DemoIdentity.jks)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.webservice.util.ServerKeyStore.getPrivateKeyInternal(ServerKeyStore.java:68)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.webservice.util.ServerKeyStore.getPrivateKey(ServerKeyStore.java:87)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.wli.knex.runtime.jws.wssecurity.inbound.WLWInboundWSSEImpl.initDecryptionKey(WLWInboundWSSEImpl.java:655)<br />
+<br />
+<br />
+Let's check which keys are in the <b>DemoIdentity </b>keystore:<br />
+<br />
+cd C:\beawli\jrockit_160_05\bin<br />
+<br />
+C:\beawli\jrockit_160_05\bin&gt;<b>keytool </b>-list -keystore <b>c:\beawli\wlserver_10.3\server\lib\DemoIdentity.jks</b><br />
+Enter keystore password:&nbsp; (enter DemoIdentityKeyStorePassPhrase)<br />
+<br />
+Keystore type: JKS<br />
+Keystore provider: SUN<br />
+<br />
+Your keystore contains 1 entry<br />
+<br />
+<b>demoidentity</b>, Feb 24, 2010, PrivateKeyEntry,<br />
+Certificate fingerprint (MD5): 7B:C7:C0:7C:91:13:6C:CB:8B:EA:AD:C4:4E:1D:A8:0E<br />
+<br />
+<br />
+I find the password here<br />
+<a href="http://kingsfleet.blogspot.com/2008/11/using-demoidentity-and-demotrust.html">http://kingsfleet.blogspot.com/2008/11/using-demoidentity-and-demotrust.html</a><br />
+<br />
+<br />
+<br />
+At this point I change mypolicy.xml file this way:<br />
+<br />
+<br />
+&lt;?xml version="1.0" ?&gt;<br />
+&lt;wsSecurityPolicy xsi:schemaLocation="WSSecurity-policy.xsd"<br />
+&nbsp;&nbsp;&nbsp; xmlns="http://www.bea.com/2003/03/wsse/config"<br />
+&nbsp;&nbsp;&nbsp; xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;wsSecurityIn&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;token tokenType="username" /&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;encryptionRequired&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;decryptionKey&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;alias&gt;<b>demoidentity</b>&lt;/alias&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;password&gt;<b>DemoIdentityKeyStorePassPhrase</b>&lt;/password&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/decryptionKey&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/encryptionRequired&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;signatureRequired&gt;true&lt;/signatureRequired&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/wsSecurityIn&gt;<br />
+&lt;/wsSecurityPolicy&gt;<br />
+<br />
+<br />
+and I&nbsp; get this new error:<br />
+<br />
+java.rmi.RemoteException: EJB Exception: ; nested exception is: <br />
+&nbsp;&nbsp;&nbsp;&nbsp;com.bea.wli.knex.runtime.jws.wssecurity.exception.WLWWSSEException:  weblogic.webservice.server.ConfigException: Failed to load key for  alias demoidentity<br />
+Caused by:  com.bea.wli.knex.runtime.jws.wssecurity.exception.WLWWSSEException:  weblogic.webservice.server.ConfigException: Failed to load key for alias  demoidentity<br />
+&nbsp;&nbsp;&nbsp;&nbsp;... 19 more<br />
+Caused by:  weblogic.webservice.server.ConfigException: Failed to load key for alias  demoidentity<br />
+&nbsp;&nbsp;&nbsp;&nbsp;... 27 more<br />
+Caused by:  java.security.UnrecoverableKeyException:<b> Cannot recover key</b><br />
+&nbsp;&nbsp;&nbsp;&nbsp;...  29 more<br />
+<br />
+<br />
+and we learn that :<br />
+<br />
+<br />
+<i>The error “java.security.UnrecoverableKeyException: Cannot recover  key” occurs when the keystore and keyEntry passwords are different. To  resolve this issue, you must remove all traces of the past certificate  and request file.</i><br />
+<i>You must generate a new keystore, keyEntry and CSR and specify the  same password for the keystore and the keyEntry.</i><br />
+<br />
+&nbsp;WTF ?????!!!! I think this is simply insane.<br />
+<br />
+<br />
+Incidentally, the keystore configuration is located under server/configuration/keystores<br />
+<br />
+<br />
+At this point, I don't give up and I create a new KeyStore with a custom Identity Key, giving same password for keystore and key:<br />
+<br />
+keytool -genkeypair -alias acme -keystore acmeks.jks -storepass weblogic -keypass weblogic<br />
+<br />
+I set the keystore to "Custom Identity and Command Line Trust" (CustomIdentityAndCommandLineTrust)<br />
+<br />
+and when I restart the server I get:<br />
+<br />
+java.lang.RuntimeException: <b>Trust KeyStore is not configured!</b><br />
+<br />
+At this point I read this documentation<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E15051_01/wls/docs103/ConsoleHelp/taskhelp/security/ConfigureKeystoresAndSSL.html">http://download.oracle.com/docs/cd/E15051_01/wls/docs103/ConsoleHelp/taskhelp/security/ConfigureKeystoresAndSSL.html</a><br />
+<br />
+The default password for the Java default keystore file  $JAVA_HOME/lib/security/cacerts is ‘changeit’<br />
+<br />
+&nbsp;keytool -list -keystore c:\beawli\jrockit_160_05\jre\lib\security\cacerts<br />
+Enter keystore password: (enter changeit)<br />
+<br />
+Keystore type: JKS<br />
+Keystore provider: SUN<br />
+<br />
+Your keystore contains 51 entries<br />
+<br />
+aolrootca1, Jan 17, 2008, trustedCertEntry,<br />
+Certificate fingerprint (MD5): 14:F1:08:AD:9D:FA:64:E2:89:E7:1C:CF:A8:AD:7D:5E<br />
+verisignclass3g2ca, Mar 25, 2004, trustedCertEntry,<br />
+Certificate fingerprint (MD5): A2:33:9B:4C:74:78:73:D4:6C:E7:C1:F3:8D:CB:5C:E9<br />
+entrustclientca, Jan 9, 2003, trustedCertEntry,<br />
+Certificate fingerprint (MD5): 0C:41:2F:13:5B:A0:54:F5:96:66:2D:7E:CD:0E:03:F4<br />
+thawtepersonalbasicca, Feb 12, 1999, trustedCertEntry,<br />
+Certificate fingerprint (MD5): E6:0B:D2:C9:CA:2D:88:DB:1A:71:0E:4B:78:EB:02:41<br />
+globalsignca, Aug 1, 2007, trustedCertEntry,<br />
+Certificate fingerprint (MD5): AB:BF:EA:E3:6B:29:A6:CC:A6:78:35:99:EF:AD:2B:80<br />
+addtrustclass1ca, May 2, 2006, trustedCertEntry,<br />
+Certificate fingerprint (MD5): 1E:42:95:02:33:92:6B:B9:5F:C0:7F:DA:D6:B2:4B:FC<br />
+digicertassuredidrootca, Jan 7, 2008, trustedCertEntry,<br />
+Certificate fingerprint (MD5): 87:CE:0B:7B:2A:0E:49:00:E1:58:71:9B:37:A8:93:72<br />
+verisignclass2g3ca, Mar 25, 2004, trustedCertEntry,<br />
+Certificate fingerprint (MD5): F8:BE:C4:63:22:C9:A8:46:74:8B:B8:1D:1E:4A:2B:F6 <br />
+blablabla<br />
+blablabla<br />
+<br />
+<br />
+<br />
+After having configured the Keystore as "<b>custom identity and custom trust</b>"<br />
+&nbsp;&nbsp;&nbsp; &lt;key-stores&gt;CustomIdentityAndCustomTrust&lt;/key-stores&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;custom-identity-key-store-file-name&gt;c:\beawli\wlserver_10.3\server\lib\acmeks.jks&lt;/custom-identity-key-store-file-name&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;custom-identity-key-store-type&gt;JKS&lt;/custom-identity-key-store-type&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;custom-identity-key-store-pass-phrase-encrypted&gt;{3DES}BJ5VpGM7nC0xjFy7L6sAsQ==&lt;/custom-identity-key-store-pass-phrase-encrypted&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;custom-trust-key-store-file-name&gt;c:\beawli\jrockit_160_05\jre\lib\security\cacerts&lt;/custom-trust-key-store-file-name&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;custom-trust-key-store-type&gt;JKS&lt;/custom-trust-key-store-type&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;custom-trust-key-store-pass-phrase-encrypted&gt;{3DES}pUeTIrard92wCNotuoJb/g==&lt;/custom-trust-key-store-pass-phrase-encrypted&gt;<br />
+<br />
+<br />
+<br />
+and AT LAST I get an expected error - since the SOAP message was not encrypted:<br />
+<br />
+ava.rmi.RemoteException: EJB Exception: ; nested exception is: <br />
+&nbsp;&nbsp;&nbsp;&nbsp;com.bea.wli.knex.runtime.jws.wssecurity.exception.WLWWSSEException:  Policy requires Message to be encrypted, Message was not encrypted.<br />
+Caused  by: com.bea.wli.knex.runtime.jws.wssecurity.exception.WLWWSSEException: <b> Policy requires Message to be encrypted, Message was not encrypted.</b><br />
+&nbsp;&nbsp;&nbsp;&nbsp;...  19 more

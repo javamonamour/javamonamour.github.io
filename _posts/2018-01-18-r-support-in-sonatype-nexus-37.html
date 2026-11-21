@@ -1,0 +1,56 @@
+---
+layout: post
+title: "R support in Sonatype Nexus 3.7"
+date: 2018-01-18T21:27:00.000+01:00
+permalink: /2018/01/r-support-in-sonatype-nexus-37.html
+blogger_id: "2603187454041120980"
+tags: ["docker", "nexus", "R"]
+---
+What is R ? <a href="https://www.r-project.org/about.html">https://www.r-project.org/about.html</a> but even better <a href="https://en.wikipedia.org/wiki/R_(programming_language)">https://en.wikipedia.org/wiki/R_(programming_language)</a><br />
+<br />
+What is CRAN ? <a href="https://cran.r-project.org/">https://cran.r-project.org/</a> and <a href="https://en.wikipedia.org/wiki/R_(programming_language)#CRAN">https://en.wikipedia.org/wiki/R_(programming_language)#CRAN</a><br />
+<br />
+"A core set of packages is included with the installation of R, with more than 11,000 additional packages (as of July 2017) available at the Comprehensive R Archive Network (CRAN), Bioconductor, Omegahat, GitHub, and other repositories."<br />
+<br />
+<br />
+<br />
+<a href="https://github.com/sonatype-nexus-community/nexus-repository-r">https://github.com/sonatype-nexus-community/nexus-repository-r</a><br />
+<br />
+git clone https://github.com/sonatype-nexus-community/nexus-repository-r.git<br />
+cd nexus-repository-r/<br />
+git tag -l<br />
+git checkout tags/1.0.1<br />
+(you are now in detached head, who cares...)<br />
+or even better : git checkout tags/1.0.1 -b 1.0.1 (so you don't get a detached head)<br />
+WARNING: for Nexus version 3.8.0-02 and above use tag 1.0.1, otherwise 1.0.0<br />
+mvn clean install<br />
+<br />
+ls target/nexus-repository-r-1.0.0.jar<br />
+<br />
+<b>docker run -d -p 8081:8081 --name nexus sonatype/nexus3</b><br />
+<i>6f49bdc956a6</i><br />
+<b>docker cp nexus-repository-r-1.0.0.jar 6f49bdc956a6:/opt/sonatype/nexus/system/org/sonatype/nexus/plugins/</b><br />
+<br />
+<br />
+docker exec -u 0 -ti 6f49bdc956a6 /bin/bash<br />
+stty rows 50 cols 132<br />
+cd /opt/sonatype/nexus/system/org/sonatype/nexus/plugins/<br />
+mkdir -p nexus-repository-r/1.0.0/<br />
+mv nexus-repository-r-1.0.0.jar nexus-repository-r/1.0.0/<br />
+<br />
+vi /opt/sonatype/nexus/system/com/sonatype/nexus/assemblies/nexus-oss-feature/3.7.1-02/nexus-oss-feature-3.7.1-02-features.xml<br />
+<br />
+customize the file as per <a href="https://github.com/sonatype-nexus-community/nexus-repository-r">https://github.com/sonatype-nexus-community/nexus-repository-r</a> chapter "(most) Permanent Install" (careful! you must add 2 separate sections in the XML file! Nexus stinks, they should provide a CLI to manage plugins, instead of asking you to manually manipulate the XML )<br />
+<br />
+docker stop 6f49bdc956a6 <br />
+docker start 6f49bdc956a6 <br />
+<br />
+when you create a new repository, you should now see the r (group) r (hosted) and r (proxy) types<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

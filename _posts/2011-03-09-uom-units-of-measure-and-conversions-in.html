@@ -1,0 +1,31 @@
+---
+layout: post
+title: "UOM Units Of Measure and Conversions in Java"
+date: 2011-03-09T17:55:00.002+01:00
+permalink: /2011/03/uom-units-of-measure-and-conversions-in.html
+blogger_id: "8102948826174241719"
+tags: ["UOM"]
+---
+some interesting facts on MAJOR disasters happened because of UOM / Conversion issues:<br />
+<br />
+<a href="http://www.slideshare.net/keilw/eclipse-uomo">http://www.slideshare.net/keilw/eclipse-uomo</a><br />
+<br />
+<a href="http://www.eclipse.org/uomo/">Here</a> the Project's homepage<br />
+<br />
+Here <a href="http://jscience.org/api/index.html?javax/measure/units/package-summary.html">http://jscience.org/api/index.html?javax/measure/units/package-summary.html</a> the javax.measure.units package<br />
+<br />
+In doubt, I think I will implement a poor man's version of the framework:<br />
+<br />
+<pre>enum UOM { KGM, CMT };
+
+UOMValue {
+  UOM uom;
+  BigDecimal value;
+  UOMValue convertTo(UOM targetUOM);
+}
+
+</pre>and do a switch with hardcoded conversion values.<br />
+<br />
+Some cases which don't fit: <br />
+<br />
+Size is composed by 3 values (len, wid, hei), which have the same UOM.

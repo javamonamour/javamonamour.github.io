@@ -1,0 +1,31 @@
+---
+layout: post
+title: "currentTimeMillis  reverse lookup, AKA \"from currentTimeMillis  to date\" in WLST"
+date: 2013-07-16T10:57:00.003+02:00
+permalink: /2013/07/currenttimemillis-reverse-lookup-aka.html
+blogger_id: "544068212591270836"
+tags: ["date"]
+---
+If you have a timestamp expressed as<br />
+<br />
+System.currentTimeMillis()<br />
+<br />
+=<span lang="EN-US" style="font-family: Consolas; font-size: 11.0pt; mso-ansi-language: EN-US; mso-bidi-font-family: &quot;Times New Roman&quot;; mso-bidi-language: AR-SA; mso-fareast-font-family: Calibri; mso-fareast-language: FR-CH; mso-fareast-theme-font: minor-latin;">1373941644513&nbsp;&nbsp;</span><br />
+<br />
+you can transform it into a readable date this way:<br />
+<br />
+<pre class="lang-java prettyprint prettyprinted"><code><span class="pln">from java.text import SimpleDateFormat </span></code></pre>
+<pre class="lang-java prettyprint prettyprinted"><code><span class="pln">from java.util import Date</span></code></pre>
+<pre class="lang-java prettyprint prettyprinted"><code><span class="pln">
+</span></code></pre>
+<pre class="lang-java prettyprint prettyprinted"><code><span class="pln">sdf </span><span class="pun">=</span><span class="pln"> </span><span class="pln"></span><span class="typ">SimpleDateFormat</span><span class="pun">(</span><span class="str">"MMM dd,yyyy HH:mm"</span><span class="pun">)</span></code></pre>
+<pre class="lang-java prettyprint prettyprinted"><code><span class="pun">mydate = Date(1373941644513)</span></code></pre>
+<pre class="lang-java prettyprint prettyprinted"><code><span class="pun">print sdf.format(mydate)</span></code></pre>
+<pre class="lang-java prettyprint prettyprinted"><code><span class="pun">
+</span></code></pre>
+<pre class="lang-java prettyprint prettyprinted"><code><span class="pun">Jul 16,2013 04:27</span></code></pre>
+<pre class="lang-java prettyprint prettyprinted"><code><span class="pun">
+</span></code></pre>
+<pre class="lang-java prettyprint prettyprinted"><code><span class="pun">
+</span></code></pre>
+

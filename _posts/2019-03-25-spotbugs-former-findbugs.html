@@ -1,0 +1,37 @@
+---
+layout: post
+title: "spotbugs former findbugs"
+date: 2019-03-25T14:18:00.000+01:00
+permalink: /2019/03/spotbugs-former-findbugs.html
+blogger_id: "7988375596041114050"
+tags: ["spotbugs"]
+---
+<a href="https://spotbugs.readthedocs.io/en/latest/maven.html#goals-of-spotbugs-maven-plugin">https://spotbugs.readthedocs.io/en/latest/maven.html#goals-of-spotbugs-maven-plugin</a><br />
+<br />
+<pre class="brush: xml">&lt;plugin&gt;
+ &lt;groupId&gt;com.github.spotbugs&lt;/groupId&gt;
+ &lt;artifactId&gt;spotbugs-maven-plugin&lt;/artifactId&gt;
+ &lt;version&gt;3.1.11&lt;/version&gt;
+ &lt;dependencies&gt;
+  &lt;!-- overwrite dependency on spotbugs if you want to specify the version 
+   of spotbugs --&gt;
+  &lt;dependency&gt;
+   &lt;groupId&gt;com.github.spotbugs&lt;/groupId&gt;
+   &lt;artifactId&gt;spotbugs&lt;/artifactId&gt;
+   &lt;version&gt;3.1.12&lt;/version&gt;
+  &lt;/dependency&gt;
+ &lt;/dependencies&gt;
+&lt;/plugin&gt;
+
+</pre><br />
+mvn spotbugs:spotbugs<br />
+<br />
+this generates a file with a report:<br />
+<br />
+target/spotbugsXml.xml<br />
+<br />
+the report is hard to read honestly, but there are many interesting remarks<br />
+<br />
+<br />
+<br />
+

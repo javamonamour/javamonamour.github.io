@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Suspending a MDB"
+date: 2017-03-19T21:28:00.000+01:00
+permalink: /2017/03/suspending-mdb.html
+blogger_id: "1602346767374745710"
+tags: ["mdb"]
+---
+It's easy to suspend consumption of JMS messages from a MDB with WLST (this code is from an Oracle Support document):
+
+<pre class="brush: java">
+connect("username", "password", "t3://host:port")
+domainRuntime()
+cd("/ServerRuntimes/TargetServerName/ApplicationRuntimes/ApplicationDeploymentName/ComponentRuntimes/ApplicationDeploymentName/EJBRuntimes/MDBName_JNDINameoftheQueue")
+cmo.suspend()
+</pre>
+
+<br/><br/>
+The Java JMX version is horrendously more complicated.
+<br/><br/>
+Here <a href="http://middlewaremagic.com/weblogic/?p=5099 ">http://middlewaremagic.com/weblogic/?p=5099 </a> 
+they say:
+<br/> <br/>
+“NOTE:Suspending One individual MDB from an EAR file is not possible so if your EAR application Contains multiple MDBs then you will have to suspend all the MDBs present in that EAR like above.”
+<br/><br/>
+but I am not really sure this is true, since there is a JMX method for this: 
+<br/><br/>
+<a href="http://docs.oracle.com/cd/E23943_01/apirefs.1111/e13945/weblogic/management/runtime/MessageDrivenEJBRuntimeMBean.html#suspend()">http://docs.oracle.com/cd/E23943_01/apirefs.1111/e13945/weblogic/management/runtime/MessageDrivenEJBRuntimeMBean.html#suspend()</a>
+<br/><br/>
+However if you restart WLS, the MDB will resume consumption.
+<br/><br/>
+If you use native WLS JMS, you can disable consumption on the JMS queue itself. This feature doesn't seem to be available for foreign JMS destinations (like MQ). In this case, you can simply comment out the destination in the JMS WLS configuration XML.... the MDB at startup will complain that it can't connect to the destination, but the application will still deploy. It's a horrible hack but it works<br/><br/>

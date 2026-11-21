@@ -1,0 +1,119 @@
+---
+layout: post
+title: "ExceptionInInitializerError , NoClassDefFoundError and ClassNotFoundException"
+date: 2016-04-03T20:39:00.000+02:00
+permalink: /2016/04/exceptionininitializererror.html
+blogger_id: "5606741919250144657"
+tags: ["exceptions", "java"]
+---
+<a href="https://docs.oracle.com/javase/7/docs/api/java/lang/ExceptionInInitializerError.html">https://docs.oracle.com/javase/7/docs/api/java/lang/ExceptionInInitializerError.html</a>
+<br/>
+"an exception occurred during evaluation of a static initializer or the initializer for a static variable."
+
+<br/><br/>
+
+<a href="https://docs.oracle.com/javase/7/docs/api/java/lang/NoClassDefFoundError.html">https://docs.oracle.com/javase/7/docs/api/java/lang/NoClassDefFoundError.html</a>
+<br/>
+"no definition of the class could be found"
+
+<br/><br/>
+
+the above 2 are LinkageError (Error). The one below is an Exception:
+<br/>
+<a href="https://docs.oracle.com/javase/7/docs/api/java/lang/ClassNotFoundException.html">https://docs.oracle.com/javase/7/docs/api/java/lang/ClassNotFoundException.html</a>
+<br/>
+<pre>
+Thrown when an application tries to load in a class through its string name using:
+
+    The forName method in class Class.
+    The findSystemClass method in class ClassLoader .
+    The loadClass method in class ClassLoader. 
+
+but no definition for the class with the specified name could be found. 
+</pre>
+<br/>
+
+Difference between NoClassDefFoundError and ClassNotFoundException is well explained here:
+<br/>
+<a href="http://www.javaroots.com/2013/02/classnotfoundexception-vs.html">http://www.javaroots.com/2013/02/classnotfoundexception-vs.html</a>
+
+"This is thrown when at compile time the required classes are present, but at run time the classes are changed or removed or class's static initializes threw exceptions. It means the class which is getting loaded is present in classpath, but one of the classes which are required by this class are either removed or failed to load by compiler. So you should see the classes which are dependent on this class."
+<br/>
+
+<br/>
+
+
+Examples:
+
+this will throw a
+<pre>
+Exception in thread "main" java.lang.ExceptionInInitializerError
+Caused by: java.lang.ArithmeticException: / by zero
+ at com.pierre.pvtest.Test.<clinit>(Test.java:4)
+
+</pre>
+
+<br/>
+
+<pre class="brush: java">
+
+package com.pierre.pvtest;
+
+public class Test {
+ static int a = 1 / 0;
+ public static void main(String[] args) {
+  System.out.println("hello");
+ }
+}
+
+</pre>
+<br/>
+<br/>
+
+
+If I compile this:
+
+<pre class="brush: java">
+package com.pierre.pvtest;
+
+public class Test {
+ 
+ public static void main(String[] args) {
+  Test1 test1 = new Test1();
+  test1.hello();
+  System.out.println("hello");
+ }
+}
+
+package com.pierre.pvtest;
+
+public class Test1 {
+ public void hello() {
+  System.out.println("Test1 hello");
+ }
+
+}
+</pre>
+
+<br/>
+
+then I delete Test1.class, I get this:
+<br/>
+<pre>
+java com.pierre.pvtest.Test
+Exception in thread "main" java.lang.NoClassDefFoundError: com/pierre/pvtest/Test1
+        at com.pierre.pvtest.Test.main(Test.java:6)
+Caused by: java.lang.ClassNotFoundException: com.pierre.pvtest.Test1
+        at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+        at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+        at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+        at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+        ... 1 more
+
+</pre>
+<br/>
+
+
+
+
+

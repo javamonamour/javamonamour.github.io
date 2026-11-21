@@ -1,0 +1,58 @@
+---
+layout: post
+title: "java.lang.OutOfMemoryError: GC overhead limit exceeded  at java.lang.Class.getDeclaredMethods0 "
+date: 2016-06-20T13:56:00.001+02:00
+permalink: /2016/06/javalangoutofmemoryerror-gc-overhead.html
+blogger_id: "2944928258346357261"
+tags: ["jms", "reflection"]
+---
+<pre>
+ Root cause of ServletException.
+java.lang.OutOfMemoryError: GC overhead limit exceeded
+ at java.lang.Class.getDeclaredMethods0(Native Method)
+ at java.lang.Class.privateGetDeclaredMethods(Class.java:2532)
+ at java.lang.Class.getDeclaredMethod(Class.java:1975)
+ at java.io.ObjectStreamClass.getPrivateMethod(ObjectStreamClass.java:1437)
+ at java.io.ObjectStreamClass.access$1700(ObjectStreamClass.java:51)
+ at java.io.ObjectStreamClass$2.run(ObjectStreamClass.java:450)
+ at java.security.AccessController.doPrivileged(Native Method)
+ at java.io.ObjectStreamClass.<init>(ObjectStreamClass.java:425)
+ at java.io.ObjectStreamClass.lookup(ObjectStreamClass.java:322)
+ at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1115)
+ at java.io.ObjectOutputStream.defaultWriteFields(ObjectOutputStream.java:1535)
+ at java.io.ObjectOutputStream.writeSerialData(ObjectOutputStream.java:1496)
+ at java.io.ObjectOutputStream.writeOrdinaryObject(ObjectOutputStream.java:1413)
+ at java.io.ObjectOutputStream.writeObject0(ObjectOutputStream.java:1159)
+ at java.io.ObjectOutputStream.writeObject(ObjectOutputStream.java:329)
+ at weblogic.jms.common.ObjectMessageImpl.setObject(ObjectMessageImpl.java:158)
+ at weblogic.jms.common.ObjectMessageImpl.setObject(ObjectMessageImpl.java:133)
+
+</pre>
+<br/>
+
+"From your write-up, it appears you've set up a use case where the application attempts to operate on multiple large objects in parallel. The JVM is simply running out of heap. It looks the same thing would regardless of whether the large objects were JMS messages, or some other type of object...
+
+ Some ideas: (A) free up JVM memory - possibly by tuning paging (see the JMS chapter of the Performance and Tuning Guide), (B) reduce the size of the async message pipe-line (search for "MessagesMaximum") in the same guide, (C) increase JVM memory, (D) see if its possible to break each large object up into multiple smaller objects/messages, but perhaps mostly (E) don't expect to be able to have multiple threads each operate on a seperate very large object concurrently - each object necessarily consumes memory while it is being accessed - strongly consider reducing the number of concurrent threads as per the MDB chapter of the Performance and Tuning guide.
+
+ Tom "
+
+
+<br/>
+
+(great Tom, Tom for president)
+<br/>
+
+<a href="https://community.oracle.com/thread/1774008?tstart=0">https://community.oracle.com/thread/1774008?tstart=0</a>
+<br/>
+<a href="http://docs.oracle.com/cd/E15523_01/web.1111/e13814/jmstuning.htm#CHDHIHGH">http://docs.oracle.com/cd/E15523_01/web.1111/e13814/jmstuning.htm#CHDHIHGH</a>
+<br/>
+
+
+How to override serialization mechanisms <a href="http://www.oracle.com/technetwork/articles/java/javaserial-1536170.html">http://www.oracle.com/technetwork/articles/java/javaserial-1536170.html</a>
+<br/><br/>
+
+
+BUT: there could be an issue in the JDK ( see OpenJDK story here https://bugs.openjdk.java.net/browse/JDK-8065563  ) so you might just add more heap and restart and ignore the issue.
+
+<br/><br/>
+

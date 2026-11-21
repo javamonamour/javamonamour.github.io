@@ -1,0 +1,41 @@
+---
+layout: post
+title: "How to tell if Oracle XE is running on your box"
+date: 2011-07-27T15:35:00.000+02:00
+permalink: /2011/07/how-to-tell-if-oracle-xe-is-running-on.html
+blogger_id: "7815749976802094858"
+tags: ["oraclexe"]
+---
+you should have these processes running on your box:<br />
+<br />
+<br />
+<i>/usr/lib/oracle/xe/app/oracle/product/10.2.0/server/bin/tnslsnr LISTENER -inherit<br />
+xe_pmon_XE<br />
+xe_psp0_XE<br />
+xe_mman_XE<br />
+xe_dbw0_XE<br />
+xe_lgwr_XE<br />
+xe_ckpt_XE<br />
+xe_smon_XE<br />
+xe_reco_XE<br />
+xe_cjq0_XE<br />
+xe_mmon_XE<br />
+xe_mmnl_XE<br />
+xe_d000_XE<br />
+xe_s000_XE<br />
+xe_s001_XE<br />
+xe_s002_XE<br />
+xe_s003_XE<br />
+xe_qmnc_XE<br />
+xe_q000_XE<br />
+xe_q001_XE</i><br />
+<br />
+<br />
+<br />
+and if you do<br />
+<b>netstat -an | grep 1521</b><br />
+you should get:<br />
+<br />
+<i>tcp        0      0 0.0.0.0:1521                0.0.0.0:*                   LISTEN      <br />
+tcp        0      0 127.0.0.1:54868             127.0.0.1:1521              ESTABLISHED <br />
+tcp        0      0 127.0.0.1:1521              127.0.0.1:54868             ESTABLISHED </i>

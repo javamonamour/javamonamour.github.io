@@ -1,0 +1,26 @@
+---
+layout: post
+title: "Installing JIRA on Linux"
+date: 2012-08-18T21:06:00.001+02:00
+permalink: /2012/08/installing-jira-on-linux.html
+blogger_id: "4387710797410350946"
+tags: ["JIRA"]
+---
+Download here <a href="http://www.atlassian.com/software/jira/download">http://www.atlassian.com/software/jira/download</a> the 30 days evaluation version<br />
+<br />
+chosen the 64 bit for Linux<br />
+<br />
+Here the <a href="https://confluence.atlassian.com/display/JIRA/Installing+JIRA+on+Linux">installation manual for Linux</a><br />
+<br />
+Once I download and copy it, I do<br />
+chmod a+x atlassian-jira-X.Y.bin<br />
+<br />
+<br />
+Since it's not recommended to use HSQLDB internal DB, I configure it to use Oracle DB - this option will appear during the first access to the console. The Schema provided must be empty, otherwise JIRA will refuse to proceed.<br />
+<br />
+<a href="https://confluence.atlassian.com/display/JIRA/Connecting+JIRA+to+Oracle#ConnectingJIRAtoOracle-manually">https://confluence.atlassian.com/display/JIRA/Connecting+JIRA+to+Oracle#ConnectingJIRAtoOracle-manually<br />
+</a><br />
+<br />
+<br />
+On the whole, it's a very easy and straightforward setup. You don't need root access.<br />
+

@@ -1,0 +1,39 @@
+---
+layout: post
+title: "BEA-000337 StuckThreadMaxTime with OSB FileAdapter"
+date: 2011-01-20T13:13:00.003+01:00
+permalink: /2011/01/bea-000337-stuckthreadmaxtime-with-osb.html
+blogger_id: "1239196309835404121"
+tags: ["FileAdapter"]
+---
+<i> 20-Jan-2011 10:57:20 o'clock WET   Error   WebLogicServer   BEA-000337   [STUCK] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)' has been busy for "602" seconds working on the request "weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl@57134e4b", which is more than the configured time (StuckThreadMaxTime) of "600" seconds. Stack trace:<br />
+java.lang.Object.wait(Native Method)<br />
+oracle.tip.adapter.file.inbound.FilesToProcess.dequeueToProcess(FilesToProcess.java:101)<br />
+oracle.tip.adapter.file.inbound.ProcessWork.run(ProcessWork.java:269)<br />
+weblogic.work.ContextWrap.run(ContextWrap.java:41)<br />
+weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)<br />
+weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)<br />
+weblogic.work.ExecuteThread.run(ExecuteThread.java:173)</i><br />
+<br />
+<br />
+I keep getting this error.<br />
+<br />
+Besides, the number of Stuck Threads increases with time, all of them are weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl@blablabla<br />
+<br />
+Another stack trace is:<br />
+<br />
+<i><br />
+ oracle.tip.adapter.file.inbound.PollWork.run(PollWork.java:369)<br />
+ weblogic.work.ContextWrap.run(ContextWrap.java:41)<br />
+ weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)<br />
+ weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)<br />
+ weblogic.work.ExecuteThread.run(ExecuteThread.java:178)<br />
+</i><br />
+<br />
+<br />
+Here it solves the problem:<br />
+<br />
+<a href="http://blog.easyteam.fr/2010/10/18/osb-%C2%AB-stuck-threads-%C2%BB-sur-la-consommation-de-fichiers/">http://blog.easyteam.fr/2010/10/18/osb-%C2%AB-stuck-threads-%C2%BB-sur-la-consommation-de-fichiers/<br />
+</a><br />
+<br />
+basically it suggests to create a WorkManager "FilesPollingWorkManager" for the FileAdapter polling thread and setting  "Ignore Stuck Threads" to true, and assigning this FilesPollingWorkManager as "Dispatch-Policy" to the File Polling Proxy Service

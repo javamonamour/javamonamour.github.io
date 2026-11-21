@@ -1,0 +1,141 @@
+---
+layout: post
+title: "installing WLS 12.2.1 on Linux RHEL 6.5"
+date: 2015-10-28T17:31:00.002+01:00
+permalink: /2015/10/installing-wls-1221-on-linux-rhel-65.html
+blogger_id: "5789738277080597460"
+---
+
+
+Download the generic installer fmw_12.2.1.0.0_wls.jar from http://www.oracle.com/technetwork/middleware/fusion-middleware/downloads/index.html and put into /opt/install/
+<br/>
+Download Java 8 JDK from http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+<br/>
+install this one:
+<br/>
+http://download.oracle.com/otn-pub/java/jdk/8u65-b17/jdk-8u65-linux-x64.rpm
+<br/>
+
+<br/><br/>
+
+rpm -i jdk-8u65-linux-x64.rpm
+<br/><br/>
+
+you should now find /usr/java/jdk1.8.0_65/bin/java
+<br/><br/>
+
+<pre>
+groupadd oracle
+useradd oracle -g oracle
+su - oracle
+/usr/java/jdk1.8.0_65/bin/java -jar /tmp/fmw_12.2.1.0.0_wls.jar
+</pre>
+<br/><br/>
+this fails because I don't have X11, so I have to do silent installation
+the error message is:
+<br/><br/>
+<pre>
+
+/usr/java/jdk1.8.0_111/bin/java -jar /opt/install/fmw_12.2.1.0.0_wls.jar
+Launcher log file is /tmp/OraInstall2017-01-02_09-52-00AM/launcher2017-01-02_09-52-00AM.log.
+Extracting files.........
+Starting Oracle Universal Installer
+
+Checking if CPU speed is above 300 MHz.   Actual 2593.750 MHz    Passed
+Checking monitor: must be configured to display at least 256 colors.  DISPLAY environment variable not set.    Failed <<<<
+Checking swap space: must be greater than 512 MB.   Actual 3999 MB    Passed
+Checking if this platform requires a 64-bit JVM.   Actual 64    Passed (64-bit not required)
+Checking temp space: must be greater than 300 MB.   Actual 4663 MB    Passed
+
+Some system prerequisite checks failed.
+You must fulfill these requirements before continuing with the installation.
+
+Continue? (yes [y] / no [n]) [n]
+n
+You have confirmed that the product cannot be installed on this platform.
+Quitting the installation.
+
+Exiting Oracle Universal Installer.
+Log(s) for this session can be found in /tmp/OraInstall2017-01-02_09-52-00AM/launcher2017-01-02_09-52-00AM.log.
+</pre>
+<br/><br/>
+you should prepare this silent file ( see doc here <a href="https://docs.oracle.com/middleware/1212/core/OUIRF/silent.htm#OUIRF329">https://docs.oracle.com/middleware/1212/core/OUIRF/silent.htm#OUIRF329</a> )
+<br/><br/>
+vi installfmw.rsp
+<br/><br/>
+
+(see <a href="http://docs.oracle.com/middleware/1221/core/OUIRF/GUID-19DEEA75-CC63-47D4-BDC7-038E133490E0.htm#OUIRF391">here</a> for sample response files for WLS 12.2.1)
+<br/><br/>
+
+<pre>
+
+[ENGINE]
+ 
+#DO NOT CHANGE THIS.
+Response File Version=1.0.0.0.0
+ 
+[GENERIC]
+ 
+#The oracle home location. This can be an existing Oracle Home or a new Oracle Home
+ORACLE_HOME=/opt/oracle/fmw
+ 
+#Set this variable value to the Installation Type selected. e.g. Fusion Middleware Infrastructure, Fusion Middleware Infrastructure With Examples.
+INSTALL_TYPE=WebLogic Server
+ 
+#Provide the My Oracle Support Username. If you wish to ignore Oracle Configuration Manager configuration provide empty string for user name.
+MYORACLESUPPORT_USERNAME=
+ 
+#Provide the My Oracle Support Password
+MYORACLESUPPORT_PASSWORD=<SECURE VALUE>
+ 
+#Set this to true if you wish to decline the security updates. Setting this to true and providing empty string for My Oracle Support username will ignore the Oracle Configuration Manager configuration
+DECLINE_SECURITY_UPDATES=true
+ 
+#Set this to true if My Oracle Support Password is specified
+SECURITY_UPDATES_VIA_MYORACLESUPPORT=false
+ 
+#Provide the Proxy Host
+PROXY_HOST=
+ 
+#Provide the Proxy Port
+PROXY_PORT=
+ 
+#Provide the Proxy Username
+PROXY_USER=
+ 
+#Provide the Proxy Password
+PROXY_PWD=<SECURE VALUE>
+ 
+#Type String (URL format) Indicates the OCM Repeater URL which should be of the format [scheme[Http/Https]]://[repeater host]:[repeater port]
+COLLECTOR_SUPPORTHUB_URL=
+
+
+
+</pre>
+
+as root:
+<pre>
+vi /etc/oraInst.loc
+
+inventory_loc=/opt/oracle/inventory
+inst_group=oinstall
+
+
+chmod 777 /etc/oraInst.loc
+
+mkdir -p /opt/oracle/inventory
+chown oracle:oinstall /opt/oracle/inventory
+mkdir /opt/oracle/fmw
+chown oracle:oinstall /opt/oracle/fmw
+
+su - oracle
+
+/usr/java/jdk1.8.0_65/bin/java -jar /opt/install/fmw_12.2.1.0.0_wls.jar -silent -responseFile /opt/install/installfmw.rsp -invPtrLoc /etc/oraInst.loc
+
+</pre>
+
+
+
+
+
+

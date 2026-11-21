@@ -1,0 +1,31 @@
+---
+layout: post
+title: "Nice little script to recursively export from SVN selected projects"
+date: 2013-02-22T20:05:00.003+01:00
+permalink: /2013/02/nice-little-script-to-recursively.html
+blogger_id: "8689812769228039192"
+tags: ["svn"]
+---
+I want to export only projects which have the "trunk" folder inside:
+
+<pre name="code" class="brush: java">
+
+svnusername=thesvnuser
+svnpassword=thesvnpassword
+
+repositoryLocation=https://yoursvnserver/yourroots
+
+svn --username ${svnusername} --password ${svnpassword} list ${repositoryLocation} | sed 's,/,,g' > projects.txt
+
+while read line ;
+do
+ svn --username ${svnusername} --password ${svnpassword} list ${repositoryLocation}/${line}/trunk 2>&1 > /dev/null
+    echo "processing ${line}"
+ if [ $? -gt 0 ]; then
+  echo "project " ${line} " has no trunk"
+ else
+  svn --username ${svnusername} --password ${svnpassword} export ${repositoryLocation}/${line}/trunk allprojects/${line}
+ fi
+done < projects.txt
+
+</pre>

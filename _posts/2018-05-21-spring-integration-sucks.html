@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Spring Integration Sucks"
+date: 2018-05-21T12:10:00.000+02:00
+permalink: /2018/05/spring-integration-sucks.html
+blogger_id: "4177989316766146463"
+tags: ["Spring", "springintegration"]
+---
+Here the whole tutorials site <a href="https://github.com/eugenp/tutorials">https://github.com/eugenp/tutorials</a> to git clone<br />
+<br />
+If you use Eclipse, better to "git clone" separately and then Import, Existing Maven Project, and give the tutorials folder. Importing from Git seems not to work (Eclipse SUCKS, it's the most pathetic IDE in centuries).<br />
+<br />
+This is the one interesting us <a href="https://github.com/eugenp/tutorials/tree/master/spring-integration">https://github.com/eugenp/tutorials/tree/master/spring-integration</a><br />
+<br />
+<br />
+All is explained here <a href="http://www.baeldung.com/spring-integration">http://www.baeldung.com/spring-integration</a> (BasicIntegrationConfig in the github project is FileCopyConfig)<br />
+<br />
+My first impression is of an <b>extreme complication and non elegant API design</b>. You have to wade through a <b>ton of annotations, abstractions, base classes, non-fluent APIs</b>, just to copy a file from A to B. <b> Camel seems to me much more essential</b> - maybe because Camel was designed with Integration as primary focus, while Spring Integration just add some Integration functionality to the hyper-complex bloated Spring monster.<br />
+<br />
+<br />
+Look at all the import you need to just copy a file every 1 second:<br />
+<br />
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;<br />
+import org.springframework.context.annotation.Bean;<br />
+import org.springframework.context.annotation.Configuration;<br />
+import org.springframework.context.support.AbstractApplicationContext;<br />
+import org.springframework.integration.annotation.InboundChannelAdapter;<br />
+import org.springframework.integration.annotation.Poller;<br />
+import org.springframework.integration.annotation.ServiceActivator;<br />
+import org.springframework.integration.channel.DirectChannel;<br />
+import org.springframework.integration.config.EnableIntegration;<br />
+import org.springframework.integration.core.MessageSource;<br />
+import org.springframework.integration.file.FileReadingMessageSource;<br />
+import org.springframework.integration.file.FileWritingMessageHandler;<br />
+import org.springframework.integration.file.filters.SimplePatternFileListFilter;<br />
+import org.springframework.integration.file.support.FileExistsMode;<br />
+import org.springframework.messaging.MessageChannel;<br />
+import org.springframework.messaging.MessageHandler;<br />
+<br />
+<br />
+simply ridiculous.<br />
+<br />

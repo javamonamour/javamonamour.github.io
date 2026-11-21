@@ -1,0 +1,102 @@
+---
+layout: post
+title: "MQ Transport could not be registered due to : Missing MQ Library"
+date: 2011-06-07T21:14:00.001+02:00
+permalink: /2011/06/mq-transport-could-not-be-registered.html
+blogger_id: "6948211158301606059"
+tags: ["MQ"]
+---
+you must copy <br />
+<b>com.ibm.mq.jar</b> <br />
+to C:\Oracle\Middleware\user_projects\domains\soadev\lib, restart the server and the message should go away.<br />
+<br />
+Only at this point you will be able to create MQ-related components.<br />
+<br />
+If you get this:<br />
+<br />
+<i>07-Jun-2011 09:07:10 o'clock CEST Error Deployer BEA-149205 Failed to initialize the application 'MQ Transport Provider' due to error java.lang.ClassNotFoundException: com.ibm.mq.jmqi.JmqiObject.<br />
+java.lang.ClassNotFoundException: com.ibm.mq.jmqi.JmqiObject<br />
+at java.net.URLClassLoader$1.run(URLClassLoader.java:202)<br />
+at java.security.AccessController.doPrivileged(Native Method)<br />
+at java.net.URLClassLoader.findClass(URLClassLoader.java:190)<br />
+at java.lang.ClassLoader.loadClass(ClassLoader.java:307)<br />
+at java.lang.ClassLoader.loadClass(ClassLoader.java:248)<br />
+Truncated. see log file for complete stacktrace<br />
+Caused By: java.lang.ClassNotFoundException: com.ibm.mq.jmqi.JmqiObject<br />
+at java.net.URLClassLoader$1.run(URLClassLoader.java:202)<br />
+at java.security.AccessController.doPrivileged(Native Method)<br />
+at java.net.URLClassLoader.findClass(URLClassLoader.java:190)<br />
+at java.lang.ClassLoader.loadClass(ClassLoader.java:307)<br />
+at java.lang.ClassLoader.loadClass(ClassLoader.java:248)<br />
+Truncated. see log file for complete stacktrace</i><br />
+<br />
+<br />
+or this<br />
+<br />
+<i><br />
+07-Jun-2011 13:27:50 o'clock CEST Error OSB Kernel BEA-380003 Exception on TransportManagerImpl.sendMessageAsync: Error, java.lang.NoClassDefFoundError: Could not initialize class com.ibm.mq.internal.MQCommonServices<br />
+java.lang.NoClassDefFoundError: Could not initialize class com.ibm.mq.internal.MQCommonServices<br />
+at com.ibm.mq.MQSESSION.getJmqiEnv(MQSESSION.java:134)</i><br />
+<br />
+<br />
+or this<br />
+<br />
+<i>07-Jun-2011 11:28:09 o'clock CEST Error WliSbTransports BEA-381913 Error occured while polling the resource for Endpoint: ProxyService$default$PVMQProxy. Polling will be stopped.<br />
+java.lang.NoClassDefFoundError: com/ibm/mq/headers/internal/trace/Names<br />
+at com.ibm.mq.internal.MQCommonServices.clinit(MQCommonServices.java:241)<br />
+at com.ibm.mq.MQSESSION.getJmqiEnv(MQSESSION.java:134)<br />
+at com.ibm.mq.MQQueueManagerFactory.init(MQQueueManagerFactory.java:85<br />
+)<br />
+at com.ibm.mq.MQQueueManagerFactory.getInstance(MQQueueManagerFactory.ja<br />
+va:112)<br />
+at com.ibm.mq.MQQueueManager.clinit(MQQueueManager.java:153)<br />
+Truncated. see log file for complete stacktrace<br />
+Caused By: java.lang.ClassNotFoundException: com.ibm.mq.headers.internal.trace.N<br />
+ames<br />
+at java.net.URLClassLoader$1.run(URLClassLoader.java:202)<br />
+at java.security.AccessController.doPrivileged(Native Method)<br />
+at java.net.URLClassLoader.findClass(URLClassLoader.java:190)<br />
+at java.lang.ClassLoader.loadClass(ClassLoader.java:307)<br />
+at java.lang.ClassLoader.loadClass(ClassLoader.java:248)<br />
+Truncated. see log file for complete stacktrace</i><br />
+<br />
+<br />
+or this<br />
+<br />
+<i>07-Jun-2011 10:11:08 o'clock CEST Error WliSbTransports BEA-381913 Error occured while polling the resource for Endpoint: ProxyService$default$PVMQProxy. Polling will be stopped.<br />
+java.lang.NoClassDefFoundError: com/ibm/mq/commonservices/CommonServicesException<br />
+        at com.ibm.mq.internal.MQCommonServices.clinit(MQCommonServices.java:236)<br />
+        at com.ibm.mq.MQSESSION.getJmqiEnv(MQSESSION.java:134)<br />
+        at com.ibm.mq.MQQueueManagerFactory.init(MQQueueManagerFactory.java:85)<br />
+        at com.ibm.mq.MQQueueManagerFactory.getInstance(MQQueueManagerFactory.java:112)<br />
+        at com.ibm.mq.MQQueueManager.clinit(MQQueueManager.java:153)<br />
+        Truncated. see log file for complete stacktrace<br />
+Caused By: java.lang.ClassNotFoundException: com.ibm.mq.commonservices.CommonServicesException<br />
+        at java.net.URLClassLoader$1.run(URLClassLoader.java:202)<br />
+        at java.security.AccessController.doPrivileged(Native Method)<br />
+        at java.net.URLClassLoader.findClass(URLClassLoader.java:190)<br />
+        at java.lang.ClassLoader.loadClass(ClassLoader.java:307)<br />
+        at java.lang.ClassLoader.loadClass(ClassLoader.java:248)<br />
+        Truncated. see log file for complete stacktrace<br />
+<br />
+07-Jun-2011 10:11:08 o'clock CEST Warning WliSbTransports BEA-381914 Missing MQ library com.ibm.mq.jar; please add the missing library to the classpath<br />
+.<br />
+</i><br />
+<br />
+<br />
+copy also<br />
+<br />
+<b>com.ibm.mq.jmqi.jar <br />
+com.ibm.mq.headers.jar <br />
+com.ibm.mq.commonservices.jar<br />
+com.ibm.mq.jar (already mentioned above)</b><br />
+<br />
+<br />
+to yourdomain/lib and restart.<br />
+<br />
+<br />
+You should see in the logs:<br />
+<br />
+<i>Following extensions directory contents added to the end of the classpath:<br />
+C:\Oracle\Middleware\user_projects\domains\soadev\lib\com.ibm.mq.jar;C:\Oracle<br />
+\Middleware\user_projects\domains\soadev\lib\com.ibm.mq.jmqi.jar blablabla</i>

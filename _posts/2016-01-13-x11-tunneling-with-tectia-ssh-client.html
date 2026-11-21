@@ -1,0 +1,45 @@
+---
+layout: post
+title: "X11 tunneling with Tectia SSH client"
+date: 2016-01-13T10:03:00.001+01:00
+permalink: /2016/01/x11-tunneling-with-tectia-ssh-client.html
+blogger_id: "7894580216208249438"
+tags: ["ssh", "tunneling"]
+---
+<a href="https://support.ssh.com/manuals/client-user/61/client-tunnel-x11.html">https://support.ssh.com/manuals/client-user/61/client-tunnel-x11.html</a>
+
+<br />
+<br />
+Do "Edit/Tectia Connections"
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/9fca47b0966469e4.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/5e81f685bc0e58ce.png" /></a></div>
+<br />
+<br />
+ssh-broker-config.xml is in several places, verify that all files contains this
+<br />
+<br />
+<pre>     &lt;server-banners visible="yes" /&gt; 
+     &lt;forwards&gt; 
+       &lt;forward type="x11" state="on"/&gt; 
+       &lt;forward type="agent" state="on"/&gt; 
+     &lt;/forwards&gt; 
+</pre>
+<br />
+<br />
+the files are:
+<br />
+<br />
+<pre>  C:\Documents and Settings\PIPPO\AppData\Roaming\SSH\
+   29.09.15│  5728│AI    │ssh-broker-config.xml
+  C:\Documents and Settings\PIPPO\Application Data\SSH\
+   29.09.15│  5728│AI    │ssh-broker-config.xml
+  C:\Users\PIPPO\AppData\Roaming\SSH\
+   29.09.15│  5728│AI    │ssh-broker-config.xml
+  C:\Users\PIPPO\Application Data\SSH\
+   29.09.15│  5728│AI    │ssh-broker-config.xml
+
+</pre>
+

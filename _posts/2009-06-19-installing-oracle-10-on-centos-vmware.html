@@ -1,0 +1,9 @@
+---
+layout: post
+title: "Installing Oracle 10 on a CentOS VMWare image by bagvapp"
+date: 2009-06-19T16:16:00.000+02:00
+permalink: /2009/06/installing-oracle-10-on-centos-vmware.html
+blogger_id: "309895030882390850"
+tags: ["Oracle Linux"]
+---
+you should run these adjustments to the Linux kernel (sudo into root)<br /><br />echo "250 32000 100 128"> /proc/sys/kernel/sem<br />echo "1024 65000" >/proc/sys/net/ipv4/ip_local_port_range<br />echo 262144 > /proc/sys/net/core/rmem_default<br />echo 262144 > /proc/sys/net/core/rmem_max<br />echo 262144 > /proc/sys/net/core/wmem_default<br />echo 262144 > /proc/sys/net/core/wmem_max<br /><br /><br />otherwise edit your /etc/sysctl.conf and add<br /><br />kernel.sem = 250 32000 100 128<br />etc<br /><br /><br />also, run<br />yum -y install compat-libstdc++-296 compat-libstdc++-33<br />yum install xorg-x11-deprecated-libs<br /><br /><br />also, make sure your NIC is configured for STATIC ip addresses

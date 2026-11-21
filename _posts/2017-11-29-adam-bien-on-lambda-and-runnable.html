@@ -1,0 +1,77 @@
+---
+layout: post
+title: "Adam Bien on Lambda and Runnable"
+date: 2017-11-29T00:53:00.000+01:00
+permalink: /2017/11/adam-bien-on-lambda-and-runnable.html
+blogger_id: "503868151782700098"
+tags: ["adambien", "lambda"]
+---
+<iframe src="https://player.vimeo.com/video/158172171" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe><br />
+<p><a href="https://vimeo.com/158172171">Java 8 Basics: Method References</a> from <a href="https://vimeo.com/adambien">AdamBien</a> on <a href="https://vimeo.com">Vimeo</a>.</p><br />
+<br />
+This is my code:<br />
+<br />
+<br />
+<br />
+<pre class="brush: java">
+
+public class TestRun {
+ public static void main(String[] args) {
+  TestRun testRun = new TestRun();
+  testRun.method1();
+  testRun.method2();
+  testRun.method3();
+  testRun.method4();
+ }
+
+ 
+ /**
+  * Old Java school
+  */
+ public void method1() {
+  Runnable runnable = new Runnable() {
+   @Override
+   public void run() {
+    System.out.println(&quot;ciao1&quot;);
+
+   }
+  };
+  new Thread(runnable).start();
+ }
+
+ /**
+  * Runnable's only method has no input parameters and only 1 method, 
+  * it's a Functional Interface https://docs.oracle.com/javase/8/docs/api/java/lang/Runnable.html 
+  * so we provide method implementation inline (lambda)
+  */
+ public void method2() {
+  Runnable runnable = () -&gt; {
+   System.out.println(&quot;ciao2&quot;);
+  };
+  new Thread(runnable).start();
+ }
+ 
+ /**
+  * Syntactic sugar, since there is no parameter we omit the () notation altogether
+  */
+ public void method3() {
+  Runnable runnable = () -&gt; System.out.println(&quot;ciao3&quot;);
+  new Thread(runnable).start();
+ }
+ 
+ /**
+  * We provide the method (lambda) as a reference
+  */
+ 
+ public void method4() {
+  Runnable runnable = this::display;
+  new Thread(runnable).start();
+ }
+ 
+ 
+ public void display() {
+  System.out.println(&quot;ciao4&quot;);
+ }
+}
+
+</pre>

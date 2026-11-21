@@ -1,0 +1,168 @@
+---
+layout: post
+title: "ulimit and lsof"
+date: 2015-10-20T11:09:00.002+02:00
+permalink: /2015/10/ulimit-and-lsof.html
+blogger_id: "6991736604671001543"
+tags: ["lsof", "ulimit"]
+---
+PID of WLS is 29518
+<br/>
+
+to count how many file descriptors are held by a process:
+<br/>
+
+ls /proc/29518/fd | wc -l
+<br/>
+666
+<br/><br/>
+
+funnily this doesn’t match the count reported by lsof ( one day I will discover why):
+<br/><br/>
+lsof -p 29518 | wc -l
+<br/>
+1288
+<br/><br/>
+to know the limit for the specific process:
+<br/><br/>
+cat /proc/29518/limits
+<br/>
+Limit                     Soft Limit           Hard Limit           Units     
+<br/>
+Max cpu time              unlimited            unlimited            seconds   
+<br/>
+Max file size             unlimited            unlimited            bytes     
+<br/>
+Max data size             unlimited            unlimited            bytes     
+<br/>
+Max stack size            10485760             unlimited            bytes     
+<br/>
+Max core file size        0                    0                    bytes     
+<br/>
+Max resident set          unlimited            unlimited            bytes     
+<br/>
+Max processes             32000                32000                processes 
+<br/>
+Max open files            1024                 1024                 files     
+<br/>
+Max locked memory         65536                65536                bytes     
+<br/>
+Max address space         unlimited            unlimited            bytes     
+<br/>
+Max file locks            unlimited            unlimited            locks     
+<br/>
+Max pending signals       515304               515304               signals   
+<br/>
+Max msgqueue size         819200               819200               bytes     
+<br/>
+Max nice priority         0                    0                    
+<br/>
+Max realtime priority     0                    0                    
+<br/>
+Max realtime timeout      unlimited            unlimited            us        
+<br/><br/>
+
+
+which is different for the limit set by default for a user:
+<br/><br/>
+
+ulimit -a
+<br/>
+core file size          (blocks, -c) 0
+<br/>
+
+
+data seg size           (kbytes, -d) unlimited
+
+<br/>
+
+scheduling priority             (-e) 0
+<br/>
+
+
+file size               (blocks, -f) unlimited
+<br/>
+
+
+pending signals                 (-i) 515304
+<br/>
+
+
+max locked memory       (kbytes, -l) 64
+<br/>
+
+
+max memory size         (kbytes, -m) unlimited
+<br/>
+
+
+open files                      (-n) 8192
+<br/>
+
+
+pipe size            (512 bytes, -p) 8
+<br/>
+
+
+POSIX message queues     (bytes, -q) 819200
+
+<br/>
+
+real-time priority              (-r) 0
+
+<br/>
+
+stack size              (kbytes, -s) 10240
+<br/>
+
+
+cpu time               (seconds, -t) unlimited
+
+<br/>
+
+max user processes              (-u) 1024
+
+<br/>
+
+virtual memory          (kbytes, -v) unlimited
+<br/>
+
+
+file locks                      (-x) unlimited
+<br/>
+
+<br/>
+
+
+
+To set the limit for a process open by the current shell :
+<br/><br/>
+
+
+
+
+ulimit -n MAX_FD_PER_PROCESS
+<br/><br/>
+
+
+
+
+<br/>
+
+
+
+
+In Linux, this is a PER-PROCESS limit! You cannot directly limit the number of Files opened by a User! You can only set a max-processes-per-user with ulimit -u MAX .
+
+<br/>
+to check the actual limits for a process:
+<br/>
+cat /proc/<pid>/limits
+
+
+
+<br/>
+
+cat /etc/security/limits.conf   to check the hard limits for all users. If you try to set a ulimit larger than that. you get a ulimit: open files: cannot modify limit: Operation not permitted 
+
+<br/>

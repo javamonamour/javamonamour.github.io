@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Cookies sharing in Spring boot applications"
+date: 2020-08-10T14:02:00.004+02:00
+permalink: /2020/08/cookies-sharing-in-spring-boot.html
+blogger_id: "1819578877067553741"
+tags: ["httpsession"]
+---
+<pre class="brush: java" name="code">    @GetMapping("/greeting")
+    public String greeting(HttpSession session, HttpServletRequest request, HttpServletResponse response, @RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
+        model.addAttribute("name", name);
+        System.out.println(session);
+        System.out.println(request);
+        for (Cookie cookie : request.getCookies()) {
+            System.out.println(cookie.getName() + " " + cookie.getValue());
+        }
+        Cookie uiColorCookie = new Cookie("color2", "red2");
+        uiColorCookie.setDomain("localhost");
+        uiColorCookie.setPath("/");
+        response.addCookie(uiColorCookie);
+        return "greeting";
+    }
+</pre><p>
+
+
+the code of the 2 applications is:&nbsp;</p><p>https://github.com/vernetto/demosession01&nbsp;</p><p>https://github.com/vernetto/demosession02&nbsp;</p><p>http://localhost:8181/books01/greeting?name=pirla&nbsp;</p><p>http://localhost:8282/books02/greeting?name=pirla&nbsp;</p><p>In Firefox, use F12 and "storage" to examine cookies.&nbsp;</p><p>Using embedded Tomcat, the session turns out to be: <br /></p><p>org.apache.catalina.session.StandardSessionFacade <a href="https://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/catalina/session/StandardSessionFacade.html ">https://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/catalina/session/StandardSessionFacade.html </a>
+
+
+</p>

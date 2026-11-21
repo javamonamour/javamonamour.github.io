@@ -1,0 +1,161 @@
+---
+layout: post
+title: "How to create a MDB"
+date: 2010-08-23T18:24:00.013+02:00
+permalink: /2010/08/how-to-create-mdb.html
+blogger_id: "4251094517379147736"
+tags: ["jms", "mdb"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2011-11-11
+    html: "ms1= managed server 1, the target server"
+  - author: "Montu"
+    date: 2011-11-11
+    html: "what is ms1??"
+---
+I am writing down all the steps so I don't forget again:<br />
+<br />
+(ms1 means Managed Server 1)<br />
+<br />
+PLEASE ACTIVATE CHANGES AFTER EACH OPERATION<br />
+<br />
+create a Persistent Store <b>MQGEOFileStore</b>, target it on MS1.<br />
+create a <b>MQGEOJMSServer</b>, back it up with the MQGEOFileStore, target it on MS1.<br />
+create a <b>MQGEOSystemModule</b>, target it to MS1.<br />
+inside it create a <b>MQGEOSubDeployment</b>, and target it to <b>MQGEOJMSServer</b>.<br />
+<br />
+create also a <b>MQGEOConnectionFactory</b> with JNDI name MQGEOConnectionFactory, and use for it the MQGEOSubDeployment (click on Advanced targeting)... remember to make it "XA Connection Factory Enabled"<br />
+and a <b>MQGEOQueue</b>, JNDI name MQGEOQueue, and use MQGEOSubDeployment<br />
+<br />
+This is the WLST Python (it's not included the "XA Connection Factory Enabled"):<br />
+<br />
+<pre name="code" class="brush: java">cd('/')
+cmo.createFileStore('MQGEOFileStore')
+
+cd('/FileStores/MQGEOFileStore')
+set('Targets',jarray.array([ObjectName('com.bea:Name=dev2WlsCBMs1,Type=Server')], ObjectName))
+
+cd('/')
+cmo.createJMSServer('MQGEOJMSServer')
+
+cd('/Deployments/MQGEOJMSServer')
+cmo.setPersistentStore(getMBean('/FileStores/MQGEOFileStore'))
+set('Targets',jarray.array([ObjectName('com.bea:Name=dev2WlsCBMs1,Type=Server')], ObjectName))
+
+cd('/')
+cmo.createJMSSystemResource('MQGEOSystemModule')
+
+cd('/SystemResources/MQGEOSystemModule')
+set('Targets',jarray.array([ObjectName('com.bea:Name=dev2WlsCBMs1,Type=Server')], ObjectName))
+cmo.createSubDeployment('MQGEOSubDeployment')
+
+cd('/SystemResources/MQGEOSystemModule/SubDeployments/MQGEOSubDeployment')
+set('Targets',jarray.array([ObjectName('com.bea:Name=MQGEOJMSServer,Type=JMSServer')], ObjectName))
+
+cd('/JMSSystemResources/MQGEOSystemModule/JMSResource/MQGEOSystemModule')
+cmo.createConnectionFactory('MQGEOConnectionFactory')
+
+cd('/JMSSystemResources/MQGEOSystemModule/JMSResource/MQGEOSystemModule/ConnectionFactories/MQGEOConnectionFactory')
+cmo.setJNDIName('MQGEOConnectionFactory')
+
+cd('/JMSSystemResources/MQGEOSystemModule/JMSResource/MQGEOSystemModule/ConnectionFactories/MQGEOConnectionFactory/SecurityParams/MQGEOConnectionFactory')
+cmo.setAttachJMSXUserId(false)
+
+cd('/SystemResources/MQGEOSystemModule/SubDeployments/MQGEOSubDeployment')
+set('Targets',jarray.array([ObjectName('com.bea:Name=MQGEOJMSServer,Type=JMSServer')], ObjectName))
+
+cd('/JMSSystemResources/MQGEOSystemModule/JMSResource/MQGEOSystemModule/ConnectionFactories/MQGEOConnectionFactory')
+cmo.setSubDeploymentName('MQGEOSubDeployment')
+
+cd('/JMSSystemResources/MQGEOSystemModule/JMSResource/MQGEOSystemModule')
+cmo.createQueue('MQGEOQueue')
+
+cd('/JMSSystemResources/MQGEOSystemModule/JMSResource/MQGEOSystemModule/Queues/MQGEOQueue')
+cmo.setJNDIName('MQGEOQueue')
+cmo.setSubDeploymentName('MQGEOSubDeployment')
+
+cd('/SystemResources/MQGEOSystemModule/SubDeployments/MQGEOSubDeployment')
+set('Targets',jarray.array([ObjectName('com.bea:Name=MQGEOJMSServer,Type=JMSServer')], ObjectName))
+
+activate()
+
+</pre><br />
+<br />
+For the MDB, it should start like this:<br />
+<br />
+<pre name="code" class="brush: java">@MessageDriven(
+ activationConfig = { @ActivationConfigProperty(propertyName = "ConnectionFactoryJndiName", propertyValue = "MQGEOConnectionFactory"),     
+    @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"
+  ) }, 
+ mappedName = "MQGEOQueue")
+
+public class MQGeoFeedMDB implements MessageListener {
+public void onMessage(Message message) {
+     TextMessage tm = (TextMessage)message;
+        String text = tm.getText();
+.......
+}
+
+</pre><br />
+<br />
+<br />
+and, last but not least, the DD:<br />
+<br />
+<pre name="code" class="brush: xml"><?xml version="1.0" encoding="UTF-8"?>
+<wls:weblogic-ejb-jar
+ xmlns:wls="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd http://xmlns.oracle.com/weblogic/weblogic-ejb-jar http://xmlns.oracle.com/weblogic/weblogic-ejb-jar/1.1/weblogic-ejb-jar.xsd">
+ <!--weblogic-version:10.3.3-->
+ <wls:weblogic-enterprise-bean>
+  <wls:ejb-name>MQGeoFeedMDB</wls:ejb-name>
+  <wls:message-driven-descriptor>
+   <wls:destination-jndi-name>MQGEOQueue</wls:destination-jndi-name>
+   <wls:connection-factory-jndi-name>MQGEOConnectionFactory</wls:connection-factory-jndi-name>
+  </wls:message-driven-descriptor>
+ </wls:weblogic-enterprise-bean>
+
+</wls:weblogic-ejb-jar>
+</pre><br />
+<br />
+<br />
+Funnily, these operations succeed on my standalone Admin,  but they fail on a proper domain with an Admin and a cluster....the error is:<br />
+<br />
+one or more registered update listeners reported activation problems. The following failures occurred: -- The following failures occurred: -- weblogic.management.DeploymentException: <br />
+This probably because I didn't activate changes after each operation....WL doesn't execute oeprations in the right order....<br />
+<br />
+<br />
+and in the logs I find<br />
+Failed to start JMS Server "MQGEOJMSS<br />
+erver" due to weblogic.management.DeploymentException: The persistent store "MQGEOFileStore" does not exist.<br />
+<br />
+<br />
+and <br />
+[Store:280044]The file store directory "/acme/domains/dev2OsbCBDomain/servers/dev2OsbCBAdmin/data/store/MQGEOFileStore" does not exist.<br />
+<br />
+<br />
+I do a /acme/domains/dev2OsbCBDomain/servers/dev2OsbCBAdmin/data/store/MQGEOFileStore<br />
+to fix the problem.<br />
+<br />
+Actually at the end I had to remove the target for MQGEOSystemModule and let the subdeployment take care of targetting....  Houston, these targetting with Subdeployment still have big problems. <br />
+I still get a message:<br />
+MDB application MQParserEARfromlocalJMSQueue is NOT connected to messaging system.<br />
+<br />
+<br />
+Reading in the logs I find:<br />
+<br />
+The Message-Driven EJB: MQGeoFeedMDB is unable to connect to the JMS destination: MQGEOQueue. The Error was:<br />
+[EJB:015027]The Message-Driven EJB is transactional but JMS connection factory referenced by the JNDI name: MQGEOConnectionFactory is not a JMS XA connection factory.<br />
+<br />
+<br />
+On the whole, my impression is that <br />
+<br />
+1) WebLogic error messages related to the JMS module are very poorly done, the error message appearing on the Console tells nothing about the root cause of the problem<br />
+<br />
+2) Subdeployments have been poorly engineered, they still overlap with traditional targetting and they are not completely alternative to it, nor they can be completely replaced with traditional targeting... <br />
+<br />
+3) When you perform several operations without activating, WebLogic should be smart enough to perform the activation activities in the proper order, without obliging you to perform an operation at a time and activate it.<br />
+<br />
+3A) We really miss in WebLogic the ability to execute WLST code directly from the console, without having to run weblogic.WLST from a shell; and the ability to export objects as WLST script, in order to import them into another domain. Right now the only option is copy/paste sections of config.xml, which stinks.<br />
+<br />
+4) but all of the above is a good news, it means that there is room for improvement

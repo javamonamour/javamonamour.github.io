@@ -1,0 +1,101 @@
+---
+layout: post
+title: "Native Format Builder generated from Excel formulas"
+date: 2011-10-26T23:02:00.004+02:00
+permalink: /2011/10/native-format-builder-generated-from.html
+blogger_id: "4494742145089364134"
+tags: ["NFB", "nxsd"]
+blogger_comments:
+  - author: "nags"
+    date: 2011-10-28
+    html: "How does the xsd get generated ? I don&#39;t find any macros in spreasheet. Kindly share."
+  - author: "vernetto"
+    date: 2011-10-29
+    html: "hi nags, there are no macros, only formulas.... actually in the formula I simply use &quot;&amp;&quot; which is &quot;chain 2 strings&quot;"
+  - author: "vernetto"
+    date: 2011-10-29
+    html: "hi nags, there are no macros, only formulas.... actually in the formula I simply use &quot;&amp;&quot; which is &quot;chain 2 strings&quot;"
+---
+here the reference manual:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/B31017_01/integrate.1013/b28994/nfb.htm">http://download.oracle.com/docs/cd/B31017_01/integrate.1013/b28994/nfb.htm</a><br />
+<br />
+See "7.2.1.3 Defining a Fixed-Length Structure"<br />
+<br />
+xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd"<br />
+<br />
+A typical entry consists of:<br />
+<br />
+<br />
+&lt;element name="to_usd_rate" nxsd:style="fixedLength" nxsd:length="12"<br />
+nxsd:padStyle="head" nxsd:paddedBy="0"&gt;<br />
+&lt;simpleType&gt;<br />
+&lt;restriction base="string"&gt;<br />
+&lt;maxLength value="12" /&gt;<br />
+&lt;/restriction&gt;<br />
+&lt;/simpleType&gt;<br />
+&lt;/element&gt;<br />
+<br />
+<br />
+I am generating all these elements with Excel, because I hate monkey work<br />
+<br />
+I put this text in a file:<br />
+ABC Private Limited   Street1   Bangalore Karnataka India<br />
+<br />
+<br />
+I put this in Excel<br />
+<br />
+NAME LENGTH<br />
+company 22<br />
+address 10<br />
+city 10<br />
+region 10<br />
+country 5<br />
+<br />
+<br />
+and I use this formula to generate all tags:<br />
+<br />
+="&lt;xsd:element name="""&B11&""" nxsd:style=""fixedLength"" nxsd:length="""&C11&""" nxsd:padStyle=""head"" nxsd:paddedBy=""0""&gt; &lt;xsd:simpleType&gt;&lt;xsd:restriction base=""xsd:string""&gt; &lt;xsd:maxLength value="""&C11&""" /&gt; &lt;/xsd:restriction&gt; &lt;/xsd:simpleType&gt; &lt;/xsd:element&gt;"<br />
+<br />
+<br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/nxsd/nxsdfactory.xlsx">Here is the Excel file</a><br />
+<br />
+<br />
+Here is the generated nXSD:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+
+&lt;xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd"
+            xmlns:tns="http://TargetNamespace.com/ServiceName"
+            targetNamespace="http://TargetNamespace.com/ServiceName"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified"
+
+            nxsd:version="NXSD"
+            nxsd:stream="chars"
+            nxsd:encoding="US-ASCII"
+&gt;
+
+
+  &lt;xsd:element name="Root-Element"&gt;
+    &lt;xsd:complexType&gt;
+      &lt;xsd:sequence&gt;
+        &lt;xsd:element name="company" nxsd:style="fixedLength" nxsd:length="22" nxsd:padStyle="head" nxsd:paddedBy="0"&gt; &lt;xsd:simpleType&gt;&lt;xsd:restriction base="xsd:string"&gt; &lt;xsd:maxLength value="22" /&gt; &lt;/xsd:restriction&gt; &lt;/xsd:simpleType&gt; &lt;/xsd:element&gt;
+        &lt;xsd:element name="address" nxsd:style="fixedLength" nxsd:length="10" nxsd:padStyle="head" nxsd:paddedBy="0"&gt; &lt;xsd:simpleType&gt;&lt;xsd:restriction base="xsd:string"&gt; &lt;xsd:maxLength value="10" /&gt; &lt;/xsd:restriction&gt; &lt;/xsd:simpleType&gt; &lt;/xsd:element&gt;
+        &lt;xsd:element name="city" nxsd:style="fixedLength" nxsd:length="10" nxsd:padStyle="head" nxsd:paddedBy="0"&gt; &lt;xsd:simpleType&gt;&lt;xsd:restriction base="xsd:string"&gt; &lt;xsd:maxLength value="10" /&gt; &lt;/xsd:restriction&gt; &lt;/xsd:simpleType&gt; &lt;/xsd:element&gt;
+        &lt;xsd:element name="region" nxsd:style="fixedLength" nxsd:length="10" nxsd:padStyle="head" nxsd:paddedBy="0"&gt; &lt;xsd:simpleType&gt;&lt;xsd:restriction base="xsd:string"&gt; &lt;xsd:maxLength value="10" /&gt; &lt;/xsd:restriction&gt; &lt;/xsd:simpleType&gt; &lt;/xsd:element&gt;
+        &lt;xsd:element name="country" nxsd:style="fixedLength" nxsd:length="5" nxsd:padStyle="head" nxsd:paddedBy="0"&gt; &lt;xsd:simpleType&gt;&lt;xsd:restriction base="xsd:string"&gt; &lt;xsd:maxLength value="5" /&gt; &lt;/xsd:restriction&gt; &lt;/xsd:simpleType&gt; &lt;/xsd:element&gt;
+      &lt;/xsd:sequence&gt;
+    &lt;/xsd:complexType&gt;
+  &lt;/xsd:element&gt;
+
+&lt;/xsd:schema&gt;
+&lt;!--NXSDWIZ:C:\tmp\sample.dat:--&gt;
+&lt;!--USE-HEADER:false:--&gt;
+
+</pre><br />
+<br />
+The classes related to nXSD are in C:\Oracle\Middleware\Oracle_OSB1\soa\modules\oracle.soa.fabric_11.1.1\bpm-infra.jar<br />
+<br />
+and in C:\Oracle\Middleware\Oracle_SOA1\jlib\oracle.soa.dbutils.jar

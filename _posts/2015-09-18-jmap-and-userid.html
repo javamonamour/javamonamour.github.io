@@ -1,0 +1,40 @@
+---
+layout: post
+title: "jmap and userid"
+date: 2015-09-18T14:17:00.001+02:00
+permalink: /2015/09/jmap-and-userid.html
+blogger_id: "881853960196405206"
+tags: ["jmap", "uid"]
+---
+Reading on StackOverflow some people report issues when you take a heap profiling with jmap (jmap -dump or jmap -histo... NOT with jmap -heap) using root rather than actual user who started the JVM process.
+<br/>
+Specifically you might get a:
+<br/>
+<pre>
+/cs/java/jdk160_85-64b/bin/jmap -F -dump:format=b,file=/tmp/PIPPOheapdump20150918.hdump 10166
+10166: Unable to open socket file: target process not responding or HotSpot VM not loaded
+The -F option can be used when the target process is not responding
+</pre>
+
+At this point you do a ps -ef to find out who started that JVM.... and you get a NUMBER (uid) rather than a username...!!! unfortunately you cant "sudo su - <UID>".... so you must do a reverse lookup of the UID...using the "getent passwd UID" command:
+
+
+<br/><br/>
+
+<pre>
+id jcqpc
+uid=5010012(jcqpc) gid=5008728(jcqpc) groups=5008728(jcqpc)
+</pre>
+<br/><br/>
+<pre>
+getent passwd 5010012
+jcqpc:x:5010012:5008728:Created by CentrifyEx Automation:/home/jcqpc:/bin/centrifyda
+</pre>
+
+
+<br/><br/>
+One would expect "id" to be able to do the reverse lookup, but this would be too easy.
+<br/><br/>
+
+
+

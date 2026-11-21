@@ -1,0 +1,54 @@
+---
+layout: post
+title: "RHEL7 firewalld caveat"
+date: 2015-03-18T10:50:00.000+01:00
+permalink: /2015/03/rhel7-firewall-caveat.html
+blogger_id: "8941995777930012828"
+tags: ["firewall"]
+---
+Beware that in RHEL7, iptables is no longer there, and by default you get another root daemon process running a firewall:
+
+<br/><br/>
+
+<i>/usr/bin/python -Es /usr/sbin/firewalld --nofork --nopid</i>
+
+<br/><br/>
+
+Here it is explained in details <a href="http://www.certdepot.net/rhel7-get-started-firewalld/">http://www.certdepot.net/rhel7-get-started-firewalld/</a>, and also do "man firewall-cmd" for more help.
+Worth reading also the RHAT page on firewalls <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-Using_Firewalls.html</a>
+
+
+<br/><br/>
+
+Look also here <a href="http://www.liquidweb.com/kb/how-to-start-and-enable-firewalld-on-centos-7/">http://www.liquidweb.com/kb/how-to-start-and-enable-firewalld-on-centos-7/</a> for how to start/stop the service
+<br/><br/>
+
+
+
+So if you waste on hour trying to figure out why you can't connect to the WebLogic console from an external browser, while the WL Server seems to be perfectly configured and functioning.... there you are... kill the stinky firewall first, then try to figure out how to open the 7001 port...
+<br/><br/>
+
+
+
+<br/><br/>
+
+Command I have used:
+
+<br/><br/>
+
+<ul>
+<li>systemctl stop firewalld</li>
+<li>systemctl start firewalld</li>
+<li>firewall-cmd --zone=dmz --add-port=2888/tcp --permanent</li>
+<li>firewall-cmd --reload</li>
+
+<li>firewall-cmd --get-service</li>
+
+
+
+
+</ul>
+
+
+
+

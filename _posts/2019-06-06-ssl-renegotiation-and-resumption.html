@@ -1,0 +1,54 @@
+---
+layout: post
+title: "SSL renegotiation and resumption"
+date: 2019-06-06T23:20:00.001+02:00
+permalink: /2019/06/ssl-renegotiation-and-resumption.html
+blogger_id: "6342090817341876324"
+tags: ["renegotiation", "resumption", "ssl", "tls"]
+---
+"Resumption and renegotiation are rather opposites. Resumption restarts a previous TLS session in a new TCP connection, using the same TLS parameters. Renegotiation continues an existing TLS session in the same TCP connection, but changes some of the parameters.<br />
+"<br />
+<br />
+<br />
+in Fiddler, check for the renegotiation_info field in the CONNECT requestsmethods<br />
+<br />
+<br />
+<a href="https://www.ssllabs.com/ssltest/">https://www.ssllabs.com/ssltest/</a> <br />
+<br />
+<br />
+Secure Renegotiation  Supported<br />
+Secure Client-Initiated Renegotiation  Yes<br />
+Insecure Client-Initiated Renegotiation  No<br />
+<br />
+Session resumption (caching)  Yes<br />
+Session resumption (tickets)  No<br />
+<br />
+<br />
+check DisableRenegoOnClient  <a href="https://www.experts-exchange.com/questions/28406053/SSL-renegotiation-in-IE8-and-above-causes-session-loss-and-logout.html">link</a><br />
+<br />
+<br />
+<a href="https://www.salt.ky/disabling-tlsssl-renegotiation-in-configuration-manager-2012/">https://www.salt.ky/disabling-tlsssl-renegotiation-in-configuration-manager-2012/</a> and <a href="https://support.microsoft.com/en-us/help/977377/microsoft-security-advisory-vulnerability-in-tls-ssl-could-allow-spoof">https://support.microsoft.com/en-us/help/977377/microsoft-security-advisory-vulnerability-in-tls-ssl-could-allow-spoof</a><br />
+<br />
+"Modify the key to HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\DisableRenegoOnClient | DWORD=0" <br />
+<br />
+<br />
+<br />
+<a href="-Djdk.tls.rejectClientInitiatedRenegotiation=true">https://backstage.forgerock.com/knowledge/kb/article/a28022128</a>   -Djdk.tls.rejectClientInitiatedRenegotiation=true<br />
+<br />
+<br />
+-Dsun.security.ssl.allowUnsafeRenegotiation=true ( see <a href="https://www.oracle.com/technetwork/java/javase/tlsreadme2-176330.html">https://www.oracle.com/technetwork/java/javase/tlsreadme2-176330.html</a> on why this is a bad idea)<br />
+<br />
+Doc on Session Resumption <a href="https://spacehost.de/tls-session-resumption-caching-tickets/">https://spacehost.de/tls-session-resumption-caching-tickets/</a><br />
+<br />
+jdk.tls.useExtendedMasterSecret=false<br />
+jdk.tls.allowLegacyResumption=true<br />
+jdk.tls.allowLegacyMasterSecret=true<br />
+<br />
+<br />
+<a href="https://wiki.openssl.org/index.php/SSL_and_TLS_Protocols">Here</a> more explanation on Resumption and Renegotiation<br />
+<br />
+<br />
+<br />
+To understand JSSE in general read this guide <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html">https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html</a><br />
+<br />
+

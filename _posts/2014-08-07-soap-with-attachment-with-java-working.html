@@ -1,0 +1,120 @@
+---
+layout: post
+title: "SOAP With Attachment with Java, working example"
+date: 2014-08-07T14:12:00.002+02:00
+permalink: /2014/08/soap-with-attachment-with-java-working.html
+blogger_id: "6656336693415726264"
+tags: ["java", "SOAP"]
+---
+This code actually works , and produces a SOAM message with attachment of type application/octet-stream - which is totally acceptable, even if I would have preferred application/pdf.
+
+<br/><br/>
+
+<pre class="brush: java">
+
+import javax.xml.soap.*;
+import java.net.URL;
+import java.io.*;
+import org.xml.sax.*;
+import javax.xml.parsers.*;
+import org.w3c.dom.*;
+import javax.activation.*;
+
+
+// now all the SOAP code
+MessageFactory factory = MessageFactory.newInstance();
+SOAPMessage message = factory.createMessage();
+SOAPPart soapPart = message.getSOAPPart();
+SOAPEnvelope envelope = soapPart.getEnvelope();
+SOAPHeader header = envelope.getHeader();
+
+DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+dbFactory.setNamespaceAware(true);
+DocumentBuilder builder = dbFactory.newDocumentBuilder();
+// add the SOAP body as from text
+StringReader sr = new StringReader(textToSend);
+InputSource is = new InputSource(sr);
+Document document = builder.parse(is);
+SOAPBody body = envelope.getBody();
+SOAPBodyElement docElement = body.addDocument(document);
+// add attachment from file          
+
+String filename = theBUSINESSIDVALUE.split("\\^")[0];
+File fileAttachment = new File(rootFolderForMSS + filename + ".pdf");
+FileDataSource fds = new FileDataSource(fileAttachment);
+DataHandler dh = new DataHandler(fds);
+out.write("content-type=" + dh.getContentType() + "<br/>");
+
+AttachmentPart attachment = message.createAttachmentPart(dh);
+
+String contentId = "&lt;" + filename + ".pdf>";
+attachment.setContentId(contentId);
+message.addAttachmentPart(attachment);
+
+
+SOAPConnectionFactory soapConnectionFactory = SOAPConnectionFactory.newInstance();
+SOAPConnection connection = soapConnectionFactory.createConnection();
+java.net.URL endpoint = new URL(POSTTOURL);
+SOAPMessage soapResponse = connection.call(message, endpoint);
+
+
+
+</pre>
+
+
+<br/><br/>
+I had tried this one before:
+
+
+
+
+<br/><br/>
+<pre class="brush: java">
+AttachmentPart attachment = message.createAttachmentPart();
+
+String filename = theBUSINESSIDVALUE.split("\\^")[0];
+File fileAttachment = new File(rootFolderForMSS + filename + ".pdf");
+byte[] fileData = new byte[(int) fileAttachment.length()];
+DataInputStream dis = new DataInputStream(new FileInputStream(fileAttachment));
+dis.readFully(fileData);
+dis.close();
+  
+String contentId = "&lt;" + filename + ".pdf>";
+attachment.setContent(new ByteArrayInputStream(fileData), "application/pdf");
+attachment.setContentId(contentId);
+message.addAttachmentPart(attachment);
+</pre>
+
+<br/><br/>
+
+but it was failing with this error
+
+
+<pre>
+ javax.activation.UnsupportedDataTypeException: no object DCH for MIME type application/pdf
+        at javax.activation.ObjectDataContentHandler.writeTo(DataHandler.java:877)
+        at javax.activation.DataHandler.writeTo(DataHandler.java:302)
+        at javax.mail.internet.MimeBodyPart.writeTo(MimeBodyPart.java:1403)
+        at javax.mail.internet.MimeBodyPart.writeTo(MimeBodyPart.java:874)
+        at javax.mail.internet.MimeMultipart.writeTo(MimeMultipart.java:444)
+        at weblogic.xml.saaj.SOAPMessageImpl.writeMimeMessage(SOAPMessageImpl.java:959)
+        at weblogic.xml.saaj.SOAPMessageImpl.writeTo(SOAPMessageImpl.java:832)
+        at com.sun.xml.internal.messaging.saaj.client.p2p.HttpSOAPConnection.post(HttpSOAPConnection.java:237)
+        at com.sun.xml.internal.messaging.saaj.client.p2p.HttpSOAPConnection.call(HttpSOAPConnection.java:144)
+
+</pre>
+
+<br/><br/>
+
+For more info see:
+<br/><br/>
+
+<a href="http://docs.oracle.com/javaee/5/tutorial/doc/bnbhr.html">http://docs.oracle.com/javaee/5/tutorial/doc/bnbhr.html</a> <br/>   
+<a href="http://docs.oracle.com/javase/6/docs/api/javax/activation/FileDataSource.html">http://docs.oracle.com/javase/6/docs/api/javax/activation/FileDataSource.html</a> <br/>
+<a href="http://docs.oracle.com/javase/6/docs/api/javax/activation/DataHandler.html">http://docs.oracle.com/javase/6/docs/api/javax/activation/DataHandler.html</a> <br/>
+
+<br/><br/>
+
+
+I would rather say that it could be all a LOT simpler.... Java Java...too verbose...
+

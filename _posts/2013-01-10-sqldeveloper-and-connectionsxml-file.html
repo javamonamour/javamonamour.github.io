@@ -1,0 +1,103 @@
+---
+layout: post
+title: "SQLDeveloper  and the connections.xml file"
+date: 2013-01-10T15:52:00.000+01:00
+permalink: /2013/01/sqldeveloper-and-connectionsxml-file.html
+blogger_id: "9042406938968754508"
+tags: ["sqldeveloper"]
+---
+I am trying to generate the connections.xml file used by SQLDeveloper to contain all connection info. It doesn't seem too difficult, the only trick is to encrypt the password.
+<br/>
+
+<pre name="code" class="brush: xml">
+
+&lt;?xml version = '1.0' encoding = 'UTF-8'?>
+&lt;References xmlns="http://xmlns.oracle.com/adf/jndi">
+   &lt;Reference name="hqblln422.acme.com:1551_TST_OSB_ts1_pippo_gm" className="oracle.jdeveloper.db.adapter.DatabaseProvider" xmlns="">
+      &lt;Factory className="oracle.jdeveloper.db.adapter.DatabaseProviderFactory"/>
+      &lt;RefAddresses>
+         &lt;StringRefAddr addrType="OracleConnectionType">
+            &lt;Contents>ADVANCED&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="oraDriverType">
+            &lt;Contents>thin&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="user">
+            &lt;Contents>ts1_pippo_gm&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="role">
+            &lt;Contents/>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="NoPasswordConnection">
+            &lt;Contents>TRUE&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="subtype">
+            &lt;Contents>oraJDBC&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="KERBEROS_AUTHENTICATION">
+            &lt;Contents>false&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="OS_AUTHENTICATION">
+            &lt;Contents>false&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="RaptorConnectionType">
+            &lt;Contents>Oracle&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="ConnName">
+            &lt;Contents>hqblln422.acme.com:1551_TST_OSB_ts1_pippo_gm&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="customUrl">
+            &lt;Contents>jdbc:oracle:thin:@//hqblln422.acme.com:1551/TST_OSB&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="password">
+            &lt;Contents>053F1E4CDCA2D3C78B79D97CC5A0ED93CA39ADBDA8ED2CB2D3&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="SavePassword">
+            &lt;Contents>true&lt;/Contents>
+         &lt;/StringRefAddr>
+         &lt;StringRefAddr addrType="driver">
+            &lt;Contents>oracle.jdbc.OracleDriver&lt;/Contents>
+         &lt;/StringRefAddr>
+      &lt;/RefAddresses>
+   &lt;/Reference>
+&lt;/References>
+
+</pre>
+
+<br/><br/>
+
+Here a post telling you how to encrypt:
+<br/><br/>
+<a href="http://stackoverflow.com/questions/1032721/does-anybody-know-what-encrypting-technique-is-jdeveloper-sql-developer-using-to">http://stackoverflow.com/questions/1032721/does-anybody-know-what-encrypting-technique-is-jdeveloper-sql-developer-using-to</a>
+<br/><br/>
+
+and here how to decrypt:
+<br/><br/>
+<a href="http://jvzoggel.wordpress.com/tag/sqldeveloper/">http://jvzoggel.wordpress.com/tag/sqldeveloper/</a>
+
+<br/><br/>
+
+
+You need these libraries:<br/><br/>
+/opt/oracle/fmw11_1_1_5/oracle_common/modules/oracle.adf.model_11.1.1/db-ca.jar
+<br/><br/>
+
+
+/opt/oracle/fmw11_1_1_5/oracle_common/modules/oracle.ldap_11.1.1/ojmisc.jar
+<br/><br/>
+
+
+and the code is<br/><br/>
+
+<pre name="code" class="brush: java">
+import oracle.jdevimpl.db.adapter.DatabaseProviderHelper;
+
+
+cleartextPassword = DatabaseProviderHelper.comingIn(encryptedPassword)
+
+
+encryptedPassword = DatabaseProviderHelper.goingOut(cleartextPassword)
+
+</pre>
+
+

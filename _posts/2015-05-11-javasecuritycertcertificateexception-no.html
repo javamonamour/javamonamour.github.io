@@ -1,0 +1,125 @@
+---
+layout: post
+title: "java.security.cert.CertificateException: no trust anchor defined"
+date: 2015-05-11T17:21:00.000+02:00
+permalink: /2015/05/javasecuritycertcertificateexception-no.html
+blogger_id: "8324877386135300767"
+tags: ["certificate", "security", "ssl", "TrustManager", "X509Certificate", "X509TrustManager"]
+---
+Or also "Trust anchor for certification path not found "<br />
+<br />
+<br />
+If you see a "java.security.cert.CertificateException: no trust anchor defined", most likely it means that someone has messed up the Certificate, for instance replacing a trusted CA certificate with a Self-Signed certificate.  <br />
+<br />
+you can use "openssl s_client -debug -connect yourhost:yourport" and check for the dreaded "verify error:num=18:self signed certificate"  <br />
+<br />
+In case you use an Oracle Wallet to hold certificates, you can do a  <br />
+<br />
+orapki wallet display -wallet  /path/to/wallet -summary  <br />
+<br />
+<a href="http://docs.oracle.com/cd/B28359_01/network.111/b28530/asoappf.htm#i636653">http://docs.oracle.com/cd/B28359_01/network.111/b28530/asoappf.htm#i636653</a>    <br />
+<br />
+<br />
+Here <a href="https://medium.com/@kibotu/handling-custom-ssl-certificates-on-android-and-fixing-sslhandshakeexception-65ffb9dc612e">https://medium.com/@kibotu/handling-custom-ssl-certificates-on-android-and-fixing-sslhandshakeexception-65ffb9dc612e</a> some troubleshooting is suggested  <br />
+<br />
+#this to display the server's certificates<br />
+openssl s_client -connect myserver.com:443 -showcerts <br />
+<br />
+<br />
+#to save server cert to pem format<br />
+openssl s_client -connect google.com:443 -showcerts < /dev/null 2> /dev/null | openssl x509 -outform PEM > googlecert.pem<br />
+<br />
+The JVM trusted CA certs are in $JAVA_HOME/jre/lib/security/cacerts<br />
+<br />
+To add an entry in cacerts:<br />
+<br />
+keytool -import -trustcacerts -keystore cacerts -storepass changeit -alias googleca -import -file googlecert.pem<br />
+<br />
+To examine the content of cacerts , use <a href="https://keystore-explorer.org/">https://keystore-explorer.org/</a><br />
+<br />
+<br />
+To dump all your trustedCA()<br />
+<br />
+<pre class="brush: java">import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+import java.security.KeyStore;
+import java.security.cert.X509Certificate;
+import java.util.Arrays;
+
+
+public class TM {
+    public static void main(String[] args) throws Exception {
+        TrustManagerFactory factory = TrustManagerFactory.getInstance("X509");
+        factory.init((KeyStore) null);
+        TrustManager[] tms = factory.getTrustManagers();
+        X509TrustManager tm = (X509TrustManager) tms[0];
+        X509Certificate[] ai = tm.getAcceptedIssuers();
+        Arrays.stream(ai).forEach(item -> System.out.println(item.toString()));
+    }
+}
+
+</pre><br />
+<br />
+<br />
+Here https://nakov.com/blog/2009/07/16/disable-certificate-validation-in-java-ssl-connections/ a dirty trick to trust all certificates:<br />
+<br />
+<br />
+<pre class="brush: java">
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.net.URLConnection;
+ 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
+ 
+public class Example {
+    public static void main(String[] args) throws Exception {
+        // Create a trust manager that does not validate certificate chains
+        TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }
+        };
+ 
+        // Install the all-trusting trust manager
+        SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+ 
+        // Create all-trusting host name verifier
+        HostnameVerifier allHostsValid = new HostnameVerifier() {
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        };
+ 
+        // Install the all-trusting host verifier
+        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+ 
+        URL url = new URL("https://www.nakov.com:2083/");
+        URLConnection con = url.openConnection();
+        Reader reader = new InputStreamReader(con.getInputStream());
+        while (true) {
+            int ch = reader.read();
+            if (ch==-1) {
+                break;
+            }
+            System.out.print((char)ch);
+        }
+    }
+}
+
+</pre><br />
+

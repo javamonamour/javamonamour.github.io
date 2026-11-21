@@ -1,0 +1,34 @@
+---
+layout: post
+title: "Profiling WebLogic 10.3.5 with YourKit 10.0.0"
+date: 2011-10-02T14:38:00.001+02:00
+permalink: /2011/10/profiling-weblogic-1035-with-yourkit.html
+blogger_id: "8059453061996552756"
+tags: ["weblogic", "yourkit"]
+---
+<a href="http://www.yourkit.com/docs/10/help/agent.jsp">http://www.yourkit.com/docs/10/help/agent.jsp</a><br />
+<br />
+see also <a href="http://www.torsten-horn.de/techdocs/jee-oracleweblogic.htm#YourKit">http://www.torsten-horn.de/techdocs/jee-oracleweblogic.htm#YourKit</a><br />
+<br />
+<br />
+In brief, if you are lazy:<br />
+<br />
+in YourKit, Tools/Integrate with standalone Application Server, choose WebLogic 9/10,<br />
+provide location of the startup script (not necessarily startWebLogic.cmd, if you are profiling a Managed Server you will provide C:\bea1035\user_projects\domains\osb_domain\startms1.cmd )<br />
+<br />
+(I choose JVM 32bit)<br />
+<br />
+YourKit will generate a C:\bea1035\user_projects\domains\osb_domain\startms1_with_yjp.bat<br />
+<br />
+who simply inserts a <br />
+<br />
+set JAVA_OPTIONS=-agentpath:C:\PROGRA~2\YOURKI~1.0\bin\win32\yjpagent.dll=disablestacktelemetry,disableexceptiontelemetry,builtinprobes=none,delay=10000,sessionname=WebLogic %JAVA_OPTIONS%<br />
+<br />
+<br />
+before my startManagedWebLogic.cmd<br />
+<br />
+Make sure that in the agentpath parameters you specify also port=11001 if port 10001 is already in use. YourKit says that it dynamically chooses another port but this didn't work for me.<br />
+<br />
+Remove disablestacktelemetry (anyway you can still disable it runtime with a button).<br />
+<br />
+In "Capture Memory Snapshot", enable HPROF format.

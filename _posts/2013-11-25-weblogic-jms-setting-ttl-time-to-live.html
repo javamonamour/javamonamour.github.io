@@ -1,0 +1,56 @@
+---
+layout: post
+title: "WebLogic JMS: setting TTL (time to live) aka Expiration Time on messages"
+date: 2013-11-25T14:54:00.000+01:00
+permalink: /2013/11/weblogic-jms-setting-ttl-time-to-live.html
+blogger_id: "9077379456532860443"
+tags: ["jms", "weblogic"]
+---
+you can set a Time To Live for a JMS message using the WLS console, with "Overrides / Time-to-Live Override", but you should also select the "Delivery Mode Override:"  = Persistent, otherwise you get this error:
+
+
+<pre>
+Message icon - Error An error occurred during activation of changes, please see the log for details.
+Message icon - Error [Management:141191]The prepare phase of the configuration update failed with an exception:
+Message icon - Error VALIDATION PROBLEMS WERE FOUND problem: cvc-enumeration-valid: string value 'No-Delivery' is not a valid enumeration value for delivery-mode-type in namespace http://xmlns.oracle.com/weblogic/weblogic-jms:<null>
+
+</pre>
+
+then you should also choose what to to with the expired message (Expiration Policy:), best thing is to redirect it to an Error Destination.
+<br/><br/>
+
+The weird thing is that this TTL Override doesn't see to work when you create a new JMS message from the WL console. If you monitor the JMS messages in the queue, the JMS Expiration is still set to 0.
+<br/>
+In OSB, you can assign a default "JMS expiration" to the Business Service sending messages to the JMS destination, or you can assign a JMS Expiration at runtime (even in the test console).
+
+<br/>
+
+
+Another way is to set the "Default Time-to-Live:" at Connection Factory level.
+
+<br/>
+
+This is the WLST code to set the Override at JMS Destination level:
+
+<pre class="brush: java">
+#you should have created a PV_OSB_TESTModule JMSModule and a PV_OSB_TESTQ Distributed Queue
+
+cd('/JMSSystemResources/PV_OSB_TESTModule/JMSResource/PV_OSB_TESTModule/UniformDistributedQueues/PV_OSB_TESTQ/DeliveryFailureParams/PV_OSB_TESTQ')
+
+cmo.setErrorDestination(getMBean('/JMSSystemResources/PV_OSB_TESTModule/JMSResource/PV_OSB_TESTModule/UniformDistributedQueues/PV_OSB_TESTReprocessQ'))
+
+
+cmo.setExpirationPolicy('Redirect')
+
+cd('/JMSSystemResources/PV_OSB_TESTModule/JMSResource/PV_OSB_TESTModule/UniformDistributedQueues/PV_OSB_TESTQ/DeliveryParamsOverrides/PV_OSB_TESTQ')
+
+
+cmo.setTimeToLive(120000)
+
+
+</pre>
+
+
+
+
+

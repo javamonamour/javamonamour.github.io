@@ -1,0 +1,38 @@
+---
+layout: post
+title: "maven wildfly archetype push to github"
+date: 2017-12-30T02:24:00.003+01:00
+permalink: /2017/12/maven-wildfly-archetype-push-to-github.html
+blogger_id: "322832042753925851"
+tags: ["git", "maven", "wildfly"]
+---
+To get started with a basic webapp for wildfly:<br />
+<br />
+mvn archetype:generate -DarchetypeArtifactId=wildfly-javaee7-webapp-archetype -DarchetypeGroupId=org.wildfly.archetype -DarchetypeVersion=8.2.0.Final<br />
+<br />
+<br />
+<a href="https://mvnrepository.com/artifact/org.wildfly.archetype/wildfly-javaee7-webapp-archetype/8.2.0.Final">https://mvnrepository.com/artifact/org.wildfly.archetype/wildfly-javaee7-webapp-archetype/8.2.0.Final</a><br />
+<br />
+<br />
+once you have created the project (groupid=org.pierre, artifactid=aostapictures)<br />
+you do the following:<br />
+<br />
+create a repository in gthub, named aostapictures (not sure if you can do it with git command line...I did with github web ui)<br />
+<br />
+cd aostapictures/<br />
+git init<br />
+echo "/target/" > .gitignore<br />
+git add *<br />
+git add .cheatsheet.xml<br />
+git add .gitignore<br />
+git add .classpath<br />
+git add .factorypath<br />
+git add .project<br />
+git add .settings/<br />
+git commit -am "first commit"<br />
+git remote add origin https://github.com/vernetto/aostapictures.git<br />
+git push --set-upstream origin master<br />
+git push -u origin master<br />
+<br />
+<br />
+see also <a href="https://help.github.com/articles/adding-a-remote/">https://help.github.com/articles/adding-a-remote/</a>

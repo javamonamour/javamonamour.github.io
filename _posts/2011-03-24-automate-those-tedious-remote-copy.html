@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Automate those tedious remote copy tasks with WINSCP"
+date: 2011-03-24T11:51:00.001+01:00
+permalink: /2011/03/automate-those-tedious-remote-copy.html
+blogger_id: "5630038580972843561"
+tags: ["WinSCP"]
+---
+Install <a href="http://winscp.net/eng/docs/lang:nl">WinSCP</a><br />
+<br />
+create a batch file containing:<br />
+<br />
+"c:\Program Files\WinSCP\WinSCP.com" /script=copyall.script<br />
+pause<br />
+<br />
+in copyall.script write:<br />
+<br />
+option confirm off<br />
+open  username:password@remotehost<br />
+lcd localPathWhereYourFilesAreStored<br />
+cd remotePathWhereYouWantToPutYourFiles<br />
+put file1<br />
+put file2<br />
+put file3<br />
+exit

@@ -1,0 +1,22 @@
+---
+layout: post
+title: "ImportError: no module named hyperic"
+date: 2012-04-22T12:57:00.000+02:00
+permalink: /2012/04/importerror-no-module-named-hyperic.html
+blogger_id: "3700642876727284124"
+tags: ["hyperic", "WLST"]
+---
+I have added all the good classes to CLASSPATH (using full paths), <br />
+I run weblogic.WLST and I do<br />
+<br />
+import org.hyperic.hq.hqapi1.HQApi<br />
+<br />
+this gives me ImportError: no module named hyperic<br />
+<br />
+<a href="http://docs.oracle.com/cd/E15051_01/wls/docs103/config_scripting/using_WLST.html#wp1094333">Here</a>  it reminds you that there is a<br />
+<br />
+C:\Oracle\Middleware\wlserver_10.3\common\wlst   directory<br />
+<br />
+but this is a place only for Python modules...<br />
+<br />
+Well the reality is that, if you set the classpath right (make sure you use full path names), you should not need to make any extra step to use a Java class...

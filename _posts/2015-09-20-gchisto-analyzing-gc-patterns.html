@@ -1,0 +1,31 @@
+---
+layout: post
+title: "gchisto- analyzing GC patterns"
+date: 2015-09-20T09:56:00.001+02:00
+permalink: /2015/09/gchisto-analyzing-gc-patterns.html
+blogger_id: "5929103177111191975"
+tags: ["gc"]
+---
+git clone https://github.com/jewes/gchisto.git
+<br/>
+cd gchisto
+<br/>
+
+set JAVA_HOME=d:\pierre\Java\jdk1.7.0_79
+<br/>
+d:\apps\apache-maven-3.3.3\bin\mvn clean install
+<br/>
+
+cd target
+<br/>
+java -jar gchisto-1.0.1-SNAPSHOT.jar
+
+<br/>
+beware that it requires also the jars in the lib folder - they are included in the MANIFEST.MF file...
+<br/>
+
+
+
+I have run the tool on some PROD gc.... I was quite pleased with the result, you get almost all the information you need to assess how bad the situation is - of course you will never know WHAT caused your trouble, but you know when and how much CPU and wait time you are paying for Minor GC and Full GC.
+<br/>
+

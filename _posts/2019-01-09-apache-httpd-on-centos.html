@@ -1,0 +1,73 @@
+---
+layout: post
+title: "apache httpd on centos"
+date: 2019-01-09T17:22:00.002+01:00
+permalink: /2019/01/apache-httpd-on-centos.html
+blogger_id: "381362925663907937"
+tags: ["apache", "httpd"]
+---
+sudo yum install httpd mod_ssl<br />
+systemctl status httpd<br />
+systemctl start httpd<br />
+Job for httpd.service failed because the control process exited with error code. See "systemctl status httpd.service" and "journalctl -xe" for details.<br />
+systemctl status httpd.service<br />
+<pre>httpd.service - The Apache HTTP Server
+   Loaded: loaded (/usr/lib/systemd/system/httpd.service; disabled; vendor preset: disabled)
+   Active: failed (Result: exit-code) since Sat 2018-04-28 02:58:49 CEST; 12s ago
+     Docs: man:httpd(8)
+           man:apachectl(8)
+  Process: 25955 ExecStop=/bin/kill -WINCH ${MAINPID} (code=exited, status=1/FAILURE)
+  Process: 25951 ExecStart=/usr/sbin/httpd $OPTIONS -DFOREGROUND (code=exited, status=1/FAILURE)
+ Main PID: 25951 (code=exited, status=1/FAILURE)
+</pre><br />
+sudo su -<br />
+cd /var/log/httpd/<br />
+less error_log<br />
+<br />
+<pre>[Sat Apr 28 02:58:49.199587 2018] [core:notice] [pid 25951] SELinux policy enabled; httpd running as context system_u:system_r:httpd_t:s0
+[Sat Apr 28 02:58:49.222124 2018] [suexec:notice] [pid 25951] AH01232: suEXEC mechanism enabled (wrapper: /usr/sbin/suexec)
+[Sat Apr 28 02:58:49.223152 2018] [ssl:emerg] [pid 25951] (13)Permission denied: AH02201: Init: Can't open server certificate file /home/centos/myapp/mysitename.crt
+[Sat Apr 28 02:58:49.223168 2018] [ssl:emerg] [pid 25951] AH02312: Fatal error initialising mod_ssl, exiting.
+</pre><br />
+less /etc/httpd/conf/httpd.conf<br />
+<br />
+<pre>&lt;VirtualHost *:443&gt;
+  DocumentRoot /var/www/website
+  ServerName www.yourdomain.com
+  SSLEngine on
+  SSLCertificateFile &quot;/home/centos/myapp/mysitename.crt&quot;
+  SSLCertificateKeyFile &quot;/home/centos/myapp/mysitename.key&quot;
+&lt;/VirtualHost&gt;
+</pre><br />
+<br />
+sudo /usr/sbin/httpd -S <br />
+<pre>AH00558: httpd: Could not reliably determine the server's fully qualified domain name, using localhost.localdomain. Set the 'ServerName' directive globally to suppress this message
+VirtualHost configuration:
+*:443                  is a NameVirtualHost
+         default server www.yourdomain.com (/etc/httpd/conf/httpd.conf:107)
+         port 443 namevhost www.yourdomain.com (/etc/httpd/conf/httpd.conf:107)
+         port 443 namevhost localhost.localdomain (/etc/httpd/conf.d/ssl.conf:56)
+ServerRoot: "/etc/httpd"
+Main DocumentRoot: "/var/www/html"
+Main ErrorLog: "/etc/httpd/logs/error_log"
+Mutex default: dir="/run/httpd/" mechanism=default 
+Mutex mpm-accept: using_defaults
+Mutex authdigest-opaque: using_defaults
+Mutex proxy-balancer-shm: using_defaults
+Mutex rewrite-map: using_defaults
+Mutex authdigest-client: using_defaults
+Mutex ssl-stapling: using_defaults
+Mutex proxy: using_defaults
+Mutex authn-socache: using_defaults
+Mutex ssl-cache: using_defaults
+PidFile: "/run/httpd/httpd.pid"
+Define: _RH_HAS_HTTPPROTOCOLOPTIONS
+Define: DUMP_VHOSTS
+Define: DUMP_RUN_CFG
+User: name="apache" id=48
+Group: name="apache" id=48
+</pre><br />
+See also <a href="/2018/02/apache.html">/2018/02/apache.html</a><br />
+<br />
+<br />
+

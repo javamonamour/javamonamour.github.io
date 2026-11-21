@@ -1,0 +1,146 @@
+---
+layout: post
+title: "Thread Dump on Stuck thread with Diagnostic Image"
+date: 2013-04-30T18:41:00.001+02:00
+permalink: /2013/04/thread-dump-on-stuck-thread-with.html
+blogger_id: "8187538262911140308"
+tags: ["weblogic", "WLDF"]
+---
+See also <a href="https://blogs.oracle.com/jamesbayer/entry/weblogic_notifications_watch_t">https://blogs.oracle.com/jamesbayer/entry/weblogic_notifications_watch_t</a> <br />
+See also <a href="http://docs.oracle.com/cd/E21764_01/web.1111/e13714/config_diag_images.htm">http://docs.oracle.com/cd/E21764_01/web.1111/e13714/config_diag_images.htm</a> <br />
+<br />
+<pre class="brush: java" name="code">
+connect('weblogic', 'weblogic1', 't3://myserver.acme.com:7001')
+
+edit()
+startEdit()
+#untarget existing default module
+cd('/SystemResources/Module-FMWDFW')
+set('Targets',jarray.array([], ObjectName))
+
+
+theMailSessionName='MailSessionAdmin'
+cd('/')
+myMbean = getMBean('/MailSessions/' + theMailSessionName)
+if (myMbean == None):
+    print "createMailSession", theMailSessionName
+    cmo.createMailSession(theMailSessionName)
+    cd('/MailSessions/MailSessionAdmin')
+    cmo.setJNDIName('MailSessionAdmin')
+    prop = Properties()
+    prop.setProperty('mail.smtp.host', 'smtp.acme.com')
+    cmo.setProperties(prop)
+    set('Targets',jarray.array([ObjectName('com.bea:Name=osbpl1as,Type=Server'), ObjectName('com.bea:Name=osbpl1cl,Type=Cluster')], ObjectName))
+else:
+    print "mailSession", theMailSessionName, "already exists"
+    
+#create custom module
+cd('/')
+cmo.createWLDFSystemResource('stuckthreadsmodule')
+
+cd('/SystemResources/stuckthreadsmodule')
+cmo.setDescription('create a diagnostic image whenever the server is in warning')
+
+#create image notification
+cd('/WLDFSystemResources/stuckthreadsmodule/WLDFResource/stuckthreadsmodule/WatchNotification/stuckthreadsmodule')
+cmo.createImageNotification('stuckthreaddiagnosticmodule')
+cd('/WLDFSystemResources/stuckthreadsmodule/WLDFResource/stuckthreadsmodule/WatchNotification/stuckthreadsmodule/ImageNotifications/stuckthreaddiagnosticmodule')
+cmo.setEnabled(true)
+cmo.setImageDirectory('logs/diagnostic_images')
+cmo.setImageLockout(10)
+
+#create email notification
+cd('/WLDFSystemResources/stuckthreadsmodule/WLDFResource/stuckthreadsmodule/WatchNotification/stuckthreadsmodule')
+cmo.createSMTPNotification('stuckthreadnotificationemail')
+
+cd('/WLDFSystemResources/stuckthreadsmodule/WLDFResource/stuckthreadsmodule/WatchNotification/stuckthreadsmodule/SMTPNotifications/stuckthreadnotificationemail')
+cmo.setEnabled(true)
+cmo.setMailSessionJNDIName('MailSessionAdmin')
+set('Recipients',jarray.array([String('pierluigi.vernetto@acme.com')], String))
+cmo.setSubject(None)
+cmo.setBody(None)
+
+#create a watch
+cd('/WLDFSystemResources/stuckthreadsmodule/WLDFResource/stuckthreadsmodule/WatchNotification/stuckthreadsmodule')
+cmo.createWatch('stuckthreadwatch')
+
+#configure watch rule
+cd('/WLDFSystemResources/stuckthreadsmodule/WLDFResource/stuckthreadsmodule/WatchNotification/stuckthreadsmodule/Watches/stuckthreadwatch')
+cmo.setRuleType('Log')
+cmo.setEnabled(true)
+cmo.setRuleExpression('(SEVERITY = \'Error\') AND ((MSGID = \'WL-000337\') OR (MSGID = \'BEA-000337\'))')
+cmo.setAlarmType('AutomaticReset')
+cmo.setAlarmResetPeriod(60000)
+
+#assign notifications to watch
+cd('/WLDFSystemResources/stuckthreadsmodule/WLDFResource/stuckthreadsmodule/WatchNotification/stuckthreadsmodule/Watches/stuckthreadwatch')
+set('Notifications',jarray.array([ObjectName('com.bea:Name=stuckthreaddiagnosticmodule,Type=weblogic.diagnostics.descriptor.WLDFImageNotificationBean,Parent=[osbpl1do]/WLDFSystemResources[stuckthreadsmodule],Path=WLDFResource[stuckthreadsmodule]/WatchNotification[stuckthreadsmodule]/ImageNotifications[stuckthreaddiagnosticmodule]'), ObjectName('com.bea:Name=stuckthreadnotificationemail,Type=weblogic.diagnostics.descriptor.WLDFSMTPNotificationBean,Parent=[osbpl1do]/WLDFSystemResources[stuckthreadsmodule],Path=WLDFResource[stuckthreadsmodule]/WatchNotification[stuckthreadsmodule]/SMTPNotifications[stuckthreadnotificationemail]')], ObjectName))
+
+cd('/SystemResources/stuckthreadsmodule')
+set('Targets',jarray.array([ObjectName('com.bea:Name=osbpl1cl,Type=Cluster')], ObjectName))
+
+validate()
+save()
+activate()
+
+
+
+
+</pre>
+This will create:- a mail session "MailSessionAdmin"<br />
+- a diagnostic module "stuckthreadsmodule"<br />
+- inside it, a watch stuckthreadwatch<br />
+- the watch will use 2 notifications, stuckthreaddiagnosticmodule and stuckthreadnotificationemail<br />
+<br /><br /><br /><br />
+How to test: <br /><br />
+mkdir -p /opt/oracle/apps/wlstuck/WEB-INF<br /><br />
+
+
+make a small index.jsp<br /><br />
+
+&lt;%
+Thread.sleep(660000);
+%&gt;
+
+and a web.xml
+<br />
+<pre>&lt;web-app xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+&lt;display-name&gt;wlstuck&lt;/display-name&gt;
+    &lt;welcome-file-list&gt;
+        &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+    &lt;/welcome-file-list&gt;
+&lt;/web-app&gt;
+</pre>
+<br /><br />
+
+
+"Health Check Interval" (Configuration/Health Monitoring) defines how often the server checks its health.
+
+<br /><br />
+
+"Stuck Thread Max Time" (Configuration/Tuning) defines how many seconds to wait before flagging the thread as stuck.
+
+
+<br /><br />
+
+You sohuld get an email when the stuck thread makes the server go in WARNING state:<br />
+
+<pre>WatchTime: Apr 24, 2013 6:29:13 PM CEST 
+WatchDomainName: osbpl1do 
+WatchServerName: osbpl1ms1 
+WatchSeverityLevel: Notice 
+WatchName: stuckthreadwatch 
+WatchRuleType: Harvester 
+WatchRule: (SEVERITY = 'Error') AND ((MSGID = 'WL-000337') OR (MSGID = 'BEA-000337'))
+WatchData: com.bea:Name=osbpl1ms1,Type=ServerRuntime//State = RUNNING  
+WatchAlarmType: AutomaticReset 
+WatchAlarmResetPeriod: 60000 
+SMTPNotificationName: stuckthreadnotificationemail 
+</pre>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

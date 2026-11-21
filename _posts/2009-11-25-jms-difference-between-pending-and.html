@@ -1,0 +1,15 @@
+---
+layout: post
+title: "JMS: difference between PENDING and CURRENT"
+date: 2009-11-25T15:52:00.000+01:00
+permalink: /2009/11/jms-difference-between-pending-and.html
+blogger_id: "2914931091529119793"
+---
+<h3>MessagesPendingCount<a href="http://www.blogger.com/post-edit.g?blogID=3195885170348729753&amp;postID=2914931091529119793" name="getMessagesPendingCount()"></a><a href="http://www.blogger.com/post-edit.g?blogID=3195885170348729753&amp;postID=2914931091529119793" name="getMessagesPendingCount"></a> </h3>The number of pending messages in the destination.<br />
+Pending messages are over and above the current number of  messages. <b>A pending message is one that has either been sent in a  transaction and not committed</b>,<b> or that has been received and not  committed or acknowledged.</b><br />
+<br />
+<br />
+<h3>MessagesCurrentCount<a href="http://www.blogger.com/post-edit.g?blogID=3195885170348729753&amp;postID=2914931091529119793" name="getMessagesCurrentCount()"></a><a href="http://www.blogger.com/post-edit.g?blogID=3195885170348729753&amp;postID=2914931091529119793" name="getMessagesCurrentCount"></a> </h3>The current number of messages in the destination. This does not  include the pending messages.<br />
+<br />
+<br />
+When you do "show messages",

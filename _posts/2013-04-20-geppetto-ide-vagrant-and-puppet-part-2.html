@@ -1,0 +1,46 @@
+---
+layout: post
+title: "Geppetto IDE, Vagrant and Puppet - part 2"
+date: 2013-04-20T19:01:00.001+02:00
+permalink: /2013/04/geppetto-ide-vagrant-and-puppet-part-2.html
+blogger_id: "1502091997833182001"
+tags: ["geppetto", "puppet", "vagrant"]
+---
+Introductory tutorial on Geppetto IDE here:<br />
+<br />
+<a href="https://puppetlabs.com/blog/geppetto-a-puppet-ide/">https://puppetlabs.com/blog/geppetto-a-puppet-ide/</a>
+
+<br />
+<br />
+I come up with my first manifest:
+
+<br />
+<pre>file { "/tmp/somefile.txt":
+    ensure =&gt; present,
+    content =&gt; "Ciao scemo",
+}
+
+</pre>
+now, how do I execute it on my VirtualBox?
+
+<br />
+<br />
+MUST READ Puppet and Vagrant tutorial here:
+<br />
+<a href="http://www.linux.com/news/software/applications/694157-setup-your-dev-environment-in-nothing-flat-with-puppet">http://www.linux.com/news/software/applications/694157-setup-your-dev-environment-in-nothing-flat-with-puppet
+</a>
+<br />
+<br />
+Here we learn that under your vagrant base directory,<br />
+you should create a manifests folder and there a default.pp file, and there you stick your "file { "/tmp/somefile.txt":" etc etc declaration.
+<br />
+<br />
+At this point, do "vagrant up" and the file somefile.txt is magically created in /tmp.<br />
+<br />
+you can check by logging in with putty at port 2222 using vagrant/vagrant.<br />
+<br />
+Interestingly, my default.pp file has ended up in /tmp/vagrant-puppet/manifests/default.pp on the VM.<br />
+<br />
+more vagrant-puppet doc here: <a href="http://docs-v1.vagrantup.com/v1/docs/provisioners/puppet.html">http://docs-v1.vagrantup.com/v1/docs/provisioners/puppet.html</a><br />
+<br />
+

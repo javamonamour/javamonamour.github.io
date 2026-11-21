@@ -1,0 +1,14 @@
+---
+layout: post
+title: "XmlObject Arrays in OSB Custom XPaths"
+date: 2012-07-14T20:41:00.002+02:00
+permalink: /2012/07/xmlobject-arrays-in-osb-custom-xpaths.html
+blogger_id: "1742232425143112129"
+tags: ["customXpath"]
+---
+I have lost 20 minutes to find out that, if you return a XmlObject[] in your Java function, in the customxpath.xml descriptor you should put<br />
+[Lorg.apache.xmlbeans.XmlObject;<br />
+and not<br />
+Lorg.apache.xmlbeans.XmlObject;<br />
+<br />
+as the <a href="http://docs.oracle.com/cd/E14571_01/doc.1111/e15866/custom_xpath.htm">official doc</a> might seem to suggest

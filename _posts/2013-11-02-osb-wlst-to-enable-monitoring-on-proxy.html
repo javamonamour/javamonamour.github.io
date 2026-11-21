@@ -1,0 +1,117 @@
+---
+layout: post
+title: "OSB: WLST to enable monitoring on Proxy Services"
+date: 2013-11-02T20:36:00.002+01:00
+permalink: /2013/11/osb-wlst-to-enable-monitoring-on-proxy.html
+blogger_id: "4137491154746600704"
+tags: ["monitoring", "OSB"]
+---
+If there is something boring is having to manually enable/disable monitoring at Pipeline/STage/Action level on Proxy/Business services, with same or different aggregation interval.
+<br/>
+
+Unfortunately OSB configuration API is not very friendly.
+
+<a href="http://docs.oracle.com/cd/E17904_01/apirefs.1111/e15033/com/bea/wli/sb/management/configuration/ProxyServiceConfigurationMBean.html">ProxyServiceConfigurationMBean </a>inherits the method <a href="http://docs.oracle.com/cd/E17904_01/apirefs.1111/e15033/com/bea/wli/sb/management/configuration/CommonServiceConfigurationMBean.html#enableMonitoring_com_bea_wli_config_Ref_">enableMonitoring </a>from its parent class CommonServiceConfigurationMBean.
+
+<br/>
+Unfortunately in the method signature there is no mention of the extra parameters : level and aggregation period.
+<br/>
+
+Here is the code:
+
+<pre class="brush: java">
+#There is a change to do to be able to run this WLST script:
+#vi /opt/oracle/fmw11_1_1_5/osb/common/bin/wlst.sh
+#change this:
+#export CLASSPATH
+#into this:
+#CLASSPATH=/opt/oracle/fmw11_1_1_5/osb/lib/sb-kernel-api.jar:/opt/oracle/fmw11_1_1_5/osb/lib/sb-kernel-impl.jar:/opt/oracle/fmw11_1_1_5/osb/modules/com.bea.common.configfwk_1.5.0.0.jar:$CLASSPATH
+#export CLASSPATH
+
+
+import javax.management
+import java.util
+import javax.management.remote
+import javax.naming
+import weblogic.management.mbeanservers.domainruntime
+import com.bea.wli.sb.management.configuration
+
+from java.util import Hashtable
+from java.util import HashSet
+from javax.management.remote import JMXServiceURL
+from weblogic.management.mbeanservers.domainruntime import DomainRuntimeServiceMBean
+from javax.naming import Context
+from javax.management.remote import JMXConnectorFactory
+from javax.management import ObjectName
+from com.bea.wli.sb.management.configuration import SessionManagementMBean
+from com.bea.wli.sb.management.configuration import ALSBConfigurationMBean
+from com.bea.wli.sb.management.configuration import CommonServiceConfigurationMBean
+import weblogic.management.jmx.MBeanServerInvocationHandler
+from com.bea.wli.config import Ref
+
+from com.bea.wli.config.env import EnvValueQuery
+from com.bea.wli.config.env import QualifiedEnvValue
+from com.bea.wli.config.resource import DependencyQuery
+from com.bea.wli.sb.management.query import ProxyServiceQuery
+from com.bea.wli.sb.management.query import BusinessServiceQuery
+
+from com.bea.wli.sb.util import EnvValueTypes
+from java.util import Collection
+from java.util import Collections
+
+
+def setMonitoringAllProjectsAndServices(isEnabled):
+    refs = configMBean.getRefs(Ref.DOMAIN)
+    refsList = ArrayList()
+    refsList.addAll(refs)
+    
+    for ref in refsList :
+        if ref.getTypeId() == "ProxyService" or ref.getTypeId() == "BusinessService" :
+            if ref.getTypeId() == "ProxyService" :
+                isPS = "1"
+            else:
+                isPS =  "0"
+            if isEnabled:
+                print "enabling monitoring for ", ref.getFullName()
+                proxyServiceConfigurationMBean.enableMonitoring(ref)
+            else:
+                print "disabling monitoring for ", ref.getFullName()
+                proxyServiceConfigurationMBean.disableMonitoring(ref)
+
+
+
+sessionName = "Session to enable or disable monitoring"
+hostname='myhost.acme.com'
+port=9001
+username='Pierluigi'
+password='pippo'
+serviceURL=JMXServiceURL("t3", hostname, port, "/jndi/" + DomainRuntimeServiceMBean.MBEANSERVER_JNDI_NAME)
+h=Hashtable()
+h.put(Context.SECURITY_PRINCIPAL, username)
+h.put(Context.SECURITY_CREDENTIALS, password)
+h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, "weblogic.management.remote")
+
+conn = JMXConnectorFactory.connect(serviceURL, h)
+
+mbconn = conn.getMBeanServerConnection()
+
+sm = JMX.newMBeanProxy(mbconn, ObjectName.getInstance(SessionManagementMBean.OBJECT_NAME), SessionManagementMBean)
+
+sm.createSession(sessionName)
+
+configMBean = JMX.newMBeanProxy(mbconn, ObjectName.getInstance("com.bea:Name=" + ALSBConfigurationMBean.NAME + "." + sessionName + ",Type=" + ALSBConfigurationMBean.TYPE), ALSBConfigurationMBean)
+
+domainService = weblogic.management.jmx.MBeanServerInvocationHandler.newProxyInstance(mbconn, ObjectName(DomainRuntimeServiceMBean.OBJECT_NAME), DomainRuntimeServiceMBean, false)
+
+proxyServiceConfigurationMBean = domainService.findService(String("ProxyServiceConfiguration.").concat(sessionName),'com.bea.wli.sb.management.configuration.ProxyServiceConfigurationMBean', None)
+
+setMonitoringAllProjectsAndServices(true)
+
+
+
+sm.activateSession(sessionName, "Complete enable/disable service monitoring")
+conn.close()
+
+
+</pre>
+

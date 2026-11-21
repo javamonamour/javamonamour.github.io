@@ -1,0 +1,82 @@
+---
+layout: post
+title: "WebLogic: all MS in a cluster hang while starting up.... weblogic.cluster.MemberManager.getJNDIStateDump issue"
+date: 2017-01-02T16:10:00.000+01:00
+permalink: /2017/01/weblogic-all-ms-in-cluster-hand-while.html
+blogger_id: "2532877211831110020"
+tags: ["cluster", "weblogic"]
+---
+in the thread dump of both MS I see several blocked threads:
+<br/><br/>
+weblogic.cluster.MemberManager.getRemoteMembers
+<br/>
+weblogic.iiop.ClusterServices.getMembers
+<br/>
+weblogic.cluster.ClusterRuntime.clusterMembersChanged
+<br/>
+weblogic.cluster.MemberManager.findOrCreate
+<br/>
+
+
+plus some 150 DynamicJSSEListenThread threads....
+
+<br/>
+In particular all BLOCKED threads are waiting for lock 0x000000060276f168  who is held by this getJNDIStateDump:
+<br/>
+<pre class="brush: xml">
+
+&quot;[STANDBY] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&quot; daemon prio=10 tid=0x00007f6a800024c0 nid=0x74bd runnable [0x00007f6b1f7e6000]
+   java.lang.Thread.State: RUNNABLE
+               at java.net.SocketInputStream.socketRead0(Native Method)
+               at java.net.SocketInputStream.read(SocketInputStream.java:152)
+               at java.net.SocketInputStream.read(SocketInputStream.java:122)
+               at sun.security.ssl.InputRecord.readFully(InputRecord.java:442)
+               at sun.security.ssl.InputRecord.read(InputRecord.java:480)
+               at sun.security.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:946)
+               - locked &lt;0x000000060bcf5160&gt; (a java.lang.Object)
+               at sun.security.ssl.SSLSocketImpl.readDataRecord(SSLSocketImpl.java:903)
+               at sun.security.ssl.AppInputStream.read(AppInputStream.java:102)
+               - locked &lt;0x000000060bd2a9b0&gt; (a sun.security.ssl.AppInputStream)
+               at java.io.BufferedInputStream.fill(BufferedInputStream.java:235)
+               at java.io.BufferedInputStream.read1(BufferedInputStream.java:275)
+               at java.io.BufferedInputStream.read(BufferedInputStream.java:334)
+               - locked &lt;0x000000060bd2a988&gt; (a java.io.BufferedInputStream)
+               at sun.net.www.http.HttpClient.parseHTTPHeader(HttpClient.java:690)
+               at sun.net.www.http.HttpClient.parseHTTP(HttpClient.java:633)
+               at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1325)
+               - locked &lt;0x000000060c29d3c8&gt; (a sun.net.www.protocol.https.DelegateHttpsURLConnection)
+               at sun.net.www.protocol.https.HttpsURLConnectionImpl.getInputStream(HttpsURLConnectionImpl.java:254)
+               - locked &lt;0x000000060c29d4a8&gt; (a sun.net.www.protocol.https.HttpsURLConnectionImpl)
+               at weblogic.cluster.MemberManager.getJNDIStateDump(MemberManager.java:244)
+               at weblogic.cluster.MemberManager.waitForSync(MemberManager.java:222)
+               at weblogic.cluster.MemberManager.waitToSyncWithCurrentMembers(MemberManager.java:182)
+               - locked &lt;0x000000060276f168&gt; (a weblogic.cluster.MemberManager)
+               at weblogic.cluster.InboundService.start(InboundService.java:52)
+               at weblogic.server.AbstractServerService.postConstruct(AbstractServerService.java:78)
+               at sun.reflect.GeneratedMethodAccessor6.invoke(Unknown Source)
+               at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+               at java.lang.reflect.Method.invoke(Method.java:606)
+               at org.glassfish.hk2.utilities.reflection.ReflectionHelper.invoke(ReflectionHelper.java:1017)
+               at org.jvnet.hk2.internal.ClazzCreator.postConstructMe(ClazzCreator.java:388)
+               at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:430)
+               at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+               at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+               at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+               at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+               at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+               - locked &lt;0x000000060acd0028&gt; (a java.lang.Object)
+               at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:87)
+               at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.oneJob(CurrentTaskFuture.java:1162)
+               at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.run(CurrentTaskFuture.java:1147)
+               at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:553)
+               at weblogic.work.ExecuteThread.execute(ExecuteThread.java:311)
+               at weblogic.work.ExecuteThread.run(ExecuteThread.java:263)
+
+
+</pre>
+
+<br/><br/>
+
+It turned out that the SAME domain was running before on a different set of servers, and while migrating them the operator forgot to shut down the previous instances. How this could interfere with the current domain, it's still a mystery<br/><br/>
+
+

@@ -1,0 +1,42 @@
+---
+layout: post
+title: "OSB transport headers"
+date: 2010-04-27T08:48:00.001+02:00
+permalink: /2010/04/osb-transport-headers.html
+blogger_id: "7619938647017228762"
+tags: ["osbtransport"]
+---
+&lt;con:transport xmlns:con="http://www.bea.com/wli/sb/context"&gt;<br />
+&nbsp; &lt;con:<b>uri</b>&gt;/PVOSBProject1/PVTestFault01&lt;/con:uri&gt;<br />
+&nbsp; &lt;con:<b>mode</b>&gt;request-response&lt;/con:mode&gt;<br />
+&nbsp; &lt;con:<b>qualityOfService</b>&gt;best-effort&lt;/con:qualityOfService&gt;<br />
+&nbsp; &lt;con:request xsi:type="http:HttpRequestMetaData" xmlns:http="http://www.bea.com/wli/sb/transports/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;tran:headers xsi:type="http:HttpRequestHeaders" xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;http:<b>Content-Type</b>&gt;text/xml; charset=utf-8&lt;/http:Content-Type&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;http:<b>SOAPAction</b>&gt;"generateFault2"&lt;/http:SOAPAction&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/tran:headers&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;tran:encoding xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;utf-8&lt;/tran:encoding&gt;<br />
+&nbsp; &lt;/con:request&gt;<br />
+&nbsp; &lt;con:response xsi:type="http:HttpResponseMetaData" xmlns:http="http://www.bea.com/wli/sb/transports/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;<b>tran:headers</b> xsi:type="http:HttpResponseHeaders" xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<b>http:Content-Type</b>&gt;text/xml&lt;/http:Content-Type&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/tran:headers&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;tran:response-code xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;0&lt;/tran:response-code&gt;<br />
+&nbsp; &lt;/con:response&gt;<br />
+&lt;/con:transport&gt;<br />
+<br />
+<br />
+You can&nbsp; customize the tran:headers section with a <b>tran:user-header with</b> a custom header <br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<b>tran:headers</b> xsi:type="http:HttpRequestHeaders" xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;<b>tran:user-header</b> name="<b>messageHistory</b>" value="<b>ciaobellagioia</b>"/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;http:Content-Type&gt;text/xml; charset=utf-8&lt;/http:Content-Type&gt;<br />
+<br />
+this is how I added the header:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"></div><div class="separator" style="clear: both; text-align: center;"><a href="/images/15c26463f137d162.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="307" src="/images/d3ad1b7aba4a6c8c.png" width="400" /></a></div><br />
+<br />
+This way the Caller Proxy Service sets the header on the $outbound variable. <b>The Called Proxy Service </b>MUST be set with the option "GET ALL HEADERS" in the "Transport" tab, otherwise the transport header will be lost. Or, at least, add the "messageHistory" in the list of headers to be explicitly copied.<br />
+The Called Proxy Service&nbsp; will get the header in the $inbound variable, transport section.<br />
+<br />
+OF COURSE you whould not put messageHistory in a transport header, the right place is in the SOAP header. Don't confuse TRANSPORT HEADER with SOAP HEADER.

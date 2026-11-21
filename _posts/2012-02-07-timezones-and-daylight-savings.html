@@ -1,0 +1,48 @@
+---
+layout: post
+title: "Timezones and Daylight savings"
+date: 2012-02-07T13:20:00.000+01:00
+permalink: /2012/02/timezones-and-daylight-savings.html
+blogger_id: "5387216216932662988"
+tags: ["date"]
+---
+In XQuery, the dateTime is associated with a TimeZone - expressed as a difference from GMT, the +01:00 below:<br />
+<br />
+fn:current-dateTime()<br />
+<i>2012-02-07T11:33:37.829+01:00</i><br />
+<br />
+<br />
+to convert this dateTime to GMT, use this trick:<br />
+<br />
+fn:adjust-dateTime-to-timezone(fn:current-dateTime(),xdt:dayTimeDuration('PT0H'))<br />
+<i>2012-02-07T10:33:37.829Z</i><br />
+<br />
+to discover which is your timezone:<br />
+<br />
+fn:implicit-timezone()<br />
+<i>PT1H</i><br />
+<br />
+To convert a String to dateTime:<br />
+xs:dateTime("2012-02-07T10:39:27")<br />
+<br />
+To convert a String to date:<br />
+xs:date("2012-02-07")<br />
+<br />
+So instead of fn:current-dateTime() you can pass an explicit dateTime:<br />
+<br />
+fn:adjust-dateTime-to-timezone(xs:dateTime("2012-02-07T11:33:37.829+01:00"),xdt:dayTimeDuration('PT0H'))<br />
+<i>2012-02-07T10:33:37.829Z</i><br />
+<br />
+(since I am in +1 timeZone, the hour goes back 1 hour after adjustment)<br />
+<br />
+BEWARE: the difference with GMT changes with the DayLight savings period (23 march to 22 September approximately)<br />
+<br />
+setting the clock to june the 14th, the difference becomes 2 hours:<br />
+<br />
+fn:current-dateTime()<br />
+<i>2012-06-14T11:50:36.124+02:00</i><br />
+<br />
+but our system to adjust dateTime to GMT still works perfectly:<br />
+<br />
+fn:adjust-dateTime-to-timezone(fn:current-dateTime(),xdt:dayTimeDuration('PT0H'))<br />
+<i>2012-06-14T09:50:36.124Z</i>

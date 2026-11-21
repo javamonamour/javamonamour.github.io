@@ -1,0 +1,49 @@
+---
+layout: post
+title: "rsync in action"
+date: 2018-07-08T19:24:00.000+02:00
+permalink: /2018/07/rsync-in-action.html
+blogger_id: "2375600532129572461"
+tags: ["rsync"]
+---
+https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories-on-a-vps<br />
+<br />
+To play in full safety, let's run tests in a docker container!<br />
+<br />
+docker run -dit --privileged --name centos centos<br />
+docker attach centos<br />
+yum install rsync<br />
+yum install openssh openssh-server openssh-clients openssl-libs<br />
+groupadd centos<br />
+useradd -g centos centos<br />
+su - centos<br />
+cd ~<br />
+mkdir dir1<br />
+mkdir dir2<br />
+touch dir1/file{1..100}<br />
+<br />
+#the "n" flag is "try-run" only, "v" is verbose, "a" is copy also links and preserve times ownership etc<br />
+rsync -anv dir1/ dir2<br />
+<br />
+<br />
+see also <a href="https://www.rosehosting.com/blog/how-to-configure-and-use-openssh-on-centos-7/">https://www.rosehosting.com/blog/how-to-configure-and-use-openssh-on-centos-7/</a>  to configure sshd<br />
+<br />
+if you get "Failed to get D-Bus connection: Operation not permitted" when starting sshd, probably you are not running the container in privileged mode<br />
+<br />
+<br />
+<br />
+<br />
+remotely:<br />
+<br />
+rsync -a dir1/ centos@localhost:/home/centos/dir2<br />
+<br />
+to syncronize 2 folders upon deletion:<br />
+<br />
+rm dir1/file99<br />
+#this will delete file99 also on dir2<br />
+rsync -anv --delete dir1/ centos@localhost:/home/centos/dir2<br />
+<br />
+<br />
+<br />
+<br />
+more flags: -z adds compression, -P adds progress report, 

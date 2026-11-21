@@ -1,0 +1,26 @@
+---
+layout: post
+title: "To Merge or To Persist...."
+date: 2011-04-01T16:53:00.000+02:00
+permalink: /2011/04/to-merge-or-to-persist.html
+blogger_id: "500038551433253223"
+tags: ["EntityManager", "merge"]
+---
+<a href="http://download.oracle.com/javaee/6/api/javax/persistence/EntityManager.html#merge%28T%29">http://download.oracle.com/javaee/6/api/javax/persistence/EntityManager.html#merge%28T%29</a><br />
+<br />
+<i>Merge the state of the given entity into the current persistence context. </i><br />
+<br />
+<br />
+more info <a href="http://stackoverflow.com/questions/3870248/setting-values-of-some-fields-to-null-using-jpa">here</a>  (from the JPA 1.0 specs)<br />
+<br />
+Hibernate has <a href="http://docs.redhat.com/docs/en-US/JBoss_Enterprise_Web_Platform/5/html/Hibernate_Entity_Manager_Reference_Guide/ch03s06.html">this</a> to say.<br />
+<br />
+<br />
+if you entityManager.<b>persist</b>(anEntity), and they you entityManager.persist(anEntity) again, you will get a UNIQUE_KEY contraint violation (it will save it twice with the same ID)<br />
+<br />
+<br />
+<br />
+in doubt, just use <b>merge</b> and you will be safe:<br />
+if you invoke it with a unpersisted entity it will do an INSERT<br />
+if you invoke it with an already persisted entity it will do an UPDATE<br />
+<div class="separator" style="clear: both; text-align: center;"><a href=" http://t1.gstatic.com/images?q=tbn:ANd9GcScToA5yDU7XwOptPKwYcQisMduug_pL8pW3DyMVSKR7j5FyokH&t=1" imageanchor="1" style=""><img border="0" height="221" width="228" src=" http://t1.gstatic.com/images?q=tbn:ANd9GcScToA5yDU7XwOptPKwYcQisMduug_pL8pW3DyMVSKR7j5FyokH&t=1" /></a></div>

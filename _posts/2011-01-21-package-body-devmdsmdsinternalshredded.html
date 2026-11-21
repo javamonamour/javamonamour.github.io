@@ -1,0 +1,96 @@
+---
+layout: post
+title: "package body \"DEV_MDS.MDS_INTERNAL_SHREDDED\" has errors"
+date: 2011-01-21T14:48:00.002+01:00
+permalink: /2011/01/package-body-devmdsmdsinternalshredded.html
+blogger_id: "3025773240772457647"
+tags: ["SOASuite"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2011-01-24
+    html: "when you are desperate you try literally everything..."
+  - author: "Chintan Shah"
+    date: 2011-01-24
+    html: "That was great. How did you figure it out?<br /><br />Chintan"
+  - author: "vernetto"
+    date: 2011-02-03
+    html: "Win 7 64bit is indeed problematic, please do use JDK 64bit all the time for WebLogic ( JDev should work fine with a 32 bit JDK)"
+  - author: "Marcos Thompson"
+    date: 2011-02-03
+    html: "Thank you so much! It works now.<br /><br />Just to start a knowledge base here:<br />I was using the same files without a problem on my old noteboook but started to have some issues on my new one. They have similar specs, the biggest difference is the OS version: Win7 (32bits) vs Win7 (64bits).<br /><br />Maybe is a problem with the JDK 64bits?"
+  - author: "vernetto"
+    date: 2011-02-03
+    html: "I am very glad to have been of some help, Ganesh. Incidentally I always have a small statue of Lord Ganesh with me whenever I go, he protects me and gives me courage."
+  - author: "Ganesh Gowthaman"
+    date: 2011-02-03
+    html: "After dropping/recreating/reinstalling the oracle xe I finally ended up with this error. And your post helped me to fix it.<br /><br />Thanks Pierluigi Vernetto for posting this.<br /><br />Cheers<br />Ganesh"
+  - author: "Unknown"
+    date: 2011-02-11
+    html: "Thanks.<br /><br />I had the same issue and was able to resolve it without re-installing Oracle XE. It was only the RCU_JDBC_TRIM_BLOCKS environment variable that needed to be set when re-creating the MDS schema using RCU."
+  - author: "Rafi"
+    date: 2011-11-01
+    html: "Great work.After uninstalling XE Database,I again installed,By compiling packages. then setting parameter and running rcu worked"
+  - author: "vernetto"
+    date: 2012-03-20
+    html: "hey Bruno thanks a lot. It&#39;s comments like your which keep me motivated to write this blog"
+  - author: "Bruno"
+    date: 2012-03-20
+    html: "Hey Brother, Thanks a LOT!<br /><br />I had to come here to say that you helped a lot lot lot!!!<br /><br />Just for information, i got the same problem, but I didn&#39;t Unistalled OracleXE database... i only did this:<br /><br />1) Got sick with the problem... lol<br />1.5) Stoped Weblogic.<br />2) Run rcu.bat and choosed drop-&gt;next..next..next..drop..finish..<br />3) Open SQL and did all this post say you to do to set the parameters<br />4) Run rcu.bat and choosed create.<br />5) Started Weblogic and saw:&quot;SOA Platform is running and accepting requests&quot;<br />6) I got happy!! ;)<br /><br />Thanks and cya!!<br />Bruno Barrios<br />Brazil"
+  - author: "GenericParallel for OSB"
+    date: 2014-09-26
+    html: "Thank you! <br /><br />3 years passed, but the new OSB 12&#39;s RCU still has the same problem with the very same packages.<br /><br />And RCU_JDBC_TRIM_BLOCKS=TRUE fixes it.<br /><br />Thank you again!"
+  - author: "Unknown"
+    date: 2015-03-29
+    html: "Thanks!Great article."
+---
+after upgrading from 11.1.1.3 to 11.1.1.4, I get this error:<br />
+<br />
+<i>oracle.mds.exception.MDSExceptionList: MDS-01329: unable to load element "persistence-config"<br />
+MDS-01370: MetadataStore configuration for metadata-store-usage "OWSM_TargetRepos" is invalid.    <br />
+ORA-04063: package body "DEV_MDS.MDS_INTERNAL_SHREDDED" has errors<br />
+ORA-06508: PL/SQL: could not find program unit being called: "DEV_MDS.MDS_INTERNAL_SHREDDED"<br />
+ORA-06512: at line 1<br />
+</i><br />
+<br />
+even if I drop the schemas and create again, I still have the problem. I tried reinstalling SOASuite, nothing.<br />
+<br />
+I have uninstalled OracleXE, reinstalled it, before I run RCU I do:<br />
+<br />
+set RCU_JDBC_TRIM_BLOCKS=TRUE<br />
+<br />
+and :<br />
+<br />
+<i>run SQLPlus<br />
+conn system/oracle (or whatever password)<br />
+show parameter processes<br />
+<br />
+by default “processes” should be 40. We should make it 300:<br />
+<br />
+alter system set processes=300 scope=spfile;<br />
+<br />
+conn / as sysdba<br />
+shutdown immediate<br />
+<br />
+startup<br />
+<br />
+conn / as sysdba<br />
+<br />
+show parameter sga<br />
+<br />
+(sga_target should be 768MB)<br />
+alter system set sga_target=350M scope=spfile;<br />
+alter system set sga_max_size=350M scope=spfile;<br />
+shutdown immediate<br />
+startup <br />
+</i><br />
+<br />
+<br />
+<br />
+and it works....<br />
+<br />
+If you still get errors, open the 3 MDS packages in Oracle SQL Developer and recompile them, you should get rid of the MDS SHREDDED bla error message<br />
+<br />
+<br />
+Lesson learned:<br />
+a) always wait a couple of weeks from a software release before you install the product yourself<br />
+b) choose a volunteer to perform the installation, and give the green light to the others only after he has successfully tested the product

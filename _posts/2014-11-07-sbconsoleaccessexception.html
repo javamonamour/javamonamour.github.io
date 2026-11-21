@@ -1,0 +1,23 @@
+---
+layout: post
+title: "SBConsoleAccessException"
+date: 2014-11-07T11:02:00.001+01:00
+permalink: /2014/11/sbconsoleaccessexception.html
+blogger_id: "6641799628095199153"
+tags: ["LDAP", "OSB"]
+---
+I had to start admin on a different machine, and I was getting
+<br/><br/>
+com.bea.alsb.console.common.base.SBConsoleAccessException: The current login role is not authorized to use the console action: "/sbSubModules"
+
+<br/><br/>
+
+The only way I managed to make it work is by replacing DOMAIN_HOME/servers/osbpp1ms2/data/ldap/ with the content of another server:
+
+<br/><br/>
+<pre>
+cd opt/oracle/domains/osbpp1do/servers/osbpp1as/data/
+cp -R ldap/ ldapOLD/ 
+cp -R /opt/oracle/domains/osbpp1do/servers/osbpp1ms2/data/ldap/* ldap/
+</pre>
+

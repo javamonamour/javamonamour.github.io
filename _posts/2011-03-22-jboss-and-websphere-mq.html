@@ -1,0 +1,29 @@
+---
+layout: post
+title: "JBoss and WebSphere MQ"
+date: 2011-03-22T17:13:00.001+01:00
+permalink: /2011/03/jboss-and-websphere-mq.html
+blogger_id: "1444746010706610377"
+tags: ["jboss", "MQ"]
+---
+Let's see if this is easier than with WebLogic <br />
+<br />
+<a href="http://www.ibm.com/developerworks/websphere/library/techarticles/0710_ritchie/0710_ritchie.html">http://www.ibm.com/developerworks/websphere/library/techarticles/0710_ritchie/0710_ritchie.html</a><br />
+<br />
+<br />
+- you need the file wmq.jmsra.rar, which is in C:\Program Files\IBM\WebSphere MQ\java\lib\jca<br />
+(of course you mush install WebSphere MQ to get it :o) )<br />
+<br />
+<br />
+- copy wmq.jmsra.rar to <install path>/server/default/deploy<br />
+<br />
+<br />
+- create wmq.jmsra-ds.xml in  C:\Post\app-rep\itl-v000100-ld-node1\deploy<br />
+copy it from <a href="http://www.ibm.com/developerworks/websphere/library/techarticles/0710_ritchie/0710_ritchie.html#running">here</a> create the wmq.jmsra-ds.xml in <br />
+<br />
+- and copy also wmq.jmsra.ivt.ear to the same folder.<br />
+<br />
+- open http://localhost:8080/WMQ_IVT/<br />
+<br />
+<br />
+(still having trouble making it work....in the meantime I am posting this)

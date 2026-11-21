@@ -1,0 +1,22 @@
+---
+layout: post
+title: "BigDecimal rounding issue"
+date: 2011-03-30T16:21:00.000+02:00
+permalink: /2011/03/bigdecimal-rounding-issue.html
+blogger_id: "6210306353727675781"
+tags: ["BigDecimal"]
+---
+java.lang.ArithmeticException: Non-terminating decimal expansion; no exact representable decimal result<br />
+<br />
+<br />
+do this:<br />
+<br />
+<br />
+RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.HALF_UP;<br />
+int DIVIDE_SCALE = 10;<br />
+BigDecimal op1, op2<br />
+...<br />
+BigDecimal result = op1.divide(op2, DIVIDE_SCALE, DEFAULT_ROUNDING_MODE);<br />
+<br />
+<br />
+and you will be happy.

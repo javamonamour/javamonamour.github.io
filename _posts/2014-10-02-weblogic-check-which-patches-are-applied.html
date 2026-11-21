@@ -1,0 +1,134 @@
+---
+layout: post
+title: "WebLogic: check which patches are applied"
+date: 2014-10-02T12:47:00.000+02:00
+permalink: /2014/10/weblogic-check-which-patches-are-applied.html
+blogger_id: "5961797235816438048"
+tags: ["opatch", "weblogic"]
+---
+Just throwing all available technology at this issue....
+
+<br/><br/>
+<b>Method 1:</b> grep BEA-141107 in the logs (I don't get anything)
+<br/><br/>
+<b>Method 2:</b> bsu
+<br/><br/>
+cd /opt3/oracle/fmw11_1_1_5/utils/bsu<br/>
+
+./bsu.sh -report -bea_home=/opt3/oracle/fmw11_1_1_5/<br/>
+
+<pre>
+
+Patch Report
+============
+  Report Info
+    Report Options
+      bea_home.................. /opt3/oracle/fmw11_1_1_5/
+      product_mask.............. ### OPTION NOT SET
+      release_mask.............. ### OPTION NOT SET
+      profile_mask.............. ### OPTION NOT SET
+      patch_id_mask............. ### OPTION NOT SET
+    Report Messages
+  BEA Home.................. /opt3/oracle/fmw11_1_1_5
+
+  Product Description
+  Product Name.............. Oracle Coherence
+  Product Version........... 3.6.0.4
+  Installed Components...... Coherence Product Files
+  Product Install Directory. /opt3/oracle/fmw11_1_1_5/coherence_3.6
+  Java Home................. null
+  Jave Vendor............... null
+  Java Version.............. null
+  Patch Directory........... /opt3/oracle/fmw11_1_1_5/patch_ocp360
+
+  Product Description
+  Product Name.............. WebLogic Server
+  Product Version........... 10.3.5.0
+  Installed Components...... Core Application Server, Administration Console, Configuration Wizard and Upgrade<br/> Framework, Web 2.0 HTTP Pub-Sub Server, WebLogic SCA, WebLogic JDBC Drivers, Third Party JDBC Drivers, WebLogic Server<br/> Clients, WebLogic Web Server Plugins, UDDI and Xquery Support, Evaluation Database, Workshop Code Completion Support<br/>
+  Product Install Directory. /opt3/oracle/fmw11_1_1_5/wlserver_10.3
+  Java Home................. null
+  Jave Vendor............... Sun
+  Java Version.............. 1.6.0_24
+  Patch Directory........... /opt3/oracle/fmw11_1_1_5/patch_wls1035
+
+
+</pre>
+
+<br/><br/>
+
+<b>Method 3</b>: opatch
+<br/><br/>
+
+export MW_HOME=/opt3/oracle/fmw11_1_1_5/
+ <br/>
+export ORACLE_HOME=/opt3/oracle/fmw11_1_1_5/osb
+ <br/>
+export JDK_HOME=/opt3/oracle/java  
+<br/>
+/opt3/oracle/fmw11_1_1_5/oracle_common/OPatch/opatch lsinv -all -jdk /opt3/oracle/java/ -invPtrLoc /opt/oracle/bin/software/oraInst_soa3.loc
+<br/><br/>
+<pre>
+Invoking OPatch 11.1.0.8.2
+
+Oracle Interim Patch Installer version 11.1.0.8.2
+Copyright (c) 2010, Oracle Corporation.  All rights reserved.
+
+
+Oracle Home       : /opt3/oracle/fmw11_1_1_5/osb
+Central Inventory : /opt3/oracle/orainventory
+   from           : /opt/oracle/bin/software/oraInst_soa3.loc
+OPatch version    : 11.1.0.8.2
+OUI version       : 11.1.0.9.0
+OUI location      : /opt3/oracle/fmw11_1_1_5/osb/oui
+Log file location : /opt3/oracle/fmw11_1_1_5/osb/cfgtoollogs/opatch/opatch2014-10-02_12-06-03PM.log
+
+Patch history file: /opt3/oracle/fmw11_1_1_5/osb/cfgtoollogs/opatch/opatch_history.txt
+
+
+OPatch detects the Middleware Home as "/opt3/oracle/fmw11_1_1_5"
+
+Lsinventory Output file location : /opt3/oracle/fmw11_1_1_5/osb/cfgtoollogs/opatch/lsinv/lsinventory2014-10-02_12-06-03PM.txt
+
+--------------------------------------------------------------------------------
+List of Oracle Homes:
+  Name          Location
+   OH827611496         /opt3/oracle/fmw11_1_1_5/oracle_common
+   OH401177498         /opt3/oracle/fmw11_1_1_5/osb
+
+Installed Top-level Products (1):
+
+Oracle Service Bus                                                   11.1.1.5.0
+There are 1 products installed in this Oracle Home.
+
+
+Interim patches (1) :
+
+Patch  12362492     : applied on Mon Sep 15 16:37:11 CEST 2014
+Unique Patch ID:  14334178
+   Created on 5 Dec 2011, 21:20:01 hrs PST8PDT
+   Bugs fixed:
+     12362492
+
+
+
+--------------------------------------------------------------------------------
+
+OPatch succeeded.
+
+
+</pre>
+
+
+<br/><br/>
+
+<b>Method 4</b>: look in WebLogic console, Monitoring tab, you should have a list of patches
+
+<br/><br/>
+Since the patch was applied with opatch, it can only be detected by opatch. Strange thought that no trace of this patch appears in the logs...
+
+<br/><br/>
+
+I assume that bsu is basically dead now, and all patches should be installed with opatch... I am not an expert 
+though...
+
+

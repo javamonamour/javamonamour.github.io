@@ -1,0 +1,27 @@
+---
+layout: post
+title: "WebLogic security"
+date: 2011-04-21T17:41:00.002+02:00
+permalink: /2011/04/weblogic-security.html
+blogger_id: "6223087934653558419"
+tags: ["security"]
+---
+Excellent JAAS tutorial here<br />
+<a href="http://middlewaremagic.com/weblogic/?p=6479">http://middlewaremagic.com/weblogic/?p=6479</a><br />
+<br />
+<br />
+An overall presentation of JCA there<br />
+<a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html">http://download.oracle.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html</a><br />
+<br />
+Here you find an overview of all JAAS classes<br />
+<a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/security/fat_client.html#wp1042108">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/security/fat_client.html#wp1042108</a><br />
+<br />
+A <a href="http://download.oracle.com/javase/6/docs/api/javax/security/auth/Subject.html">Subject</a> can have many <a href="http://download.oracle.com/javase/6/docs/api/java/security/Principal.html">Principal</a><br />
+<br />
+a <a href="http://download.oracle.com/javase/6/docs/api/javax/security/auth/login/LoginContext.html">LoginContext</a> lives inside a <a href="http://download.oracle.com/javase/6/docs/api/javax/security/auth/login/Configuration.html">Configuration</a><br />
+<br />
+The Configuration contains a stack of <a href="http://download.oracle.com/javase/1.4.2/docs/api/javax/security/auth/spi/LoginModule.html">LoginModule</a>, and the Credentials are authenticated in cascade across this stack.<br />
+<br />
+A <a href="http://download.oracle.com/javase/6/docs/api/java/security/Policy.html">Policy</a> is ensured by a <a href="http://download.oracle.com/javase/6/docs/api/java/security/Provider.html">Provider</a>, and its role is to grant a <a href="http://download.oracle.com/javase/6/docs/api/java/security/Permissions.html">Permission</a><br />
+<br />
+..; to be continued....

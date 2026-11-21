@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Jira on Docker, and integration with BitBucket/Github"
+date: 2017-11-23T07:47:00.000+01:00
+permalink: /2017/11/jira-on-docker-and-integration-with.html
+blogger_id: "1879848868550408825"
+tags: ["docker", "JIRA"]
+---
+<a href="https://hub.docker.com/r/cptactionhank/atlassian-jira/">https://hub.docker.com/r/cptactionhank/atlassian-jira/</a><br />
+<br />
+<br />
+sudo docker run --detach --publish 8080:8080 cptactionhank/atlassian-jira:latest<br />
+<br />
+<a href="http://localhost:8080">http://localhost:8080</a><br />
+<br />
+<a href="https://www.atlassian.com/blog/jira-software/connecting-jira-6-2-github">https://www.atlassian.com/blog/jira-software/connecting-jira-6-2-github</a> but I can't find the DVCS Connector...<br />
+<br />
+<a href="https://marketplace.atlassian.com/plugins/com.osowskit.jira.github.app/cloud/overview">https://marketplace.atlassian.com/plugins/com.osowskit.jira.github.app/cloud/overview</a><br />
+<br />
+<br />
+and you can also find one here <a href="http://localhost:8080/plugins/servlet/upm/marketplace/search?q=github">http://localhost:8080/plugins/servlet/upm/marketplace/search?q=github</a> "git integration for Jira" by BigBrassBand<br />
+<br />
+interesting also the Jigit project, by Dmitri Apanasevich<br />
+<br />
+It seems that integration with Stash is more supported.... how to run Stash locally... <a href="https://hub.docker.com/r/atlassian/bitbucket-server/">https://hub.docker.com/r/atlassian/bitbucket-server/</a><br />
+<br />
+sudo docker volume create --name bitbucketVolume<br />
+sudo docker run -v bitbucketVolume:/var/atlassian/application-data/bitbucket --name="bitbucket" -d -p 7990:7990 -p 7999:7999 atlassian/bitbucket-server<br />
+<br />
+sudo docker exec -ti bitbucket /bin/bash<br />
+<br />
+<br />
+<a href="http://localhost:7990/">http://localhost:7990/</a><br />
+<br />
+<br />
+To integrate Bitbucket with Jira, in Bitbucket there is a link "Administration/Application Integration".... it pays to use same username/pw for administrator  role on both products.<br />
+<br />
+

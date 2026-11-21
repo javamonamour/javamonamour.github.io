@@ -1,0 +1,45 @@
+---
+layout: post
+title: "Connecting to a secure port with WLST"
+date: 2013-05-19T18:21:00.000+02:00
+permalink: /2013/05/connecting-to-secure-port-with-wlst.html
+blogger_id: "5887742666209326337"
+tags: ["security", "WLST"]
+---
+9002 is the SSL port of the admin.
+<br/><br/>
+
+on WLST side:
+<br/><br/>
+connect(userConfigFile='/opt/oracle/domains/mydomain/serveruserconfigfile.secure',userKeyFile='/opt/oracle/domains/mydomain/serveruserkeyfile.secure',url='t3://acme.com:9002')
+
+<br/><br/>
+java.net.SocketException: Connection reset; No available router to destination
+
+<br/><br/>
+
+on the server side:
+<br/><br/>
+
+
+####&lt;May 17, 2013 6:25:13 PM CEST> &lt;Warning> &lt;Security> &lt;hqchnesoa104> &lt;osbpl1as> &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;9455361429c2e897:-bf0d58f:13eb3468b62:-8000-000000000000001a> &lt;1368807913292> &lt;BEA-090475> &lt;Plaintext data for protocol T3 was received from peer acme.com - 10.11.5.190 instead of an SSL handshake.>
+
+
+<br/><br/>
+
+You should use t3s protocol
+<br/><br/>
+connect(userConfigFile='/opt/oracle/domains/mydomain/serveruserconfigfile.secure',userKeyFile='/opt/oracle/domains/mydomain/serveruserkeyfile.secure',url='t3s://acme.com:9002')
+
+<br/><br/>
+
+Watch this great video on using Administration Port in WebLogic:
+<br/><br/>
+<iframe width="640" height="360" src="http://www.youtube.com/embed/J2hmxhqJLxk?feature=player_detailpage" frameborder="0" allowfullscreen></iframe>
+
+<br/><br/>
+
+
+
+
+

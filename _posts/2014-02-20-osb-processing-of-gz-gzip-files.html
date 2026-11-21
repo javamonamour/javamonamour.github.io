@@ -1,0 +1,89 @@
+---
+layout: post
+title: "OSB processing of gz gzip files"
+date: 2014-02-20T17:04:00.001+01:00
+permalink: /2014/02/osb-processing-of-gz-gzip-files.html
+blogger_id: "3335700732300402019"
+tags: ["gzip", "OSB"]
+---
+Taking <a href="https://blogs.oracle.com/ateamsoab2b/entry/an_example_of_how_to">example from this post</a>, I have developed this Java Callout class:
+
+<pre class="brush: java">
+package com.acme.osb.utilities;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.zip.GZIPInputStream;
+
+public class UnzipAndWriteToFile {
+ public static String inputFileName = "c:\\pierre\\myfile.txt.gz";
+ public static String outputFileName = "c:\\pierre\\myfile.txt";
+
+ public static void main(String[] args) throws Exception {
+  unzipGZIPFile(inputFileName, outputFileName);
+ }
+
+ /*
+  * Read from a gz byte[] and writes to a file
+  */
+ public static String processBytes(byte[] data, String outputFile) throws Exception {
+  ByteArrayInputStream bais = new ByteArrayInputStream(data);
+  fromGZStreamToFile(outputFile, bais);
+  return "OK";
+ }
+
+ /**
+  * Read from a gz file and writes the unzipped content to another file
+  * 
+  * @param fileName
+  * @param outputFile
+  * @throws Exception
+  */
+ public static void unzipGZIPFile(String fileName, String outputFile) throws Exception {
+  FileInputStream in = new FileInputStream(fileName);
+  fromGZStreamToFile(outputFile, in);
+ }
+
+ /**
+  * Persist a gz stream to a file
+  * @param outputFile
+  * @param in
+  * @throws IOException
+  * @throws FileNotFoundException
+  */
+ private static void fromGZStreamToFile(String outputFile, InputStream in) throws IOException, FileNotFoundException {
+  GZIPInputStream gzip = new GZIPInputStream(in);
+  BufferedReader br = new BufferedReader(new InputStreamReader(gzip));
+  PrintWriter pw = new PrintWriter(outputFile);
+  String line;
+  while ((line = br.readLine()) != null) {
+   pw.println(line);
+  }
+  br.close();
+  pw.close();
+ }
+}
+
+</pre>
+
+<br/>
+
+Our aim is to read a gz file from HTTP server and write it locally, before we further process it.
+<br/>
+
+We do a Service Callout to a Business Service  (response type is binary), and it returns us this response:  &lt;con:binary-content ref="cid:-34da800e:1442fd94091:-7fae" xmlns:con="http://www.bea.com/wli/sb/context"/> .
+
+<br/>
+We can pass this variable as such to the "public static String processBytes(byte[] data, String outputFile)" function, as this variable represents a reference to an array of bytes which is the binary content of the gz file. processBYtes will persist the unzipped content to a give file (specify full path)
+
+<br/>
+
+
+
+

@@ -1,0 +1,33 @@
+---
+layout: post
+title: "REST interface to manage WLS "
+date: 2019-09-17T22:08:00.000+02:00
+permalink: /2019/09/rest-interface-to-manage-wls.html
+blogger_id: "5720585335610112353"
+tags: ["weblogic"]
+---
+this works like magic:<br />
+<br />
+<br />
+curl -s -v --user weblogic:weblogic0 -H X-Requested-By:MyClient -H Accept:application/json -H Content-Type:application/json -d "{timeout: 10, ignoreSessions: true }" -X POST http://localhost:7001/management/wls/latest/servers/id/AdminServer/shutdown<br />
+<br />
+<br />
+Problem comes when you have only HTTPS, and even worse with 2 way SSL. Then you are screwed - pardon my french - because curl stupidly uses only pem certificates, so if you have p12 you must convert the p12 into 2 separate files, certificate and private key :<br />
+<br />
+<br />
+openssl pkcs12 -in mycert.p12 -out file.key.pem -nocerts -nodes<br />
+openssl pkcs12 -in mycert.p12 -out file.crt.pem -clcerts -nokeys<br />
+curl -E ./file.crt.pem --key ./file.key.pem https://myservice.com/service?wsdl<br />
+<br />
+CORRECTION: it seems that CURL does support now p12 certs: curl --cert-type P12 ...https://curl.haxx.se/docs/manpage.html  BUT only if you use the Apple Library "Secure Support" or something like that, not if you use NSS or OpenSSL libraries (do "curl -V" to find out)<br />
+<br />
+<br />
+See more here <a href="https://docs.oracle.com/middleware/1221/wls/WLRUR/using.htm#WLRUR180">https://docs.oracle.com/middleware/1221/wls/WLRUR/using.htm#WLRUR180</a><br />
+<br />
+<br />
+return all servers:<br />
+<br />
+curl -s --user weblogic:weblogic0  http://localhost:7001/management/weblogic/latest/edit/servers<br />
+<br />
+<br />
+

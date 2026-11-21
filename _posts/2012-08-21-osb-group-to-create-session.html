@@ -1,0 +1,66 @@
+---
+layout: post
+title: "OSB Group to create session"
+date: 2012-08-21T10:06:00.000+02:00
+permalink: /2012/08/osb-group-to-create-session.html
+blogger_id: "5405681083839564377"
+tags: ["OSB", "WLST"]
+blogger_comments:
+  - author: "Mallyboy"
+    date: 2013-05-30
+    html: "I too got this error and it turns out this is a bug (that exists in OSB at least to Version 11.1.1.5) for which Oracle can provide a version specific patch that allows someone in the Deployers group to deploy via WLST, which aligns the permissions needed to deploy via WLST to be the same as via the OSB Console."
+---
+I was struggling to find out which Group I can assign to a Principal to allow him to create a OSB sesson. It turned out that only the Administrators group allows us to create OSB Session - which is quite a pity.<br />
+<br />
+<pre name="code" class="brush: java">
+. /opt/oracle/domains/osbpl2do/bin/setDomainEnv.sh
+java weblogic.WLST
+#Pierluigi is member of the group "Administrators"
+connect('Pierluigi', 'weblogic1', 't3://acme.com:7101')
+domainRuntime()
+SessionMBean = findService("SessionManagement", "com.bea.wli.sb.management.configuration.SessionManagementMBean")
+print SessionMBean
+ [MBeanServerInvocationHandler]com.bea:Name=SessionManagement,Type=com.bea.wli.sb.management.configuration.SessionManagementMBean
+
+sessionName='pippo'
+SessionMBean.createSession(sessionName)
+
+SessionMBean.discardSession(sessionName)
+
+#Praveen is member of no group
+disconnect()
+
+connect('Praveen', 'weblogic1', 't3://acme.com:7101')
+domainRuntime()
+SessionMBean = findService("SessionManagement", "com.bea.wli.sb.management.configuration.SessionManagementMBean")
+print SessionMBean
+ [MBeanServerInvocationHandler]com.bea:Name=SessionManagement,Type=com.bea.wli.sb.management.configuration.SessionManagementMBean
+
+sessionName='pippo3'
+SessionMBean.createSession(sessionName)
+
+
+ Traceback (innermost last):
+  File "<console>", line 1, in ?
+        at weblogic.rjvm.ResponseImpl.unmarshalReturn(ResponseImpl.java:234)
+        at weblogic.rmi.internal.BasicRemoteRef.invoke(BasicRemoteRef.java:223)
+        at javax.management.remote.rmi.RMIConnectionImpl_1035_WLStub.invoke(Unknown Source)
+        at weblogic.management.remote.common.RMIConnectionWrapper$16.run(ClientProviderBase.java:919)
+        at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)
+        at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:146)
+        at weblogic.security.Security.runAs(Security.java:61)
+        at weblogic.management.remote.common.RMIConnectionWrapper.invoke(ClientProviderBase.java:917)
+        at javax.management.remote.rmi.RMIConnector$RemoteMBeanServerConnection.invoke(RMIConnector.java:993)
+        at weblogic.management.jmx.MBeanServerInvocationHandler.doInvoke(MBeanServerInvocationHandler.java:544)
+        at weblogic.management.jmx.MBeanServerInvocationHandler.invoke(MBeanServerInvocationHandler.java:380)
+        at $Proxy15.createSession(Unknown Source)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+        at java.lang.reflect.Method.invoke(Method.java:597)
+
+  
+weblogic.management.NoAccessRuntimeException: weblogic.management.NoAccessRuntimeException: Access not allowed for subject: principals=[Praveen], on ResourceType: com.bea.wli.sb.management.configuration.SessionManagementMBean Action: execute, Target: createSession
+
+
+</pre>

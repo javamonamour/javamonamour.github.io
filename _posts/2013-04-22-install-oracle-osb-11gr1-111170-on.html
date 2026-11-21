@@ -1,0 +1,205 @@
+---
+layout: post
+title: "Install Oracle OSB 11gR1 (11.1.1.7.0) on Amazon Linux"
+date: 2013-04-22T16:43:00.001+02:00
+permalink: /2013/04/install-oracle-osb-11gr1-111170-on.html
+blogger_id: "105163819513406927"
+---
+courtesy of <a href="http://aestas.it">aestas.it</a>
+
+Install Java 7<br />
+<br />
+more info here <a href="https://gist.github.com/tankchintan/1335220">https://gist.github.com/tankchintan/1335220</a><br />
+<br />
+wget http://download.oracle.com/otn-pub/java/jdk/7u21-b11/jdk-7u21-linux-x64.rpm<br />
+<br />
+sudo rpm -i jdk-7u21-linux-x64.rpm<br />
+<br />
+# Check if the default java version is set to sun jdk<br />
+<br />
+java -version<br />
+<br />
+# If not then lets create one more alternative for Java for Sun JDK<br />
+sudo /usr/sbin/alternatives --install /usr/bin/java java /usr/java/jdk1.7.0_21/bin/java 20000<br />
+<br />
+# Set the SUN JDK as the default java<br />
+sudo /usr/sbin/alternatives --config java<br />
+<br />
+# Verify if change in SDK was done.<br />
+java -version<br />
+<br />
+Install Weblogic 10.3.6<br />
+Download the 64 bit version from this url:<br />
+<a href="http://download.oracle.com/otn/nt/middleware/11g/wls/1036/wls1036_generic.jar">http://download.oracle.com/otn/nt/middleware/11g/wls/1036/wls1036_generic.jar</a><br />
+<br />
+Create a “silent installation” file with this content:<br />
+<br />
+
+<pre name="code" class="brush: xml">
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;bea-installer&gt;
+
+&lt;input-fields&gt;
+
+&lt;data-value name="BEAHOME" value="/opt3/oracle/fmw11_1_1_5" /&gt;
+
+&lt;data-value name="WLS_INSTALL_DIR" value="/opt3/oracle/fmw11_1_1_5/wlserver_10.3"
+
+/&gt;
+
+&lt;data-value name="COMPONENT_PATHS"
+
+ation Console|WebLogic Server/Configuration Wizard and Upgrade Framework|WebLogic Ser
+
+ver/Web 2.0 HTTP Pub-Sub Server|WebLogic Server/WebLogic JDBC Drivers|WebLogic Server
+
+/Third Party JDBC Drivers|WebLogic Server/WebLogic Server Clients|WebLogic Server/Web
+
+Logic Web Server Plugins|WebLogic Server/UDDI and Xquery Support|Oracle Coherence/Coh
+
+erence Product Files|Oracle Coherence/Coherence Examples"/&gt;
+
+value="WebLogic Server/Core Application Server|WebLogic Server/Administr
+
+&lt;data-value name="NODEMGR_PORT" value="5558" /&gt;
+
+&lt;data-value name="INSTALL_SHORTCUT_IN_ALL_USERS_FOLDER" value="no"/&gt;
+
+&lt;data-value name="LOCAL_JVMS" value="/usr/java/jdk1.7.0_21/"/&gt;
+
+&lt;/input-fields&gt;
+
+&lt;/bea-installer&gt;
+
+</pre>
+
+<br/><br/>
+
+Run the following command:
+<br/>
+sudo java -jar wls1036_generic.jar -mode=silent -silent_xml=wls_silent.xml
+<br/><br/>
+Install OSB 11.1.1.7.0
+<br/>
+mkdir osb
+<br/>
+mv ofm_osb_generic_11.1.1.7.0_disk1_1of1.zip osb
+<br/>
+cd osb
+<br/>
+unzip ofm_osb_generic_11.1.1.7.0_disk1_1of1.zip
+<br/>
+# add a oinstall group
+<br/>
+sudo groupadd oinstall
+<br/>
+# add the ec2-user to that group
+<br/>
+sudo usermod -a -G oinstall ec2-user
+<br/>
+Log out and log back in to make the group addition effective.
+<br/>
+# Make Oracle Home writable by oinstall group
+<br/>
+sudo chown -R :oinstall /opt3/oracle/
+<br/>
+sudo chmod -R g+rwxs /opt3/oracle/fmw11_1_1_5/
+<br/>
+sudo osb/Disk1/stage/Response/createCentralInventory.sh /opt3/oracle/oraInventory oinstall
+<br/>
+Create a “response” file in the ‘sob’ folder named custom_installtype_osb11.1.1.7.rsp with the following content:
+<br/>
+<pre>
+
+[ENGINE]
+
+#DO NOT CHANGE THIS.
+
+Response File Version=1.0.0.0.0
+
+[GENERIC]
+
+#Set this to true if you wish to specify a directory where latest updates are downloaded. This option would use the software updates from the specified directory
+
+SPECIFY_DOWNLOAD_LOCATION=false
+
+#
+
+SKIP_SOFTWARE_UPDATES=true
+
+#If the Software updates are already downloaded and available on your local system, then specify the path to the directory where these patches are available and set SPECIFY_DOWNLOAD_LOCATION to true
+
+SOFTWARE_UPDATES_DOWNLOAD_LOCATION=
+
+#Write the name of the Oracle Home directory. The Oracle Home directory name may only contain alphanumeric , hyphen (-) , dot (.) and underscore (_) characters, and it must begin with an alphanumeric character.
+
+#ORACLE_HOME=/app3/oracle/product/osb/Oracle_OSB1
+
+ORACLE_HOME=/opt3/oracle/fmw11_1_1_5/osb
+
+#Write the complete path to a valid Middleware Home.
+
+MIDDLEWARE_HOME=/opt3/oracle/fmw11_1_1_5
+
+#Set this to true if typical installation must be done. If this is set to true then wariable "CUSTOM TYPE" must be set to false as the variables are mutually exclusive
+
+TYPICAL TYPE=false
+
+#Set this to true if custom installation must be done, all other required variables need to be provided. If this is set to true then variable "TYPICAL TYPE" must be set to false as the variables are mutually exclusive.
+
+CUSTOM TYPE=true
+
+#Set this to true if component Oracle Service Bus Examples must be installed. This input will be needed only in the case of custom installation
+
+Oracle Service Bus Examples=false
+
+#Set this to true if component Oracle Service Bus IDE must be installed. This input will be needed only in the case of custom installation
+
+Oracle Service Bus IDE=false
+
+#Give the complete path to a valid WebLogic Server Home for the corresponding Middleware Home entered.
+
+#WL_HOME=/u01/app/oracle/product/osb/wlserver_10.3
+
+WL_HOME=/opt3/oracle/fmw11_1_1_5/wlserver_10.3
+
+#Give the complete path to a valid OEPE Home for the corresponding Middleware Home entered. This input will be needed in both typical and custom installations. But in case of custom installation, Oracle Service Bus IDE must be set to true.
+
+OEPE_HOME=
+
+[SYSTEM]
+
+[APPLICATIONS]
+
+[RELATIONSHIPS]
+</pre>
+
+<br/>
+Run the following command.
+<br/>
+osb/Disk1/runInstaller -silent -responseFile /home/ec2-user/osb/custom_installtype_osb11.1.1.7.rsp -jreLoc /usr/java/jdk1.7.0_21/jre/
+<br/>
+
+If the installer complains about swap space, run the following commands to increase the swap:
+<br/>
+<pre>
+sudo dd if=/dev/zero of=/swapfile bs=1M count=520
+
+sudo mkswap /swapfile
+
+sudo swapon /swapfile
+</pre>
+or run the installer with the -ignoreSysPrereqs option.
+
+<br/>
+Create an OSB Domain
+<br/><br/>
+Run the domain configuration script located in:
+
+<br/>
+/opt3/oracle/fmw11_1_1_5/wlserver_10.3/common/bin/config.sh
+<br/>
+
+
+

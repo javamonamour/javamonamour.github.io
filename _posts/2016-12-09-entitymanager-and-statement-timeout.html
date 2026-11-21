@@ -1,0 +1,36 @@
+---
+layout: post
+title: "EntityManager and statement timeout"
+date: 2016-12-09T08:31:00.000+01:00
+permalink: /2016/12/entitymanager-and-statement-timeout.html
+blogger_id: "4033947234145618774"
+tags: ["jdbc", "JPA"]
+---
+We spoke here about Statement Timeout to set on a Datasource <a href="/2013/04/statement-timeout-on-datasource.html">/2013/04/statement-timeout-on-datasource.html</a> <br/><br/>
+
+If you use an EntityManager, you don't have access to the javax.sql.Statement object. This is the beauty of abstraction (sarcasm here): it prevents you from using the full power of the underlying technology, and it forces you to awkward acrobatics.
+<br/><br/>
+
+I would give a try to <b>javax.persistence.query.timeout</b>
+<br/><br/>
+<a href="http://stackoverflow.com/questions/24244621/set-timeout-on-entitymanager-query ">http://stackoverflow.com/questions/24244621/set-timeout-on-entitymanager-query </a> 
+<br/><br/>
+<a href="https://docs.jboss.org/hibernate/entitymanager/3.6/reference/en/html_single/">https://docs.jboss.org/hibernate/entitymanager/3.6/reference/en/html_single/</a>
+<br/><br/>
+
+<pre>
+
+query.setHint("javax.persistence.query.timeout", 2000);
+
+</pre>
+<br/><br/>
+see <a href="https://docs.oracle.com/javaee/6/api/javax/persistence/Query.html">https://docs.oracle.com/javaee/6/api/javax/persistence/Query.html</a>
+<br/><br/>
+but it works (actually, they told me it doesn't work AT ALL with WebLogic 12 and Eclipse JPA) only if you use Queries with EntityManager....
+<br/><br/>
+
+
+
+
+
+

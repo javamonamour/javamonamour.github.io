@@ -1,0 +1,103 @@
+---
+layout: post
+title: "weblogic.management.DeploymentException: Exception occured while downloading files, Posted content doesn't set it's Content-Length"
+date: 2012-06-03T17:52:00.000+02:00
+permalink: /2012/06/weblogicmanagementdeploymentexception.html
+blogger_id: "4125754711797318524"
+tags: ["weblogic"]
+---
+in nodemanager.log :<br />
+<i><br />
+<br />
+&lt;Jun 3, 2012 5:20:07 PM> &lt;INFO> &lt;osbpp1do> &lt;osbpp1ms3> &lt;Boot identity properties saved to "/opt/oracle/domains/osbpp1do/servers/osbpp1ms3/data/nodemanager/boot.properties"><br />
+&lt;Jun 3, 2012 5:20:07 PM> &lt;INFO> &lt;osbpp1do> &lt;osbpp1ms3> &lt;Startup configuration properties saved to "/opt/oracle/domains/osbpp1do/servers/osbpp1ms3/data/nodemanager/startup.properties"><br />
+&lt;Jun 3, 2012 5:20:07 PM> &lt;INFO> &lt;osbpp1do> &lt;osbpp1ms3> &lt;Rotated server output log to "/opt/oracle/domains/osbpp1do/servers/osbpp1ms3/logs/osbpp1ms3.out00116"><br />
+&lt;Jun 3, 2012 5:20:07 PM> &lt;INFO> &lt;osbpp1do> &lt;osbpp1ms3> &lt;Server error log also redirected to server log><br />
+&lt;Jun 3, 2012 5:20:07 PM> &lt;INFO> &lt;osbpp1do> &lt;osbpp1ms3> &lt;Starting WebLogic server with command line: /opt/oracle/domains/osbpp1do/bin/startWebLogic.sh ><br />
+&lt;Jun 3, 2012 5:20:07 PM> &lt;INFO> &lt;osbpp1do> &lt;osbpp1ms3> &lt;Working directory is '/opt/oracle/domains/osbpp1do'><br />
+&lt;Jun 3, 2012 5:20:07 PM> &lt;INFO> &lt;osbpp1do> &lt;osbpp1ms3> &lt;Rotated server output log to "/opt/oracle/domains/osbpp1do/servers/osbpp1ms3/logs/osbpp1ms3.out00117"><br />
+&lt;Jun 3, 2012 5:20:07 PM> &lt;INFO> &lt;osbpp1do> &lt;osbpp1ms3> &lt;Server error log also redirected to server log><br />
+&lt;Jun 3, 2012 5:20:07 PM> &lt;INFO> &lt;osbpp1do> &lt;osbpp1ms3> &lt;Server output log file is '/opt/oracle/domains/osbpp1do/servers/osbpp1ms3/logs/osbpp1ms3.out'><br />
+&lt;Jun 3, 2012 5:20:11 PM> &lt;INFO> &lt;Successfully brought 10.56.5.174 with netmask 255.255.255.0 online on bond0:1><br />
+&lt;Jun 3, 2012 5:20:13 PM> &lt;INFO> &lt;Successfully removed 10.56.5.174 from bond0:1.><br />
+&lt;Jun 3, 2012 5:20:13 PM> &lt;INFO> &lt;osbpp1do> &lt;osbpp1ms3> &lt;Server failed during startup so will not be restarted><br />
+&lt;Jun 3, 2012 5:20:13 PM> &lt;WARNING> &lt;Exception while starting server 'osbpp1ms3'><br />
+java.io.IOException: Server failed to start up. See server output log for more details.<br />
+        at weblogic.nodemanager.server.AbstractServerManager.start(AbstractServerManager.java:200)<br />
+        at weblogic.nodemanager.server.ServerManager.start(ServerManager.java:23)<br />
+        at weblogic.nodemanager.server.Handler.handleStart(Handler.java:604)<br />
+        at weblogic.nodemanager.server.Handler.handleCommand(Handler.java:121)<br />
+        at weblogic.nodemanager.server.Handler.run(Handler.java:71)<br />
+        at java.lang.Thread.run(Thread.java:662)<br />
+<br />
+</i><br />
+<br />
+in /opt/oracle/domains/osbpp1do/servers/osbpp1ms3/logs/osbpp1ms3.out:<br />
+<br />
+<i><br />
+<br />
+<br />
+&lt;Jun 3, 2012 5:20:13 PM CEST> &lt;Critical> &lt;WebLogicServer> &lt;BEA-000362> &lt;Server failed. Reason:<br />
+<br />
+There are 1 nested errors:<br />
+<br />
+weblogic.management.DeploymentException: Exception occured while downloading files<br />
+        at weblogic.deploy.internal.targetserver.datamanagement.ConfigDataUpdate.doDownload(ConfigDataUpdate.java:83)<br />
+        at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.download(DataUpdate.java:56)<br />
+        at weblogic.deploy.internal.targetserver.datamanagement.Data.prepareDataUpdate(Data.java:97)<br />
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.downloadFiles(RuntimeAccessDeploymentReceiverService.java:920)<br />
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.updateFiles(RuntimeAccessDeploymentReceiverService.java:879)<br />
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.handleRegistrationResponse(RuntimeAccessDeploymentReceiverService.java:728)<br />
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.registerHandler(RuntimeAccessDeploymentReceiverService.java:699)<br />
+        at weblogic.management.provider.internal.RuntimeAccessDeploymentReceiverService.start(RuntimeAccessDeploymentReceiverService.java:169)<br />
+        at weblogic.t3.srvr.ServerServicesManager.startService(ServerServicesManager.java:461)<br />
+        at weblogic.t3.srvr.ServerServicesManager.startInStandbyState(ServerServicesManager.java:166)<br />
+        at weblogic.t3.srvr.T3Srvr.initializeStandby(T3Srvr.java:881)<br />
+        at weblogic.t3.srvr.T3Srvr.startup(T3Srvr.java:568)<br />
+        at weblogic.t3.srvr.T3Srvr.run(T3Srvr.java:469)<br />
+        at weblogic.Server.main(Server.java:71)<br />
+Caused by: java.io.IOException: Posted content doesn't set it's Content-Length<br />
+        at weblogic.deploy.service.datatransferhandlers.MultipartParser.parseResponse(MultipartParser.java:98)<br />
+        at weblogic.deploy.service.datatransferhandlers.MultipartParser.&lt;init>(MultipartParser.java:83)<br />
+        at weblogic.deploy.service.datatransferhandlers.MultipartParser.&lt;init>(MultipartParser.java:46)<br />
+        at weblogic.deploy.service.datatransferhandlers.HttpDataTransferHandler.getDataAsStream(HttpDataTransferHandler.java:88)<br />
+        at weblogic.deploy.service.datatransferhandlers.DataHandlerManager$RemoteDataTransferHandler.getDataAsStream(DataHandlerManager.java:153)<br />
+        at weblogic.deploy.internal.targetserver.datamanagement.ConfigDataUpdate.doDownload(ConfigDataUpdate.java:75)<br />
+        ... 13 more<br />
+<br />
+><br />
+<br />
+</i><br />
+<br />
+(btw it's not "it's Content-Length", but "its Content-Length"... lot of IT people are illiterate...)<br />
+<br />
+<br />
+Here I google and find the solution:<br />
+<br />
+<a href="http://robin4444.blogspot.ch/2011/10/high-availability-of-admin-server.html">http://robin4444.blogspot.ch/2011/10/high-availability-of-admin-server.html</a><br />
+<br />
+<br />
+“As per KM 1294379.1, Released that there were 0sized files under the config directory of domain which were not being synchronized, removing those files fixed the problem.”<br />
+<br />
+<br />
+on the admin box (105):<br />
+<br />
+<b>find /opt/oracle/domains/osbpp1do/config -type f -size 0 -exec ls {} \; | xargs ls -ltr<br />
+</b><br />
+<br />
+<i><br />
+<br />
+-rw-r----- 1 soa soa 0 Nov 24  2011 /opt/oracle/domains/osbpp1do/config/fmwconfig/servers/osbpp1as/applications/OracleBamAdapter/config/BAMCommonConfig.xml.jmxori<br />
+-rw-r----- 1 soa soa 0 Nov 24  2011 /opt/oracle/domains/osbpp1do/config/fmwconfig/servers/osbpp1as/applications/OracleBamAdapter/config/BAMCommonConfig.xml<br />
+-rw-r----- 1 soa soa 0 Nov 24  2011 /opt/oracle/domains/osbpp1do/config/fmwconfig/servers/osbpp1ms1/applications/OracleBamAdapter/config/BAMCommonConfig.xml.jmxori<br />
+-rw-r----- 1 soa soa 0 Nov 24  2011 /opt/oracle/domains/osbpp1do/config/fmwconfig/servers/osbpp1ms1/applications/OracleBamAdapter/config/BAMCommonConfig.xml<br />
+<b><br />
+-rw-r----- 1 soa soa 0 Jun  3 15:14 /opt/oracle/domains/osbpp1do/config/fmwconfig/servers/osbpp1ms4/applications/OracleBamAdapter/config/BAMCommonConfig.xml.jmxori<br />
+-rw-r----- 1 soa soa 0 Jun  3 15:14 /opt/oracle/domains/osbpp1do/config/fmwconfig/servers/osbpp1ms4/applications/OracleBamAdapter/config/BAMCommonConfig.xml<br />
+</b><br />
+</i><br />
+<br />
+deleted those 2 files in bold. All works again.<br />
+<br />
+<br />
+Those 2 files were generated by a MS which was migrated to the same box of the Admin, and who left behind some config files... when you start any MS, they fetch the latest configuration files from the Admin, and if one of those files has length = 0, it fails! Bummer!

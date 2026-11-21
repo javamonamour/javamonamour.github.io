@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Eclipse and Gradle"
+date: 2018-06-10T22:20:00.000+02:00
+permalink: /2018/06/eclipse-and-gradle.html
+blogger_id: "7138464388004266881"
+tags: ["eclipse", "Gradle"]
+---
+Importing an old Gradle project in Eclipse can be problematic. I get this error message when "import existing gradle build"<br />
+<br />
+Spring Boot plugin requires Gradle 4.0 or later. The current version is Gradle 2.5<br />
+<br />
+<br />
+I the project's "gradle/wrapper/gradle-wrapper.properties" I replace<br />
+<br />
+distributionUrl=https\://services.gradle.org/distributions/gradle-2.5-bin.zip<br />
+<br />
+with <br />
+<br />
+distributionUrl=https\://services.gradle.org/distributions/gradle-4.8-bin.zip<br />
+<br />
+<br />
+I download and install latest gradle 4.8 in E:\apps\gradle-4.8<br />
+<br />
+In Eclipse, configure the Preferences/Gradle setting the Gradle User Home to E:\apps\gradle-4.8<br />
+<br />
+I have installed "Buildship Eclipse plug-ins for Gradle" version 2.2.1<br />
+<br />
+<br />
+It's a real pity that the plugin doesn't offer an automatic resolution of the issue (upgrading to latest Gradle, and updating the project's settings", but in case of Eclipse we are just thankful it doesn't crash as it usually does. What a pathetic piece of crap Eclipse is, it's a shame for the whole IT community, I use it only because it's the official IDE at work.

@@ -1,0 +1,115 @@
+---
+layout: post
+title: "docker cheat sheets"
+date: 2019-09-08T19:43:00.000+02:00
+permalink: /2019/09/docker-cheat-sheets.html
+blogger_id: "564503891688912290"
+tags: ["cmd", "docker", "entrypoint"]
+---
+<a href="https://github.com/wsargent/docker-cheat-sheet">https://github.com/wsargent/docker-cheat-sheet</a><br />
+<br />
+<br />
+About "docker inspect". you can inspect a container or an image. <br />
+<br />
+<br />
+<b>docker inspect $containerid </b><br />
+<br />
+-> there are 2 places with "Image", one showing the image's sha2, the other the image's name. <br />
+If you use the sha2 to identify the image, remember it's truncated to the leftmost 12 digits.<br />
+<br />
+<b>docker image inspect $imagename</b> (or $imagesha2)<br />
+<br />
+here you find the Cmd and Entrypoint`<br />
+<br />
+<br />
+You can assign a label to image in Dockerfile: <br />
+<b>LABEL app=hello-world</b><br />
+<br />
+and use it to filter:<br />
+<br />
+<b>docker images --filter "label=app=hello-world"</b><br />
+<br />
+<br />
+since version 18.6 you can use BuildKit <a href="https://docs.docker.com/engine/reference/builder/#label">https://docs.docker.com/engine/reference/builder/#label</a> :<br />
+<br />
+without BuildKit:<br />
+<br />
+<pre>docker build -t myhw .
+Sending build context to Docker daemon  9.728kB
+Step 1/3 : FROM busybox:latest
+ ---> db8ee88ad75f
+Step 2/3 : CMD echo "Hello world date=" `date`
+ ---> Using cache
+ ---> 22bd2fd85b95
+Step 3/3 : LABEL app=hello-world
+ ---> Running in 1350a308f4eb
+Removing intermediate container 1350a308f4eb
+ ---> 7a576b758d86
+Successfully built 7a576b758d86
+Successfully tagged myhw:latest
+</pre><br />
+<br />
+export DOCKER_BUILDKIT=1<br />
+<br />
+<br />
+with BuildKit:<br />
+<br />
+<pre>docker build -t myhw .
+[+] Building 2.2s (5/5) FINISHED                                                                                                                                                                                   
+ => [internal] load .dockerignore                                                                                                                                                                             1.5s
+ => => transferring context: 2B                                                                                                                                                                               0.0s
+ => [internal] load build definition from Dockerfile                                                                                                                                                          1.2s
+ => => transferring dockerfile: 181B                                                                                                                                                                          0.0s
+ => [internal] load metadata for docker.io/library/busybox:latest                                                                                                                                             0.0s
+ => [1/1] FROM docker.io/library/busybox:latest                                                                                                                                                               0.0s
+ => => resolve docker.io/library/busybox:latest                                                                                                                                                               0.0s
+ => exporting to image                                                                                                                                                                                        0.0s
+ => => exporting layers                                                                                                                                                                                       0.0s
+ => => writing image sha256:4ce77b76b309be143c25ad75add6cdf17c282491e2966e6ee32edc40f802b1f4                                                                                                                  0.0s
+ => => naming to docker.io/library/myhw     
+</pre><br />
+<br />
+<br />
+CMD vs ENTRYPOINT<br />
+<br />
+if you use <br />
+ENTRYPOINT echo "pippo "<br />
+docker build -t echopippo .<br />
+docker run echopippo<br />
+<br />
+it will print "pippo"<br />
+<br />
+if you use also CMD<br />
+ENTRYPOINT echo "pippo "<br />
+CMD " peppo"<br />
+<br />
+it will still print only "pippo". To append arguments, you must use the JSON array format (i.e. square brackets)<br />
+<br />
+ENTRYPOINT ["echo",  "pippo "]<br />
+CMD [" peppo"]<br />
+<br />
+<br />
+this will print "pippo peppo".<br />
+<br />
+If you provide an extra parameter from command line:<br />
+docker run echopippo pluto<br />
+<br />
+then CMD is ignored, and the parameter from command line is used:<br />
+pippo  pluto<br />
+<br />
+<br />
+<br />
+<br />
+Priceless Romin Irani turorial on :<br />
+<br />
+docker volumes: <a href="https://rominirani.com/docker-tutorial-series-part-7-data-volumes-93073a1b5b72">https://rominirani.com/docker-tutorial-series-part-7-data-volumes-93073a1b5b72</a><br />
+<br />
+Dockerfile: <a href="https://rominirani.com/docker-tutorial-series-writing-a-dockerfile-ce5746617cd">https://rominirani.com/docker-tutorial-series-writing-a-dockerfile-ce5746617cd</a><br />
+<br />
+<br />
+Other tutorials here <a href="https://github.com/botchagalupe/DockerDo">https://github.com/botchagalupe/DockerDo</a><br />
+<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,57 @@
+---
+layout: post
+title: "docker enabling remote daemon administration"
+date: 2017-12-25T03:43:00.001+01:00
+permalink: /2017/12/docker-enabling-remote-daemon.html
+blogger_id: "5188484554101142928"
+tags: ["docker"]
+---
+one can use the -H option <br />
+<br />
+<a href="https://docs.docker.com/engine/reference/commandline/dockerd/#examples">https://docs.docker.com/engine/reference/commandline/dockerd/#examples</a><br />
+<a href="https://docs.docker.com/engine/admin/systemd/#start-automatically-at-system-boot">https://docs.docker.com/engine/admin/systemd/#start-automatically-at-system-boot</a><br />
+<a href="https://docs.docker.com/engine/reference/commandline/dockerd//#daemon-configuration-file">https://docs.docker.com/engine/reference/commandline/dockerd//#daemon-configuration-file</a><br />
+<br />
+don't try to use /etc/docker/daemon.json , it's not supported for this option<br />
+<br />
+Do this:<br />
+<br />
+<b>sudo less /usr/lib/systemd/system/docker.service</b><br />
+<br />
+change<br />
+ExecStart=/usr/bin/dockerd<br />
+into<br />
+ExecStart=/usr/bin/dockerd -D -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock<br />
+(if this fails, remove the -D)<br />
+<b><br />
+sudo systemctl daemon-reload<br />
+sudo systemctl restart docker<br />
+<br />
+sudo systemctl stop firewalld<br />
+<br />
+sudo less /var/log/messages<br />
+<br />
+sudo journalctl -xe<br />
+<br />
+netstat -an | grep 2375</b><br />
+<br />
+Now you can connect remotely (in this case I am using localhost, but you can use an IP or a hostname if remotely connecting):<br />
+<br />
+<b>docker -H localhost:2375 info</b><br />
+<br />
+<br />
+I have tried with<br />
+<b>export DOCKER_HOST="tcp://0.0.0.0:2375"<br />
+systemctl daemon-reload<br />
+systemctl restart docker</b><br />
+<br />
+but it didn't work for me...<br />
+<br />
+<br />
+This allows to do cool stuff like:<br />
+<br />
+<b>curl http://localhost:2375/images/json | python -mjson.tool</b><br />
+<br />
+<br />
+<br />
+One can use also the HTTP REST Api <a href="https://docs.docker.com/develop/sdk/examples/">https://docs.docker.com/develop/sdk/examples/</a>

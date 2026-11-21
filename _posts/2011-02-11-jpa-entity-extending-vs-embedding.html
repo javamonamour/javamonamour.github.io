@@ -1,0 +1,24 @@
+---
+layout: post
+title: "JPA Entity: extending vs embedding"
+date: 2011-02-11T18:05:00.000+01:00
+permalink: /2011/02/jpa-entity-extending-vs-embedding.html
+blogger_id: "1763693252324083159"
+tags: ["embeddable", "JPA"]
+---
+<a href="http://en.wikibooks.org/wiki/Java_Persistence/Embeddables#Example_of_an_Embeddable_object_annotations">http://en.wikibooks.org/wiki/Java_Persistence/Embeddables#Example_of_an_Embeddable_object_annotations<br />
+</a><br />
+<br />
+<br />
+JPA defines 2 annotations: @Embeddable and @Embedded<br />
+This is a great way to COMPOSE objects - rather than inheriting.<br />
+<br />
+Suppose you have to incorporate in your entities several features:<br />
+tracking, logical deletion, id....<br />
+<br />
+one solution is to stick all the co,,on features in a base abstract Entity.<br />
+The problem arises when not ALL Entities use ALL the features...; then you should introduce several base classes... this could soon become unmanageable.<br />
+<br />
+The alternative is to Embed only the Embeddable entities that you want to incorporate.<br />
+<br />
+The problem is that it's not easy to determine which Embeddable Entities are embedded in a given Entity.... while when using abstract classes or interfaces you can use instanceof.

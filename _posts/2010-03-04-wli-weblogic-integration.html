@@ -1,0 +1,12 @@
+---
+layout: post
+title: "WLI WebLogic Integration"
+date: 2010-03-04T15:34:00.000+01:00
+permalink: /2010/03/wli-weblogic-integration.html
+blogger_id: "7170795633375401232"
+---
+WLI doesn't handle very well a refactoring process.<br />
+Thus, if you move a Processs to a different package or project, you will face trouble because some configuraiton files are not automatically updated.<br />
+Such as wli-config.xml.<br />
+So in the WliWebAppListener you will get a ClassNotFoundException.<br />
+To recover from this situation, delete the wli-config.xml&nbsp; and let WLI rebuild it from scratch.

@@ -1,0 +1,55 @@
+---
+layout: post
+title: "dockerfile cmd and entrypoint"
+date: 2019-07-12T04:27:00.001+02:00
+permalink: /2019/07/dockerfile-cmd-and-entrypoint.html
+blogger_id: "6441603221590533845"
+tags: ["docker", "dockerfile"]
+---
+very confusing, poor design IMHO<br />
+<br />
+<br />
+Dockerfile:<br />
+<br />
+FROM ubuntu<br />
+ENV myname "pierre"<br />
+ENTRYPOINT ["/bin/bash", "-c", "echo hello ${myname}"]<br />
+<br />
+<br />
+docker built -t hello01 .<br />
+docker run hello01<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+FROM ubuntu<br />
+ENTRYPOINT ["sleep"]<br />
+<br />
+docker built -t hello02 .<br />
+docker run hello02<br />
+<br />
+#this sleep for 5s<br />
+docker run hello02 5<br />
+<br />
+#this gives error because parameter is missing<br />
+docker run hello02<br />
+<br />
+<br />
+<br />
+FROM ubuntu<br />
+ENTRYPOINT ["sleep"]<br />
+CMD ["5"]<br />
+<br />
+<br />
+this version uses a default time of 5, if not specified in command line<br />
+"docker run hello02"  will sleep for 5<br />
+"docker run hello02 10"  will sleep for 10<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

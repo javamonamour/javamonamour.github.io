@@ -1,0 +1,124 @@
+---
+layout: post
+title: "WebSockets and JSONDecoder in Wildfly 11"
+date: 2017-12-11T14:38:00.001+01:00
+permalink: /2017/12/websockets-and-jsondecoder-in-wildfly-11.html
+blogger_id: "8493757660421369892"
+tags: ["websockets", "wildfly"]
+---
+<br />
+<pre class="brush: java">import java.io.Serializable;
+import java.net.URI;
+
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+import javax.websocket.ClientEndpoint;
+import javax.websocket.CloseReason;
+import javax.websocket.ContainerProvider;
+import javax.websocket.OnClose;
+import javax.websocket.OnMessage;
+import javax.websocket.OnOpen;
+import javax.websocket.Session;
+import javax.websocket.WebSocketContainer;
+
+import com.pierre.inst.model.Member;
+
+@ClientEndpoint(decoders={JSONDecoder.class})
+public class MemberClientEndpoint implements Serializable{
+
+    @Inject
+    private Event&lt;Member> memberEvent;
+
+    @OnMessage
+    public void onMessage(Member member) {
+        memberEvent.fire(member);
+    }
+}
+
+
+</pre><br />
+<br />
+java.lang.RuntimeException: javax.websocket.DeploymentException: UT003029: Could not find message parameter on method public void com.pierre.inst.websockets.MemberClientEndpoint.onMessage(com.pierre.inst.model.Member)<br />
+<br />
+where JSONDecoder is<br />
+<br />
+<pre class="brush: java">import javax.websocket.DecodeException;
+import javax.websocket.Decoder;
+import javax.websocket.EndpointConfig;
+
+import com.google.gson.Gson;
+import com.pierre.inst.model.Member;
+
+public class JSONDecoder implements Decoder.Text&lt;Object> {
+
+ private Gson gson;
+
+ @Override
+ public void init(EndpointConfig config) {
+  gson = new Gson();
+ }
+
+ @Override
+ public void destroy() {
+  // do nothing
+ }
+
+ @Override
+ public Object decode(String s) throws DecodeException {
+  return gson.fromJson(s, Member.class);
+ }
+
+ @Override
+ public boolean willDecode(String s) {
+  return true;
+ }
+
+}
+
+</pre><br />
+see also <br />
+<a href="https://docs.oracle.com/javaee/7/tutorial/websocket007.htm">https://docs.oracle.com/javaee/7/tutorial/websocket007.htm</a><br />
+and<br />
+<a href="https://issues.jboss.org/browse/UNDERTOW-287">https://issues.jboss.org/browse/UNDERTOW-287</a><br />
+<br />
+The issue is that JSONDecoder is too generic, parameter class is Object, it should be Member:<br />
+<br />
+<br />
+<pre class="brush: java">import javax.websocket.DecodeException;
+import javax.websocket.Decoder;
+import javax.websocket.EndpointConfig;
+
+import com.google.gson.Gson;
+import com.pierre.inst.model.Member;
+
+public class JSONDecoder implements Decoder.Text&lt;Member> {
+
+ private Gson gson;
+
+ @Override
+ public void init(EndpointConfig config) {
+  gson = new Gson();
+ }
+
+ @Override
+ public void destroy() {
+  // do nothing
+ }
+
+ @Override
+ public Member decode(String s) throws DecodeException {
+  return gson.fromJson(s, Member.class);
+ }
+
+ @Override
+ public boolean willDecode(String s) {
+  return true;
+ }
+
+}
+
+</pre><br />
+<br />
+<br />
+<br />
+

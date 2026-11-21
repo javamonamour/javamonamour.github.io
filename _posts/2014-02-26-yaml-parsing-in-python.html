@@ -1,0 +1,46 @@
+---
+layout: post
+title: "YAML parsing in Python with PyYAML"
+date: 2014-02-26T13:38:00.001+01:00
+permalink: /2014/02/yaml-parsing-in-python.html
+blogger_id: "6455472204560483629"
+tags: ["python", "yaml"]
+---
+I was looking for a simple way of validating YAML structures, so I did the following:
+<br />
+download <a href="http://pyyaml.org/download/pyyaml/PyYAML-3.10.tar.gz">http://pyyaml.org/download/pyyaml/PyYAML-3.10.tar.gz</a>
+<br />
+tar xvfz PyYAML-3.10.tar.gz
+<br />
+cd PyYAML-3.10
+<br />
+python setup.py install
+<br />
+python
+<br />
+import yaml
+<br />
+<pre>mydomains=yaml.load("""
+domains:
+  osbpl1do:
+    soauser: soa
+    optpath: /opt
+  osbpl2do:
+    soauser: soa2
+    optpath: /opt2
+  osbpl3do:
+    soauser: soa3
+    optpath: /opt3
+""")
+print mydomains
+print mydomains['domains']
+print mydomains['domains']['osbpl2do']
+
+</pre>
+<br />
+It works like wonder.
+<br />
+<a href="http://pyyaml.org/wiki/PyYAMLDocumentation">Here more doc.</a>
+
+<br />
+<br />

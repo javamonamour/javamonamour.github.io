@@ -1,0 +1,112 @@
+---
+layout: post
+title: "Testing OVAB 12"
+date: 2015-09-29T17:01:00.000+02:00
+permalink: /2015/09/testing-ovab-12.html
+blogger_id: "1603175321683282502"
+tags: ["OVAB"]
+---
+I download OVAB_12.1.2.0.0_Appliance_v1.0.ova from <a href="http://www.oracle.com/technetwork/middleware/ovab/downloads/index.html?ssSourceSiteId=ocomen">http://www.oracle.com/technetwork/middleware/ovab/downloads/index.html?ssSourceSiteId=ocomen</a> . Attempts to install the product from its installer failed, because I could not install the dependencies.... so I would rather use the preinstalled VM.
+
+<br />
+<br />
+Form VirtualBox I do Import Appliance.
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/7a10c36f73c01e0c.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/d84903a8bed48404.jpg" height="361" width="640" /></a></div>
+<br />
+and agree the EULA
+<br />
+
+I get this message:
+<pre>
+Could not start the machine OVAB_12.1.2.0.0_Appliance_v1.0 because the following physical network interfaces were not found:
+
+en0: Ethernet (adapter 1)
+
+You can either change the machine's network settings or stop the machine.
+
+</pre>
+
+
+
+<br />
+the issue is easily fixed by validating the proposed settings change.
+
+<br />
+
+I setup the Linux OS installation (create a "oracle"user). Read the OVAB appliance instructions <a href="http://download.oracle.com/otn/nt/middleware/12c/121200/OVAB_12.1.2.0.0_Appliance_v1.0.pdf">http://download.oracle.com/otn/nt/middleware/12c/121200/OVAB_12.1.2.0.0_Appliance_v1.0.pdf</a>
+<br />
+Predefined users are ovab/oracle and root/oracle. I do cd /home/ovab/Oracle/Middleware/Oracle_Home and check that the installation is there.
+
+<br />
+
+Login as ovab/oracle, cd /home/ovab/bin/, nohup ./startDB.sh &, nohup ./startWLSAdminServer.sh & , ./startOVABStudio.sh 1
+
+<br /><br />
+
+<pre>
+&lt;Mar 8, 2015 8:16:51 AM EDT&gt; &lt;Critical&gt; &lt;WebLogicServer&gt; &lt;BEA-000386&gt; &lt;Server subsystem failed. Reason: java.lang.AssertionError: Could not obtain the localhost address. The most likely cause is an error in the network configuration of this machine.
+java.lang.AssertionError: Could not obtain the localhost address. The most likely cause is an error in the network configuration of this machine.
+        at weblogic.server.channels.AddressUtils$AddressMaker.getLocalHost(AddressUtils.java:38)
+        at weblogic.server.channels.AddressUtils$AddressMaker.&lt;clinit&gt;(AddressUtils.java:33)
+        at weblogic.server.channels.AddressUtils.getIPAny(AddressUtils.java:154)
+        at weblogic.protocol.configuration.ChannelHelper.checkConsistency(ChannelHelper.java:61)
+        at weblogic.server.channels.ChannelService.start(ChannelService.java:207)
+        Truncated. see log file for complete stacktrace
+Caused By: java.net.UnknownHostException: dhcppc4: dhcppc4
+        at java.net.InetAddress.getLocalHost(InetAddress.java:1360)
+        at weblogic.server.channels.AddressUtils$AddressMaker.getLocalHost(AddressUtils.java:36)
+        at weblogic.server.channels.AddressUtils$AddressMaker.&lt;clinit&gt;(AddressUtils.java:33)
+        at weblogic.server.channels.AddressUtils.getIPAny(AddressUtils.java:154)
+        at weblogic.protocol.configuration.ChannelHelper.checkConsistency(ChannelHelper.java:62)
+        Truncated. see log file for complete stacktrace
+&gt; 
+
+
+</pre> 
+
+
+<br /><br />
+
+hostname is dhcppc4
+
+<br /><br />
+su - root (enter oracle), vi /etc/hosts, add line "127.0.0.1 dhcppc4", exit
+
+<br /><br />
+now run:  startWLSClusterServer.sh 1, startOPMN.sh, startOHS.sh, webtierStatus.sh,
+
+
+
+<br/><br/>
+
+<b>References</b><br/>
+<br/>
+Excellent presentation by the excellent Kai Yu:
+<br/><br/>
+<iframe width="640" height="360" src="https://www.youtube.com/embed/uUH2z2ucYt8?feature=player_detailpage" frameborder="0" allowfullscreen></iframe>
+<br/><br/>
+
+go to minute 33 for OVAB-related stuff<br/><br/>
+
+here is the paper:
+<br/><br/>
+<a href="https://kyuoracleblog.files.wordpress.com/2013/05/2013_369_yu_ppr.pdf">https://kyuoracleblog.files.wordpress.com/2013/05/2013_369_yu_ppr.pdf</a>
+<br/><br/>
+
+
+
+
+<br/><br/>
+
+
+<br/><br/>
+
+<br/><br/>
+
+
+
+

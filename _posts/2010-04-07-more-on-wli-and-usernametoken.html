@@ -1,0 +1,141 @@
+---
+layout: post
+title: "More on WLI and UsernameToken"
+date: 2010-04-07T13:10:00.000+02:00
+permalink: /2010/04/more-on-wli-and-usernametoken.html
+blogger_id: "7746309300829152348"
+---
+if you provide this policy file to protect your WLI process:<br />
+<br />
+@WSSecurityService(file="mypolicy.xml")<br />
+<br />
+<br />
+&lt;wssecuritypolicy xsi:schemalocation="WSSecurity-policy.xsd"&gt;<br />
+xmlns="http://www.bea.com/2003/03/wsse/config"<br />
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;<br />
+&lt;wssecurityin&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;token tokentype="username"&gt;<br />
+&lt;/token&gt;&lt;/wssecurityin&gt;&lt;/wssecuritypolicy&gt;<br />
+<br />
+<br />
+you get this error message:<br />
+<br />
+<br />
+java.rmi.RemoteException: EJB Exception: ; nested exception is:<br />
+com.bea.wli.knex.runtime.jws.wssecurity.exception.WLWWSSEException: Policy requires Message to contain UsernameToken, UsernameToken not found in the Message.<br />
+Caused by: com.bea.wli.knex.runtime.jws.wssecurity.exception.WLWWSSEException: Policy requires Message to contain UsernameToken,<b> UsernameToken not found in the Message.</b><br />
+<br />
+<br />
+this is fantastic. I wonder why WLI manuals say that JPD don't support security... they are funny.<br />
+<br />
+<br />
+Now I try <b>passing a Username in the Soap Header</b>:<br />
+<br />
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:open="http://www.openuri.org/"&gt;<br />
+&lt;soapenv:<b>Header</b>&gt;<br />
+&lt;wsse:<b>Security</b><br />
+xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"<br />
+xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"<br />
+soapenv:mustUnderstand="1"&gt;<br />
+&lt;wsse:<b>UsernameToken </b>wsu:Id="SecurityToken-1"&gt;<br />
+&lt;wsse:<b>Username</b>&gt;username&lt;/wsse:Username&gt;<br />
+&lt;wsse:<b>Password</b><br />
+Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText"&gt;<br />
+password<br />
+&lt;/wsse:Password&gt;<br />
+&lt;/wsse:UsernameToken&gt;<br />
+&lt;/wsse:Security&gt;<br />
+&lt;/soapenv:Header&gt;<br />
+<br />
+&lt;soapenv:Body&gt;<br />
+&lt;open:clientRequestwithReturn&gt;<br />
+&lt;!--Optional:--&gt;<br />
+&lt;open:x0&gt;pippo&lt;/open:x0&gt;<br />
+&lt;/open:clientRequestwithReturn&gt;<br />
+&lt;/soapenv:Body&gt;<br />
+&lt;/soapenv:Envelope&gt;<br />
+<br />
+<br />
+and I get a fantastic:<br />
+<br />
+<i>javax.security.auth.login.FailedLoginException: [Security:090304]Authentication Failed: User username </i><i>at weblogic.security.providers.authentication.LDAPAtnLoginModuleImpl.login(LDAPAtnLoginModuleImpl.java:230)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.common.security.internal.service.LoginModuleWrapper$1.run(LoginModuleWrapper.java:110)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.common.security.internal.service.LoginModuleWrapper.login(LoginModuleWrapper.java:106)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)<br />
+&nbsp;&nbsp;&nbsp; at java.lang.reflect.Method.invoke(Method.java:597)<br />
+&nbsp;&nbsp;&nbsp; at javax.security.auth.login.LoginContext.invoke(LoginContext.java:769)<br />
+&nbsp;&nbsp;&nbsp; at javax.security.auth.login.LoginContext.access$000(LoginContext.java:186)<br />
+&nbsp;&nbsp;&nbsp; at javax.security.auth.login.LoginContext$4.run(LoginContext.java:683)<br />
+&nbsp;&nbsp;&nbsp; at javax.security.auth.login.LoginContext.invokePriv(LoginContext.java:680)<br />
+&nbsp;&nbsp;&nbsp; at javax.security.auth.login.LoginContext.login(LoginContext.java:579)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.common.security.internal.service.JAASLoginServiceImpl.login(JAASLoginServiceImpl.java:113)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)<br />
+&nbsp;&nbsp;&nbsp; at java.lang.reflect.Method.invoke(Method.java:597)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.common.security.internal.utils.Delegator$ProxyInvocationHandler.invoke(Delegator.java:57)<br />
+&nbsp;&nbsp;&nbsp; at $Proxy16.login(Unknown Source)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.security.service.internal.WLSJAASLoginServiceImpl$ServiceImpl.login(Unknown Source)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.common.security.internal.service.JAASAuthenticationServiceImpl.authenticate(JAASAuthenticationServiceImpl.java:82)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)<br />
+&nbsp;&nbsp;&nbsp; at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)<br />
+&nbsp;&nbsp;&nbsp; at java.lang.reflect.Method.invoke(Method.java:597)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.common.security.internal.utils.Delegator$ProxyInvocationHandler.invoke(Delegator.java:57)<br />
+&nbsp;&nbsp;&nbsp; at $Proxy34.authenticate(Unknown Source)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.security.service.WLSJAASAuthenticationServiceWrapper.authenticate(Unknown Source)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.security.service.PrincipalAuthenticator.authenticate(Unknown Source)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.security.service.PrincipalAuthenticator.authenticate(Unknown Source)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.webservice.util.ServerSecurityHelper.assertIdentity(ServerSecurityHelper.java:45)<br />
+&nbsp;&nbsp;&nbsp; at com.bea.wli.knex.runtime.jws.wssecurity.inbound.WLWInboundWSSEImpl.assertIdentity(WLWInboundWSSEImpl.java:458)</i><br />
+<br />
+<br />
+Exciting!<br />
+I can see in the stacktrace interesting stuff like: <i>ServerSecurityHelper.</i>assertIdentity(), <i>PrincipalAuthenticator.authenticate(), </i><i><b>JAAS</b>AuthenticationServiceImpl.authenticate(), </i><i><b>LDAP</b>AtnLoginModuleImpl.login()... </i><br />
+<br />
+Now I create the username "username" in the default security realm, with password "anotherpassword"<br />
+<br />
+I still get the<br />
+<br />
+javax.security.auth.login.FailedLoginException: [Security:090302]Authentication Failed: User username denied<br />
+<br />
+(so we understand that "User xxx denied" could also mean "bad password")<br />
+<br />
+When I provide the right password, everything works.<br />
+<br />
+I am using SOAPUI to submit the request.<br />
+<br />
+If I remove the Security header from the SOAP message, and I select the <b>WSS-Password Type= password text</b>, and I provide username and password in the appropriate properties, things work again fine. (tip: look in the SOAPUI http log, you should see the password being trasmitted in the clear with the SOAP request).<br />
+<br />
+If you choose <b>WSS-Password Type=digest</b>, you transmit this:<br />
+<br />
+&lt;soapenv:Envelope xmlns:open="http://www.openuri.org/" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"&gt;&lt;soapenv:Header&gt;&lt;wsse:Security soapenv:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"&gt;&lt;wsse:<b>UsernameToken </b>wsu:Id="UsernameToken-5" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"&gt;&lt;wsse:<b>Username</b>&gt;username&lt;/wsse:Username&gt;&lt;wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest"&gt;DNBu/78N8l0BgBzKPvJglF8zlqw=&lt;/wsse:Password&gt;&lt;wsse:<b>Nonce </b>EncodingType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary"&gt;Kb64xrWI9XLLjdmTcIZATQ==&lt;/wsse:Nonce&gt;&lt;wsu:<b>Created</b>&gt;2010-04-07T12:27:21.353Z&lt;/wsu:Created&gt;&lt;/wsse:UsernameToken&gt;&lt;/wsse:Security&gt;&lt;/soapenv:Header&gt;[\n]"<br />
+<br />
+As recommended by OASIS <a href="http://www.oasis-open.org/committees/wss/documents/WSS-Username-02-0223-merged.pdf">http://www.oasis-open.org/committees/wss/documents/WSS-Username-02-0223-merged.pdf</a> , also Nonce and Timestamp ("Created") are supplied (they are supplied also in the "password text" case).<br />
+<br />
+Now, just for fun I hack the header and set Created to 2009-04-07T12:33:17.551Z<br />
+The Web Service still process it.... how to tell Web Service to<b> reject a request which is 1 year old</b>?<br />
+<br />
+I look into <a href="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/ws-securitypolicy.xsd"><b>http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/ws-securitypolicy.xsd</b></a> if there is any such option. I don't see anything inspiring.<br />
+<br />
+Theoretically the "Created" info should be embedded into a&nbsp; <b>wsu:Timestamp</b> element.... the WS-Security specs seem very loose and fuzzy, I have the impression that <b>SOA is built on a under-specified standard</b> which imposes every solution to reinvent the wheel adapting a generic standard to its own internal needs.<br />
+I guess some billion dollars have been lost so far because of this fuzziness.<br />
+<br />
+Anyway... this is the standard:<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;wsse:Security xmlns:wsse="..." xmlns:wsu="..." <br />
+soapenv:mustUnderstand="1"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;wsu:Timestamp wsu:Id="Timestamp-31497800"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;wsu:Created&gt;2009-11-02T14:00:00Z&lt;/wsu:Created&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;wsu:Expires&gt;2009-11-02T15:00:00Z&lt;/wsu:Expires&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/wsu:Timestamp&gt;<br />
+<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;wsse:UsernameToken wsu:Id="UsernameToken-10697954"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;wsse:Username&gt;...&lt;/wsse:Username&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;wsse:Password Type="...#PasswordText"&gt;...&lt;/wsse:Password&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/wsse:UsernameToken&gt;<br />
+<br />
+so the "created" is associated to the Timestamp, not to the Username... in fact I have read that the "Created" clause can be attached to any Element.

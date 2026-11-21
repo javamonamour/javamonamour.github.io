@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Exception in thread \"Main Thread\" java.lang.NoClassDefFoundError: weblogic/management/WebLogicMBean"
+date: 2010-02-07T15:44:00.000+01:00
+permalink: /2010/02/exception-in-thread-main-thread.html
+blogger_id: "3222871369126910035"
+blogger_comments:
+  - author: "Anonymous"
+    date: 2012-02-07
+    html: "add commons-logging-XXXXX.jar<br /><br />http://nexus.cestpasdur.com/nexus/content/repositories/sonatype-forge/com/adobe/flex/compiler/commons-logging/4.5.1.21328/<br /><br />add try it!"
+---
+While working in WebLogic, are you haunted by weblogic logging classes (which in 10.3 are spread into a miriad of jar files, and ultimately in any case you can't avoid including weblogic.jar in the classpath, messing around everything else)? <br />
+<br />
+<br />
+Exception in thread "Main Thread" java.lang.NoClassDefFoundError: weblogic/management/WebLogicMBean<br />
+&nbsp;&nbsp;&nbsp; at weblogic.kernel.KernelLogManager$LoggerMaker.<clinit>(KernelLogManager.java:22)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.kernel.KernelLogManager.getLogger(KernelLogManager.java:28)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.logging.commons.LogImpl.<init>(LogImpl.java:14)<br />
+&nbsp;&nbsp;&nbsp; at weblogic.logging.commons.LogFactoryImpl.getInstance(LogFactoryImpl.java:21)<br />
+&nbsp;&nbsp;&nbsp; at <b>weblogic.logging.commons.LogFactoryImpl</b>.getInstance(LogFactoryImpl.java:18)<br />
+&nbsp;&nbsp;&nbsp; at <b>org.apache.commons.logging.LogFactory.getLog(LogFactory.java:351)</b><br />
+&nbsp;&nbsp;&nbsp; at org.apache.axis2.description.AxisDescription.<clinit>(AxisDescription.java:76)<br />
+&nbsp;&nbsp;&nbsp; at org.openuri.www.GetPrepaidAccountBalanceProcessStub.populateAxisService(GetPrepaidAccountBalanceProcessStub.java:41)<br />
+&nbsp;&nbsp;&nbsp; at org.openuri.www.GetPrepaidAccountBalanceProcessStub.<init>(GetPrepaidAccountBalanceProcessStub.java:91)<br />
+&nbsp;&nbsp;&nbsp; at org.openuri.www.GetPrepaidAccountBalanceProcessStub.<init>(GetPrepaidAccountBalanceProcessStub.java:78)<br />
+&nbsp;&nbsp;&nbsp; at org.openuri.www.GetPrepaidAccountBalanceProcessStub.<init>(GetPrepaidAccountBalanceProcessStub.java:124)<br />
+&nbsp;&nbsp;&nbsp; at org.openuri.www.GetPrepaidAccountBalanceProcessStub.<init>(GetPrepaidAccountBalanceProcessStub.java:117)<br />
+&nbsp;&nbsp;&nbsp; at com.pierre.acmetester.AcmePrepaidTester.main(JawwalPrepaidTester.java:14)</init></init></init></init></clinit></init></clinit><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+the solution is:<br />
+import org.apache.commons.logging.LogFactory;<br />
+...<br />
+<b><br />
+</b><br />
+<b>System.setProperty(LogFactory.FACTORY_PROPERTY, "org.apache.commons.logging.impl.Log4jFactory");</b><br />
+<br />
+This will force Apache Commons Logging to use Log4J rather than WebLogic... and don't listen to people saying that Log4J is the default implementation for Apache... IT IS NOT!<br />
+<br />
+I can't believe in 2010 we are still in such a pathetic shape.... Java will die, it's too messy, everything is just a HUGE mess.... even the fact that in order to log a message I need to instantiate a WebLogicMBean is grotesque. And the fact that the WebLogicMBean initialization fails without a proper error message is grotesque.... EVERYTHING IS GROTESQUE. Why people can't do a proper job. Why do we have to suffer so much.

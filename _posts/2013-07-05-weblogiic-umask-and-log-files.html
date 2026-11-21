@@ -1,0 +1,17 @@
+---
+layout: post
+title: "WebLogic, umask and log files permissions"
+date: 2013-07-05T12:40:00.000+02:00
+permalink: /2013/07/weblogiic-umask-and-log-files.html
+blogger_id: "7513564022496219440"
+tags: ["umask", "weblogic"]
+---
+Our soa user has <a href="http://en.wikipedia.org/wiki/Umask">umask</a> 0022 , which mean every new file will be created with rw.r..r.. attributes. <br />
+However, weblogic log files are rw.r...., which means that our monitoring system, running with a user not belonging to soa group, will not be able to read them.<br />
+<br />
+In DOMAIN_HOME/bin/startWebLogic.sh there is a umask 037 statement, which changes the rule of the game for the WebLogic process.<br />
+<br />
+See related discussion <a href="https://forums.oracle.com/thread/1248373">here</a>.<br />
+<br />
+The other solution is to make the monitoring user as member of the soa group. <br />
+<br />

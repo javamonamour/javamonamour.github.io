@@ -1,0 +1,81 @@
+---
+layout: post
+title: "OSB: how to find which service/operation you are in"
+date: 2010-05-09T13:10:00.002+02:00
+permalink: /2010/05/osb-how-to-find-which-serviceoperation.html
+blogger_id: "3144058740478857832"
+tags: ["OSB", "osbtransport"]
+---
+The $operation variable tells you the operation you are executing. But operation is not unique across all services, so to uniquely identify who you are you must add also the service information.<br />
+<br />
+As reported here<br />
+<br />
+<pre name="code" class="brush: xml">
+&lt;con:endpoint name="ProxyService$TestUpdateDB$PS$InsertInDbPS" xmlns:con="http://www.bea.com/wli/sb/context"&gt;
+  &lt;con:service&gt;
+    &lt;con:operation&gt;updateCompany&lt;/con:operation&gt;
+  &lt;/con:service&gt;
+  &lt;con:transport&gt;
+    &lt;con:uri&gt;/TestUpdateDB/PS/InsertInDbPS&lt;/con:uri&gt;
+    &lt;con:mode&gt;request-response&lt;/con:mode&gt;
+    &lt;con:qualityOfService&gt;best-effort&lt;/con:qualityOfService&gt;
+    &lt;con:request xsi:type="http:HttpRequestMetaData" xmlns:http="http://www.bea.com/wli/sb/transports/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+      &lt;tran:headers xsi:type="http:HttpRequestHeaders" xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;
+        &lt;http:Content-Type&gt;text/xml; charset=utf-8&lt;/http:Content-Type&gt;
+        &lt;http:SOAPAction&gt;""&lt;/http:SOAPAction&gt;
+      &lt;/tran:headers&gt;
+      &lt;tran:encoding xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;utf-8&lt;/tran:encoding&gt;
+    &lt;/con:request&gt;
+    &lt;con:response xsi:type="http:HttpResponseMetaData" xmlns:http="http://www.bea.com/wli/sb/transports/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
+      &lt;tran:headers xsi:type="http:HttpResponseHeaders" xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;
+        &lt;http:Content-Type&gt;text/xml&lt;/http:Content-Type&gt;
+      &lt;/tran:headers&gt;
+      &lt;tran:response-code xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;0&lt;/tran:response-code&gt;
+    &lt;/con:response&gt;
+  &lt;/con:transport&gt;
+  &lt;con:security&gt;
+    &lt;con:transportClient&gt;
+      &lt;con:username&gt;&lt;anonymous&gt;&lt;/con:username&gt;
+    &lt;/con:transportClient&gt;
+  &lt;/con:security&gt;
+&lt;/con:endpoint&gt;
+</pre><br />
+<br />
+there is a $inbound/con:endpoint/con:service variable, but this seems to be always empty :o( (there must a way to assign a value to it...). Theoretically con:service should specify providerName and operation, which sounds interesing, if only it was filled. Reading the docs here http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/context.html#wp1080491 it becomes evident that this applies only to the $outbound variable while publishing... confusing indeed.<br />
+<br />
+The alternative is using $inbound/ctx:transport/ctx:uri, that is the endpoint, which is unique. Better than losing your umbrella, as they say in Bologna.<br />
+<br />
+We also learn that the XSDs MessageContext.xsd  of the inbound and outbound elements are in a ORACLE_HOME/osb_10.3/lib/sb-schemas.jar , see here:<br />
+http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/context.html#wp1060634<br />
+<br />
+<br />
+Interesting enough, the Reference.xsd file in the sb-schemas.jar contains a line which causes an error:<br />
+<br />
+xs:import namespace="http://www.bea.com/wli/config/reference"<br />
+schemaLocation="Reference.xsd"<br />
+<br />
+<br />
+just remove it and the error goes away.<br />
+<br />
+<br />
+<br />
+This script should return you the URI given the $inbound variable as input:<br />
+<br />
+(:<br />
+Pass $inbound as input, it should return you the Service URI<br />
+:)<br />
+<br />
+<br />
+(:: pragma bea:local-element-parameter parameter="$inbound_endpoint1" type="ns0:messagecontext/ns0:inbound-endpoint" location="../../CommonResources/XSD/MessageReporting.xsd" ::)<br />
+<br />
+declare namespace ns0 = "http://www.bea.com/wli/sb/context";<br />
+declare namespace xf = "http://tempuri.org/TestUpdateDB/XQuery/getServiceFromInbound/";<br />
+<br />
+declare function xf:getServiceFromInbound($inbound_endpoint1 as element())<br />
+as xs:string {<br />
+xs:string( data($inbound_endpoint1/ns0:transport/ns0:uri) )<br />
+};<br />
+<br />
+declare variable $inbound_endpoint1 as element() external;<br />
+<br />
+xf:getServiceFromInbound($inbound_endpoint1)

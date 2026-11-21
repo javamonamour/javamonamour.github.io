@@ -1,0 +1,131 @@
+---
+layout: post
+title: "Brilliant Java8 tutorial by mkyong"
+date: 2017-04-01T21:19:00.001+02:00
+permalink: /2017/04/brilliant-java8-tutorial-by-mkyong.html
+blogger_id: "748768069050064596"
+tags: ["java8"]
+blogger_comments:
+  - author: "CANDID INDUSTRIAL TRAINING"
+    date: 2017-08-22
+    html: "get  this  detailed explanations on <a href=\"http://java.candidjava.com/tutorial/Spring-mvc-hello-world-example.htm\" rel=\"nofollow\">spring MVC maven example</a>"
+---
+<a href="https://www.mkyong.com/tutorials/java-8-tutorials/">https://www.mkyong.com/tutorials/java-8-tutorials/</a>
+
+<br/>
+I will recap here the salient points.
+<br/>
+
+mkyong analyzes the use of a Functional Interface <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html">https://docs.oracle.com/javase/8/docs/api/java/util/Comparator.html</a>
+
+In a nutshell:
+<br/>
+Collections have a sort method using a comparator, which can be a lambda expression (list of named parameters in (params), -> and the method implementation:
+<pre class="brush: java">
+List&lt;Developer> listDevs;
+listDevs.sort((Developer o1, Developer o2)->o1.getAge()-o2.getAge());
+</pre>
+
+<br/>
+<br/>
+
+collections have a forEach method, using also a lambda (a Map has a special forEach)
+<pre class="brush: java">
+List&lt;Developer> listDevs;
+listDevs.forEach((developer)->System.out.println(developer));
+listDevs.forEach(System.out::println);
+
+Map&lt;String, Integer> items;
+items.forEach((k,v)->System.out.println("Item : " + k + " Count : " + v));
+</pre>
+
+<br/>
+<br/>
+actually it's not even necessary to declare the type of the parameters, the compiler can infer them from the List type:
+<br/>
+<br/>
+<pre class="brush: java">
+listDevs.sort((o1, o2)->o1.getAge()-o2.getAge());
+</pre>
+
+<br/>
+<br/>
+
+and of course you can assign the Comparator lambda to a variable:
+<br/>
+<pre class="brush: java">
+Comparator&lt;Developer> salaryComparator = (o1, o2)->o1.getSalary().compareTo(o2.getSalary());
+</pre>
+<br/>
+
+A Collection can be turned into a stream and filtered
+<pre class="brush: java">
+List&lt;String> items;
+items.stream().filter(s->s.contains("B")).forEach(System.out::println);
+</pre>
+<br/><br/>
+and of course you can turn the result of "stream().filter()" into a Collection using collect():
+<br/><br/>
+<pre class="brush: java">
+
+List&lt;String> result = lines.stream().filter(line -> !"mkyong". equals (line)).collect(Collectors.toList()); 
+</pre>
+<br/><br/>
+To return the first match in a filter (and null if not found) there is a compact way:
+
+<br/><br/>
+<pre class="brush: java">
+Person result = persons.stream().filter(x -> "michael".equals(x.getName())).findAny().orElse(null);
+</pre>
+<br/><br/>
+You can map on the fly each collection element into a String, using "map()":
+<br/><br/>
+
+<pre class="brush: java">
+String name = persons.stream().filter(x -> "michael".equals(x.getName())).map(Person::getName).findAny().orElse("");
+</pre>
+
+<br/><br/>
+One can also perform "group by" on a Stream, just like in SQL (the syntax is a bit obscure, honestly):
+
+<br/><br/>
+<pre class="brush: java">
+Map&lt;String, Long> result = items.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+</pre>
+<br/><br/>
+
+this is well documented here <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html">https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html</a>
+
+<br/><br/>
+
+You can create a stream directly, then convert it to a List:
+<pre class="brush: java">
+Stream&lt;String> language = Stream.of("java", "python");
+List&lt;String> myList = language.collect(Collectors.toList())
+</pre>
+<br/><br/>
+same with an array:
+<pre class="brush: java">
+Stream&lt;String> stream1 = Arrays.stream(array);
+</pre>
+
+<br/><br/>
+
+
+<br/><br/>
+
+well, in the long run it becomes quite tedious, all this collection manipulation...
+
+<br/><br/>
+Very cool is the <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Optional.html">java.util.Optional</a>
+
+
+
+
+<br/><br/>
+
+
+
+
+
+

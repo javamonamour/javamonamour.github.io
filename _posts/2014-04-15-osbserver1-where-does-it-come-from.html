@@ -1,0 +1,112 @@
+---
+layout: post
+title: "osb_server1, where does it come from?"
+date: 2014-04-15T08:15:00.001+02:00
+permalink: /2014/04/osbserver1-where-does-it-come-from.html
+blogger_id: "4698752844354113563"
+tags: ["OSB"]
+---
+When you create a new OSB domain, typically you include 2 templates:<br />
+<br />
+SB_BASE_TEMPLATE = '/common/templates/applications/wlsb_base.jar'<br />
+SB_TEMPLATE = '/common/templates/applications/wlsb.jar'<br />
+<div>
+<br /></div>
+<div>
+in wlsb.jar there is a tiny config.xml defining the&nbsp;osb_server1 managed server.</div>
+<div>
+<br /></div>
+<div>
+So, a brand new domain will contain this&nbsp;osb_server1.</div>
+<div>
+<br /></div>
+<div>
+To customize the domain, you can either delete it (not advisable, since there are singleton services targeted to it) or rename it (better this way)</div>
+<div>
+<br /></div>
+<div>
+In the same way, a datasource wlsbjmsrpDataSource will be created automatically, using some default values:</div>
+<div>
+<br /></div>
+<div>
+<pre class="brush: xml">
+&lt;jdbc-data-source xmlns="http://xmlns.oracle.com/weblogic/jdbc-data-source">
+  &lt;name>wlsbjmsrpDataSource&lt;/name>
+  &lt;jdbc-driver-params>
+    &lt;url>jdbc:derby://localhost:1527/osbexamples;create=true;serverName=localhost&lt;/url>
+    &lt;driver-name>org.apache.derby.jdbc.ClientDriver&lt;/driver-name>
+    &lt;properties>
+      &lt;property>
+        &lt;name>user&lt;/name>
+        &lt;value>DEV_SOAINFRA&lt;/value>
+      &lt;/property>
+    &lt;/properties>
+    &lt;password-encrypted>weblogic&lt;/password-encrypted>
+  &lt;/jdbc-driver-params>
+  &lt;jdbc-connection-pool-params>
+    &lt;initial-capacity>5&lt;/initial-capacity>
+    &lt;max-capacity>20&lt;/max-capacity>
+    &lt;capacity-increment>1&lt;/capacity-increment>
+  &lt;/jdbc-connection-pool-params>
+  &lt;jdbc-data-source-params>
+    &lt;jndi-name>wlsbjmsrpDataSource&lt;/jndi-name>
+    &lt;global-transactions-protocol>LoggingLastResource&lt;/global-transactions-protocol>
+  &lt;/jdbc-data-source-params>
+&lt;/jdbc-data-source>
+
+</pre>
+
+<br /></div>
+
+Of course you will have to customize this Datasource to suit your needs, with code like this:
+
+<pre class='brush: java' >
+            DS_NAME_REP = 'wlsbjmsrpDataSource'
+            db_driver = 'oracle.jdbc.OracleDriver'
+            db_url = 'jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=myhost.acme.com)(PORT=1522))(CONNECT_DATA=(SERVICE_NAME=myservice)))'
+            db_password = 'bla'
+            db_name = 'myservice'
+
+            cd('/')
+            cd('JDBCSystemResource/' + DS_NAME_REP + '/JdbcResource/' + DS_NAME_REP )
+            cd('JDBCDriverParams/NO_NAME_0')
+            set('DriverName', db_driver)
+            set('URL', db_url)
+            set('PasswordEncrypted', db_password )
+            
+            # set/create all properties
+            cd('Properties/NO_NAME_0')
+            
+            cd('Property/user')
+            cmo.setValue(db_username)
+            
+            cd('../..')
+            create('databaseName', 'Property')
+            cd('Property/databaseName')
+            cmo.setValue(db_name)
+            
+            cd('../..')
+            create('serverName', 'Property')
+            cd('Property/serverName')
+            cmo.setValue(db_host)
+            
+            cd('../..')
+            create('portNumber', 'Property')
+            cd('Property/portNumber')
+            cmo.setValue(db_port)
+            
+            cd('/JDBCSystemResource/' + DS_NAME_REP + '/JdbcResource/' + DS_NAME_REP )
+            cd('JDBCConnectionPoolParams/NO_NAME_0')
+            set('TestTableName', db_testtable)
+
+            set('InitialCapacity', 0)
+            
+            cd('/JDBCSystemResource/' + DS_NAME_REP + '/JdbcResource/' + DS_NAME_REP )
+            cd ('JDBCDataSourceParams/NO_NAME_0' )
+            set('GlobalTransactionsProtocol', 'LoggingLastResource')
+            
+
+</pre>
+
+<br />
+All this is very beautiful and instructive.

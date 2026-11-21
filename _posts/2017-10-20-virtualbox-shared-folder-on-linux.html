@@ -1,0 +1,40 @@
+---
+layout: post
+title: "VirtualBox shared folder on Linux Centos guest and Windows host"
+date: 2017-10-20T02:57:00.000+02:00
+permalink: /2017/10/virtualbox-shared-folder-on-linux.html
+blogger_id: "6467788681062608814"
+tags: ["centos", "virtualbox"]
+---
+my main Linux user is "centos".<br />
+<br />
+in VirtualBox, right-click on your VM, Settings, Shared Folder, create an entry with Folder Path = d:\pierre\pvshared and Folder Name = pvshared , check "auto-mount" and "make permanent"<br />
+<br />
+Make sure you have the latest VBoxAdditions installed:<br />
+<br />
+cd /run/media/centos/VBOXADDITIONS_5.1.30_118389/<br />
+sudo ./autorun.sh<br />
+<br />
+#group vboxsf should already exist, so this should fail:<br />
+sudo groupadd vboxsf<br />
+sudo usermod -a -G vboxsf centos<br />
+<br />
+reboot!<br />
+<br />
+login again with your user (centos)<br />
+<br />
+id<br />
+uid=1000(centos) gid=1000(centos) groups=1000(centos),983(<b>vboxsf</b>) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023<br />
+<br />
+cd /media/sf_pvshared<br />
+touch pippo.txt<br />
+<br />
+you should see the file pippo.txt on your d:\pierre\pvshared folder in Windows<br />
+<br />
+I have also done<br />
+<br />
+sudo chmod 777 /media/sf_pvshared<br />
+<br />
+but I don't think it's required once the centos user is assigned to vboxsf group<br />
+<br />
+

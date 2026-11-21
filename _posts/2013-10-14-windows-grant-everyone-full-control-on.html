@@ -1,0 +1,27 @@
+---
+layout: post
+title: "Windows: grant Everyone full control on your external hard disk"
+date: 2013-10-14T22:02:00.000+02:00
+permalink: /2013/10/windows-grant-everyone-full-control-on.html
+blogger_id: "1219248338388465712"
+tags: ["windows"]
+---
+If you have Windows on your company's laptop, here is a good news: it could be worse, you could sleep under a bridge and being gnawed by rats. That's definitely worse than having to use Windows. Not MUCH worse, though.
+
+<br/>
+
+So you have plugged in your external hard drive and copied some files. Big mistake. Windows will immediately take ownership of your device and change ownership and access rights, so that the same hard drive will not be readable from a different machine with different users. This is Windows. Remember: Eastern Europe under Nazi occupation in WWII was worse off, so don't complain.
+
+<br/><br/>
+
+To grant Everyone full control on all files recursively, just do this:
+<br/>
+<pre>
+icacls g:\ /grant Everyone:f
+</pre>
+<br/>
+where g: is your external hard drive.
+<br/><br/>
+
+
+

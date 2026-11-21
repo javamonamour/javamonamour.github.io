@@ -1,0 +1,41 @@
+---
+layout: post
+title: "The specified size exceeds the maximum representable size"
+date: 2016-10-19T10:46:00.002+02:00
+permalink: /2016/10/the-specified-size-exceeds-maximum.html
+blogger_id: "7859385949535183752"
+tags: ["JVM"]
+---
+If you run this:
+<br/><br/>
+
+<pre>
+java -Xms4096m Bla
+</pre>
+<br/><br/>
+
+and you get this:
+<br/><br/>
+<pre>
+
+Invalid initial heap size: -Xms4096m
+The specified size exceeds the maximum representable size
+</pre>
+
+
+<br/><br/>
+
+
+it simply means that you are using a 32bit JVM instead of a 64bit JVM.
+
+
+<br/><br/>
+check "java -d64"
+
+<br/><br/>
+
+java -d64 -version
+Error: This Java instance does not support a 64-bit JVM.
+Please install the desired version.
+
+<br/><br/>

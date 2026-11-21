@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Change username in Unix"
+date: 2009-06-17T17:46:00.000+02:00
+permalink: /2009/06/change-username-in-unix.html
+blogger_id: "1293299589066411565"
+---
+usermod -l newuser olduser<br />groupmod oldgroup -n newgroup<br />usermod -d /home/newuser newuser  (to change home directory, must be root)<br />cat /etc/passwd to verify that it worked<br />cat /etc/group<br /><br />vi /etc/sudoers to change entry (as root)

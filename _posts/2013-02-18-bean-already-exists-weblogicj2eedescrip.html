@@ -1,0 +1,46 @@
+---
+layout: post
+title: "Bean already exists: \"weblogic.j2ee.descriptor.wl.JDBCPropertyBeanImpl JDBCDriverParams/Properties/Properties[user])"
+date: 2013-02-18T22:20:00.000+01:00
+permalink: /2013/02/bean-already-exists-weblogicj2eedescrip.html
+blogger_id: "8724847952967514352"
+tags: ["jdbc", "weblogic"]
+blogger_comments:
+  - author: "Mukesh"
+    date: 2014-06-12
+    html: "Deleted the appropriate xml from config\\jdbc and restart server. It worked for me."
+---
+I was getting this error while committing changes on a DataSource:
+<br/><br/>
+<pre>
+
+Bean already exists: "weblogic.j2ee.descriptor.wl.JDBCPropertyBeanImpl JDBCDriverParams/Properties
+/Properties[user])
+
+</pre>
+
+<br/><br/>
+
+Deleting the DataSource didn't help.
+
+<br/><br/>
+I tried editing manually config.xml, and I discovered that there was a swap file for vi to recover. I deleted it:
+
+<br/><br/>
+
+mv .config.xml.swp config.xml.swpORI
+
+<br/><br/>
+
+Then I discovered that in the config/jdbc folder there was still a xml file with the preexisting DataSource, although I had deleted it. So I removed it:
+
+<br/><br/>
+
+rm jdbc/AcmeDataSourceUS-0327-jdbc.xml
+
+<br/><br/>
+
+
+At this point I managed to recreate the DataSource.
+<br/><br/>
+Wow. What a fight.

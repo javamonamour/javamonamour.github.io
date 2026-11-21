@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Reflection with Oracle DB: getting the list of all columns with a given name"
+date: 2010-12-27T12:39:00.001+01:00
+permalink: /2010/12/reflection-with-oracle-db-getting-list.html
+blogger_id: "8418433466585142807"
+tags: ["oraclemetadata"]
+---
+SQL> select unique object_type  from user_objects order by object_type;<br />
+<br />
+OBJECT_TYPE<br />
+-------------------<br />
+INDEX<br />
+INDEX PARTITION<br />
+LOB<br />
+PACKAGE<br />
+PACKAGE BODY<br />
+PROCEDURE<br />
+QUEUE<br />
+SEQUENCE<br />
+SYNONYM<br />
+TABLE<br />
+TABLE PARTITION<br />
+TRIGGER<br />
+TYPE<br />
+VIEW<br />
+<br />
+with USER_OBJECTS you have information only on TABLES, not on COLUMNS.<br />
+<br />
+Also <br />
+Select * From User_Tables;  <br />
+<br />
+Select * From all_Tables;<br />
+<br />
+doesn't mention COLUMNS.<br />
+<br />
+To find out about COLUMNS, use ALL_TAB_COLUMNS:<br />
+<br />
+SELECT OWNER, TABLE_NAME, COLUMN_NAME FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME LIKE '%INSTANCE%' order by OWNER;<br />
+<br />
+<br />
+See <a href="http://en.wikipedia.org/wiki/Oracle_metadata">http://en.wikipedia.org/wiki/Oracle_metadata</a> for more on Oracle Metadata and useful SQL.

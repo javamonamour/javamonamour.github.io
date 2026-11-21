@@ -1,0 +1,83 @@
+---
+layout: post
+title: "WebLogic JSP generation and compilation"
+date: 2016-12-06T12:10:00.000+01:00
+permalink: /2016/12/weblogic-jsp-generation-and-compilation.html
+blogger_id: "229333886941507734"
+tags: ["jdt", "jsp", "weblogic"]
+---
+Doc ID 1306579.1 : "Since the 10.3.2 timeframe, we have been gradually moving away from using javac. In both the JSP engine and the EJB engines, we are now using a repackaged version of the JDT compiler to generate class files.  This was done as a performance optimization.  In 10.3.3 we have gone a step further and all but the EJB 2.1 entity beans are being generated dynamically using ASM.  There are options for directly interpreting JSP (OJSPNext for example)."
+
+
+<br/><br/>
+
+
+<br/><br/>
+
+
+To compile your JSPs: java weblogic.appc -verbose -compiler jdt YOUR.EAR (YOUR:EAR can also be a directory in exploded format)
+<br/><br/>
+<a href="https://docs.oracle.com/middleware/1212/wls/ADMRF/utils.htm#i1219183">https://docs.oracle.com/middleware/1212/wls/ADMRF/utils.htm#i1219183</a>
+
+<br/><br/>
+
+
+In some cases, using WebLogic 12.1.3 you get
+<br/><br/>
+"weblogic.utils.compiler.ToolFailureException: jspc failed with errors :weblogic.servlet.jsp.CompilationException: bla.jsp:8:2: The
+code of method _jspService(HttpServletRequest, HttpServletResponse) is exceeding the 65535 bytes limit"
+
+<br/><br/>
+
+while the same works in WLS 10.3.2
+
+<br/><br/>
+There is a patch available for WLS 12.2.1
+WLS-The Code of Method _jspService(HttpServletRequest, HttpServletResponse) Is Exceeding The 65535 Bytes Limit (Doc ID 1919706.1)... see bug 17968606 
+
+<br/><br/>
+
+Be aware that WLS 10.3.2 generated Java 5 .class files (see WebLogic Server Compiles JSP Using JDK 1.5 Even When JVM is Running with JDK 1.6 (Doc ID 1501536.1) ). it's by design! "compiled Java class data, version 49.0 (Java 1.5)"
+
+<br/><br/>
+
+You can make WLS use a different compiler for instance with -Dweblogic.jsp.javacompiler.javac=true , or using the option javacompiler in jsp-descriptor in weblogic.xml. Check also the flags -Dweblogic.jsp.javacompiler.javac.target=1.7 -Dweblogic.jsp.javacompiler.javac.source=1.7
+
+<br/><br/>
+
+You should also use the option jsp-descriptor precompile true in the weblogic.xml, and keepgenerated = true (and also precompile-continue )
+
+<br/><br/>
+
+References: 
+<br/><br/>
+<a href="http://blog.kifaru.be/2011/08/how-to-precompile-jsps-with-the-weblogic-wlappc-ant-task/">http://blog.kifaru.be/2011/08/how-to-precompile-jsps-with-the-weblogic-wlappc-ant-task/</a>
+
+<br/><br/>
+
+
+Classes involved: com.bea.core.repackaged.jdt.internal.compiler.* (in com.bea.core.repackaged.jdt_3.4.1.0.jar in WLS 10.3.2, and in weblogic.server.merged.jar for WLS 12.1.3 )
+and weblogic.utils.compiler.* (com.bea.core.utils.compiler_1.1.0.1.jar for WLS 10.3.2 , weblogic.server.merged.jar for WLS 12.1.3 ). Also weblogic.servlet.jsp.JspCLLManager, weblogic.jsp.internal.Javelin, weblogic.jsp.compiler.DiagnosticList
+<br/><br/>
+
+
+See also "Bug 23076699 : WLS 12.1.2- DEPLOY - THE CODE OF METHOD _JSPSERVICE, IS EXCEEDING THE 65535 BYTE" , patch 21984577 , patch 17968606 )
+
+
+<br/><br/>
+
+The value of the code_length item must be less than 65536 <a href="http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.9.1">http://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.9.1</a>
+
+<br/><br/>
+Using javap -verbose you can print all info about a .class, such as Major Version and code_length
+<br/><br/>
+
+
+Use also java weblogic.appc -compiler javac -source 1.7 -target 1.7 JspCompilerProblem.war   to determine which Version of bytecode to generate.
+
+
+
+
+
+
+

@@ -1,0 +1,47 @@
+---
+layout: post
+title: "VMWare and Ubuntu"
+date: 2010-07-15T21:55:00.001+02:00
+permalink: /2010/07/vmware-and-ubuntu.html
+blogger_id: "6145476987056711873"
+tags: ["ubuntu", "VMWare"]
+---
+Download image here<br />
+http://www.thoughtpolice.co.uk/vmware/<br />
+<br />
+login as notroot thoughtpolice<br />
+ctrl-alt-del to exit if you are in full screen mode<br />
+ctrl-g and ctrl-alt to get or lose focus<br />
+<br />
+to become root:<br />
+sudo su<br />
+root ubuntu<br />
+<br />
+<br />
+to add users:<br />
+adduser osbuser<br />
+<br />
+<br />
+More info (copied from their website):<br />
+<br />
+Change default language for the console:<br />
+<br />
+       1. Edit /home/USERNAME/.bash_profile<br />
+       2. Add the line export LANG=de (example given for German)<br />
+<br />
+Change keyboard for the console:<br />
+    sudo dpkg-reconfigure console-setup<br />
+<br />
+Apply software updates<br />
+    sudo aptitude update # refresh apt's cache<br />
+    sudo aptitude upgrade # run the upgrade <br />
+<br />
+Install new software<br />
+    sudo aptitude update # refresh apt's cache<br />
+    aptitude search pkgnames # lists all available software containing<br />
+    aptitude search pkgnames | grep -i WORD # lists all software containing WORD<br />
+    sudo aptitude install PACKAGE # installs PACKAGE (found from list above) <br />
+<br />
+Where is the GUI?<br />
+    It's not installed. This is a server installation. If you still want a gui, run:<br />
+    sudo aptitude install xorg gnome

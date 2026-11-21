@@ -1,0 +1,109 @@
+---
+layout: post
+title: "Poor man's firewall test"
+date: 2013-05-28T17:43:00.000+02:00
+permalink: /2013/05/poor-mans-firewall-test.html
+blogger_id: "4701532380419789390"
+tags: ["network"]
+---
+on the Destination host:<br />
+<br />
+<i>nc -l myhost.acme.com 3872</i><br />
+<br />
+and make sure you are actually listening:<br />
+<br />
+<i>netstat -an | grep 3872</i><br />
+tcp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 10.33.80.121:3872&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0.0.0.0:*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; LISTEN<br />
+<br />
+On the Source host:<br />
+<br />
+<i>echo ciao | nc myhost.acme.com 3872</i><br />
+<br />
+and the "ciao" should appear on Destination and the nc should exit.<br />
+<br />
+If you don't have nc installed, there are alternatives to nc:<br />
+<br />
+wlst or python:<br />
+<br />
+import socket<br />
+HOST = 'myhost.acme.com'<br />
+PORT = 3872<br />
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)<br />
+<pre>s.connect((HOST, PORT)) </pre>
+<pre>s.send('Hello, world')
+data = s.recv(1024)
+s.close()</pre>
+<pre>&nbsp;</pre>
+<pre>&nbsp;</pre>
+<pre>(see http://docs.python.org/release/2.5.2/lib/socket-example.html)</pre>
+<pre>&nbsp;</pre>
+<pre></pre>
+<pre>or simply  run</pre>
+<pre><i>telnet myhost.acme.com 3872</i></pre>
+<pre></pre>
+<pre>&nbsp;</pre>
+<pre>To receive data, run Java or python:</pre>
+<pre>&nbsp;</pre>
+<pre>from java.net import ServerSocket</pre>
+<pre>ss = ServerSocket(3872)</pre>
+<pre>ss.accept()</pre>
+<pre></pre>
+<pre></pre>
+<pre>(see <a href="http://docs.oracle.com/javase/6/docs/api/java/net/ServerSocket.html">http://docs.oracle.com/javase/6/docs/api/java/net/ServerSocket.html</a> )</pre>
+<pre>&nbsp;</pre>
+<pre>&nbsp;</pre>
+<pre>The great advantage of nc is that you can bind to any IP on the source host:</pre>
+<pre>&nbsp;</pre>
+<pre>nc -s "your_ip_here"</pre>
+<pre></pre>
+<pre></pre>
+<pre></pre>
+
+<br/>
+To check if nc could actually connect, do:
+<br/>
+echo ciao | nc....
+<br/>
+echo $?
+<br/><br/>
+1 means "unable to connect", 0 means "connected"
+<br/><br/>
+
+echo a | nc -s "10.26.20.116" -w 1 10.51.87.24 1722 ; echo $?
+<br/><br/>
+
+
+A script to check firewall could very well be:
+
+<pre class="brush: java">
+
+#!/bin/sh
+#This script is to check that a firewall rule is operational
+#Author name : Pierluigi Vernetto
+
+
+function checkFirewall {
+ sourceIPsArray=$(echo $sourceIPs | tr "," "\n")
+ destinationIPsArray=$(echo $destinationIPs | tr "," "\n")
+ for sourceIP in $sourceIPsArray 
+ do
+        for destinationIP in $destinationIPsArray
+        do
+            echo a | nc -s "$sourceIP" -w 2 $destinationIP $port
+            if [[ $? -eq 0 ]] 
+             then echo $sourceIP $destinationIP $port success
+             else echo $sourceIP $destinationIP $port failure
+            fi   
+        done
+    done
+}
+
+sourceIPs=10.56.218.91,10.56.218.93,10.56.218.90,10.56.218.94,10.56.218.92
+destinationIPs=10.56.128.10,10.56.128.8,10.56.128.9
+port=1522
+
+checkFirewall
+
+
+</pre>
+

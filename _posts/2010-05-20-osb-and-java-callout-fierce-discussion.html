@@ -1,0 +1,42 @@
+---
+layout: post
+title: "OSB and Java Callout, a fierce discussion"
+date: 2010-05-20T14:56:00.001+02:00
+permalink: /2010/05/osb-and-java-callout-fierce-discussion.html
+blogger_id: "26188147111785377"
+tags: ["javacallout", "OSB"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2012-03-06
+    html: "keep it easy and return an Array"
+  - author: "Jhon Gamboa"
+    date: 2012-03-06
+    html: "I need return a collection (List) in Java Callout Action, i recive only this content in any variable:<br /><br />how i do for read or convert to list in OSB message flow ?<br /><br />my escenary is, excecute un method in java callout, this method recive a colection and return a collection. i cant view estructur in message flow. only view &lt;con:java-content…..<br /><br />can any help me?<br /><br />I need your help.<br />Regards<br />jgamboita@gmail.com"
+---
+here is my take:<br />
+<br />
+<i>During a discussion, somebody said that we should use Java Callouts with great care, because <br />
+A) they introduce an extra artifact, a JAR file (or multiple JAR files) to maintain;<br />
+<br />
+and <br />
+<br />
+B) because there are performance issues tied to Java Callouts.<br />
+<br />
+For point A, I can only say that Ant exists :o) , so there is no real need to generate and deploy JARs by hand. Here http://ant.apache.org/ is Ant :o) , your friend.<br />
+<br />
+For point B, I am still looking for some documentation or actual POC proving that Java Callouts introduce a performance hit, and under which circumstances, and of which extent. So if you are aware of anything, please show us.<br />
+<br />
+I am not saying we SHOULD use Java Callouts, but I am not ruling out the technology in specific cases where it really makes sense.<br />
+<br />
+<br />
+Anyway here is the documentation from Oracle<br />
+<a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/pojo.html">http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/pojo.html</a><br />
+<br />
+<br />
+I found this particularly interesting:<br />
+<br />
+A single POJO can be invoked by one or more proxy services. All the threads in the proxy services invoke the same POJO. Therefore, the POJO must be thread safe. A class or method on a POJO can be synchronized, in which case it serializes access across all threads in all of the invoking proxy services. Any finer-grained concurrency (for example, to control access to a DB read results cache and implement stale cache entry handling) must be implemented by the POJO code. <br />
+<br />
+It is generally a bad practice for POJOs to create threads.&nbsp;</i><br />
+<i><br />
+</i>

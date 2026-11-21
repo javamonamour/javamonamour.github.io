@@ -1,0 +1,15 @@
+---
+layout: post
+title: "startWebLogic.cmd and other scripts"
+date: 2011-08-25T00:02:00.000+02:00
+permalink: /2011/08/startweblogiccmd-and-other-scripts.html
+blogger_id: "9162854565324605116"
+tags: ["startWebLogic"]
+---
+<div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">Often it's VERY confusing to find out the hierarchy of scripts: </span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><br />
+</div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">$DOMAIN_HOME\<b>startWebLogic</b>.cmd  -&gt;</span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">&nbsp;&nbsp;&nbsp; %DOMAIN_HOME%\bin\startWebLogic.cmd   -&gt;</span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; %DOMAIN_HOME%\bin\setDomainEnv.cmd  -&gt;</span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; %WL_HOME%\common\derby\bin\startNetworkServer.cmd</span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="font-size: small;">%WL_HOME%\common\bin\commEnv.cmd&nbsp; -&gt;</span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; %WL_HOME%\common\bin\setPatchEnv.cmd</span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="font-size: small;">%DOMAIN_HOME%\bin\setOSBDomainEnv.cmd</span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><br />
+</div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><br />
+</div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><br />
+</div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">$DOMAIN_HOME\bin\<b>startManagedWebLogic</b>.cmd -&gt;</span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">&nbsp;&nbsp;&nbsp;&nbsp; </span><span style="font-size: small;">%DOMAIN_HOME%\bin\startWebLogic.cmd</span></div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><br />
+</div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><br />
+</div><div style="font-family: &quot;Courier New&quot;,Courier,monospace;"><span style="font-size: small;">%WL_HOME%\server\bin\<b>startNodeManager</b>.cmd&nbsp; -&gt;</span></div><span style="font-size: small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; %WL_HOME%\common\bin\commEnv.cmd</span></span>

@@ -1,0 +1,139 @@
+---
+layout: post
+title: "Enabling Swagger in a Java EE application"
+date: 2019-05-02T08:43:00.000+02:00
+permalink: /2019/05/enabling-swagger-in-java-ee-application.html
+blogger_id: "6824680158692625018"
+blogger_comments:
+  - author: "Alejandro"
+    date: 2021-11-04
+    html: "Where is the generated JSON or where can I check the generated documentation?"
+---
+This should be enough:<br />
+<br />
+0) add Maven dependencies:<br />
+<br />
+com.wordnik:swagger-jaxrs_2.10:1.3.1<br />
+<br />
+<br />
+1) with an Application, register the Swagger jaxrs resources:<br />
+<br />
+<pre class="brush: java">
+import java.util.Set;
+
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+
+@ApplicationPath("/rest")
+public class JaxRsActivator extends Application {
+
+ @Override
+ public Set&lt;Class&lt;?>> getClasses() {
+  Set&lt;Class&lt;?>> resources = new java.util.HashSet&lt;>();
+  resources.add(com.wordnik.swagger.jaxrs.listing.ApiListingResource.class);
+  resources.add(com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider.class);
+  resources.add(com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON.class);
+  resources.add(com.wordnik.swagger.jaxrs.listing.ResourceListingProvider.class);
+//  resources.add(BearerTokenFilter.class);
+  addRestResourceClasses(resources);
+  return resources;
+ }
+
+ private void addRestResourceClasses(Set&lt;Class&lt;?>> resources) {
+  resources.add(BlaService.class);
+  resources.add(MumbleService.class);
+ }
+
+}
+
+
+</pre><br />
+<br />
+2) register the Swagger configuration:<br />
+<br />
+<pre class="brush: java">
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+
+import com.wordnik.swagger.config.ConfigFactory;
+import com.wordnik.swagger.config.ScannerFactory;
+import com.wordnik.swagger.config.SwaggerConfig;
+import com.wordnik.swagger.jaxrs.config.DefaultJaxrsScanner;
+import com.wordnik.swagger.jaxrs.reader.DefaultJaxrsApiReader;
+import com.wordnik.swagger.reader.ClassReaders;
+
+@WebServlet(name = "SwaggerJaxrsConfig", loadOnStartup = 1)
+public class SwaggerJaxrsConfig extends HttpServlet {
+
+ @Override
+ public void init(ServletConfig servletConfig) {
+  try {
+   super.init(servletConfig);
+   SwaggerConfig swaggerConfig = new SwaggerConfig();
+   ConfigFactory.setConfig(swaggerConfig);
+   swaggerConfig.setBasePath("/rest");
+   swaggerConfig.setApiVersion("2.1");
+   ScannerFactory.setScanner(new DefaultJaxrsScanner());
+   ClassReaders.setReader(new DefaultJaxrsApiReader());
+  } catch (ServletException e) {
+   System.out.println(e.getMessage());
+  }
+ }
+}
+
+</pre><br />
+<br />
+<br />
+<br />
+3) then you can annotare your services methods:<br />
+<br />
+<pre class="brush: java">
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
+
+@Path("/pippo")
+@Consumes({ MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_JSON })
+@Api(value = "/pippo", description = "REST service end-points exposed to Pippo")
+public class PippoService {
+ @GET
+ @Path("/profiles")
+ @Produces(MediaType.APPLICATION_JSON)
+ @ApiOperation(value = "All Pippos", notes = "List all Pippos")
+ @ApiResponses(value = { @ApiResponse(code = 200, message = "OK"), @ApiResponse(code = 500, message = "Server error, check log files") })
+ public List<Pippo> listPippobyQuery(
+                 @ApiParam(value = "the hostname where Pippo resides") @QueryParam("hostname") String hostName) {
+
+  return listPippo(hostName);
+ }
+}
+
+
+</pre><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

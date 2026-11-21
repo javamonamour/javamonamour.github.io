@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Stuck Threads when using JCA FileAdapter"
+date: 2011-10-30T21:38:00.001+01:00
+permalink: /2011/10/stuck-threads-when-using-jca.html
+blogger_id: "5374354624698859285"
+tags: ["FileAdapter", "JCA"]
+---
+you will notice that the Server Health has a Warning, and there are 5 stuck threads<br />
+<br />
+one of this type:<br />
+<br />
+<i><br />
+"[STUCK] ExecuteThread: '7' for queue: 'weblogic.kernel.Default (self-tuning)'" TIMED_WAITING<br />
+<br />
+java.lang.Thread.sleep(Native Method)<br />
+<br />
+oracle.tip.adapter.file.inbound.PollWork.run(PollWork.java:369)<br />
+<br />
+weblogic.work.ContextWrap.run(ContextWrap.java:41)<br />
+<br />
+weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)<br />
+<br />
+weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)<br />
+<br />
+weblogic.work.ExecuteThread.run(ExecuteThread.java:178)<br />
+<br />
+</i><br />
+<br />
+and 4 of this type:<br />
+<br />
+<i> <br />
+"[STUCK] ExecuteThread: '4' for queue: 'weblogic.kernel.Default (self-tuning)'" waiting for lock oracle.tip.adapter.file.inbound.FilesToProcess@4bdddc TIMED_WAITING<br />
+<br />
+java.lang.Object.wait(Native Method)<br />
+<br />
+oracle.tip.adapter.file.inbound.FilesToProcess.dequeueToProcess(FilesToProcess.java:101)<br />
+<br />
+oracle.tip.adapter.file.inbound.ProcessWork.run(ProcessWork.java:269)<br />
+<br />
+weblogic.work.ContextWrap.run(ContextWrap.java:41)<br />
+<br />
+weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)<br />
+<br />
+weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)<br />
+<br />
+weblogic.work.ExecuteThread.run(ExecuteThread.java:178)<br />
+<br />
+</i><br />
+<br />
+<br />
+according to <a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/jcatransport/transport.html#wp1107788">Oracle documentation</a> for the DB adapter this is normal. They don't mention File Adapter....<br />
+<br />
+<br />
+The solution is to create a WorkManager with the option “ignore stuck threads” and assign it as a dispatch policy to each Proxy Service using the FileAdapter

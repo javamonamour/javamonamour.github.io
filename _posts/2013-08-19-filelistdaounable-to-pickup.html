@@ -1,0 +1,17 @@
+---
+layout: post
+title: "FileListDAO::Unable to pickup"
+date: 2013-08-19T12:46:00.000+02:00
+permalink: /2013/08/filelistdaounable-to-pickup.html
+blogger_id: "5020667768054178145"
+---
+We use HAFileAdapter to read files from a shared folder. Occasionally we find in the logs
+<br/><br/>
+<i>FileListDAO::Unable to pickup [BLA], this error will ignored</i>
+<br/><br/>
+2 Managed Servers at the same time have detected the file with their FilePoller, so the 2 of them at the same time run to get the exclusive lock on the file by updating the table FILEADAPTER_IN to set PROCESSED = 1, but only one of them gets it, the other gets no lock and logs a warning saying "I was unable to get the lock". This is not an issue, actually it should not even be a warning at all, since it's meant to work that way.
+<br/><br/>
+This is done in  FileListDAO: public boolean claimLock(FileInfo fileInfo)
+
+
+

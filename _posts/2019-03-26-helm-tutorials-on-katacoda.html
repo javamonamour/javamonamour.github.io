@@ -1,0 +1,57 @@
+---
+layout: post
+title: "Helm tutorials on Katacoda"
+date: 2019-03-26T16:30:00.000+01:00
+permalink: /2019/03/helm-tutorials-on-katacoda.html
+blogger_id: "2988379571710418896"
+tags: ["helm"]
+---
+I have been through some youtube tutorials on Helm but I found them too blablaistic. I like essential, crisp and down to earth presentations, not all-encompassing philosophical sermons. <br />
+<br />
+<a href="https://www.katacoda.com/aptem/scenarios/helm">https://www.katacoda.com/aptem/scenarios/helm</a><br />
+<br />
+<a href="https://www.katacoda.com/javajon/courses/kubernetes-pipelines/helm">https://www.katacoda.com/javajon/courses/kubernetes-pipelines/helm</a><br />
+<br />
+<br />
+curl https://raw.githubusercontent.com/kubernetes/helm/master/scripts/get | bash<br />
+helm init<br />
+helm repo update<br />
+kubectl get pods -n kube-system<br />
+helm version<br />
+<br />
+in Chart.yaml there is basically nothing (version and chartname)<br />
+<br />
+in equirements.yaml there are dependencies <br />
+<br />
+in templates/configmap.yaml the ConfigMap<br />
+<br />
+in templates/service.yaml the Service Definition (with port/nodePort)<br />
+<br />
+in templates/pv.yaml the PersistenVolume <br />
+<br />
+<br />
+helm dependency update lets-chat<br />
+<br />
+helm inspect lets-chat<br />
+<br />
+helm install lets-chat --name demo -f my_values.yml --debug --dry-run<br />
+<br />
+helm install lets-chat --name demo --namespace demo -f my_values.yml<br />
+<br />
+helm list<br />
+<br />
+helm status demo<br />
+<br />
+kubectl get pods -n demo<br />
+<br />
+sed -i 's/0.4.7/0.4.6/g' lets-chat/Chart.yaml<br />
+<br />
+helm upgrade demo lets-chat --set replicas=2<br />
+<br />
+helm history demo<br />
+<br />
+helm rollback demo 1<br />
+<br />
+<br />
+<br />
+

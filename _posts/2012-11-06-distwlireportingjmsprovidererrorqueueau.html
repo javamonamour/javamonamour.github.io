@@ -1,0 +1,88 @@
+---
+layout: post
+title: "OSB JMS reporting: dist_wli.reporting.jmsprovider_error.queue_auto"
+date: 2012-11-06T07:53:00.001+01:00
+permalink: /2012/11/distwlireportingjmsprovidererrorqueueau.html
+blogger_id: "9115201143994245107"
+tags: ["jms", "OSB", "reporting"]
+blogger_comments:
+  - author: "Efrén Villamagua"
+    date: 2016-08-31
+    html: " com.bea.wli.reporting.jmsprovider.runtime.ReportMessage Object is serialized in the body element. --- not correct<br /><br />It´s 64-based encoded"
+---
+Report messages are saved to a JMS queue dist_wli.reporting.jmsprovider.queue_auto, then persisted to a DB, the tables are WLI_QS_REPORT_ATTRIBUTE/WLI_QS_REPORT_DATA and the DataSource is wlsbjmsrpDataSourc.<br />
+<br />
+There is a component, ReportingMDB, who consumes the messages from dist_wli.reporting.jmsprovider.queue_auto and stores in the DB.<br />
+<br />
+When something goes wrong and the message cannot be persisted to DB, the message is still consumed from dist_wli.reporting.jmsprovider.queue_auto, but it is stored in <br />
+dist_wli.reporting.jmsprovider_error.queue_auto.<br/>
+<br />
+&nbsp;It's a good practice to monitor this dist_wli.reporting.jmsprovider_error.queue_auto queue for messages.
+<br/><br/>
+
+These messages in WebLogic console look like<br/><br/>
+
+ObjectMessage[ID:<200612.1321621841486.0>,com.bea.wli.reporting.jmsprovider.runtime.ReportMessage@2e9846b]
+
+<br/><br/>
+JMS_BEA_DeliveryFailureReason 2 java.lang.Integer<br/>
+MSGTYPE 1 java.lang.Integer<br/>
+REPORTINGDATATYPE 1 java.lang.Integer<br/>
+JMSXDeliveryCount 1 java.lang.Integer<br/>
+<br/><br/>
+
+MSGTYPE is always set to 1
+
+
+
+See also <a href="/2011/08/dissecting-osb-jms-reporting-provider.html">/2011/08/dissecting-osb-jms-reporting-provider.html</a>
+
+<br/><br/>
+
+To read those messages, you can use this code <a href="http://jvzoggel.wordpress.com/2012/02/15/oracle-service-bus-logging-tracing-iii-create-custom-report-provider/">http://jvzoggel.wordpress.com/2012/02/15/oracle-service-bus-logging-tracing-iii-create-custom-report-provider/</a>
+
+<br/><br/>
+<br/><br/>
+
+If you export the JMS message using the "View Messages/Export" facility of WebLogic console you get this:
+
+<pre name="code" class="brush: xml">
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;JMSMessageExport>
+    &lt;mes:WLJMSMessage xmlns:mes="http://www.bea.com/WLS/JMS/Message">
+        &lt;mes:Header>
+            &lt;mes:JMSMessageID>ID:&lt;200612.1321621841486.0>&lt;/mes:JMSMessageID>
+            &lt;mes:JMSDeliveryMode>PERSISTENT&lt;/mes:JMSDeliveryMode>
+            &lt;mes:JMSExpiration>0&lt;/mes:JMSExpiration>
+            &lt;mes:JMSPriority>4&lt;/mes:JMSPriority>
+            &lt;mes:JMSRedelivered>false&lt;/mes:JMSRedelivered>
+            &lt;mes:JMSTimestamp>1321621841486&lt;/mes:JMSTimestamp>
+            &lt;mes:Properties>
+                &lt;mes:property name="JMS_BEA_DeliveryFailureReason">
+                    &lt;mes:Int>2&lt;/mes:Int>
+                &lt;/mes:property>
+                &lt;mes:property name="MSGTYPE">
+                    &lt;mes:Int>1&lt;/mes:Int>
+                &lt;/mes:property>
+                &lt;mes:property name="REPORTINGDATATYPE">
+                    &lt;mes:Int>1&lt;/mes:Int>
+                &lt;/mes:property>
+                &lt;mes:property name="JMSXDeliveryCount">
+                    &lt;mes:Int>1&lt;/mes:Int>
+                &lt;/mes:property>
+            &lt;/mes:Properties>
+        &lt;/mes:Header>
+        &lt;mes:Body>
+            &lt;mes:Object>rO0ABXNyADdjb20uYmVhLndsaS5yZXBvcnRpbmcuam1zcHJvdmlkZXIucnVudGltZS5SZXBvcnRNZXNzYWdlie8aww8dKHQCAARbAApiaW5QYXlsb2FkdAACW0JMAAhtZXRhZGF0YXQAH0xvcmcvYXBhY2hlL3htbGJlYW5zL1htbE9iamVjdDtMAApzdHJQYXlsb2FkdAASTGphdmEvbGFuZy9TdHJpbmc7TAAKeG1sUGF5bG9hZHEAfgACeHBwc3IAQm9yZy5hcGFjaGUueG1sYmVhbnMuaW1wbC52YWx1ZXMuWG1sT2JqZWN0QmFzZSRTZXJpYWxpemVkUm9vdE9iamVjdAAAAAAAAAABAwAAeHB2cgAsY29tLmJlYS53bGkucmVwb3J0aW5nLk1lc3NhZ2Vjb250ZXh0RG9jdW1lbnQAAAAAAAAAAAAAAHhwdwYAAAABAAF0Awk8cmVwOm1lc3NhZ2Vjb250ZXh0IHhtbG5zOnJlcD0iaHR0cDovL3d3dy5iZWEuY29tL3dsaS9yZXBvcnRpbmciPjxyZXA6Y29udGVudC1lbmNvZGluZz5VVEYtODwvcmVwOmNvbnRlbnQtZW5jb2Rpbmc+PHJlcDpsYWJlbHM+bWVzc2FnZUlEPTwvcmVwOmxhYmVscz48cmVwOmluYm91bmQtZW5kcG9pbnQgbmFtZT0iUHJveHlTZXJ2aWNlJFBob2VuaXhfUHVyY2hhc2VPcmRlciRQUyRQdXJjaGFzZU9yZGVyX0ZGTVdfUFMiPjxyZXA6c2VydmljZT48cmVwOm9wZXJhdGlvbj5SZWFkPC9yZXA6b3BlcmF0aW9uPjwvcmVwOnNlcnZpY2U+PHJlcDp0cmFuc3BvcnQ+PHJlcDp1cmk+amNhOi8vZWlzL0ZpbGVBZGFwdGVyPC9yZXA6dXJpPjxyZXA6bW9kZT5yZXF1ZXN0PC9yZXA6bW9kZT48cmVwOnF1YWxpdHlPZlNlcnZpY2U+YmVzdC1lZmZvcnQ8L3JlcDpxdWFsaXR5T2ZTZXJ2aWNlPjwvcmVwOnRyYW5zcG9ydD48L3JlcDppbmJvdW5kLWVuZHBvaW50PjxyZXA6b3JpZ2luPjxyZXA6c3RhdGU+UkVRVUVTVDwvcmVwOnN0YXRlPjxyZXA6bm9kZT5QUExfTmVzc29yYV9QT19GRk1XX0ZpbGVQb2xsZXJfZmlsZTwvcmVwOm5vZGU+PHJlcDpwaXBlbGluZT5QUExfTmVzc29yYV9QT19GRk1XX0ZpbGVQb2xsZXJfZmlsZV9yZXF1ZXN0PC9yZXA6cGlwZWxpbmU+PHJlcDpzdGFnZT5SZXBvcnRFbnRyeTwvcmVwOnN0YWdlPjwvcmVwOm9yaWdpbj48cmVwOnRpbWVzdGFtcD4yMDExLTExLTE4VDE0OjEwOjQxLjM4NSswMTowMDwvcmVwOnRpbWVzdGFtcD48L3JlcDptZXNzYWdlY29udGV4dD53AQB4dAAmUHVyY2hhc2UgT3JkZXIgRmlsZSBjb25zdW1lZCBmcm9tIEZGTVdw&lt;/mes:Object>
+        &lt;/mes:Body>
+    &lt;/mes:WLJMSMessage>
+&lt;/JMSMessageExport>
+
+</pre>
+
+<br/><br/>
+
+Evidently the com.bea.wli.reporting.jmsprovider.runtime.ReportMessage Object is serialized in the body element.
+<br/><br/>
+
+

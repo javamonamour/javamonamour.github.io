@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Representing Collections in WSDL and XSDs"
+date: 2010-06-27T04:59:00.004+02:00
+permalink: /2010/06/representing-collections-in-wsdl-and.html
+blogger_id: "4479869340473325253"
+tags: ["xsds"]
+---
+Some people like to represent a Collection of elements as a sequence, without an aggregation element. For instance, if I want to return an array of Location object, I return you this:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;getLocations&gt;
+&nbsp;&nbsp; &lt;Location&gt;Roma&lt;/Location&gt;
+&nbsp;&nbsp; &lt;Location&gt;New York&lt;/Location&gt;
+&nbsp;&nbsp; &lt;Location&gt;Ouagadougou&lt;/Location&gt;
+&lt;getLocations&gt;
+</pre><br />
+being getLocation the operation name.<br />
+<br />
+I think this sucks, big time.<br />
+<br />
+I would much rather have:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;getLocations&gt;
+&nbsp;&nbsp;&lt;Locations&gt;
+&nbsp;&nbsp; &nbsp;&nbsp; &lt;Location&gt;Roma&lt;/Location&gt;
+&nbsp;&nbsp; &nbsp;&nbsp; &lt;Location&gt;New York&lt;/Location&gt;
+&nbsp;&nbsp; &nbsp;&nbsp; &lt;Location&gt;Ouagadougou&lt;/Location&gt;
+&nbsp;&nbsp; &lt;/Locations&gt;
+&lt;getLocations&gt;
+</pre><br />
+It makes the XML a lot more readable and easier to manipulate.<br />
+You can add extra info by keeping it hierarchically separated from the collection.<br />
+Besides, this is the way the default unmarshaling mechanism from Java (EJB) to OSB works for any type of Java Collection - Sets, Lists, Arrays.

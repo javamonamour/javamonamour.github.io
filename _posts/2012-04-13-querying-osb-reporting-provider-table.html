@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Querying the OSB Reporting Provider table"
+date: 2012-04-13T11:57:00.001+02:00
+permalink: /2012/04/querying-osb-reporting-provider-table.html
+blogger_id: "4524966844312434043"
+tags: ["OSB", "reporting"]
+---
+We are using the OSB JMS Reporting Provider to track messages.<br />
+We must build custom reports to track the activity within a range of time.<br />
+<br />
+The only problem is that the key-value pairs are stored as SEMICOLON (;) separated lists key1=value1;key2=value2....<br />
+<br />
+Nothing is easier that writing SQL queries supported by PL/SQL functions.<br />
+<br />
+Here how to create the function and types needed:<br />
+http://stackoverflow.com/questions/1089508/how-to-best-split-csv-strings-in-oracle-9i<br />
+<br />
+if you run<br />
+select tokenize('key1=value1;key2=value2', ';') from dual;<br />
+<br />
+you get the list<br />
+GM.TOKEN_LIST('key1=value1','key2=value2')<br />
+<br />
+Since my PL/SQL skills are very basic, I will follow a <a href="http://techblog.steveandyvonne.com/2010/03/i-needed-to-parse-csv-but-wanted-to.html">pure SQL Functions approach</a>:<br />
+<br />
+<br />
+WITH csv_data AS (SELECT '&your_csv_string' AS CSV ,'[^ |;]+' REGEX FROM DUAL)<br />
+<br />
+SELECT regexp_replace(TRIM(REGEXP_SUBSTR(A.CSV, A.REGEX, 1, LEVEL)),'[^[:print:]]', '') STR FROM csv_data a CONNECT BY LEVEL <= REGEXP_COUNT(A.CSV, A.REGEX) ORDER BY 1
+
+Honestly I prefer a "poor man's" approach, that I will explain in <a href="/2012/04/extracting-data-with-sql-from.html">another post</a>.

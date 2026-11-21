@@ -1,0 +1,22 @@
+---
+layout: post
+title: "rebuilding indexes to speed up the OSB reporting "
+date: 2012-11-26T12:56:00.002+01:00
+permalink: /2012/11/rebuiulding-indexes-to-speed-up-osb.html
+blogger_id: "6722889212534928011"
+tags: ["index", "oracledb", "OSB"]
+---
+Aparently there is a heated debate on whether rebuilding indexes is actually helpful. To me, it worked like a charm. <br/>
+Before, a simple "select count(*) from WLI_QS_REPORT_ATTRIBUTE;" would take 15 seconds, even if my table was almost empty.<br/>After the rebuild, it was taking milliseconds.
+
+
+<br/>
+<br/>
+<br/>
+<br/>ALTER INDEX IX_WLI_QS_REPORT_ATTRIBUTE_DM REBUILD;<br/>ALTER INDEX IX_WLI_QS_REPORT_ATTRIBUTE_IED REBUILD;<br/>
+<br/>
+<br/>
+
+
+This wiki contrains a lot of valuable advice on how to monitor index usage:
+<a href="http://www.orafaq.com/wiki/Oracle_database_Performance_Tuning_FAQ">http://www.orafaq.com/wiki/Oracle_database_Performance_Tuning_FAQ</a>

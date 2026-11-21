@@ -1,0 +1,50 @@
+---
+layout: post
+title: "OSB strange blocked threads while hammering a server "
+date: 2013-09-26T17:41:00.002+02:00
+permalink: /2013/09/osb-strange-blocked-threads-while.html
+blogger_id: "6179381097010258058"
+tags: ["OSB"]
+---
+I was pounding with requests a service with TRACING and LOGGING enabled, at debug level.
+This seemps to create a lot of contention. Avoid using tracing in any critical environment (prod).
+
+
+<br />
+<br />
+<pre>
+
+"[ACTIVE] ExecuteThread: '82' for queue: 'weblogic.kernel.Default (self-tuning)'" daemon prio=10 tid=0x00002aaacc3cc000 nid=0x1086 waiting for monitor entry [0x000000004b404000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+ at org.apache.xmlbeans.impl.store.Path.getCompiledPath(Path.java:136)
+ - waiting to lock <0x0000000767e381f0> (a java.lang.Class for org.apache.xmlbeans.impl.store.Path)
+ at org.apache.xmlbeans.impl.store.Path.getCompiledPath(Path.java:130)
+ at org.apache.xmlbeans.impl.store.Cursor._selectPath(Cursor.java:902)
+ at org.apache.xmlbeans.impl.store.Cursor.selectPath(Cursor.java:2634)
+ - locked <0x00000007f8276f38> (a org.apache.xmlbeans.impl.store.Locale)
+
+
+
+"[ACTIVE] ExecuteThread: '61' for queue: 'weblogic.kernel.Default (self-tuning)'" daemon prio=10 tid=0x00002aaaba01d800 nid=0xa59 waiting for monitor entry [0x0000000049ff0000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+ at com.bea.logging.RotatingFileStreamHandler.publish(RotatingFileStreamHandler.java:75)
+ - waiting to lock <0x0000000797c61b08> (a weblogic.logging.FileStreamHandler)
+ at java.util.logging.Logger.log(Logger.java:478)
+ at com.bea.logging.BaseLogger.log(BaseLogger.java:51)
+ at weblogic.logging.WLLogger.log(WLLogger.java:40)
+ at com.bea.logging.LoggingService.log(LoggingService.java:250)
+ at com.bea.wli.sb.messages.ServiceLogger.enterPipelinePair(ServiceLogger.java:1693)
+ at com.bea.wli.sb.pipeline.LoggingTracingStep.traceEnter(LoggingTracingStep.java:211)
+
+
+
+</pre>
+<br />
+<br />
+
+
+
+
+to be investigated.... If you find the same issue, please scream.
+
+

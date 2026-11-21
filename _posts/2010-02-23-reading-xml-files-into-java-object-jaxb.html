@@ -1,0 +1,51 @@
+---
+layout: post
+title: "Reading XML files into Java Object, the JAXB way"
+date: 2010-02-23T13:07:00.001+01:00
+permalink: /2010/02/reading-xml-files-into-java-object-jaxb.html
+blogger_id: "2170853168347069365"
+---
+package com.acme.integration.tools;<br />
+import java.io.File;<br />
+<br />
+import javax.xml.bind.JAXBContext;<br />
+import javax.xml.bind.JAXBException;<br />
+import javax.xml.bind.Unmarshaller;<br />
+<br />
+import webservices.processes.CreatePrepaidSubscriberProcess.CreatePrepaidSubscriberwithReturn;<br />
+<br />
+/**<br />
+&nbsp;* Helper class to load Java Objects from an XML document<br />
+&nbsp;* See test methods for usage&nbsp; <br />
+&nbsp;* @author pierre<br />
+&nbsp;*<br />
+&nbsp;* @param &lt;T&gt;<br />
+&nbsp;*/<br />
+<br />
+public class XMLLoader &lt;T&gt; {<br />
+&nbsp;&nbsp;&nbsp; public static void main(String[] args) throws JAXBException {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; testJAXBT();<br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp;&nbsp; private static void testJAXBT() throws JAXBException {<br />
+<b>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; XMLLoader&lt;CreatePrepaidSubscriberwithReturn&gt; loader = new XMLLoader&lt;CreatePrepaidSubscriberwithReturn&gt;();</b>&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; CreatePrepaidSubscriberwithReturn result = loader.getObjectFromXMLFile(CreatePrepaidSubscriberwithReturn.class, "resources/CreatePrepaidSubscriber.xml");<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; System.out.println(result.getSiebelMessage().getListOfAcmeCreatePrepaidAccountIo().getAcmeAccountLite().get(0).getListOfAcmeSubscriberLite().getAcmeSubscriberLite().get(0).getName());<br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+<b><br />
+&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; /**<br />
+&nbsp;&nbsp;&nbsp; &nbsp;* Loads an object from a XML file<br />
+&nbsp;&nbsp;&nbsp; &nbsp;* @param theClass<br />
+&nbsp;&nbsp;&nbsp; &nbsp;* @param fileName<br />
+&nbsp;&nbsp;&nbsp; &nbsp;* @return<br />
+&nbsp;&nbsp;&nbsp; &nbsp;* @throws JAXBException<br />
+&nbsp;&nbsp;&nbsp; &nbsp;*/<br />
+&nbsp;&nbsp;&nbsp; public T getObjectFromXMLFile(Class theClass, String fileName) throws JAXBException {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; T result = null;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; JAXBContext jc = JAXBContext.newInstance(theClass.getPackage().getName());<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Unmarshaller unmarshaller = jc.createUnmarshaller();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; result = (T)unmarshaller.unmarshal(new File(fileName));<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return result;<br />
+&nbsp;&nbsp;&nbsp; }</b><br />
+}

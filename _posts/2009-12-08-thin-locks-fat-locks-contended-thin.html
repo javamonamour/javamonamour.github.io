@@ -1,0 +1,16 @@
+---
+layout: post
+title: "Thin locks, Fat Locks, contended thin lock etc"
+date: 2009-12-08T15:05:00.000+01:00
+permalink: /2009/12/thin-locks-fat-locks-contended-thin.html
+blogger_id: "5458783023908707774"
+---
+voir <a href="http://download.oracle.com/docs/cd/E13188_01/jrockit/docs142/usingJRA/applocks.html">http://download.oracle.com/docs/cd/E13188_01/jrockit/docs142/usingJRA/applocks.html</a> <br />
+<br />
+A <b>Thin Lock</b> is one on which there is little contention, and only by <b>spinning threads</b> (the thread trying to acquire the lock is not suspended, but it keep polling the lock until it's available).<br />
+Such a Thin Lock with only Spinning Threads is called <b>contended thin lock</b>. <br />
+<br />
+When there is more contention, a Thin Lock is promoted to <b>Fat Lock</b>, and a list is made with all threads waiting to acquire the lock.<br />
+Threads trying to acquire a fat lock go to sleep, and are called <b>contended fat lock</b>.<br />
+<br />
+A Fat Lock might <b>deflate </b>to a Thin Lock if the JVM believes there is not much contention on the lock.

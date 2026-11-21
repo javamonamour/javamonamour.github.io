@@ -1,0 +1,52 @@
+---
+layout: post
+title: "OWASP Dependency Check maven plugin"
+date: 2017-10-18T15:10:00.003+02:00
+permalink: /2017/10/owasp-dependency-check-maven-plugin.html
+blogger_id: "818990617192481731"
+tags: ["owasp", "security"]
+---
+<a href="https://blog.lanyonm.org/articles/2015/12/22/continuous-security-owasp-java-vulnerability-check.html">https://blog.lanyonm.org/articles/2015/12/22/continuous-security-owasp-java-vulnerability-check.html</a><br />
+<br />
+<br />
+<a href="https://jeremylong.github.io/DependencyCheck/dependency-check-maven/index.html">https://jeremylong.github.io/DependencyCheck/dependency-check-maven/index.html</a><br />
+<br />
+<br />
+<a href="https://www.owasp.org/index.php/OWASP_Dependency_Check">https://www.owasp.org/index.php/OWASP_Dependency_Check</a><br />
+<br />
+<br />
+<a href="https://nvd.nist.gov/vuln/data-feeds">https://nvd.nist.gov/vuln/data-feeds</a><br />
+<br />
+<br />
+just run <br />
+<br />
+mvn dependency-check:check<br />
+<br />
+and you get a great report with all the vulnerabilities in your dependencies.... fantastic! Even a Jenkins plugin is available, so you don't need to modify all your poms.<br />
+<br />
+<br />
+To install it as Jenkins Plugin, install these plugins:<br />
+<br />
+http://updates.jenkins-ci.org/latest/dependency-check-jenkins-plugin.hpi<br />
+https://updates.jenkins.io/latest/token-macro.hpi<br />
+https://updates.jenkins.io/latest/analysis-core.hpi<br />
+https://updates.jenkins.io/latest/dashboard-view.hpi<br />
+https://updates.jenkins.io/latest/maven-plugin.hpi<br />
+http://updates.jenkins-ci.org/latest/apache-httpcomponents-client-4-api.hpi<br />
+http://updates.jenkins-ci.org/latest/javadoc.hpi<br />
+http://updates.jenkins-ci.org/latest/jsch.hpi<br />
+<br />
+<br />
+Interesting post on how to configure a separate jenkins task just to update the NIST repos in a common folder <a href="https://medium.com/@PrakhashS/checking-vulnerabilities-in-3rd-party-dependencies-using-owasp-dependency-check-plugin-in-jenkins-bedfe8de6ba8">https://medium.com/@PrakhashS/checking-vulnerabilities-in-3rd-party-dependencies-using-owasp-dependency-check-plugin-in-jenkins-bedfe8de6ba8</a>  to avoid checking for updates at every build.<br />
+<br />
+A similar post goes here <a href="https://blog.dominikschadow.de/2015/07/using-owasp-dependency-check-as-jenkins-plugin/https://blog.dominikschadow.de/2015/07/using-owasp-dependency-check-as-jenkins-plugin/">https://blog.dominikschadow.de/2015/07/using-owasp-dependency-check-as-jenkins-plugin/</a><br />
+<br />
+<br />
+A good test is to run it against the WebGoat <a href="https://github.com/WebGoat/WebGoat">https://github.com/WebGoat/WebGoat</a> but the repo is heavy and you need a good internet connection<br />
+<br />
+<br />
+Here <a href="https://jeremylong.github.io/DependencyCheck/general/dependency-check.pdf">https://jeremylong.github.io/DependencyCheck/general/dependency-check.pdf</a> a presentation of the plugin by Jeremy Long (OWASP)<br />
+<br />
+<br />
+<br />
+

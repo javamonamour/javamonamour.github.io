@@ -1,0 +1,112 @@
+---
+layout: post
+title: "WebLogic secured Web Application"
+date: 2013-01-24T10:28:00.001+01:00
+permalink: /2013/01/weblogic-secured-web-application.html
+blogger_id: "2344218881663453706"
+tags: ["security", "webapp"]
+---
+web.xml: <br/><br/>
+
+here I define a role "webuser" to protect my resources:
+<br/><br/>
+
+<pre name="code" class="brush: xml">
+
+&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+ id="WebApp_ID" version="2.5">
+ &lt;display-name>PVWebApp&lt;/display-name>
+
+ &lt;welcome-file-list>
+  &lt;welcome-file>index.html&lt;/welcome-file>
+  &lt;welcome-file>index.htm&lt;/welcome-file>
+  &lt;welcome-file>index.jsp&lt;/welcome-file>
+  &lt;welcome-file>default.html&lt;/welcome-file>
+  &lt;welcome-file>default.htm&lt;/welcome-file>
+  &lt;welcome-file>default.jsp&lt;/welcome-file>
+ &lt;/welcome-file-list>
+
+ &lt;security-constraint>
+  &lt;web-resource-collection>
+   &lt;web-resource-name>Success&lt;/web-resource-name>
+   &lt;url-pattern>/index.jsp&lt;/url-pattern>
+   &lt;http-method>GET&lt;/http-method>
+   &lt;http-method>POST&lt;/http-method>
+  &lt;/web-resource-collection>
+  &lt;auth-constraint>
+   &lt;role-name>webuser&lt;/role-name>
+  &lt;/auth-constraint>
+ &lt;/security-constraint>
+
+
+ &lt;login-config>
+  &lt;auth-method>FORM&lt;/auth-method>
+  &lt;realm-name>default&lt;/realm-name>
+  &lt;form-login-config>
+   &lt;form-login-page>/login.jsp&lt;/form-login-page>
+   &lt;form-error-page>/error.jsp&lt;/form-error-page>
+  &lt;/form-login-config>
+ &lt;/login-config>
+
+ &lt;security-role>
+  &lt;role-name>webuser&lt;/role-name>
+ &lt;/security-role>
+
+&lt;/web-app>
+
+</pre>
+
+<br/><br/>
+
+
+weblogic.xml: <br/><br/>
+
+here associate the role "webuser" to a principal myGroup
+
+<br/><br/>
+
+<pre name="code" class="brush: xml">
+
+&lt;!DOCTYPE weblogic-web-app PUBLIC "-//BEA Systems, Inc.//DTD Web Application 8.1//EN" "http://www.bea.com/servers/wls810/dtd/weblogic 810-web-jar.dtd">
+
+&lt;weblogic-web-app>
+
+  &lt;security-role-assignment>
+   &lt;role-name>webuser&lt;/role-name>
+   &lt;principal-name>myGroup&lt;/principal-name>
+  &lt;/security-role-assignment>
+
+&lt;/weblogic-web-app>
+
+</pre>
+
+<br/><br/>
+
+I have tried to record the creation of the myGroup and myUser in WebLogic, but I got a message "A security change to a role, policy, user, group or credential mapping was made, but this change was not recorded"
+
+<br/><br/> 
+
+Manually, just click on Security Realms, myrealm, Users and Groups, groups, new, create myGroup, then Users, create myUser and assing it the group "myGroup".
+<br/><br/>
+
+
+With WLST:<br/>
+
+<pre name="code" class="brush: java">
+connect('Pierluigi', 'weblogic1', 't3://myhost.com:7001')
+atnr=cmo.getSecurityConfiguration().getDefaultRealm().lookupAuthenticationProvider('DefaultAuthenticator')
+
+
+group = 'proton_group'
+atnr.createGroup(group,group)
+
+user = 'proton_user'
+password= 'proton_password'
+atnr.createUser(user,password,user)
+atnr.addMemberToGroup(group,user)
+
+</pre>
+

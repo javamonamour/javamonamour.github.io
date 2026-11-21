@@ -1,0 +1,48 @@
+---
+layout: post
+title: "JSF facelets, composition, layouts, templates"
+date: 2017-12-02T21:05:00.002+01:00
+permalink: /2017/12/jsf-facelets-composition-layouts.html
+blogger_id: "5594637394731344710"
+tags: ["jsf", "template"]
+---
+<a href="https://docs.oracle.com/javaee/7/javaserver-faces-2-2/vdldocs-facelets/toc.htm">https://docs.oracle.com/javaee/7/javaserver-faces-2-2/vdldocs-facelets/toc.htm</a> this is the Facelets documentation<br />
+<br />
+and this <a href="https://docs.oracle.com/javaee/7/javaserver-faces-2-2/vdldocs-facelets/ui/composition.html">https://docs.oracle.com/javaee/7/javaserver-faces-2-2/vdldocs-facelets/ui/composition.html</a>  is the ui:composition documentation<br />
+<br />
+<br />
+<br />
+RANT ON<br />
+<br />
+<i>Let's admit it, HTML UI development is sheer mess. <br />
+In OOP you learn about nice encapsulation, separation of concerns, tidy APIs, design-time validation, convention over configuration...  in HTML it's exactly the other way round, everything mixed up and it's just a verbose visually incomprehensible jungle, tons of implicit stuff has to be explicitly stated over and over, tons of useless boilerplate fluff make the code unreadable. It makes me really sick. With some better designed standard, the size of this crap could be reduced by a factor of 10 without any loss, actually gaining a lot in readability and maintainability. It's so evident.</i><br />
+<br />
+RANT OFF<br />
+<br />
+Here a decent tutorial (a bit too complicated) on templates:<br />
+<br />
+<iframe width="800" height="600" src="https://www.youtube.com/embed/2RBapjxatp4" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe><br />
+<br />
+code is here:<br />
+<br />
+<a href="https://github.com/discospiff/JavaFullStackEnterpriseWeb">https://github.com/discospiff/JavaFullStackEnterpriseWeb</a><br />
+<br />
+<br />
+in a JSF application you use a template, in which you insert contents defined in pages. <br />
+<br />
+In a template, to insert the content, you use <b>div+insert</b> (=<i>insertContent</i>) , <br />
+<br />
+In a page, to use a template, you use <b>composition</b> (=<i>useTemplate</i>)<br />
+<br />
+In a page, to define the content, you use <b>define</b> (=<i>defineContent</i>). <br />
+<br />
+Again: a template inserts stuff; a page defines stuff and uses a template to arrange it on a layout.<br />
+<br />
+<br />
+for a page, look here <a href="https://github.com/discospiff/JavaFullStackEnterpriseWeb/blob/master/PlantPlaces/WebContent/index.xhtml">https://github.com/discospiff/JavaFullStackEnterpriseWeb/blob/master/PlantPlaces/WebContent/index.xhtml</a> <br />
+<br />
+and the corresponding template is <a href="https://github.com/discospiff/JavaFullStackEnterpriseWeb/blob/master/PlantPlaces/WebContent/template.xhtml">https://github.com/discospiff/JavaFullStackEnterpriseWeb/blob/master/PlantPlaces/WebContent/template.xhtml</a><br />
+<br />
+<br />
+<br />
+

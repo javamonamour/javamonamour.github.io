@@ -1,0 +1,32 @@
+---
+layout: post
+title: "java-content in OSB XQuery"
+date: 2012-07-13T07:38:00.001+02:00
+permalink: /2012/07/java-content-in-osb-xquery.html
+blogger_id: "6988658585338125303"
+tags: ["customXpath", "OSB"]
+---
+<a href="http://docs.oracle.com/cd/E23943_01/admin.1111/e15867/context.htm#i1106669">http://docs.oracle.com/cd/E23943_01/admin.1111/e15867/context.htm#i1106669</a><br />
+<br />
+<i>The content's metadata (that is, its key) can be handled as any other XML, for example in an XQuery such as $pojo/java-content/@ref. This may be useful for logging or debugging, but the content of the object cannot be directly accessed.<br />
+</i><br />
+<br />
+The reference to the Java object cannot be passed to an XQuery, who can in turn pass it to a Custom XPath for further manipulation in Java????<br />
+<br />
+A practical case; I have a Java Callout creating a Java object for me:<br />
+<br />
+public static ConcurrentHashMap<String, XmlObject> createPriceMap() {<br />
+ConcurrentHashMap<String, XmlObject> result = new ConcurrentHashMap<String, XmlObject>();<br />
+return result ;<br />
+}<br />
+<br />
+I assign it to a $mymap variable; if I log $mymap I get:<br />
+<br />
+&lt;con:java-content ref="jcid:72c9f10e:1387982c6c6:-7fb8" xmlns:con="http://www.bea.com/wli/sb/context"/><br />
+<br />
+<br />
+Yet I can pass this $mymap as input parameter to other Java Callouts, no tricks, no problem.<br />
+<br />
+Yet it seems that in XQuery there is not a specific syntax to pass $mymap...not a way to get a reference to the pipeline context to retrieve the Java object based on its ref. how sad.<br />
+<br />
+A workaround could be to store the Java Object in a global hashmap, accessible through a Java static method, using the java-content ref as a key, and remember to remove it otherwise it will leak memory...

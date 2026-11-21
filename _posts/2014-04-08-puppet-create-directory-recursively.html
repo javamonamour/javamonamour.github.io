@@ -1,0 +1,88 @@
+---
+layout: post
+title: "puppet create directory recursively"
+date: 2014-04-08T18:41:00.000+02:00
+permalink: /2014/04/puppet-create-directory-recursively.html
+blogger_id: "8872911321612461537"
+tags: ["puppet"]
+---
+The whole VERY OLD rant is here&nbsp; <a href="http://projects.puppetlabs.com/issues/86">http://projects.puppetlabs.com/issues/86</a><br />
+Why on earth in 8 years the Puppet Gods have kept ignoring this very basic and common need, they only know.<br />
+<br />
+In a nutshell, I have a variable<br />
+$mypath='/opt/oracle/fmw11_1_1_6'<br />
+file { "$mypath":<br />
+&nbsp;&nbsp; ensure =&gt; directory,<br />
+&nbsp;&nbsp; owner =&gt; 'soa' <br />
+}<br />
+<br />
+This will of course fail if /opt and /opt/oracle have not been already defined.<br />
+<br />
+Of course since $mypath is a configuration value there is&nbsp; no way I can hardcode all the parents directories.<br />
+<br />
+Hence I am screwed, and Puppet doesn't offer me any way around.<br />
+<br />
+I can think of only one elegant way, that is writing a Ruby function (I am not good in Puppet stinky DSL) "pathExpand" to transform a full path into an array of his components:<br />
+<br />
+assert [ '/opt', '/opt/oracle', '/opt/oracle/fmw11_1_1_6' ] = pathExpand('/opt/oracle/fmw11_1_1_6')<br />
+<br />
+and a define "conditionalDirectory($mypath ):<br />
+<br />
+if (! defined($mypath)) {<br />
+&nbsp; file { "$mypath": <br />
+&nbsp;&nbsp;&nbsp; ensure =&gt; directory,<br />
+&nbsp; }<br />
+}<br />
+<br />
+<br />
+<br />
+All this sucks, but not as much as Puppet DSL anyway.<br />
+<br />
+<br />
+
+This is a Puppet solution (hack) to the problem:
+
+<pre class="brush: bash">
+
+define common::mkdirp(
+  $owner     = 'root',
+  $group     = 'root',
+  $exec_path = '/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin') {
+
+  exec { "create ${name}":
+    command     => "mkdir -p ${name}",
+    creates     => $name,
+    path        => $exec_path,
+  }
+
+  common::ownership { $name:
+    user        => $owner,
+    group       => $group,
+    exec_path   => $exec_path,
+    require     => Exec["create ${name}"]
+  }
+
+}
+
+define common::ownership(
+  $user,
+  $group     = undef,
+  $dir       = $name,
+  $exec_path = '/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin'
+) {
+
+  $real_group = $group ? {
+    undef   => $user,
+    default => $group
+  }
+
+  exec { "full '${dir}' directory ownership for ${user}:${real_group}":
+    path    => $exec_path,
+    command => "chown -R ${user}:${real_group} ${dir}",
+    unless  => "test `find ${dir} -user ${user} -group ${real_group} | wc -l` -eq `find ${dir} | wc -l`",
+  }
+
+}
+</pre>
+
+

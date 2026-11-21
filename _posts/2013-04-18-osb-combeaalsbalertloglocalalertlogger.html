@@ -1,0 +1,38 @@
+---
+layout: post
+title: "OSB: com.bea.alsb.alert.log.LocalAlertLogger NullPointerException"
+date: 2013-04-18T11:55:00.002+02:00
+permalink: /2013/04/osb-combeaalsbalertloglocalalertlogger.html
+blogger_id: "991130214941485350"
+tags: ["OSB"]
+---
+We have noticed that when 2 different users access sbconsole at the same time, we have a NullPointerException in a Managed server:
+
+<br/><br/>
+<pre>
+
+RuntimeException thrown by rmi server: com.bea.alsb.alert.log.LocalAlertLogger.next(Ljava.lang.String;I)
+java.lang.NullPointerException.
+java.lang.NullPointerException
+at com.bea.alsb.alert.log.LocalAlertLogger.next(LocalAlertLogger.java:182)
+at com.bea.alsb.alert.log.LocalAlertLogger_WLSkel.invoke(Unknown Source)
+at weblogic.rmi.internal.BasicServerRef.invoke(BasicServerRef.java:667)
+at weblogic.rmi.internal.BasicServerRef$1.run(BasicServerRef.java:522)
+at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)
+at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:146)
+at weblogic.rmi.internal.BasicServerRef.handleRequest(BasicServerRef.java:518)
+at weblogic.rmi.internal.wls.WLSExecuteRequest.run(WLSExecuteRequest.java:118)
+at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+
+
+</pre>
+
+<br/><br/>
+
+This is not a harmful thing, although not desirable.
+<br/><br/>
+
+
+
+

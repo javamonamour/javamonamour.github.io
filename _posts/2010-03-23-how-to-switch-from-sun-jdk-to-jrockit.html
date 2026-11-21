@@ -1,0 +1,27 @@
+---
+layout: post
+title: "How to switch from Sun JDK to JRockit?"
+date: 2010-03-23T15:19:00.000+01:00
+permalink: /2010/03/how-to-switch-from-sun-jdk-to-jrockit.html
+blogger_id: "1785399258012718312"
+tags: ["jrockit"]
+blogger_comments:
+  - author: "Unknown"
+    date: 2010-07-05
+    html: "It is very likely that it will not work. Just changing the java executable is not enough. Memory parameters and garbage collection will need changes.<br /><br />e.g. -XX:PermSize= , <br />-XX:MaxPermSize= are not available in jRockit. Garbage collector parameters for jRockit are completely different.<br /><br />jRockit likes -jrockit better than -server of HotSpot. -server will also work for jockit.<br /><br />If you are running a small time Weblogic installation for demo, probably you can get away with just changing the value in setDomainEnv.sh|cmd for JAVA_HOME. If its a system in production or testing, its very likely that it will fall flat.<br /><br />Also if you are running a vendor application on Weblogic, its wise to consult the vendor for support.<br /><br />Don&#39;t undermine SUN HotSpot. Have a look at jconsole, visualvm and standard utilities like jmap...you may change your mind..<br /><br />With Java 6 you also get G1 garbage collector...touted to be the next generation and a low latency one..<br /><br />Also underlying OS plays an important role. If Solaris, stick to SUN HotSpot and if Linux or Windows try jRockit.<br /><br />HotSpot and jRockit are a close match...but I like jRockit better. jRockit Mission Control (toolset) is amazing (jconsole for HotSpot is not far tho..)"
+  - author: "Lost IN Translation"
+    date: 2010-09-17
+    html: "setting java_vendor and java_home should do. As for memory parameters and others, commEnv.sh file in /common/bin directory decides what to use depending on JAVA_VENDOR variable."
+---
+JRockit is a lot better in development environment, because of the wonderful jrcmd utility and JRA.<br />
+<br />
+If you have installed WebLogic with Sun JDK, you can switch to JRockit by editing the<br />
+C:\_yourbeahome_\user_projects\domains\_yourdomain_\bin\setWLEnd.cmd (sh) file,&nbsp;</yourdomain></yourbeahome><br />
+<br />
+setting<br />
+set JAVA_VENDOR=BEA<br />
+<br />
+set BEA_JAVA_HOME=C:\_yourbeahome_\jrockit_160_05</yourbeahome><br />
+<br />
+<br />
+I am not sure this covers all scenarios, but at least it's a good starting point...

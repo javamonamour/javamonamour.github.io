@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Automating Keyboard and Mouse in Java"
+date: 2020-05-23T23:29:00.001+02:00
+permalink: /2020/05/automating-keyboard-and-mouse-in-java.html
+blogger_id: "9044149378078807242"
+---
+<br />
+<pre class="brush: java">
+package org.pierre.robot;
+
+import java.awt.*;
+import java.awt.event.KeyEvent;
+
+public class RobotSnapshot {
+    public static void main(String[] args) throws AWTException {
+        Robot robot = new Robot();
+        for (int i = 0; i < 2000; i++) {
+            robot.delay(2000);
+            robot.keyPress(KeyEvent.VK_RIGHT);
+            robot.keyRelease(KeyEvent.VK_RIGHT);
+            robot.delay(2000);
+            robot.keyPress(KeyEvent.VK_PRINTSCREEN);
+            robot.keyRelease(KeyEvent.VK_PRINTSCREEN);
+        }
+    }
+}
+
+
+</pre>

@@ -1,0 +1,26 @@
+---
+layout: post
+title: "unpack of a OSB domain fails if OSB is not installed (of course...)"
+date: 2014-06-03T15:33:00.001+02:00
+permalink: /2014/06/unpack-of-osb-domain-fails-if-osb-is.html
+blogger_id: "8943577148095556736"
+tags: ["OSB"]
+---
+The unpack of a OSB domain template will fail with:
+<br/><br/>
+
+<i>Required component home not found for component 'oracle.as.jrf' version '11.1.1.7.0'"</i>
+<br/><br/>
+I think at the origin of the issue is that it's expecting to find the component home in this file:
+<br/>
+/opt/oracle/middleware11g/Oracle_OSB1/inventory/ContentsXML/comps.xml
+<br/>
+<br/>
+which of course is not available of OSB binaries are not installed.
+<br/>
+<br/>
+
+One would have appreciated a message like "unable to proceed, OSB not installed", but no, life would be too boring of all was perfect clean and intuitive.
+
+<br/>
+<br/>

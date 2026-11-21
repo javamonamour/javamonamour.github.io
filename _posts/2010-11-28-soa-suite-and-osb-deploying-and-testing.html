@@ -1,0 +1,56 @@
+---
+layout: post
+title: "SOA Suite and OSB: deploying and testing"
+date: 2010-11-28T18:39:00.026+01:00
+permalink: /2010/11/soa-suite-and-osb-deploying-and-testing.html
+blogger_id: "6896360026868499269"
+tags: ["deploy", "OSB", "SOASuite"]
+---
+You should create a SAR file and deploy it.<br />
+<br />
+SOA SUITE:<br />
+<br />
+with WLST:<br />
+<br />
+some interesting WLST commands <a href="http://download.oracle.com/docs/cd/E12839_01/web.1111/e13813/custom_soa.htm">here</a><br />
+<br />
+Here C:\Oracle1\Middleware\Oracle_SOA1\bin\ant-t2p-worklist.xml the MDS migration tool.<br />
+<br />
+with ANT:<br />
+C:\Oracle1\Middleware\jdeveloper\bin\ant-sca-compile.xml<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12839_01/integration.1111/e10224/sca_lifecycle.htm">here</a> the entire documentation on how to build and deploy using the Ant files.<br />
+<br />
+OSB:<br />
+<br />
+with WLST:<br />
+<a href="http://www.oracle.com/technology/sample_code/products/osb/index.html">http://www.oracle.com/technology/sample_code/products/osb/index.html</a><br />
+<br />
+also here another version of same script<br />
+<a href="http://www.insemble.com/oracleservicebus-deployment.html">http://www.insemble.com/oracleservicebus-deployment.html</a><br />
+<br />
+before you run it:<br />
+<br />
+c:\Oracle1\Middleware\wlserver_10.3\server\bin\setWLSEnv.cmd<br />
+<br />
+set CLASSPATH=%CLASSPATH%;C:\Oracle1\Middleware\Oracle_OSB1\lib\sb-kernel-api.jar;C:\Oracle1\Middleware\Oracle_OSB1\modules\com.bea.common.configfwk_1.3.0.0.jar;C:\Oracle1\Middleware\Oracle_OSB1\lib\sb-kernel-impl.jar<br />
+<br />
+java weblogic.WLST import.py import.properties<br />
+<br />
+Examples:<br />
+<br />
+how to compile your SCA with Ant:<br />
+<br />
+cd C:\JDeveloper\mywork\myproject<br />
+ant -f C:\Oracle1\Middleware\jdeveloper\bin\ant-sca-compile.xml -Dscac.input=C:\JDeveloper\mywork\myproject\composite.xml<br />
+<br />
+this will produce out.err and out.xml in your default TEMP directory<br />
+(eg C:\Users\pierre\AppData\Local\Temp)<br />
+<br />
+then package into a jar file:<br />
+ant -f C:\Oracle1\Middleware\jdeveloper\bin\ant-sca-package.xml -DcompositeDir=C:\JDeveloper\mywork\myproject -DcompositeName=myproject -Drevision<br />
+=1.0 <br />
+<br />
+then deploy:<br />
+<br />
+ant -f C:\Oracle1\Middleware\jdeveloper\bin\ant-sca-deploy.xml -DserverURL=http://localhost:7001 -DsarLocation=C:\JDeveloper\mywork\myproject\deploy\sca_myproject_rev1.0.jar -Duser=weblogic

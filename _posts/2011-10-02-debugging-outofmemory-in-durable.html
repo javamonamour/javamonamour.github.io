@@ -1,0 +1,72 @@
+---
+layout: post
+title: "Debugging OutOfMemory in Durable Subscribers"
+date: 2011-10-02T23:31:00.004+02:00
+permalink: /2011/10/debugging-outofmemory-in-durable.html
+blogger_id: "265441936200026384"
+tags: ["topic"]
+---
+(this is just a stub...  working on it...)<br />
+<br />
+classes involved:<br />
+<br />
+weblogic.rjvm.MsgAbbrevJVMConnection<br />
+weblogic.rjvm.MsgAbbrevJVMConnection.WritingState<br />
+<br />
+weblogic.utils.UnsyncCircularQueue<br />
+<br />
+weblogic.utils.io.Chunk<br />
+<br />
+weblogic.rjvm.t3.MuxableSocketT3<br />
+<br />
+<br />
+T3MsgAbbrevJVMConnection extends MsgAbbrevJVMConnection<br />
+<br />
+<br />
+debug flags:<br />
+<br />
+DebugJMSDurableSubscribers<br />
+DebugJMSDispatcher<br />
+DebugAbbreviation<br />
+<br />
+weblogic.kernel.debug<br />
+DebugConnection<br />
+DebugMessaging<br />
+DebugJMSBackEnd <br />
+DebugJMSFrontEnd <br />
+DebugJMSCommon<br />
+<br />
+DebugJMSXA<br />
+<br />
+<br />
+basically this WLST:<br />
+<br />
+<i><br />
+cd('/Servers/ms1/ServerDebug/ms1')<br />
+cmo.setDebugAbbreviation(true)<br />
+cmo.setDebugConnection(true)<br />
+cmo.setDebugMessaging(true)<br />
+cmo.setDebugJMSBackEnd(true)<br />
+cmo.setDebugJMSCommon(true)<br />
+cmo.setDebugJMSDurableSubscribers(true)<br />
+cmo.setDebugMessagingKernel(true)<br />
+cmo.setDebugMessagingKernelBoot(true)<br />
+cmo.setDebugJMSDispatcher(true)<br />
+cmo.setDebugJMSFrontEnd(true)<br />
+cmo.setDebugJMSXA(true)<br />
+<br />
+activate()<br />
+</i><br />
+<br />
+<br />
+parameters:<br />
+KernelMBean T3ServerAbbrevTableSize<br />
+<br />
+weblogic.Chunksize<br />
+weblogic.utils.io.chunkpoolsize<br />
+weblogic.PartitionSize<br />
+<br />
+<br />
+see <a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/perform/WLSTuning.html#wp1152088">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/perform/WLSTuning.html#wp1152088</a><br />
+<br />
+Interesting: Connection Factory "Subscription Sharing Policy" (sharable or exclusive) <a href="http://download.oracle.com/docs/cd/E17904_01/web.1111/e15493/jms_extensions.htm">http://download.oracle.com/docs/cd/E17904_01/web.1111/e15493/jms_extensions.htm</a>  but this leads to the message being delivered to only 1 subscriber

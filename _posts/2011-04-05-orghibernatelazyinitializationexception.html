@@ -1,0 +1,29 @@
+---
+layout: post
+title: "org.hibernate.LazyInitializationException: failed to lazily initialize a collection"
+date: 2011-04-05T16:27:00.000+02:00
+permalink: /2011/04/orghibernatelazyinitializationexception.html
+blogger_id: "1275367672403939663"
+tags: ["JPA", "lazy"]
+---
+<i><br />
+org.hibernate.LazyInitializationException: failed to lazily initialize a collection of role: acme.domain.model.Bla.mumbles, no session or session was closed<br />
+ at org.hibernate.collection.AbstractPersistentCollection.throwLazyInitializationException(AbstractPersistentCollection.java:358)<br />
+ at org.hibernate.collection.AbstractPersistentCollection.throwLazyInitializationExceptionIfNotConnected(AbstractPersistentCollection.java:350)<br />
+ at org.hibernate.collection.AbstractPersistentCollection.initialize(AbstractPersistentCollection.java:343)<br />
+ at org.hibernate.collection.AbstractPersistentCollection.read(AbstractPersistentCollection.java:86)<br />
+ at org.hibernate.collection.PersistentSet.iterator(PersistentSet.java:163)</i><br />
+<br />
+<br />
+<br />
+Entity Bla contains a collection of Mumbles. The OneToMany annotation by default uses a LAZY loading approach.<br />
+<br />
+If in your client layer you try to do a bla.getMumbles(), you get the exception LazyInitializationException. The session was closed in the EJB, and in the client you have only a detached entity.<br />
+To avoid the problem, in the EJB do a <br />
+<br />
+<b>bla.getMumbles().size();</b><br />
+<br />
+(bla.getMumbles() is not enough!)<br />
+<br />
+<br />
+This will explicitly load ALL mumbles and the client will be happy.

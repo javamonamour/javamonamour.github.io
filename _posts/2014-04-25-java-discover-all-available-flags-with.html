@@ -1,0 +1,84 @@
+---
+layout: post
+title: "Java, discover all available flags with PrintFlagsFinal "
+date: 2014-04-25T23:19:00.001+02:00
+permalink: /2014/04/java-discover-all-available-flags-with.html
+blogger_id: "7138585070162288020"
+tags: ["JVM"]
+---
+not many people know that you can get the list of all supported JVM flags with
+-XX:+PrintFlagsFinal 
+<br/>
+example:
+<br/>
+java -XX:+PrintFlagsFinal -version | grep -i gc
+<br/>will print:<br/>
+<pre>
+    uintx AdaptiveSizeMajorGCDecayTimeScale         = 10              {product}
+    uintx AutoGCSelectPauseMillis                   = 5000            {product}
+     bool BindGCTaskThreadsToCPUs                   = false           {product}
+    uintx CMSFullGCsBeforeCompaction                = 0               {product}
+    uintx ConcGCThreads                             = 0               {product}
+     bool DisableExplicitGC                         = false           {product}
+     bool ExplicitGCInvokesConcurrent               = false           {product}
+     bool ExplicitGCInvokesConcurrentAndUnloadsClasses  = false           {product}
+    uintx GCDrainStackTargetSize                    = 64              {product}
+    uintx GCHeapFreeLimit                           = 2               {product}
+    uintx GCLockerEdenExpansionPercent              = 5               {product}
+     bool GCLockerInvokesConcurrent                 = false           {product}
+     bool GCOverheadReporting                       = false           {product}
+     intx GCOverheadReportingPeriodMS               = 100             {product}
+    uintx GCPauseIntervalMillis                     = 0               {product}
+    uintx GCTaskTimeStampEntries                    = 200             {product}
+    uintx GCTimeLimit                               = 98              {product}
+    uintx GCTimeRatio                               = 99              {product}
+     bool HeapDumpAfterFullGC                       = false           {manageable}
+     bool HeapDumpBeforeFullGC                      = false           {manageable}
+    uintx MaxGCMinorPauseMillis                     = 18446744073709551615{product}
+    uintx MaxGCPauseMillis                          = 18446744073709551615{product}
+     bool OptimizeStringConcat                      = false           {C2 product}
+     intx ParGCArrayScanChunk                       = 50              {product}
+    uintx ParGCDesiredObjsFromOverflowList          = 20              {product}
+     bool ParGCTrimOverflow                         = true            {product}
+     bool ParGCUseLocalOverflow                     = false           {product}
+     intx ParallelGCBufferWastePct                  = 10              {product}
+     bool ParallelGCRetainPLAB                      = true            {product}
+    uintx ParallelGCThreads                        := 10              {product}
+     bool ParallelGCVerbose                         = false           {product}
+     intx PerfMaxStringConstLength                  = 1024            {product}
+     bool PrintClassHistogramAfterFullGC            = false           {manageable}
+     bool PrintClassHistogramBeforeFullGC           = false           {manageable}
+     bool PrintGC                                   = false           {manageable}
+     bool PrintGCApplicationConcurrentTime          = false           {product}
+     bool PrintGCApplicationStoppedTime             = false           {product}
+     bool PrintGCDateStamps                         = false           {manageable}
+     bool PrintGCDetails                            = false           {manageable}
+     bool PrintGCTaskTimeStamps                     = false           {product}
+     bool PrintGCTimeStamps                         = false           {manageable}
+     bool PrintHeapAtGC                             = false           {product rw}
+     bool PrintHeapAtGCExtended                     = false           {product rw}
+     bool PrintJNIGCStalls                          = false           {product}
+     bool PrintParallelOldGCPhaseTimes              = false           {product}
+     bool PrintReferenceGC                          = false           {product}
+     intx QueuedAllocationWarningCount              = 0               {product}
+     bool ScavengeBeforeFullGC                      = true            {product}
+     bool SpecialStringCompareToCC                  = true            {product}
+     bool SpecialStringCompress                     = true            {product}
+     bool TraceParallelOldGCTasks                   = false           {product}
+     bool UseAdaptiveGCBoundary                     = false           {product}
+     bool UseAdaptiveSizeDecayMajorGCCost           = true            {product}
+     bool UseAdaptiveSizePolicyWithSystemGC         = false           {product}
+     bool UseAutoGCSelectPolicy                     = false           {product}
+     bool UseConcMarkSweepGC                        = false           {product}
+     bool UseG1GC                                   = false           {product}
+     bool UseGCOverheadLimit                        = true            {product}
+     bool UseGCTaskAffinity                         = false           {product}
+     bool UseMaximumCompactionOnSystemGC            = true            {product}
+     bool UseParNewGC                               = false           {product}
+     bool UseParallelGC                            := true            {product}
+     bool UseParallelOldGC                          = false           {product}
+     bool UseParallelOldGCCompacting                = true            {product}
+     bool UseParallelOldGCDensePrefix               = true            {product}
+     bool UseSerialGC                               = false           {product}
+     bool UseStringCache                            = false           {product}
+</pre>

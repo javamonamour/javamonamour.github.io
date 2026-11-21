@@ -1,0 +1,14 @@
+---
+layout: post
+title: "libSDL-1.2.so.0()(64bit) is needed by VirtualBox"
+date: 2013-06-01T23:05:00.000+02:00
+permalink: /2013/06/libsdl-12so064bit-is-needed-by.html
+blogger_id: "8095401996410758739"
+tags: ["virtualbox"]
+---
+trying to install VirtualBox on a RHEL 5.6, I get this error:
+<br />
+<br />
+<br /><b>sudo rpm -i /opt/oracle/software/VirtualBox-4.2-4.2.12_84980_el5-1.x86_64.rpm</b><br /><i>warning: /opt/oracle/software/VirtualBox-4.2-4.2.12_84980_el5-1.x86_64.rpm: Header V4 DSA signature: NOKEY, key ID 98ab5139<br />error: Failed dependencies:<br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; libSDL-1.2.so.0()(64bit) is needed by VirtualBox-4.2-4.2.12_84980_el5-1.x86_64</i><br /><b>yum provides */libSDL-1.2.so.0<br />yum search SDL&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br />yum install SDL</b><br /><br /><i>Error Downloading Packages:<br />&nbsp; SDL-1.2.10-8.el5.x86_64: failure: SDL-1.2.10-8.el5.x86_64.rpm from ol5_latest: [Errno 256] No more mirrors to try.<br />&nbsp; SDL-1.2.10-8.el5.i386: failure: SDL-1.2.10-8.el5.i386.rpm from ol5_latest: [Errno 256] No more mirrors to try.</i><br /><b>download it from <br />http://pkgs.org/centos-5-rhel-5/centos-rhel-x86_64/SDL-1.2.10-9.el5.x86_64.rpm/download/<br />http://pkgs.org/centos-5-rhel-5/centos-rhel-i386/SDL-1.2.10-9.el5.i386.rpm/download/</b><br />(choose binary package)<br /><br /><b>sudo rpm -i SDL-1.2.10-9.el5.i386.rpm<br />sudo rpm -i SDL-1.2.10-9.el5.x86_64.rpm</b><br />
+<br />
+<br />

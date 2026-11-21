@@ -1,0 +1,37 @@
+---
+layout: post
+title: "OSB Local Transport with Java Request Message Type"
+date: 2010-05-25T14:17:00.001+02:00
+permalink: /2010/05/osb11-local-transport-with-java-request.html
+blogger_id: "5226302963156688825"
+tags: ["osb11"]
+---
+I am invoking a Proxy Service defined as<br />
+"Local Transport with Java Request Message Type and Java <span class="bea-portal-theme-taskcontent">Response Message Type</span>"<br />
+<br />
+and, not matter whan I specify as a payload, I get a:<br />
+<span class="bea-portal-theme-popupwindow"><span class="xmlview_text">BEA-382054 : </span></span><br />
+<br />
+<table border="0" cellpadding="0" cellspacing="0"><tbody>
+<tr></tr>
+<tr><span class="bea-portal-theme-popupwindow"></span><td class="xmlview_default" valign="top"><span class="xmlview_text">Expected  [[http://www.bea.com/wli/sb/context]java-content] element under $body  is missing or invalid</span></td></tr>
+</tbody></table><br />
+The documentation says:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E14571_01/apirefs.1111/e15034/Router.html">http://download.oracle.com/docs/cd/E14571_01/apirefs.1111/e15034/Router.html</a><br />
+<br />
+<br />
+<b>BEA-382054</b>   <br />
+<div class="table"><b><i>Error: </i></b>Expected  [[http://www.bea.com/wli/sb/context]java-content] element under $body is  missing or invalid</div><br />
+<table border="0" cellpadding="4" summary="Message Table"><tbody>
+<tr> <td align="right" valign="top"><div class="table"><b>Description</b> </div></td><td valign="top">Services of Messaging Type : Java are expected to  contain a valid [[http://www.bea.com/wli/sb/context]java-content] child  element under $body.</td> </tr>
+<tr> <td align="right" valign="top"><div class="table"><b>Action</b> </div></td><td valign="top">Make sure the contents of $body conforms to  expected format. One can use Log action to log and examine the contents  of any message context variable, including $body</td></tr>
+</tbody></table><br />
+<br />
+<br />
+but the OSB11 documentation doesn't mention Java Request Message Type... so I am not sure what should the java-content&nbsp; should look like....<br />
+<br />
+This <a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/context.html#wp1106656">http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/context.html#wp1106656</a>&nbsp; might give some clues... in fact you are supposed to have in the body an element<br />
+<br />
+<br />
+&lt;java-content ref="cid:kkkkeeeeyyyy"/&gt;

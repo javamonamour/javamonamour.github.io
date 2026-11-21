@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Finding out what Weblogic processes is running in Unix"
+date: 2009-02-20T13:52:00.000+01:00
+permalink: /2009/02/finding-out-what-weblogic-processes-is.html
+blogger_id: "7932605700998955933"
+tags: ["netstat", "PID"]
+---
+if you are using NodeManager, it will most likely be running on port 5556 <br />
+<br />
+<br />
+<span style="font-style: italic;">netstat -putanuw | grep 555</span><br />
+<br />
+will give you this:<br />
+<br />
+tcp        0      0 :::5556                     :::*                        LISTEN      32092/java<br />
+<br />
+<br />
+where 32092 is the NodeManager's PID<br />
+<br />
+<span style="font-style: italic;">ps -ef | grep 32092</span><br />
+<br />
+will give you:<br />
+<br />
+beasvbd  10921 22827  0 13:53 pts/0    00:00:00 grep 32092<br />
+beasvbd  11121 32092  0 Feb13 ?        00:03:31 /opt/bea/jrockit/R27.3.1/bin/java blablabla weblogic.Server<br />
+beasvbd  32092 32069  0 Feb13 ?        00:00:23 /opt/bea/jrockit/R27.3.1/bin/java blablabla weblogic.NodeManager <br />
+<br />
+<br />
+<br />
+note that the weblogic.Server's parent PID is the NodeManager's PID<br />
+<br />
+<br />
+32069 is the shell's PID, which was used to start the server<br />
+<br />
+<br />
+Note that a Weblogic instance can have multiple Network channels:<br />
+<br />
+[beasvbd@bcdev05 bea_install]$ netstat -putanuw | grep 5610<br />
+(Not all processes could be identified, non-owned process info<br />
+will not be shown, you would have to be root to see it all.)<br />
+tcp        0      0 ::ffff:127.0.0.1:5610       :::*                        LISTEN      29082/java<br />
+tcp        0      0 ::ffff:10.40.16.109:5610    :::*                        LISTEN      29082/java<br />
+tcp        0      0 ::ffff:10.40.20.109:5610    :::*                        LISTEN      29082/java<br />
+<br />
+<br />
+each of them corresponds to a different Network Interface. note that the PID is the same.

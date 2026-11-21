@@ -1,0 +1,36 @@
+---
+layout: post
+title: "Referencing a WorkManager (ExecutorService) in a Web module or EJB module or at App level"
+date: 2016-05-17T11:52:00.002+02:00
+permalink: /2016/05/referencing-workmanager-executorservice.html
+blogger_id: "1914329869433195468"
+tags: ["ejb"]
+---
+at WAR level you can have a work-manager clause:
+<br/>
+
+<a href="https://docs.oracle.com/cd/E24329_01/web.1211/e21049/weblogic_xml.htm#WBAPP627">https://docs.oracle.com/cd/E24329_01/web.1211/e21049/weblogic_xml.htm#WBAPP627</a>
+<br/>
+but it's available also at EAR level:
+<br/>
+https://docs.oracle.com/cd/E24329_01/web.1211/e24368/app_xml.htm#WLPRG487
+<br/>
+
+
+<a href="http://xmlns.oracle.com/weblogic/weblogic-application/1.4/weblogic-application.xsd">http://xmlns.oracle.com/weblogic/weblogic-application/1.4/weblogic-application.xsd</a>
+<br/>
+and also at EJB level:
+
+<a href="https://docs.oracle.com/cd/E12840_01/wls/docs103/ejb/DDreference-ejb-jar.html">https://docs.oracle.com/cd/E12840_01/wls/docs103/ejb/DDreference-ejb-jar.html</a>
+
+<br/>
+
+<br/>
+
+
+Useful links:
+<br/>
+<a href="https://developer.ibm.com/answers/questions/168264/how-to-use-resources-defined-in-applicationxml-des.html">https://developer.ibm.com/answers/questions/168264/how-to-use-resources-defined-in-applicationxml-des.html</a>
+<br/>
+<a href="http://stackoverflow.com/questions/2887967/what-is-resource-ref-in-web-xml-used-for">http://stackoverflow.com/questions/2887967/what-is-resource-ref-in-web-xml-used-for</a>
+<br/>

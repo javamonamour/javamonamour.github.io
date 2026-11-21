@@ -1,0 +1,254 @@
+---
+layout: post
+title: "Oracle Service Bus Configuration Jar Build and Export"
+date: 2011-07-25T16:02:00.018+02:00
+permalink: /2011/07/oracle-service-bus-configuration-jar.html
+blogger_id: "8749814798644369158"
+tags: ["OSBbuild"]
+---
+I was wondering how to generate a sbconfig.jar - yes I know there is a <a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/javadoc/com/bea/wli/sb/management/configuration/ALSBConfigurationMBean.html#exportProjects%28java.util.Collection,%20java.lang.String%29">ALSBConfigurationMBean API here</a> but it works only if the projects are deployed in OSB, not if they exist in the OEPE workspace.<br />
+<br />
+so while running an Export operation of my projects defined in Eclipse I took this beautiful stacktrace (thank you, VisualVM):<br />
+<br />
+<br />
+<pre>at ZwWaitForSingleObject+21()@0x770BF8C1
+    at RtlIntegerToUnicodeString+523()@0x770D8CB8
+    at block_for_safepoint+163(safepoint.c:872+10)@0x0232ABA4
+    at tsCheckTransitToJava+19(execution.c:236+19)@0x02330944
+    at java/util/zip/ZipFile.getEntry(ILjava/lang/String;Z)I(Native Method)
+    at java/util/zip/ZipFile.getEntry(ZipFile.java:150)
+    at org/eclipse/osgi/baseadaptor/bundlefile/ZipBundleFile.getZipEntry(ZipBundleFile.java:118)
+    at org/eclipse/osgi/baseadaptor/bundlefile/ZipBundleFile.getEntry(ZipBundleFile.java:248)
+    ^-- Holding lock: org/eclipse/osgi/baseadaptor/bundlefile/ZipBundleFile@0x1193ADF8[thin lock]
+    at org/eclipse/osgi/baseadaptor/loader/ClasspathManager.findClassImpl(ClasspathManager.java:531)
+    at org/eclipse/osgi/baseadaptor/loader/ClasspathManager.findLocalClassImpl(ClasspathManager.java:481)
+    at org/eclipse/osgi/baseadaptor/loader/ClasspathManager.findLocalClass_LockClassLoader(ClasspathManager.java:469)
+    ^-- Holding lock: org/eclipse/osgi/internal/baseadaptor/DefaultClassLoader@0x118AF488[recursive]
+    at org/eclipse/osgi/baseadaptor/loader/ClasspathManager.findLocalClass(ClasspathManager.java:449)
+    at org/eclipse/osgi/internal/baseadaptor/DefaultClassLoader.findLocalClass(DefaultClassLoader.java:216)
+    at org/eclipse/osgi/internal/loader/BundleLoader.findLocalClass(BundleLoader.java:393)
+    at org/eclipse/osgi/internal/loader/BundleLoader.findClassInternal(BundleLoader.java:469)
+    at org/eclipse/osgi/internal/loader/BundleLoader.findClass(BundleLoader.java:422)
+    at org/eclipse/osgi/internal/loader/BundleLoader.findClass(BundleLoader.java:410)
+    at org/eclipse/osgi/internal/baseadaptor/DefaultClassLoader.loadClass(DefaultClassLoader.java:107)
+    at java/lang/ClassLoader.loadClass(ClassLoader.java:248)
+    at jrockit/vm/Classes.loadClassInternal(Classes.java:76)
+    ^-- Holding lock: org/eclipse/osgi/internal/baseadaptor/DefaultClassLoader@0x118AF488[thin lock]
+    at jrockit/vm/RNI.c2java(IIIII)V(Native Method)
+    at jrockit/vm/RNI.initializeClass(I)V(Native Method)
+    at com/bea/wli/sb/resources/alertdestination/AlertDestinationTypeDef.getPersistedValueRepresentation(AlertDestinationTypeDef.java:574)
+    at com/bea/wli/config/persistence/BinaryIndexedFile.getValueRepresentation(BinaryIndexedFile.java:586)
+    at com/bea/wli/config/persistence/BinaryIndexedFile.readData(BinaryIndexedFile.java:444)
+    at com/bea/wli/config/component/impl/DataCache.evaluateKey(DataCache.java:97)
+    at com/bea/wli/config/component/impl/DataCache.evaluateKey(DataCache.java:35)
+    at com/bea/wli/config/component/impl/LazyValueCache$DataCacheEntry.evaluate(LazyValueCache.java:30)
+    at com/bea/wli/config/component/impl/LazyValue.getValue(LazyValue.java:91)
+    at com/bea/wli/config/component/impl/DataCache.getValue(DataCache.java:87)
+    at com/bea/wli/config/component/impl/ComponentTypeImpl.getValue(ComponentTypeImpl.java:776)
+    at com/bea/wli/config/impl/ConfigContextImpl.getResourceData(ConfigContextImpl.java:899)
+    at com/bea/wli/config/importexport/ConfigJar$CanonicalForm.<init>(ConfigJar.java:336)
+    at com/bea/wli/config/task/impl/ExportTask._execute(ExportTask.java:172)
+    at com/bea/wli/config/task/impl/ExportTask._execute(ExportTask.java:62)
+    at com/bea/wli/config/task/impl/SessionedTask$1.execute(SessionedTask.java:233)
+    at com/bea/wli/config/transaction/TransactionalTask._doExecute(TransactionalTask.java:217)
+    at com/bea/wli/config/transaction/TransactionalTask._doExecuteWithRetry(TransactionalTask.java:162)
+    at com/bea/wli/config/transaction/TransactionalTask.doExecute(TransactionalTask.java:142)
+    at com/bea/wli/config/task/impl/SessionedTask.doExecute(SessionedTask.java:236)
+    at com/bea/wli/config/task/impl/SessionedTask.doExecute(SessionedTask.java:191)
+    at com/bea/wli/config/task/impl/ExportTask.exportProjectLevel(ExportTask.java:137)
+    at com/bea/wli/config/mbeans/Config.exportProjects(Config.java:482)
+    at com/bea/alsb/core/internal/repositories/jar/ConfigFactory.createForProjects(Ljava/util/Collection;Z)[B(Unknown Source)
+    at com/bea/alsb/ui/repositories/jar/ConfigJarContentViewer.createJar()[B(Unknown Source)
+    at com/bea/alsb/ui/repositories/jar/JarContextWizardPage.createContext()Lcom/bea/alsb/core/repositories/jar/IWorkspaceConfigRepository$IWorkspaceRepositoryContext;(Unknown Source)
+    at com/bea/alsb/ui/repositories/jar/JarExportWizard.performFinish()Z(Unknown Source)
+    at org/eclipse/jface/wizard/WizardDialog.finishPressed(WizardDialog.java:811)
+    at org/eclipse/jface/wizard/WizardDialog.buttonPressed(WizardDialog.java:430)
+    at org/eclipse/jface/dialogs/Dialog$2.widgetSelected(Dialog.java:624)
+    at org/eclipse/swt/widgets/TypedListener.handleEvent(TypedListener.java:234)
+    at org/eclipse/swt/widgets/EventTable.sendEvent(EventTable.java:84)
+    at org/eclipse/swt/widgets/Widget.sendEvent(Widget.java:1053)
+    at org/eclipse/swt/widgets/Display.runDeferredEvents(Display.java:4066)
+    at org/eclipse/swt/widgets/Display.readAndDispatch(Display.java:3657)
+    at org/eclipse/jface/window/Window.runEventLoop(Window.java:825)
+    at org/eclipse/jface/window/Window.open(Window.java:801)
+    at org/eclipse/ui/internal/navigator/wizards/WizardShortcutAction.run(WizardShortcutAction.java:98)
+    at org/eclipse/jface/action/Action.runWithEvent(Action.java:498)
+    at org/eclipse/jface/action/ActionContributionItem.handleWidgetSelection(ActionContributionItem.java:584)
+    at org/eclipse/jface/action/ActionContributionItem.access$2(ActionContributionItem.java:501)
+    at org/eclipse/jface/action/ActionContributionItem$5.handleEvent(ActionContributionItem.java:411)
+    at org/eclipse/swt/widgets/EventTable.sendEvent(EventTable.java:84)
+    at org/eclipse/swt/widgets/Widget.sendEvent(Widget.java:1053)
+    at org/eclipse/swt/widgets/Display.runDeferredEvents(Display.java:4066)
+    at org/eclipse/swt/widgets/Display.readAndDispatch(Display.java:3657)
+    at org/eclipse/ui/internal/Workbench.runEventLoop(Workbench.java:2640)
+    at org/eclipse/ui/internal/Workbench.runUI(Workbench.java:2604)
+    at org/eclipse/ui/internal/Workbench.access$4(Workbench.java:2438)
+    at org/eclipse/ui/internal/Workbench$7.run(Workbench.java:671)
+    at org/eclipse/core/databinding/observable/Realm.runWithDefault(Realm.java:332)
+    at org/eclipse/ui/internal/Workbench.createAndRunWorkbench(Workbench.java:664)
+    at org/eclipse/ui/PlatformUI.createAndRunWorkbench(PlatformUI.java:149)
+    at org/eclipse/ui/internal/ide/application/IDEApplication.start(IDEApplication.java:115)
+    at org/eclipse/equinox/internal/app/EclipseAppHandle.run(EclipseAppHandle.java:196)
+    at org/eclipse/core/runtime/internal/adaptor/EclipseAppLauncher.runApplication(EclipseAppLauncher.java:110)
+    at org/eclipse/core/runtime/internal/adaptor/EclipseAppLauncher.start(EclipseAppLauncher.java:79)
+    at org/eclipse/core/runtime/adaptor/EclipseStarter.run(EclipseStarter.java:369)
+    at org/eclipse/core/runtime/adaptor/EclipseStarter.run(EclipseStarter.java:179)
+    at jrockit/vm/RNI.c2java(IIIII)V(Native Method)
+    at jrockit/vm/Reflect.invokeMethod(Ljava/lang/Object;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;(Native Method)
+    at sun/reflect/NativeMethodAccessorImpl.invoke0(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;(Native Method)
+    at sun/reflect/NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+    at sun/reflect/DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+    at java/lang/reflect/Method.invoke(Method.java:597)
+    at org/eclipse/equinox/launcher/Main.invokeFramework(Main.java:619)
+    at org/eclipse/equinox/launcher/Main.basicRun(Main.java:574)
+    at org/eclipse/equinox/launcher/Main.run(Main.java:1407)
+    at org/eclipse/equinox/launcher/Main.main(Main.java:1383)
+    at jrockit/vm/RNI.c2java(IIIII)V(Native Method)
+    -- end of trace
+
+</pre><br />
+<br />
+Everything seems to start from com.bea.alsb.ui.repositories.jar.JarExportWizard, which is part of the alsbui.jar (eclipse plugin).<br />
+<br />
+in fact I am trying to generate a sbconfig.jar file directly from the SVN content of the OSB artifacts, without having to do a manual export from Eclipse of from the OSB Web Console.... <br />
+<br />
+<br />
+Anyway <a href="http://biemond.blogspot.com/2010/07/osb-11g-ant-deployment-scripts.html">here the solution</a>... see the exportFromWorkspace target which uses the com.bea.alsb.core.ConfigExport class... which is documented <a href="http://download.oracle.com/docs/cd/E14571_01/relnotes.1111/e10132/osb.htm#CJAJDHFF">here</a> ...  great job, Edwin.<br />
+<br />
+With the PS3, in the build.xml replace:<br />
+org.eclipse.equinox.launcher_1.0.201.R35x_v20090715.jar<br />
+with<br />
+org.eclipse.equinox.launcher_1.1.0.v20100507.jar<br />
+<br />
+and:<br />
+oepe_11gR1PS2<br />
+with<br />
+oepe_11gR1PS3<br />
+<br />
+and make sure you DO NOT DELETE your .metadata in the WORKING COPY workspace - otherwise you have to reconstruct it again!<br />
+<br />
+<br />
+Problem is, the machine where you do the exportFromWorkspace must have OEPE installed - which is normally not part of the server installation for a non-dev environment...<br />
+<br />
+<br />
+Just to recap, I am reporting the build.property file and the ant task here:<br />
+<br />
+<br />
+<pre name="code">fmw.home=C:/Oracle4/Middleware
+
+wls.username=weblogic
+wls.password=welcome1
+wls.server=t3://localhost:7009
+
+#properties for workspace export
+config.project="OSBConfiguration1"
+config.jar=c:/tmp/sbconfigPV.jar
+config.subprojects="InterfacesA,InterfacesB,GlobalResources,ATools,MockB"
+config.includeDependencies=true
+workspace.dir=C:/pierre/workspaceSVN
+
+
+# export properties  
+  
+# specify a project or use None  
+#export.project=EJB  
+export.project=None
+export.jar=c:/tmp/exportPV.jar
+#export.customFile = c:/temp/cust.xml  
+export.customFile=None
+  
+# import properties  
+  
+# specify a project or use None  
+import.project=None
+#import.project=EJB
+import.jar=c:/tmp/exportPV.jar
+#import.customFile=None  
+import.customFile=c:/tmp/cust.xml
+</pre><br />
+<br />
+<br />
+and the build.xml<br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version="1.0" encoding="windows-1252" ?&gt;
+&lt;project name="ConfigExport"&gt;
+
+   &lt;property file="./build.properties"/&gt;
+
+   &lt;property name="eclipse.home" value="${fmw.home}/oepe_11gR1PS3"/&gt;
+   &lt;property name="weblogic.home" value="${fmw.home}/wlserver_10.3"/&gt;
+   &lt;property name="metadata.dir" value="${workspace.dir}/.metadata"/&gt;
+   &lt;property name="osb.home" value="${fmw.home}/Oracle_OSB1"/&gt;
+
+   &lt;property name="domain.export.script" value="export.py" /&gt;
+   &lt;property name="domain.import.script" value="import.py" /&gt;
+
+
+   &lt;target name="exportFromWorkspace"&gt;
+      &lt;!--delete failonerror="false" includeemptydirs="true"
+              dir="${metadata.dir}"/--&gt;
+      &lt;java dir="${eclipse.home}"
+            jar="${eclipse.home}/plugins/org.eclipse.equinox.launcher_1.0.201.R35x_v20090715.jar" 
+            fork="true" failonerror="true" maxmemory="768m"&gt;
+         &lt;jvmarg line="-XX:MaxPermSize=256m"/&gt;   
+         &lt;arg line="-data ${workspace.dir}"/&gt;
+         &lt;arg line="-application com.bea.alsb.core.ConfigExport"/&gt;
+         &lt;arg line="-configProject ${config.project}"/&gt;
+         &lt;arg line="-configJar ${config.jar}"/&gt;
+         &lt;arg line="-configSubProjects ${config.subprojects}"/&gt;
+         &lt;arg line="-includeDependencies ${config.includeDependencies}"/&gt;
+         &lt;sysproperty key="weblogic.home" value="${weblogic.home}"/&gt;
+         &lt;sysproperty key="osb.home" value="${osb.home}"/&gt;
+         &lt;sysproperty key="osgi.bundlefile.limit" value="500"/&gt;
+         &lt;sysproperty key="harvester.home" value="${osb.home}/harvester"/&gt;
+         &lt;sysproperty key="osgi.nl" value="en_US"/&gt;
+         &lt;sysproperty key="sun.lang.ClassLoader.allowArraySyntax" value="true"/&gt;
+      &lt;/java&gt;
+   &lt;/target&gt;
+&lt;/project&gt;
+</pre><br />
+<br />
+and it works like magic, even without deleting the .metadata directory...<br />
+<br />
+thank you soooo much Edwin!!!<br />
+<br />
+<br />
+Incidentally, an attempt to run the task WITHOUT Eclipse (removing the "dir" parameter and providing the JAR as a local copy) aborted with this message:<br />
+<br />
+<pre>!SESSION Tue Jul 26 11:47:56 CEST 2011 -----------------------------------------
+!ENTRY org.eclipse.equinox.launcher 4 0 2011-07-26 11:47:56.430
+!MESSAGE Exception launching the Eclipse Platform:
+!STACK
+java.lang.RuntimeException: Could not find framework
+ at org.eclipse.equinox.launcher.Main.getBootPath(Main.java:975)
+ at org.eclipse.equinox.launcher.Main.basicRun(Main.java:554)
+ at org.eclipse.equinox.launcher.Main.run(Main.java:1407)
+ at org.eclipse.equinox.launcher.Main.main(Main.java:1383)
+</pre><br />
+<br />
+<br />
+Conversely, if you copy your workspace and OEPE from  your Windows machine to your Linux hudson build server, you might get this:<br />
+<br />
+<i>org.eclipse.equinox.p2.core.ProvisionException: No repository found at file:/opt/app/bla/mumble/oepe_11gR1PS3/C:/Oracle4/Middleware/Oracle_OSB1/eclipse120<br />
+</i><br />
+try adding an extra / at the end of your workspace.dir variable in build.properties<br />
+<br />
+and if you get<br />
+<br />
+<i>java.lang.RuntimeException: Application "com.bea.alsb.core.ConfigExport" could not be found in the registry</i><br />
+<br />
+then edit<br />
+$ORACLE_HOME/oepe_11gR1PS3/dropins/oracle.osb.ide.link  <br />
+to point it to your right value (/opt/app/bla/mumble/Oracle_OSB1/eclipse120/)<br />
+<br />
+and make sure the $ORACLE_HOME/Oracle_OSB1/eclipse120/ directory exists with all the plugins<br />
+<br />
+<br />
+<br />
+PS for 10.3.5, use <br />
+<br />
+property name="eclipse.home" value="${fmw.home}/oepe_11gR1PS4"<br />
+<br />
+and<br />
+<br />
+jar="${eclipse.home}/plugins/org.eclipse.equinox.launcher_1.1.1.R36x_v20101122_1400.jar"

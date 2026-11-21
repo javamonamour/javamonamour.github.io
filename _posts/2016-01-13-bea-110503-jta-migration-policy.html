@@ -1,0 +1,34 @@
+---
+layout: post
+title: "BEA-110503 JTA migration policy : The migrator is not available"
+date: 2016-01-13T10:03:00.000+01:00
+permalink: /2016/01/bea-110503-jta-migration-policy.html
+blogger_id: "8040563320551767806"
+tags: ["transactions", "tx"]
+---
+We see this Warning message in the logs 
+
+<br/><br/>
+
+&lt;Warning&gt; &lt;JTA&gt; &lt;BEA-110503&gt; &lt;The migrator(the AdminServer for manual JTA migration policy, or the Singleton Master for automatic JTA migration policy) is not available. Will skip JTA TRS failback because isStrictOwnershipCheck is [false]. This may lead to potencial TLOG corruption if TRS of myserver has been migrated to backup server and the backup server is accessing the TLOG of myserver . More safety can be achieved by setting isStrictOwnershipCheck to [true].&gt;
+
+
+<br/><br/>
+
+<a href="https://docs.oracle.com/cd/E24329_01/web.1211/e24425/service_migration.htm#CLUST286">https://docs.oracle.com/cd/E24329_01/web.1211/e24425/service_migration.htm#CLUST286</a> here an explanation of the Service Migration Policy
+
+<br/><br/>
+"TRS" is JTA Transaction Recovery Service "The Transaction Recovery Service automatically attempts to recover transactions on system startup by parsing all transaction log records for incomplete transactions and completing them. "
+
+
+<br/><br/>
+isStrictOwnershipCheck <a href="http://docs.oracle.com/cd/E14571_01/apirefs.1111/e13945/weblogic/management/configuration/JTAMigratableTargetMBean.html#isStrictOwnershipCheck%28%29">http://docs.oracle.com/cd/E14571_01/apirefs.1111/e13945/weblogic/management/configuration/JTAMigratableTargetMBean.html#isStrictOwnershipCheck%28%29</a>
+
+<br/><br/>
+
+
+<br/><br/>
+
+
+I will elaborate more once I find out more.
+<br/><br/>

@@ -1,0 +1,18 @@
+---
+layout: post
+title: "JpaUnitils.assertMappingWithDatabaseConsistent() is your friend"
+date: 2011-02-16T14:33:00.002+01:00
+permalink: /2011/02/jpaunitilsassertmappingwithdatabasecons.html
+blogger_id: "2210805738396867500"
+tags: ["unitils"]
+---
+This baby detects the differences between your schema and your entities, and generates the DDL to adjust your schema to the Entities (of course if you use a schema-first approach you would run the DDL on the Entities, not on the schema!)<br />
+<br />
+<br />
+Priceless!<br />
+<br />
+Funnily enough, I have discovered that running the same tests using different versions of Oracle DB (Oracle XE and the "real" Oracle DB) can give different results concerning the DB Metadata, speficically for the error:<br />
+<br />
+<i>junit.framework.AssertionFailedError: Found mismatches between Java objects and database tables. Applying following DDL statements to the database should resolve the problem: <br />
+<br />
+(list of DDL commands follows)</i>

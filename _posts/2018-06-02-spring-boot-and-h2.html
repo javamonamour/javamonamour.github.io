@@ -1,0 +1,100 @@
+---
+layout: post
+title: "Spring Boot and H2"
+date: 2018-06-02T20:48:00.001+02:00
+permalink: /2018/06/spring-boot-and-h2.html
+blogger_id: "5823585987362011638"
+tags: ["h2", "springboot"]
+---
+<a href="https://dzone.com/articles/spring-boot-and-spring-jdbc-with-h2">https://dzone.com/articles/spring-boot-and-spring-jdbc-with-h2</a><br />
+<br />
+Example code is here:<br />
+<br />
+<a href="https://github.com/in28minutes/spring-boot-examples/tree/master/spring-boot-2-jdbc-with-h2">https://github.com/in28minutes/spring-boot-examples/tree/master/spring-boot-2-jdbc-with-h2</a><br />
+<br />
+you must add spring.h2.console.path=/h2 in the application.properties file<br />
+<br />
+in a nutshell:<br />
+<br />
+in pom.xml<br />
+<br />
+&lt;dependency&gt;<br />
+&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;<br />
+&lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;<br />
+&lt;/dependency&gt;<br />
+<br />
+<br />
+&lt;dependency&gt;<br />
+&lt;groupId&gt;com.h2database&lt;/groupId&gt;<br />
+&lt;artifactId&gt;h2&lt;/artifactId&gt;<br />
+&lt;scope&gt;runtime&lt;/scope&gt;<br />
+&lt;/dependency&gt;<br />
+<br />
+<br />
+in application.properties<br />
+<br />
+<pre># Datasource
+#spring.datasource.url=jdbc:h2:file:~/test
+spring.datasource.url=jdbc:h2:file:~/mydb
+spring.datasource.username=mydb
+spring.datasource.password=mydb
+spring.datasource.driver-class-name=org.h2.Driver
+
+# H2
+# Enabling H2 Console
+spring.h2.console.path=/h2
+spring.h2.console.enabled=true
+#Turn Statistics on
+spring.jpa.properties.hibernate.generate_statistics=true
+logging.level.org.hibernate.stat=debug
+# Show all queries
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+logging.level.org.hibernate.type=trace
+
+
+#spring.jpa.generate-ddl=false
+spring.jpa.hibernate.ddl-auto=update
+#spring.jpa.hibernate.ddl-auto=validate
+</pre><br />
+<br />
+To implement a repository:<br />
+<br />
+<br />
+import org.springframework.data.repository.CrudRepository;<br />
+<br />
+public interface QuarantineRepository extends CrudRepository&lt;Quarantine, Long> {<br />
+List<quarantine> findBygav(String gav);<br />
+<br />
+}<br />
+<br />
+<br />
+To use the repository in a @javax.inject.Named bean:<br />
+<br />
+import javax.inject.Inject;<br />
+...<br />
+<br />
+@Inject<br />
+QuarantineRepository quarantineRepository ;<br />
+<br />
+<br />
+where Quarantine is like this:<br />
+<br />
+<br />
+import javax.persistence.Entity;<br />
+import javax.persistence.GeneratedValue;<br />
+import javax.persistence.GenerationType;<br />
+import javax.persistence.Id;<br />
+<br />
+@Entity<br />
+public class Quarantine {<br />
+@Id<br />
+@GeneratedValue(strategy = GenerationType.AUTO)<br />
+private Long id;<br />
+private String gav;<br />
+<br />
+etc etc<br />
+<br />
+}<br />
+<br />
+

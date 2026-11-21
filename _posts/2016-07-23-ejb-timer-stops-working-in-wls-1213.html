@@ -1,0 +1,91 @@
+---
+layout: post
+title: "EJB Timer stops working in WLS 12.1.3 after an exception occurs"
+date: 2016-07-23T22:20:00.001+02:00
+permalink: /2016/07/ejb-timer-stops-working-in-wls-1213.html
+blogger_id: "6293892123728746214"
+tags: ["timer", "weblogic"]
+---
+On Version: WebLogic Server 12.1.3.0.0, Java  1.7.0_51
+
+<br/>
+
+<pre class="brush: java">
+
+package com.pierre.timertest;
+
+import javax.ejb.Schedule;
+import javax.ejb.Stateless;
+import javax.ejb.Timer;
+
+@Stateless
+public class TimerTestEJB {
+ public static int count = 0;
+
+    /**
+     * Default constructor. 
+     */
+    public TimerTestEJB() {
+        // TODO Auto-generated constructor stub
+    }
+ 
+ @SuppressWarnings("unused")
+ @Schedule(second="*/10", minute="*", hour="*", dayOfWeek="*",
+      dayOfMonth="*", month="*", year="*", info="MyTimer")
+    private void scheduledTimeout(final Timer t) {
+  count++;
+        System.out.println("@Schedule called at: " + new java.util.Date() + " count=" + count);
+        if (count == 5) {
+         System.out.println("@Schedule count = 5, throwing Exception");
+         throw new Error("@Schedule count = 5");
+        }
+    }
+}
+
+
+</pre>
+
+
+<br/>
+
+This funnily will still work for count=6, then stop.
+<br/>
+<br/>
+
+Luckily the bug has been fixed (god bless oracle engineers), see
+<br/>
+<br/>
+
+<b>Oracle WebLogic Server Patch Set Update 12.1.3.0.160719 Fixed Bugs List (Doc ID 2162294.1)</b>
+<br/>
+<br/>
+<b>19689036 12.1.3.0.160719 Timer EJB will stop when timer expiration is success and previous timer expiration is failed.</b>
+<br/>
+<br/>
+
+
+Patch 19689036: NON-PERSISTENT CALENDAR-BASED TIMER IS CANCELED IF CALLBACK METHOD THROWS SYSTEM
+  
+  
+<br/>
+
+<br/>
+
+In reality even PERSISTENT timers fail...in fact by default @Schedule creates a persistent timer, and also adding persistent=true doesn't fix the issue.
+<br/>
+
+I download p19689036_121300_Generic.zip, extract the weblogic\ejb\container\timer\TimerImpl.class, put in a JAR that I prepend to the WLS classpath, and now the timer keeps working even after the Error occurs.... awesome ! (PS I am too lazy to properly apply the patch with opatch...)
+<br/>
+
+
+<br/><br/>
+
+
+
+Here <a href="http://docs.oracle.com/cd/E14571_01/web.1111/e13719/implementing.htm#EJBPG213">http://docs.oracle.com/cd/E14571_01/web.1111/e13719/implementing.htm#EJBPG213</a> they mention: weblogic.ejb.WLTimerInfo (there is a maxRetryAttempts) and "Configuring Automatic Retry of Container-Managed Transactions" ... this could keep you going even without applying the patch...
+
+<br/><br/>
+
+
+
+

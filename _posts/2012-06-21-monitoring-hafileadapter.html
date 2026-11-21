@@ -1,0 +1,52 @@
+---
+layout: post
+title: "Monitoring HAFileAdapter"
+date: 2012-06-21T22:02:00.000+02:00
+permalink: /2012/06/monitoring-hafileadapter.html
+blogger_id: "9000248843131570170"
+tags: ["HAFileAdapter"]
+---
+if a file has already been processed but not purged from the FILEADAPTER_IN table,<br />
+the second time it's submitted you will see<br />
+<br />
+INSERT INTO FILEADAPTER_IN (FULL_PATH, ROOT_DIRECTORY,FILE_DIRECTORY, FILE_NAME, FILE_ENDPOINT_GUID, FILE_LAST_MODIFIED,FILE_READONLY, CREATED, UPDATED, FILE_PROCESSED) VALUES (?,?,?,?,?,?,?,?,?,?)<br />
+<br />
+where FILE_PROCESSED = "0"<br />
+<br />
+and you will get a <br />
+<br />
+java.sql.SQLIntegrityConstraintViolationException: ORA-00001: unique constraint (PL1_SOAINFRA.SYS_C0026314) violated<br />
+<br />
+because the file is already in the DB.<br />
+<br />
+So why the file is not being purged? Because it's still with FILE_PROCESSED = "0".<br />
+<br />
+I see very often:<br />
+<br />
+DELETE FROM FILEADAPTER_IN WHERE  FILE_PROCESSED='2' AND FILE_READONLY='N' AND ROOT_DIRECTORY=?)<br />
+<br />
+<br />
+<b>RECOVER_UNPICKED</b>:<br />
+<br />
+DELETE FROM FILEADAPTER_IN WHERE  UPDATED <= ? AND FILE_PROCESSED='0' AND ROOT_DIRECTORY=?<br />
+<br />
+where the first ? is:<br />
+System.currentTimeMillis() - (oracle.tip.adapter.file.timeout.recoverunpicked.minutes * 60 * 1000)<br />
+<br />
+(default is 3600 000 = 1 hour) <br />
+<br />
+and in the log:<br />
+FileListDAO::Recovered [0] unpicked instances diff time=[1340299775855], recoverytime=[120000]<br />
+<br />
+<br />
+and also<br />
+<br />
+DELETE FROM FILEADAPTER_IN WHERE  UPDATED <= ? AND FILE_PROCESSED='1' AND ROOT_DIRECTORY=?)<br />
+<br />
+where the first ? is:<br />
+System.currentTimeMillis() - (oracle.tip.adapter.file.timeout.recoverpicked.minutes * 60 * 1000)<br />
+<br />
+<br />
+and also<br />
+<br />
+DELETE FROM FILEADAPTER_IN WHERE FILE_ENDPOINT_GUID= ? AND FILE_READONLY='N' AND FILE_PROCESSED='0'

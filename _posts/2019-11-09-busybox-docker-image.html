@@ -1,0 +1,64 @@
+---
+layout: post
+title: "busybox docker image"
+date: 2019-11-09T13:09:00.000+01:00
+permalink: /2019/11/busybox-docker-image.html
+blogger_id: "2967015151568819184"
+tags: ["busybox", "docker", "kubectl"]
+---
+<a href="https://hub.docker.com/_/busybox/">https://hub.docker.com/_/busybox/</a><br />
+<br />
+docker pull busybox<br />
+docker inspect busybox <br />
+<br />
+if I see in the Config section (<a href="https://stackoverflow.com/questions/36216220/what-is-different-of-config-and-containerconfig-of-docker-inspect">don't look at ContainerConfig</a> ) the Cmd is simply "sh"<br />
+<br />
+which means that if I do <br />
+<br />
+<b>kubectl run --restart=Never busybox -it --image=busybox</b><br />
+<br />
+I simply get a shell.<br />
+<br />
+If I create a pod who executes simply "env"<br />
+<br />
+kubectl run --restart=Never busybox --image=busybox -- env<br />
+<br />
+<br />
+and then "inspect" it<br />
+<br />
+kubectl get pod busybox -o yaml<br />
+<br />
+I see that the container got the entry:<br />
+<br />
+<pre>args:
+  - env
+</pre><br />
+<br />
+and since the "args" are simply appended to the default command defined in the container ("If you define args, but do not define a command, the default command is used with your new arguments.")... it's equivalent to specifying:<br />
+<br />
+<br />
+<pre>command: ["sh", "-c"]
+args: ["env"]
+</pre><br />
+don't forget the "-c", otherwise you get "sh: can't open 'env': No such file or directory"<br />
+<br />
+<br />
+NB: if with "kubectl run" you specify --command<br />
+<br />
+kubectl run busybox --image=busybox --restart=Never --command  -- env <br />
+<br />
+then "command" instead of "args" will be generated:<br />
+<br />
+<pre>spec:
+  containers:
+  - command:
+    - env
+    image: busybox
+    name: busybox
+</pre><br />
+<br />
+This aspect of containers/pods (how to run a command with arguments) is rather confusing and poorly engineered.<br />
+<br />
+<br />
+<br />
+

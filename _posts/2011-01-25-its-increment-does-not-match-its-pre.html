@@ -1,0 +1,51 @@
+---
+layout: post
+title: "Its increment does not match its pre-allocation size"
+date: 2011-01-25T21:36:00.002+01:00
+permalink: /2011/01/its-increment-does-not-match-its-pre.html
+blogger_id: "8408324038783074861"
+tags: ["DBAdapter"]
+---
+{% raw %}<i> 25-Jan-2011 19:17:44 o'clock WET   Error   oracle.soa.bpel.engine.dispatch   BEA-000000   failed to handle message<br />
+com.oracle.bpel.client.BPELFault: faultName: {{http://schemas.oracle.com/bpel/extension}bindingFault}<br />
+messageType: {{http://schemas.oracle.com/bpel/extension}RuntimeFaultMessage}<br />
+parts: {{summary= summary Exception occured when binding was invoked.<br />
+Exception occured during invocation of JCA binding: "JCA Binding execute of Reference operation 'insert' failed due to: DBWriteInteractionSpec Execute Failed Exception.<br />
+insert failed. Descriptor name: [BOOK_LOT.BOOKLot].<br />
+Caused by Exception [EclipseLink-7027] (Eclipse Persistence Services - 2.1.2.v20101206-r8635): org.eclipse.persistence.exceptions.ValidationException<br />
+Exception Description: The sequence named [BOOK_LOT_SEQUENCE] is setup incorrectly.  Its increment does not match its pre-allocation size..<br />
+Please see the logs for the full DBAdapter logging output prior to this exception.  This exception is considered not retriable, likely due to a modelling mistake.<br />
+".<br />
+The invoked JCA adapter raised a resource exception.<br />
+Please examine the above error message carefully to determine a resolution.<br />
+/summary <br />
+,detail= detail <br />
+Exception Description: The sequence named [BOOK_LOT_SEQUENCE] is setup incorrectly.  Its increment does not match its pre-allocation size. /detail  ,code= code null /code }<br />
+</i><br />
+<br />
+<br />
+<br />
+the or-mapping file specifies:<br />
+<br />
+<pre>sequencing
+            sequence-name BOOK_LOT_SEQUENCE /sequence-name
+            sequence-field table="BOOK_LOT" name="ID_BOOK_LOT"/
+         /sequencing
+</pre><br />
+here<br />
+<a href="http://wiki.eclipse.org/Introduction_to_Relational_Projects_%28ELUG%29#Sequencing_and_Preallocation_Size">http://wiki.eclipse.org/Introduction_to_Relational_Projects_%28ELUG%29#Sequencing_and_Preallocation_Size</a><br />
+<br />
+some more (useless) info on the OR-MAPPING file.<br />
+<br />
+after hours of googling, I found out the solution:<br />
+<br />
+<a href="http://forums.oracle.com/forums/thread.jspa?threadID=1006099&tstart=0">http://forums.oracle.com/forums/thread.jspa?threadID=1006099&tstart=0</a><br />
+<br />
+<br />
+you must change the DBAdapter properties in WebLogic deployments console, make the preallocationSize same as the one used for the sequence (Increment By field):<br />
+<br />
+Create Sequence Book_Lot_Sequence Start With 1 Increment By 1 Nominvalue Nomaxvalue Nocycle Nocache;<br />
+<br />
+<br />
+<br />
+<a href="http://forums.oracle.com/forums/thread.jspa?threadID=1006099&tstart=0">http://forums.oracle.com/forums/thread.jspa?threadID=1006099&tstart=0</a>{% endraw %}

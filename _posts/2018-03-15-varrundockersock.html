@@ -1,0 +1,34 @@
+---
+layout: post
+title: "/var/run/docker.sock"
+date: 2018-03-15T04:01:00.002+01:00
+permalink: /2018/03/varrundockersock.html
+blogger_id: "300459413718110107"
+tags: ["docker"]
+---
+ls -ltra /var/run/docker.sock<br />
+srw-rw----. 1 root docker 0 Feb 12 15:49 /var/run/docker.sock<br />
+<br />
+<br />
+<br />
+<a href="https://www.gnu.org/software/coreutils/manual/html_node/What-information-is-listed.html#What-information-is-listedhttp://">https://www.gnu.org/software/coreutils/manual/html_node/What-information-is-listed.html#What-information-is-listed</a>  "s" stands for Unix socket<br />
+<br />
+Communication between a Docker container and Docker daemon can happen via this socket (see Portainer and "docker in docker"<br />
+<br />
+<a href="https://medium.com/lucjuggery/about-var-run-docker-sock-3bfd276e12fd"><br />
+https://medium.com/lucjuggery/about-var-run-docker-sock-3bfd276e12fd</a>  excellent explanation of the /var/run/docker.sock<br />
+<br />
+<br />
+This REST call via /var/run/docker.sock will create a cointainer:<br />
+<br />
+docker pull nginx:latest<br />
+curl -H "Content-Type: application/json" -X POST --unix-socket /var/run/docker.sock -d '{"Image":"nginx"}' http://localhost/containers/create<br />
+<br />
+amazing!<br />
+<br />
+<br />
+This PRICELESS command, run on the host, can trace all the events handled by the docker daemon:<br />
+<br />
+curl --unix-socket /var/run/docker.sock http://localhost/events<br />
+<br />
+

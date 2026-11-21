@@ -1,0 +1,56 @@
+---
+layout: post
+title: "git clone failing with Failed connect to github.com:443"
+date: 2013-11-02T22:01:00.002+01:00
+permalink: /2013/11/git-clone-failing-with-failed-connect.html
+blogger_id: "2771605879678985552"
+tags: ["git"]
+blogger_comments:
+  - author: "shangtang"
+    date: 2015-08-07
+    html: "git config --global http.proxy http://proxy:8080<br /><br />help me, thanks for the sharing"
+---
+On my RHEL box I tried:
+<br/>
+<b>git clone https://github.com/graphite-project/graphite-web.git</b>
+<pre>
+Initialized empty Git repository in /home/vagrant/graphite-web/.git/
+</pre>
+and it was hanging and finally giving HTTP timeout error.
+
+<br/>
+
+I tried then
+<br/>
+<b>export http_proxy=http://myuser:mypassword@myproxy:8080</b>
+<br/>
+and again <br/>
+<b>git clone https://github.com/graphite-project/graphite-web.git</b>
+<pre>
+Initialized empty Git repository in /home/vagrant/graphite-web/.git/
+error: Failed connect to github.com:443; Operation now in progress while accessing https://github.com/graphite-project/graphite-web.git/info/refs
+
+fatal: HTTP request failed
+</pre>
+<br/>
+finally I did:
+<br/>
+<b>git config --global http.proxy http://myuser:mypassword@myproxy:8080</b>
+<br/>
+<b>git clone https://github.com/graphite-project/graphite-web.git</b>
+
+and I got the magic
+<pre>
+Initialized empty Git repository in /home/vagrant/graphite-web/.git/
+remote: Counting objects: 13933, done.
+remote: Compressing objects: 100% (5434/5434), done.
+remote: Total 13933 (delta 9025), reused 13065 (delta 8316)
+Receiving objects: 100% (13933/13933), 17.15 MiB | 527 KiB/s, done.
+Resolving deltas: 100% (9025/9025), done.
+</pre>
+
+<br/><br/>
+
+If you expected such a widely used product like git to give you some hint on how to troubleshoot such a common issue, you are expecting in vain, git is for geeks and geeks are not user friendly.
+<br/><br/>
+

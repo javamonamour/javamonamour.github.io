@@ -1,0 +1,204 @@
+---
+layout: post
+title: "verbose:class not tracing the classloader"
+date: 2016-11-11T18:24:00.001+01:00
+permalink: /2016/11/verboseclass-not-tracing-classloader.html
+blogger_id: "8940346212762597795"
+tags: ["classloaders"]
+---
+If you start the jvm with "java -verbose:class" you get this stuff:
+
+
+<pre>
+
+[Opened c:\pippo\wl12.1\oracle_common\modules\endorsed\javax-xml-bind.jar]
+[Opened c:\pippo\wl12.1\oracle_common\modules\endorsed\javax-xml-ws.jar]
+[Opened c:\pippo\wl12.1\oracle_common\modules\endorsed\jsr250-api.jar]
+[Opened c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.Object from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.io.Serializable from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.Comparable from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.CharSequence from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.String from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.reflect.GenericDeclaration from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.reflect.Type from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.reflect.AnnotatedElement from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.Class from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.Cloneable from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.ClassLoader from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.System from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.Throwable from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.Error from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.ThreadDeath from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.Exception from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.RuntimeException from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.security.ProtectionDomain from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.security.AccessControlContext from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.ReflectiveOperationException from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.ClassNotFoundException from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.LinkageError from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.NoClassDefFoundError from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.ClassCastException from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.ArrayStoreException from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.VirtualMachineError from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.OutOfMemoryError from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+[Loaded java.lang.StackOverflowError from c:\pippo\java\jdk170_101-64b\jre\lib\rt.jar]
+</pre>
+
+<br/><br/>
+
+but this is not enough to discover nasty classloader issues. I have searched the Planet but apparently there is no way to print also the classloader without with Java OOTB.
+
+<br/><br/>
+
+This is a lot better:
+
+<br/><br/>
+
+<a href="https://blogs.oracle.com/sundararajan/entry/tracing_class_loading_1_5">https://blogs.oracle.com/sundararajan/entry/tracing_class_loading_1_5</a>
+
+ 
+
+<br/><br/>
+
+and I copy the code here just in case:
+
+ 
+
+<pre class="brush: java">
+
+import java.lang.instrument.*;
+
+import java.security.*;
+
+ 
+
+public class ClassLoadTracer {
+
+    public static void premain(String agentArgs, Instrumentation inst) {
+
+         final java.io.PrintStream out = System.out;
+
+         inst.addTransformer(new ClassFileTransformer() {
+
+             public byte[] transform(ClassLoader loader, String className, Class classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+
+                 out.print(className + &quot; loaded by &quot; + loader + &quot; at &quot; + new java.util.Date());
+
+                 out.println(&quot; in &quot; + protectionDomain);
+// dump stack trace of the thread loading class
+//        Thread.dumpStack();
+
+                 // we just want the original .class bytes to be loaded!
+                 // we are not instrumenting it...
+                 return null;
+             }
+         });
+    }
+}
+
+ 
+
+</pre>
+
+ 
+
+<br/><br/>
+
+and you get this:
+
+ 
+
+<br/><br/>
+
+<pre>
+
+sun/launcher/LauncherHelper loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+sun/nio/cs/MS1252 loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+sun/nio/cs/SingleByte loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+sun/nio/cs/SingleByte$Decoder loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+java/lang/Package loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+weblogic/Server loaded by sun.misc.Launcher$AppClassLoader@2792e317 at Fri Nov 11 10:48:52 CET 2016 in ProtectionDomain  (file:/c:\pippo\wl12.1/wlserver/modules/features/weblogic.server.merged.jar &lt;no signer certificates&gt;)
+sun.misc.Launcher$AppClassLoader@2792e317
+&lt;no principals&gt;
+java.security.Permissions@54a01a10 (
+(&quot;java.lang.RuntimePermission&quot; &quot;exitVM&quot;)
+(&quot;java.io.FilePermission&quot; &quot;\c:\pippo\wl12.1\wlserver\modules\features\weblogic.server.merged.jar&quot; &quot;read&quot;)
+)
+
+java/lang/Void loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+utils/ValidateJavaEE6EndorsedOverrides loaded by sun.misc.Launcher$AppClassLoader@2792e317 at Fri Nov 11 10:48:52 CET 2016 in ProtectionDomain  (file:/c:\pippo\wl12.1/wlserver/modules/features/weblogic.server.merged.jar &lt;no signer certificates&gt;)
+sun.misc.Launcher$AppClassLoader@2792e317
+&lt;no principals&gt;
+java.security.Permissions@54a01a10 (
+(&quot;java.lang.RuntimePermission&quot; &quot;exitVM&quot;)
+(&quot;java.io.FilePermission&quot; &quot;\c:\pippo\wl12.1\wlserver\modules\features\weblogic.server.merged.jar&quot; &quot;read&quot;)
+)
+
+weblogic/security/utils/SecurityUtils loaded by sun.misc.Launcher$AppClassLoader@2792e317 at Fri Nov 11 10:48:52 CET 2016 in ProtectionDomain  (file:/c:\pippo\wl12.1/wlserver/modules/features/weblogic.server.merged.jar &lt;no signer certificates&gt;)
+sun.misc.Launcher$AppClassLoader@2792e317
+&lt;no principals&gt;
+java.security.Permissions@54a01a10 (
+(&quot;java.lang.RuntimePermission&quot; &quot;exitVM&quot;)
+(&quot;java.io.FilePermission&quot; &quot;\c:\pippo\wl12.1\wlserver\modules\features\weblogic.server.merged.jar&quot; &quot;read&quot;)
+)
+
+java/security/Security loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+java/security/Security$1 loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+java/util/Properties$LineReader loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+sun/security/util/PropertyExpander loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+sun/net/ProgressMonitor loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+sun/net/DefaultProgressMeteringPolicy loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+sun/net/ProgressMeteringPolicy loaded by null at Fri Nov 11 10:48:52 CET 2016 in null
+
+weblogic/security/SecurityLogger loaded by sun.misc.Launcher$AppClassLoader@2792e317 at Fri Nov 11 10:48:52 CET 2016 in ProtectionDomain  (file:/c:\pippo\wl12.1/wlserver/modules/features/weblogic.server.merged.jar &lt;no signer certificates&gt;)
+sun.misc.Launcher$AppClassLoader@2792e317
+&lt;no principals&gt;
+java.security.Permissions@54a01a10 (
+(&quot;java.lang.RuntimePermission&quot; &quot;exitVM&quot;)
+(&quot;java.io.FilePermission&quot; &quot;\c:\pippo\wl12.1\wlserver\modules\features\weblogic.server.merged.jar&quot; &quot;read&quot;)
+)
+
+</pre>
+
+ 
+
+<br/><br/>
+
+ 
+
+The protection domain info is way too verbose, and probably you want to be able to control/filter better the output, otherwise it gets really too verbose.... but this seems to be really a big step forward...
+
+ 
+
+<br/><br/>
+You can use multiple agents:<br/><br/>
+
+<a href=" http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/instrument/package-summary.html">
+http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/instrument/package-summary.html</a>
+
+<br/><br/>
+<pre> 
+
+On JVMs with a command-line interface, agents are specified by adding 
+this switch to the JVM command-line:
+
+-javaagent:jarpath[=options]
+
+jarpath is the path to the agent JAR file. options is the agent options. 
+This switch may be used multiple times on the same command line,
+thus creating multiple agents. More than one agent may use the same jarpath.
+
+</pre>

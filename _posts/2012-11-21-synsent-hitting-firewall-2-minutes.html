@@ -1,0 +1,62 @@
+---
+layout: post
+title: "SYN_SENT hitting firewall, 2 minutes timeout"
+date: 2012-11-21T13:10:00.000+01:00
+permalink: /2012/11/synsent-hitting-firewall-2-minutes.html
+blogger_id: "2405926698051055284"
+tags: ["firewall"]
+---
+I am trying to connect to a Oracle RAC instance protected by a firewall. 
+<br/><br/>
+ 
+
+jdbc_url='jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=theDNSentryforRAC.acme.com)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=srv_osb)))'
+<br/>
+username='soainfra'
+<br/>
+password='soainfra1'
+<br/>
+driver = "oracle.jdbc.OracleDriver"
+<br/>
+from com.ziclix.python.sql import zxJDBC
+<br/>
+conn = zxJDBC.connect(jdbc_url, username, password, driver)
+  
+<br/><br/>
+this request times out after 2 minutes, with an error
+<br/><br/>
+DatabaseError: The Network Adapter could not establish the connection [SQLCode: 20], [SQLState: 61000]
+<br/><br/>
+in the meantime, I monitor the connection with:
+<br/>
+netstat -an | grep 1521
+<br/>
+tcp        0      1 ::ffff:10.56.5.185:58597    ::ffff:10.56.13.112:1521    SYN_SENT
+<br/>
+<br/> 
+
+the IP 10.56.13.112 corresponds to one of the 2 RAC instances, and the initial :ffff represents a IPv4 address translated into IPv6
+
+ <br/><br/>
+
+
+As very welle explained here <a href="http://www.faqs.org/docs/iptables/tcpconnections.html">http://www.faqs.org/docs/iptables/tcpconnections.html</a>, the SYN_SENT is the first phase of the handshake to establish a connection, and its default timeout is 2 minutes.
+ <br/><br/>
+
+The interesting thing is that if I specify port 1552, on which NOTHING is listening, the error <br/>
+DatabaseError: The Network Adapter could not establish the connection [SQLCode: 20], [SQLState: 61000]<br/><br/>
+
+is returned IMMEDIATELY, which makes me think that I can actually contact the DB, but for some reason the DB is unable to send me back the SYN-ACK. Still investigating.
+<br/><br/>
+
+The connection waiting for an SYN-ACK is called an "embrionic connection" <a href="http://en.wikipedia.org/wiki/TCP_half-open">http://en.wikipedia.org/wiki/TCP_half-open</a>
+<br/><br/>
+
+
+
+<a href="http://www.ibm.com/developerworks/aix/library/au-aixnetworkproblem2/index.html">http://www.ibm.com/developerworks/aix/library/au-aixnetworkproblem2/index.html</a> :
+<i> a status of SYN_SENT indicates that a three-way handshake has been initiated by your host, but as yet no acknowledgement has been received from the target host. This could mean that there's a route to the target but no route back for this type of traffic. In this situation, ask the network administrator whether any firewalls on the route back are blocking this type of traffic. </i>
+
+
+
+

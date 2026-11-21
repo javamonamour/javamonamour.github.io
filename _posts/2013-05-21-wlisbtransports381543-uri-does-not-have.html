@@ -1,0 +1,35 @@
+---
+layout: post
+title: "WliSbTransports:381543 : URI does not have host and port information"
+date: 2013-05-21T12:04:00.002+02:00
+permalink: /2013/05/wlisbtransports381543-uri-does-not-have.html
+blogger_id: "6312372395303028431"
+tags: ["jms", "OSB"]
+---
+In OSB, when you enter a JMS URI without hostname and port - meaning a LOCAL URI - you get this warning:
+
+<br/><br/>
+<pre>
+URI: jms:///weblogic.jms.XAConnectionFactory/PV_OSB_TESTQ, does not have host and port information. 
+Host and port information is configured generally as empty when a foreign JMS provider is used.
+
+</pre>
+<br/><br/>
+This error message is described here
+<br/><br/>
+<a href="http://docs.oracle.com/cd/E14571_01/apirefs.1111/e15034/JmsTransport.html">http://docs.oracle.com/cd/E14571_01/apirefs.1111/e15034/JmsTransport.html</a>
+
+<br/><br/>
+
+"JMS proxy service can have empty host and port information in the URI when it is supposed to use foreign JMS provider. The destination is not created if it does not exist."
+
+<br/><br/>
+
+In fact the syntax jms:///connectionFactoryJNDI/queueJNDI is working perfectly even for local queues.
+And we really hate the story that OSB creates the queues if they are missing, so once more reason to avoid using host:port in the JMS URI.
+
+<br/><br/>
+
+
+
+

@@ -1,0 +1,27 @@
+---
+layout: post
+title: "Test Console service is not running. Contact administrator to start this service"
+date: 2011-12-28T15:26:00.001+01:00
+permalink: /2011/12/test-console-service-is-not-running.html
+blogger_id: "8105372999989403962"
+tags: ["OSB"]
+---
+I was unable to test a Proxy/Business service, and getting the error message<br />
+"Test Console service is not running. Contact administrator to start this service"<br />
+<br />
+I opened the AdminServer logs and it was full of:<br />
+<br />
+<br />
+<i><br />
+An exception [java.lang.StackOverflowError] was thrown while rendering the content at [/jsp/dashboard/<b>DashboardAlerts.jsp</b>].<br />
+javax.servlet.ServletException: <b>java.lang.StackOverflowError</b><br />
+at weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:341)<br />
+at weblogic.servlet.internal.TailFilter.doFilter(TailFilter.java:26)<br />
+at weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)<br />
+at org.apache.beehive.netui.pageflow.PageFlowPageFilter.continueChainNoWrapper(PageFlowPageFilter.java:455)<br />
+at org.apache.beehive.netui.pageflow.PageFlowPageFilter.doFilter(PageFlowPageFilter.java:114)<br />
+<br />
+</i><br />
+<br />
+<br />
+It is unclear how the server got itself in that state.... anyway restarting AdminServer and Managed Servers fixed the issue.... weird.

@@ -1,0 +1,9 @@
+---
+layout: post
+title: "Eclipse Tigris plugin and built-in plugin"
+date: 2010-07-29T17:14:00.003+02:00
+permalink: /2010/07/eclipse-tigris-plugin-and-built-in.html
+blogger_id: "233558647681809285"
+tags: ["svnplugin", "tigris"]
+---
+Apparently there is a conflict when you install Tigris plugin on top of Eclipse:<br /><br /><a href="http://subclipse.tigris.org/servlets/ProjectProcess?pageID=p4wYuA">http://subclipse.tigris.org/servlets/ProjectProcess?pageID=p4wYuA</a><br /><br />I click on "accept license" and it doesn't proceed.<br /><br />If you remove these jars (put them in a directory different from C:\bea11\oepe_11gR1PS2\plugin), and you restart, Tigris allows you to proceed.<br /><br /><pre><br />org.eclipse.team.svn.core.nl1_0.7.9.I20100512-1900.jar<br />org.eclipse.team.svn.core_0.7.9.I20100512-1900.jar<br />org.eclipse.team.svn.help_0.7.9.I20100512-1900.jar<br />org.eclipse.team.svn.nl1_0.7.9.I20100512-1900.jar<br />org.eclipse.team.svn.resource.ignore.rules.jdt_0.7.9.I20100512-1900.jar<br />org.eclipse.team.svn.revision.graph_0.7.9.I20100512-1900.jar<br />org.eclipse.team.svn.ui.nl1_0.7.9.I20100512-1900.jar<br />org.eclipse.team.svn.ui_0.7.9.I20100512-1900.jar<br />org.eclipse.team.svn_0.7.9.I20100512-1900.jar<br /></pre>

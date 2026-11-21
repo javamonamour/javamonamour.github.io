@@ -1,0 +1,70 @@
+---
+layout: post
+title: "How to read a transaction error message"
+date: 2009-12-09T12:41:00.000+01:00
+permalink: /2009/12/how-to-read-transaction-error-message.html
+blogger_id: "6573636350274226888"
+---
+Don't quote me on this, this is only my interpretation.<br />
+<br />
+We start with a general message, with times (important in case of timeout, to understand where the timeout originates)<br />
+<br />
+<i>&lt;[ACTIVE] ExecuteThread: '3' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;&gt; &lt;1260325532180&gt; </i><br />
+<i>&lt;BEA-010026&gt; </i><br />
+<i>&lt;Exception occurred during commit of transaction Xid=BEA1-53B00171B6B92DDEE6DD(585181039),</i><br />
+<i>Status=Rolledback. </i><br />
+<i>[Reason=weblogic.transaction.internal.AppSetRollbackOnlyException],</i><br />
+<i>numRepliesOwedMe=0,numRepliesOwedOthers=0,<b>seconds since begin=60</b>,seconds left=0,</i><br />
+<br />
+then a section with all the XA resources enrolled in the XA TX:<br />
+<br />
+<i><b>XAServerResourceInfo</b>[<b>WLStore_PEPPODomain_PEPPOJMSStore_1</b>]=</i><br />
+<i>&nbsp;&nbsp; (ServerResourceInfo[WLStore_PEPPODomain_PEPPOJMSStore_1]=</i><br />
+<i>&nbsp;&nbsp; (state=rolledback,assigned=PEPPOappli1),</i><br />
+<i>&nbsp;&nbsp; xar=WLStore_PEPPODomain_PEPPOJMSStore_1786968327,</i><br />
+<i>&nbsp;&nbsp; re-Registered = false),</i><br />
+<i><br />
+</i><br />
+<i><b>XAServerResourceInfo</b>[<b>cgDataSource</b>]=</i><br />
+<i>&nbsp;&nbsp;&nbsp; (ServerResourceInfo[cgDataSource]=(state=rolledback,assigned=PEPPOappli1),</i><br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xar=cgDataSource,</i><br />
+<i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; re-Registered = false),</i><br />
+<i><br />
+</i><br />
+<i><b>XAServerResourceInfo</b>[jdbc/INFOCOMejbJTSToplink]=(ServerResourceInfo[jdbc/INFOCOMejbJTSToplink]=(state=rolledback,assigned=LAPPAappli1),</i><br />
+<i>&nbsp; xar=null,</i><br />
+<i>re-Registered = false),</i><br />
+<br />
+then a list of the domains involved in the TX, in this case 2 Domains are involved:<br />
+<br />
+<i>SCInfo[PEPPODomain+PEPPOappli1]=(state=rolledback),</i><br />
+<i>SCInfo[LAPPADomain+LAPPAappli1]=(state=rolledback),</i><br />
+<br />
+<i>properties=({}),</i><br />
+<br />
+the CoordinatorURL tells us on which domain the TX was originated:<br />
+<br />
+<i>local properties=({class com.bea.wli.bpm.runtime.JpdContainer$TxnListener[10.1.5.123-52d2aa43.1256f924548.-7855]postNotificationCtrl:10.1.5.122-1bdb3347.1256f922aaa.-6f7c=com.bea.wli.bpm.runtime.JpdContainer$TxnListener@37e9159d, weblogic.jdbc.jta.cgDataSource=[ No XAConnection is attached to this TxInfo ], modifiedListeners=[weblogic.ejb.container.internal.TxManager$TxListener@22e14e03]}),OwnerTransactionManager=ServerTM[ServerCoordinatorDescriptor</i><br />
+<i>=(<b>CoordinatorURL</b>=PEPPOappli1+frparmat01.acme.dns:8122+PEPPODomain+t3+, </i><br />
+<br />
+XAResources is a list of all the transactional resources registered in the TX Coordinator:<br />
+<br />
+<i><b>XAResources</b>={WLStore_PEPPODomain_PEPPOJMSStore_1, WLStore_PEPPODomain_pfProliferationJMSStore_auto_1, cgDataSource, OatmialResource, portalDataSourceAlwaysXA, eis/jms/WLSConnectionFactoryJNDIXA, PEPPO_LAPPAejbJTSToplink, PEPPO_UTILejbJTSToplink</i><br />
+<i>, PEPPO_PEPPOejbJTSToplink, WLStore_PEPPODomain_cgJMSStore_auto_1, PEPPO_CCejbJTSToplink, WLStore_PEPPODomain__WLS_PEPPOappli1, WLStore_PEPPODomain_cgJMSStore_auto_3, bpmArchDataSource, portalDataSource, WLStore_PEPPODomain_WseeFileStore_auto_1, PEPPO_ACTejbJTSToplink, PEPPO_CISejbJTSToplink},NonXAResources={})],</i><br />
+<i>CoordinatorURL=PEPPOappli1+frparmat01.acme.dns:8122+PEPPODomain+t3+): </i><br />
+<br />
+finally, the stacktrace:<br />
+<br />
+<i>weblogic.transaction.RollbackException: Unknown reason</i><br />
+<i>at weblogic.transaction.internal.TransactionImpl.throwRollbackException(TransactionImpl.java:1809)</i><br />
+<i>at weblogic.transaction.internal.ServerTransactionImpl.internalCommit(ServerTransactionImpl.java:331)</i><br />
+<i>at weblogic.transaction.internal.ServerTransactionImpl.commit(ServerTransactionImpl.java:227)</i><br />
+<i>at weblogic.ejb.container.internal.MDListener.execute(MDListener.java:463)</i><br />
+<i>at weblogic.ejb.container.internal.MDListener.transactionalOnMessage(MDListener.java:335)</i><br />
+<i>at weblogic.ejb.container.internal.MDListener.onMessage(MDListener.java:291)</i><br />
+<i>at weblogic.jms.client.JMSSession.onMessage(JMSSession.java:4072)</i><br />
+<i>at weblogic.jms.client.JMSSession.execute(JMSSession.java:3962)</i><br />
+<i>at weblogic.jms.client.JMSSession$UseForRunnable.run(JMSSession.java:4490)</i><br />
+<i>at weblogic.work.ServerWorkManagerImpl$WorkAdapterImpl.run(ServerWorkManagerImpl.java:518)</i><br />
+<i>at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)</i><br />
+<i>at weblogic.work.ExecuteThread.run(ExecuteThread.java:181)</i>

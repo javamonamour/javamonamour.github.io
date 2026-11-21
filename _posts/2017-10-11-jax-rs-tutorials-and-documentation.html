@@ -1,0 +1,92 @@
+---
+layout: post
+title: "JAX-RS tutorials and documentation"
+date: 2017-10-11T05:02:00.000+02:00
+permalink: /2017/10/jax-rs-tutorials-and-documentation.html
+blogger_id: "4124180987545397031"
+tags: ["http", "jaxrs", "REST"]
+---
+Here a reasoned discussion about CacheControl and ETag <a href="https://abhirockzz.wordpress.com/2016/03/27/efficient-jax-rs-conditional-gets-puts/">https://abhirockzz.wordpress.com/2016/03/27/efficient-jax-rs-conditional-gets-puts/</a><br />
+<br />
+Here <a href="https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html</a> all the HTTP 1.1 headers specifications<br />
+<br />
+<br />
+<a href="http://www.logicbig.com/tutorials/java-ee-tutorial/jax-rs/request-context/">http://www.logicbig.com/tutorials/java-ee-tutorial/jax-rs/request-context/</a> <br />
+<br />
+deploy it in a PVRestRS project and hit it with http://localhost:8080/PVRestRS/users<br />
+<br />
+it's an excellent simple example showing the use of:<br />
+<br />
+<a href="http://docs.oracle.com/javaee/7/api/javax/ws/rs/core/Request.html">http://docs.oracle.com/javaee/7/api/javax/ws/rs/core/Request.html</a><br />
+<br />
+<br />
+specifically, here <a href="http://docs.oracle.com/javaee/7/api/javax/ws/rs/core/Request.html#evaluatePreconditions-javax.ws.rs.core.EntityTag-">http://docs.oracle.com/javaee/7/api/javax/ws/rs/core/Request.html#evaluatePreconditions-javax.ws.rs.core.EntityTag-</a> some explanations on the use of an ETag.<br />
+<br />
+<a href="http://docs.oracle.com/javaee/7/api/javax/ws/rs/core/CacheControl.html">http://docs.oracle.com/javaee/7/api/javax/ws/rs/core/CacheControl.html</a><br />
+<br />
+<br />
+Some explanations on "what ETag is for?" here <a href="http://www.logicbig.com/quick-info/web/etag-header/">http://www.logicbig.com/quick-info/web/etag-header/</a><br />
+<br />
+I open Chrome, STRL-SHIFT.I (developer tools) , Networks, select "users", right-click, console / Headers/all (it took me a  lot of clicking to find it...) and I see this:<br />
+<br />
+<br />
+<pre>Request URL:http://localhost:8080/PVRestRS/users
+Request Method:GET
+Status Code:304 Not Modified
+Remote Address:127.0.0.1:8080
+Referrer Policy:no-referrer-when-downgrade
+Response Headers
+view source
+Date:Wed, 11 Oct 2017 00:31:57 GMT
+Server:WildFly/11
+X-Powered-By:Undertow/1
+Request Headers
+view source
+Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+Accept-Encoding:gzip, deflate, br
+Accept-Language:en-US,en;q=0.8
+Cache-Control:max-age=0
+Connection:keep-alive
+Cookie:Idea-f3d396f=f1a96b31-981d-4574-a116-314fe061816e; __utma=111872281.364080227.1506531800.1506531800.1506531800.1; __utmc=111872281; __utmz=111872281.1506531800.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none)
+Host:localhost:8080
+If-Modified-Since:Tue, 19 Sep 2017 22:00:00 GMT
+Upgrade-Insecure-Requests:1
+User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36
+
+</pre><br />
+If I request http://localhost:8080/PVRestRS/users/pippo , I see also ETag:"version1" and (the second time only) If-None-Match:"version1"<br />
+<br />
+"The If-None-Match request-header field is used with a method to make it conditional. A client that has one or more entities previously obtained from the resource can verify that none of those entities is current by including a list of their associated entity tags in the If-None-Match header field. The purpose of this feature is to allow efficient updates of cached information with a minimum amount of transaction overhead. It is also used to prevent a method (e.g. PUT) from inadvertently modifying an existing resource when the client believes that the resource does not exist. "<br />
+<br />
+<br />
+"1. If the response includes the "s-maxage" cache-control<br />
+directive, the cache MAY use that response in replying to a<br />
+subsequent request. But (if the specified maximum age has<br />
+passed) a proxy cache MUST first revalidate it with the origin<br />
+server, using the request-headers from the new request to allow<br />
+the origin server to authenticate the new request. (This is the<br />
+defined behavior for s-maxage.) If the response includes "s-<br />
+maxage=0", the proxy MUST always revalidate it before re-using<br />
+it."<br />
+<br />
+"s-maxage<br />
+If a response includes an s-maxage directive, then for a shared cache (but not for a private cache), the maximum age specified by this directive overrides the maximum age specified by either the max-age directive or the Expires header. The s-maxage directive also implies the semantics of the proxy-revalidate directive (see section 14.9.4), i.e., that the shared cache must not use the entry after it becomes stale to respond to a subsequent request without first revalidating it with the origin server. The s- maxage directive is always ignored by a private cache. "<br />
+<br />
+<br />
+This book is on my to-read list <a href="https://leanpub.com/rest-assured-with-jaxrs">https://leanpub.com/rest-assured-with-jaxrs</a><br />
+<br />
+<br />
+The excellent article about JAX-RS on Java Magazine jan/feb 2016 by Abishek is available here http://www.javamagazine.mozaicreader.com/JanFeb2016#&pageSet=32&page=0<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,43 @@
+---
+layout: post
+title: "More on UML Modelling with PlantUML"
+date: 2014-04-03T11:38:00.001+02:00
+permalink: /2014/04/more-on-uml-modelling-with-plantuml.html
+blogger_id: "1340705115593695746"
+tags: ["UML"]
+---
+<a href="https://www.ibm.com/developerworks/rational/library/content/RationalEdge/sep04/bell/">Here an excellent explanation</a> of the different types of dependencies amongst classes.<br />
+<br />
+Here are all the sort of relationships you can draw. 
+<br />
+As a simple reminder, Composition, Aggregation, Dependency, Association are in decreasing order of "tight coupling" between 2 classes.<br />
+<br />
+<ul>
+<li>Composition = B cannot exist without A</li>
+<li>Aggregation = B is a part of A</li>
+<li>Dependency = change in B affects A</li>
+<li>Association = very loose relationship</li>
+</ul>
+<br />
+<pre class="brush: xml">@startuml
+left to right direction
+Class01 &lt;|-- Class02 : Extension
+Class001 "1" *-- "many" Class002 : contains (one to many)
+Class03 *-- Class04  : Composition
+Class05 o-- Class06 : Aggregation
+Class07 .. Class08 : Dependency
+Class09 -- Class10 : Association
+Class11 &lt;|.. Class12 : Implements
+Class13 --&gt; Class14: Unidirectional Association
+Class15 ..&gt; Class16: Unidirectional Dependency
+Class19 *--&gt; Class20: Unidirectional Composition
+Class21 -- Class21: Reflexive Association
+@enduml
+
+</pre>
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/c8dd419502305558.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/c8dd419502305558.png" height="640" width="328" /></a></div>
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/5e96e5b388d0f602.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><br /></a></div>
+<br />

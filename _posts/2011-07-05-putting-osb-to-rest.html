@@ -1,0 +1,62 @@
+---
+layout: post
+title: "Putting OSB to REST"
+date: 2011-07-05T13:14:00.003+02:00
+permalink: /2011/07/putting-osb-to-rest.html
+blogger_id: "1275254441389004466"
+tags: ["OSB", "REST"]
+---
+this is my URI that I &quot;GET&quot; in my browser:<br />
+<br />
+<a href="http://acme.com:7009/GUTools/Caches/LoadCache/">http://acme.com:7009/GUTools/Caches/LoadCache/</a><b>validityDate=2001-07-05/id=90</b><br />
+<br />
+being GUTools/Caches/LoadCache the URI of my &quot;REST&quot; AnyXML Proxy Service<br />
+<br />
+assign $inbound/ctx:transport/ctx:request/http:relative-URI/text() to relativeURI<br />
+<br />
+(relativeURI = <b>validityDate=2001-07-05/id=90)<br />
+<br />
+</b>assign <br />
+<i>let $mySequence := fn:tokenize($relativeURI, &quot;/&quot;)<br />
+return<br />
+&lt;parameters&gt;<br />
+{for $item in $mySequence<br />
+return &lt;parameter&gt;&lt;name&gt;{fn:substring-before($item, &#39;=&#39;)}&lt;/name&gt;&lt;value&gt;{fn:substring-after($item, &#39;=&#39;)}&lt;/value&gt;&lt;/parameter&gt;<br />
+}<br />
+&lt;/parameters&gt;</i><br />
+to parameters <br />
+<br />
+<br />
+this is $parameters :<br />
+<br />
+&lt;parameters&gt;<br />
+&lt;parameter&gt;<br />
+&lt;name&gt;validityDate&lt;/name&gt;<br />
+&lt;value&gt;2001-07-05&lt;/value&gt;<br />
+&lt;/parameter&gt;<br />
+&lt;parameter&gt;<br />
+&lt;name&gt;id&lt;/name&gt;<br />
+&lt;value&gt;90&lt;/value&gt;<br />
+&lt;/parameter&gt;<br />
+&lt;/parameters&gt;<br />
+<br />
+<br />
+For Each [ parameter ] in [ ./parameter ] of [ parameters ]<br />
+Indexed by [ parameterIndex ] with total count in [ parameterCount ] <br />
+<br />
+log $parameter/name/text()<br />
+log $parameter/value/text()<br />
+<br />
+<br />
+Great! I was able to get all the parameters from the URI. At this point I can process them using simple XPath to thet their value:<br />
+<br />
+$parameters/parameter[name=&#39;validityDate&#39;]/value/text()<br />
+<br />
+this returns 2001-07-05<br />
+<br />
+<br />
+I can invoke from a CRON job this command:<br />
+<br />
+ lwp-request -m GET http://acme.com:7009//GUTools/Caches/LoadCache/validityDate=2001-07-02<br />
+<br />
+to trigger the Proxy Service with a simple GET (no more bloody SOAP)

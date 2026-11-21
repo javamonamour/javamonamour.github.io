@@ -1,0 +1,24 @@
+---
+layout: post
+title: "whoami vs who am i"
+date: 2013-11-19T11:04:00.003+01:00
+permalink: /2013/11/whoami-vs-who-am-i.html
+blogger_id: "6191645152252550886"
+tags: ["linux"]
+---
+ok this is like Linux 101:
+
+<pre>
+[root@osb-vagrant ~]# who am i
+root     pts/1        2013-11-19 11:01 (10.0.2.2)
+[root@osb-vagrant ~]# whoami
+root
+[root@osb-vagrant ~]# sudo -u soa whoami
+soa
+[root@osb-vagrant ~]# sudo -u soa who am i
+root     pts/1        2013-11-19 11:01 (10.0.2.2)
+
+</pre>
+
+<br/>
+So if you allow some user to sudo a command, and you want to log who that user is, you should use <b>"who am i"</b> and not "whoami". 

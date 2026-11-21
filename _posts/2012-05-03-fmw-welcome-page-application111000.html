@@ -1,0 +1,60 @@
+---
+layout: post
+title: "FMW Welcome Page Application_11.1.0.0.0 Application"
+date: 2012-05-03T11:39:00.001+02:00
+permalink: /2012/05/fmw-welcome-page-application111000.html
+blogger_id: "4299278346009910986"
+---
+The "FMW Welcome Page Application" is a: <br />
+<br />
+/opt/oracle/fmw11_1_1_5/oracle_common/modules/oracle.jrf_11.1.1/fmw-welcome.ear<br />
+<br />
+and should be targeted to the Admin only<br />
+<br />
+In the META-INF/mbeans.xml there is:<br />
+<br />
+<br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version = '1.0' encoding = 'UTF-8' standalone='yes'?>
+&lt;application-mbeans
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:noNamespaceSchemaLocation="http://xmlns.oracle.com/oracleas/schema/11/application-mbeans-11_1.xsd"
+   schema-major-version="11"
+   schema-minor-version="1"
+> 
+  &lt;runtime-mbeans location="../APP-INF/lib/mbeans.jar">
+    &lt;jmx-runtime-mbean
+      objectname="EMDomain:type=EMIntegration,EMTargetType=j2ee_application,name=FMW Welcome Page Application,Application=FMW Welcome Page Application,ApplicationVersion=11.1.0.0.0"
+      class="oracle.jrf.fmwapp.mbean.EMIntegrationMBeanImpl"
+      management-interface="oracle.jrf.fmwapp.mbean.EMIntegrationMBean"
+      unregister-on-undeploy="true">
+      
+      &lt;description>EM Integration Runtime MBean for FMW Welcome Page app&lt;/description> 
+    &lt;/jmx-runtime-mbean>
+
+  &lt;/runtime-mbeans>
+&lt;/application-mbeans>
+
+</pre><br />
+and the application.xml:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;application version="1.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/application_1_4.xsd">
+ &lt;display-name>FMW Welcome Page Application&lt;/display-name>
+ &lt;module>
+  &lt;web>
+   &lt;web-uri>fmw-welcome.war&lt;/web-uri>
+   &lt;context-root>/&lt;/context-root>
+  &lt;/web>
+ &lt;/module>
+&lt;/application>
+
+</pre><br />
+how about fmw-welcome.war?<br />
+<br />
+Well, if you enter http://myhost:7001/welcome-index.html<br />
+you will see a nice ad page about all Oracle products. <br />
+Do you really need this in your environment? I don't think so...<br />
+besides, it even contains broken links<br />
+<br />
+Besides, there is even a known bug: https://forums.oracle.com/forums/thread.jspa?threadID=2141995

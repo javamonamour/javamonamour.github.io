@@ -1,0 +1,34 @@
+---
+layout: post
+title: "Groovy WSDL Parser"
+date: 2011-08-01T13:43:00.002+02:00
+permalink: /2011/08/groovy-wsdl-parser.html
+blogger_id: "5141321692479143092"
+tags: ["groovy", "wsdl_parser"]
+---
+<pre name="code" class="brush: java">
+class PVWSDLParser {
+ public static void main(String[] args) {
+  PVWSDLParser parser = new PVWSDLParser();
+  parser.parse("/path/to/your.wsdl");
+ }
+ 
+ public void parse(String filename) {
+  
+  def nsxsd = new groovy.xml.Namespace("http://www.w3.org/2001/XMLSchema", 'xsd')
+  def nswsdl = new groovy.xml.Namespace("http://schemas.xmlsoap.org/wsdl/", 'wsdl')
+  
+  def wsdlDocument = new XmlParser().parse(new File(filename));
+  def targetNamespace = wsdlDocument.'@targetNamespace';
+  
+  def imports = wsdlDocument[nswsdl.types][nsxsd.schema][nsxsd.import];
+  imports.each { theimport ->
+   System.out.println(theimport.'@schemaLocation');  
+   System.out.println(theimport.'@namespace');
+  } 
+ }
+}
+
+</pre><br />
+<br />
+A LOT easier than in Java!

@@ -1,0 +1,8 @@
+---
+layout: post
+title: "BEA-380001: A Transport Exception occurred during an SB Transport message processing"
+date: 2011-06-24T19:41:00.001+02:00
+permalink: /2011/06/bea-380001-transport-exception-occurred.html
+blogger_id: "7486295055066862166"
+---
+I was calling a BS from a PS1 (route) and I was always getting this error. The BS was using SB protocol to talk to another PS2.<br><br>It turned out that in PS1 I was inserting a wsa:SoapAction header. <br>Removing the header fixed the issue.<br>  I am not sure at which point it was causing trouble.... one needs to turn on debug flags to trace operations.<br> 

@@ -1,0 +1,34 @@
+---
+layout: post
+title: "WebLogic: Registered more than one instance with the same objectName"
+date: 2014-10-02T11:11:00.000+02:00
+permalink: /2014/10/weblogic-registered-more-than-one.html
+blogger_id: "7127443574143274608"
+tags: ["weblogic"]
+---
+We keps getting an error in the logs:
+<br />
+<br />
+<pre>BEA-149500&gt; <an 5="" :="" at="" bjectnamemanagerbase.java:168="" cb8a604="" egistrationmanagerbase.java:110="" egistrationmanagerbase.java:180="" exception="" existing="" init="" instance="" java.lang.illegalargumentexception:="" jms_sessionpool_-1550329347="" mbean="" more="" nager.java:65="" new:weblogic.deployment.jms.jmssessionpoolruntimeimpl="" null.="" objectname="" ocation="osbpr4ms1,Type=JMSPooledConnectionRuntime" occurred="" odelmbeanfactory.java:87="" ompatibilityobjectnamema="" one="" osbpr4do:serverruntime="osbpr4ms1,Name=ALSB_" registered="" registering="" same="" than="" the="" untimembeanagent.java:104="" untimembeandelegate.java:317="" weblogic.deployment.jms.jmssessionpoolruntimeimpl="" weblogic.management.jmx.modelmbean.wlsmodelmbeanfactory.registerwlsmodelmbean="" weblogic.management.jmx.objectnamemanagerbase.registerobject="" weblogic.management.mbeanservers.compatibility.internal.compatibilityobjectnamemanager.lookupobjectname="" weblogic.management.mbeanservers.internal.runtimembeanagent="" weblogic.management.provider.core.registrationmanagerbase.invokeregistrationhandlers="" weblogic.management.provider.core.registrationmanagerbase.register="" weblogic.management.runtime.runtimembeandelegate.="" weblogic.management.runtime.runtimembeandelegate.register="" while="" with="">(RuntimeMBeanDelegate.java:255)
+        at weblogic.management.runtime.RuntimeMBeanDelegate.<init>(RuntimeMBeanDelegate.java:215)
+        at weblogic.management.runtime.RuntimeMBeanDelegate.<init>(RuntimeMBeanDelegate.java:193)
+        at weblogic.management.runtime.RuntimeMBeanDelegate.<init>(RuntimeMBeanDelegate.java:182)
+
+</init></init></init></an></pre>
+<br />
+<br />
+until we restarted and it went away. No change was done in the configuration recently.
+<br />
+<br />
+Looking in Oracle Support I found:
+<br />
+<br />
+BEA-149500 Error Registered more than one instance with the same objectName using JDBC TLOG Store (Doc ID 1544879.1)
+<br />
+<br />
+WebLogic Server tries to create a new MBean every time a PersistentStoreRuntimeMBean is called. This issue has been fixed in unpublished defect 16063328
+<br />
+<br />
+Our MBean type is "JMSPooledConnectionRuntime" and not "PersistentStoreRuntime", but maybe the origin is the same... anyway I am not going to apply the patch, as this has occurred only once.... 
+
+

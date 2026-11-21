@@ -1,0 +1,51 @@
+---
+layout: post
+title: "Xquery, the need to cast your variables"
+date: 2011-06-23T21:13:00.001+02:00
+permalink: /2011/06/xquery-need-to-cast-your-variables.html
+blogger_id: "2267602396512508819"
+tags: ["XQuery"]
+---
+Today I have wasted 1 hour on this:<br />
+<br />
+the inputs are:<br />
+<br />
+<pre name="code" class="brush: xml"><books>
+<book>
+<id>27</id>
+<name>Al Quran</name>
+</book>
+
+<book>
+<authorindex>1</authorIndex>
+<name>La Tregua</name>
+</book>
+</books>
+
+<authors>
+<author>
+<name>Mohamed</name>
+</author>
+
+<author>
+<name>Levi</name>
+</author>
+</authors>
+
+</pre><br />
+my Xquery does:<br />
+<br />
+THIS is WRONG:<br />
+<br />
+let <b>$myAuthorIndex</b> := data($books/book[name="Mohamed"]/authorIndex)<br />
+let $myAuthors := $authors/author[$myAuthorIndex]<br />
+<br />
+<br />
+well, this will not work.... you will get ALL AUTHORS.<br />
+The trick is to CAST $myAuthorIndex to an integer, otherwise it will be considered a string and ignored<br />
+<br />
+<br />
+THIS is correct:<br />
+<br />
+let $myAuthorIndex := <b>xs:int(</b>data($books/book[name="Mohamed"]/authorIndex))<br />
+let $myAuthors := $authors/author[$myAuthorIndex]

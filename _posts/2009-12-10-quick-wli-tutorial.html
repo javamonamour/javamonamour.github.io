@@ -1,0 +1,60 @@
+---
+layout: post
+title: "Quick WLI tutorial"
+date: 2009-12-10T11:48:00.000+01:00
+permalink: /2009/12/quick-wli-tutorial.html
+blogger_id: "6331776827848350695"
+---
+the nodes ina project can be:<br />
+<br />
+<b>Start</b><br />
+<b>Finish</b><br />
+<b>Client Request</b> nodes: receive an event<br />
+<b>Client Response</b> <br />
+<b>Decision </b>nodes: branch execution<br />
+<b>&nbsp;&nbsp;&nbsp; Condition</b> <br />
+<b>Control Send </b>nodes: communicate with services<br />
+<b>Control Send with return</b> <br />
+<b>Control Receive</b> nodes: wait for an asynchronous response from external services<br />
+<br />
+Perform<br />
+<br />
+Other types of node:<br />
+Decision<br />
+Switch<br />
+While do<br />
+Do While<br />
+<br />
+For Each<br />
+Branch <br />
+Parallel<br />
+Event Choice<br />
+Group<br />
+Transaction<br />
+<br />
+<br />
+<b>Projects</b>:<br />
+Web: contains WebServices, XQuery, Transformations, Business Processes, Service Controls<br />
+<br />
+<br />
+A <b>Process </b>is defined by an annotation @Process with a long XML defining the structure of the process (nodes, branches etc)<br />
+<br />
+<br />
+<b>Data Palette</b>:<br />
+lists all&nbsp; variables (XML or Non-XML, Java types); and all Controls (ServiceControl, FileControl...)<br />
+<br />
+<br />
+<br />
+@<b>com.bea.wli.common.XQuery</b>&nbsp; is a tag to define XQuery code<br />
+<br />
+A Process implements a <b>com.bea.jpd.ProcessDefinition</b> Interface (marker Interface).<br />
+<br />
+It generally contains member variables of type XmlObject or XmlObjectList; they store portion of the XML documents.<br />
+<br />
+@<b>com.bea.wli.jpd.Callback</b> identifies callback points for asynchronous services.<br />
+<br />
+Controls extend <b>com.bea.control.ServiceControl</b>, which manages credentials, endpoints, timeouts to make calls to Services.<br />
+<br />
+Transformations implement <b>com.bea.transform.TransformSource</b> (marker Interface).<br />
+<br />
+All processes (.jpd) contain a JpdContext (com.bea.wli.jpd.Context)

@@ -1,0 +1,35 @@
+---
+layout: post
+title: "java.lang.ClassNotFoundException: com.bea.wli.config.deployment.server.ServerVersion"
+date: 2011-08-25T00:15:00.000+02:00
+permalink: /2011/08/javalangclassnotfoundexception.html
+blogger_id: "1352961455073290723"
+tags: ["nodemanager"]
+blogger_comments:
+  - author: "javin paul"
+    date: 2011-09-11
+    html: "Good one mate, I agree This is real pain when you encounter, this could be even more difficult to find out the real cause in integrated environment like J2EE where different web server use different classloaders and it can come if class is not visible to classloader.<br /><br />Thanks<br /><a href=\"http://javarevisited.blogspot.com/2011/07/classnotfoundexception-vs.html\" rel=\"nofollow\">difference on NoClassDefFoundError vs ClassNotFoundException</a>"
+---
+java.lang.ClassNotFoundException: com.bea.wli.config.deployment.server.ServerVersion<br />
+<br />
+This error could indicate that a component was deployed on a  cluster member but not other members of that cluster. Make sure that any component deployed on a server that is part of a cluster is also deployed on all other members of that cluster<br />
+<br />
+Solution:<br />
+<br />
+add <br />
+C:\Oracle2\Middleware\Oracle_OSB1\modules\com.bea.common.configfwk.wlinterop_10.3.1.0.jar<br />
+<br />
+to the Server Start/ Classpath parameters of the Managed Server<br />
+<br />
+If you get<br />
+<br />
+FATAL ERROR in native method: JDWP No transports initialized, jvmtiError=AGENT_ERROR_TRANSPORT_INIT(197)<br />
+<br />
+then you must set <br />
+set ALSB_DEBUG_FLAG=false<br />
+and<br />
+set debugFlag=false<br />
+<br />
+in setDomainEnv.cmd (sh)<br />
+<br />
+

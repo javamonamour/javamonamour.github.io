@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Escaping strings in Java or Groovy"
+date: 2013-08-04T15:58:00.003+02:00
+permalink: /2013/08/escaping-strings-in-java-or-groovy.html
+blogger_id: "3882649796334206889"
+tags: ["java"]
+---
+Working with Strings in Java is a pain, because Java does its best to prevent you from using characters like " or \ in a string.<br />
+<br />
+Escaping is a pain but there is no way around it - apart from ditching Java in favor of Groovy which is a lot more flexible.<br />
+<br />
+Either you use&nbsp;<a href="http://commons.apache.org/proper/commons-lang/javadocs/api-2.6/org/apache/commons/lang/StringEscapeUtils.html">http://commons.apache.org/proper/commons-lang/javadocs/api-2.6/org/apache/commons/lang/StringEscapeUtils.html</a>&nbsp;apache commons library escapeJava(), or Groovy escapeUtils&nbsp;<a href="http://groovy.codehaus.org/gapi/groovy/json/StringEscapeUtils.html">http://groovy.codehaus.org/gapi/groovy/json/StringEscapeUtils.html</a>&nbsp;, or just write a little function:<br />
+<br />
+def escapeString(theString) {<br />
+&nbsp; &nbsp; return theString.replace('\\', '\\\\').replaceAll('"',"'").replaceAll('\n', '" +\n"') <br />
+&nbsp; &nbsp; //this is the list of all replace you need to implement: {"'", "\\'"}, {"\"", "\\\""}, {"\\", "\\\\"},{"/", "\\/"}<br />
+}<br />
+<div>
+<br /></div>
+<div>
+<br /></div>
+<div>
+and good luck.</div>
+

@@ -1,0 +1,26 @@
+---
+layout: post
+title: "javax.net.ssl.SSLHandshakeException: Server chose unsupported or disabled protocol: SSLv3"
+date: 2015-12-31T13:55:00.000+01:00
+permalink: /2015/12/javaxnetsslsslhandshakeexception-server.html
+blogger_id: "5307251476062081944"
+tags: ["ssl", "tls"]
+---
+If you get this error message  "javax.net.ssl.SSLHandshakeException: Server chose unsupported or disabled protocol: SSLv3", 
+<br/>
+chances are that your JVM, for vulnerability issues connected to SSLv3, is configured to disable this protocol. 
+<br/>
+
+If you REALLY need to support SSLv3, check which file you are using for -Djava.security.properties=/path/to/yourfile, then edit yourfile and make sure your property:
+<br/>
+jdk.tls.disabledAlgorithms=SSLv3, DH keySize < 768
+<br/>
+
+doesn't contain SSLv3 (make it jdk.tls.disabledAlgorithms=DH keySize < 768)
+
+<br/>
+
+
+
+
+

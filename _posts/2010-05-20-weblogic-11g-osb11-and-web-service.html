@@ -1,0 +1,29 @@
+---
+layout: post
+title: "WebLogic 11g, OSB11 and Web Service client"
+date: 2010-05-20T16:03:00.000+02:00
+permalink: /2010/05/weblogic-11g-osb11-and-web-service.html
+blogger_id: "859392913881634068"
+tags: ["osb11"]
+---
+Glory to Oracle, they have introduced Eclipse 3.5.2, wow! <br />
+<br />
+AT LAST Oracle introduced a <b>wizard </b>to generate a <b>Java Web Service Client</b> without having to struggle for zip and jar files and classpaths for hours... Long Live Oracle!<br />
+<br />
+Do New, Other, and you have 2 options:<br />
+Web Service Client and<br />
+WebLogic Web Service Client<br />
+<br />
+With Web Service Client <br />
+you have the option to<br />
+<b>Monitor SOAP traffic</b> and<br />
+<b>Customize namespace to Java packages mapping</b> (cool!)<b><br />
+</b><br />
+<br />
+<br />
+and here is the code you should use<br />
+<br />
+<br />
+HelloWorldSOAP12BindingQSServiceLocator locator = new HelloWorldSOAP12BindingQSServiceLocator();<br />
+HelloWorldPortType pt = locator.getHelloWorldSOAP12BindingQSPort();<br />
+pt.helloWorld("vaffanculo");

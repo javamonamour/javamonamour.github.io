@@ -1,0 +1,9 @@
+---
+layout: post
+title: "Silent installation of WLI"
+date: 2009-02-16T19:04:00.001+01:00
+permalink: /2009/02/silent-installation-of-wli.html
+blogger_id: "5529045505935428190"
+tags: ["wli silent installation"]
+---
+the only way to make it work is by specifying also a value for ECLIPSE32_HOME, otherwise it fails with a<br /><br /><br />com.bea.plateng.common.util.ObjectStoreValueNotFoundException: Unable to locate object store key ECLIPSE32_HOME<br /><br /><br />./platform1020_linux32.bin -mode=silent -silent_xml=pvtests/silent_wli100.xml -log=installlog.log<br /><br />&lt;bea-installer&gt;&lt;/bea-installer&gt;&lt;input-fields&gt;&lt;/input-fields&gt;&lt;data-value name="ECLIPSE32_HOME" value="/data/software/pvtests/eo"&gt;&lt;/data-value&gt;<br />&lt;data-value name="BEAHOME" value="/data/software/pvtests"&gt;&lt;/data-value&gt;&lt;data-value name="USER_INSTALL_DIR" value="/data/software/pvtests/installdir"&gt;<br />&lt;/data-value&gt;&lt;data-value name="INSTALL_MERCURY_PROFILING_TOOLS" value="false"&gt;&lt;/data-value&gt;<br />&lt;data-value name="COMPONENT_PATHS" value="WebLogic Server/Server|WebLogic Server/Server Add-ons|WebLogic Integration/Integration Server|WebLogic Integration/Workshop Integration Extension"&gt;&lt;/data-value&gt;

@@ -1,0 +1,36 @@
+---
+layout: post
+title: "oracle.sysman.emSDK.webservices.wsdlparser.OperationInfoImpl.getHttpResponseMessage"
+date: 2011-01-18T10:39:00.001+01:00
+permalink: /2011/01/oraclesysmanemsdkwebserviceswsdlparsero.html
+blogger_id: "1637910578055902820"
+tags: ["OBR"]
+---
+<pre>Server Exception during PPR, #6[[
+javax.el.ELException: oracle.sysman.emSDK.webservices.wsdlapi.SoapTestException: null
+
+ at javax.el.BeanELResolver.getValue(BeanELResolver.java:266)
+ at javax.el.CompositeELResolver.getValue(CompositeELResolver.java:143)
+ at com.sun.faces.el.FacesCompositeELResolver.getValue(FacesCompositeELResolver.java:72)
+ at com.sun.el.parser.AstValue.getValue(AstValue.java:118)
+ at com.sun.el.parser.AstNotEqual.getValue(AstNotEqual.java:41)
+ at com.sun.el.parser.AstAnd.getValue(AstAnd.java:46)
+
+....
+
+caused by:
+
+java.lang.NullPointerException at oracle.sysman.emSDK.webservices.wsdlparser.OperationInfoImpl.getHttpResponseMessage(OperationInfoImpl.java:1508)
+ at oracle.sysman.emas.model.wsmgt.PortName.getResponse(PortName.java:635)
+
+</pre><br />
+Testing a Business Rules based composite proves to be quite challenging...<br />
+the Enterprise Manager console seems to have difficulties handling it.<br />
+<br />
+A second attempt gives:<br />
+<br />
+<pre>A Decision Service of the given name doesnt exist.[[
+The component OracleRules1 in composite OBRPerfTest does not expose a service .
+Check the services that are exposed by component OracleRules1. If the error persists, contact Oracle Support Services.
+
+</pre>

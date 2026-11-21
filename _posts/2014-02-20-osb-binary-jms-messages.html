@@ -1,0 +1,36 @@
+---
+layout: post
+title: "OSB binary JMS messages"
+date: 2014-02-20T18:31:00.001+01:00
+permalink: /2014/02/osb-binary-jms-messages.html
+blogger_id: "2997661026136973325"
+tags: ["jms", "OSB"]
+---
+If someone sets the message type to "binary" for a JMS Business Service, this will generate BytesMessage rather than TextMessage. You might have performance reasons to do that. But it's a pain, because in the WebLogic console these messages will not be very readable.
+<br/>
+If you want to process those messages with some Java utility, you can still get the content of the message this way:
+<br/>
+<pre class="brush: java">
+Enumeration msgs = queueBrowser.getEnumeration();
+while (msgs.hasMoreElements()) {
+    Message tempMsg = (Message)msgs.nextElement();
+    String msgContent = "";
+    if (tempMsg instanceof BytesMessage) {
+        weblogic.jms.common.BytesMessageImpl bm = (weblogic.jms.common.BytesMessageImpl)tempMsg;
+        msgContent = new String(bm.getBodyBytes());
+    }
+    if (tempMsg instanceof TextMessage) {
+        msgContent = ((TextMessage)tempMsg).getText();
+    }
+
+}
+</pre>
+<br/>
+
+
+the method getBodyBytes() is not part of the BytesMessage interface, but it's very convenient...
+<br/>
+I guess that the message body COULD be compressed, in that case you are screwed, you might try decompressMessageBody() before reading the body, not sure...
+<br/>
+
+

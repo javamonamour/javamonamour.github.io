@@ -1,0 +1,90 @@
+---
+layout: post
+title: "Puppet: mount a SAMBA share at boot"
+date: 2014-09-23T18:23:00.000+02:00
+permalink: /2014/09/puppet-mount-samba-share-at-boot.html
+blogger_id: "7019666488167651098"
+tags: ["puppet", "samba"]
+---
+First, create a credentials file in your acme module:
+<br/>
+acme\files\samba\myshare.smb.credentials
+<br/>
+and inside put:
+<br/>
+<pre>
+username=myuser
+password=mypassword
+</pre>
+<br/>
+
+I was unable to make it mount an unprotected share..... so just have it protected by username/password.
+
+<br/><br/>
+
+Then in your acme init.pp read a boolean
+<br/><br/>
+<i>$acme_install_sambamyshare        = any2bool(hiera('acme_install_sambamyshare', false)),</i>
+<br/><br/>
+Create a samba.pp class (file):
+<br/><br/>
+
+<pre class="brush: java">
+# == Class: acme::samba
+#
+# Manages samba mounts
+#
+class acme::samba {
+  if $acme::acme_install_sambamyshare {
+    file { '/data/myshare/':
+      ensure => directory,
+      owner  => "soa",
+      group  => 'soa',
+      mode   => '0775',
+    }
+
+    file { '/etc/myshare.smb.credentials': source => 'puppet:///modules/acme/samba/myshare.smb.credentials', 
+  owner => root,
+      mode => '0700', } ->
+    mount { 'myshare':
+      name    => '/data/myshare/',
+      atboot  => 'true',
+      device  => '//windowshost/sharedfolder',
+      ensure  => 'mounted',
+      fstype  => 'cifs',
+      options => "credentials=/etc/myshare.smb.credentials,rw,nounix,iocharset=utf8,file_mode=0777,dir_mode=0777",
+      require => [Package['samba-client'], Package['cifs-utils'], File['/data/myshare/'], File['/etc/myshare.smb.credentials']],
+    }
+  }
+
+}
+
+</pre>
+
+<br/><br/>
+Don't forget to declare the samba class in your init.pp!
+
+<br/><br/>
+If you do cat /etc/fstab you should see something like this:
+<br/><br/>
+<i>//windowshost/sharedfolder   /data/myshare/     cifs    credentials=/etc/myshare.smb.credentials,rw,nounix,iocharset=utf8,file_mode=0777,dir_mode=0777 0       0</i>
+
+<br/><br/>
+
+If you want to do the same thing manually, this is the recipe:
+<br/><br/>
+yum install smbclient<br/>
+//yum install cifs-utils for Ubuntu<br/>
+/bin/mount -t cifs -o username=someuser,password=somepassword,rw,nounix,iocharset=utf8,file_mode=0777,dir_mode=0777  //windowshost/sharedfolder /data/myshare/
+<br/><br/>
+To remove a mountpoint, use umount:<br/><br/>
+
+
+umount /data/myshare/
+<br/><br/>
+it supports also a -f (force) option:   
+<br/><br/>   
+umount -f /data/myshare/
+
+<br/><br/>
+See also <a href="http://www.samba.org/samba/docs/man/manpages-3/mount.cifs.8.html">here</a> 

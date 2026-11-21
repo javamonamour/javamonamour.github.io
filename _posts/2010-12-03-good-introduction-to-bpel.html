@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Good introduction to BPEL"
+date: 2010-12-03T16:12:00.002+01:00
+permalink: /2010/12/good-introduction-to-bpel.html
+blogger_id: "2128641716885079305"
+tags: ["BPEL"]
+---
+Great tutorial for absolute beginners:<br />
+<br />
+<a href="http://www.radikalfx.com/bpel/language.html">http://www.radikalfx.com/bpel/language.html</a><br />
+<br />
+<br />
+Here is the BPEP XSD : <a href="http://schemas.xmlsoap.org/ws/2003/03/business-process/">http://schemas.xmlsoap.org/ws/2003/03/business-process/</a><br />
+<br />
+<br />
+The main elements of a BPEL Process definition are:<br />
+<br />
+<b>process</b><br />
+<br />
+<b>partnerLinks</b><br />
+<br />
+<b>variables</b><br />
+<ul><li>messageType</li>
+<li>type</li>
+<li>element</li>
+</ul><br />
+<br />
+<b>sequence</b><br />
+<ul><li>receive</li>
+<li>assign</li>
+<li>invoke (sync or async)</li>
+<li>reply (only for sync)</li>
+</ul><br />
+<b>switch</b><br />
+<br />
+<b>while</b><br />
+<br />
+<b>throw</b> <br />
+<br />
+<b>fault</b><br />
+<br />
+<b>empty</b> <br />
+<br />
+<b>pick</b>  - like "receive" but lets you specify multiple triggers<br />
+<br />
+<b>flow</b> - executes multiple activities in parallel<br />
+<br />
+<b>faultHandlers</b>  catch and catchAll<br />
+<br />
+<br />
+<br />
+<br />
+A Synchronous process will have a Receive/Reply <br />
+<br />
+An Asynchronous process will have a Receive/Invoke

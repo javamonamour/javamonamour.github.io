@@ -1,0 +1,66 @@
+---
+layout: post
+title: "java.io.IOException: [DeploymentService:290066]Error occurred while downloading files from admin server for deployment request \"0\". Underlying error is: \"null\""
+date: 2012-10-18T20:25:00.001+02:00
+permalink: /2012/10/javaioioexception-deploymentservice2900.html
+blogger_id: "945354262105656088"
+---
+in OSB we get this stacktrace, and the server starts in ADMIN mode.
+Root cause is missing .EAR file on some server - and the Admin is unable to redeploy the file, no clue why.
+<br/>
+
+The only way to recover is by stopping the failed deployments (<a href="/2012/10/wlst-to-stop-and-undeploy-list-of.html">use the script here</a>)  and restart the failed server. 
+<br/>
+OSB will regenerate the EAR and redeploy to all instances in the cluster.
+<br/>
+<br/>
+See also <a href="/2012/06/weblogicmanagementdeploymentexception.html">/2012/06/weblogicmanagementdeploymentexception.html</a> for a possible workaround.
+<br/>
+<br/>
+
+####&lt;Oct 18, 2012 6:37:39 PM CEST> &lt;Error> &lt;Deployer> &lt;hqchnesoa106> &lt;osbpp1ms2> &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'> &lt;&lt;WLS Kernel>> &lt;> &lt;0000JdoiDifE4Uk5oz9DiY1GW2xD000002> &lt;1350578259992> &lt;BEA-149205> &lt;Failed to initialize the application '_ALSB_1347537893822' due to error weblogic.management.DeploymentException: Exception occured while downloading files.
+weblogic.management.DeploymentException: Exception occured while downloading files
+        at weblogic.deploy.internal.targetserver.datamanagement.AppDataUpdate.doDownload(AppDataUpdate.java:43)
+        at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.download(DataUpdate.java:56)
+        at weblogic.deploy.internal.targetserver.datamanagement.Data.prepareDataUpdate(Data.java:97)
+        at weblogic.deploy.internal.targetserver.BasicDeployment.prepareDataUpdate(BasicDeployment.java:682)
+        at weblogic.deploy.internal.targetserver.BasicDeployment.stageFilesForStatic(BasicDeployment.java:725)
+        at weblogic.deploy.internal.targetserver.AppDeployment.prepare(AppDeployment.java:104)
+        at weblogic.management.deploy.internal.DeploymentAdapter$1.doPrepare(DeploymentAdapter.java:39)
+        at weblogic.management.deploy.internal.DeploymentAdapter.prepare(DeploymentAdapter.java:191)
+        at weblogic.management.deploy.internal.AppTransition$1.transitionApp(AppTransition.java:21)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.prepare(ConfiguredDeployments.java:165)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:122)
+        at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:180)
+        at weblogic.management.deploy.internal.DeploymentServerService.start(DeploymentServerService.java:96)
+        at weblogic.t3.srvr.SubsystemRequest.run(SubsystemRequest.java:64)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+Caused By: java.io.IOException: [DeploymentService:290066]Error occurred while downloading files from admin server for deployment request "0". Underlying error is: "null"
+        at weblogic.deploy.service.datatransferhandlers.HttpDataTransferHandler.getDataAsStream(HttpDataTransferHandler.java:86)
+        at weblogic.deploy.service.datatransferhandlers.DataHandlerManager$RemoteDataTransferHandler.getDataAsStream(DataHandlerManager.java:153)
+        at weblogic.deploy.internal.targetserver.datamanagement.AppDataUpdate.doDownload(AppDataUpdate.java:39)
+        at weblogic.deploy.internal.targetserver.datamanagement.DataUpdate.download(DataUpdate.java:56)
+        at weblogic.deploy.internal.targetserver.datamanagement.Data.prepareDataUpdate(Data.java:97)
+        at weblogic.deploy.internal.targetserver.BasicDeployment.prepareDataUpdate(BasicDeployment.java:682)
+        at weblogic.deploy.internal.targetserver.BasicDeployment.stageFilesForStatic(BasicDeployment.java:725)
+        at weblogic.deploy.internal.targetserver.AppDeployment.prepare(AppDeployment.java:104)
+        at weblogic.management.deploy.internal.DeploymentAdapter$1.doPrepare(DeploymentAdapter.java:39)
+        at weblogic.management.deploy.internal.DeploymentAdapter.prepare(DeploymentAdapter.java:191)
+        at weblogic.management.deploy.internal.AppTransition$1.transitionApp(AppTransition.java:21)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.prepare(ConfiguredDeployments.java:165)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:122)
+        at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:180)
+        at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:122)
+        at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:180)
+        at weblogic.management.deploy.internal.DeploymentServerService.start(DeploymentServerService.java:96)
+        at weblogic.t3.srvr.SubsystemRequest.run(SubsystemRequest.java:64)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+>
+
+
+
+

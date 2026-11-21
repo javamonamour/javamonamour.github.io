@@ -1,0 +1,103 @@
+---
+layout: post
+title: "JDB is your friend"
+date: 2017-02-18T03:49:00.002+01:00
+permalink: /2017/02/jdb-is-your-friend.html
+blogger_id: "4249282940450162472"
+tags: ["jdb"]
+---
+We had recently an issue with an XML parser failing to parse a temporary file that was immediately deleted after.
+<br/> 
+How to stop execution before the file gets deleted?
+<br/>
+I am using jdb <a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/jdb.html">http://docs.oracle.com/javase/7/docs/technotes/tools/windows/jdb.html</a> and I have created a simple test case
+<br/><br/>
+Start WebLogic with 
+<pre>
+set JAVA_OPTIONS=-agentlib:jdwp=transport=dt_shmem,address=jdbconn,server=y,suspend=n %JAVA_OPTIONS%
+</pre>
+<br/>
+I deploy a small webapp with:
+<br/><br/>
+class com.pierre.MyCounter 
+<br/><br/>
+
+<pre class="brush: java">
+package com.pierre;
+public class MyCounter {
+       static int count = 0;
+       public static String getCountAsString() {
+             return String.valueOf(count++);
+       }
+}
+</pre>
+
+<br/>
+
+<pre class="brush: java">
+&lt;%@ page language=&quot;java&quot; contentType=&quot;text/html; charset=ISO-8859-1&quot;
+    pageEncoding=&quot;ISO-8859-1&quot;%&gt;
+&lt;%@ page import=&quot;com.pierre.*&quot;  %&gt;
+&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.01 Transitional//EN&quot; &quot;http://www.w3.org/TR/html4/loose.dtd&quot;&gt;
+&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=ISO-8859-1&quot;&gt;
+&lt;title&gt;Insert title here bla&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+The count is:
+&lt;%
+       out.write(MyCounter.getCountAsString());
+%&gt;
+ 
+&lt;br/&gt;
+I hope you are happy.
+ 
+&lt;/body&gt;
+&lt;/html&gt;
+ 
+</pre>
+<br/>
+<br/>
+web.xml
+<br/><br/>
+<pre class="brush: xml">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;web-app xmlns=&quot;http://java.sun.com/xml/ns/j2ee&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+&lt;display-name&gt;testjdb&lt;/display-name&gt;
+  &lt;welcome-file-list&gt;
+    &lt;welcome-file&gt;index.html&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;index.htm&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;default.html&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;default.htm&lt;/welcome-file&gt;
+    &lt;welcome-file&gt;default.jsp&lt;/welcome-file&gt;
+  &lt;/welcome-file-list&gt;
+&lt;/web-app&gt;
+</pre>
+<br/>
+<br/>
+Then run from a command line : <pre>jdb -attach jdbconn</pre>
+<br/>
+<br/>
+run your case once to make sure the MyCounter class has already been loaded, then run 
+<br/> <br/>
+
+classes
+
+<br/> <br/>
+
+to check if the MyCounter is there, then run this to set a breakpoint:
+<br/> <br/>
+stop at com.pierre.MyCounter:6
+
+ <br/>
+ <br/>
+
+
+next time you run the jsp, the breakpoint is hit and execution stops
+
+
+ <br/>
+
+

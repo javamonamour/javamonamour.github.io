@@ -1,0 +1,147 @@
+---
+layout: post
+title: "Bamboo and SOAPUI integration"
+date: 2012-07-10T12:04:00.001+02:00
+permalink: /2012/07/bamboo-and-soapui-integration.html
+blogger_id: "7967942742873428737"
+tags: ["bamboo", "soapui"]
+blogger_comments:
+  - author: "lazykate"
+    date: 2015-04-30
+    html: "Thanks this was really useful in setting up SoapUI with my Bamboo. I would NEVER have figured out needing the parser task!<br /><br />I only had one difference - I couldn&#39;t use the custom directory for the script task. so I let it use my build folder and just path to the &#39;test-result&#39; sub folder.<br /><br />It&#39;s quite simple in the end (but still took hours to get right!)<br /><br />Script Task: <br /><br />/opt/SoapUI-5.1.3/bin/testrunner.sh -j -M -f test-reports tests/SOAPUI/My-API-soapui-project.xml<br /><br />Junit Parse tasks<br /><br />Custom Results: test-reports/TEST-*.xml<br />"
+---
+Install SOAPUI 4.5:<br />
+<br />
+zip soapUI-x32-4_5_0.sh into soapUI-x32-4_5_0.zip (transferring .sh file got corrupted, need to set binary mode)<br />
+<br />
+unzip soapUI-x32-4_5_0.zip on target /home/soa<br />
+<br />
+chmod 755 soapUI-x32-4_5_0.sh<br />
+./soapUI-x32-4_5_0.sh<br />
+<br />
+run in non-graphic mode, install to /home/soa/SmartBear/soapUI-4.5.0/<br />
+<br />
+the installer will install also a Java 7 JRE into /home/soa/SmartBear/soapUI-4.5.0/jre, rename this directory to /home/soa/SmartBear/soapUI-4.5.0/jreORI so that SOAPUI will use the default java installation ( with Java 7 I had problems with this error:<br />
+[SoapUITestCaseRunner] java.lang.UnsatisfiedLinkError: /home/soa/SmartBear/soapUI-4.5.0/jre/lib/i386/xawt/libmawt.so: libXrender.so.1: cannot open shared object file: No such file or directory)<br />
+<br />
+cd /home/soa/SmartBear/soapUI-4.5.0/bin<br />
+<br />
+copy here your SOAPUI shop.xml test<br />
+<br />
+./testrunner.sh  -s"Configuration Service TestSuite" -c"Get terminal configuration" -j "shop.xml"<br />
+<br />
+the -j option will generate a TEST-Configuration_Service_TestSuite.xml file in JUnit format, with the result of the test. The file name comes from 'testSuite name="Configuration Service TestSuite"'<br />
+<br />
+Create a Bamboo plan<br />
+<br />
+choose a "Script" task<br />
+you must choose to run a script <a href="https://confluence.atlassian.com/display/BAMBOO/Script">https://confluence.atlassian.com/display/BAMBOO/Script</a><br />
+<br />
+Script body= ./testrunner.sh  -s"Configuration Service TestSuite" -c"Get terminal configuration" -j "shop.xml"<br />
+<br />
+Working Sub Directory= /home/soa/SmartBear/soapUI-4.5.0/bin<br />
+<br />
+then we add a JUnit Parse task:<br />
+Specify custom results directory=/home/soa/SmartBear/soapUI-4.5.0/bin/TEST-*.xml<br />
+<br />
+Enable the project in dashboard<br />
+Run it<br />
+<br />
+It fails saying "Could not find test result reports in the /home/soa/bamboohome/xml-data/build-dir/SOAPUITEST-SOAPUITEST-JOB1 "<br />
+<br />
+in fact the /home/soa/bamboohome/xml-data/build-dir/SOAPUITEST-SOAPUITEST-JOB1/ was created, but only build-number.txt is there.<br />
+<br />
+SoapUITestCaseRunner must be told WHERE to write the blessed JUnit TEST-bla.xml result.<br />
+<br />
+The SoapUITestCaseRunner code says:<br />
+<br />
+<pre>SoapUIOptions options = new SoapUIOptions( "testrunner" );
+options.addOption( "e", true, "Sets the endpoint" );
+options.addOption( "s", true, "Sets the testsuite" );
+options.addOption( "c", true, "Sets the testcase" );
+options.addOption( "u", true, "Sets the username" );
+options.addOption( "p", true, "Sets the password" );
+options.addOption( "w", true, "Sets the WSS password type, either 'Text' or 'Digest'" );
+options.addOption( "i", false, "Enables Swing UI for scripts" );
+options.addOption( "d", true, "Sets the domain" );
+options.addOption( "h", true, "Sets the host" );
+options.addOption( "r", false, "Prints a small summary report" );
+options.addOption( "M", false, "Creates a Test Run Log Report in XML format" );
+<b>options.addOption( "f", true, "Sets the output folder to export results to" );</b>
+<b>options.addOption( "j", false, "Sets the output to include JUnit XML reports" );
+</b>options.addOption( "m", false, "Sets the maximum number of TestStep errors to save for each testcase" );
+options.addOption( "a", false, "Turns on exporting of all results" );
+options.addOption( "A", false, "Turns on exporting of all results using folders instead of long filenames" );
+options.addOption( "t", true, "Sets the soapui-settings.xml file to use" );
+options.addOption( "x", true, "Sets project password for decryption if project is encrypted" );
+options.addOption( "v", true, "Sets password for soapui-settings.xml file" );
+options.addOption( "D", true, "Sets system property with name=value" );
+options.addOption( "G", true, "Sets global property with name=value" );
+options.addOption( "P", true, "Sets or overrides project property with name=value" );
+options.addOption( "I", false, "Do not stop if error occurs, ignore them" );
+options.addOption( "S", false, "Saves the project after running the tests" );
+
+</pre><br />
+<br />
+so I do<br />
+<br />
+/home/soa/SmartBear/soapUI-4.5.0/bin/testrunner.sh  -s"Configuration Service TestSuite" -c"Get terminal configuration" -j "/home/soa/SmartBear/soapUI-4.5.0/bin/shop.xml" -f/home/soa/bamboohome/xml-data/build-dir/SOAPUITEST-SOAPUITEST-JOB1/<br />
+<br />
+<br />
+and the result is written in /home/soa/bamboohome/xml-data/build-dir/SOAPUITEST-SOAPUITEST-JOB1/<br />
+<br />
+the second step is simply<br />
+parse junit<br />
+Specify custom results directory=**/TEST*.xml<br />
+<br />
+<br />
+where the meaning of -s and -c parameters are:<br />
+<br />
+&lt;con:entry key="TestSuite" value="Configuration Service TestSuite"/><br />
+&lt;con:entry key="TestCase" value="Get terminal configuration"/><br />
+<br />
+-s = suite<br />
+-c = case<br />
+<br />
+<br />
+____________________________<br />
+<br />
+<br />
+<br />
+Integrating also SVN checkout:<br />
+<br />
+Put your SOAPUI project in SVN<br />
+<br />
+For instance:<br />
+<br />
+https://nessvn1.acme.com/svn/pippov2/PPP_AutomatedTests/SOAPUIArtifacts/shop-conf-soapui-project.xml<br />
+Create Bamboo Plan<br />
+<br />
+Name SOAPUITEST<br />
+Create SVN repository<br />
+<br />
+Source Repository= Subversion<br />
+<br />
+Display Name = pippo2_SoapUI<br />
+<br />
+Repository URL = https://nessvn1.acme.com/svn/pippov2/PPP_AutomatedTests/SOAPUIArtifacts/<br />
+<br />
+Username= avernetto Password=bla<br />
+Create SOAPUI checkout task<br />
+<br />
+Repository = pippo2_SoapUI<br />
+Create Script task<br />
+<br />
+Task Description=Testrunner<br />
+<br />
+Script Location=Inline<br />
+<br />
+Script body=/home/soa/SmartBear/soapUI-4.5.0/bin/testrunner.sh  -s"Configuration Service TestSuite" -j "/home/soa/bamboohome/xml-data/build-dir/SOAPUITEST-SOAPUITEST-JOB1/shop-conf-soapui-project.xml" -f/home/soa/bamboohome/xml-data/build-dir/SOAPUITEST-SOAPUITEST-JOB1/<br />
+Create JUnit Parser task<br />
+<br />
+Task description=parse junit<br />
+<br />
+Specify custom results directories=*/TEST.xml<br />
+Run the plan<br />
+<br />
+Examine the content of /home/soa/bamboohome/xml-data/build-dir/SOAPUITEST-SOAPUITEST-JOB1/ folder for all artifacts being generated

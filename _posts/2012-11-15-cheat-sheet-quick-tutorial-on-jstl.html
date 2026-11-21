@@ -1,0 +1,96 @@
+---
+layout: post
+title: "Cheat sheet (quick tutorial) on JSTL"
+date: 2012-11-15T11:21:00.001+01:00
+permalink: /2012/11/cheat-sheet-quick-tutorial-on-jstl.html
+blogger_id: "6369802003613365242"
+tags: ["jstl"]
+---
+Insert tags<br />
+<br />
+&lt;%@ taglib uri="http://java.sun.com/jsp/jstl/sql" prefix="sql"%&gt;<br />
+&lt;%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%&gt;<br />
+<br />
+&nbsp;_______<br />
+<br />
+Set a JSTL variable from Java<br />
+<br />
+&lt;c:set scope="session" value="&lt;%=propertyMap.get("debugsql")%&gt;" var="debugsql"&gt;&lt;/c:set&gt;<br />
+<br />
+_______<br />
+<br/>
+Print value of all httprequest parameters:<br/><br/>
+
+
+&lt;c:forEach var="par" items="${paramValues}"><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;c:out value="${par.key}=${par.value[0]}">&lt;/c:out><br/>
+&lt;/c:forEach><br/>
+<br/>
+_______<br/>
+<br/>
+
+Read in Java a JSTL property with session scope<br/><br/>
+
+Object mydomainObj = session.getAttribute("mydomain");<br/>
+String mydomain = (mydomainObj == null) ? "" : mydomainObj.toString(); <br/>
+<br/><br/>
+<br/>
+_______<br/>
+<br/>
+
+Check is a JSTL variable is null:<br/><br/>
+
+&lt;c:if test="${not empty param.nesoadomain}">
+<br/><br/>
+
+<br/>
+_______<br/>
+<br/>
+
+
+Run a SQL query:<br/><br/>
+
+
+&lt;sql:query var="rsCMDBDS" dataSource="jdbc/cmdb"> <br/>
+ select A.JDBCDRIVER, B.URL, B.USERNAME, B.ENCRYPTED_PASSWORD from DATASOURCES A, DATASOURCES_ENV B  
+  where A.DSNAME = B.DSNAME and A.DSNAME = 'wlsbjmsrpDataSource' and B.DOMAINNAME = '${mydomain}'   <br/>
+&lt;/sql:query>
+
+
+
+<br/>
+_______<br/>
+<br/>
+
+test for equal
+<br/><br/>
+
+&lt;c:if test="${par.key eq 'synchronizeLocalTable'} ">
+
+<br/><br/>
+
+test for equal
+<br/><br/>
+
+&lt;c:if test="${par.key ne 'synchronizeLocalTable'} ">
+
+
+<br/>
+_______<br/>
+<br/>
+
+
+increment a counter in a loop<br/><br/>
+
+
+&lt;c:set var="count" value="0" scope="page" /><br/>
+
+&lt;c:set var="count" value="${count + 1}" scope="page"/><br/>
+
+
+
+<br/>
+_______<br/>
+<br/>
+
+

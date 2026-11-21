@@ -1,0 +1,33 @@
+---
+layout: post
+title: "What is actually posted when you invoke a Web Service?"
+date: 2010-05-02T20:08:00.000+02:00
+permalink: /2010/05/what-is-actually-posted-when-you-invoke.html
+blogger_id: "5791108351790693619"
+tags: ["webservices"]
+---
+<soapenv:envelope xmlns:java="java:com.testws.data" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://com/testws/ws"><soapenv:header><soapenv:body><ws:hello>POST http://localhost:7001/ExceptionHandlerWS/WSFaultGenerator HTTP/1.1<br />
+Accept-Encoding: gzip,deflate<br />
+Content-Type: text/xml;charset=UTF-8<br />
+SOAPAction: "helloAction"<br />
+User-Agent: Jakarta Commons-HttpClient/3.1<br />
+Host: localhost:7001<br />
+Content-Length: 412<br />
+<br />
+&lt;soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://com/testws/ws" xmlns:java="java:com.testws.data"&gt;<br />
+&nbsp;&nbsp; &lt;soapenv:Header&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;someHeadersHere/&gt;<br />
+&nbsp;&nbsp; &lt;/soapenv:Header&gt;<br />
+<br />
+<br />
+&nbsp;&nbsp; &lt;soapenv:Body&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ws:hello&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ws:emp&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;java:Age&gt;34&lt;/java:Age&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;java:Name&gt;Ciao&lt;/java:Name&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ws:emp&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ws:hello&gt;<br />
+&nbsp;&nbsp; &lt;/soapenv:Body&gt;<br />
+&lt;/soapenv:Envelope&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </ws:hello><br />
+&nbsp;&nbsp; </soapenv:body></soapenv:header></soapenv:envelope>

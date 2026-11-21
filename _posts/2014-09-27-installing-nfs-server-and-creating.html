@@ -1,0 +1,39 @@
+---
+layout: post
+title: "Installing a NFS server, and creating a mountpoint, in 30 seconds"
+date: 2014-09-27T12:27:00.004+02:00
+permalink: /2014/09/installing-nfs-server-and-creating.html
+blogger_id: "6978160796606657341"
+tags: ["nfs"]
+---
+This on RHEL/CentOS. For <strike>lazyness</strike> simplicity I install client and server on the same box :o) whose IP is 10.0.2.15<br />
+<br />
+<b>Installing a NFS server:</b><br />
+<a href="http://www.howtoforge.com/setting-up-an-nfs-server-and-client-on-centos-5.5">http://www.howtoforge.com/setting-up-an-nfs-server-and-client-on-centos-5.5</a><br />
+<br />
+yum install nfs-utils nfs-utils-lib<br />
+chkconfig --levels 235 nfs on<br />
+/etc/init.d/nfs start<br />
+<br />
+mkdir /var/nfs<br />
+chmod 777 /var/nfs<br />
+vi /etc/exports<br />
+/var/nfs&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10.0.2.15(rw,sync,no_subtree_check)<br />
+<br />
+exportfs -a<br />
+<br />
+<b>Creating a mountpoint</b><br />
+mkdir /home/users<br />
+mount -t nfs 10.0.2.15:/var/nfs /home/users<br />
+echo ciao &gt; /home/users/ciao.txt<br />
+cat /var/nfs/ciao.txt<br />
+ciao<br />
+<br />
+done :o)<br />
+<br />
+Useful links:<br />
+<a href="https://www.suse.com/communities/conversations/configuring-nfsv4-server-and-client-suse-linux-enterprise-server-10/">https://www.suse.com/communities/conversations/configuring-nfsv4-server-and-client-suse-linux-enterprise-server-10/</a> 
+<br />
+<a href="/2014/10/mount-nfs-and-rpcbind.html">/2014/10/mount-nfs-and-rpcbind.html</a>
+<br />
+

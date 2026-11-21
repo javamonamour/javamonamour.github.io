@@ -1,0 +1,47 @@
+---
+layout: post
+title: "SOA suite, BPEL variables: message type, simple type, element"
+date: 2010-11-30T17:50:00.002+01:00
+permalink: /2010/11/soa-suite-bpel-variables-message-type.html
+blogger_id: "3235002211009657144"
+tags: ["BPEL"]
+blogger_comments:
+  - author: "Harish Goud"
+    date: 2016-12-15
+    html: "Gud explanation :)"
+---
+In a BPEL file you have a <b>variables</b> section, and each entry can be declared as <i>messageType</i>, <i>type</i> or <i>element</i>.<br />
+<br />
+<br />
+A variable of type "<b>messageType</b>" has its type declared in the "message" clause of a WSDL.<br />
+<br />
+<pre name="code" class="brush: xml"><!-- in BPEL -->
+   <variable name="ReceiveFile_Read_InputVariable" messageType="ns1:Read_msg">
+   </variable>
+
+   <!-- in WSDL -->
+    <wsdl:message name="Read_msg">
+        <wsdl:part name="body" element="imp1:Root-Element"/>
+    </wsdl:message>
+
+</pre><br />
+A variable of type "<b>type</b>" is a simple xsd type:<br />
+<br />
+variable name="Counter" type="xsd:integer"<br />
+<br />
+A variable of type "<b>element</b>" is a complex xsd type defined as element:<br />
+<br />
+variable name="Books" element="ns2:BookCollection"<br />
+<br />
+where BookColletion is<br />
+<br />
+<pre name="code" class="brush: xml"><xs:element name="BookCollection" type="BookCollection"/>
+<xs:complexType name="BookCollection">
+      <xs:sequence>
+         <xs:element name="Book" type="Book" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+   </xs:complexType>
+
+</pre><br />
+<br />
+When interacting with Partner Links, you can only use variables of type messageType; if your data is stored in a variable of type element, you should copy it using a Assign block.

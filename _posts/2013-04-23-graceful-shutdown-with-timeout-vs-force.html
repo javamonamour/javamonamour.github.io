@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Graceful shutdown with timeout vs force shutdown"
+date: 2013-04-23T18:13:00.001+02:00
+permalink: /2013/04/graceful-shutdown-with-timeout-vs-force.html
+blogger_id: "6385703990897653346"
+tags: ["weblogic"]
+---
+<a href="http://docs.oracle.com/cd/E25054_01/web.1111/e13708/server_life.htm">http://docs.oracle.com/cd/E25054_01/web.1111/e13708/server_life.htm</a>
+<br/><br/>
+
+<i>
+<b>Graceful Shutdown</b>
+<br/><br/>
+The Graceful Shutdown command transitions a server instance from the RUNNING state to the SHUTDOWN state, <b>allowing work in process to be handled gracefully</b>, with this sequence of state transitions:
+<br/><br/>
+RUNNING > SUSPENDING > ADMIN > SHUTTING_DOWN > SHUTDOWN
+<br/><br/><br/>
+</i>
+<b>Force Shutdown</b>
+<br/><br/>
+The Force Shutdown command transitions a server instance from the any state to the SHUTDOWN state, <b>without allowing work in process to be handled gracefully</b>. When run for a server instance in the RUNNING state, the Force Shutdown command results in these state transitions:
+<br/><br/>
+RUNNING > FORCE_SUSPENDING > ADMIN > STANDBY > SHUTDOWN
+
+
+
+<br/><br/><br/>
+If you specify a "Graceful Shutdown Timeout" (value is in seconds), you can transform a Graceful Shutdown into a Force Shutdown if the shutdown is impeded by some funny causes. I think this is the safest option: set 120 so as to allow 2 minutes for all work to be completed, then shutdown. 
+
+
+
+<pre>
+
+connect('weblogic', 'weblogic1', 't3://myserver.acme.com:7001')
+edit()
+startEdit()
+cd('/')
+serverList=cmo.getServers()
+for server in serverList:
+    name=server.getName()
+    cd('/Servers/' + name)
+    cmo.setGracefulShutdownTimeout(120)
+save()
+activate()
+
+</pre>

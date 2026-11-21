@@ -1,0 +1,35 @@
+---
+layout: post
+title: "How to return a default value if lookup fails on a table"
+date: 2013-09-18T18:11:00.002+02:00
+permalink: /2013/09/how-to-return-default-value-if-lookup.html
+blogger_id: "8828439634394271517"
+tags: ["sql"]
+---
+given this table:
+
+<pre>
+
+  CREATE TABLE "ACME_ERRORCODES" 
+   ( "ERRORCODE" VARCHAR2(100 BYTE), 
+ "ISRETRIABLE" NUMBER, 
+ "ISCUSTOM" NUMBER
+   ) ;
+
+</pre>
+
+<br/><br/>
+
+if you want to return a default value 0 for ISRETRIABLE in case the ERRORCODE is missing in the table, you can do:
+<br/><br/>
+<pre>
+select NVL ( 
+   (select ISRETRIABLE from ACME_ERRORCODES where errorcode = 'SOME_MISSING_ERROR_CODE' ), 
+    '0') 
+from dual;
+</pre>
+
+<br/><br/>
+
+
+

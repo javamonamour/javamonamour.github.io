@@ -1,0 +1,72 @@
+---
+layout: post
+title: "JCA File Adapter, File read vs Synchronous File Read, Sorting Files with ListSorter"
+date: 2011-11-05T22:01:00.004+01:00
+permalink: /2011/11/jca-file-adapter-file-read-vs.html
+blogger_id: "6419477721440624795"
+tags: ["FileAdapter"]
+---
+In a nutshell, the Synchronous option doesn't create a File Poller Thread, but stops execution of an existing Thread (Message Flow) to read a file with a specified name.<br />
+In the parametrization of the File Adapter, the only difference is the existence of the "File Name" attribute. This is <a href="http://suryaveer-chauhan.blogspot.com/2009/08/dynamically-passing-file-name-to-read.html">explained in detail here</a>.<br />
+<br />
+In the official documentation, this picture is wrong:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E15523_01/integration.1111/e10231/adptr_file.htm#BABEJGJB">http://download.oracle.com/docs/cd/E15523_01/integration.1111/e10231/adptr_file.htm#BABEJGJB</a><br />
+<br />
+<br />
+it should be rather this:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/f6a7f902d6e085e1.jpg" imageanchor="1"><img border="0" height="267" src="/images/cca948689da2f405.jpg" width="320" /></a></div><br />
+<br />
+Bear in mind that not all properties are shown in the JDeveloper wizard. You will have to hack the JCA file for some of them.<br />
+<a href="http://download.oracle.com/docs/cd/E12839_01/integration.1111/e10231/adptr_propertys.htm#CHDJDGFD">Their list is here.</a><br />
+<br />
+A very interesting option is ListSorter :<br />
+<br />
+ListSorter="oracle.tip.adapter.file.sorter.TimestampSorterAscending" allows you to process files in order of timestamp. <br />
+<br />
+You can provide your own ListSorter: just implement a java.util.Comparator, you will receive 2 objects oracle.tip.adapter.file.FileInfo, so the available properties on which you can sort are:<br />
+<br />
+fileName  <br />
+compressedFileName  <br />
+fileExtension  <br />
+fullPath  <br />
+compressedFullPath  <br />
+timestamp<br />
+size<br />
+processed<br />
+isActive<br />
+fileList  <br />
+batchId <br />
+processHeaderOnly <br />
+headerOnlyNoDelete <br />
+distributed <br />
+inputDirectory <br />
+compressedInputDirectory  <br />
+rootDirectory <br />
+compressedRootDirectory  <br />
+readOnly <br />
+creationTime <br />
+raw <br />
+primaryKey <br />
+originalPrimaryKey <br />
+clusteredFileList  <br />
+fileType<br />
+singleThreaded<br />
+status<br />
+usePreciseTimestamp<br />
+poller  <br />
+properties<br />
+<br />
+However, bear in mind that the <a href="http://docs.oracle.com/cd/E21764_01/integration.1111/e10231/adptr_file.htm">documentation</a> says that you should have a SINGLE THREAD to make the sorting work<br />
+<br />
+<i><br />
+When files must be processed by Oracle File and FTP Adapters in a particular order, you must configure the sorting parameters. For example, you can configure the sorting parameters for Oracle File and FTP Adapters to process files in ascending or descending order by time stamps.<br />
+You must meet the following prerequisites for sorting scenarios of Oracle File and FTP Adapters:<br />
+• Use a synchronous operation<br />
+• Add the following property to the inbound JCA file:<br />
+<br />
+property name="ListSorter" value="oracle.tip.adapter.file.inbound.listing.TimestampSorterAscending"<br />
+property name="SingleThreadModel" value="true"<br />
+<br />
+</i>

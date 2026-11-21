@@ -1,0 +1,46 @@
+---
+layout: post
+title: "Preparing a Centos VirtualBox with Docker.... putting it all together"
+date: 2018-05-10T19:10:00.000+02:00
+permalink: /2018/05/preparing-centos-virtualbox-with-docker.html
+blogger_id: "7725321319867057798"
+tags: ["docker"]
+---
+sudo vi /etc/sysconfig/network-scripts/ifcfg-enp0s3 <br />
+add these 3 lines:<br />
+ONBOOT=yes<br />
+DNS1=8.8.8.8<br />
+DNS2=8.8.4.4<br />
+<br />
+<br />
+sudo reboot now<br />
+ping google.com<br />
+sudo yum install gcc kernel-devel-$(uname -r)<br />
+<br />
+now you can install VirtualBox Guest Additions (Devices/Insert Guest Additions CD image)<br />
+<br />
+to install DOcker <a href="https://docs.docker.com/install/linux/docker-ce/centos/#install-from-a-package">https://docs.docker.com/install/linux/docker-ce/centos/#install-from-a-package</a><br />
+<br />
+<pre>sudo yum check-update
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+sudo yum install docker-ce
+sudo systemctl start docker
+sudo usermod -aG docker $(whoami)
+sudo docker run hello-world
+</pre><br />
+you can now reboot<br />
+<br />
+<br />
+<br />
+<br />
+Some fine tuning on VB:<br />
+File/Preferences/Input: <br />
+- set Host Key Combination<br />
+- disable "auto capture Keyboard"<br />
+<br />
+General/Advanced/Shared Clipboard set to Bidirectional<br />
+<br />
+<br />
+<br />
+

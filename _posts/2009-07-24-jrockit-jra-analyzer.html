@@ -1,0 +1,50 @@
+---
+layout: post
+title: "JRockit JRA Analyzer"
+date: 2009-07-24T10:23:00.002+02:00
+permalink: /2009/07/jrockit-jra-analyzer.html
+blogger_id: "1728014514967416524"
+tags: ["jrockit"]
+---
+See a great presentation of JRA here:<br />
+<br />
+<a href="http://www.packtpub.com/article/jrockit-runtime-analyzer">http://www.packtpub.com/article/jrockit-runtime-analyzer</a><br />
+<br />
+To analyse a practical case, write a piece of code which clearly leaks:<br />
+<br />
+package com.pierre.test;<br />
+<br />
+import java.util.ArrayList;<br />
+import java.util.List;<br />
+<br />
+public class Pippo {<br />
+public static void main(String[] args) throws InterruptedException {<br />
+List&lt;Object&gt; list = new ArrayList&lt;Object&gt;();<br />
+for (int i = 0; i &lt; 1000000; i++) {<br />
+Thread.sleep(10);<br />
+list.add(new Integer(i));<br />
+}<br />
+<br />
+}<br />
+}<br />
+<br />
+<br />
+<br />
+start your program with<br />
+<br />
+-Xmanagement<br />
+<br />
+in the JVM arguments.<br />
+<br />
+You should see a message <br />
+[JRockit] Local management server started.<br />
+<br />
+<br />
+Start JRockit Mission Control, in the JVM Browser find your running program (Pippo), right click and "Start JRA Recording", choose your template (Full Recording), save to a .jra file .<br />
+<br />
+you should see this message in the Java stdout:<br />
+<br />
+[INFO ][jra    ] Starting JRA recording with these options:<br />
+filename=C:\temp\jrockit62462.jra, recordingtime=300s, methodsampling=1, gcsampling=1, heapstats=1, nativesamples=0, methodtraces=1, sampletime=5, zip=1, hwsampling=0 delay=0s, tracedepth=30 threaddump=1, threaddumpinterval=10s, latency=1, latencythreshold=20ms, cpusamples=1, cpusampleinterval=1s<br />
+<br />
+Later on you can open again the JRA recording file (File-Open in Mission Control).

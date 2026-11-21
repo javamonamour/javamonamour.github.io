@@ -1,0 +1,32 @@
+---
+layout: post
+title: "No shared spaces configured"
+date: 2016-05-24T10:13:00.001+02:00
+permalink: /2016/05/no-shared-spaces-configured.html
+blogger_id: "7099349961978326102"
+tags: ["JVM"]
+---
+<pre>
+
+Heap
+garbage-first heap   total 6291456K, used 1368757K [0x0000000640000000, 0x00000007c0000000, 0x00000007c0000000)
+  region size 2048K, 97 young (198656K), 9 survivors (18432K)
+compacting perm gen  total 1048576K, used 230859K [0x00000007c0000000, 0x0000000800000000, 0x0000000800000000)
+   the space 1048576K,  22% used [0x00000007c0000000, 0x00000007ce172e10, 0x00000007ce173000, 0x0000000800000000)
+No shared spaces configured.
+
+
+</pre>
+<br/>
+
+this was seen in a 
+<br/>
+<pre>
+java/jdk170_91-64b/bin/java -XX:-UseBiasedLocking -XX:SurvivorRatio=10 -verbose:gc -XX:+PrintGCTimeStamps -Xms6144m -Xmx6144m -XX:NewSize=256m -XX:MaxNewSize=256m -XX:PermSize=1024m -XX:MaxPermSize=1024m  -XX:+UseG1GC -XX:InitiatingHeapOccupancyPercent=60 
+
+</pre>
+
+<br/>
+
+I am not really sure what this "No shared spaces configured" would mean - I could not find any decent documentation on this message. And it doesn't seem to be really an error message, nor something related to G1GC...
+

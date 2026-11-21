@@ -1,0 +1,47 @@
+---
+layout: post
+title: "Getting rid of Windows line feeds "
+date: 2014-01-24T12:34:00.001+01:00
+permalink: /2014/01/getting-rid-of-windows-line-feeds.html
+blogger_id: "3126622606969389472"
+tags: ["windowssucks"]
+---
+This script to find infected files:
+<br/>
+
+<pre class="brush: java">
+#!/bin/sh
+
+PATH_TO_SCAN=$1
+
+if [ "${PATH_TO_SCAN}" == "" ]; then
+    PATH_TO_SCAN="."
+fi
+
+FILELIST=$(find "${PATH_TO_SCAN}" |egrep '\.(java|xml|js|groovy|sql|csv|txt|py)$')
+
+IFS_BCK=$IFS
+IFS="
+"
+
+for FILEPATH in ${FILELIST}; do
+    cat -v "${FILEPATH}" | grep -I -q '\^M'
+    if [ $? -eq 0 ]; then echo $FILEPATH; fi
+done
+IFS=$IFS_BCK
+</pre>
+
+<br/><br/>
+In Eclipse: Windows Preferences, then search "encoding" and set "line terminator" to Unix and Encoding to UTF-8
+
+<br/><br/>
+
+To convert infected files, in Eclipse do "File/Convert line terminator to..."
+
+<br/><br/>
+
+Otherwise, in Notepad++ use "edit /EOL conversion"
+
+<br/><br/>
+
+

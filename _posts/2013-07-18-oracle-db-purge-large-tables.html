@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Oracle DB, purge large tables"
+date: 2013-07-18T11:41:00.001+02:00
+permalink: /2013/07/oracle-db-purge-large-tables.html
+blogger_id: "2393694905701061502"
+tags: ["oracledb"]
+---
+I have a huge table WLI_NESOA2_REPORTING_ARCHIVE and I need to purge 10000 rows at a time for all records older than 2013-05-10. It's easy if you use a ROWID table and empty it progressively.
+
+
+<pre>
+
+
+--evaluate number of rows to delete
+select count(*) from WLI_NESOA2_REPORTING_ARCHIVE;
+select count(*) from WLI_NESOA2_REPORTING_ARCHIVE where EventOccuredOn &lt; '2013-05-10';
+
+--prepare empty table containing those rowids
+drop table tobedeleted;
+
+--populate table
+create table tobedeleted  as SELECT rowid as MYROWID from WLI_NESOA2_REPORTING_ARCHIVE where EventOccuredOn &lt; '2013-05-10';
+
+--evaluate if numbers match
+select count(*) from tobedeleted;
+
+
+DECLARE
+  nCount  NUMBER; 
+BEGIN
+  nCount := 0;
+  LOOP
+    --create subset of 10000 to delete
+    execute immediate 'create table TOBEDELETEDNOW as select MYROWID from tobedeleted where rownum &lt;= 10000';
+    --delete first 10000
+    execute immediate 'delete from WLI_NESOA2_REPORTING_ARCHIVE where rowid in (select MYROWID from TOBEDELETEDNOW )';
+    commit;
+    --remove the already purged records from list
+    execute immediate 'delete from tobedeleted where MYROWID in (select MYROWID from TOBEDELETEDNOW)';
+    nCount := sql%rowcount;
+    execute immediate 'drop table TOBEDELETEDNOW';
+    commit;
+
+    
+    DBMS_OUTPUT.PUT_LINE('deleted records: ' || to_char(ncount) );
+    commit;    
+
+    EXIT WHEN nCount = 0;
+
+  END LOOP;
+end;
+/
+
+</pre>
+

@@ -1,0 +1,70 @@
+---
+layout: post
+title: "Minimalistic Java application to encode/decode in Base64"
+date: 2015-10-12T10:50:00.002+02:00
+permalink: /2015/10/minimalistic-java-application-to.html
+blogger_id: "472882727521605135"
+tags: ["base64"]
+---
+If your Outlook blocks all kind of attachments, you have here the FINAL resolution to the problem (Outlook doesn't check for Base64 text attachments)
+
+
+<pre class="brush: java">
+
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
+public class Decoder {
+
+    public static void main(String[] args) throws Exception {
+        if (args.length < 3) {
+            System.out.println("Usage: java EncodeFileWithBASE64 d|e &lt;inputFile> &lt;outputFile>");
+            return;
+        }
+        String op = args[0];
+        String inputFile = args[1];
+        String outputFile = args[2];
+
+
+        if (op.equalsIgnoreCase("e")) {
+            BASE64Encoder encoder = new BASE64Encoder();
+            encoder.encode(
+                    new FileInputStream(inputFile),
+                    new FileOutputStream(outputFile)
+            );
+        } else {
+            BASE64Decoder decoder = new BASE64Decoder();
+            decoder.decodeBuffer(new FileInputStream(inputFile),
+                    new FileOutputStream(outputFile));
+
+
+        }
+    }
+}
+
+
+
+
+</pre>
+
+<br/><br/>
+
+If you put in in Eclipse you get an error, and this is how to solve it: <a href="http://stackoverflow.com/questions/5549464/import-sun-misc-base64encoder-results-in-error-compiled-in-eclipse">http://stackoverflow.com/questions/5549464/import-sun-misc-base64encoder-results-in-error-compiled-in-eclipse</a> (it's easier to ignore errors than using an Apache Commons library)
+<br/><br/>
+<pre>
+Go to Window-->Preferences-->Java-->Compiler-->Error/Warnings.
+ Select Deprecated and Restricted API. Change it to warning.
+ Change forbidden and Discouraged Reference and change it to warning. 
+</pre>
+You can also use <a href="http://www.motobit.com/util/base64-decoder-encoder.asp">this online application</a>
+
+<br/><br/>
+
+
+
+

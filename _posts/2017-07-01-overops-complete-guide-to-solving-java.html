@@ -1,0 +1,35 @@
+---
+layout: post
+title: "OverOps \"The Complete Guide to Solving Java Application Errors in Production\""
+date: 2017-07-01T11:30:00.000+02:00
+permalink: /2017/07/overops-complete-guide-to-solving-java.html
+blogger_id: "5520766061006145047"
+tags: ["exceptions"]
+---
+<a href="http://land.overops.com/java-application-errors/">http://land.overops.com/java-application-errors/</a>
+
+<br/><br/>
+
+I have downloaded the interesting free PDF. In a nutshell:
+
+<br/><br/>
+
+NullPointerException are the most common type of exception - followed by NumberFormatException (IMHO both can be avoided by better checks of input data/parameters and configuration: the external world is your enemy, never trust it)
+
+<br/><br/>
+
+Pareto Law: 97% of error logs are caused by just 3% unique errors
+
+<br/><br/>
+
+Read Joshua Bloch "Effective Java 2nd Edition" on how to handle exceptions
+
+<br/><br/>
+Logging errors is expensive in term of disk space... it's cheaper to fix them than to ignore them!
+
+<br/><br/>
+
+Operational noise is a killer: make sure your logs are clean, and your exception contain all the context information necessary to troubleshoot them
+<br/><br/>
+
+

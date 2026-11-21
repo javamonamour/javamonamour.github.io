@@ -1,0 +1,9 @@
+---
+layout: post
+title: "java.lang.OutOfMemoryError: nativeGetNewTLA"
+date: 2009-09-03T15:10:00.000+02:00
+permalink: /2009/09/javalangoutofmemoryerror.html
+blogger_id: "9166905937605810797"
+tags: ["oom"]
+---
+see http://download.oracle.com/docs/cd/E13188_01/jrockit/geninfo/diagnos/memman.html<br /><br />try setting <br /><br /> -XXlargeObjectLimit:32k -XXtlaSize:min=32k,preferred=64k<br /><br />if still you have problems, try<br /><br /> -XXlargeObjectLimit:64k -XXtlaSize:min=64k,preferred=128k

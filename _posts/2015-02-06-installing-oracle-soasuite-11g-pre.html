@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Installing Oracle SoaSuite 11g pre-built VM on A Mac Pro (OS-X)"
+date: 2015-02-06T10:55:00.000+01:00
+permalink: /2015/02/installing-oracle-soasuite-11g-pre.html
+blogger_id: "1262289190787298694"
+tags: ["SOASuite", "virtualbox"]
+---
+Unfortunately all the instructions on the <a href="http://www.oracle.com/technetwork/middleware/soasuite/learnmore/vmsoa-172279.html">Oracle site</a> are FOR WINDOWS ONLY (bleah).
+
+<br/><br/>
+On a Mac, installing Virtual Box Manager is just as easy. Download the 6 files (7z split file). Here comes the tricky part, 7Zip is not supported on a Mac. I personally PURCHASED for 2 CHF the "Keka" application, and it was very easy to unpack the 6 files into a oel6-64bit-soasuite-11gr1-ps6-otn.ova file. A free alternative is "The Unarchiver", I have installed it but not tested.
+
+<br/><br/>
+At this point, in Finder, right-click on the oel6-64bit-soasuite-11gr1-ps6-otn.ova file, choose "Open with..." and then "Virtual Box (default)".
+<br/><br/>
+I "Start" the VM image, and get an error message about the missing support for USB 2.0. I just remove this option from the VM settings and all runs smoothly (this is explained also in <a href="http://www.oracle.com/technetwork/middleware/soasuite/learnmore/virtualboxps6readme2-2168473.pdf">the pre-built VM box instructions</a>).
+<br/><br/>
+Login as oracle/oracle and enjoy. You can use also Mac's own terminal to connect: "ssh -X oracle@localhost -p 2222"
+<br/><br/>
+Using the -X switch will allow you to use the pre-installed firefox on the VM.... so you avoid fastidious settings on your host machine.
+<br/><br/>
+Run firefox, then enter:
+<br/><br/>
+http://10.0.2.15:7001/console
+<br/><br/>
+or
+<br/><br/>
+http://soabpm-vm.site:7001/console
+<br/><br/>
+
+If you find X11 too slow (it was slow on my machine), you can access from the host machine browser:
+<br/><br/>
+
+<pre>
+sudo vi /private/etc/hosts
+</pre>
+<br/><br/>
+
+add this line:
+<br/><br/>
+
+<pre>
+127.0.0.1 soabpm-vm soabpm-vm.site localhost
+</pre>
+
+<br/><br/>
+
+then enter <a href="http://soabpm-vm.site:7001/console/">http://soabpm-vm.site:7001/console/</a> in your browser, and login as weblogic/welcome1. OSB console available at <a href="http://soabpm-vm.site:7001/sbconsole/">http://soabpm-vm.site:7001/sbconsole/</a>
+
+<br/><br/>
+eventually also exclude from the proxy settings the 127.0.0.1 and localhost...
+<br/><br/>
+
+

@@ -1,0 +1,23 @@
+---
+layout: post
+title: "Constraints and Contract programming"
+date: 2011-04-18T11:30:00.000+02:00
+permalink: /2011/04/constraints-and-contract-programming.html
+blogger_id: "8455138422062973467"
+tags: ["constraints", "contract", "DbC"]
+---
+<a href="http://en.wikipedia.org/wiki/Constraint_programming">Constraint programming</a> is not very inspiring, while <a href="http://en.wikipedia.org/wiki/Design_by_contract">Design by contract</a> gives more food for thought.<br />
+<br />
+My impression is that:<br />
+<br />
+a) constraints are ENORMOUSLY valuable as a part of the Business Rules enforcement<br />
+<br />
+b) they are normally understated in the code and scattered everywhere (XSD, SQL Constraints, Java Code...)<br />
+<br />
+c) constraint exercising is normally not enough covered by Unit Tests<br />
+<br />
+d) DbC testing as exercised by the Unit Tests is not guaranteed to be active in production, hence it doesn't give us the benefit of validations in real life environment. <br />
+Why Unit Test should explicitly code logic which belongs to the Business Domain? These Rules/Constraints should be incorporated in the Business Logic (vs the test logic).... the test logic should be reduced to setting up scenarios which exercise those rules, and let the rules fail themselves.<br />
+<br />
+Here <a href="http://c4j.sourceforge.net/">http://c4j.sourceforge.net/</a> a nice and simple example of DbC in Java (most links are broken though :o( ).<br />
+It shows clearly what a pre_condition, post_condition and invariant is.

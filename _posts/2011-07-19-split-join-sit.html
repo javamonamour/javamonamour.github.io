@@ -1,0 +1,37 @@
+---
+layout: post
+title: "OSB Split Join.... Split !Join! Sit!"
+date: 2011-07-19T15:15:00.003+02:00
+permalink: /2011/07/split-join-sit.html
+blogger_id: "1876865237411220019"
+tags: ["split-join"]
+---
+"Split-Join allows you to send message requests to multiple services concurrently"<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="http://www.supercoolpets.com/pictures/GRcostume.jpg" imageanchor="1"><img border="0" height="350" src="http://www.supercoolpets.com/pictures/GRcostume.jpg" width="269" /></a></div><br />
+<div style="text-align: center;">This is a Split-Join Halloween dog</div><br />
+<br />
+The official documentation:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/splitjoin.html">http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/userguide/splitjoin.html</a><br />
+<br />
+and <br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/eclipsehelp/tasks.html#wp1145066">http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/eclipsehelp/tasks.html#wp1145066</a><br />
+<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/eclipsehelp/tasks.html#wp1150641">Designing a split join documentation</a><br />
+<br />
+What is a Mediator Pattern :<br />
+<br />
+<a href="http://en.wikipedia.org/wiki/Mediator_pattern">http://en.wikipedia.org/wiki/Mediator_pattern</a><br />
+<br />
+<br />
+I have done a quick minimalistic example to test the parallel execution:<br />
+<a href="http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBArtifacts/OSBSplitJoinExample_sbconfig.jar"><br />
+http://javatoolsforweblogic.googlecode.com/svn/trunk/OSBArtifacts/OSBSplitJoinExample_sbconfig.jar</a><br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/3ba3d506bc5d6803.png" imageanchor="1"><img border="0" height="579" src="/images/f0c3c81ecf474df7.png" width="640" /></a></div><br />
+<br />
+simply import the sbconfig.jar, test/debug the BS, enter whatever you want in input, and watch the 3 parallel log statements being executed in no particular order

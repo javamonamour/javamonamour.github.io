@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Git: SSL certificate problem: unable to get local issuer certificate"
+date: 2013-12-11T13:22:00.003+01:00
+permalink: /2013/12/git-ssl-certificate-problem-unable-to.html
+blogger_id: "3785176706680104059"
+tags: ["git"]
+---
+<pre>
+git clone https://stash.acme.com/scm/pup/biemond-orawls-vagrant.git
+
+Cloning into 'biemond-orawls-vagrant'...
+fatal: unable to access 'https://stash.acme.com/scm/pup/biemond-orawls-vagrant.git/': SSL certificate problem: unable to get local issuer certificate
+
+</pre>
+
+The secret is
+<pre>
+set GIT_SSL_NO_VERIFY=true
+git clone etc etc
+</pre>
+

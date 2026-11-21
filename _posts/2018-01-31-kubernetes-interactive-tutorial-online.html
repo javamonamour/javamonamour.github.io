@@ -1,0 +1,134 @@
+---
+layout: post
+title: "Kubernetes interactive tutorial online"
+date: 2018-01-31T21:20:00.000+01:00
+permalink: /2018/01/kubernetes-interactive-tutorial-online.html
+blogger_id: "2195312030462751506"
+tags: ["kubernetes"]
+---
+{% raw %}<br />
+https://kubernetes.io/docs/tutorials/kubernetes-basics/cluster-interactive/<br />
+<br />
+<h1>module 1</h1><br />
+$ <b>minikube version</b><br />
+minikube version: v0.17.1-katacoda<br />
+$ <b>minikube start</b><br />
+Starting local Kubernetes cluster...<br />
+$ <b>kubectl version</b><br />
+Client Version: version.Info{Major:"1", Minor:"8", GitVersion:"v1.8.0", GitCommit:"6e937839ac04a38cac63e6a7a306c5d035fe7b0a", GitTreeState:"clean", BuildDate:"2017-09-28T22:57:57Z", GoVersion:"go1.8.3", Compiler:"gc", Platform:"linux/amd64"}<br />
+Server Version: version.Info{Major:"1", Minor:"5", GitVersion:"v1.5.2", GitCommit:"08e099554f3c31f6e6f07b448ab3ed78d0520507", GitTreeState:"clean", BuildDate:"1970-01-01T00:00:00Z", GoVersion:"go1.7.1", Compiler:"gc", Platform:"linux/amd64"}<br />
+$ <b>kubectl cluster-info</b><br />
+Kubernetes master is running at http://host01:8080<br />
+heapster is running at http://host01:8080/api/v1/namespaces/kube-system/services/heapster/proxy<br />
+kubernetes-dashboard is running at http://host01:8080/api/v1/namespaces/kube-system/services/kubernetes-dashboard/proxy<br />
+monitoring-grafana is running at http://host01:8080/api/v1/namespaces/kube-system/services/monitoring-grafana/proxy<br />
+monitoring-influxdb is running at http://host01:8080/api/v1/namespaces/kube-system/services/monitoring-influxdb/proxy<br />
+<br />
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.<br />
+$ <b>kubectl get nodes</b><br />
+NAME      STATUS    ROLES     AGE       VERSION<br />
+host01    Ready     <none>    22m       v1.5.2<br />
+<br />
+<h1>module 2</h1><br />
+<b>kubectl run kubernetes-bootcamp --image=docker.io/jocatalin/kubernetes-bootcamp:v1 --port=8080</b><br />
+<br />
+<b>kubectl get deployments</b><br />
+<br />
+<b>kubectl proxy</b><br />
+<br />
+<b>curl http://localhost:8001/version</b><br />
+<br />
+<b>export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')<br />
+echo Name of the Pod: $POD_NAME<br />
+</b><br />
+<br />
+curl http://localhost:8001/api/v1/proxy/namespaces/default/pods/$POD_NAME/<br />
+<br />
+<b>kubectl get pods</b><br />
+<br />
+<b>kubectl describe pods</b><br />
+<br />
+kubectl logs $POD_NAME<br />
+<br />
+kubectl exec $POD_NAME env<br />
+<br />
+kubectl exec -ti $POD_NAME bash<br />
+curl localhost:8080<br />
+exit<br />
+<br />
+<br />
+kubectl get services<br />
+<br />
+kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080<br />
+<br />
+kubectl get services<br />
+<br />
+kubectl describe services/kubernetes-bootcamp<br />
+<br />
+export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')<br />
+echo NODE_PORT=$NODE_PORT<br />
+curl host01:$NODE_PORT<br />
+<br />
+kubectl describe deployment<br />
+<br />
+kubectl get pods -l run=kubernetes-bootcamp<br />
+<br />
+export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')<br />
+echo Name of the Pod: $POD_NAME<br />
+<br />
+kubectl label pod $POD_NAME app=v1<br />
+<br />
+kubectl describe pods $POD_NAME<br />
+<br />
+kubectl get pods -l app=v1<br />
+<br />
+kubectl delete service -l run=kubernetes-bootcamp<br />
+kubectl get services<br />
+curl host01:$NODE_PORT<br />
+kubectl exec -ti $POD_NAME curl localhost:8080<br />
+<br />
+<br />
+<h1>module 4</h1><br />
+kubectl get deployments<br />
+kubectl scale deployments/kubernetes-bootcamp --replicas=4<br />
+kubectl get deployments<br />
+<br />
+kubectl get pods -o wide<br />
+<br />
+kubectl describe deployments/kubernetes-bootcamp<br />
+<br />
+export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')<br />
+echo NODE_PORT=$NODE_PORT<br />
+<br />
+curl host01:$NODE_PORT<br />
+<br />
+kubectl scale deployments/kubernetes-bootcamp --replicas=2<br />
+kubectl get deployments<br />
+kubectl get pods -o wide<br />
+<br />
+<br />
+<br />
+<h1>module 6</h1><br />
+kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2<br />
+<br />
+kubectl get pods<br />
+kubectl describe services/kubernetes-bootcamp<br />
+export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')<br />
+echo NODE_PORT=$NODE_PORT<br />
+curl host01:$NODE_PORT<br />
+<br />
+kubectl rollout status deployments/kubernetes-bootcamp<br />
+<br />
+kubectl describe pods<br />
+<br />
+kubectl rollout status deployments/kubernetes-bootcamp<br />
+<br />
+kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v10<br />
+kubectl rollout undo deployments/kubernetes-bootcamp<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+{% endraw %}

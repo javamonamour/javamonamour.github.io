@@ -1,0 +1,58 @@
+---
+layout: post
+title: "more Docker in Action"
+date: 2018-04-06T23:19:00.000+02:00
+permalink: /2018/04/more-docker-in-action.html
+blogger_id: "5113248141406932923"
+tags: ["docker"]
+---
+<pre>docker run -d --volume /var/lib/cassandra/data --name cass-shared alpine echo Data Container
+
+docker run -d --volumes-from cass-shared --name cass1 cassandra:2.2
+
+docker run -it --rm --link cass1:cass cassandra:2.2 cqlsh cass
+
+select * from system.schema_keyspaces where keyspace_name = 'docker_hello_world';
+
+create keyspace docker_hello_world with replication = { 'class' : 'SimpleStrategy', 'replication_factor': 1 };
+
+select * from system.schema_keyspaces where keyspace_name = 'docker_hello_world';
+
+quit
+
+docker stop cass1
+docker rm -vf cass1
+
+docker run -d --volumes-from cass-shared --name cass2 cassandra:2.2
+docker run -it --rm --link cass2:cass cassandra:2.2 cqlsh cass
+select * from system.schema_keyspaces where keyspace_name = 'docker_hello_world';
+
+quit
+
+docker rm -vf cass2 cass-shared
+
+#bind-mount volumes point to a space on the host 
+
+
+cd 
+mkdir example-docs
+echo "ciao" > example-docs/index.html
+
+docker run -d --name bmweb -v ~/example-docs:/usr/local/app 80:80 httpd:latest
+
+#enter localhost:80 in your browser, you should see "ciao"
+
+#create a file on the guest system
+docker run --rm -v ~/example-docs:/testspace alpine /bin/sh -c 'echo test > /testspace/test'
+
+#this will fail - read only
+docker run --rm -v ~/example-docs:/testspace:ro alpine /bin/sh -c 'echo test2 > /testspace/test'
+
+#check how the volume is mounted
+docker run --rm -v ~/example-docs/absent:/absent alpine:latest /bin/sh -c 'mount | grep absent'
+
+
+
+</pre><br />
+<br />
+

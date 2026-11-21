@@ -1,0 +1,81 @@
+---
+layout: post
+title: "setting a WLDF watch to monitor a cluster"
+date: 2011-08-19T23:56:00.009+02:00
+permalink: /2011/08/getting-feet-wet-with-wldf.html
+blogger_id: "3508351909392992772"
+tags: ["WLDF"]
+---
+<a href="http://download.oracle.com/docs/cd/E14571_01/web.1111/e13714/toc.htm">Here the official Oracle documentation on WLDF</a><br />
+<br />
+<br />
+<a href="/2010/04/wldf-in-action.html">Here</a> my previous post on WLDF.<br />
+<br />
+<br />
+<br />
+Here the WLST to create a WLDF Diagnostic Module with a watch on the number of members in the cluster:<br />
+<br />
+domain=osb_domain<br />
+managed server=ms1<br />
+cluster=myCluster<br />
+<br />
+It will generate a SNMP trap every time the number of AliveServerCount on ms1 is less than 3:<br />
+<br />
+<pre name="code" class="brush: java">edit()
+startEdit()
+cd('/')
+cmo.createWLDFSystemResource('ClusterMonitor')
+
+cd('/SystemResources/ClusterMonitor')
+cmo.setDescription('')
+
+cd('/WLDFSystemResources/ClusterMonitor/WLDFResource/ClusterMonitor/Harvester/ClusterMonitor')
+cmo.createHarvestedType('weblogic.management.runtime.ClusterRuntimeMBean')
+
+cd('/WLDFSystemResources/ClusterMonitor/WLDFResource/ClusterMonitor/Harvester/ClusterMonitor/HarvestedTypes/weblogic.management.runtime.ClusterRuntimeMBean')
+set('HarvestedAttributes',jarray.array([String('AliveServerCount'), String('CurrentSecondaryServer'), String('ForeignFragmentsDroppedCount'), String('FragmentsReceivedCount'), String('FragmentsSentCount'), String('MulticastMessagesLostCount'), String('PrimaryCount'), String('ResendRequestsCount'), String('SecondaryCount'), String('SecondaryServerDetails')], String))
+set('HarvestedInstances',jarray.array([String('com.bea:Name=myCluster,ServerRuntime=ms1,Type=ClusterRuntime')], String))
+cmo.setNamespace('ServerRuntime')
+
+cd('/WLDFSystemResources/ClusterMonitor/WLDFResource/ClusterMonitor/WatchNotification/ClusterMonitor')
+cmo.createWatch('clusterGone')
+
+cd('/WLDFSystemResources/ClusterMonitor/WLDFResource/ClusterMonitor/WatchNotification/ClusterMonitor/Watches/clusterGone')
+cmo.setRuleType('Harvester')
+cmo.setEnabled(true)
+cmo.setRuleExpression('(${ServerRuntime//[weblogic.management.runtime.ClusterRuntimeMBean]com.bea:Name=myCluster,ServerRuntime=ms1,Type=ClusterRuntime//AliveServerCount} &lt; 3)')
+cmo.setAlarmType('AutomaticReset')
+cmo.setAlarmResetPeriod(60000)
+
+cd('/WLDFSystemResources/ClusterMonitor/WLDFResource/ClusterMonitor/WatchNotification/ClusterMonitor')
+cmo.createSNMPNotification('snmptrap')
+
+cd('/WLDFSystemResources/ClusterMonitor/WLDFResource/ClusterMonitor/WatchNotification/ClusterMonitor/SNMPNotifications/snmptrap')
+cmo.setEnabled(true)
+
+cd('/WLDFSystemResources/ClusterMonitor/WLDFResource/ClusterMonitor/WatchNotification/ClusterMonitor/Watches/clusterGone')
+set('Notifications',jarray.array([ObjectName('com.bea:Name=snmptrap,Type=weblogic.diagnostics.descriptor.WLDFSNMPNotificationBean,Parent=[osb_domain]/WLDFSystemResources[ClusterMonitor],Path=WLDFResource[ClusterMonitor]/WatchNotification[ClusterMonitor]/SNMPNotifications[snmptrap]')], ObjectName))
+
+activate()
+
+</pre><br />
+When the watch triggers, it logs this in the Server log: <br />
+<br />
+<pre>####&lt;16-Aug-2011 15:29:21 o'clock BST&gt; &lt;notice&gt; &lt;diagnostics&gt; &lt;pierrepc&gt; &lt;ms1&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;wls Kernel&gt;&gt; &lt;&gt; &lt;1b7e5955c26b51de:219aeffc:131d2f16195:-8000-0000000000000369&gt; &lt;1313504961943&gt; &lt;BEA-320068&gt; &lt;watch 'clusterGone' with severity 'Notice' on server 'ms1' has triggered at 16-Aug-2011 15:29:21 o'clock BST. Notification details: 
+WatchRuleType: Harvester 
+WatchRule: (${ServerRuntime//[weblogic.management.runtime.ClusterRuntimeMBean]com.bea:Name=myCluster,ServerRuntime=ms2,Type=ClusterRuntime//AliveServerCount} &lt;3) ) 
+WatchData: com.bea:Name=myCluster,ServerRuntime=ms1,Type=ClusterRuntime//AliveServerCount &lt; 3  
+WatchAlarmType: AutomaticReset 
+WatchAlarmResetPeriod: 60000 
+&gt; 
+</pre>If you need a free SNMP manager, <a href="http://www.dart.com/psnet_free.aspx">download this</a> Some snaphots here if you setup Watches and Notification through the WebLogic console: Selecting metrics to collect with the Harvester: select MBean <br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/6eb8849ea8f4a2d6.jpg" imageanchor="1"><img border="0" height="161px" src="/images/2f173dcb1af635b8.jpg" width="640px" /></a></div>Selecting metrics to collect with the Harvester: select MBean attributes <br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/c9c74a05171b49e6.jpg" imageanchor="1"><img border="0" height="140px" src="/images/1f423c6f4874e59d.jpg" width="400px" /></a></div>selecting Managed Server instances from which to collect metrics <br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/f2f68e88be08d9c7.jpg" imageanchor="1"><img border="0" height="136px" src="/images/1364e4b217082e27.jpg" width="400px" /></a></div>adding a clusterInTrouble notification which takes a diagnosticImage when the watch triggers:<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/e7d42f0ea657ad1c.jpg" imageanchor="1"><img border="0" height="282px" src="/images/dbdae94d95459199.jpg" width="400px" /></a></div>assiging the clusterInTrouble notification to the clusterGone watch: <br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/d89210b5f1d91bbb.jpg" imageanchor="1"><img border="0" height="305px" src="/images/4ce1c031bdc5fe3e.jpg" width="400px" /></a></div><br />
+<br />
+<br />
+<br />
+<br />
+

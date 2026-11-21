@@ -1,0 +1,18 @@
+---
+layout: post
+title: "javax.persistence.PersistenceException: org.hibernate.PropertyValueException: not-null property references a null or transient value: bla"
+date: 2011-02-25T13:12:00.001+01:00
+permalink: /2011/02/javaxpersistencepersistenceexception.html
+blogger_id: "2993028241686769264"
+tags: ["hibernate"]
+---
+<a href="http://www.dil.univ-mrs.fr/~massat/docs/hibernate-3.1/api/org/hibernate/PropertyValueException.html">org.hibernate.PropertyValueException</a> is a nice animal, containing a lot of useful info:<br />
+<br />
+entityName<br />
+propertyName<br />
+<br />
+so instead of doing yourself the validation on all the properties to be persisted, you can delegate Hibernate.<br />
+<br />
+The problem with Hibernate is that it's a fail-fast validation: the first invalid property (null or referencing an non existing entity) will throw an exception.<br />
+<br />
+If you want to capture ALL the validation errors, then you need to do it individually testing each property.

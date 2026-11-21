@@ -1,0 +1,84 @@
+---
+layout: post
+title: "Mount nfs and rpcbind"
+date: 2014-10-12T21:58:00.001+02:00
+permalink: /2014/10/mount-nfs-and-rpcbind.html
+blogger_id: "1832302007668596662"
+tags: ["nfs"]
+---
+I was trying to mount a NFS4 share:
+<br/><br/>
+<b>mount -t nfs 10.0.2.15:/drbd/main/shared/ /opt/oracle/domains/osbpl1do/shared</b>
+<br/>
+
+
+mount.nfs: Connection timed out
+<br/><br/>
+Of course, I forgot to start the nfs service:
+
+<br/><br/>
+
+<b>/etc/init.d/nfs start</b>
+<pre>
+Starting NFS services:                                     [  OK  ]
+Starting NFS quotas: Cannot register service: RPC: Unable to receive; errno = Connection refused
+rpc.rquotad: unable to register (RQUOTAPROG, RQUOTAVERS, udp).
+                                                           [FAILED]
+Starting NFS mountd:                                       [FAILED]
+Starting NFS daemon: rpc.nfsd: writing fd to kernel failed: errno 111 (Connection refused)
+rpc.nfsd: unable to set any sockets for nfsd
+                                                           [FAILED]
+
+</pre>
+Mmmmm, what is going on here..... I try to get some info on the rpc service:
+
+<br/>
+
+<b>rpcinfo -p</b>
+<br/>
+<pre>
+rpcinfo: can't contact portmapper: RPC: Remote system error - No such file or directory
+</pre>
+
+<br/><br/>
+hell on Earth... let me restart the rpcbind service:
+<br/><br/>
+
+
+<b>service rpcbind restart</b>
+<br/><br/>
+
+<pre>
+Stopping rpcbind:                                          [FAILED]
+Starting rpcbind:                                          [  OK  ]
+</pre>
+<br/><br/>
+
+
+<b>rpcinfo -p</b>
+<br/><br/>
+<pre>
+
+   program vers proto   port  service
+    100000    4   tcp    111  portmapper
+    100000    3   tcp    111  portmapper
+    100000    2   tcp    111  portmapper
+    100000    4   udp    111  portmapper
+    100000    3   udp    111  portmapper
+    100000    2   udp    111  portmapper
+</pre>
+<br/><br/>
+at last I can start the nfs service:
+
+<b>/etc/init.d/nfs start</b>
+<pre>
+
+Starting NFS services:                                     [  OK  ]
+Starting NFS quotas:                                       [  OK  ]
+Starting NFS mountd:                                       [  OK  ]
+Starting NFS daemon:                                       [  OK  ]
+Starting RPC idmapd:                                       [  OK  ]
+
+
+</pre>
+

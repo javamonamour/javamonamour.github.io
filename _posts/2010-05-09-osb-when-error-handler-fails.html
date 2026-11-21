@@ -1,0 +1,41 @@
+---
+layout: post
+title: "OSB: when the error handler fails..."
+date: 2010-05-09T17:03:00.001+02:00
+permalink: /2010/05/osb-when-error-handler-fails.html
+blogger_id: "6739387529326261582"
+tags: ["errorhandling", "OSB"]
+---
+You get an error inside the error:<br />
+<br />
+<b>System Error Handler</b> <i>(and not "Stage Error Handler")</i><br />
+&nbsp;&nbsp;&nbsp; <br />
+$fault: &nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; &lt;con:fault&nbsp; &nbsp;&nbsp;&nbsp; xmlns:con="http://www.bea.com/wli/sb/context"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:errorCode&gt;BEA-380002&lt;/con:errorCode&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:reason&gt;Not Found&lt;/con:reason&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:details&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;err:ErrorResponseDetail&nbsp; &nbsp;&nbsp;&nbsp; xmlns:err="http://www.bea.com/wli/sb/errors"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;err:response-metadata&nbsp; &nbsp;&nbsp;&nbsp; xsi:type="http:HttpResponseMetaData" xmlns:http="http://www.bea.com/wli/sb/transports/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;tran:headers&nbsp; &nbsp;&nbsp;&nbsp; xsi:type="http:HttpResponseHeaders" xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;tran:user-header&nbsp; &nbsp;&nbsp;&nbsp; name="X-Powered-By" value="Servlet/2.5 JSP/2.1"/&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;http:Connection&gt;close&lt;/http:Connection&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;http:Content-Length&gt;1214&lt;/http:Content-Length&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;http:Content-Type&gt;text/html&lt;/http:Content-Type&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;http:Date&gt;Sun, 09 May 2010 14:59:21 GMT&lt;/http:Date&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/tran:headers&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;tran:response-code&nbsp; &nbsp;&nbsp;&nbsp; xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;3&lt;/tran:response-code&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;tran:response-message&nbsp; &nbsp;&nbsp;&nbsp; xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;Not Found&lt;/tran:response-message&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;tran:encoding&nbsp; &nbsp;&nbsp;&nbsp; xmlns:tran="http://www.bea.com/wli/sb/transports"&gt;iso-8859-1&lt;/tran:encoding&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;http:http-response-code&gt;404&lt;/http:http-response-code&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/err:response-metadata&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/err:ErrorResponseDetail&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/con:details&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:<b>location</b>&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:node&gt;PipelinePairNode1&lt;/con:node&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:pipeline&gt;PipelinePairNode1_request&lt;/con:pipeline&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:stage&gt;stage1&lt;/con:stage&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;con:path&gt;request-pipeline&lt;/con:path&gt;<br />
+&nbsp;&nbsp;<b>&nbsp; &lt;con:error-handler&gt;true&lt;/con:error-handler&gt;</b><br />
+&nbsp;&nbsp;&nbsp; &lt;/con:location&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/con:fault&gt;

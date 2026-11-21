@@ -1,0 +1,28 @@
+---
+layout: post
+title: "debug hanging shell scripts"
+date: 2018-04-11T21:04:00.005+02:00
+permalink: /2018/04/debug-hanging-shell-scripts.html
+blogger_id: "3391031349171748989"
+tags: ["bash"]
+---
+<a href="https://stackoverflow.com/questions/4640794/a-running-bash-script-is-hung-somewhere-can-i-find-out-what-line-it-is-on">https://stackoverflow.com/questions/4640794/a-running-bash-script-is-hung-somewhere-can-i-find-out-what-line-it-is-on</a><br />
+<br />
+set -x<br />
+<br />
+lsof -p $pid<br />
+<br />
+strace -p $pid -s 1024<br />
+<br />
+/proc/$pid/environ<br />
+<br />
+pstree -pl 21156 + cat /proc/15232/stack  (15232 is the PID of the hanging process)<br />
+<br />
+top<br />
+<br />
+set -v or set -o verbose<br />
+<br />
+<a href="http://bashdb.sourceforge.net/">http://bashdb.sourceforge.net/</a><br />
+<a href="https://www.shellcheck.net/">https://www.shellcheck.net/</a><br />
+<a href="https://marketplace.visualstudio.com/items?itemName=rogalmic.bash-debug">https://marketplace.visualstudio.com/items?itemName=rogalmic.bash-debug</a><br />
+<br />

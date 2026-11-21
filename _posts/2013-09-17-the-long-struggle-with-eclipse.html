@@ -1,0 +1,32 @@
+---
+layout: post
+title: "The long struggle with Eclipse Subclipse plugin"
+date: 2013-09-17T12:28:00.004+02:00
+permalink: /2013/09/the-long-struggle-with-eclipse.html
+blogger_id: "6774503166409839575"
+tags: ["subclipse", "svn"]
+---
+I had to change password in SVN, and the new password was not being saved in svn.simple. 
+For every operation I get the username/password popup. Running me crazy.<br/><br/>
+
+Googling, I find <a href="http://stackoverflow.com/questions/984773/clearing-eclipse-subversion-password">this article</a>, so I do all the tricks:
+
+<br/>
+deleted .keyring file
+<br/>
+deleted the svn.simple file
+<br/>
+Windows/Preferences/SVN and changed the Configuration Location to something else
+<br/>
+started Eclipse as administrator
+<br/>
+looked in Eclipse .log file in workspace looking for errors
+<br/><br/>
+
+Nothing worked. I HATE Eclipse.
+
+<br/><br/>
+Finally switching from SVN Interface JavaHL to SVNKit seems to fix the issue.
+<br/><br/>
+Unless you HAVE to use Eclipse, seriously consider switching to IntelliJ. Seriously.
+

@@ -1,0 +1,54 @@
+---
+layout: post
+title: "WLST script to monitor JMS messages and heap"
+date: 2010-09-02T19:34:00.000+02:00
+permalink: /2010/09/wlst-script-to-monitor-jms-messages-and.html
+blogger_id: "1933600928264344749"
+tags: ["jms", "WLST"]
+---
+Inspired by this document:<br />
+<a href="http://download.oracle.com/docs/cd/E13222_01/wls/docs100/config_scripting/monitoring.html">http://download.oracle.com/docs/cd/E13222_01/wls/docs100/config_scripting/monitoring.html</a><br />
+<br />
+<br />
+For more info on JMS metrics, see here:<br />
+<a href="http://download.oracle.com/docs/cd/E11035_01/wls100/javadocs_mhome/weblogic/management/runtime/JMSDestinationRuntimeMBean.html">http://download.oracle.com/docs/cd/E11035_01/wls100/javadocs_mhome/weblogic/management/runtime/JMSDestinationRuntimeMBean.html</a><br />
+<br />
+<br />
+<pre class="brush: java" name="code">#########################################################################
+#
+# This script will monitor a queue over time
+# Author : Pierluigi Vernetto
+#
+#########################################################################
+ 
+from java.util import Date
+ 
+ucf='PVWebLogicConfig.properties'
+ukf='PVWebLogicKey.properties'
+serverurl='t3://osb.acme.net:8311'
+
+
+ 
+def JmsStat():
+
+ connect(userConfigFile=ucf, userKeyFile=ukf,url=serverurl)
+ serverRuntime()
+ servername = 'dev3OsbLABMs1'
+ while 1:
+  cd('/JMSRuntime/' + servername + '.jms/JMSServers/myJmsServer_1/Destinations/MQGEOSystemModule!myJmsServer_1@MQGEOQueue')
+  messagesCurrentCount= cmo.getMessagesCurrentCount()
+  messagesTotal= cmo.getMessagesReceivedCount()
+  cd('/JVMRuntime/'+servername)
+  heapfree = cmo.getHeapSizeCurrent()
+  date = Date() # now
+  print '%14s   %5d %6d %12d' %  (date, messagesCurrentCount, messagesTotal, heapfree)
+  java.lang.Thread.sleep(10000)
+
+ 
+ 
+if __name__== "main":
+        redirect('jmsmonitor.log', 'false')
+        JmsStat()
+
+
+</pre>

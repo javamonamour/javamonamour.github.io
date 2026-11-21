@@ -1,0 +1,17 @@
+---
+layout: post
+title: "com.collaxa.cube.engine.types.bpel.CXMessageVariable"
+date: 2011-01-09T20:26:00.001+01:00
+permalink: /2011/01/comcollaxacubeenginetypesbpelcxmessagev.html
+blogger_id: "8447122355175895379"
+tags: ["BPEL"]
+---
+if you invoke a BPEL process, the inputVariable will be a com.collaxa.cube.engine.types.bpel.CXMessageVariable , and if you do toString you get:<br />
+<br />
+inputVariable={payload=oracle.xml.parser.v2.XMLElement@1e651480}<br />
+<br />
+so it looks like a hashTable kind of thingie. Just get the element with key "payload" and you can work as usual with a XMLElement.<br />
+<br />
+Normally you would get the XmlElement with this function:<br />
+<br />
+bpws:getVariableData('inputVariable','payload')

@@ -1,0 +1,14 @@
+---
+layout: post
+title: "OSB, finding the WebLogic server name on which a message flow is executing"
+date: 2011-12-08T11:11:00.000+01:00
+permalink: /2011/12/osb-finding-weblogic-server-name-on.html
+blogger_id: "3556004012471363870"
+tags: ["OSB"]
+---
+<a href="https://forums.oracle.com/forums/thread.jspa?threadID=982549">https://forums.oracle.com/forums/thread.jspa?threadID=982549</a><br />
+<br />
+<br />
+apparently there is no other way than doing a Java Callout (or better, a Custom XPath) returning System.getProperty("weblogic.Name").<br />
+<br />
+The OSB Reporting puts the server name in the reporting message, but I think it gets it from inside Java code.

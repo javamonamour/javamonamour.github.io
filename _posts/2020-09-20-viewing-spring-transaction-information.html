@@ -1,0 +1,11 @@
+---
+layout: post
+title: "Viewing Spring transaction information"
+date: 2020-09-20T18:47:00.004+02:00
+permalink: /2020/09/viewing-spring-transaction-information.html
+blogger_id: "7310300009698385513"
+---
+<p>enable these flags:&nbsp;</p><p>logging.level.org.springframework.orm.jpa=TRACE</p><p>logging.level.org.springframework.transaction=TRACE</p><p>&nbsp;</p><p>&nbsp;and you will see this in the logs:&nbsp;</p><p>&nbsp;</p><p><i>2020-09-20 18:40:00.788 DEBUG 4904 --- [  restartedMain] o.s.orm.jpa.JpaTransactionManager        : Opened new EntityManager [SessionImpl(239595802&lt;open&gt;)] for JPA transaction&nbsp;</i></p><p><i>2020-09-20 18:40:00.794 DEBUG 4904 --- [  restartedMain] o.s.orm.jpa.JpaTransactionManager        : Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@12096038]&nbsp;</i></p><p><i>2020-09-20 18:40:00.805 DEBUG 4904 --- [  restartedMain] o.s.orm.jpa.JpaTransactionManager        : Found thread-bound EntityManager [SessionImpl(239595802&lt;open&gt;)] for JPA transaction&nbsp;</i></p><p><i>2020-09-20 18:40:00.805 DEBUG 4904 --- [  restartedMain] o.s.orm.jpa.JpaTransactionManager        : Participating in existing transaction&nbsp;</i></p><p><i>2020-09-20 18:40:00.834 DEBUG 4904 --- [  restartedMain] o.s.orm.jpa.JpaTransactionManager        : Initiating transaction commit
+2020-09-20 18:40:00.839 DEBUG 4904 --- [  restartedMain] o.s.orm.jpa.JpaTransactionManager        : Committing JPA transaction on EntityManager [SessionImpl(239595802&lt;open&gt;)]&nbsp;</i></p><p><i>2020-09-20 18:40:00.856 DEBUG 4904 --- [  restartedMain] o.s.orm.jpa.JpaTransactionManager        : Closing JPA EntityManager [SessionImpl(239595802&lt;open&gt;)] after transaction&nbsp;</i></p><p>&nbsp;plus a lot of TRACE information equally useful (omitted here)<i><br /></i></p><p>Demo code is available here <a href="https://github.com/vernetto/txdemo">https://github.com/vernetto/txdemo</a>
+
+</p>

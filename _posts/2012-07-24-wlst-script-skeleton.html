@@ -1,0 +1,39 @@
+---
+layout: post
+title: "WLST script skeleton"
+date: 2012-07-24T15:19:00.002+02:00
+permalink: /2012/07/wlst-script-skeleton.html
+blogger_id: "6858240753027356998"
+tags: ["WLST"]
+---
+<pre name="code" class="brush: java">fileName = sys.argv[1] 
+print 'Loading properties from ', fileName
+propInputStream = FileInputStream(fileName)
+configProps = Properties()
+configProps.load(propInputStream)
+
+adminURL = configProps.get("admin.url")
+adminUserName = configProps.get("admin.userName")
+adminPassword = configProps.get("admin.password")
+
+connect(adminUserName, adminPassword, adminURL)
+ try:
+  edit()
+  startEdit()
+  
+  cd('/')
+
+.... your code here
+
+  validate() 
+  save()
+  activate()
+
+ except:
+   dumpVariables()
+   dumpStack()
+   print 'Some error message here'
+   print ''
+   undo('true', 'y')
+   cancelEdit('y')
+</pre>

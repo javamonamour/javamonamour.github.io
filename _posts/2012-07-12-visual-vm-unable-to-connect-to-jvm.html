@@ -1,0 +1,17 @@
+---
+layout: post
+title: "visual vm unable to connect to jvm"
+date: 2012-07-12T16:52:00.000+02:00
+permalink: /2012/07/visual-vm-unable-to-connect-to-jvm.html
+blogger_id: "8678086681134715338"
+---
+<a href="http://docs.oracle.com/javase/6/docs/technotes/guides/visualvm/index.html">http://docs.oracle.com/javase/6/docs/technotes/guides/visualvm/index.html</a><br />
+<br />
+I can see the java processes running, but I can't connect to them by runnning jvisualvm on the same box as the java process.<br />
+<br />
+So I try:<br />
+ ./jinfo 10248<br />
+Attaching to process ID 10248, please wait...<br />
+Error attaching to process: sun.jvm.hotspot.debugger.DebuggerException: Can't attach to the process<br />
+<br />
+All of a sudden I realize that I was logged in with a different Unix login as the Java process.... logging in with the same Unix user and then running jvisualvm fixed the problem.

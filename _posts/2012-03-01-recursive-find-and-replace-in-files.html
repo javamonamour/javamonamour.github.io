@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Recursive find and replace in files"
+date: 2012-03-01T22:25:00.001+01:00
+permalink: /2012/03/recursive-find-and-replace-in-files.html
+blogger_id: "8446133260641996588"
+tags: ["find", "OSB"]
+---
+If you need to make a change in all your OSB artifacts:<br />
+<br />
+copy the sbconfig.jar in an empty folder<br />
+jar xvf sbconfig.jar<br />
+rm sbconfig.jar<br />
+<br />
+perl -p -i -e 's/originalString/targetString/g' `find . -name '*' -type f`<br />
+<br />
+jar cvf sbconfig.jar<br />
+<br />
+done<br />
+<br />
+<br />
+if originalString contains / (like /bla/bly ) you can do this:  \/bla\/bly

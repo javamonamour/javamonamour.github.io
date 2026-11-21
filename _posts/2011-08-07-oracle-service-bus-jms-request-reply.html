@@ -1,0 +1,214 @@
+---
+layout: post
+title: "Oracle Service Bus JMS request reply with correlationId"
+date: 2011-08-07T15:21:00.001+02:00
+permalink: /2011/08/oracle-service-bus-jms-request-reply.html
+blogger_id: "6769996240560693545"
+tags: ["correlationId", "OSB", "request-reply"]
+---
+<a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/interopjms/transport.html">http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/interopjms/transport.html</a><br />
+<br />
+<br />
+<a href="http://eelzinga.wordpress.com/2009/10/28/oracle-service-bus-jms-requestresponse-pattern/">http://eelzinga.wordpress.com/2009/10/28/oracle-service-bus-jms-requestresponse-pattern/</a><br />
+<br />
+So here we go:<br />
+<br />
+create a project "MyRRJMS"<br />
+<br />
+create a PS "RRPS", <br />
+Any XML Service, <br />
+protocol=JMS, <br />
+endpoint URL="jms://localhost:7001/weblogic.jms.XAConnectionFactory/RRPSRequest", <br />
+is response required=yes, <br />
+response pattern=JMSCorrelationID, <br />
+response URL="jms://localhost:7001/weblogic.jms.XAConnectionFactory/RRPSResponse"<br />
+<br />
+the moment you activate the session, in the Server's JNDI tree you find 2 new objects with Binding Name:<br />
+RRPSRequest (weblogic.jms.common.DestinationImpl)<br />
+RRPSResponse (weblogic.jms.common.DestinationImpl)<br />
+<br />
+Where do they come from? Look at<br />
+C:\Oracle2\Middleware\user_projects\domains\osb_domain\config\jms\xbusResources-jms.xml and there they are, all the JMS resources are declared in there.<br />
+<br />
+You find out also that in<br />
+C:\Oracle2\Middleware\user_projects\domains\osb_domain\servers\AdminServer\tmp\_WL_user\_ALSB_1312707027768\6v4trg\META-INF<br />
+<br />
+you have an exploded EAR with <br />
+<br />
+application.xml =<br />
+<br />
+<pre name="code" style="brush: xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;jav:application xmlns:jav="http://java.sun.com/xml/ns/javaee"&gt;
+  &lt;jav:display-name&gt;ProxyService MyRRJMS/RRPS&lt;/jav:display-name&gt;
+  &lt;jav:module&gt;
+    &lt;jav:ejb&gt;ejb.jar&lt;/jav:ejb&gt;
+  &lt;/jav:module&gt;
+&lt;/jav:application&gt;
+</pre><br />
+<br />
+and a weblogic-application.xml:<br />
+<br />
+<pre name="code" style="brush: xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;web:weblogic-application xmlns:web="http://xmlns.oracle.com/weblogic/weblogic-application"&gt;
+  &lt;web:ejb&gt;
+    &lt;web:start-mdbs-with-application&gt;false&lt;/web:start-mdbs-with-application&gt;
+  &lt;/web:ejb&gt;
+  &lt;web:application-param&gt;
+    &lt;web:param-name&gt;service-ref&lt;/web:param-name&gt;
+    &lt;web:param-value&gt;ProxyService$MyRRJMS$RRPS&lt;/web:param-value&gt;
+  &lt;/web:application-param&gt;
+  &lt;web:listener&gt;
+    &lt;web:listener-class&gt;com.bea.wli.sb.transports.jms.JmsEndPointAppListener&lt;/web:listener-class&gt;
+  &lt;/web:listener&gt;
+&lt;/web:weblogic-application&gt;
+</pre><br />
+and the ejb.jar contains:<br />
+<br />
+<br />
+weblogic-ejb-jar.xml:<br />
+<br />
+<pre name="code" style="brush: xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;web:weblogic-ejb-jar xmlns:web="http://xmlns.oracle.com/weblogic/weblogic-ejb-jar"&gt;
+  &lt;web:weblogic-enterprise-bean&gt;
+    &lt;web:ejb-name&gt;RequestEJB-2434504941437409959-3df8b25b.131a331d3f9.-7fdb&lt;/web:ejb-name&gt;
+    &lt;web:message-driven-descriptor&gt;
+      &lt;web:pool&gt;
+        &lt;web:max-beans-in-free-pool&gt;1000&lt;/web:max-beans-in-free-pool&gt;
+        &lt;web:initial-beans-in-free-pool&gt;1&lt;/web:initial-beans-in-free-pool&gt;
+      &lt;/web:pool&gt;
+      &lt;web:destination-jndi-name&gt;RRPSRequest&lt;/web:destination-jndi-name&gt;
+      &lt;web:provider-url&gt;t3://localhost:7001&lt;/web:provider-url&gt;
+      &lt;web:connection-factory-jndi-name&gt;weblogic.jms.XAConnectionFactory&lt;/web:connection-factory-jndi-name&gt;
+    &lt;/web:message-driven-descriptor&gt;
+    &lt;web:transaction-descriptor&gt;
+      &lt;web:trans-timeout-seconds&gt;600&lt;/web:trans-timeout-seconds&gt;
+    &lt;/web:transaction-descriptor&gt;
+    &lt;web:resource-description&gt;
+      &lt;web:res-ref-name&gt;jms/ConnectionFactory&lt;/web:res-ref-name&gt;
+      &lt;web:jndi-name&gt;weblogic.jms.XAConnectionFactory&lt;/web:jndi-name&gt;
+    &lt;/web:resource-description&gt;
+    &lt;web:resource-description&gt;
+      &lt;web:res-ref-name&gt;jms/QueueName&lt;/web:res-ref-name&gt;
+      &lt;web:jndi-name&gt;RRPSRequest&lt;/web:jndi-name&gt;
+    &lt;/web:resource-description&gt;
+  &lt;/web:weblogic-enterprise-bean&gt;
+  &lt;web:weblogic-enterprise-bean&gt;
+    &lt;web:ejb-name&gt;ResponseEJB-2434504941437409959-3df8b25b.131a331d3f9.-7fdb&lt;/web:ejb-name&gt;
+    &lt;web:message-driven-descriptor&gt;
+      &lt;web:pool&gt;
+        &lt;web:max-beans-in-free-pool&gt;1000&lt;/web:max-beans-in-free-pool&gt;
+        &lt;web:initial-beans-in-free-pool&gt;1&lt;/web:initial-beans-in-free-pool&gt;
+      &lt;/web:pool&gt;
+      &lt;web:destination-jndi-name&gt;RRPSResponse&lt;/web:destination-jndi-name&gt;
+      &lt;web:provider-url&gt;t3://localhost:7001&lt;/web:provider-url&gt;
+      &lt;web:connection-factory-jndi-name&gt;weblogic.jms.XAConnectionFactory&lt;/web:connection-factory-jndi-name&gt;
+    &lt;/web:message-driven-descriptor&gt;
+    &lt;web:transaction-descriptor&gt;
+      &lt;web:trans-timeout-seconds&gt;600&lt;/web:trans-timeout-seconds&gt;
+    &lt;/web:transaction-descriptor&gt;
+    &lt;web:resource-description&gt;
+      &lt;web:res-ref-name&gt;jms/ConnectionFactory&lt;/web:res-ref-name&gt;
+      &lt;web:jndi-name&gt;weblogic.jms.XAConnectionFactory&lt;/web:jndi-name&gt;
+    &lt;/web:resource-description&gt;
+    &lt;web:resource-description&gt;
+      &lt;web:res-ref-name&gt;jms/QueueName&lt;/web:res-ref-name&gt;
+      &lt;web:jndi-name&gt;RRPSResponse&lt;/web:jndi-name&gt;
+    &lt;/web:resource-description&gt;
+  &lt;/web:weblogic-enterprise-bean&gt;
+  &lt;web:disable-warning&gt;BEA-010001&lt;/web:disable-warning&gt;
+  &lt;web:disable-warning&gt;BEA-010054&lt;/web:disable-warning&gt;
+  &lt;web:disable-warning&gt;BEA-010200&lt;/web:disable-warning&gt;
+  &lt;web:disable-warning&gt;BEA-010202&lt;/web:disable-warning&gt;
+&lt;/web:weblogic-ejb-jar&gt;
+</pre><br />
+<br />
+and ejb-jar.xml<br />
+<br />
+<pre name="code" style="brush: xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+&lt;jav:ejb-jar xmlns:jav="http://java.sun.com/xml/ns/javaee"&gt;
+  &lt;jav:display-name&gt;BEA ALSB JMS Inbound Endpoint&lt;/jav:display-name&gt;
+  &lt;jav:enterprise-beans&gt;
+    &lt;jav:message-driven&gt;
+      &lt;jav:display-name&gt;BEA ALSB JMS Inbound Endpoint (Request)&lt;/jav:display-name&gt;
+      &lt;jav:ejb-name&gt;RequestEJB-2434504941437409959-3df8b25b.131a331d3f9.-7fdb&lt;/jav:ejb-name&gt;
+      &lt;jav:ejb-class&gt;com.bea.wli.sb.transports.jms.JmsInboundMDB&lt;/jav:ejb-class&gt;
+      &lt;jav:transaction-type&gt;Container&lt;/jav:transaction-type&gt;
+      &lt;jav:message-destination-type&gt;javax.jms.Queue&lt;/jav:message-destination-type&gt;
+      &lt;jav:env-entry&gt;
+        &lt;jav:env-entry-name&gt;service-ref&lt;/jav:env-entry-name&gt;
+        &lt;jav:env-entry-type&gt;java.lang.String&lt;/jav:env-entry-type&gt;
+        &lt;jav:env-entry-value&gt;ProxyService$MyRRJMS$RRPS&lt;/jav:env-entry-value&gt;
+      &lt;/jav:env-entry&gt;
+      &lt;jav:env-entry&gt;
+        &lt;jav:env-entry-name&gt;XA-supported&lt;/jav:env-entry-name&gt;
+        &lt;jav:env-entry-type&gt;java.lang.Boolean&lt;/jav:env-entry-type&gt;
+        &lt;jav:env-entry-value&gt;true&lt;/jav:env-entry-value&gt;
+      &lt;/jav:env-entry&gt;
+      &lt;jav:env-entry&gt;
+        &lt;jav:env-entry-name&gt;checksum&lt;/jav:env-entry-name&gt;
+        &lt;jav:env-entry-type&gt;java.lang.Integer&lt;/jav:env-entry-type&gt;
+        &lt;jav:env-entry-value&gt;-319661414&lt;/jav:env-entry-value&gt;
+      &lt;/jav:env-entry&gt;
+    &lt;/jav:message-driven&gt;
+    &lt;jav:message-driven&gt;
+      &lt;jav:description&gt;BEA ALSB JMS Inbound Endpoint (Response) (AdminServer)&lt;/jav:description&gt;
+      &lt;jav:ejb-name&gt;ResponseEJB-2434504941437409959-3df8b25b.131a331d3f9.-7fdb&lt;/jav:ejb-name&gt;
+      &lt;jav:ejb-class&gt;com.bea.wli.sb.transports.jms.JmsAsyncResponseMDB&lt;/jav:ejb-class&gt;
+      &lt;jav:transaction-type&gt;Container&lt;/jav:transaction-type&gt;
+      &lt;jav:message-destination-type&gt;javax.jms.Queue&lt;/jav:message-destination-type&gt;
+      &lt;jav:activation-config&gt;
+        &lt;jav:activation-config-property&gt;
+          &lt;jav:activation-config-property-name&gt;messageSelector&lt;/jav:activation-config-property-name&gt;
+          &lt;jav:activation-config-property-value&gt;JMSCorrelationID LIKE 'ID:424541534594cf52%'&lt;/jav:activation-config-property-value&gt;
+        &lt;/jav:activation-config-property&gt;
+      &lt;/jav:activation-config&gt;
+      &lt;jav:env-entry&gt;
+        &lt;jav:env-entry-name&gt;service-ref&lt;/jav:env-entry-name&gt;
+        &lt;jav:env-entry-type&gt;java.lang.String&lt;/jav:env-entry-type&gt;
+        &lt;jav:env-entry-value&gt;ProxyService$MyRRJMS$RRPS&lt;/jav:env-entry-value&gt;
+      &lt;/jav:env-entry&gt;
+      &lt;jav:env-entry&gt;
+        &lt;jav:env-entry-name&gt;XA-supported&lt;/jav:env-entry-name&gt;
+        &lt;jav:env-entry-type&gt;java.lang.Boolean&lt;/jav:env-entry-type&gt;
+        &lt;jav:env-entry-value&gt;true&lt;/jav:env-entry-value&gt;
+      &lt;/jav:env-entry&gt;
+    &lt;/jav:message-driven&gt;
+  &lt;/jav:enterprise-beans&gt;
+  &lt;jav:assembly-descriptor&gt;
+    &lt;jav:container-transaction&gt;
+      &lt;jav:method&gt;
+        &lt;jav:ejb-name&gt;RequestEJB-2434504941437409959-3df8b25b.131a331d3f9.-7fdb&lt;/jav:ejb-name&gt;
+        &lt;jav:method-name&gt;*&lt;/jav:method-name&gt;
+      &lt;/jav:method&gt;
+      &lt;jav:trans-attribute&gt;Required&lt;/jav:trans-attribute&gt;
+    &lt;/jav:container-transaction&gt;
+    &lt;jav:container-transaction&gt;
+      &lt;jav:method&gt;
+        &lt;jav:ejb-name&gt;ResponseEJB-2434504941437409959-3df8b25b.131a331d3f9.-7fdb&lt;/jav:ejb-name&gt;
+        &lt;jav:method-name&gt;*&lt;/jav:method-name&gt;
+      &lt;/jav:method&gt;
+      &lt;jav:trans-attribute&gt;Required&lt;/jav:trans-attribute&gt;
+    &lt;/jav:container-transaction&gt;
+  &lt;/jav:assembly-descriptor&gt;
+&lt;/jav:ejb-jar&gt;
+
+</pre><br />
+To inject messages in the Request queue, write a Business Service "writeToRequestQueue"<br />
+<br />
+Any XML Service<br />
+protocol=JMS<br />
+Endpoint URI=jms://localhost:7001/weblogic.jms.XAConnectionFactory/RRPSRequest<br />
+No response<br />
+<br />
+To read messages from the Response queue, write a Proxy Service "readFromResponseQueue"<br />
+<br />
+Any XML Service<br />
+protocol=JMS<br />
+Endpoint URI=jms://localhost:7001/weblogic.jms.XAConnectionFactory/RRPSResponse<br />
+No response<br />
+in its Message Flow, add a pipeline, stage, add action "log" expression "$body"<br />
+<br />
+Everything is operational: when you writeToRequestQueue, the message is consumed by the RRPS, put to the ResponseQueue where it is consumed by readFromResponseQueue.<br />
+<br />
+So what is the big deal, we could have achieved the same without all this circus of Request/Reply and correlationId. Where is the correlationId by the way?<br />
+We will discover all this in the next installment.

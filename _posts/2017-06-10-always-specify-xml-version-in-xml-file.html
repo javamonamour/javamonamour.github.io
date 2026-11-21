@@ -1,0 +1,238 @@
+---
+layout: post
+title: "Always specify xml version in a XML file"
+date: 2017-06-10T08:39:00.001+02:00
+permalink: /2017/06/always-specify-xml-version-in-xml-file.html
+blogger_id: "6022666647742847237"
+tags: ["xml"]
+---
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+
+<br/>
+
+There was a case where one forgot it in a beans.xml file, and WebLogic tries to open a Socket to retrieve some stuff (no clue what) attempting some alternate way to retrieve the version information. Crazy. It's crazy to use XML in any case.... XML is the biggest failure in IT history.
+<br/>
+
+<br/>
+<pre class="brush: java">
+&quot;[STANDBY] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&quot; daemon prio=10 tid=0x00007f1a380184b0 nid=0x1f65 runnable [0x00007f1aa47bb000]
+
+   java.lang.Thread.State: RUNNABLE
+
+               at java.net.PlainSocketImpl.socketConnect(Native Method)
+
+               at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:344)
+
+               - locked &lt;0x00000007f12f65b0&gt; (a java.net.SocksSocketImpl)
+
+               at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:200)
+
+               at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:182)
+
+               at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+
+               at java.net.Socket.connect(Socket.java:579)
+
+               at java.net.Socket.connect(Socket.java:528)
+
+               at sun.net.NetworkClient.doConnect(NetworkClient.java:180)
+
+               at sun.net.www.http.HttpClient.openServer(HttpClient.java:432)
+
+               at sun.net.www.http.HttpClient.openServer(HttpClient.java:527)
+
+               - locked &lt;0x00000007f12f6528&gt; (a sun.net.www.http.HttpClient)
+
+               at sun.net.www.http.HttpClient.&lt;init&gt;(HttpClient.java:211)
+
+               at sun.net.www.http.HttpClient.New(HttpClient.java:308)
+
+               at sun.net.www.http.HttpClient.New(HttpClient.java:326)
+
+               at sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1039)
+
+               at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:975)
+
+               at sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:893)
+
+               at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1343)
+
+               - locked &lt;0x00000007f12f23e8&gt; (a sun.net.www.protocol.http.HttpURLConnection)
+
+               at com.sun.org.apache.xerces.internal.impl.XMLEntityManager.setupCurrentEntity(XMLEntityManager.java:664)
+
+               at com.sun.org.apache.xerces.internal.impl.XMLVersionDetector.determineDocVersion(XMLVersionDetector.java:148)
+
+               at com.sun.org.apache.xerces.internal.impl.xs.opti.SchemaParsingConfig.parse(SchemaParsingConfig.java:582)
+
+               at com.sun.org.apache.xerces.internal.impl.xs.opti.SchemaParsingConfig.parse(SchemaParsingConfig.java:685)
+
+               at com.sun.org.apache.xerces.internal.impl.xs.opti.SchemaDOMParser.parse(SchemaDOMParser.java:530)
+
+               at com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler.getSchemaDocument(XSDHandler.java:2173)
+
+               at com.sun.org.apache.xerces.internal.impl.xs.traversers.XSDHandler.parseSchema(XSDHandler.java:569)
+
+               at com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaLoader.loadSchema(XMLSchemaLoader.java:613)
+
+               at com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaValidator.findSchemaGrammar(XMLSchemaValidator.java:2446)
+
+               at com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaValidator.handleStartElement(XMLSchemaValidator.java:1766)
+
+               at com.sun.org.apache.xerces.internal.impl.xs.XMLSchemaValidator.startElement(XMLSchemaValidator.java:740)
+
+               at com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(XMLNSDocumentScannerImpl.java:374)
+
+               at com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl$NSContentDriver.scanRootElementHook(XMLNSDocumentScannerImpl.java:613)
+
+               at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(XMLDocumentFragmentScannerImpl.java:3132)
+
+               at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl$PrologDriver.next(XMLDocumentScannerImpl.java:856)
+
+               at com.sun.org.apache.xerces.internal.impl.XMLDocumentScannerImpl.next(XMLDocumentScannerImpl.java:606)
+
+               at com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(XMLNSDocumentScannerImpl.java:112)
+
+               at com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(XMLDocumentFragmentScannerImpl.java:504)
+
+               at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:848)
+
+               at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:777)
+
+               at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:141)
+
+               at com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.parse(AbstractSAXParser.java:1213)
+
+               at com.sun.org.apache.xerces.internal.jaxp.SAXParserImpl$JAXPSAXParser.parse(SAXParserImpl.java:642)
+
+               at weblogic.xml.jaxp.WebLogicXMLReader.parse(WebLogicXMLReader.java:133)
+
+               at javax.xml.parsers.SAXParser.parse(SAXParser.java:392)
+
+               at org.jboss.weld.xml.BeansXmlParser.parse(BeansXmlParser.java:107)
+
+               at org.jboss.weld.xml.BeansXmlParser.parse(BeansXmlParser.java:137)
+
+               at org.jboss.weld.bootstrap.WeldBootstrap.parse(WeldBootstrap.java:485)
+
+               at org.jboss.weld.bootstrap.WeldBootstrap.parse(WeldBootstrap.java:481)
+
+               at com.oracle.injection.provider.weld.BasicBeanDeploymentArchive.getBeansXml(BasicBeanDeploymentArchive.java:87)
+
+               at org.jboss.weld.bootstrap.BeanDeployment.loadClasses(BeanDeployment.java:154)
+
+               at org.jboss.weld.bootstrap.BeanDeployment.createBeans(BeanDeployment.java:184)
+
+               at org.jboss.weld.bootstrap.WeldBootstrap.deployBeans(WeldBootstrap.java:349)
+
+               - locked &lt;0x00000007ecfe8cd0&gt; (a org.jboss.weld.bootstrap.WeldBootstrap)
+
+               at com.oracle.injection.provider.weld.WeldInjectionContainer.deploy(WeldInjectionContainer.java:103)
+
+               at com.oracle.injection.integration.CDIAppDeploymentExtension.initCdi(CDIAppDeploymentExtension.java:74)
+
+               at com.oracle.injection.integration.CDIAppDeploymentExtension.activate(CDIAppDeploymentExtension.java:49)
+
+               at weblogic.application.internal.flow.AppDeploymentExtensionFlow.activate(AppDeploymentExtensionFlow.java:37)
+
+               at weblogic.application.internal.BaseDeployment$2.next(BaseDeployment.java:729)
+
+               at weblogic.application.utils.StateMachineDriver.nextState(StateMachineDriver.java:42)
+
+               at weblogic.application.internal.BaseDeployment.activate(BaseDeployment.java:258)
+
+               at weblogic.application.internal.EarDeployment.activate(EarDeployment.java:61)
+
+               at weblogic.application.internal.DeploymentStateChecker.activate(DeploymentStateChecker.java:165)
+
+               at weblogic.deploy.internal.targetserver.AppContainerInvoker.activate(AppContainerInvoker.java:80)
+
+               at weblogic.deploy.internal.targetserver.BasicDeployment.activate(BasicDeployment.java:226)
+
+               at weblogic.deploy.internal.targetserver.BasicDeployment.activateFromServerLifecycle(BasicDeployment.java:418)
+
+               at weblogic.management.deploy.internal.DeploymentAdapter$1.doActivate(DeploymentAdapter.java:51)
+
+               at weblogic.management.deploy.internal.DeploymentAdapter.activate(DeploymentAdapter.java:200)
+
+               at weblogic.management.deploy.internal.AppTransition$2.transitionApp(AppTransition.java:30)
+
+               at weblogic.management.deploy.internal.ConfiguredDeployments.transitionApps(ConfiguredDeployments.java:240)
+
+               at weblogic.management.deploy.internal.ConfiguredDeployments.activate(ConfiguredDeployments.java:169)
+
+               at weblogic.management.deploy.internal.ConfiguredDeployments.deploy(ConfiguredDeployments.java:123)
+
+               at weblogic.management.deploy.internal.DeploymentServerService.resume(DeploymentServerService.java:211)
+
+               at weblogic.management.deploy.internal.DeploymentServerService.start(DeploymentServerService.java:119)
+
+               at weblogic.server.AbstractServerService.postConstruct(AbstractServerService.java:78)
+
+               at sun.reflect.GeneratedMethodAccessor10.invoke(Unknown Source)
+
+               at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+
+               at java.lang.reflect.Method.invoke(Method.java:606)
+
+               at org.glassfish.hk2.utilities.reflection.ReflectionHelper.invoke(ReflectionHelper.java:1017)
+
+               at org.jvnet.hk2.internal.ClazzCreator.postConstructMe(ClazzCreator.java:388)
+
+               at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:430)
+
+               at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+
+               at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+
+               at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+
+               at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+
+               at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+
+               - locked &lt;0x00000007063c7078&gt; (a java.lang.Object)
+
+               at org.jvnet.hk2.internal.ServiceLocatorImpl.getService(ServiceLocatorImpl.java:606)
+
+               at org.jvnet.hk2.internal.ThreeThirtyResolver.resolve(ThreeThirtyResolver.java:77)
+
+               at org.jvnet.hk2.internal.ClazzCreator.resolve(ClazzCreator.java:231)
+
+               at org.jvnet.hk2.internal.ClazzCreator.resolveAllDependencies(ClazzCreator.java:254)
+
+               at org.jvnet.hk2.internal.ClazzCreator.create(ClazzCreator.java:413)
+
+               at org.jvnet.hk2.internal.SystemDescriptor.create(SystemDescriptor.java:456)
+
+               at org.glassfish.hk2.runlevel.internal.AsyncRunLevelContext.findOrCreate(AsyncRunLevelContext.java:225)
+
+               at org.glassfish.hk2.runlevel.RunLevelContext.findOrCreate(RunLevelContext.java:82)
+
+               at org.jvnet.hk2.internal.Utilities.createService(Utilities.java:2488)
+
+               at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:98)
+
+               - locked &lt;0x00000007ffe69e58&gt; (a java.lang.Object)
+
+               at org.jvnet.hk2.internal.ServiceHandleImpl.getService(ServiceHandleImpl.java:87)
+
+               at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.oneJob(CurrentTaskFuture.java:1162)
+
+               at org.glassfish.hk2.runlevel.internal.CurrentTaskFuture$QueueRunner.run(CurrentTaskFuture.java:1147)
+
+               at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:553)
+
+               at weblogic.work.ExecuteThread.execute(ExecuteThread.java:311)
+
+               at weblogic.work.ExecuteThread.run(ExecuteThread.java:263)
+
+               
+
+</pre>
+
+
+<br/>
+
+

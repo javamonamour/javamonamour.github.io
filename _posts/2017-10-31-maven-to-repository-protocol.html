@@ -1,0 +1,119 @@
+---
+layout: post
+title: "Maven to Repository protocol"
+date: 2017-10-31T18:27:00.002+01:00
+permalink: /2017/10/maven-to-repository-protocol.html
+blogger_id: "7082809043444720947"
+tags: ["maven", "nexus"]
+---
+I have used this minimalistic proxy service:<br />
+<br />
+<a href="http://www.jcgonzalez.com/java-simple-proxy-socket-server-examples#1">http://www.jcgonzalez.com/java-simple-proxy-socket-server-examples#1</a><br />
+<br />
+and just added a "System.out.println("read: " + new String(request));" after the   "outToServer.flush();"<br />
+<br />
+then in my settings.xml I point the mirror to localhost instead of the real Nexus Repository service, and I start my proxy pointing to Nexus and listening on port 80. This way, I can intercept all http request issued by Maven.<br />
+<br />
+<br />
+The result is quite simple:<br />
+<br />
+<i><br />
+Starting proxy for nexus-java:80 on port 80<br />
+read: GET /content/repositories/approved-from-central/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.pom HTTP/1.1<br />
+Cache-control: no-cache<br />
+Cache-store: no-store<br />
+Pragma: no-cache<br />
+Expires: 0<br />
+Accept-Encoding: gzip<br />
+User-Agent: Apache-Maven/3.3.9 (Java 1.8.0_102; Windows 7 6.1)<br />
+Host: localhost<br />
+Connection: Keep-Alive<br />
+<br />
+<br />
+<br />
+read: GET /content/repositories/approved-from-central/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.pom.sha1 HTTP/1.1<br />
+Cache-control: no-cache<br />
+Cache-store: no-store<br />
+Pragma: no-cache<br />
+Expires: 0<br />
+Accept-Encoding: gzip<br />
+User-Agent: Apache-Maven/3.3.9 (Java 1.8.0_102; Windows 7 6.1)<br />
+Host: localhost<br />
+Connection: Keep-Alive<br />
+<br />
+<br />
+read: GET /content/repositories/approved-from-central/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar HTTP/1.1<br />
+Cache-control: no-cache<br />
+Cache-store: no-store<br />
+Pragma: no-cache<br />
+Expires: 0<br />
+Accept-Encoding: gzip<br />
+User-Agent: Apache-Maven/3.3.9 (Java 1.8.0_102; Windows 7 6.1)<br />
+Host: localhost<br />
+Connection: Keep-Alive<br />
+<br />
+<br />
+read: GET /content/repositories/approved-from-central/commons-logging/commons-logging-api/1.1/commons-logging-api-1.1.jar.sha1 HTTP/1.1<br />
+Cache-control: no-cache<br />
+Cache-store: no-store<br />
+Pragma: no-cache<br />
+Expires: 0<br />
+Accept-Encoding: gzip<br />
+User-Agent: Apache-Maven/3.3.9 (Java 1.8.0_102; Windows 7 6.1)<br />
+Host: localhost<br />
+Connection: Keep-Alive<br />
+<br />
+<br />
+read: GET /content/repositories/approved-from-central/commons-lang/commons-lang/2.1/commons-lang-2.1.pom HTTP/1.1<br />
+Cache-control: no-cache<br />
+Cache-store: no-store<br />
+Pragma: no-cache<br />
+Expires: 0<br />
+Accept-Encoding: gzip<br />
+User-Agent: Apache-Maven/3.3.9 (Java 1.8.0_102; Windows 7 6.1)<br />
+Host: localhost<br />
+Connection: Keep-Alive<br />
+<br />
+<br />
+read: GET /content/repositories/approved-from-central/commons-lang/commons-lang/2.1/commons-lang-2.1.pom.sha1 HTTP/1.1<br />
+Cache-control: no-cache<br />
+Cache-store: no-store<br />
+Pragma: no-cache<br />
+Expires: 0<br />
+Accept-Encoding: gzip<br />
+User-Agent: Apache-Maven/3.3.9 (Java 1.8.0_102; Windows 7 6.1)<br />
+Host: localhost<br />
+Connection: Keep-Alive<br />
+<br />
+<br />
+read: GET /content/repositories/approved-from-central/commons-lang/commons-lang/2.1/commons-lang-2.1.jar HTTP/1.1<br />
+Cache-control: no-cache<br />
+Cache-store: no-store<br />
+Pragma: no-cache<br />
+Expires: 0<br />
+Accept-Encoding: gzip<br />
+User-Agent: Apache-Maven/3.3.9 (Java 1.8.0_102; Windows 7 6.1)<br />
+Host: localhost<br />
+Connection: Keep-Alive<br />
+<br />
+<br />
+read: GET /content/repositories/approved-from-central/commons-lang/commons-lang/2.1/commons-lang-2.1.jar.sha1 HTTP/1.1<br />
+Cache-control: no-cache<br />
+Cache-store: no-store<br />
+Pragma: no-cache<br />
+Expires: 0<br />
+Accept-Encoding: gzip<br />
+User-Agent: Apache-Maven/3.3.9 (Java 1.8.0_102; Windows 7 6.1)<br />
+Host: localhost<br />
+Connection: Keep-Alive<br />
+<br />
+</i><br />
+<br />
+<br />
+so it's extremely easy to parse the GET command and implement a firewall/filter to block components that you know are harmful.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

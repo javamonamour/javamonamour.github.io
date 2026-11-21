@@ -1,0 +1,20 @@
+---
+layout: post
+title: "junit.framework.AssertionFailedError: No tests found in BLA"
+date: 2010-02-21T16:37:00.000+01:00
+permalink: /2010/02/junitframeworkassertionfailederror-no.html
+blogger_id: "3901104713314898314"
+tags: ["ant", "junit"]
+---
+most likely you forgot to set ANT_HOME to the right value... I am using JUnit4, so I want to use the latest version of Ant:<br />
+<br />
+<i>export ANT_HOME=/weblogic/bea10.3/tools/eclipse_pkgs/2.0/eclipse_3.3.2/eclipse/plugins/org.apache.ant_1.7.0.v200706080842<br />
+ant -verbose</i><br />
+<br />
+<br />
+and remember to set<br />
+<br />
+export CLASSPATH=/weblogic/bea10.3/tools/eclipse_pkgs/2.0/eclipse_3.3.2/eclipse/plugins/org.junit4_4.3.1/junit.jar<br />
+<br />
+<br />
+Ant is a piece of crap, JUnit even&nbsp; more so. Why should a man struggle so much to run Unit Tests.

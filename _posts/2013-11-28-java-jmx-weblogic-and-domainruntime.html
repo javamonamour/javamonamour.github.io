@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Java, JMX, WebLogic and DomainRuntime"
+date: 2013-11-28T10:57:00.003+01:00
+permalink: /2013/11/java-jmx-weblogic-and-domainruntime.html
+blogger_id: "8821902155239764535"
+tags: ["corba", "JMX"]
+---
+I try to run the code:
+<br/><br/>
+
+<a href="http://docs.oracle.com/cd/E12840_01/wls/docs103/jmx/accessWLS.html#wp1111297">http://docs.oracle.com/cd/E12840_01/wls/docs103/jmx/accessWLS.html#wp1111297</a>
+
+<br/><br/>
+
+I get this error:
+<br/>
+java.net.MalformedURLException: Unsupported protocol: t3
+<br/>
+
+I add "C:\Oracle\Middleware\wlserver_10.3\server\lib\wljmxclient.jar"  to the classpath
+<br/>
+
+<br/>
+
+This time I receive a
+<br/>
+"org.omg.CORBA.COMM_FAILURE:   vmcid: SUN  minor code: 211  completed: No"
+caused by java.io.IOException: End-of-stream at com.sun.corba.se.impl.transport.SocketOrChannelConnectionImpl.readFully(SocketOrChannelConnectionImpl.java:666)
+
+<br/><br/>
+
+This is apparently an issue in the JVM (see Doc ID 1598451.1 ) ... they say one can add  -Dcom.sun.CORBA.connection.ORBHighWaterMark=300 ... personally I give up in frustration.
+
+

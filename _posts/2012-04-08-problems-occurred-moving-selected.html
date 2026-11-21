@@ -1,0 +1,13 @@
+---
+layout: post
+title: "Problems occurred moving the selected resources.   Path for project must have only one segment.   Path for project must have only one segment."
+date: 2012-04-08T22:02:00.001+02:00
+permalink: /2012/04/problems-occurred-moving-selected.html
+blogger_id: "4723455467432946266"
+tags: ["eclipse", "OSB"]
+---
+Eclipse is really tragic. One of the biggest "balls-of-mud" in the history if IT.<br />
+<br />
+Anyway hacking the com.bea.alsb.core.prefs by adding the project to container.referenced.projects as shown in <a href="http://soaprofessional.blogspot.com/2011/06/getting-problems-occurred-moving.html">this hack</a> DID NOT take care of the issue.<br />
+<br />
+I had to checkout the project from SVN by using the "use new project wizard", and assigning it to the OSB Configuration project while importing it.

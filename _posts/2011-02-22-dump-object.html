@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Dump an object"
+date: 2011-02-22T12:08:00.000+01:00
+permalink: /2011/02/dump-object.html
+blogger_id: "1493575745820939513"
+tags: ["dump"]
+---
+I believe this code can be sometimes useful to debug... <br />
+it dumps the value of all methods of an object starting with "get", "is" or "has"...<br />
+<br />
+<br />
+<pre name="code" class="brush: java">
+ public String dumpObject(Object theObject) throws IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+  StringBuilder result = new StringBuilder();
+  for (Method method : theObject.getClass().getDeclaredMethods()) {
+   String methodName = method.getName();
+   if (methodName.startsWith("get") || methodName.startsWith("has") ||methodName.startsWith("is") && method.getParameterTypes().length == 0) {
+    result.append(methodName).append("=").append(method.invoke(theObject, null));
+    result.append("\n");
+   }
+  }
+  
+  return result.toString();
+ }
+
+</pre><br />
+<br />
+I am sure the same can be done with some Apache commons utility....

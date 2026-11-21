@@ -1,0 +1,41 @@
+---
+layout: post
+title: "Platform MBean Server Used"
+date: 2012-04-25T06:57:00.000+02:00
+permalink: /2012/04/platform-mbean-server-used.html
+blogger_id: "4218250528347129133"
+tags: ["weblogic"]
+---
+In the logs I find:<br />
+<br />
+<i><br />
+The JMX MBean PlatformMBeanServerUsed attribute is true, but the Platform MBeanServer was created without the hooks for the WLS security infrastructure. The Platform MBeanServer will NOT be used and Platform MBeans will NOT be available via the WLS Runtime or Domain Runtime MBeanServers. This can occur if you have defined Platform MBeanServer system properties or JVM options (-Dcom.sun.management.jmxremote or JRockit -XManagement).<br />
+ To allow the Platform MBeanServer to be used, you must either remove the system properties/JVM options or start WLS with the following system property:<br />
+ -Djavax.management.builder.initial=weblogic.management.jmx.mbeanserver.WLSMBeanServerBuilder<br />
+ If you want to eliminate this log error and do not need Platform MBeans to be available via WLS, then set the PlatformMBeanUsed attribute in the JMXMBean to false.<br />
+</i><br />
+<br />
+<br />
+In the WL Console, Domain, Configuration, General, we have:<br />
+<br />
+<b>Platform MBean Server Enabled</b><br />
+<br />
+<i>Specifies whether each server instance initializes the JDK's platform MBean server. Enabling it, along with isPlatformMBeanServerUsed, causes WebLogic Server to use the platform MBean server as its Runtime MBean Server<br />
+</i><br />
+<br />
+and also<br />
+<b>Platform MBean Server Used</b><br />
+<br />
+<i><br />
+Specifies whether WebLogic Server will use the platform MBean server for its Runtime MBean Server. Previously, WebLogic Server used the platform MBean server by default if it was enabled. This attribute provides a separation between enabling the platform MBean server and using it for WebLogic Server MBeans<br />
+</i><br />
+<br />
+So.... in order to USE actually the Platform MBean Server, you not only must set to true both flags (Enabled and Used), but also pass the -Djavax.management.builder.initial=weblogic.management.jmx.mbeanserver.WLSMBeanServerBuilder property.... hard work!<br />
+<br />
+More doc here:<br />
+<a href="http://docs.oracle.com/cd/E12840_01/wls/docs103/jmxinst/designapp.html#UsingJVMPlatformMBeanServer">http://docs.oracle.com/cd/E12840_01/wls/docs103/jmxinst/designapp.html#UsingJVMPlatformMBeanServer<br />
+</a><br />
+<br />
+<i><br />
+"If it is essential that JMX clients be able to monitor your custom MBeans, WebLogic Server MBeans, and the JVM’s platform MBeans through a single MBean server, you can configure the runtime MBean server to be the JVM platform MBean server"<br />
+</i>

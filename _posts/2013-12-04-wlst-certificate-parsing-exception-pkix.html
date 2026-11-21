@@ -1,0 +1,22 @@
+---
+layout: post
+title: "WLST: certificate parsing exception PKIX"
+date: 2013-12-04T11:45:00.001+01:00
+permalink: /2013/12/wlst-certificate-parsing-exception-pkix.html
+blogger_id: "8350431858974682653"
+tags: ["jks", "WLST"]
+---
+"The loading of the trusted certificate list raised a certificate parsing exception PKIX: Unsupported OID in the AlgorithmIdentifier object"
+<br/><br/>
+
+
+it turned out that I had to add to the WLST trust store (wlsTrust.jks) the root certificate of the CA certifying the Identity Store of the domain 
+<br/><br/>
+
+and add this to wlst.sh :
+<br/><br/>
+<i>
+export WLST_PROPERTIES="-Dweblogic.security.SSL.ignoreHostnameVerification=true -Dweblogic.security.TrustKeyStore=CustomTrust -Dweblogic.security.CustomTrustKeyStoreFileName=/opt/oracle/certs/wlsTrust.jks -Dweblogic.security.CustomTrustKeyStorePassPhrase=bla -Dweblogic.security.CustomTrustKeyStoreType=JKS"
+
+</i>
+<br/><br/>

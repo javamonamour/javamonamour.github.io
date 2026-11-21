@@ -1,0 +1,21 @@
+---
+layout: post
+title: "WebLogic WSDL generation"
+date: 2010-05-02T19:39:00.000+02:00
+permalink: /2010/05/weblogic-wsdl-generation.html
+blogger_id: "2526614328085800771"
+tags: ["wsdl"]
+---
+When WL recognizes a WS as a "WebLogic Web Service", it generates the WSDL in a single .wsdl file.<br />
+If it recognizes the WS as a plain "JAX-WS Web Service", it generates a .wsdl file AND a .xsd file with the parameters in the XSD.<br />
+<br />
+Needless to say, I prefer having the parameters factored out in the .XSD file, and using an import:<br />
+<br />
+&nbsp; &lt;types&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;xsd:schema&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xsd:import namespace="http://ws.testws.com/" schemaLocation="WSExceptionHandlingService_schema1.xsd"/&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/xsd:schema&gt;<br />
+&nbsp; &lt;/types&gt;<br />
+<br />
+<br />
+Another difference, for JAX-WS WebLogic doesn't populate the address  element in the WSDL.

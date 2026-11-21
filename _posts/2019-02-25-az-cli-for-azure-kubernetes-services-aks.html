@@ -1,0 +1,62 @@
+---
+layout: post
+title: "az CLI for Azure Kubernetes Services (AKS)"
+date: 2019-02-25T22:02:00.000+01:00
+permalink: /2019/02/az-cli-for-azure-kubernetes-services-aks.html
+blogger_id: "318785701621973072"
+tags: ["aks", "azure"]
+---
+<a href="https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?view=azure-cli-latest">https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?view=azure-cli-latest</a><br />
+<br />
+I am installing AZ on Windows. At the end of installation, I reboot (maybe not needed...)<br />
+<br />
+az login -> this opens a browser window which automatically logs you in your AKS account<br />
+<br />
+in return , you get a JSON with your account details. Nice.<br />
+<br />
+[<br />
+{<br />
+"cloudName": "AzureCloud",<br />
+"id": "9ab0d5c-036-495-b6d-25b05be758",<br />
+"isDefault": true,<br />
+"name": "Free Trial",<br />
+"state": "Enabled",<br />
+"tenantId": "9dc2b0-897-4b6-adf1-8c5488ea413",<br />
+"user": {<br />
+"name": "pippo.pluto@hotmail.com",<br />
+"type": "user"<br />
+}<br />
+}<br />
+]<br />
+<br />
+which can be obtained also by doing<br />
+<br />
+<b>az account show</b><br />
+<br />
+<br />
+I am stingy, so I first check my billing:<br />
+<br />
+<b>az billing invoice list</b><br />
+<br />
+<i>NotOptedIn - You are not allowed to download invoices. Please contact your account administrator (pippo.pluto@hotmail.com) to turn on access in the management portal for allowing to download invoices through the API.<br />
+</i><br />
+<br />
+<br />
+<br />
+So I log into <a href="https://portal.azure.com/">https://portal.azure.com/</a><br />
+<br />
+<br />
+Be very careful not to use the Azure Cloud Shell available in the Browser UI... using it will create a Storage Account to host a shared drive needed by the Shell, and this will reduce to 1 month the (otherwise 1 year) trial account. So, just install the AZ cli on your machine and be happy.<br />
+<br />
+<br />
+<br />
+To display a Resource Group (RG): <br />
+<b>az group show --name myResourceGroup</b><br />
+<br />
+To create a RG<br />
+az group create --name myResourceGroup --location "East US"<br />
+<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,79 @@
+---
+layout: post
+title: "validateControlSocket"
+date: 2012-02-21T18:46:00.003+01:00
+permalink: /2012/02/validatecontrolsocket.html
+blogger_id: "1551285512247643116"
+tags: ["ftpadapter"]
+---
+We are getting some weird socket timeout problems <br />
+on FTPClient and FtpDescriptor there is a JCA property<br />
+<b>control.read.timeout</b><br />
+by default it's 15000<br />
+and also a<br />
+<b>control.read.error_on_timeout</b><br />
+by default it's true<br />
+<br />
+you can set it to false to get rid of the problem<br />
+<br />
+<br />
+<b>RETR</b> command: <a href="http://cr.yp.to/ftp/retr.html">http://cr.yp.to/ftp/retr.html</a><br />
+<br />
+A RETR request asks the server to send the contents of a file over the data connection already established by the client.<br />
+<br />
+<br />
+####&lt;Feb 21, 2012 4:10:29 PM CET&gt; &lt;Debug&gt; &lt;AlsbJcaFrameworkAdapter&gt; &lt;hqchnesoa102&gt; &lt;osbdv2ms1&gt; &lt;[ACTIVE] ExecuteThread: '31' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;7f9b72b69446518a:-3e7d8906:1359f3f0c67:-8000-0000000000000a3b&gt; &lt;1329837029661&gt; &lt;BEA-000000&gt; &lt;<b>FTP Command: RETR</b>, reply:<br />
+150 Opening data connection for /acme/environments/env-0/ave/tmp/ITEM_X_ACME_AVE_1329837028553.xml (408 bytes).<br />
+<br />
+&gt;<br />
+<br />
+####&lt;Feb 21, 2012 4:10:29 PM CET&gt; &lt;Debug&gt; &lt;AlsbJcaFrameworkAdapter&gt; &lt;hqchnesoa102&gt; &lt;osbdv2ms1&gt; &lt;[ACTIVE] ExecuteThread: '31' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;7f9b72b69446518a:-3e7d8906:1359f3f0c67:-8000-0000000000000a3b&gt; &lt;1329837029661&gt; &lt;BEA-000000&gt; &lt;<b>shortCircuit==&gt;true</b>&gt;<br />
+<br />
+####&lt;Feb 21, 2012 4:10:29 PM CET&gt; &lt;Debug&gt; &lt;AlsbJcaFrameworkAdapter&gt; &lt;hqchnesoa102&gt; &lt;osbdv2ms1&gt; &lt;[ACTIVE] ExecuteThread: '31' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;7f9b72b69446518a:-3e7d8906:1359f3f0c67:-8000-0000000000000a3b&gt; &lt;1329837029661&gt; &lt;BEA-000000&gt; &lt;<b>validateControlSocket::Control socket being read by</b> [[ACTIVE] ExecuteThread: '31' for queue: 'weblogic.kernel.Default (self-tuning)']&gt;<br />
+<br />
+####&lt;Feb 21, 2012 4:10:44 PM CET&gt; &lt;Debug&gt; &lt;AlsbJcaFrameworkAdapter&gt; &lt;hqchnesoa102&gt; &lt;osbdv2ms1&gt; &lt;[ACTIVE] ExecuteThread: '31' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;7f9b72b69446518a:-3e7d8906:1359f3f0c67:-8000-0000000000000a3b&gt; &lt;1329837044661&gt; &lt;BEA-000000&gt; &lt;<b>Timed out in [15000] msecs</b>&gt;<br />
+<br />
+####&lt;Feb 21, 2012 4:10:44 PM CET&gt; &lt;Debug&gt; &lt;AlsbJcaFrameworkAdapter&gt; &lt;hqchnesoa102&gt; &lt;osbdv2ms1&gt; &lt;[ACTIVE] ExecuteThread: '31' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;7f9b72b69446518a:-3e7d8906:1359f3f0c67:-8000-0000000000000a3b&gt; &lt;1329837044662&gt; &lt;BEA-000000&gt; &lt;<b>Exception caught while reading control socket</b><br />
+<b>java.net.SocketTimeoutException: Read timed out</b><br />
+at java.net.SocketInputStream.socketRead0(Native Method)<br />
+at java.net.SocketInputStream.read(SocketInputStream.java:129)<br />
+at sun.nio.cs.StreamDecoder.readBytes(StreamDecoder.java:264)<br />
+at sun.nio.cs.StreamDecoder.implRead(StreamDecoder.java:306)<br />
+at sun.nio.cs.StreamDecoder.read(StreamDecoder.java:158)<br />
+at java.io.InputStreamReader.read(InputStreamReader.java:167)<br />
+at java.io.BufferedReader.fill(BufferedReader.java:136)<br />
+at java.io.BufferedReader.readLine(BufferedReader.java:299)<br />
+at java.io.BufferedReader.readLine(BufferedReader.java:362)<br />
+at oracle.tip.adapter.ftp.FTPClient$BufferedTimedReader.readLine(FTPClient.java:2385)<br />
+at oracle.tip.adapter.ftp.FTPClient.validateControlSocket(FTPClient.java:931)<br />
+at oracle.tip.adapter.ftp.FTPClient.getBinaryFileAsStream(FTPClient.java:1225)<br />
+at oracle.tip.adapter.ftp.FTPAgent.getBinaryFileAsStream(FTPAgent.java:654)<br />
+at oracle.tip.adapter.ftp.FTPAgent.getContentAsStream(FTPAgent.java:700)<br />
+at oracle.tip.adapter.ftp.inbound.FTPSource.getContents(FTPSource.java:987)<br />
+at oracle.tip.adapter.ftp.inbound.FTPSource.getFileFromSource(FTPSource.java:912)<br />
+at oracle.tip.adapter.ftp.outbound.FTPIoOperation.ioOnly(FTPIoOperation.java:119)<br />
+at oracle.tip.adapter.ftp.outbound.FTPIoOperation$2.perform(FTPIoOperation.java:844)<br />
+at oracle.tip.adapter.ftp.outbound.FTPInteraction.executeFTPIo(FTPInteraction.java:287)<br />
+at oracle.tip.adapter.ftp.outbound.FTPInteraction.execute(FTPInteraction.java:245)<br />
+at oracle.tip.adapter.sa.impl.fw.wsif.jca.WSIFOperation_JCA.performOperation(WSIFOperation_JCA.java:529)<br />
+at oracle.tip.adapter.sa.impl.fw.wsif.jca.WSIFOperation_JCA.executeOperation(WSIFOperation_JCA.java:353)<br />
+at oracle.tip.adapter.sa.impl.fw.wsif.jca.WSIFOperation_JCA.executeRequestResponseOperation(WSIFOperation_JCA.java:312)<br />
+at oracle.tip.adapter.sa.impl.JCABindingReferenceImpl.invokeWsifProvider(JCABindingReferenceImpl.java:350)<br />
+at oracle.tip.adapter.sa.impl.JCABindingReferenceImpl.request(JCABindingReferenceImpl.java:253)<br />
+at com.bea.wli.sb.transports.jca.binding.JCATransportOutboundOperationBindingServiceImpl.invoke(JCATransportOutboundOperationBindingServiceImpl.java:150)<br />
+at com.bea.wli.sb.transports.jca.JCATransportEndpoint.sendRequestResponse(JCATransportEndpoint.java:209)<br />
+at com.bea.wli.sb.transports.jca.JCATransportEndpoint.send(JCATransportEndpoint.java:170)<br />
+at com.bea.wli.sb.transports.jca.JCATransportProvider.sendMessageAsync(JCATransportProvider.java:598)<br />
+at sun.reflect.GeneratedMethodAccessor1154.invoke(Unknown Source)<br />
+at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)<br />
+at java.lang.reflect.Method.invoke(Method.java:597)<br />
+at com.bea.wli.sb.transports.Util$1.invoke(Util.java:83)<br />
+at $Proxy128.sendMessageAsync(Unknown Source)<br />
+at com.bea.wli.sb.transports.LoadBalanceFailoverListener.sendMessageAsync(LoadBalanceFailoverListener.java:148)<br />
+at com.bea.wli.sb.transports.LoadBalanceFailoverListener.sendMessageToServiceAsync(LoadBalanceFailoverListener.java:603)<br />
+at com.bea.wli.sb.transports.LoadBalanceFailoverListener.sendMessageToService(LoadBalanceFailoverListener.java:538)<br />
+<br />
+<br />
+<br />
+<br />
+still chasing what is at the origin of the problem...

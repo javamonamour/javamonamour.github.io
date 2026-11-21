@@ -1,0 +1,26 @@
+---
+layout: post
+title: "opaq:opaqueElement and base64Binary"
+date: 2011-11-14T07:16:00.001+01:00
+permalink: /2011/11/opaqopaqueelement-and-base64binary.html
+blogger_id: "1433114500602804885"
+tags: ["base64", "ftpadapter"]
+---
+If you want to write binary data to a FTP in OSB (or simply you want to avoid any nXSD transformation in your XML), you have the option of using <br />
+<br />
+opaq:opaqueElement<br />
+<br />
+You should in this case base64-encode your payload. <br />
+The bad news is that in Xquery 1.0 there is not a function to base64encode<br />
+<br />
+You can do a Java Callout or a Custom XPath to a Java function.<br />
+<br />
+There are plenty of BASE64Encoder classes around... from the BEA WLI framework, from Sun, from Apache....<br />
+<br />
+In fact, Sun implementation <br />
+http://stackoverflow.com/questions/5549464/import-sun-misc-base64encoder-got-error-in-eclipse is not really an option.<br />
+<br />
+We have identified the Apache Commons base64 encoder  - in alternative to Sun implementation, since Sun (Oracle) itself  recommends NOT to use sun packages http://www.oracle.com/technetwork/java/faq-sun-packages-142232.html - as the most commonly used encoder.<br />
+<br />
+<br />
+So, use this <a href="http://commons.apache.org/codec/">http://commons.apache.org/codec/</a> commons-codec-1.4.jar

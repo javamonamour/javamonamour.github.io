@@ -1,0 +1,50 @@
+---
+layout: post
+title: "Importing and exporting dictionaries in XL-Deploy"
+date: 2018-10-24T16:58:00.001+02:00
+permalink: /2018/10/importing-and-exporting-dictionaries-in.html
+blogger_id: "7519224124195581401"
+tags: ["xldeploy"]
+---
+XebiaLab XL-Deploy is a great tool, but definitely lacking important features as far as versioning and exporting/importing configuration.<br />
+<br />
+If you need to programmatically generate a Dictionary (rather than using the painfully limited  UI), you can take a look at this code <a href="https://github.com/xebialabs-community/xld-aws-ecs-plugin/blob/master/src/test/resources/docker/initialize/exportCIs.py">https://github.com/xebialabs-community/xld-aws-ecs-plugin/blob/master/src/test/resources/docker/initialize/exportCIs.py</a><br />
+<br />
+<br />
+In my case, I create a dictionary "pippo.dict" with a couple of keys (pippo, paperino...)<br />
+<br />
+then from the cli:<br />
+<br />
+<pre>mypippo=repository.searchByName('pippo.dict')
+print mypippo
+['Environments/pippo/pippo.dict']
+
+repository.exportCisAndWait('Environments/pippo/pippo.dict')
+export/pippo.dict_2018-10-24_16-36-45_045.zip
+
+</pre><br />
+<br />
+then <br />
+<br />
+cd /home/centos/xldeploy/xl-deploy-8.2.0-server/export <br />
+unzip pippo.dict_2018-10-24_16-36-45_045.zip<br />
+cat configuration-items.xml<br />
+<br />
+<br />
+there are several entries &lt;entry key="pippo"&gt;pluto&lt;/entry&gt;<br />
+<br />
+you can add/delete/edit those entries, then create a new file (with a slightly different name, 56 instead of 36):<br />
+<br />
+<pre>zip pippo.dict_2018-10-24_16-56-45_045.zip configuration-items.xml
+</pre><br />
+and in the CLI:<br />
+<br />
+repository.importCisAndWait('export/pippo.dict_2018-10-24_16-56-45_045.zip')<br />
+<br />
+and lo and behold, the updated properties are in the dictionary!<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

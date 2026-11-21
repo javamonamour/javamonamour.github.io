@@ -1,0 +1,48 @@
+---
+layout: post
+title: "Hyperic plugin software factory"
+date: 2012-05-13T10:23:00.000+02:00
+permalink: /2012/05/hyperic-plugin-software-factory.html
+blogger_id: "5469626570007704027"
+tags: ["hyperic"]
+---
+After many errors and botch-ups, I am persuaded that the best way to develop a plugin is:<br />
+<br />
+a C:\pierre\workspace\HypericAutomation\plugins where to keep in SVN the plugin xml<br />
+<br />
+a C:\pierre\workspace\HypericAutomation\scripts with:<br />
+<br />
+copyAllPlugins.bat:<br />
+<br />
+<pre>copy ..\plugins\*-plugin.xml C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\plugins\
+copy ..\plugins\*-plugin.xml C:\pierre\hypericserver\server-4.6.5-EE\hq-engine\hq-server\webapps\ROOT\WEB-INF\hq-plugins
+</pre><br />
+stopall.bat<br />
+<br />
+<pre>cd C:\pierre\hypericagent\agent-4.6.5-EE\bin
+call C:\pierre\hypericagent\agent-4.6.5-EE\bin\hq-agent.bat stop
+cd C:\pierre\hypericserver\server-4.6.5-EE\bin
+call C:\pierre\hypericserver\server-4.6.5-EE\bin\hq-server.bat stop
+</pre><br />
+<br />
+startall.bat<br />
+<br />
+<pre>
+cd C:\pierre\hypericagent\agent-4.6.5-EE\bin
+call C:\pierre\hypericagent\agent-4.6.5-EE\bin\hq-agent.bat start
+cd C:\pierre\hypericserver\server-4.6.5-EE\bin
+call C:\pierre\hypericserver\server-4.6.5-EE\bin\hq-server.bat start
+</pre><br />
+<br />
+and the sequence is:<br />
+<br />
+edit the plugin<br />
+stopapp<br />
+copyAllPlugins<br />
+startall<br />
+<br />
+<br />
+this because I have the impression that the agent plugin get overwritten when you restart the server<br />
+<br />
+<br />
+Also, make sure you shutdown and restart your monitored applications whenever your IP address is changed (if you are on DHCP) !

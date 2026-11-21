@@ -1,0 +1,59 @@
+---
+layout: post
+title: "WebLogic server hanging on startup"
+date: 2013-02-11T16:31:00.000+01:00
+permalink: /2013/02/weblogic-server-hanging-on-startup.html
+blogger_id: "5453766029709678037"
+---
+This is so typical... <br/><br/>
+
+Thread Dump shows:<br/><br/>
+
+<pre>
+
+"[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'" daemon prio=10 tid=0x000000004c6cf800 nid=0x3e47 in Object.wait() [0x00000000426a8000]
+   java.lang.Thread.State: WAITING (on object monitor)
+ at java.lang.Object.wait(Native Method)
+ - waiting on &lt;0x00000007e40ca438> (a com.octetstring.vde.backend.standard.TransactionProcessor)
+ at java.lang.Object.wait(Object.java:485)
+ at com.octetstring.vde.backend.standard.TransactionProcessor.waitTransactionsCompleted(TransactionProcessor.java:353)
+ - locked &lt;0x00000007e40ca438> (a com.octetstring.vde.backend.standard.TransactionProcessor)
+ at com.octetstring.vde.backend.standard.BackendStandard.&lt;init>(BackendStandard.java:275)
+ at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+ at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+ at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+ at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
+ at com.octetstring.vde.backend.BackendHandler.&ltinit>(BackendHandler.java:248)
+ at com.octetstring.vde.backend.BackendHandler.getInstance(BackendHandler.java:344)
+ at weblogic.ldap.EmbeddedLDAP.start(EmbeddedLDAP.java:299)
+ at weblogic.t3.srvr.SubsystemRequest.run(SubsystemRequest.java:64)
+ at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+ at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+
+</pre>
+
+<br/><br/>
+
+Delete the $DOMAIN_HOME/servers/myservername/data/ldap folder and the $DOMAIN_HOME/servers/myservername/security/boot.properties file.<br/><br/>
+
+cd $DOMAIN_HOME/bin<br/><br/>
+./startManagedWeblogic.sh myservername<br/><br/>
+
+enter weblogic username and password
+<br/><br/>
+
+If some OSB (ALSB) deployments fail, make sure you remove all configuration files with 0 size from the admin host:
+<br/><br/>
+cd $DOMAIN_HOME/config
+<br/><br/>
+find . -size -1 -exec ls -l {} \;
+
+<br/><br/>
+
+find . -size -1 -exec rm {} \;
+
+<br/><br/>
+
+
+
+

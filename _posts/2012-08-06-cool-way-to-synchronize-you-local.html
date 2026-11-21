@@ -1,0 +1,15 @@
+---
+layout: post
+title: "Cool way to synchronize you local folder with a remote folder"
+date: 2012-08-06T20:43:00.000+02:00
+permalink: /2012/08/cool-way-to-synchronize-you-local.html
+blogger_id: "8864581273423949431"
+tags: ["WinSCP"]
+---
+I hate developing code directly on the target machine - I would much rather edit them locally in Eclipse, scp them and checking them into SVN when they are stable.<br />
+So this utility provided by WinSCP is quite handy at copying remotely the files for me whenever I save them to the local folder:<br />
+<br />
+WinSCP.exe soa@remotehost.com /keepuptodate C:\pierre\<br />
+workspace\myscripts /home/soa/targetdir/scripts<br />
+<br />
+keepuptodate is the magic option

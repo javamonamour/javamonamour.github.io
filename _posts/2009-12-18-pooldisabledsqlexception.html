@@ -1,0 +1,17 @@
+---
+layout: post
+title: "PoolDisabledSQLException, ResourceDisabledException"
+date: 2009-12-18T19:48:00.000+01:00
+permalink: /2009/12/pooldisabledsqlexception.html
+blogger_id: "8576723777578857531"
+---
+weblogic.jdbc.extensions.<strong>PoolDisabledSQLException</strong>:  weblogic.common.resourcepool.ResourceDisabledException<br />
+&nbsp;: Pool bla is disabled, cannot allocate resources to  applications..Code d'erreur : 0<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<div align="left" dir="ltr"><span style="color: blue; font-family: Arial; font-size: x-small;"><a href="http://forums.oracle.com/forums/thread.jspa?threadID=962573&amp;tstart=30" title="http://forums.oracle.com/forums/thread.jspa?threadID=962573&amp;tstart=30">http://forums.oracle.com/forums/thread.jspa?threadID=962573&amp;tstart=30</a></span></div><div align="left" dir="ltr">&nbsp;</div><div align="left" dir="ltr">&nbsp;A pool may disable itself after a configurable  number<br />
+of consectutive failures to replace dead connections. Therafter it  will periodically try<br />
+to reconnect to the DBMS and when it succeeds, the pool  will re-enable itself.</div>

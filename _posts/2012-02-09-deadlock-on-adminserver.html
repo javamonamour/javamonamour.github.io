@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Deadlock on AdminServer"
+date: 2012-02-09T14:34:00.000+01:00
+permalink: /2012/02/deadlock-on-adminserver.html
+blogger_id: "2609510048210212851"
+tags: ["deadlock"]
+blogger_comments:
+  - author: "Sandeep"
+    date: 2012-02-18
+    html: "Some more <a href=\"http://extreme-java.com/multithreading-and-deadlock-in-java/\" rel=\"nofollow\">Deadlock in Java</a>"
+---
+DEADLOCK DETECTED:<br />
+<br />
+ExecuteThread: '0' is waiting to acquire lock 'com.bea.wli.config.component.impl.ReferenceMap@333992e9' that is held by thread ExecuteThread: '11'<br />
+<br />
+stacktrace:<br />
+com.bea.wli.config.component.impl.ReferenceMap.getAncestorsOrDescendents(ReferenceMap.java:820)<br />
+<br />
+<br />
+<br />
+ExecuteThread: '11' is waiting to acquire lock 'com.bea.wli.config.transaction.TransactionManager@4870086e' that is held by thread ExecuteThread: '0'<br />
+<br />
+stacktrace:<br />
+com.bea.wli.config.transaction.TransactionManager.enlistAsRead(TransactionManager.java:972)<br />
+<br />
+<br />
+I assume this happened when someone was deploying a new component.... restarting the Admin was the only way out.<br />
+<br />
+This is not a tragic event (Admin servers are not so important after all :o) ) ...  still if you have faced this issue you know you now that are not alone.

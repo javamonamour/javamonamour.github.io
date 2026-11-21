@@ -1,0 +1,68 @@
+---
+layout: post
+title: "Exporting WebLogic Workshop as Ant Script"
+date: 2010-02-03T10:56:00.000+01:00
+permalink: /2010/02/exporting-weblogic-workshop-as-ant.html
+blogger_id: "1764360793018269774"
+---
+this will create:<br />
+${workspace-dir}/workshop-lib/<br />
+${workspace-dir}/workspace.xml<br />
+${workspace-dir}/${project-dir}/build.xml<br />
+<br />
+you should specify these properties:<br />
+workspace <br />
+wl.home<br />
+workshop.home<br />
+<br />
+(<br />
+the wizard suggests you to declare:<br />
+wl.home=C:/beawli/wlserver_10.3<br />
+workshop.home=C:/beawli/workshop_10.3<br />
+workspace.dir=C:/beawli/user_projects/workspaces/default<br />
+)<br />
+<br />
+<br />
+How to export Ant in Workshop :<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E13224_01/wlw/docs102/guide/ideuserguide/build/conUseCustomAntBuild.html">http://download.oracle.com/docs/cd/E13224_01/wlw/docs102/guide/ideuserguide/build/conUseCustomAntBuild.html</a><br />
+<br />
+this <a href="http://www.oracle.com/technology/pub/articles/liptak-workshop-ant.html">http://www.oracle.com/technology/pub/articles/liptak-workshop-ant.html</a> talks more on the subject<br />
+<br />
+You can export ALL the build.xml in one go (select all the projects you need in the wizard).<br />
+<br />
+To run the build:<br />
+<br />
+declare<br />
+<br />
+<br />
+cd C:\beawli\user_projects\workspaces\default\JAWWAL_INTEG_WEB<br />
+<br />
+c:\beawli\wlserver_10.3\common\bin\commEnv.cmd<br />
+<br />
+#this takes care of the java.lang.NoClassDefFoundError: weblogic/logging/NonCatalogLogger <br />
+set CLASSPATH=C:\beawli\wlserver_10.3\server\lib\wls-api.jar;%CLASSPATH%<br />
+<br />
+set WL_HOME=c:\beawli\wlserver_10.3\ <br />
+set WORKSHOP_HOME=C:\beawli\workshop_10.3<br />
+set WORKSHOP_WORKSPACE=C:\beawli\user_projects\workspaces\default\<br />
+set WORKSHOP_LIB_DIR=C:\beawli\user_projects\workspaces\default\workshop-lib <br />
+<br />
+copy C:\beawli\wlserver_10.3\server\lib\wls-api.jar C:\beawli\user_projects\workspaces\defaultworkshop-lib<br />
+<br />
+ant -verbose build archive <br />
+<br />
+or if you want more info:<br />
+<br />
+ant -verbose -diagnostics build archive &gt; antlog.log<br />
+<br />
+With log4j enabled:<br />
+set ANT_OPTS=-Dlog4j.debug -Dlog4j.configuration=file:./log4j.propertiesset CLASSPATH=C:\beawli\modules\org.apache.beehive_1.0.2.2\apache-beehive-svn-snapshot\lib\common\log4j-1.2.8.jar;%CLASSPATH%<br />
+ant -listener org.apache.tools.ant.listener.Log4jListener -verbose -buildfile build.xml build<br />
+<br />
+<br />
+To run an automate build from Hudson/CVS, remember to copy:<br />
+a build.xml per each project<br />
+a workspace.xml medatata file<br />
+the .metadata workspace directory <br />
+workshop-lib directory

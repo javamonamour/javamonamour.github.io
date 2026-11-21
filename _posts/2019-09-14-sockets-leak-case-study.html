@@ -1,0 +1,148 @@
+---
+layout: post
+title: "Sockets leak, a case study"
+date: 2019-09-14T16:36:00.000+02:00
+permalink: /2019/09/sockets-leak-case-study.html
+blogger_id: "8081337909747553754"
+tags: ["socket"]
+---
+We get a "too many files open", and lsof reveals some 40k IPv6 connections.<br />
+<br />
+<br />
+<br />
+What happens if you forget to close a Socket ?<br />
+<br />
+<pre class="brush: java">import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+
+public class ConnLeak {
+
+    public static void main(String[] args) throws InterruptedException, IOException {
+        for (;;) {
+            Thread.sleep(1000);
+            leak();
+        }
+    }
+
+    static void leak() throws IOException {
+        System.out.println("connecting ");
+        String hostName = "localhost";
+        int portNumber = 8080;
+        Socket echoSocket = new Socket(hostName, portNumber);
+        BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+        System.out.println(in.readLine());
+        // in.close();   // WE FORGOT TO CLOSE!
+        // echoSocket.close(); // WE FORGOT TO CLOSE!
+        System.out.println("done");
+    }
+}
+
+</pre><br />
+<br />
+<pre>centos@localhost ~]$ netstat -an | grep WAIT 
+tcp6       0      0 127.0.0.1:8080          127.0.0.1:50008         FIN_WAIT2  
+tcp6       0      0 127.0.0.1:8080          127.0.0.1:50020         FIN_WAIT2  
+tcp6       0      0 127.0.0.1:8080          127.0.0.1:50016         FIN_WAIT2  
+tcp6       0      0 127.0.0.1:50014         127.0.0.1:8080          CLOSE_WAIT 
+tcp6       0      0 127.0.0.1:8080          127.0.0.1:50006         FIN_WAIT2  
+tcp6       0      0 127.0.0.1:8080          127.0.0.1:50012         FIN_WAIT2  
+tcp6       0      0 127.0.0.1:50020         127.0.0.1:8080          CLOSE_WAIT 
+tcp6     578      0 ::1:8080                ::1:41240               CLOSE_WAIT 
+tcp6       0      0 127.0.0.1:8080          127.0.0.1:50014         FIN_WAIT2  
+tcp6       0      0 127.0.0.1:8080          127.0.0.1:50018         FIN_WAIT2  
+tcp6       0      0 127.0.0.1:50022         127.0.0.1:8080          CLOSE_WAIT 
+tcp6       0      0 127.0.0.1:50016         127.0.0.1:8080          CLOSE_WAIT 
+tcp6       0      0 127.0.0.1:50006         127.0.0.1:8080          CLOSE_WAIT 
+tcp6       0      0 127.0.0.1:8080          127.0.0.1:50022         FIN_WAIT2  
+tcp6       0      0 127.0.0.1:8080          127.0.0.1:50010         FIN_WAIT2  
+tcp6       0      0 127.0.0.1:50018         127.0.0.1:8080          CLOSE_WAIT 
+tcp6       0      0 127.0.0.1:50010         127.0.0.1:8080          CLOSE_WAIT 
+tcp6       0      0 127.0.0.1:50008         127.0.0.1:8080          CLOSE_WAIT 
+tcp6       0      0 127.0.0.1:50012         127.0.0.1:8080          CLOSE_WAIT 
+
+</pre><br />
+<br />
+<br />
+you end up with a pile of socket file descriptors in FIN_WAIT2+CLOSE_WAIT<br />
+<br />
+<br />
+If instead you DO close the socket, you have only fd in TIME_WAIT <br />
+<br />
+<br />
+In the LEAKING case, you can observe the leaking fd:<br />
+<br />
+<br />
+<b>sudo lsof -p 10779</b><br />
+<br />
+<pre>lsof: WARNING: can't stat() fuse.gvfsd-fuse file system /run/user/1000/gvfs
+      Output information may be incomplete.
+COMMAND   PID   USER   FD   TYPE             DEVICE  SIZE/OFF     NODE NAME
+java    10779 centos  cwd    DIR              253,0      4096 52165832 /home/centos
+java    10779 centos  rtd    DIR              253,0       243       64 /
+java    10779 centos  txt    REG              253,0      7734 33728521 /home/centos/jdk1.8.0_141/bin/java
+java    10779 centos  mem    REG              253,0 106070960    56227 /usr/lib/locale/locale-archive
+java    10779 centos  mem    REG              253,0    115814 52241403 /home/centos/jdk1.8.0_141/jre/lib/amd64/libnet.so
+java    10779 centos  mem    REG              253,0  66216625  3748173 /home/centos/jdk1.8.0_141/jre/lib/rt.jar
+java    10779 centos  mem    REG              253,0    124327 52241426 /home/centos/jdk1.8.0_141/jre/lib/amd64/libzip.so
+java    10779 centos  mem    REG              253,0     62184    56246 /usr/lib64/libnss_files-2.17.so
+java    10779 centos  mem    REG              253,0    225914 52241483 /home/centos/jdk1.8.0_141/jre/lib/amd64/libjava.so
+java    10779 centos  mem    REG              253,0     66472 52241404 /home/centos/jdk1.8.0_141/jre/lib/amd64/libverify.so
+java    10779 centos  mem    REG              253,0     44448    42091 /usr/lib64/librt-2.17.so
+java    10779 centos  mem    REG              253,0   1139680    56236 /usr/lib64/libm-2.17.so
+java    10779 centos  mem    REG              253,0  17013932 19043494 /home/centos/jdk1.8.0_141/jre/lib/amd64/server/libjvm.so
+java    10779 centos  mem    REG              253,0   2127336    42088 /usr/lib64/libc-2.17.so
+java    10779 centos  mem    REG              253,0     19776    56234 /usr/lib64/libdl-2.17.so
+java    10779 centos  mem    REG              253,0    102990 52241266 /home/centos/jdk1.8.0_141/lib/amd64/jli/libjli.so
+java    10779 centos  mem    REG              253,0    144792    56254 /usr/lib64/libpthread-2.17.so
+java    10779 centos  mem    REG              253,0    164264    34688 /usr/lib64/ld-2.17.so
+java    10779 centos  mem    REG              253,0     32768 41856127 /tmp/hsperfdata_centos/10779
+java    10779 centos    0u   CHR              136,1       0t0        4 /dev/pts/1
+java    10779 centos    1u   CHR              136,1       0t0        4 /dev/pts/1
+java    10779 centos    2u   CHR              136,1       0t0        4 /dev/pts/1
+java    10779 centos    3r   REG              253,0  66216625  3748173 /home/centos/jdk1.8.0_141/jre/lib/rt.jar
+java    10779 centos    4u  unix 0xffff8801eaabfc00       0t0   327936 socket
+java    10779 centos    5u  IPv6             327938       0t0      TCP localhost:50132->localhost:webcache (CLOSE_WAIT)
+java    10779 centos    6u  IPv6             327940       0t0      TCP localhost:50134->localhost:webcache (CLOSE_WAIT)
+java    10779 centos    7u  IPv6             327942       0t0      TCP localhost:50136->localhost:webcache (CLOSE_WAIT)
+java    10779 centos    8u  IPv6             327146       0t0      TCP localhost:50138->localhost:webcache (CLOSE_WAIT)
+java    10779 centos    9u  IPv6             329030       0t0      TCP localhost:50140->localhost:webcache (CLOSE_WAIT)
+java    10779 centos   10u  IPv6             329036       0t0      TCP localhost:50142->localhost:webcache (CLOSE_WAIT)
+java    10779 centos   11u  IPv6             326450       0t0      TCP localhost:50146->localhost:webcache (CLOSE_WAIT)
+java    10779 centos   12u  IPv6             328073       0t0      TCP localhost:50148->localhost:webcache (CLOSE_WAIT)
+java    10779 centos   13u  IPv6             329065       0t0      TCP localhost:50150->localhost:webcache (ESTABLISHED)
+
+
+</pre><br />
+A Java Flight Recorder measurement reveals the source of the leak:<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/83ae06e6c3504d85.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/3d4c1feb5feb3109.jpg" width="700" height="500" data-original-width="1600" data-original-height="755" /></a></div><br />
+<br />
+You can view those sockets in /proc/10779/fd/ folder (use ls -ltra, they are links)<br />
+and display more info with <br />
+<br />
+cat /proc/10779/net/sockstat<br />
+<br />
+<pre>sockets: used 881
+TCP: inuse 9 orphan 0 tw 9 alloc 94 mem 75
+UDP: inuse 8 mem 1
+UDPLITE: inuse 0
+RAW: inuse 0
+FRAG: inuse 0 memory 0
+
+</pre><br />
+<br />
+(see also https://www.cyberciti.biz/faq/linux-find-all-file-descriptors-used-by-a-process/ for <a href="https://en.wikipedia.org/wiki/Procfs">procfs</a> info )<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

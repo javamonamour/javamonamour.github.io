@@ -1,0 +1,60 @@
+---
+layout: post
+title: "WebLogic integration with MQ series using JMS Foreign Server"
+date: 2010-08-17T12:03:00.003+02:00
+permalink: /2010/08/weblogic-integration-with-mq-series.html
+blogger_id: "687027385943533340"
+tags: ["MQ"]
+---
+I am taking some notes just to track:<br />
+<br />
+<a href="http://www.ibm.com/developerworks/websphere/library/techarticles/0604_kesavan/0604_kesavan.html">http://www.ibm.com/developerworks/websphere/library/techarticles/0604_kesavan/0604_kesavan.html</a><br />
+<br />
+one must configure the MDB to use a foreign JMS connection factory in addition to the foreign JMS<br />
+destination. <br />
+<br />
+<br />
+Error getting JMSServer member info NestedException Message is :javax.naming.Reference<br />
+<br />
+<a href="http://ibswings.blogspot.com/2008/02/integrating-mq-broker-6-with-bea.html">http://ibswings.blogspot.com/2008/02/integrating-mq-broker-6-with-bea.html</a><br />
+<br />
+If MQ and WLS are NOT on the same box, make sure you choose the transport=MQClient on MQ, this will generate a .bindings file totally different from the previous one; remember to copy this file to WebLogic.<br />
+<br />
+<br />
+<br />
+To verify that your MDB is actually registered as a consumer of the MQ queue, "check value of IPProcs attribute in queue. This value gives the current number of threads listening for messages. If this value is 0 then there is no thread listening. " ( I am quoting a OTN thread)<br />
+<br />
+<br />
+This http://blog.xebia.com/2009/12/02/restricting-the-number-of-jms-mq-connections-made-by-the-osb/  is a very interesting reading on how to configure the number of listeners on the MQ queue.<br />
+<br />
+<br />
+This script is useful to create the resources:<br />
+<br />
+cd('/')<br />
+cmo.createJMSSystemResource('MQIntegrationTest')<br />
+<br />
+cd('/SystemResources/MQIntegrationTest')<br />
+set('Targets',jarray.array([ObjectName('com.bea:Name=dev2WlsCBMs1,Type=Server')], ObjectName))<br />
+<br />
+cd('/JMSSystemResources/MQIntegrationTest/JMSResource/MQIntegrationTest')<br />
+cmo.createForeignServer('MQTestForeignServer')<br />
+<br />
+cd('/JMSSystemResources/MQIntegrationTest/JMSResource/MQIntegrationTest/ForeignServers/MQTestForeignServer')<br />
+cmo.setDefaultTargetingEnabled(true)<br />
+cmo.setConnectionURL('file:////acme/domains/dev2WlsCBDomain/mqjndistuff')<br />
+cmo.setInitialContextFactory('com.sun.jndi.fscontext.RefFSContextFactory')<br />
+cmo.unSet('JNDIPropertiesCredentialEncrypted')<br />
+cmo.createForeignDestination('ReceiverDetails')<br />
+<br />
+cd('/JMSSystemResources/MQIntegrationTest/JMSResource/MQIntegrationTest/ForeignServers/MQTestForeignServer/ForeignDestinations/ReceiverDetails')<br />
+cmo.setLocalJNDIName('jms/WLReceiverQueue')<br />
+cmo.setRemoteJNDIName('MQSenderQueue')<br />
+<br />
+cd('/JMSSystemResources/MQIntegrationTest/JMSResource/MQIntegrationTest/ForeignServers/MQTestForeignServer')<br />
+cmo.createForeignConnectionFactory('ReceiverCF')<br />
+<br />
+cd('/JMSSystemResources/MQIntegrationTest/JMSResource/MQIntegrationTest/ForeignServers/MQTestForeignServer/ForeignConnectionFactories/ReceiverCF')<br />
+cmo.setLocalJNDIName('jms/WLReceiverQCF')<br />
+cmo.setRemoteJNDIName('MQSenderQCF')<br />
+<br />
+activate()

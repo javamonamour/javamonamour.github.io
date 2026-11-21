@@ -1,0 +1,126 @@
+---
+layout: post
+title: "docker-compose"
+date: 2017-12-09T05:07:00.001+01:00
+permalink: /2017/12/docker-compose.html
+blogger_id: "8624050111728759120"
+tags: ["centos", "docker-compose", "jakewright"]
+---
+Install docker-compose on CentOS. Digital Ocean tutorials are very good:<br />
+<br />
+<a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-centos-7">https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-centos-7</a><br />
+<br />
+<br />
+sudo yum install epel-release<br />
+sudo yum install -y python-pip<br />
+<br />
+<br />
+if you get<br />
+<br />
+"Another app is currently holding the yum lock; waiting for it to exit...<br />
+  The other application is: PackageKit<br />
+"<br />
+<br />
+just do "ps -ef | grep PackageKit", find the PID and do "sudo kill -9 PID"<br />
+<br />
+<br />
+sudo pip install --upgrade pip<br />
+<br />
+sudo pip install docker-compose<br />
+sudo yum upgrade python*<br />
+<br />
+<br />
+docker-compose<br />
+<br />
+<br />
+<br />
+Awesome quick hands-on php tutorial on docker-compose<br />
+<br />
+<iframe width="800" height="600" src="https://www.youtube.com/embed/Qw9zlE3t8Ko" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe><br />
+<br />
+first do:<br />
+sudo pip3.6 install flask<br />
+sudo pip3.6 install flask_restful<br />
+<br />
+<br />
+cd<br />
+mkdir jakewright; cd jakewright<br />
+mkdir product; cd product<br />
+<br />
+you should have this tree:<br />
+~<br />
+~/jakewright<br />
+~/jakewright/product<br />
+<br />
+make sure you are in ~/jakewright/product :<br />
+<br />
+<b>cat api.py</b> <br />
+<pre class="brush: java">from flask import Flask
+from flask_restful import Resource, Api
+
+app = Flask(__name__)
+api = Api(app)
+
+class Product(Resource):
+    def get(self):
+        return {
+            'products' : ['Ice Cream', 'Chocolate', 'Fruit']
+        }
+
+api.add_resource(Product, '/')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0',port=9080, debug=True)
+</pre><br />
+python3.6 api.py<br />
+<br />
+http://localhost:9080/<br />
+<br />
+<br />
+<b>cat Dockerfile</b><br />
+<i>FROM python:3-onbuild<br />
+COPY . /usr/src/app<br />
+CMD ["python", "api.py"]</i><br />
+<br />
+<br />
+<b>cat requirements.txt</b><br />
+<i>flask<br />
+flask_restful</i><br />
+<br />
+docker build . -t jakewright<br />
+-> Successfully tagged jakewright:latest<br />
+docker images <br />
+docker run -p 9080:9080 jakewright<br />
+<br />
+<br />
+now in ~/jakewright folder:<br />
+<b>cat docker-compose.yml</b> <br />
+<i><br />
+version: '3'<br />
+<br />
+services:<br />
+  product-service:<br />
+    build: ./product<br />
+    volumes:<br />
+      - ./product:/usr/src/app<br />
+    ports:<br />
+      - 9080:9080<br />
+</i><br />
+<br />
+(leaving the second part for now....)<br />
+<br />
+docker-compose up -d<br />
+docker-compose stop<br />
+<br />
+your service should now be equally available, in an image called jakewright_product-service<br />
+<br />
+<br />
+User Manual for Dockerfile <a href="https://docs.docker.com/engine/reference/builder/#usage">https://docs.docker.com/engine/reference/builder/#usage</a><br />
+<br />
+<br />
+<br />
+PS another GREAT video by Jake Wright is Learning CSS <a href="https://www.youtube.com/watch?v=0afZj1G0BIE">https://www.youtube.com/watch?v=0afZj1G0BIE</a> , and don't forget Learning Docker <a href="https://www.youtube.com/watch?v=YFl2mCHdv24">https://www.youtube.com/watch?v=YFl2mCHdv24</a><br />
+<br />
+<br />
+<br />
+

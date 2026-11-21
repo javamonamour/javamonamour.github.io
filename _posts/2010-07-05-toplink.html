@@ -1,0 +1,394 @@
+---
+layout: post
+title: "Toplink"
+date: 2010-07-05T08:21:00.006+02:00
+permalink: /2010/07/toplink.html
+blogger_id: "6286917904095169653"
+tags: ["toplink"]
+---
+In Eclipse Workshop 11g, just do a New Project / JPA and follow the wizard.<br />
+It's excellent and it builds all Java classes from DB Schema.<br />
+<br />
+Here some info on how to handle entities in JPA:<br />
+<a href="http://www.oracle.com/technology/products/ias/toplink/jpa/howto/create-modify-delete.html">http://www.oracle.com/technology/products/ias/toplink/jpa/howto/create-modify-delete.html</a><br />
+<br />
+<br />
+<br />
+If you want to ose other tools (not recommended) <br />
+<br />
+Download:<br />
+<a href="http://www.oracle.com/technology/products/ias/toplink/index.html">http://www.oracle.com/technology/products/ias/toplink/index.html</a><br />
+<br />
+Tutorial standalone:<br />
+<a href="http://www.oracle.com/technology/products/ias/toplink/doc/11110/tutorial/intro/standalone/intro_tutorial.htm">http://www.oracle.com/technology/products/ias/toplink/doc/11110/tutorial/intro/standalone/intro_tutorial.htm</a><br />
+<br />
+<br />
+<br />
+Run Workbench :<br />
+C:\apps\toplink_111130_en\utils\workbench\workbench.cmd<br />
+<br />
+Unfortunately Workbench is not JPA aware.<br />
+<br />
+This <a href="http://download.oracle.com/docs/cd/E13224_01/wlw/docs103/guide/ormworkbench/conGeneratingEJB3Mappings.html#creating_mappings_from_schema">http://download.oracle.com/docs/cd/E13224_01/wlw/docs103/guide/ormworkbench/conGeneratingEJB3Mappings.html#creating_mappings_from_schema</a> will explain you how to generate the JPA annotated Java classes from an existing database schema.<br />
+<br />
+<br />
+This is a JDeveloper demo on JPA<br />
+<a href="http://www.oracle.com/technology/products/jdev/viewlets/1013/ejb_30_viewlet_swf.html">http://www.oracle.com/technology/products/jdev/viewlets/1013/ejb_30_viewlet_swf.html</a><br />
+<br />
+An interesting JPA plugin for Eclipse (99 USD)<br />
+<a href="http://objectgeneration.com/eclipse/index.html">http://objectgeneration.com/eclipse/index.html</a><br />
+<br />
+EclipseLink gives you JPA in Eclipse<br />
+<a href="http://wiki.eclipse.org/EclipseLink">http://wiki.eclipse.org/EclipseLink</a><br />
+<br />
+<br />
+<br />
+Now let's setup a standalone application; I am using a schema SCOTT with username SCOTT and password TIGER on my local machine<br />
+<br />
+<pre>CREATE TABLE test_entity  (
+    entity_id               NUMBER(10),
+    entity_name             VARCHAR2(30),
+    entity_description      VARCHAR2(50)
+);
+
+</pre><br />
+<br />
+The JPA entity class:<br />
+<br />
+<pre class="brush: java" name="code">package my.entity;
+
+import java.io.Serializable;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Column;
+import javax.persistence.Id;
+
+/** JPA Annotation linking DB table to Java Class. */
+@Entity
+@Table(name = "TEST_ENTITY", schema = "SCOTT")
+
+public class TestEntity implements Serializable {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /** The testEntity id. */
+    @Id
+    @Column(name = "ENTITY_ID")
+    private int entityId;
+
+    /** The testEntity name. */
+    @Column(name = "ENTITY_NAME")
+    private String entityName;
+
+    /** The testEntity description. */
+    @Column(name = "ENTITY_DESCRIPTION")
+    private String entityDescription;
+
+    /**
+     * Instantiates a new testEntity.
+     */
+    public TestEntity() {}
+
+    /**
+     * Setter for the testEntity variable.
+     *
+     * @param entityId - the new value
+     */
+    public void setTestEntityId(int entityId) {
+        this.entityId = entityId;
+    }
+
+    /**
+     * Getter for the testEntity variable.
+     *
+     * @return int
+     */
+    public int getEntityId() {
+        return entityId;
+    }
+
+    /**
+     * Setter for the entityName variable.
+     *
+     * @param entityName - the new value
+     */
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
+    }
+
+    /**
+     * Getter for entityName variable.
+     *
+     * @return String
+     */
+    public String getEntityName() {
+        return entityName;
+    }
+
+    /**
+     * Setter for entityDescription variable.
+     *
+     * @param entityDescription - the new value
+     */
+    public void setEntityDescription(String entityDescription) {
+        this.entityDescription = entityDescription;
+    }
+
+    /**
+     * Gettter for entityDescription variable.
+     *
+     * @return String
+     */
+    public String getEntityDescription() {
+        return entityDescription;
+    }
+
+}
+
+
+</pre><br />
+<br />
+use these jars:<br />
+commons-logging-api.jar<br />
+commons-logging.jar<br />
+odbc14.jar<br />
+toplink-essentials.jar<br />
+<br />
+<br />
+the persistence.xml should be:<br />
+<br />
+<pre class="brush: xml" name="code"><persistence version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/persistence" xsi:schemalocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+  <persistence-unit name="myPersistenceUnit" transaction-type="RESOURCE_LOCAL"> 
+    <provider>oracle.toplink.essentials.PersistenceProvider</provider>
+    <jta-data-source>jdbc/localXE</jta-data-source>
+    <class>my.entity.TestEntity</class>
+    <properties>
+      
+      <property name="toplink.cache.type.default" value="NONE">
+      <property name="toplink.jdbc.url" value="jdbc:oracle:thin:@localhost:1521:XE">
+      <property name="toplink.jdbc.user" value="scott">
+      <property name="toplink.jdbc.driver" value="oracle.jdbc.OracleDriver">
+      <property name="toplink.jdbc.password" value="tiger">
+      <property name="toplink.logging.logger" value="JavaLogger">
+      <property name="toplink.logging.level" value="FINE">
+      <property name="toplink.logging.exceptions" value="true">
+      <property name="SetBigStringTryClob" value="true">
+    </property>
+  </property>
+</property>
+</property></property></property></property></property></property></properties></persistence-unit></persistence></pre><br />
+<br />
+and this is the test client:<br />
+<br />
+<br />
+<pre class="brush: java" name="code">package my.entity;
+
+import java.io.Serializable;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.Persistence;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+
+public class TestEntityHandler implements Serializable {
+
+    /** Default Serial Version UID. */
+    private static final long serialVersionUID = 1L;
+
+    /** The Default Class LOGGER. */
+    private static final Log LOGGER = LogFactory.getFactory().getInstance(
+            TestEntityHandler.class.getName());
+
+    /** The entity manager factory. */
+    private static EntityManagerFactory entityManagerFactory = null;
+
+    /** The Entity Manager for JAXB container managed persistence. */
+    protected EntityManager em = null;
+
+    /** The testEntity. */
+    private TestEntity testEntity = null;
+
+    /**
+     * Public constructor.
+     */
+    public TestEntityHandler() { testEntity = new TestEntity(); }
+
+    /**
+     * Initialise and return the JAXB EntityManager to be used by this Class instance.
+     *
+     * @return - a valid [initialised] EntityManager instance
+     */
+    private EntityManager initialiseEntityManager() {
+        try {
+            if (em == null) {
+                em = getEntityManager();
+                LOGGER.info("Initialised Entity Manager: " + em);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to initialise EntityManager instance! ... " + e, e);
+        }
+        return em;
+    }
+
+    /**
+     * Persist a new instance of the Entity.
+     */
+    public void create() {
+        initialiseEntityManager();
+        em.getTransaction().begin();
+        em.persist(testEntity);
+        em.getTransaction().commit();
+        //em.close();
+    }
+
+    /**
+     * Persist updated details of an existing instance of the Entity.
+     */
+    public void update() {
+        initialiseEntityManager();
+        em.getTransaction().begin();
+        em.merge(testEntity);
+        em.getTransaction().commit();
+        // This next step should not be necessary; but sometimes update is not propagated !??
+        em.getTransaction().begin();
+        refreshEntity(testEntity);
+        em.getTransaction().commit();
+        //em.close();
+    }
+
+    /**
+     * Delete an existing instance of the Entity from the system.
+     */
+    public void delete() {
+        initialiseEntityManager();
+        em.getTransaction().begin();
+        em.remove(testEntity);
+        em.getTransaction().commit();
+        //em.close();
+    }
+
+
+    /**
+     * Gets the testEntity.
+     *
+     * @return the testEntity
+     */
+    public TestEntity getTestEntity() {
+        return testEntity;
+    }
+
+    /**
+     * Sets the testEntity.
+     *
+     * @param testEntity_ the new testEntity
+     */
+    public void setTestEntity(TestEntity testEntity_) {
+        this.testEntity = testEntity_;
+    }
+
+    // Everything below belongs in other Class(es), reproduced here for simplicity.
+
+    /**
+     * Gets the entity manager.
+     *
+     * @return the entity manager
+     */
+    private EntityManager getEntityManager () {
+        try {
+            if (entityManagerFactory == null) {
+                LOGGER.info("Attempting to create EntityManger ... ");
+                Map override = new HashMap();
+                // Override the provider used for persistence
+                override.put("provider", "oracle.toplink.essentials.PersistenceProvider");
+                // This name must correspond to value in META-INF/persistence.xml
+                entityManagerFactory = Persistence.createEntityManagerFactory("myPersistenceUnit");
+            }
+
+            EntityManager entityManager = null;
+            entityManager = entityManagerFactory.createEntityManager();
+            LOGGER.info("Returning EntityManger instance:= " + entityManager);
+            return entityManager;
+        } catch (Exception e) {
+            LOGGER.error("Exception in PersistenceManager.getEntityManager: " + e, e);
+        }
+        return null;
+    }
+
+    /**
+     * Refresh the entity from database.
+     *
+     * @param TestEntity - abstract class (substituted at runtime) that is to be refreshed
+     */
+    protected void refreshEntity(TestEntity testEntity) {
+        try {
+              em.refresh(testEntity);
+            } catch(EntityNotFoundException ex){
+              LOGGER.debug("Failed to refresh entity; this may not be a problem");
+            }
+    }
+
+    /**
+     * Close the EntityManager instance.
+     */
+    public void closeEM() {
+        em.close();
+    }
+
+    public static void main(String args[]) {
+        TestEntityHandler testEntityHandler = new TestEntityHandler();
+        TestEntity testEntity = new TestEntity();
+        testEntity.setTestEntityId(500);
+        testEntity.setEntityName("PierreLuigi");
+        testEntity.setEntityDescription("This is a test");
+        testEntityHandler.setTestEntity(testEntity);
+        testEntityHandler.create();
+        LOGGER.info("Created new TestEntity; check database now ... ");
+
+        try {
+            Thread.sleep(10000);
+            LOGGER.info("Resuming ... ");
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // Before continuing check database to ensure that object was created.
+
+        testEntity.setEntityName("PierreLuigi Vernetto");
+        testEntityHandler.setTestEntity(testEntity);
+        testEntityHandler.getTestEntity().setEntityDescription("This is a second test (UPDATE)");
+        testEntityHandler.update();
+        LOGGER.info("Updated new TestEntity; check database now ... ");
+
+        try {
+            Thread.sleep(10000);
+            LOGGER.info("Resuming ... ");
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
+        // Before continuing check database to ensure that object was updated.
+
+        testEntity.setEntityName("Pierluigi Vernetto is stupid");
+        testEntity.setEntityDescription("This is a second test (UPDATE)");
+        testEntityHandler.delete();
+        LOGGER.info("Deleted new TestEntity.");
+
+        testEntityHandler.closeEM();
+
+        // Now check that the object was deleted.
+
+    }
+}
+
+
+</pre>

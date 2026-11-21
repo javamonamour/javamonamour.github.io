@@ -1,0 +1,34 @@
+---
+layout: post
+title: "WLST useful tips and tricks"
+date: 2009-11-18T11:57:00.000+01:00
+permalink: /2009/11/wlst-useful-tips-and-tricks.html
+blogger_id: "77754377320758589"
+---
+Run a .py script with:<br />
+<br />
+java weblogic.WLST scriptname.py<br />
+<br />
+<br />
+How to define a function with exception handling:<br />
+<br />
+<i>def connect_to_weblogic(username,password,adminurl):<br />
+try :<br />
+connect(username,password,adminurl)<br />
+except :<br />
+print 'Cannot connect to server '<br />
+exit()<br />
+</i><br />
+<br />
+How to get the list of defined servers:<br />
+<br />
+<i>serverList = ls('Servers',returnMap='true')</i><br />
+<br />
+(the "returnMap" options makes the serverList variable a HashMap with key=serverName)<br />
+<br />
+<br />
+How to get a list of RUNNING servers:<br />
+<br />
+<i>domainRuntime()<br />
+runningList = ls('ServerRuntimes',returnMap='true')<br />
+</i>

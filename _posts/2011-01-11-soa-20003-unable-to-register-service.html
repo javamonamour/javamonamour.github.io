@@ -1,0 +1,34 @@
+---
+layout: post
+title: "SOA-20003 unable to register service"
+date: 2011-01-11T20:02:00.000+01:00
+permalink: /2011/01/soa-20003-unable-to-register-service.html
+blogger_id: "5538668721082974382"
+tags: ["SOASuite"]
+---
+SOA-20003 unable to register service<br />
+oracle.webservices.provider.ProviderException: java.lang.NullPointerException<br />
+<br />
+<br />
+This error occurs while I try to deploy a composite.<br />
+<br />
+<a href="http://docs.tpu.ru/docs/oracle/en/owl/E14571_01/core.1111/e10113/chapter_soa_messages.htm">http://docs.tpu.ru/docs/oracle/en/owl/E14571_01/core.1111/e10113/chapter_soa_messages.htm</a><br />
+<br />
+<pre>SOA-20003: Unable to register service.
+    Cause: There was an issue during the attempt to create the endpoint for the composite service
+    Action: Make sure that the WSDL either has a service and port that correspond to the values specified in the composite file or that there is no empty service node in the WSDL
+
+    Level: 1
+
+    Type: ERROR
+
+    Impact: Deployment
+</pre><br />
+<br />
+The problem in fact was that I coded by hand the WSDL (naughty me) and I put a service name not matching the Web Service name created in the Composite.<br />
+<br />
+I recreated the WSDL using the JDeveloper wizard associated to the Composite Exposed Services for WS Adapter, and it works. <br />
+<br />
+This wizard doesn't produce a "service" entry in the WSDL - this might be the reason for the failure, the Composite doesn't expect to have a "complete" WSDL, the Engine will take care of generating a true one.<br />
+<br />
+Especially, forget about imposing an Endpoint URL by using the "soap:address location" in the wsdl:service/wsdl:port section: the SOA Composite will generate its endpoint using his own logic.

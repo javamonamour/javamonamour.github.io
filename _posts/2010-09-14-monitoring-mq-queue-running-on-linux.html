@@ -1,0 +1,91 @@
+---
+layout: post
+title: "Monitoring MQ queue running on Linux"
+date: 2010-09-14T11:25:00.004+02:00
+permalink: /2010/09/monitoring-mq-queue-running-on-linux.html
+blogger_id: "2835961036279010567"
+tags: ["MQ"]
+---
+MQ user interface is VERY mainframe... you must get used to a very stern and dry presentation.<br />
+<br />
+log into your unix box running the mqserver <br />
+<br />
+<br />
+cd $MQSERVER_HOME/bin<br />
+<br />
+runmqsc myqueuemanager<br />
+<br />
+help<br />
+<br />
+display qstatus(myqueue)<br />
+<br />
+<br />
+<br />
+<i>     4 : DISPLAY QSTATUS(myqueue)<br />
+<br />
+AMQ8450: Display queue status details.<br />
+<br />
+QUEUE(myqueue)            TYPE(QUEUE)<br />
+<br />
+CURDEPTH(0)                             IPPROCS(2)<br />
+<br />
+LGETDATE( )                             LGETTIME( )<br />
+<br />
+LPUTDATE( )                             LPUTTIME( )<br />
+<br />
+MEDIALOG( )                             MONQ(OFF)<br />
+<br />
+MSGAGE( )                               OPPROCS(0)<br />
+<br />
+QTIME( , )                              UNCOM(NO)</i><br />
+<br />
+<br />
+<br />
+<br />
+<i>AMQ8426: Valid MQSC commands are:<br />
+<br />
+<br />
+ALTER<br />
+<br />
+CLEAR<br />
+<br />
+DEFINE<br />
+<br />
+DELETE<br />
+<br />
+DISPLAY<br />
+<br />
+END<br />
+<br />
+PING<br />
+<br />
+REFRESH<br />
+<br />
+RESET<br />
+<br />
+RESOLVE<br />
+<br />
+RESUME<br />
+<br />
+START<br />
+<br />
+STOP<br />
+<br />
+SUSPEND</i><br />
+<br />
+<br />
+<br />
+Terminology:<br />
+<br />
+Message Queue Interface (MQI) <br />
+Queue Manager (QM), which hosts Queues and Channels<br />
+<br />
+Queues can be:<br />
+Local queue (held in the QM)<br />
+Transmission queue (basically a Bridge)<br />
+Remote queue definition (basically a Foreign Queue)<br />
+Alias queue (just a nickname for an existing queue)<br />
+Model queue (a template)<br />
+Cluster queue (like a Uniform Distributed Queue)<br />
+Shared queue (???)<br />
+Group definition queue (???)

@@ -1,0 +1,67 @@
+---
+layout: post
+title: "Handy script to create a WL Server in a cluster"
+date: 2011-08-20T18:53:00.002+02:00
+permalink: /2011/08/handy-script-to-create-wl-server-in.html
+blogger_id: "3935021928190166020"
+tags: ["createServer", "WLST"]
+---
+<pre name="code" class="brush: java">servername='ms3'
+debugport='8890'
+domainname='osb_domain'
+clustername='myCluster'
+listenport=7031
+
+
+
+edit()
+startEdit()
+cd('/')
+cmo.createServer(servername)
+
+cd('/Servers/' + servername)
+cmo.setListenAddress('')
+cmo.setListenPort(listenport)
+cmo.setCluster(getMBean('/Clusters/' + clustername))
+cmo.setListenPortEnabled(true)
+cmo.setAdministrationPort(9002)
+cmo.setWeblogicPluginEnabled(false)
+cmo.setJavaCompiler('javac')
+cmo.setStartupMode('RUNNING')
+cmo.setVirtualMachineName(domainname + '_' + servername)
+cmo.setClientCertProxyEnabled(false)
+cmo.setMachine(getMBean('/Machines/myMachine'))
+
+cd('/Servers/' + servername + '/SSL/' + servername)
+cmo.setEnabled(false)
+
+cd('/Servers/' + servername + '/ServerDiagnosticConfig/' + servername)
+cmo.setWLDFDiagnosticVolume('Low')
+
+cd('/Servers/' + servername + '/ServerStart/' + servername)
+cmo.setArguments('-Xms356m -Xmx1024m -XX:CompileThreshold=8000 -XX:PermSize=128m  -XX:MaxPermSize=512m -Dweblogic.debug.DebugUnicastMessaging=true -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port='+ debugport + ' -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dweblogic.unicast.HttpPing=true')
+
+
+
+cd('/Servers/' + servername)
+cmo.createNetworkAccessPoint('unicastChannel')
+
+cd('/Servers/ms1/NetworkAccessPoints/unicastChannel')
+cmo.setProtocol('cluster-broadcast')
+cmo.setListenPort(listenport + 100)
+cmo.setEnabled(true)
+cmo.setHttpEnabledForThisProtocol(false)
+cmo.setTunnelingEnabled(false)
+cmo.setOutboundEnabled(true)
+cmo.setTwoWaySSLEnabled(false)
+cmo.setClientCertificateEnforced(false)
+
+
+activate()
+
+</pre><br />
+In order to run it, connect first to the AdminServer<br />
+connect('weblogic', 'welcome1', 't3://localhost:7001')<br />
+<br />
+<br />
+

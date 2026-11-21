@@ -1,0 +1,41 @@
+---
+layout: post
+title: "oracle.fabric.common.FabricDeploymentException: Unable to register service. {rootCauses=[]}"
+date: 2011-01-28T13:27:00.001+01:00
+permalink: /2011/01/oraclefabriccommonfabricdeploymentexcep.html
+blogger_id: "3217399296871202237"
+tags: ["SOASuite"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2012-03-13
+    html: "honestly, I can&#39;t remember, it was a looooong time ago.... sorry about that!"
+  - author: "Rob"
+    date: 2012-03-13
+    html: "I&#39;m having the same problem with a mediator wsdl &quot;_ep&quot;.  What was the fix?"
+---
+You get this message when trying to deploy a composite to the SOAServer, and there is no way to get more info from the log...<br />
+<br />
+If you go up in the stdout, you finally find the reason:<br />
+<br />
+<br />
+<i>28-Jan-2011 12:17:27 o'clock WET Error oracle.integration.platform SOA-20003 Unable to register service.<br />
+oracle.webservices.provider.ProviderException: oracle.webservices.provider.ProviderException: No service {http://instantlink.inwi.com}BookCallbackService_2 defined in the WSDL<br />
+at oracle.j2ee.ws.server.provider.ProviderConfigImpl.addService(Provider<br />
+</i><br />
+<br />
+In fact the service name in the WSDL is BookCallbackService, and the _2 has been added by JDeveloper unbeknown to me. I had this problem countless times, and I really believe this can be handled better.<br />
+<br />
+<br />
+This is what you find in the log files:<br />
+<br />
+<i>Caused By: oracle.fabric.common.FabricDeploymentException: Unable to register service. {rootCauses=[]}<br />
+at oracle.integration.platform.blocks.soap.WebServiceEntryBindingComponent.load(WebServiceEntryBindingComponent.java:227)<br />
+at oracle.integration.platform.blocks.soap.WebServiceEntryBindingComponent.load(WebServiceEntryBindingComponent.java:98)<br />
+at oracle.integration.platform.blocks.deploy.CompositeDeploymentConnection.deployServices(CompositeDeploymentConnection.java:160)<br />
+at oracle.integration.platform.blocks.deploy.CompositeDeploymentConnection.deploy(CompositeDeploymentConnection.java:91)<br />
+at oracle.integration.platform.blocks.deploy.CompositeDeploymentManagerImpl.initDeployment(CompositeDeploymentManagerImpl.java:149)<br />
+at oracle.integration.platform.blocks.deploy.CompositeDeploymentManagerImpl.load(CompositeDeploymentManagerImpl.java:62)<br />
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+<br />
+<br />
+</i>

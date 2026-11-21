@@ -1,0 +1,163 @@
+---
+layout: post
+title: "OSB Read Timeout and Connection Timeout, stuck threads"
+date: 2011-07-26T10:12:00.000+02:00
+permalink: /2011/07/osb-read-timeout-and-connection-timeout.html
+blogger_id: "2074242839326694893"
+tags: ["OSB", "timeout"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2011-08-11
+    html: "not really, so far it has not happened again.... will keep my eyes open anyway! I think setting timeouts on Sockets would definitely help!"
+  - author: "LeoLuz"
+    date: 2011-08-11
+    html: "Hi!<br /><br />Any news about this issue?<br /><br />We are facing a similar problem in our environment.<br /><br />tks!<br />LeoLuz"
+  - author: "vernetto"
+    date: 2013-10-22
+    html: "nope... actually we had recently another stuck thread hung on a network I/O call, but there doesn&#39;t seem to be an easy way to set a socket timeout for all sockets open in a JVM.... much needed feature...."
+  - author: "Subhashish Mishra"
+    date: 2013-10-22
+    html: "Hi, <br />   We are facing the same issue. Did you guys find a solution for this issue."
+---
+This morning the server was hanging (even sbconsole was not responding) and the automated tests were stuck since little after midnight. Maybe something has happened around midnight on that box.<br />
+<br />
+Since I would much rather have a request fail than hanging forever, I have reviewed all the timeouts associated with my Business Services.<br />
+<br />
+There are 2 parameters:<br />
+<br />
+HTTP Transport Configuration:<br />
+<br />
+<b>Read Timeout</b> (30s default)<br />
+"Enter the read timeout interval in seconds.<br />
+A zero (0) value indicates no timeout."<br />
+<br />
+<br />
+<b>Connection Timeout</b> (0=disabled by default)<br />
+"Enter the connection timeout interval in seconds. If the timeout expires before the connection can be established, Oracle Service Bus raises a connection error."<br />
+<br />
+<br />
+see <a href="http://download.oracle.com/docs/cd/E14571_01/doc.1111/e15866/transports.htm#i1267023">here</a> the Oracle OSB doc.<br />
+<br />
+My threads were stuck waiting for a Response from a Web Service... I wonder why the "Read Timeout" didn't trigger a fault.<br />
+<br />
+This was the complete stacktrace for the stuck thread:<br />
+(I see a similar problem reported <a href="http://forums.oracle.com/forums/thread.jspa?threadID=2243910">here</a>)<br />
+<br />
+<pre>
+"[STUCK] ExecuteThread: '30' for queue: 'weblogic.kernel.Default (self-tuning)'" - Thread t@141
+   java.lang.Thread.State: WAITING
+ at java.lang.Object.wait(Native Method)
+ - waiting on <6f34d9fb> (a java.lang.Object)
+ at java.lang.Object.wait(Object.java:485)
+ at com.bea.wli.sb.pipeline.PipelineContextImpl$SynchronousListener.waitForResponse(PipelineContextImpl.java:1569)
+ at com.bea.wli.sb.pipeline.PipelineContextImpl.dispatchSync(PipelineContextImpl.java:553)
+ at stages.transform.runtime.WsCalloutRuntimeStep$WsCalloutDispatcher.dispatch(WsCalloutRuntimeStep.java:1391)
+ at stages.transform.runtime.WsCalloutRuntimeStep.processMessage(WsCalloutRuntimeStep.java:236)
+ at com.bea.wli.sb.pipeline.StatisticUpdaterRuntimeStep.processMessage(StatisticUpdaterRuntimeStep.java:41)
+ at com.bea.wli.sb.stages.StageMetadataImpl$WrapperRuntimeStep.processMessage(StageMetadataImpl.java:346)
+ at com.bea.wli.sb.pipeline.PipelineStage.processMessage(PipelineStage.java:84)
+ at com.bea.wli.sb.pipeline.PipelineContextImpl.execute(PipelineContextImpl.java:1055)
+ at com.bea.wli.sb.pipeline.Pipeline.processMessage(Pipeline.java:141)
+ at com.bea.wli.sb.pipeline.PipelineContextImpl.execute(PipelineContextImpl.java:1055)
+ at com.bea.wli.sb.pipeline.PipelineNode.doRequest(PipelineNode.java:55)
+ at com.bea.wli.sb.pipeline.Node.processMessage(Node.java:67)
+ at com.bea.wli.sb.pipeline.PipelineContextImpl.execute(PipelineContextImpl.java:1055)
+ at com.bea.wli.sb.pipeline.Router.processMessage(Router.java:214)
+ at com.bea.wli.sb.pipeline.MessageProcessor.processRequest(MessageProcessor.java:96)
+ at com.bea.wli.sb.pipeline.RouterManager$1.run(RouterManager.java:593)
+ at com.bea.wli.sb.pipeline.RouterManager$1.run(RouterManager.java:591)
+ at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)
+ at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:146)
+ at com.bea.wli.sb.security.WLSSecurityContextService.runAs(WLSSecurityContextService.java:55)
+ at com.bea.wli.sb.pipeline.RouterManager.processMessage(RouterManager.java:590)
+ at com.bea.wli.sb.transports.TransportManagerImpl.receiveMessage(TransportManagerImpl.java:375)
+ at com.bea.wli.sb.transports.local.LocalMessageContext$1.run(LocalMessageContext.java:179)
+ at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)
+ at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:146)
+ at weblogic.security.Security.runAs(Security.java:61)
+ at com.bea.wli.sb.transports.local.LocalMessageContext.send(LocalMessageContext.java:174)
+ at com.bea.wli.sb.transports.local.LocalTransportProvider.sendMessageAsync(LocalTransportProvider.java:322)
+ at sun.reflect.GeneratedMethodAccessor655.invoke(Unknown Source)
+ at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+ at java.lang.reflect.Method.invoke(Method.java:597)
+ at com.bea.wli.sb.transports.Util$1.invoke(Util.java:83)
+ at $Proxy106.sendMessageAsync(Unknown Source)
+ at com.bea.wli.sb.transports.LoadBalanceFailoverListener.sendMessageAsync(LoadBalanceFailoverListener.java:148)
+ at com.bea.wli.sb.transports.LoadBalanceFailoverListener.sendMessageToServiceAsync(LoadBalanceFailoverListener.java:603)
+ at com.bea.wli.sb.transports.LoadBalanceFailoverListener.sendMessageToService(LoadBalanceFailoverListener.java:538)
+ at com.bea.wli.sb.transports.TransportManagerImpl.sendMessageToService(TransportManagerImpl.java:558)
+ at com.bea.wli.sb.transports.TransportManagerImpl.sendMessageAsync(TransportManagerImpl.java:426)
+ at com.bea.wli.sb.pipeline.PipelineContextImpl.doDispatch(PipelineContextImpl.java:670)
+ at com.bea.wli.sb.pipeline.PipelineContextImpl.dispatch(PipelineContextImpl.java:585)
+ at stages.routing.runtime.DynamicRouteRuntimeStep.processMessage(DynamicRouteRuntimeStep.java:161)
+ at com.bea.wli.sb.stages.StageMetadataImpl$WrapperRuntimeStep.processMessage(StageMetadataImpl.java:346)
+ at com.bea.wli.sb.pipeline.RouteNode.doRequest(RouteNode.java:106)
+ at com.bea.wli.sb.pipeline.Node.processMessage(Node.java:67)
+ at com.bea.wli.sb.pipeline.PipelineContextImpl.execute(PipelineContextImpl.java:1055)
+ at com.bea.wli.sb.pipeline.Router.processMessage(Router.java:214)
+ at com.bea.wli.sb.pipeline.MessageProcessor.processRequest(MessageProcessor.java:96)
+ at com.bea.wli.sb.pipeline.RouterManager$1.run(RouterManager.java:593)
+ at com.bea.wli.sb.pipeline.RouterManager$1.run(RouterManager.java:591)
+ at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)
+ at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:146)
+ at com.bea.wli.sb.security.WLSSecurityContextService.runAs(WLSSecurityContextService.java:55)
+ at com.bea.wli.sb.pipeline.RouterManager.processMessage(RouterManager.java:590)
+ at com.bea.wli.sb.transports.TransportManagerImpl.receiveMessage(TransportManagerImpl.java:375)
+ at com.bea.wli.sb.transports.local.LocalMessageContext$1.run(LocalMessageContext.java:179)
+ at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)
+ at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:146)
+ at weblogic.security.Security.runAs(Security.java:61)
+ at com.bea.wli.sb.transports.local.LocalMessageContext.send(LocalMessageContext.java:174)
+ at com.bea.wli.sb.transports.local.LocalTransportProvider.sendMessageAsync(LocalTransportProvider.java:322)
+ at sun.reflect.GeneratedMethodAccessor655.invoke(Unknown Source)
+ at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+ at java.lang.reflect.Method.invoke(Method.java:597)
+ at com.bea.wli.sb.transports.Util$1.invoke(Util.java:83)
+ at $Proxy106.sendMessageAsync(Unknown Source)
+ at com.bea.wli.sb.transports.LoadBalanceFailoverListener.sendMessageAsync(LoadBalanceFailoverListener.java:148)
+ at com.bea.wli.sb.transports.LoadBalanceFailoverListener.sendMessageToServiceAsync(LoadBalanceFailoverListener.java:603)
+ at com.bea.wli.sb.transports.LoadBalanceFailoverListener.sendMessageToService(LoadBalanceFailoverListener.java:538)
+ at com.bea.wli.sb.transports.TransportManagerImpl.sendMessageToService(TransportManagerImpl.java:558)
+ at com.bea.wli.sb.transports.TransportManagerImpl.sendMessageAsync(TransportManagerImpl.java:426)
+ at com.bea.wli.sb.pipeline.PipelineContextImpl.doDispatch(PipelineContextImpl.java:670)
+ at com.bea.wli.sb.pipeline.PipelineContextImpl.dispatch(PipelineContextImpl.java:585)
+ at stages.routing.runtime.RouteRuntimeStep.processMessage(RouteRuntimeStep.java:128)
+ at com.bea.wli.sb.stages.StageMetadataImpl$WrapperRuntimeStep.processMessage(StageMetadataImpl.java:346)
+ at com.bea.wli.sb.pipeline.RouteNode.doRequest(RouteNode.java:106)
+ at com.bea.wli.sb.pipeline.Node.processMessage(Node.java:67)
+ at com.bea.wli.sb.pipeline.PipelineContextImpl.execute(PipelineContextImpl.java:1055)
+ at com.bea.wli.sb.pipeline.Router.processMessage(Router.java:214)
+ at com.bea.wli.sb.pipeline.MessageProcessor.processRequest(MessageProcessor.java:96)
+ at com.bea.wli.sb.pipeline.RouterManager$1.run(RouterManager.java:593)
+ at com.bea.wli.sb.pipeline.RouterManager$1.run(RouterManager.java:591)
+ at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)
+ at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:146)
+ at com.bea.wli.sb.security.WLSSecurityContextService.runAs(WLSSecurityContextService.java:55)
+ at com.bea.wli.sb.pipeline.RouterManager.processMessage(RouterManager.java:590)
+ at com.bea.wli.sb.transports.TransportManagerImpl.receiveMessage(TransportManagerImpl.java:375)
+ at com.bea.wli.sb.transports.http.generic.RequestHelperBase.invokePipeline(RequestHelperBase.java:179)
+ at com.bea.wli.sb.transports.http.wls.HttpTransportServlet$RequestHelperWLS.invokePipeline(HttpTransportServlet.java:227)
+ at com.bea.wli.sb.transports.http.generic.RequestHelperBase$1.run(RequestHelperBase.java:154)
+ at com.bea.wli.sb.transports.http.generic.RequestHelperBase$1.run(RequestHelperBase.java:152)
+ at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)
+ at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:146)
+ at com.bea.wli.sb.transports.http.generic.RequestHelperBase.securedInvoke(RequestHelperBase.java:151)
+ at com.bea.wli.sb.transports.http.generic.RequestHelperBase.service(RequestHelperBase.java:107)
+ at com.bea.wli.sb.transports.http.wls.HttpTransportServlet.service(HttpTransportServlet.java:129)
+ at weblogic.servlet.FutureResponseServlet.service(FutureResponseServlet.java:24)
+ at javax.servlet.http.HttpServlet.service(HttpServlet.java:820)
+ at weblogic.servlet.internal.StubSecurityHelper$ServletServiceAction.run(StubSecurityHelper.java:227)
+ at weblogic.servlet.internal.StubSecurityHelper.invokeServlet(StubSecurityHelper.java:125)
+ at weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:300)
+ at weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:183)
+ at weblogic.servlet.internal.WebAppServletContext$ServletInvocationAction.wrapRun(WebAppServletContext.java:3717)
+ at weblogic.servlet.internal.WebAppServletContext$ServletInvocationAction.run(WebAppServletContext.java:3681)
+ at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:321)
+ at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:120)
+ at weblogic.servlet.internal.WebAppServletContext.securedExecute(WebAppServletContext.java:2277)
+ at weblogic.servlet.internal.WebAppServletContext.execute(WebAppServletContext.java:2183)
+ at weblogic.servlet.internal.ServletRequestImpl.run(ServletRequestImpl.java:1454)
+ at weblogic.work.ExecuteThread.execute(ExecuteThread.java:207)
+ at weblogic.work.ExecuteThread.run(ExecuteThread.java:176)
+
+</pre>

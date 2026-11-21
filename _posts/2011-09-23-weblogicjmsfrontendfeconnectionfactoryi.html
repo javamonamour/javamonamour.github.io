@@ -1,0 +1,34 @@
+---
+layout: post
+title: "weblogic.jms.frontend.FEConnectionFactoryImpl"
+date: 2011-09-23T12:20:00.000+02:00
+permalink: /2011/09/weblogicjmsfrontendfeconnectionfactoryi.html
+blogger_id: "6715848846959898696"
+tags: ["jms"]
+---
+If you get a STUCK thread on the JMS FrontEnd:<br />
+<br />
+&lt;Error&gt; &lt;WebLogicServer&gt; &lt;BEA-000337&gt; &lt;[STUCK] ExecuteThread: '15' for queue: 'weblogic.kernel.Default (self-tuning)' has been busy for "655" seconds working on the request "weblogic.jms.frontend.FEConnectionFactoryImpl", which is more than the configured time (StuckThreadMaxTime) of "600" seconds. Stack trace:<br />
+ weblogic.rmi.extensions.DisconnectMonitorListImpl.addDisconnectListener(DisconnectMonitorListImpl.java:78)<br />
+ weblogic.messaging.dispatcher.DispatcherWrapperState.addPeerGoneListener(DispatcherWrapperState.java:414)<br />
+ weblogic.messaging.dispatcher.DispatcherWrapperState.&lt;init&gt;(DispatcherWrapperState.java:79)<br />
+ weblogic.messaging.dispatcher.DispatcherManager.addDispatcherReference(DispatcherManager.java:115)<br />
+ weblogic.jms.dispatcher.JMSDispatcherManager.addDispatcherReference(JMSDispatcherManager.java:191)<br />
+ weblogic.jms.frontend.FEConnectionFactory.connectionCreateInternal(FEConnectionFactory.java:360)<br />
+ weblogic.jms.frontend.FEConnectionFactoryImpl.connectionCreateInternal(FEConnectionFactoryImpl.java:79)<br />
+ weblogic.jms.frontend.FEConnectionFactoryImpl.connectionCreateRequest(FEConnectionFactoryImpl.java:62)<br />
+ weblogic.jms.frontend.FEConnectionFactoryImpl_WLSkel.invoke(Unknown Source)<br />
+ weblogic.rmi.internal.BasicServerRef.invoke(BasicServerRef.java:589)<br />
+ weblogic.rmi.cluster.ClusterableServerRef.invoke(ClusterableServerRef.java:230)<br />
+ weblogic.rmi.internal.BasicServerRef$1.run(BasicServerRef.java:477)<br />
+ weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:363)<br />
+ weblogic.security.service.SecurityManager.runAs(Unknown Source)<br />
+ weblogic.rmi.internal.BasicServerRef.handleRequest(BasicServerRef.java:473)<br />
+ weblogic.rmi.internal.wls.WLSExecuteRequest.run(WLSExecuteRequest.java:118)<br />
+ weblogic.work.ExecuteThread.execute(ExecuteThread.java:201)<br />
+ weblogic.work.ExecuteThread.run(ExecuteThread.java:173)<br />
+<br />
+<br />
+check for instance that the firewall on the client is not blocking communication from the Server, see also here:<br />
+<br />
+<a href="https://forums.oracle.com/forums/thread.jspa?threadID=837177">https://forums.oracle.com/forums/thread.jspa?threadID=837177</a>

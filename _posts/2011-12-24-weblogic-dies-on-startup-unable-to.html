@@ -1,0 +1,21 @@
+---
+layout: post
+title: "WebLogic dies on startup: Unable to create a server socket for listening on channel \"Default\""
+date: 2011-12-24T20:24:00.000+01:00
+permalink: /2011/12/weblogic-dies-on-startup-unable-to.html
+blogger_id: "7817608590807507556"
+tags: ["weblogic"]
+---
+<i>Unable to create a server socket for listening on channel "Default". The address 10.83.17.84 might be incorrect or another process is<br />
+using port 7001: java.net.BindException: Cannot assign requested address: JVM_Bind.<br />
+</i><br />
+<br />
+Of course there is no running process who listens on the 7001 port, I have done netstat -a to check...<br />
+<br />
+It turned out that I have a dynamic IP on my laptop - with hostname pierrepc -  and foolishly I have made an entry in my hosts file saying<br />
+<br />
+10.83.17.84 pierrepc<br />
+<br />
+Idiot me! The IP address is not static, so once I get assigned a different IP, WebLogic still tries to use the 10.83.17.84 IP to create a Socket...<br />
+<br />
+Removing the (foolish) entry from hosts fixed the problem

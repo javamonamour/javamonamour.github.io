@@ -1,0 +1,8 @@
+---
+layout: post
+title: "BEA-190032"
+date: 2009-11-12T11:58:00.000+01:00
+permalink: /2009/11/bea-190032.html
+blogger_id: "9163651439309879757"
+---
+&lt;Warning&gt; &lt;Connector&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;BEA-190032&gt; &lt;&lt; eis/jms/WLSConnectionFactoryJNDIXA &gt; ResourceAllocationException thr<br />own by resource adapter on call to ManagedConnectionFactory.createManagedConnection(): "javax.resource.ResourceException: Failed to start the connection "&gt;<br /><br /><br />it's evidently a JMS Bridge problem.<br /><br />This teaches me the following:<br /><br />The bridge uses a JCA Connector packaged in this jar:<br /><br />jms-xa-adp.rar<br /><br />and its JNDI name is eis.jms.WLSConnectionFactoryJNDIXA<br /><br />see more info here:<br /><br />http://weblogic.sys-con.com/node/44439<br /><br />.... more to come...

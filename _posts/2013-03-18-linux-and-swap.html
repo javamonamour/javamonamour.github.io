@@ -1,0 +1,66 @@
+---
+layout: post
+title: "Linux and swap"
+date: 2013-03-18T17:49:00.000+01:00
+permalink: /2013/03/linux-and-swap.html
+blogger_id: "7043229796372211595"
+tags: ["swap"]
+---
+run top, then O (uppercase o), p and Enter
+<br/><br/>
+this will show  you all processes sorted by SWAP used
+<br/><br/>
+
+<pre>
+
+
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  SWAP COMMAND
+16103 soa3      23   0 3109m 1.3g  34m S  0.0  8.3  12:02.82 1.7g java
+ 4091 soa3      19   0 3115m 1.5g  34m S  0.0  9.7  11:35.79 1.5g java
+12193 soa       20   0 1122m 293m 8764 S  0.0  1.8   0:23.88 828m java
+25674 soa3      21   0 2152m 1.3g  50m S  0.0  8.5   7:38.07 786m java
+17344 soa2      21   0 2355m 1.7g  51m S  0.0 10.6  16:16.17 652m java
+ 3435 soa2      21   0 3326m 2.6g  35m S  0.0 16.7  43:47.83 639m java
+
+</pre>
+
+<br/><br/>
+top computes SWAP as VIRT - RES.
+<br/><br/>
+
+( see <a href="http://www.linux.com/news/software/applications/8208-all-about-linux-swap-space">here for more details</a>)<br/><br/>
+
+To examine how swap is configured on your machine (can be file or partition):
+
+<br/><br/>
+<b>/sbin/swapon -s</b>
+<br/><br/>
+<pre>
+Filename                                Type            Size    Used    Priority
+/dev/mapper/rootvg-swaplv               partition       8388600 188     -1
+</pre>
+<br/><br/>
+
+
+and cat /proc/swaps to view the same info.
+<br/><br/>
+
+do "cat /etc/fstab", you should see a line to mount the partition on boot:<br/><br/>
+/dev/rootvg/swaplv      swap                    swap    defaults        0 0
+
+<br/><br/>
+
+check your swappiness this way:
+<br/>
+
+<pre>
+cat /proc/sys/vm/swappiness
+60
+</pre>
+
+<br/>
+Use also vmstat 5 to trace si and so (swap in and swapout)
+<br/><br/>
+
+
+

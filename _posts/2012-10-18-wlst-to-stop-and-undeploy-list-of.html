@@ -1,0 +1,23 @@
+---
+layout: post
+title: "WLST to stop and undeploy a list of Deployments"
+date: 2012-10-18T20:12:00.000+02:00
+permalink: /2012/10/wlst-to-stop-and-undeploy-list-of.html
+blogger_id: "2163525152217936413"
+tags: ["WLST"]
+---
+<br />
+
+<pre name="code" class="brush: java">
+cd /opt/oracle/fmw11_1_1_5/
+. ./wlserver_10.3/common/bin/wlst.sh
+connect( 'weblogic', 'password', 't3://acme.com:7001')
+modulestodelete='_ALSB_1347537896788,_ALSB_1347537898052,_ALSB_1347537898748,_ALSB_1347537899485,_ALSB_1347537900275,_ALSB_1347541839901'
+for mymodule in modulestodelete.split(','):
+ stopApplication(mymodule)
+ undeploy(mymodule)
+disconnect()
+exit()
+</pre>
+
+<br />

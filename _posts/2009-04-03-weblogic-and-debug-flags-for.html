@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Weblogic and Debug Flags for Transactions"
+date: 2009-04-03T10:50:00.000+02:00
+permalink: /2009/04/weblogic-and-debug-flags-for.html
+blogger_id: "5722151963265722206"
+---
+digging in the weblogic.jdbc.jta.DataSource code, the weblogic.jdbcx.base.BaseXAResource, weblogic.transaction.internal.XAServerResourceInfo etc you can see that these flags are used to determine what should be logged:<br /><br />JTAXA (DebugJTAXA)<br />JTAXAStackTrace (DebugJTAXAStackTrace)<br />JTA2PC (DebugJTA2PC)<br />JTARecovery (not important IMHO) (DebugJTARecovery)<br />JTAResourceHealth (DebugJTAResourceHealth)<br /><br />all the JTA flags are:<br /><br />DebugJTARecovery            <br />DebugJTAAPI                 <br />DebugJTALLR                 <br />DebugJTARecoveryStackTrace  <br />DebugJTATransactionName     <br />DebugJTAJDBC                <br />DebugJTAPropagate           <br />DebugJTAHealth              <br />DebugJTAXA                  <br />DebugJTALifecycle           <br />DebugJTATLOG                <br />DebugJTANonXA               <br />DebugJTAXAStackTrace        <br />DebugJTAResourceName        <br />DebugJTAGatewayStackTrace   <br />DebugJTA2PCStackTrace       <br />DebugJTAResourceHealth      <br />DebugJTANamingStackTrace    <br />DebugJTA2PC                 <br />DebugJTAMigration           <br />DebugJTANaming              <br />DebugJTARMI                 <br />DebugJTAGateway

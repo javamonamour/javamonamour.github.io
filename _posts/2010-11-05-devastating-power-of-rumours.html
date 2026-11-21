@@ -1,0 +1,19 @@
+---
+layout: post
+title: "The devastating power of rumours"
+date: 2010-11-05T12:55:00.000+01:00
+permalink: /2010/11/devastating-power-of-rumours.html
+blogger_id: "774853486083095023"
+tags: ["proxy plugin"]
+---
+In a previous life, during the performance tests of an environment, we would inject load  with LoadRunner, targeting a WebLogic cluster through an Apache with  <b>WebLogic Proxy Plugin</b> as Load Balancer.<br />
+The load generation scripts had been prepared by a <b>LoadRunner </b>consultant  (very messy guy) who had just left the company. Funnily, this guy  enjoyed good reputation, because he would prepare very good looking  documents, but he was a really messy coder, copying and pasting like  hell.<br />
+<br />
+We would constantly measure more load on one WL instance than the other.<br />
+I asked "are we sure we target only the Apache and not the managed servers?" and they answered "absolutely". <br />
+Some guys in the corridor started <b>spreading the rumor that WebLogic  Proxy Plug-in is a poorly tested product, that it often does a poor job  at balancing properly the load, and that nobody really uses it in  production</b>.<br />
+These rumors much later proved to be <b>ABSOLUTELY FALSE</b>, WebLogic Proxy Plugin is a ROCK SOLID product, but at the time  they were enough to make everybody point the fingers against the Proxy  Plugin. We spent one week with Oracle support (very patient people, I love them)  trying to troubleshoot the problem, in vain.<br />
+<br />
+Finally, when all hopes were lost, one chap had the brilliant idea to  carefully verify the LoadRunner scripts...only to discover that they  were actually often targeting one of the Managed Servers! We felt like IDIOTS in front of the Oracle Support people and our managers.<br />
+<br />
+Everyone can draw his conclusion. Mine is that now I am very tough with  people who spread rumors without bringing evidence. If you are not 100%  sure of what you are saying, please, shut your mouth, because the  consequences of your comments can be really devastating and bring  about pain and losses to the company and the people around you.

@@ -1,0 +1,32 @@
+---
+layout: post
+title: "OSB Message Driven EJBs and Stateless EJB"
+date: 2012-05-01T13:02:00.001+02:00
+permalink: /2012/05/osb-message-driven-ejbs.html
+blogger_id: "6013294872983644390"
+tags: ["mdb", "OSB"]
+---
+You can expect to find these <b>MDBs</b> in a OSB server:<br />
+<br />
+Email Transport Provider PolledMessageListenerMDBEJB_jmsResources!wlsb.internal.transport.task.queue.email_auto_1<br />
+<br />
+File Transport Provider PolledMessageListenerMDBEJB_jmsResources!wlsb.internal.transport.task.queue.file_auto_1<br />
+<br />
+Ftp Transport Provider PolledMessageListenerMDBEJB_jmsResources!wlsb.internal.transport.task.queue.ftp_auto_1<br />
+<br />
+JMS Reporting Provider ReportingMDB_jmsResources!wli.reporting.jmsprovider.queue_auto_1 Message Driven EJB<br />
+Message Reporting Purger PurgingMDB_wli.reporting.purge.queue<br />
+<br />
+SFTP Transport Provider PolledMessageListenerMDBEJB_jmsResources!wlsb.internal.transport.task.queue.sftp_auto_1<br />
+<br />
+plus a MDB for each JMS-based ProxyService, but its format can be horrifying:<br />
+<br />
+_ALSB_1333581925704 RequestEJB-7851583836778691984-57e93bc6.1367f6d8854.-7fc2_ACMEJMSModule!ACMECommonJmsServer1@ACMEQueue <br />
+<br />
+(the recipe could be: strip away from the name whatever precedes the "_" sign)<br />
+<br />
+<br />
+The <b>Stateless EJB </b>are:<br />
+<br />
+ALSB Test Framework TestService<br />
+SB Transport Provider SBDispatcher

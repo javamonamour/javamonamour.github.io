@@ -1,0 +1,36 @@
+---
+layout: post
+title: "Magic: convert CentOS 7 to Oracle Linux"
+date: 2017-11-14T19:25:00.001+01:00
+permalink: /2017/11/magic-convert-centos-7-to-oracle-linux.html
+blogger_id: "7831217796163509723"
+tags: ["centos"]
+---
+I found this post <a href="https://www.digitalocean.com/community/questions/how-can-i-install-oracle-11g">https://www.digitalocean.com/community/questions/how-can-i-install-oracle-11g</a><br />
+<br />
+<br />
+curl -O https://linux.oracle.com/switch/centos2ol.sh <br />
+chmod 777 centos2ol.sh<br />
+sudo sh -c ./centos2ol.sh<br />
+<br />
+sudo yum distro-sync<br />
+<br />
+I get this:<br />
+<br />
+<i><br />
+Transaction check error:<br />
+  file /usr/lib64/gnome-documents/girepository-1.0/Gd-1.0.typelib from install of gnome-documents-3.14.3-3.el7.x86_64 conflicts with file from package gnome-documents-libs-3.22.2-5.el7.x86_64<br />
+  file /usr/lib64/gnome-documents/girepository-1.0/GdPrivate-1.0.typelib from install of gnome-documents-3.14.3-3.el7.x86_64 conflicts with file from package gnome-documents-libs-3.22.2-5.el7.x86_64<br />
+  file /usr/lib64/gnome-documents/libgd.so from install of gnome-documents-3.14.3-3.el7.x86_64 conflicts with file from package gnome-documents-libs-3.22.2-5.el7.x86_64<br />
+  file /usr/lib64/gnome-documents/libgdprivate-1.0.so from install of gnome-documents-3.14.3-3.el7.x86_64 conflicts with file from package gnome-documents-libs-3.22.2-5.el7.x86_64<br />
+  file /usr/share/glib-2.0/schemas/org.gnome.Documents.enums.xml from install of gnome-documents-3.14.3-3.el7.x86_64 conflicts with file from package gnome-documents-libs-3.22.2-5.el7.x86_64<br />
+  file /usr/share/gnome-documents/getting-started/C/gnome-documents-getting-started.pdf from install of gnome-documents-3.14.3-3.el7.x86_64 conflicts with file from package gnome-documents-libs-3.22.2-5.el7.x86_64<br />
+  file /usr/share/gnome-documents/gir-1.0/Gd-1.0.gir from install of gnome-documents-3.14.3-3.el7.x86_64 conflicts with file from package gnome-documents-libs-3.22.2-5.el7.x86_64<br />
+  file /usr/share/gnome-documents/gir-1.0/GdPrivate-1.0.gir from install of gnome-documents-3.14.3-3.el7.x86_64 conflicts with file from package gnome-documents-libs-3.22.2-5.el7.x86_64<br />
+</i><br />
+<br />
+sudo yum install oracle-rdbms-server-11gR2-preinstall<br />
+<br />
+sudo reboot now<br />
+<br />
+At this point, you can try to install Oracle DB <a href="http://www.oracle.com/technetwork/articles/servers-storage-admin/ginnydbinstallonlinux-488779.html">http://www.oracle.com/technetwork/articles/servers-storage-admin/ginnydbinstallonlinux-488779.html</a>

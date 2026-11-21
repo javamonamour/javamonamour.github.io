@@ -1,0 +1,82 @@
+---
+layout: post
+title: "Generics and collections"
+date: 2019-04-08T10:40:00.001+02:00
+permalink: /2019/04/generics-and-collections.html
+blogger_id: "4880969072640608341"
+tags: ["generics", "java"]
+---
+this one has no compilation errors:<br />
+<br />
+<pre>Set a;
+Set&lt;Object&gt; b;
+Set&lt;? super Object&gt; c;
+
+a = new HashSet();
+b = new HashSet&lt;&gt;();
+c = new HashSet&lt;&gt;();
+
+c = a;
+c = b;
+b = a;
+b = c;
+a = c;
+a = b;
+
+</pre><br />
+<br />
+but if I use <br />
+<br />
+Set&lt;Object&gt; b;<br />
+Set&lt;?> c;<br />
+<br />
+then "c = b" gives compilation error<br />
+<br />
+Error:(26, 13) java: incompatible types: java.util.Set<capture#1 of ?> cannot be converted to java.util.Set<java.lang.Object><br />
+<br />
+<br />
+This is interesting, since ? means "any Object and subclasses"... while "? super Object" means "Object and its superclasses"<br />
+but Object has no superclasses, so effectively it's only Object.<br />
+<br />
+<br />
+If I use:<br />
+b = new HashSet&lt;&gt;();<br />
+Set&lt;?? extends Object> c;<br />
+<br />
+then <br />
+b = c; <br />
+fails with the same error:<br />
+<br />
+Error:(26, 13) java: incompatible types: java.util.Set<capture#1 of ? extends java.lang.Object> cannot be converted to java.util.Set<java.lang.Object><br />
+<br />
+<br />
+The raw type a can be assigned all the time to all the others.<br />
+<br />
+<br />
+similarly, collections are INVARIANT:<br />
+<pre>Set&lt;Number&gt; numset = new HashSet&lt;&gt;();
+Set&lt;Integer&gt; intset = new HashSet&lt;&gt;();
+Set&lt;?&gt; allset = new HashSet&lt;&gt;();
+
+numset = intset; // INVALID
+intset = numset; // INVALID
+allset = numset; // VALID
+numset = allset; // INVALID
+
+</pre><br />
+<br />
+but arrays are COVARIANT:<br />
+<br />
+<pre>Number[] numarr = new Number[1];
+Integer[] intarr = new Integer[1];
+numarr = intarr; // VALID
+intarr = numarr; // INVALID
+
+</pre><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

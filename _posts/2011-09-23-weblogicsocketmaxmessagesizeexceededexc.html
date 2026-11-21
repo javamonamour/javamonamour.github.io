@@ -1,0 +1,106 @@
+---
+layout: post
+title: "weblogic.socket.MaxMessageSizeExceededException"
+date: 2011-09-23T11:48:00.000+02:00
+permalink: /2011/09/weblogicsocketmaxmessagesizeexceededexc.html
+blogger_id: "4445414758451715211"
+tags: ["socket"]
+---
+I am getting this:<br />
+<br />
+&lt;Error&gt; &lt;Socket&gt; &lt;BEA-000403&gt; &lt;IOException occurred on socket: Socket[addr=10.10.200.200/10.10.200.200,port=4243,localport=7011]<br />
+<br />
+ weblogic.socket.MaxMessageSizeExceededException: Incoming message of size: '10000080' bytes exceeds the configured maximum of: '10000000' bytes for protocol<br />
+<br />
+: 't3'.<br />
+<br />
+weblogic.socket.MaxMessageSizeExceededException: Incoming message of size: '10000080' bytes exceeds the configured maximum of: '10000000' bytes for protocol:<br />
+<br />
+ 't3'<br />
+<br />
+        at weblogic.socket.AbstractMuxableSocket.incrementBufferOffset(AbstractMuxableSocket.java:262)<br />
+<br />
+        at weblogic.rjvm.t3.MuxableSocketT3.incrementBufferOffset(MuxableSocketT3.java:343)<br />
+<br />
+        at weblogic.socket.SocketMuxer.readReadySocketOnce(SocketMuxer.java:910)<br />
+<br />
+        at weblogic.socket.SocketMuxer.readReadySocket(SocketMuxer.java:859)<br />
+<br />
+        at weblogic.socket.DevPollSocketMuxer.processSockets(DevPollSocketMuxer.java:120)<br />
+<br />
+        at weblogic.socket.SocketReaderRequest.run(SocketReaderRequest.java:29)<br />
+<br />
+        at weblogic.socket.SocketReaderRequest.execute(SocketReaderRequest.java:42)<br />
+<br />
+        at weblogic.kernel.ExecuteThread.execute(ExecuteThread.java:145)<br />
+<br />
+        at weblogic.kernel.ExecuteThread.run(ExecuteThread.java:117)<br />
+<br />
+&gt; <br />
+<br />
+You can identify the client issuing the request looking at the IP address (10.10.200.200).<br />
+<br />
+<br />
+Solution:<br />
+<br />
+On the receiving side, go to: <br />
+Server/Protocols/General/Maximum Message Size<br />
+<br />
+and increase it.<br />
+<br />
+"The maximum number of bytes allowed in messages that are received over all supported protocols, unless overridden by a protocol-specific setting or a custom channel setting."<br />
+<br />
+<br />
+The console help on this attribute is very interesting:<br />
+<br />
+<i><br />
+<br />
+The order of precedence for setting message size maximums is as follows:<br />
+<br />
+- A channel-wide maximum in a custom network channel.<br />
+<br />
+- A protocol-specific setting in the default network channel.<br />
+<br />
+See<br />
+<br />
+MaxCOMMessageSize<br />
+<br />
+MaxHTTPMessageSize<br />
+<br />
+MaxIIOPessageSize<br />
+<br />
+MaxT3MessageSize<br />
+<br />
+<br />
+The message maximum in this attribute.<br />
+<br />
+This maximum message size helps guard against a denial of service attack in which a caller attempts to force the server to allocate more memory than is available thereby keeping the server from responding quickly to other requests.<br />
+<br />
+MBean Attribute: <br />
+ServerMBean.MaxMessageSize<br />
+<br />
+Minimum value: 4096<br />
+<br />
+Maximum value: 2000000000<br />
+<br />
+Secure value: 10000000<br />
+ <br />
+<br />
+Related Tasks<br />
+<br />
+Configure T3 protocol<br />
+Configure HTTP protocol<br />
+Enable and configure IIOP<br />
+Enable jCOM<br />
+Related Topics<br />
+<br />
+Configuring Network Resources<br />
+<br />
+<br />
+</i><br />
+<br />
+<br />
+<br />
+Otherwise, change the JAVA_OPTIONS to incorporate<br />
+<br />
+-Dweblogic.MaxMessageSize=20000000

@@ -1,0 +1,19 @@
+---
+layout: post
+title: "UseSunHttpHandler"
+date: 2016-11-25T22:15:00.000+01:00
+permalink: /2016/11/usesunhttphandler.html
+blogger_id: "6514553750361024630"
+---
+I am curious about this property -DUseSunHttpHandler=true, according to Oracle, it's all about which Stack is used to handle SSL (JSSE), Java or WebLogic:
+
+<br/>
+"by setting UseSunHttpHandler, it is using the JSSE classes supplied by the JDK rather than the Weblogic classes. This means that such properties as -Dweblogic.security.SSL.ignoreHostnameVerification=true do not apply "
+<br/>
+The property influences also how WebServices invokations are done.
+<br/>
+For Web Services, there is also the property welogic.wsee.usesunhttphandler : see document "How to Use Sun.net.www.protocol.http.Handler for a Certain Web Service Request (Doc ID 1518346.1)"
+
+<br/>
+
+However, I could not find a clear documentation about what the flag would really affect.

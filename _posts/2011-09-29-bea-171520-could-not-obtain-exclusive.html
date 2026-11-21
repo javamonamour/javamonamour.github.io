@@ -1,0 +1,23 @@
+---
+layout: post
+title: "BEA-171520 Could not obtain an exclusive lock for directory"
+date: 2011-09-29T17:51:00.001+02:00
+permalink: /2011/09/bea-171520-could-not-obtain-exclusive.html
+blogger_id: "4290165445582146597"
+---
+<i><br />
+Warning EmbeddedLDAP BEA-171520 Could not obtain an exclusive lock for directory: /home/osbadmin/pierretests/domains/osb_domain/servers/ms1/data/ldap/ldapfiles. Waiting for 10 seconds and then retrying in case existing WebLogic Server is still shutting down.<br />
+<br />
+</i><br />
+<br />
+Just delete any .lok file in that directory and try again<br />
+<br />
+If you find this:<br />
+<br />
+<i><br />
+Unable to obtain lock on /home/osbadmin/pierretests/domains/osb_domain/servers/ms1/tmp/ms1.lok. Server may already be running<br />
+</i><br />
+<br />
+then <br />
+a) make sure server is not running<br />
+b) rm /home/osbadmin/pierretests/domains/osb_domain/servers/ms1/tmp/ms1.lok

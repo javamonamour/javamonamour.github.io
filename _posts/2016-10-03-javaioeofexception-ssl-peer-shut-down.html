@@ -1,0 +1,111 @@
+---
+layout: post
+title: "java.io.EOFException: SSL peer shut down incorrectly"
+date: 2016-10-03T11:30:00.001+02:00
+permalink: /2016/10/javaioeofexception-ssl-peer-shut-down.html
+blogger_id: "6260156498051543815"
+tags: ["handshake", "ssl"]
+---
+This error:
+
+<br/><br/>
+
+<pre>
+
+Caused by: javax.net.ssl.SSLHandshakeException: Remote host closed connection during handshake
+    at com.sun.net.ssl.internal.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:899)
+    at com.sun.net.ssl.internal.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1218)
+    at com.sun.net.ssl.internal.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1245)
+    at com.sun.net.ssl.internal.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1229)
+    at sun.net.www.protocol.https.HttpsClient.afterConnect(HttpsClient.java:476)
+    at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:166)
+    at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(HttpURLConnection.java:1033)
+    at sun.net.www.protocol.https.HttpsURLConnectionImpl.getOutputStream(HttpsURLConnectionImpl.java:230)
+    at com.sun.jersey.client.urlconnection.URLConnectionClientHandler$1$1.getOutputStream(URLConnectionClientHandler.java:202)
+    at com.sun.jersey.api.client.CommittingOutputStream.commitWrite(CommittingOutputStream.java:117)
+    at com.sun.jersey.api.client.CommittingOutputStream.write(CommittingOutputStream.java:89)
+    at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:202)
+    at sun.nio.cs.StreamEncoder.implFlushBuffer(StreamEncoder.java:272)
+    at sun.nio.cs.StreamEncoder.implFlush(StreamEncoder.java:276)
+    at sun.nio.cs.StreamEncoder.flush(StreamEncoder.java:122)
+    at java.io.OutputStreamWriter.flush(OutputStreamWriter.java:212)
+    at java.io.BufferedWriter.flush(BufferedWriter.java:236)
+    at com.sun.jersey.core.util.ReaderWriter.writeToAsString(ReaderWriter.java:191)
+    at com.sun.jersey.core.provider.AbstractMessageReaderWriterProvider.writeToAsString(AbstractMessageReaderWriterProvider.java:128)
+    at com.sun.jersey.core.impl.provider.entity.StringProvider.writeTo(StringProvider.java:88)
+    at com.sun.jersey.core.impl.provider.entity.StringProvider.writeTo(StringProvider.java:58)
+    at com.sun.jersey.api.client.RequestWriter.writeRequestEntity(RequestWriter.java:311)
+    at com.sun.jersey.client.urlconnection.URLConnectionClientHandler._invoke(URLConnectionClientHandler.java:181)
+    at com.sun.jersey.client.urlconnection.URLConnectionClientHandler.handle(URLConnectionClientHandler.java:129)
+    ... 7 more
+Caused by: java.io.EOFException: SSL peer shut down incorrectly
+    at com.sun.net.ssl.internal.ssl.InputRecord.read(InputRecord.java:462)
+    at com.sun.net.ssl.internal.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:880)
+    ... 30 more
+
+
+Unexpected error occured!
+com.sun.jersey.api.client.ClientHandlerException: java.net.SocketException: Connection reset
+    at com.sun.jersey.client.urlconnection.URLConnectionClientHandler.handle(URLConnectionClientHandler.java:131)
+    at com.csg.cs.batch.launch.client.util.JerseyClientWrapper$1.handle(JerseyClientWrapper.java:67)
+    at com.sun.jersey.api.client.Client.handle(Client.java:629)
+    at com.sun.jersey.api.client.WebResource.handle(WebResource.java:601)
+    at com.sun.jersey.api.client.WebResource.access$200(WebResource.java:74)
+    at com.sun.jersey.api.client.WebResource$Builder.post(WebResource.java:507)
+    at com.csg.cs.batch.launch.client.util.JerseyClientWrapper.postOverHTTPS(JerseyClientWrapper.java:87)
+    at com.csg.cs.batch.launch.client.JobClient.main(JobClient.java:86)
+Caused by: java.net.SocketException: Connection reset
+    at java.net.SocketInputStream.read(SocketInputStream.java:168)
+    at com.sun.net.ssl.internal.ssl.InputRecord.readFully(InputRecord.java:422)
+    at com.sun.net.ssl.internal.ssl.InputRecord.read(InputRecord.java:460)
+    at com.sun.net.ssl.internal.ssl.SSLSocketImpl.readRecord(SSLSocketImpl.java:880)
+    at com.sun.net.ssl.internal.ssl.SSLSocketImpl.performInitialHandshake(SSLSocketImpl.java:1218)
+    at com.sun.net.ssl.internal.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1245)
+    at com.sun.net.ssl.internal.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:1229)
+    at sun.net.www.protocol.https.HttpsClient.afterConnect(HttpsClient.java:476)
+    at sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:166)
+    at sun.net.www.protocol.http.HttpURLConnection.getOutputStream(HttpURLConnection.java:1033)
+    at sun.net.www.protocol.https.HttpsURLConnectionImpl.getOutputStream(HttpsURLConnectionImpl.java:230)
+    at com.sun.jersey.client.urlconnection.URLConnectionClientHandler$1$1.getOutputStream(URLConnectionClientHandler.java:202)
+    at com.sun.jersey.api.client.CommittingOutputStream.commitWrite(CommittingOutputStream.java:117)
+    at com.sun.jersey.api.client.CommittingOutputStream.write(CommittingOutputStream.java:89)
+    at sun.nio.cs.StreamEncoder.writeBytes(StreamEncoder.java:202)
+    at sun.nio.cs.StreamEncoder.implFlushBuffer(StreamEncoder.java:272)
+    at sun.nio.cs.StreamEncoder.implFlush(StreamEncoder.java:276)
+    at sun.nio.cs.StreamEncoder.flush(StreamEncoder.java:122)
+    at java.io.OutputStreamWriter.flush(OutputStreamWriter.java:212)
+    at java.io.BufferedWriter.flush(BufferedWriter.java:236)
+    at com.sun.jersey.core.util.ReaderWriter.writeToAsString(ReaderWriter.java:191)
+    at com.sun.jersey.core.provider.AbstractMessageReaderWriterProvider.writeToAsString(AbstractMessageReaderWriterProvider.java:128)
+    at com.sun.jersey.core.impl.provider.entity.StringProvider.writeTo(StringProvider.java:88)
+    at com.sun.jersey.core.impl.provider.entity.StringProvider.writeTo(StringProvider.java:58)
+    at com.sun.jersey.api.client.RequestWriter.writeRequestEntity(RequestWriter.java:311)
+    at com.sun.jersey.client.urlconnection.URLConnectionClientHandler._invoke(URLConnectionClientHandler.java:181)
+    at com.sun.jersey.client.urlconnection.URLConnectionClientHandler.handle(URLConnectionClientHandler.java:129)
+
+</pre>
+
+
+
+<br/><br/>
+
+according to Oracle Support KB documents:
+<br/><br/>
+
+  SSL-Encrypted JDBC Connections Fail With "Remote host closed connection during handshake" (Doc ID 2149709.1)
+<br/><br/>
+
+
+  Getting "javax.net.ssl.SSLHandshakeException: Remote Host Closed Connection During Handshake" Error (Doc ID 1572454.1)
+
+<br/><br/>
+
+it could be because of unsupported cypher suites (not in our case, this is a WLS to WLS communication, a DB listener is not involved) , or a proxy or a firewall in between that mangles the data transfer or closes the connection (mmmm this also is unsure)
+
+<br/><br/>
+
+
+
+
+
+

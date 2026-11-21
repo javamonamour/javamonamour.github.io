@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Keep all your XSDs in a single place"
+date: 2010-12-20T17:51:00.000+01:00
+permalink: /2010/12/keep-all-your-xsds-in-single-place.html
+blogger_id: "2131404948654579438"
+tags: ["OSR", "UDDI"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2010-12-21
+    html: "You could also use the SOA Suite MDS repository...check this article out, http://blogs.oracle.com/soabpm/2009/07/reusing_common_metadata_wsdl_x.html"
+  - author: "Eric Elzinga"
+    date: 2010-12-22
+    html: "The OSB (Eclipse environment) still forces you to have the xsd resources locally in your osb configuration project (so it can relate the dependencies). On deploy you could overrule the location of the xsds, but the next time when you edit the osb resources in Eclipse it will have an invalid status again. I&#39;m still looking for a clean solution for this."
+---
+I want to avoid copying/pasting XSDs all over the places (every single OSB project, every single SOA Suite Project....)<br />
+<br />
+<a href="http://orasoa.blogspot.com/2007/11/deploy-single-xsd-files.html">This</a> article talks about this issue.<br />
+<br />
+I am experimenting with Oracle Service Registry (OSR), it was a bit of a fight to install it, but finally I chose "Jetty HTTP Server" and it works....<br />
+<br />
+My dream would be to register all XSDs and WSDLs in OSR and import them into OSB using the "import from UDDI" feature....

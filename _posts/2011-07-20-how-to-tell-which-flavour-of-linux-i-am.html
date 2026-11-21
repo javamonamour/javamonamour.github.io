@@ -1,0 +1,44 @@
+---
+layout: post
+title: "How to tell which flavour of Linux I am running"
+date: 2011-07-20T10:28:00.000+02:00
+permalink: /2011/07/how-to-tell-which-flavour-of-linux-i-am.html
+blogger_id: "923171167587465858"
+tags: ["linux"]
+---
+When you telnet, you get it all:<br />
+<br />
+<i>login as: a087<br />
+*---------------------------------------*<br />
+   Host:         blahost<br />
+   Company:      ACME<br />
+   Type:         PHYSICAL<br />
+   Zone:         INTRANET<br />
+   Environment:  PRODUCTION<br />
+   Location:     Block<br />
+<br />
+   In case of problems, contact<br />
+   linux@acme.com<br />
+<br />
+*---------------------------------------*<br />
+a087@acme.com's password:<br />
+Last login: Tue Jul 19 17:20:14 2011 from bla.acme.com<br />
+Welcome to blahost.<br />
+This system is managed by Puppet 2.6.7.<br />
+<br />
+<b>Running Red Hat Enterprise Linux Server release 5.6 (Tikanga)</b>.<br />
+</i><br />
+<br />
+<br />
+also, <b>uname -a</b> tells you a lot:<br />
+<br />
+Linux blahost 2.6.18-238.1.1.el5 #1 SMP Tue Jan 4 13:32:19 EST 2011 x86_64 x86_64 x86_64 GNU/Linux<br />
+<br />
+<br />
+and in case of RedHat<br />
+<br />
+<b>cat /etc/redhat-release</b><br />
+Red Hat Enterprise Linux Server release 5.6 (Tikanga)<br />
+<br />
+otherwise just do<br />
+ls /etc/*release

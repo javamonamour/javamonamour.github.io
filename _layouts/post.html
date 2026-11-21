@@ -1,0 +1,14 @@
+---
+layout: default
+---
+<article>
+  <h1>{{ page.title }}</h1>
+  <p class="meta">{{ page.date | date: "%A, %B %-d, %Y" }}</p>
+  <div class="post-body">{{ content }}</div>
+  {% include labels.html labels=page.tags %}
+  {% if page.blogger_comments %}
+  <section class="comments"><h2>{{ page.blogger_comments.size }} comment{% if page.blogger_comments.size > 1 %}s{% endif %}:</h2>
+  {% for c in page.blogger_comments %}<div class="comment"><p class="meta">{{ c.author }} said ({{ c.date }}):</p>{{ c.html }}</div>{% endfor %}
+  </section>{% endif %}
+  <nav class="prevnext">{% if page.previous %}<a href="{{ page.previous.url }}">&laquo; {{ page.previous.title }}</a>{% endif %}{% if page.next %}<a href="{{ page.next.url }}">{{ page.next.title }} &raquo;</a>{% endif %}</nav>
+</article>

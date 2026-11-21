@@ -1,0 +1,36 @@
+---
+layout: post
+title: "JMXTerm and WebLogic"
+date: 2013-12-04T18:28:00.003+01:00
+permalink: /2013/12/jmxterm-and-weblogic.html
+blogger_id: "6531623933850701265"
+tags: ["JMX", "weblogic"]
+---
+Download the uberjar <a href="http://wiki.cyclopsgroup.org/jmxterm/download">http://wiki.cyclopsgroup.org/jmxterm/download</a> (I love that, no need to have complicated classpaths). <a href="http://kent.dl.sourceforge.net/project/cyclops-group/jmxterm/1.0-alpha-4/jmxterm-1.0-alpha-4-uber.jar">This link worked for me</a>.
+<br/><br/>
+
+On how to <a href="/2013/11/weblogic-jmx-remote-using-jmx-protocol.html">configure WebLogic for JMS see here</a>.
+<br/><br/>
+
+This is a sample session:
+<pre>
+java -jar jmxterm-1.0-alpha-4-uber.jar
+#this will connect remotely
+open myserver.acme.com:8888
+#this will list all available beans
+beans
+#this will filter only com.bea stuff
+domain com.bea
+#this will set your current bean
+bean com.bea:Name=wlsbjmsrpDataSource,ServerRuntime=osbpl1as,Type=JDBCDataSourceRuntime
+#this will get an attrbute from current bean
+get ActiveConnectionsCurrentCount
+</pre>
+
+<br/><br/>
+For a more complete example: 
+<a href="http://rostislav-matl.blogspot.com/2011/02/monitoring-tomcat-with-jmxterm.html?_sm_au_=iVV5Nr3q41tnt3Mt">Here a lot of useful commands.</a>
+
+<br/><br/>
+
+

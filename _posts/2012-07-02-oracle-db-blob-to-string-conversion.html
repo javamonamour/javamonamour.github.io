@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Oracle DB BLOB to String conversion"
+date: 2012-07-02T11:28:00.005+02:00
+permalink: /2012/07/oracle-db-blob-to-string-conversion.html
+blogger_id: "8149019420793344290"
+tags: ["oracledb"]
+---
+the problem is mainly with BLOBs > 2K<br />
+<br />
+This is a collection of strategies:<br />
+<br />
+this doesn't work, I get a "ORA-00932: inconsistent datatypes: expected NUMBER got BLOB" :<br />
+<b>select TO_CHAR(DATA_VALUE) from wli_qs_report_data where msg_guid = 'uuid:7f9b72b69446518a:3591707b:1382c7d7451:-73f8';</b><br />
+<br />
+<br />
+this one is better, but still gives "ORA-06502: PL/SQL: numeric or value error: raw variable length too long":<br />
+<b>select utl_raw.cast_to_varchar2(dbms_lob.substr(DATA_VALUE)) from wli_qs_report_data where msg_guid = 'uuid:7f9b72b69446518a:3591707b:1382c7d7451:-73f8';</b><br />
+<br />
+<br />
+this one gives "ORA-06502: PL/SQL: numeric or value error: raw variable length too long":<br />
+<b>select DBMS_LOB.SUBSTR(DATA_VALUE, 32767, 1) from wli_qs_report_data where msg_guid = 'uuid:7f9b72b69446518a:3591707b:1382c7d7451:-73f8';</b><br />
+<br />
+<br />
+this one gives "ORA-00904: "DBMS_LOB"."CONVERTTOCLOB": invalid identifier":<br />
+<b>select dbms_lob.converttoclob(DATA_VALUE) from wli_qs_report_data where msg_guid = 'uuid:7f9b72b69446518a:3591707b:1382c7d7451:-73f8';</b><br />
+<br />
+<br />
+after a while I give up, and do stuff directly in Java:<br />
+<br />
+<br />
+&lt;sql:query var="rsMessageCount" dataSource="jdbc/soainfra" scope="request"><br />
+<b>select DATA_VALUE from WLI_QS_REPORT_DATA where MSG_GUID='${msg_guid}' </b><br />
+&lt;/sql:query><br />
+<br />
+and I display ${rsMessageCount.getRowsByIndex()[0][0]}  :<br />
+its class is oracle.sql.BLOB<br />
+<br />
+I am planning to use <a href="http://docs.oracle.com/cd/E11882_01/appdev.112/e13995/oracle/sql/BLOB.html#getBinaryStream__">http://docs.oracle.com/cd/E11882_01/appdev.112/e13995/oracle/sql/BLOB.html#getBinaryStream__</a><br />
+<br />
+which is a java.sql.blob<br />
+<br />
+how to display a java.sql.Blob as a String? <br />
+<br />
+<a href="http://www.jguru.com/faq/view.jsp?EID=1325">http://www.jguru.com/faq/view.jsp?EID=1325</a><br />
+<br />
+<pre name="code" class="brush: java">java.sql.Blob blob = (java.sql.Blob)((org.apache.taglibs.standard.tag.common.sql.ResultImpl)(request.getAttribute("rsMessageCount"))).getRowsByIndex()[0][0];
+
+byte[] bdata = blob.getBytes(1, (int) blob.length());
+
+String text = new String(bdata);
+text = text.replace("<", "&amp;lt;");
+
+out.write(text);
+</pre>

@@ -1,0 +1,63 @@
+---
+layout: post
+title: "base64 in WLST"
+date: 2013-10-10T17:11:00.001+02:00
+permalink: /2013/10/base64-in-wlst.html
+blogger_id: "6923753131604924122"
+tags: ["base64", "WLST"]
+---
+<a href="http://docs.python.org/2/library/base64.html">if you try using base64</a> in WLST:
+
+<pre>
+import base64
+encoded = base64.b64encode('data to be encoded')
+</pre>
+
+<br/><br/>
+you get a:
+<br/><br/>
+<pre>
+AttributeError: 'module' object has no attribute 'b64encode'
+</pre>
+
+
+<br/><br/>
+
+reason being that there is:<br/>
+/usr/lib64/python2.4/base64.py<br/>
+and<br/>
+/opt/oracle/fmw11_1_1_5/oracle_common/util/jython/Lib/base64.py
+<br/><br/>
+
+b64decode does:
+<pre>
+import binascii
+binascii.a2b_base64(s)
+</pre>
+
+b64encode does:
+<pre>
+import binascii
+binascii.b2a_base64(s)[:-1]
+</pre>
+
+So basically:
+
+<pre>
+import binascii
+s='string to encode'
+encoded = binascii.b2a_base64(s)[:-1]
+print binascii.a2b_base64(encoded)
+string to encode
+print encoded
+c3RyaW5nIHRvIGVuY29kZQ==
+
+</pre>
+
+
+
+
+
+
+
+

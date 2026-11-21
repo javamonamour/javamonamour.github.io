@@ -1,0 +1,26 @@
+---
+layout: post
+title: "Virtual column (computed column) in Oracle DB"
+date: 2012-05-05T08:15:00.002+02:00
+permalink: /2012/05/virtual-column-computed-column-in.html
+blogger_id: "4824177888032729325"
+tags: ["oracledb"]
+---
+<b>create table c ( a varchar2(10), b as (substr( a, 5, 2 )));<br />
+insert into c (a) values ('TOPOLINO');<br />
+insert into c (a) values ('PAPERINO');<br />
+<br />
+select * from c;</b><br />
+<br />
+<i><br />
+"A"                           "B"                           <br />
+"PAPERINO"                    "RI"                          <br />
+"TOPOLINO"                    "LI"  </i>                        <br />
+<br />
+<br />
+I think this valuable feature was introduced only recently...<br />
+<br />
+A noticeable case is:<br />
+b as ( 'string1' || a || 'string2)<br />
+<br />
+Incidentally the feature is not supported in SQL Developer UI, so once you use virtual columns you must alter the table manually with DDL commands.

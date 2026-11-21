@@ -1,0 +1,53 @@
+---
+layout: post
+title: "Installing Oracle VM Server on.... Oracle VirtualBox!"
+date: 2015-03-04T20:12:00.002+01:00
+permalink: /2015/03/installing-oracle-vm-server-on-oracle.html
+blogger_id: "402860763380997236"
+tags: ["oraclevm"]
+---
+Download V46550-01 from http://edelivery.oracle.com/oraclevm
+<br />
+<br />
+choose Oracle VM and x86_64 bit
+<br />
+<br />
+Open Oracle VirtualBox, create a new VM , call it "oraclevmserver" , Type = Other, version = Other/unknown (64bit), base memory 8 GB, 
+"do not add a virtual drive", 
+remove all the Storage Controllers and add CD/DVD device and point it to the downloaded ISO file. (see here http://oracle-base.com/articles/vm/virtualbox-creating-a-new-vm.php for some more hints). Add also an  hard disk "oraclevmsserverdisk" with 12 GB , type VDI, dynamically allocated storage.
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/d9044d8d8dd7ceba.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/dd91b8208931473c.png" height="409" width="640" /></a></div>
+<br />
+<br />
+hit Enter to start installation; skip media test
+<br />
+<br />
+choose language and keyboard. When it tells you that the VBOX disk is defective, just reinitialize it from scratch using all available space. <br />
+<br />
+select DHCP (NB OVS needs STATIC IP!!! FIX THIS!!! ) <br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/756cb952b5f8e6ea.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/2257ccba4c7af516.png" height="390" width="640" /></a></div>
+<br />
+<br />
+at the end of the (hopefully) successful installation, just reboot (don't worry about the ISO DVD, it was automatically ejected by the anaconda installer I believe). You should get this happy and peaceful screen:
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/cac3672265a05e76.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/6cede56592e58192.png" height="416" width="640" /></a></div>
+<br />
+<br />
+<br />
+<br />
+<b>NEXT STEP</b>: do the same operation but assign a static IP and a hostname
+<br />
+<br /><br />
+<br />
+
+
+PS just discovered that Oracle gives away prebuilt VMs with Oracle VM Server and Manager: <a href="http://www.oracle.com/technetwork/server-storage/vm/template-1482544.html">http://www.oracle.com/technetwork/server-storage/vm/template-1482544.html</a>
+
+
+

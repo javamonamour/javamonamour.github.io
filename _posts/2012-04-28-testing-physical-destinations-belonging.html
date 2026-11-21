@@ -1,0 +1,62 @@
+---
+layout: post
+title: "Testing Physical Destinations belonging to Distributed Queues"
+date: 2012-04-28T21:16:00.001+02:00
+permalink: /2012/04/testing-physical-destinations-belonging.html
+blogger_id: "507746748657503803"
+tags: ["jms"]
+---
+I need to send a JMS message to a specific Queue part of a Distributed Queue.<br />
+If I send a message to a Distributed Queue, I have no control on which specific instance of the Queue, on which JMSServer, the message will go.<br />
+<br />
+When you target a Distributed Queue "MyQ"  to a cluster, this gets created in the JNDI tree of each Managed Server in the cluster:<br />
+<br />
+The Distributed Queue:<br />
+Class: weblogic.jms.common.DistributedDestinationImpl<br />
+Binding Name: jms.jndi.dq.MyQ<br />
+<br />
+The actual instance in the JMSServer running in the Managed Server:<br />
+Class: weblogic.jms.common.DestinationImpl<br />
+Binding Name = CommonJmsServer1@jms.jndi.dq.MyQ  <br />
+<br />
+<br />
+So, you must bind to "CommonJmsServer1@jms.jndi.dq.MyQ" to send to only that JMSServer.<br />
+<br />
+Example of WLST script to send to multiple physical destinations:<br />
+<br />
+<pre name="code" class="brush: java">from javax.naming import Context, InitialContext
+from weblogic.jndi import WLInitialContextFactory
+from javax.jms import QueueSession, Queue, Session
+
+msservers=["myhost1:8001", "myhost2:8001", "myhost3:8001", "myhost4:8001"]
+jmsservers=["CommonJmsServer1", "CommonJmsServer2", "CommonJmsServer3", "CommonJmsServer4"]
+
+jmsQueueJNDIs=["jms.jndi.dq.AQ", "jms.jndi.dq.BQ"];
+
+for i in range(len(msservers)):
+    msserver = msservers[i] 
+    jmsserver = jmsservers[i]
+    properties = Properties()
+    properties[Context.PROVIDER_URL] = "t3://" + msserver
+    properties[Context.INITIAL_CONTEXT_FACTORY] = WLInitialContextFactory.name
+    print "connecting to " + msserver + "..."
+    ctx = InitialContext(properties)
+    print "successfully connected to ", msserver
+    
+    connectionFactory = ctx.lookup("weblogic/jms/XAConnectionFactory" )
+    queueCon = connectionFactory.createQueueConnection();
+    queueSession = queueCon.createQueueSession( false, Session.AUTO_ACKNOWLEDGE );
+    for jmsqueue in jmsQueueJNDIs:
+        theJNDI = jmsserver + "@" + jmsqueue
+        queue = ctx.lookup(theJNDI)
+        sender = queueSession.createSender( queue );
+        
+        msg = queueSession.createTextMessage( "<hello>I am a pig</hello>" );
+        msg.setStringProperty("ISTEST", "true");
+        print "sending message to " + theJNDI
+        sender.send( msg );
+
+
+</pre><br />
+See also:<br />
+<a href="/2011/09/creating-durable-subscribers-for.html">/2011/09/creating-durable-subscribers-for.html</a>

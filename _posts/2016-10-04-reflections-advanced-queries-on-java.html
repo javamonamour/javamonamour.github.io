@@ -1,0 +1,81 @@
+---
+layout: post
+title: "Reflections: advanced queries on Java classpath"
+date: 2016-10-04T08:29:00.001+02:00
+permalink: /2016/10/reflections-advanced-queries-on-java.html
+blogger_id: "3254128660398944913"
+tags: ["reflection"]
+---
+We have already explored Reflections <a href="/2015/11/find-all-java-classes-implementing.html">here</a> .
+<br/><br/>
+Another cool feature is to find programmatically all classes where a given method is invoked; here I search for all references to method oracle.ucp.common.UniversalConnectionPoolBase.registerConnectionAffinityCallback(...):
+<br/><br/>
+
+<pre class="brush: java">
+
+package com.pierre.typequerylanguage;
+
+import static org.reflections.ReflectionUtils.getAllMethods;
+import static org.reflections.ReflectionUtils.withPrefix;
+
+import java.io.File;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Set;
+
+import org.reflections.Reflections;
+import org.reflections.scanners.FieldAnnotationsScanner;
+import org.reflections.scanners.MemberUsageScanner;
+import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.scanners.MethodParameterNamesScanner;
+import org.reflections.scanners.MethodParameterScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
+
+public class FindClassesInvokingMethod{
+ public static boolean VERBOSE = true;
+
+ public static void main(String[] args) {
+  if (VERBOSE) {
+   System.out.println("searching in the following jars:");
+   System.out.println(System.getProperty("java.class.path").replace(File.pathSeparatorChar, '\n'));
+  }
+  FilterBuilder oracleFilter = new FilterBuilder().include("oracle.*");
+  Collection&lt;URL> asList = ClasspathHelper.forJavaClassPath();
+  Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(asList).filterInputsBy(oracleFilter).setScanners(new SubTypesScanner(false), new TypeAnnotationsScanner(), new FieldAnnotationsScanner(),
+                new MethodAnnotationsScanner(), new MethodParameterScanner(), new MethodParameterNamesScanner(), new MemberUsageScanner()));
+  ;
+  System.out.println("searching now");
+  
+  
+  Set&lt;Method> myMethods = getAllMethods(oracle.ucp.common.UniversalConnectionPoolBase.class, withPrefix("registerConnectionAffinityCallback"));
+  System.out.println(myMethods.size());
+  for (Method method : myMethods) {
+   System.out.println(method.getDeclaringClass());
+   Set&lt;Member> usages = reflections.getMethodUsage(method);
+   for (Member member : usages) {
+    System.out.println("member.getDeclaringClass() " + member.getDeclaringClass());
+   }
+  }
+  
+
+  System.out.println("searching done");
+ }
+
+}
+
+</pre>
+
+<br/><br/>
+
+
+
+<br/><br/>
+
+
+

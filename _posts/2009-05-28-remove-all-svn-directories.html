@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Remove all .svn directories"
+date: 2009-05-28T16:44:00.001+02:00
+permalink: /2009/05/remove-all-svn-directories.html
+blogger_id: "950570226283276715"
+---
+find . -type d -name '.svn' -print0 | xargs -0 rm -rdf

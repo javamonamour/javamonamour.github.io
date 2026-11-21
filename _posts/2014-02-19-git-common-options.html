@@ -1,0 +1,34 @@
+---
+layout: post
+title: "git: common options"
+date: 2014-02-19T11:29:00.000+01:00
+permalink: /2014/02/git-common-options.html
+blogger_id: "8771787809551566907"
+tags: ["git"]
+---
+configure your identity:
+<br/>
+ 
+<pre>
+git config --global user.name "FirstName LastName"
+
+git config --global user.email "firstname.lastname@nespresso.com"
+
+</pre> 
+<br/>
+disable certificate warning
+<br/>
+<pre>
+git config --global http.sslVerify false
+</pre> 
+
+<br/><br/>
+use '--rebase' automatically when doing a 'pull' 
+<br/>
+<pre>
+git config --global branch.autosetuprebase remote
+</pre> 
+
+<br/><br/>
+
+For common commands, refer to the <a href="https://github.com/AlexZeitler/gitcheatsheet/blob/master/gitcheatsheet.pdf?raw=true">cheatsheet</a> or the the <a href="http://git-scm.com/book">Git Book</a>

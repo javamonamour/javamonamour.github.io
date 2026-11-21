@@ -1,0 +1,81 @@
+---
+layout: post
+title: "Oracle DB PL/SQL package example"
+date: 2013-04-06T16:04:00.002+02:00
+permalink: /2013/04/oracle-db-plsql-package-example.html
+blogger_id: "888512851102462856"
+tags: ["PL-SQL"]
+---
+I have always considered packages as a nuisance, as an extra, useless thing.
+In fact, their syntax is highly redundant (why do I have to declare twice the signature of a procedure???).
+<br/>
+But they help keep your PL/SQL organized.<br/>
+Here is an example:<br/>
+
+<pre name="code" class="brush: java">
+CREATE TABLE ACME_ALERTS (
+ERRORCODE VARCHAR2(100) NOT NULL,
+INTERFACEID VARCHAR2(100) NOT NULL,
+CREATIONDATE DATE NOT NULL,
+ISACTIVE NUMBER
+);
+
+CREATE INDEX "ACME_ALERTS_INDEX1" ON "ACME_ALERTS" ("ERRORCODE", "INTERFACEID") ;
+
+create or replace package PKG_ACME_ALERTS
+IS
+ FUNCTION ACME_findAlertInstance (theERRORCODE IN VARCHAR2, theINTERFACEID IN VARCHAR2 )  return NUMBER;
+ PROCEDURE ACME_insertAlertInstance (theERRORCODE IN VARCHAR2, theINTERFACEID IN VARCHAR2 );
+ PROCEDURE ACME_resetAlertInstance (theERRORCODE IN VARCHAR2, theINTERFACEID IN VARCHAR2 );
+END PKG_ACME_ALERTS;
+/
+
+
+ 
+CREATE OR REPLACE PACKAGE BODY PKG_ACME_ALERTS is
+
+FUNCTION ACME_findAlertInstance 
+  (theERRORCODE IN VARCHAR2, theINTERFACEID IN VARCHAR2 )  return NUMBER
+is 
+numberOfAlerts number;
+begin
+ SELECT COUNT(*) INTO numberOfAlerts
+ from ACME_ALERTS
+ where ERRORCODE=theERRORCODE
+ and INTERFACEID=theINTERFACEID
+ and ISACTIVE=1
+ and CREATIONDATE < (SYSDATE - 4/24);
+ 
+   return  numberOfAlerts;
+end ACME_findAlertInstance;
+
+
+
+PROCEDURE ACME_insertAlertInstance 
+  (theERRORCODE IN VARCHAR2, theINTERFACEID IN VARCHAR2 )
+as
+begin
+INSERT INTO ACME_ALERTS (
+ERRORCODE, INTERFACEID, CREATIONDATE, ISACTIVE
+) VALUES (
+theERRORCODE, theINTERFACEID, SYSDATE, 1
+);
+end ACME_insertAlertInstance;
+
+
+PROCEDURE ACME_resetAlertInstance 
+  (theERRORCODE IN VARCHAR2, theINTERFACEID IN VARCHAR2 )
+as
+begin
+UPDATE ACME_ALERTS set ISACTIVE = 0 where ERRORCODE=theERRORCODE and INTERFACEID=theINTERFACEID;
+end ACME_resetAlertInstance;
+
+
+end PKG_ACME_ALERTS;
+/
+
+
+</pre>
+
+
+

@@ -1,0 +1,88 @@
+---
+layout: post
+title: "Troubleshooting and Debugging WebLogic SAF"
+date: 2011-09-12T00:06:00.003+02:00
+permalink: /2011/09/troubleshooting-and-debugging-weblogic.html
+blogger_id: "703037062227974827"
+tags: ["saf"]
+---
+In the logs typically we shall find at startup:<br />
+<br />
+&lt;Info&gt; &lt;SAFService&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766521288&gt; &lt;BEA-281003&gt; &lt;<b>SAF Service has been initialized</b>.&gt;<br />
+<br />
+&lt;Info&gt; &lt;SAFService&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766521300&gt; &lt;BEA-281002&gt; &lt;<b>SAF Service has been started</b>.&gt; <br />
+<br />
+&lt;Info&gt; &lt;SAFService&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766522952&gt; &lt;BEA-281007&gt; &lt;<b>SAF Agent "TESTSAFAgent@ms2" has been successfully prepared</b>.&gt; <br />
+<br />
+<br />
+&lt;Info&gt; &lt;Store&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766522976&gt; &lt;BEA-280008&gt; &lt;<b>Opening the persistent file store "filestore2" for recovery</b>: directory=C:\Oracle2\Middleware\user_projects\domains\osb_domain\servers\ms2\data\store\filestore2 requestedWritePolicy="Direct-Write" fileLockingEnabled=true driver="wlfileio3".&gt; <br />
+<br />
+&lt;Info&gt; &lt;Store&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766523128&gt; &lt;BEA-280009&gt; &lt;<b>The persistent file store "filestore2" (6664685f-2e2e-4a64-b87d-c9fc9e485ade) has been opened</b>: blockSize=512 actualWritePolicy="Direct-Write(read-buffered)" explicitIOEnforced=false records=49.&gt; <br />
+<br />
+&lt;Info&gt; &lt;JMS&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766523135&gt; &lt;BEA-040321&gt; &lt;<b>JMSServer "TESTSAFAgent@ms2" is resuming</b>.&gt; <br />
+<br />
+&lt;Info&gt; &lt;Messaging&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766523212&gt; &lt;BEA-282003&gt; &lt;<b>The messaging kernel TESTSAFAgent@ms2 will use up to 345,986,389 bytes of memory before paging begins</b>&gt; <br />
+<br />
+&lt;Info&gt; &lt;Messaging&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766523226&gt; &lt;BEA-282001&gt; &lt;The messaging kernel TESTSAFAgent@ms2 is beginning recovery of its persistent state&gt;<br />
+<br />
+&lt;Info&gt; &lt;Messaging&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766523265&gt; &lt;BEA-282002&gt; &lt;The messaging kernel TESTSAFAgent@ms2 has recovered 0 persistent messages&gt;<br />
+<br />
+&lt;Debug&gt; &lt;SAFStore&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766523341&gt; &lt;BEA-000000&gt; &lt;*********** ***** &lt;SAFStoreRecord&gt; state= class=weblogic.messaging.saf.internal.SendingAgentImpl code=15 obj=&lt;SendingAgentImpl&gt; :  SAFAgentInternalName = TESTSAFAgent@ms2 null&gt; <br />
+<br />
+&lt;Debug&gt; &lt;SAFStore&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766523341&gt; &lt;BEA-000000&gt; &lt; == SAFStore Created for Agent TESTSAFAgent@ms2.SA&gt; <br />
+<br />
+&lt;Debug&gt; &lt;SAFSendingAgent&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766523343&gt; &lt;BEA-000000&gt; &lt;Sending Agent 'TESTSAFAgent@ms2' has recovered 0 conversation infos&gt; <br />
+<br />
+&lt;Debug&gt; &lt;SAFSendingAgent&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766523343&gt; &lt;BEA-000000&gt; &lt;Sending Agent 'TESTSAFAgent@ms2' is starting: found 0 topics&gt;<br />
+<br />
+&lt;Info&gt; &lt;SAFService&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[STANDBY] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766523343&gt; &lt;BEA-281008&gt; &lt;<b>SAF Agent "TESTSAFAgent@ms2" has been successfully activated</b>.&gt; <br />
+<br />
+<br />
+&lt;Info&gt; &lt;JMS&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '1' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315766539485&gt; &lt;BEA-040109&gt; &lt;<b>JMSServer "TESTSAFAgent@ms2" is started</b>.&gt;<br />
+<br />
+<br />
+<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/saf_admin/troubleshoot.html">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/saf_admin/troubleshoot.html</a><br />
+<br />
+<br />
+<br />
+<br />
+weblogic.diagnostics.debug.DebugLogger.DISABLED<br />
+weblogic.management.utils.debug<br />
+<br />
+-Dweblogic.debug.DebugSAFSendingAgent=true <br />
+-Dweblogic.log.StdoutSeverity="Debug"<br />
+<br />
+<br />
+<br />
+Server debug flags:<br />
+<br />
+in the "default" area:<br />
+DebugMessaging<br />
+(remember to restart)<br />
+<br />
+in the WebLogic area:<br />
+DebugSAFAdmin, DebugSAFLifeCycle, DebugSAFManager, DebugSAFMessagePath, DebugSAFReceivingAgent, DebugSAFSendingAgent, DebugSAFStore<br />
+DebugSAFTransport, DebugSAFVerbose, DebugJMSSAF, DebugMessagingKernel<br />
+<br />
+<br />
+Especially enabling <b>DebugJMSSAF</b> traces this info in the logs:<br />
+<br />
+&lt;Debug&gt; &lt;JMSSAF&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315778607231&gt; &lt;BEA-000000&gt; &lt;Forwarder reconnect(): remoteInitialCtx= null&gt; <br />
+&lt;Debug&gt; &lt;JMSSAF&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315778607231&gt; &lt;BEA-000000&gt; &lt;Forwarder connectTarget()&gt; <br />
+&lt;Debug&gt; &lt;JMSSAF&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315778607231&gt; &lt;BEA-000000&gt; &lt;Retry for 't3://pierrepc:7011' to 't3://pierrepc:7011'&gt; <br />
+&lt;Debug&gt; &lt;JMSSAF&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315778607232&gt; &lt;BEA-000000&gt; &lt;Forwarder::getInitialContext()::Password=XXXX,username=weblogic&gt;<br />
+<br />
+<br />
+The DebugMessagingKernel produces a lot of info:<br />
+<br />
+<br />
+ &lt;Debug&gt; &lt;MessagingKernel&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;weblogic&gt; &lt;&gt; &lt;&gt; &lt;1315779610966&gt; &lt;BEA-000000&gt; &lt;Queue SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2 sending message element: [ sequence=0 queue=1 name=SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2 state=0 deliveryCount=0 ] handle: [ id=3 queueRefCount=1 quotaRefCount=1 persistentRefCount=0 pinCount=1 size=5 persistent=true persistBody=false ]&gt; <br />
+&lt;Debug&gt; &lt;MessagingKernel&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;weblogic&gt; &lt;&gt; &lt;&gt; &lt;1315779610967&gt; &lt;BEA-000000&gt; &lt;Added message to the queue list: [ sequence=3 queue=1 name=SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2 state=1 deliveryCount=0 sequence=osb_domain@myCluster@ms2@SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2201109091356440079 number=0 ]&gt; <br />
+ &lt;Debug&gt; &lt;MessagingKernel&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;weblogic&gt; &lt;&gt; &lt;&gt; &lt;1315779610967&gt; &lt;BEA-000000&gt; &lt;Enlisting message [ sequence=3 queue=1 name=SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2 state=1 deliveryCount=0 sequence=osb_domain@myCluster@ms2@SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2201109091356440079 number=0 ] in transaction weblogic.store.gxa.internal.GXALocalTransactionImpl@80e605&gt; <br />
+ &lt;Debug&gt; &lt;MessagingKernel&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;weblogic&gt; &lt;&gt; &lt;&gt; &lt;1315779610975&gt; &lt;BEA-000000&gt; &lt;SendOperation prepare called for [ sequence=3 queue=1 name=SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2 state=5 deliveryCount=0 sequence=osb_domain@myCluster@ms2@SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2201109091356440079 number=0 ]&gt; <br />
+ &lt;Debug&gt; &lt;MessagingKernel&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;weblogic&gt; &lt;&gt; &lt;&gt; &lt;1315779610978&gt; &lt;BEA-000000&gt; &lt;Persisted new value of 0 for sequence [ name=osb_domain@myCluster@ms2@SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2201109091356440079 sequenceMode=ASSIGN destination=weblogic.messaging.kernel.internal.QueueImpl@8845ff03 lastValue=0 lastAssignedValue=9 ]&gt; <br />
+&lt;Debug&gt; &lt;MessagingKernel&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;weblogic&gt; &lt;&gt; &lt;&gt; &lt;1315779610983&gt; &lt;BEA-000000&gt; &lt;Persisted message element 3 to queue weblogic.messaging.kernel.internal.QueueImpl@8845ff03&gt; <br />
+ &lt;Debug&gt; &lt;MessagingKernel&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315779610987&gt; &lt;BEA-000000&gt; &lt;SendOperation commit called. Making message visible [ sequence=3 queue=1 name=SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2 state=261 deliveryCount=0 sequence=osb_domain@myCluster@ms2@SAFTestModule!SAFImportedDestinations0!SAFTESTLOCAL@TESTSAFAgent@ms2201109091356440079 number=10 ]&gt; <br />
+ &lt;Debug&gt; &lt;MessagingKernel&gt; &lt;pierrepc&gt; &lt;ms2&gt; &lt;[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;WLS Kernel&gt;&gt; &lt;&gt; &lt;&gt; &lt;1315779610994&gt; &lt;BEA-000000&gt; &lt;Resuming send of message [ state = COMMIT handle = [ id=3 queueRefCount=1 quotaRefCount=1 persistentRefCount=1 pinCount=1 size=5 persistent=true persistBody=true ] ]&gt;

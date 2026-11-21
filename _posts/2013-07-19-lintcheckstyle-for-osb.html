@@ -1,0 +1,59 @@
+---
+layout: post
+title: "Lint and CheckStyle for OSB"
+date: 2013-07-19T19:07:00.000+02:00
+permalink: /2013/07/lintcheckstyle-for-osb.html
+blogger_id: "3258412223604759310"
+---
+Export your sbconfig.jar and unjar it
+
+
+<br/>
+
+find . -name *.ProxyService > allproxies.txt
+<br/>
+
+wlst osblint.py > osblintresult.txt
+
+<br/>
+
+<pre name="code" class="brush: java">
+
+from xml.dom import minidom
+
+f = open('allproxies.txt')
+allproxies = [line.strip() for line in f ]
+f.close()
+
+for aproxy in allproxies:
+    print "processing", aproxy
+    xmldoc = minidom.parse(aproxy)
+    logs = xmldoc.getElementsByTagNameNS("http://www.bea.com/wli/sb/stages/logging/config", 'log')    
+    for log in logs:
+        logLevel = log.getElementsByTagNameNS("http://www.bea.com/wli/sb/stages/logging/config", 'logLevel')[0]
+        xqueryTexts = log.getElementsByTagNameNS("http://www.bea.com/wli/sb/stages/config", 'xqueryText')
+        if len(xqueryTexts) > 0: 
+            xqueryText = xqueryTexts[0]
+            logLevelString = logLevel.childNodes[0].nodeValue
+            variableString = xqueryText.childNodes[0].nodeValue
+            print aproxy, "logLevel", logLevelString, "variable", variableString
+            if "fault" in variableString and logLevelString == "debug":
+                print "OSBLINTERROR fault with debug level"
+        else:
+            print "OSBLINTERROR missing xqueryText"
+
+
+
+</pre>
+
+
+<br/>
+
+The check above tests that all fault variables are logged with level different from debug.
+
+<br/>
+
+
+
+
+

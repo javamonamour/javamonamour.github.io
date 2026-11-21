@@ -1,0 +1,24 @@
+---
+layout: post
+title: "XML Streaming Parsing: a desert populated by skinny animals"
+date: 2011-02-26T12:29:00.003+01:00
+permalink: /2011/02/xml-streaming-parsing-desert-populated.html
+blogger_id: "2037613918027669204"
+tags: ["jaxb", "stax", "streaming"]
+---
+<div class="separator" style="clear: both; text-align: center;"><a href="http://t1.gstatic.com/images?q=tbn:ANd9GcSA5Cms4KZIb3pPJ9qJNVLvXXAHgXT9wz-AmSj-MgI4FV2dfzcyxA&t=1" imageanchor="1" style=""><img border="0" height="194" width="259" src="http://t1.gstatic.com/images?q=tbn:ANd9GcSA5Cms4KZIb3pPJ9qJNVLvXXAHgXT9wz-AmSj-MgI4FV2dfzcyxA&t=1" /></a></div><br />
+Having to implement a XML Streaming parser is no fun these days.<br />
+<br />
+On one hand, you have a solid technology which is JAXB. Wonderful. But it doesn't handle streaming. So if you have a 1 GB document to parse, you are screwed.<br />
+<br />
+On the other hand, you have SAX and <a href="http://en.wikipedia.org/wiki/StAX">StAX</a>.... well I have played a few hours with StAX, and I can't really see the improvement over SAX, apart from the silly "pull" approach over the "push" approach... so what? Basically you still have to handle individual atomic events (startElement, characters, stopElement) and manually reconstruct your Java XmlEntity from them....  painful if you have complex Entities...<br />
+<br />
+StAX is useful only if you need to parse bits and pieces of information here and there, without having to parse the whole thing. Otherwise, FIASCO.<br />
+<br />
+<br />
+Finally I resorted to using the excellent <a href="http://download.oracle.com/javase/1.5.0/docs/api/java/util/Scanner.html">java.util.Scanner</a> class to locate the start of an element, and read until the end of the element into a String, then use JAXB to parse the String into a XmlEntity.... it works like a charm.<br />
+<br />
+you just need to annotate your entity as @<a href="http://download.oracle.com/javase/6/docs/api/javax/xml/bind/annotation/XmlRootElement.html">XmlRootElement</a> - no worries you can have multiple XmlRootElement in your file, and you can annotate even a static class.<br />
+<br />
+<br />
+I see here a big need for a streaming technology that can still make use of JAXB... it seems not too difficult to implement... or some adjustments on StAX so that it can call JAXB...

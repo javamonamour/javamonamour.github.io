@@ -1,0 +1,97 @@
+---
+layout: post
+title: "gcloud on CentOS7"
+date: 2018-01-28T11:49:00.000+01:00
+permalink: /2018/01/gcloud-on-centos7.html
+blogger_id: "29767731425812558"
+tags: ["gcloud", "gcp"]
+---
+for Windows you can install like this <a href="https://cloud.google.com/sdk/">https://cloud.google.com/sdk/</a><br />
+<br />
+in Linux it's much simpler:<br />
+<b>cd /home/centos/</b><br />
+<b>curl https://sdk.cloud.google.com | bash</b><br />
+<br />
+this will install into /home/centos/google-cloud-sdk/<br />
+<br />
+As region, I chose 8 (us-central1)<br />
+<br />
+in the browser, grant access to your account<br />
+<br />
+<b>gcloud init</b><br />
+<b>gcloud docker</b><br />
+<b>gcloud --version</b><br />
+<b>gcloud compute project-info describe</b><br />
+<br />
+<b>gcloud info</b><br />
+<pre>oogle Cloud SDK [186.0.0]
+
+Platform: [Linux, x86_64] ('Linux', 'localhost.localdomain', '3.10.0-693.17.1.el7.x86_64', '#1 SMP Thu Jan 25 20:13:58 UTC 2018', 'x86_64', 'x86_64')
+Python Version: [2.7.5 (default, Aug  4 2017, 00:39:18)  [GCC 4.8.5 20150623 (Red Hat 4.8.5-16)]]
+Python Location: [/usr/bin/python2]
+Site Packages: [Disabled]
+
+Installation Root: [/home/centos/google-cloud-sdk]
+Installed Components:
+  core: [2018.01.22]
+  gsutil: [4.28]
+  bq: [2.0.28]
+System PATH: [/home/centos/google-cloud-sdk/bin:/usr/lib64/qt-3.3/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:/home/centos/.local/bin:/home/centos/bin:/home/centos/apache-maven-3.5.0/bin/:/home/centos/jdk1.8.0_141/bin/]
+Python PATH: [/home/centos/google-cloud-sdk/lib/third_party:/home/centos/google-cloud-sdk/lib:/usr/lib64/python27.zip:/usr/lib64/python2.7/:/usr/lib64/python2.7/plat-linux2:/usr/lib64/python2.7/lib-tk:/usr/lib64/python2.7/lib-old:/usr/lib64/python2.7/lib-dynload]
+Cloud SDK on PATH: [True]
+Kubectl on PATH: [/usr/local/sbin/kubectl]
+
+Installation Properties: [/home/centos/google-cloud-sdk/properties]
+User Config Directory: [/home/centos/.config/gcloud]
+Active Configuration Name: [default]
+Active Configuration Path: [/home/centos/.config/gcloud/configurations/config_default]
+
+Account: [blabla@gmail.com]
+Project: [pippo-189911]
+
+Current Properties:
+  [core]
+    project: [pippo-189911]
+    account: [blabla@gmail.com]
+    disable_usage_reporting: [False]
+  [compute]
+    region: [us-central1]
+    zone: [us-central1-a]
+
+Logs Directory: [/home/centos/.config/gcloud/logs]
+Last Log File: [/home/centos/.config/gcloud/logs/2018.01.28/01.19.39.753977.log]
+
+git: [git version 1.8.3.1]
+ssh: [OpenSSH_7.4p1, OpenSSL 1.0.2k-fips  26 Jan 2017]
+
+</pre><br />
+<b>gcloud config set compute/zone us-central1-a</b><br />
+<b>gcloud config set compute/region us-central1</b><br />
+<br />
+<br />
+<br />
+<b>gcloud compute instances create my-instance</b><br />
+<br />
+<br />
+<b>gcloud compute instances list</b><br />
+<pre>NAME                                      ZONE           MACHINE_TYPE               PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP      STATUS
+gke-cluster-1-default-pool-6e000aa7-489w  us-central1-a  custom (1 vCPU, 2.00 GiB)               10.128.0.3   104.154.182.52   RUNNING
+gke-cluster-1-default-pool-6e000aa7-hrqp  us-central1-a  custom (1 vCPU, 2.00 GiB)               10.128.0.2   104.154.229.102  RUNNING
+gke-cluster-1-default-pool-6e000aa7-s43m  us-central1-a  custom (1 vCPU, 2.00 GiB)               10.128.0.4   35.224.155.62    RUNNING
+</pre><br />
+you can add --format yaml  or --format json but it's a lot more verbose<br />
+<br />
+<br />
+<b>gcloud container clusters upgrade cluster-1 --image-type cos --cluster-version 1.8.6-gke.0</b><br />
+<br />
+Failed to start node upgrade: Desired node version (1.8.6-gke.0) cannot be greater than current master version (1.7.12-gke.0)<br />
+<br />
+<br />
+gcloud compute instances describe my-instance --zone us-central1-a<br />
+<br />
+gcloud compute ssh my-instance --zone us-central1-a<br />
+gcloud compute scp ~/file-1 my-instance:~/remote-destination --zone us-central1-a<br />
+<br />
+<br />
+<br />
+

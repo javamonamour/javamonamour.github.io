@@ -1,0 +1,58 @@
+---
+layout: post
+title: "Docker run a command in an image"
+date: 2018-04-17T15:53:00.002+02:00
+permalink: /2018/04/docker-run-command-in-image.html
+blogger_id: "6095719548218765142"
+tags: ["docker", "maven"]
+---
+How many times you are baffled because you run<br />
+<br />
+docker run myregistry/maven:3-alpine <br />
+<br />
+and it simply exists without doing anything.<br />
+<br />
+Then you do <br />
+<br />
+docker run myregistry/maven:3-alpine /bin/bash<br />
+<br />
+and the same thing happens<br />
+<br />
+Then you inspect the image:<br />
+<br />
+docker image inspect myregistry/maven:3-alpine<br />
+<br />
+<br />
+and you notice<br />
+<br />
+<pre>           "Cmd": [
+                "mvn"
+            ],
+
+          "Entrypoint": [
+                "/usr/local/bin/mvn-entrypoint.sh"
+            ],
+
+</pre><br />
+and you wonder what is actually executed....<br />
+<br />
+Luckily you can simply OVERRIDE the entrypoint (see <a href="https://gist.github.com/mitchwongho/11266726">https://gist.github.com/mitchwongho/11266726</a> ) :<br />
+<br />
+<br />
+<b>docker run -it --entrypoint /bin/bash myregistry/maven:3-alpine</b><br />
+<br />
+so you enter directly a bash shell, without executing the original Entrypoint of course.<br />
+<br />
+<br />
+The documentation of this precious Maven image is <a href="https://hub.docker.com/_/maven/">https://hub.docker.com/_/maven/</a> here<br />
+<br />
+mvn settings are in /usr/share/maven/ref/settings-docker.xml and (maybe) in /usr/share/maven/conf/settings.xml<br />
+mvn binaries are in /usr/bin/mvn -> /usr/share/maven/bin/mvn<br />
+<br />
+<br />
+Ref: docker run <a href="https://docs.docker.com/engine/reference/commandline/run/#options">https://docs.docker.com/engine/reference/commandline/run/#options</a><br />
+<br />
+<br />
+Priceless, to debug Maven: mvn -X help:effective-settings<br />
+<br />
+

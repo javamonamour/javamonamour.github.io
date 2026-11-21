@@ -1,0 +1,24 @@
+---
+layout: post
+title: "Restarting your remote Application Server from Windows, with WinSCP"
+date: 2011-03-24T13:53:00.001+01:00
+permalink: /2011/03/restarting-your-remote-application.html
+blogger_id: "7308190181227615086"
+tags: ["WinSCP"]
+---
+"c:\Program Files\WinSCP\WinSCP.com" /script=restart.script<br />
+<br />
+and restart.script is:<br />
+<br />
+option confirm off<br />
+open  username:password@hostname<br />
+cd /pathToYourStartStopScripts<br />
+call ./stop.sh<br />
+call ./start.sh<br />
+<br />
+<br />
+<br />
+<br />
+easy does it!<br />
+<br />
+No more need to putty to your remote AppServer host to recycle the server

@@ -1,0 +1,29 @@
+---
+layout: post
+title: "VirtualBox: setting a home for Virtual Boxes"
+date: 2013-06-02T09:44:00.002+02:00
+permalink: /2013/06/virtualbox-chicken-and-egg-setting-home.html
+blogger_id: "7425229106768600580"
+tags: ["virtualbox"]
+---
+Sadly, when you install VirtualBox on Linux, by default it chooses your /home/oracle home (my user is oracle) to store the VMs. I hate having stuff installed in my home. <br />
+<br />
+In  /home/oracle/.VirtualBox/VirtualBox.xml there is an entry <br />
+SystemProperties defaultMachineFolder="/home/oracle/VirtualBox VMs" <br />
+You can change this by running VirtualBox and changing preferences (File/Preferences); it's irritating because this requires to open a graphic session, which is not scriptable.<br />
+<br />
+<a href="/images/2e171dcd4b331e80.jpg" imageanchor="1"><img border="0" height="526" src="/images/10cfbac80aad2fd0.jpg" width="640" /></a>   <br />
+<br />
+Since in my home partition I have little space, every attempt to create a VM dies with: <br />
+<i>vagrant up VBoxManage: error: Could not create the clone medium VERR_DISK_FULL  </i><br />
+<br />
+Another way is to create a symbolic link (mmmmmm) /home/oracle/VirtualBox VMs -&gt; /oracle/VirtualBox VMs <br />
+(besides, who chose a folder name containing SPACES???? Are you working at Microsoft or what?) <br />
+<br />
+or also you manually hack the VirtualBox.xml  <br />
+<br />
+So far, my experience with Vagrant and VirtualBox has not been very good. These tools still need to be ironed to make them fool (me) proof.<br />
+<br />
+Like, the idea of Vagrant to put all its stuff in a .vagrant.d (initial .) is moronic, it took me a while to find out this hidden repository. I assume you can change this by setting VAGRANT_HOME (see <a href="http://emptysquare.net/blog/moving-virtualbox-and-vagrant-to-an-external-drive/">http://emptysquare.net/blog/moving-virtualbox-and-vagrant-to-an-external-drive/</a> ). It would be so much better if one could choose these settings during an installation phase.  <br />
+<br />
+

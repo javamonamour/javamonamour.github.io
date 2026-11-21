@@ -1,0 +1,34 @@
+---
+layout: post
+title: "jvisualvm: java.lang.OutOfMemoryError: PermGen space"
+date: 2014-01-27T18:27:00.002+01:00
+permalink: /2014/01/jvisualvm-javalangoutofmemoryerror.html
+blogger_id: "2261268823162035708"
+tags: ["visualvm"]
+---
+I get OOM while profiling a JMV. 
+<br/>
+If you do 
+<br/>
+jvisualvm -J-XX:MaxPermSize=512m
+<br/>
+you get this:
+<br/>
+<pre>
+ps -ef | grep visual
+soa      16602 15386  0 18:06 pts/0    00:00:00 /bin/bash /opt/oracle/java/bin/../lib/visualvm//platform/lib/nbexec --jdkhome /opt/oracle/java/bin/.. --branding visualvm --clusters /opt/oracle/java/bin/../lib/visualvm//visualvm:/opt/oracle/java/bin/../lib/visualvm//profiler: --userdir /home/soa/.visualvm/7 -J-client -J-Xms24m -J-Xmx256m -J-Dsun.jvmstat.perdata.syncWaitMs=10000 -J-Dsun.java2d.noddraw=true -J-Dsun.java2d.d3d=false -J-XX:MaxPermSize=512m
+
+soa      16702 16602  8 18:06 pts/0    00:00:07 /opt/oracle/java/bin/java -Djdk.home=/opt/oracle/java -classpath /opt/oracle/java/lib/visualvm/platform/lib/boot.jar:/opt/oracle/java/lib/visualvm/platform/lib/org-openide-modules.jar:/opt/oracle/java/lib/visualvm/platform/lib/org-openide-util.jar:/opt/oracle/java/lib/visualvm/platform/lib/org-openide-util-lookup.jar:/opt/oracle/java/lib/visualvm/platform/lib/locale/boot_ja.jar:/opt/oracle/java/lib/visualvm/platform/lib/locale/boot_zh_CN.jar:/opt/oracle/java/lib/visualvm/platform/lib/locale/org-openide-modules_ja.jar:/opt/oracle/java/lib/visualvm/platform/lib/locale/org-openide-modules_zh_CN.jar:/opt/oracle/java/lib/visualvm/platform/lib/locale/org-openide-util_ja.jar:/opt/oracle/java/lib/visualvm/platform/lib/locale/org-openide-util-lookup_ja.jar:/opt/oracle/java/lib/visualvm/platform/lib/locale/org-openide-util-lookup_zh_CN.jar:/opt/oracle/java/lib/visualvm/platform/lib/locale/org-openide-util_zh_CN.jar:/opt/oracle/java/lib/dt.jar:/opt/oracle/java/lib/tools.jar -Dnetbeans.dirs=/opt/oracle/java/bin/../lib/visualvm//visualvm:/opt/oracle/java/bin/../lib/visualvm//profiler: -Dnetbeans.home=/opt/oracle/java/lib/visualvm/platform -client -Xms24m -Xmx256m -Dsun.jvmstat.perdata.syncWaitMs=10000 -Dsun.java2d.noddraw=true -Dsun.java2d.d3d=false -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/home/soa/.visualvm/7/var/log/heapdump.hprof org.netbeans.Main --userdir /home/soa/.visualvm/7 --branding visualvm
+
+</pre>
+
+<br/>
+If your VisualVM hangs on "computing description", just restart the monitored JVMs (see <a href="http://stackoverflow.com/questions/6222210/visualvm-hanging-on-startup-computing-description">http://stackoverflow.com/questions/6222210/visualvm-hanging-on-startup-computing-description</a> )
+
+<br/>
+
+
+Unfortunately, VisualVM has a limit of 64K profiled methods. There are options to limit to a subset of methods though...
+
+
+

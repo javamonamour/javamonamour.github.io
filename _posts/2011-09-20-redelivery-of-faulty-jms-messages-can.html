@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Redelivery of faulty JMS messages can bring a server to its knees"
+date: 2011-09-20T12:17:00.001+02:00
+permalink: /2011/09/redelivery-of-faulty-jms-messages-can.html
+blogger_id: "4847350900465855438"
+tags: ["jms"]
+---
+This morning CPU 200% and 100MB logs a minute.<br />
+<br />
+A quick examination shows this:<br />
+<br />
+WliSbTransports BEA-381502<br />
+<br />
+Exception in JmsInboundMDB.onMessage: com<br />
+.bea.wli.sb.transports.TransportException: Unexpected type of message received: weblogic.jms.common.ObjectMessageImpl<br />
+<br />
+No message redelivery limit was set, so the faulty messages were simply being redeliveder immediately several times a second.<br />
+<br />
+Impossible to delete messages, because they were constantly in "receive" or "receive transaction" state.<br />
+<br />
+Only way out: go to JMSServer, Monitoring, pause Consumption on all queues,<br />
+go to the queues, Monitoring, select messages and delete all.<br />
+<br />
+And, of course, set a redelivery limit on the queues.

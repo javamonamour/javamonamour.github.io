@@ -1,0 +1,64 @@
+---
+layout: post
+title: "Hyperic, browse PostgreSQL DB"
+date: 2012-05-13T22:08:00.006+02:00
+permalink: /2012/05/hyperic-browse-postgresql-db.html
+blogger_id: "1405461908812946198"
+tags: ["hyperic", "PostgreSQL"]
+---
+look in C:\pierre\hypericserver\server-4.6.5-EE\conf\hq-server.conf<br />
+<br />
+server.database=PostgreSQL<br />
+server.database-driver=org.postgresql.Driver<br />
+server.database-url=jdbc:postgresql://127.0.0.1:9432/hqdb?protocolVersion=2<br />
+server.database-user=hqadmin<br />
+server.database-password=ENC(Nadmq0eNldP2+Cew2mu+fw==)<br />
+<br />
+To browse the DB:<br />
+start HQ Server<br />
+<br />
+<br />
+C:\pierre\hypericserver\server-4.6.5-EE\bin\db-psql.bat<br />
+<br />
+<i><br />
+Welcome to psql 8.2.5, the PostgreSQL interactive terminal.<br />
+<br />
+Type:  \copyright for distribution terms<br />
+\h for help with SQL commands<br />
+\? for help with psql commands<br />
+\g or terminate with semicolon to execute query<br />
+\q to quit<br />
+<br />
+Warning: Console code page (437) differs from Windows code page (1252)<br />
+8-bit characters may not work correctly. See psql reference<br />
+page "Notes for Windows users" for details.<br />
+</i><br />
+<br />
+<a href="http://support.hyperic.com/display/DOC/Set+Up+PostgreSQL">Useful commands</a> <br />
+<b><br />
+\h     help  with SQL commands<br />
+?      help with psql commands<br />
+\du    list roles/users<br />
+\l     list databases<br />
+\c     to choose a database<br />
+\d     to list tables once in a database<br />
+\q    quit<br />
+</b><br />
+<br />
+I do:<br />
+<br />
+\c hqdb<br />
+\d<br />
+and I get plenty of eam_", hq_metric* and qrtz* tables. It looks quite complex.<br />
+<br />
+select * from eam_platform;<br />
+select * from eam_resource;<br />
+<br />
+<br />
+here http://linux.die.net/man/1/psql  the manual of psql<br />
+<br />
+<br />
+If you need a GUI, here <a href="http://wiki.postgresql.org/wiki/Community_Guide_to_PostgreSQL_GUI_Tools">http://wiki.postgresql.org/wiki/Community_Guide_to_PostgreSQL_GUI_Tools</a> a lost of GUI who support PostgreSQL<br />
+<br />
+<br />
+I have installed Squirrel, and copied postgresql-7.4.3.jar from Hyperic to C:\pierre\squirrel\lib (requires restart). It connects without problem (use jdbc:postgresql://127.0.0.1:9432/hqdb?protocolVersion=2 hqadmin hqadmin), but then I am lost in this UI.

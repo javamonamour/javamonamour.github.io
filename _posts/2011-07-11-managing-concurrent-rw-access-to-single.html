@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Managing concurrent R/W access to a single resource"
+date: 2011-07-11T21:08:00.001+02:00
+permalink: /2011/07/managing-concurrent-rw-access-to-single.html
+blogger_id: "4818730019023262744"
+tags: ["locks"]
+---
+I have a cache which can be reloaded by client threads.<br />
+The problem is to avoid having 2 (or 20!) threads reloading it at the same time.<br />
+<br />
+The solution is pretty simple:<br />
+<br />
+import java.util.concurrent.locks.Lock;<br />
+import java.util.concurrent.locks.ReentrantLock;<br />
+<br />
+....<br />
+<br />
+private static final Lock lock = new ReentrantLock();<br />
+<br />
+public static boolean acquireLock() throws InterruptedException {<br />
+return lock.tryLock(TIMEOUT_FOR_LOCK, TimeUnit.SECONDS);<br />
+}<br />
+<br />
+<br />
+public static String releaseLock() {<br />
+lock.unlock();<br />
+return "OK";<br />
+}<br />
+<br />
+<br />
+And I have exposed these 2 functions as custom XPaths.<br />
+<br />
+In my pipeline, I acquire the lock, then check again if the cache still needs to be reloaded (it might have been reloaded while trying to acquire the lock!)...<br />
+<br />
+VERY important:<br />
+<br />
+a) remember to release the lock, under all circumstances (i.e. do it also in error handler)<br />
+b) don't put your acquireLock in a synchronized method, otherwise a deadlock is guaranteed<br />
+<br />
+There might be a case where a thread acquires the lock and then dies without executing the error handler... in this case, the lock will NEVER be released. <br />
+I still must think about this scenario, very unlikely but you never know...

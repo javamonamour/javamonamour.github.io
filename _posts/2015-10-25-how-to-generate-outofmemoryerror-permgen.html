@@ -1,0 +1,74 @@
+---
+layout: post
+title: "How to generate a OutOfMemoryError PERMGEN"
+date: 2015-10-25T15:57:00.000+01:00
+permalink: /2015/10/how-to-generate-outofmemoryerror-permgen.html
+blogger_id: "176944402057855744"
+tags: ["eclipsemat", "permgen"]
+---
+Inspired by a very interesting presentation by Pierre-Hugues Charbonneau:
+<br />
+<iframe allowfullscreen="" frameborder="0" height="360" src="https://www.youtube.com/embed/PUUJ4rNpRhU" width="640"></iframe>
+
+<br />
+I have partially copied his code to generate a OOM PERMGEN:
+<br />
+
+<pre>
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
+
+public class ClassLoaderLeak {
+    private static Map<String, Aclass> leakingMap = new HashMap<String, Aclass> ();
+    public static void main(String[] args) {
+ try {
+     for (int i = 0; i &lt; 100000; i++) {
+  String dummyCLURLString = "file:" + i + ".jar";
+  URL[] dummyCLURL = new URL[] { new URL(dummyCLURLString) };
+  URLClassLoader urlClassLoader = new URLClassLoader(dummyCLURL);
+  Class[] arg1 = new Class[] {Aclass.class}; 
+  InvocationHandler arg2 = new InvocationHandler() {
+      @Override
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+   return null;
+      }
+  };
+  Aclass aclass = (Aclass)Proxy.newProxyInstance(urlClassLoader, arg1, arg2);
+  leakingMap.put(dummyCLURLString, aclass);
+  Thread.sleep(10);
+     }
+ } catch (Exception e) {
+     e.printStackTrace();
+ }
+
+    }
+
+}
+</string></string></pre>
+<br />
+run it with "java -XX:+HeapDumpOnOutOfMemoryError -XX:MaxPermSize=64m -Xmx256m ClassLoaderLeak 
+<br />
+<br />
+you will see the PermGen space quickly fill up until you get a OOM error
+<br />
+<br />
+You should see something like 
+<br />
+<pre>java.lang.OutOfMemoryError: PermGen space  
+Dumping heap to java_pid15744.hprof ...
+Heap dump file created [154441412 bytes in 1.982 secs]
+</pre>
+<br />
+Now open Eclipse MAT, open the java_pid15744.hprof file and run the Java Basics / Classloader Explorer tool:
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/e5464b5d1dfa0b88.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="465" src="/images/fa183eb06d3fe5d2.png" width="640" /></a></div>
+<br />
+You will see several thousands (in my case, 27k) instances of URLClassLoader accumulated in the PERMGEN
+
+

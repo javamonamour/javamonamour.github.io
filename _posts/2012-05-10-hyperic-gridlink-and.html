@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Hyperic, GridLink and JDBCConnectionPoolRuntime"
+date: 2012-05-10T14:44:00.004+02:00
+permalink: /2012/05/hyperic-gridlink-and.html
+blogger_id: "6387493882760551058"
+tags: ["hyperic"]
+---
+DataSource=SOADataSource <br />
+<br />
+Host Server="Weblogic 10.3 osbpp1do osbpp1ms1" (osbpp1do=wldomain, osbpp1ms1=wlserver) <br />
+<br />
+Resource Type="Weblogic 10.3 JDBC Connection Pool"<br />
+<br />
+jdbc.conn=SOADataSource<br />
+<br />
+JDBC URL=jdbc:oracle:thin:@mydbserver.acme.com:1551:osbdb1<br />
+JDBC Driver Name : oracle.jdbc.OracleDriver <br />
+<br />
+MBean as constructed by Hyperic:<br />
+<br />
+'osbpp1do:Location=osbpp1ms1,ServerRuntime=osbpp1ms1,Name=SOADataSource2,Type=<b>JDBCConnectionPoolRuntime</b>,ApplicationRuntime=SOADataSource1' <br />
+<br />
+Name=SOADataSource2 is the content of jdbc.conn (JDBC Connection Pool name)<br />
+ApplicationRuntime=SOADataSource1 is the content of application (Application name)<br />
+<br />
+application must be at least 1 characters long<br />
+<br />
+<br />
+java weblogic.Admin -url t3://myserver:8001 -username weblogic -password weblogic1 GET -pretty -type JDBCConnectionPoolRuntime<br />
+<br />
+osbpp1do:ServerRuntime=osbpp1ms1,Name=ACMEDataSource,Type=JDBCConnectionPoolRuntime,Location=osbpp1ms1<br />
+<br />
+SOADataSource has a <b>JDBCOracleDataSourceRuntime</b><br />
+(wls:/osbpp1do/serverRuntime/JDBCServiceRuntime/osbpp1ms1/JDBCDataSourceRuntimeMBeans/SOADataSource)<br />
+<br />
+GridLink stuff is a <br />
+JDBCOracleDataSourceRuntime extends JDBCDataSourceRuntime which extends a ComponentRuntime<br />
+<br />
+while a Generic DataSource is a <b>JDBCDataSourceRuntime</b> extends ComponentRuntime<br />
+<br />
+so... I am afraid you can't monitor GridLink Datasources with Hyperic OOTB, using a traditional prototype "Weblogic 10.3 JDBC Connection Pool": you need to write a custom JMX plugin for that.

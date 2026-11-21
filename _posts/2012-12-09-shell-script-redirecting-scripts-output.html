@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Shell script, redirecting a script's output in a simple way"
+date: 2012-12-09T10:38:00.000+01:00
+permalink: /2012/12/shell-script-redirecting-scripts-output.html
+blogger_id: "2683909203326307083"
+tags: ["shell"]
+---
+This is really the simplest way I could find: just embed the redirection thing in the script itself, live happily ever after.
+<br/><br/>
+
+
+<pre>
+
+
+main_function() {
+        echo Ciao
+        echo Miao
+}
+
+
+
+main_function > pippo.log 2>&1
+
+</pre>
+
+<br/><br/>
+
+
+If you want to see the output while executing:<br/>
+
+LOG_FILE=bla.log<br/>
+main_function | tee -a $LOG_FILE 2>&1 <br/>
+
+

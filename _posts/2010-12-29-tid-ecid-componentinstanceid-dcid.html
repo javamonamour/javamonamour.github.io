@@ -1,0 +1,44 @@
+---
+layout: post
+title: "tid, ecid, component_instance_id, dcid, composite_instance_id"
+date: 2010-12-29T20:48:00.002+01:00
+permalink: /2010/12/tid-ecid-componentinstanceid-dcid.html
+blogger_id: "849693681987348976"
+tags: ["SOASuite"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2010-12-30
+    html: "thank you Peter Paul, you are an angel, I have updated my post with your remarks"
+  - author: "Anonymous"
+    date: 2010-12-30
+    html: "The <b>ECID</b> is used to track a flow  messages through and between SOA Composites.<br />The <b>component_instance_id</b> is the identification of the component within the composite.<br />The <b>composite_instance_id</b> is the identification of the (SCA) composite.<br />These are used for example to show the flow of messages through the several components of you composites...<br /><br />hth,<br />Peter Paul<br /><a href=\"http://www.deltalounge.net/wpress\" rel=\"nofollow\">deltalounge</a>"
+---
+in a SOA Suite log line, these elements appear:<br />
+<br />
+<br />
+[2010-12-29T16:37:30.576+00:00] [soa_server1] [NOTIFICATION] [] [oracle.soa.mediator.common.cache] [<b>tid</b>: weblogic.work.j2ee.J2EEWorkManager$WorkWithListener@309d309d] [userId: pierre] [<b>ecid</b>: 0000IomzSwp8lnc5tjw0yX1D1v7j0036DZ,0] [APP: soa-infra] [composite_name: PierreProject] [<b>component_instance_id</b>: EDF2C8C0136911E0BFFDEF342CAF0998] [<b>dcid</b>: 240449412c647dab:58beda0f:12ce60fee82:-7ffd-000000000000d44b] [component_name: Mediator1] [<b>composite_instance_id</b>: 4] calloutMediatorMessage.toString=oracle.tip.mediator.common.message.MediatorNormalizedMessage@41524152<br />
+<br />
+<br />
+<br />
+<br />
+What do they mean?<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+tid: ??<br />
+<br />
+ecid: The ECID is used to track a flow messages through and between SOA Composites.<br />
+<br />
+component_instance_id: the identification of the component within the composite.<br />
+<br />
+dcid: ??<br />
+<br />
+composite_instance_id: the identification of the (SCA) composite.<br />
+<br />
+<br />
+ECID, component_instance_id and composite_instance_id are used for example to show the flow of messages through the several components of you composites...<br />
+<br />
+I shall answer to each ?? as I find out...

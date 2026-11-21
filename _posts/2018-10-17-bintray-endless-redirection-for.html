@@ -1,0 +1,28 @@
+---
+layout: post
+title: "bintray endless redirection for repo.scala-sbt.org"
+date: 2018-10-17T10:25:00.002+02:00
+permalink: /2018/10/bintray-endless-redirection-for.html
+blogger_id: "5428553279600101426"
+tags: ["bintray", "nexus", "scala"]
+---
+The Scala folks running this repository don't seem to understand the importance of running their stuff behind a Proxy Server, so that all elements come from the same domain.... instead, they send you HTTP 302 (MOVED) and force you to hop from repo.scala-sbt.org to dl.bintray.com and then to akamai.bintray.com .... which is outrageously cumbersome if you run your Nexus repository from behind a Firewall, then you have to open individually each subdomain... otherwise you end up with the dreaded " HTTP/1.1 407 Proxy Authentication Required "<br />
+<br />
+<br />
+<i><br />
+2018-10-16 16:21:19,993+0200 DEBUG [qtp72695066-17874]  *UNKNOWN org.sonatype.nexus.httpclient.outbound - https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/jars/sbt-native-packager.jar > GET /scalasbt/sbt-plugin-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/jars/sbt-native-packager.jar HTTP/1.1<br />
+<br />
+2018-10-16 16:21:20,102+0200 DEBUG [qtp72695066-17874]  *UNKNOWN org.sonatype.nexus.httpclient.outbound - https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/jars/sbt-native-packager.jar < HTTP/1.1 302 Moved Temporarily @ 108.4 ms
+
+2018-10-16 16:21:20,102+0200 DEBUG [qtp72695066-17874]  *UNKNOWN org.sonatype.nexus.httpclient.outbound - https://dl.bintray.com/sbt/sbt-plugin-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/jars/sbt-native-packager.jar > GET /sbt/sbt-plugin-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/jars/sbt-native-packager.jar HTTP/1.1<br />
+<br />
+2018-10-16 16:21:20,193+0200 DEBUG [qtp72695066-17874]  *UNKNOWN org.sonatype.nexus.httpclient.outbound - https://dl.bintray.com/sbt/sbt-plugin-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/jars/sbt-native-packager.jar < HTTP/1.1 302  @ 90.77 ms
+
+2018-10-16 16:21:20,195+0200 DEBUG [qtp72695066-17874]  *UNKNOWN org.sonatype.nexus.httpclient.outbound - https://akamai.bintray.com/3f/3f786b85a05e14c7ed5c24fbefbee19fbaa345e1db5d16fa9fa348c2a4e4789e?__gda__=exp=1539700400~hmac=9d5b250bffebb7cedf93ef28933b588c8788e9a7b20415dbe12e255435bf5ede&response-content-disposition=attachment%3Bfilename%3D%22sbt-native-packager.jar%22&response-content-type=application%2Fjava-archive&requestInfo=U2FsdGVkX1_tU3jkSNxcBb5JrmKzZS9pVZUOhb41Zj_AapUhiUGbx2fl-2B2bTDZvRaC1DmJfpw37KETEYGfMyBkdRqY-gknijMaFBx-HSJPsgC4aYd6Ejwpe2uzTSrTmhIF7HIgBbnG6hm8PxLHTvaGWPkWDnEacMK9-YMvxz8zphO4eHB46kniHIOc-vop&response-X-Checksum-Sha1=f8ab68145e3a23da45be0847f114065aa2fc0f54&response-X-Checksum-Sha2=3f786b85a05e14c7ed5c24fbefbee19fbaa345e1db5d16fa9fa348c2a4e4789e > GET /3f/3f786b85a05e14c7ed5c24fbefbee19fbaa345e1db5d16fa9fa348c2a4e4789e?__gda__=exp=1539700400~hmac=9d5b250bffebb7cedf93ef28933b588c8788e9a7b20415dbe12e255435bf5ede&response-content-disposition=attachment%3Bfilename%3D%22sbt-native-packager.jar%22&response-content-type=application%2Fjava-archive&requestInfo=U2FsdGVkX1_tU3jkSNxcBb5JrmKzZS9pVZUOhb41Zj_AapUhiUGbx2fl-2B2bTDZvRaC1DmJfpw37KETEYGfMyBkdRqY-gknijMaFBx-HSJPsgC4aYd6Ejwpe2uzTSrTmhIF7HIgBbnG6hm8PxLHTvaGWPkWDnEacMK9-YMvxz8zphO4eHB46kniHIOc-vop&response-X-Checksum-Sha1=f8ab68145e3a23da45be0847f114065aa2fc0f54&response-X-Checksum-Sha2=3f786b85a05e14c7ed5c24fbefbee19fbaa345e1db5d16fa9fa348c2a4e4789e HTTP/1.1<br />
+<br />
+2018-10-16 16:21:20,204+0200 DEBUG [qtp72695066-17874]  *UNKNOWN org.sonatype.nexus.httpclient.outbound - https://akamai.bintray.com/3f/3f786b85a05e14c7ed5c24fbefbee19fbaa345e1db5d16fa9fa348c2a4e4789e?__gda__=exp=1539700400~hmac=9d5b250bffebb7cedf93ef28933b588c8788e9a7b20415dbe12e255435bf5ede&response-content-disposition=attachment%3Bfilename%3D%22sbt-native-packager.jar%22&response-content-type=application%2Fjava-archive&requestInfo=U2FsdGVkX1_tU3jkSNxcBb5JrmKzZS9pVZUOhb41Zj_AapUhiUGbx2fl-2B2bTDZvRaC1DmJfpw37KETEYGfMyBkdRqY-gknijMaFBx-HSJPsgC4aYd6Ejwpe2uzTSrTmhIF7HIgBbnG6hm8PxLHTvaGWPkWDnEacMK9-YMvxz8zphO4eHB46kniHIOc-vop&response-X-Checksum-Sha1=f8ab68145e3a23da45be0847f114065aa2fc0f54&response-X-Checksum-Sha2=3f786b85a05e14c7ed5c24fbefbee19fbaa345e1db5d16fa9fa348c2a4e4789e < HTTP/1.1 407 Proxy Authentication Required @ 9.761 ms
+
+
+</i><br />
+<br />
+

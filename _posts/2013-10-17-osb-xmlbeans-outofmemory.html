@@ -1,0 +1,58 @@
+---
+layout: post
+title: "OSB xmlbeans outofmemory"
+date: 2013-10-17T12:22:00.001+02:00
+permalink: /2013/10/osb-xmlbeans-outofmemory.html
+blogger_id: "4836020882355901619"
+tags: ["OSB"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2014-10-08
+    html: "unfortunately there is no resolution... you can attempt using STREAMING, for me it was not working. So the only workaround is to split payloads."
+  - author: "Abhijeet Rai"
+    date: 2014-10-08
+    html: "Hello,<br /><br />What was the resolution ? Can you please update.<br /><br />we are having similar issue.<br /><br />thanks<br />Abhijeet"
+---
+we had a couple of cases of OOM lately, both preceded with this stuck thread:
+<br/>
+
+<pre>
+      org.apache.xmlbeans.impl.schema.SchemaParticleImpl.isFixed(SchemaParticleImpl.java:203)
+        org.apache.xmlbeans.impl.validator.Validator.validateSimpleType(Validator.java:1205)
+        org.apache.xmlbeans.impl.validator.Validator.handleText(Validator.java:829)
+        org.apache.xmlbeans.impl.validator.Validator.textEvent(Validator.java:814)
+        org.apache.xmlbeans.impl.validator.Validator.nextEvent(Validator.java:244)
+        org.apache.xmlbeans.impl.store.Validate.emitEvent(Validate.java:168)
+        org.apache.xmlbeans.impl.store.Validate.process(Validate.java:84)
+        org.apache.xmlbeans.impl.store.Validate.<init>(Validate.java:39)
+        org.apache.xmlbeans.impl.store.Xobj.validate(Xobj.java:1878)
+        org.apache.xmlbeans.impl.values.XmlObjectBase.validate(XmlObjectBase.java:386)
+        stages.transform.runtime.ValidateRuntimeStep.validate(ValidateRuntimeStep.java:225)
+        stages.transform.runtime.ValidateRuntimeStep.processMessage(ValidateRuntimeStep.java:124)
+        com.bea.wli.sb.stages.StageMetadataImpl$WrapperRuntimeStep.processMessage(StageMetadataImpl.java:346)
+        com.bea.wli.sb.pipeline.PipelineStage.processMessage(PipelineStage.java:84)
+        com.bea.wli.sb.pipeline.PipelineContextImpl.execute(PipelineContextImpl.java:1055)
+        com.bea.wli.sb.pipeline.Pipeline.processMessage(Pipeline.java:141)
+        com.bea.wli.sb.pipeline.PipelineContextImpl.execute(PipelineContextImpl.java:1055)
+        com.bea.wli.sb.pipeline.PipelineNode.doRequest(PipelineNode.java:55)
+        com.bea.wli.sb.pipeline.Node.processMessage(Node.java:67)
+        com.bea.wli.sb.pipeline.PipelineContextImpl.execute(PipelineContextImpl.java:1055)
+        com.bea.wli.sb.pipeline.Router.processMessage(Router.java:214)
+        com.bea.wli.sb.pipeline.MessageProcessor.processRequest(MessageProcessor.java:96)
+        com.bea.wli.sb.pipeline.RouterManager$1.run(RouterManager.java:593)
+        com.bea.wli.sb.pipeline.RouterManager$1.run(RouterManager.java:591)
+
+</pre>
+
+<br/>
+
+Doing a heap dump and using Eclipse MAT I could trace reconduct them to a org.apache.xmlbeans.impl.store.Cursor class, _toPrevBookmark method.
+<br/>
+
+Still investigating.
+
+<br/>
+
+PS it seems this was due to very large payload (> 20 MB). However it's quite frustrating.
+
+

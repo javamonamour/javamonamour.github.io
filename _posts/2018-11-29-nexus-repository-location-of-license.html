@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Nexus repository location of license"
+date: 2018-11-29T10:10:00.001+01:00
+permalink: /2018/11/nexus-repository-location-of-license.html
+blogger_id: "5977854853314035309"
+tags: ["nexus"]
+---
+If you move your Nexus repository to a new machine, it's quite annoying to have to reinstall the license file.<br />
+<br />
+The trick is to clone the folder ~/.java/.userPrefs, specifically the license is embedded in <br />
+<br />
+~/.java/.userPrefs/com/sonatype/nexus/professional/prefs.xml <br />
+<br />
+and it's common for Nexus2 and Nexus3<br />
+<br />
+I had searched everywhere for a .lic file, to no avail of course.<br />
+<br />
+<br />
+This is also documented here <a href="https://support.sonatype.com/hc/en-us/articles/115000779668-Methods-to-Install-a-Nexus-Repository-Manager-3-License">https://support.sonatype.com/hc/en-us/articles/115000779668-Methods-to-Install-a-Nexus-Repository-Manager-3-License</a>

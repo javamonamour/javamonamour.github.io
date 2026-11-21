@@ -1,0 +1,223 @@
+---
+layout: post
+title: "Hyperic, Anatomy of a JMX plugin"
+date: 2012-05-07T22:01:00.067+02:00
+permalink: /2012/05/hyperic-anatomy-of-jmx-plugin.html
+blogger_id: "3335358963882553659"
+tags: ["hyperic"]
+---
+<a href="http://support.hyperic.com/display/DOC/JMX+Plugin">http://support.hyperic.com/display/DOC/JMX+Plugin</a><br />
+<br />
+<a href="http://support.hyperic.com/display/DOC/JMX+Plugin+Tutorial">http://support.hyperic.com/display/DOC/JMX+Plugin+Tutorial</a><br />
+<br />
+More modern (for 4.6.5):<br />
+http://support.hyperic.com/display/EVO/JMX+Plugin<br />
+<br />
+<br />
+java -Duser=weblogic -Dpass=weblogic1 -Dplugins.include=jmx -jar C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\hq-pdk-4.6.5.jar jmx MBeanDumper service:jmx:rmi:///jndi/rmi://myhost:8888/jmxrmi<br />
+<br />
+(8888 is the remote jmx port)<br />
+<br />
+<br />
+java -Duser=weblogic -Dpass=weblogic1 -Dplugins.include=jmx -jar C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\hq-pdk-4.6.5.jar jmx MBeanDumper service:jmx:iiop://myhost:8001/jndi/weblogic.management.mbeanservers.runtime<br />
+<br />
+(8001 is the listen port of the WLS)<br />
+<br />
+you will get:<br />
+<br />
+<i>java.io.IOException: Failed to retrieve RMIServer stub: javax.naming.NoInitialContextException: Need to specify class name in environment or system property, or as an applet parameter, or in an application resource file:  java.naming.factory.initial<br />
+</i><br />
+<br />
+so you will add -Djava.naming.factory.initial=weblogic.jndi.WLInitialContextFactory<br />
+and a we have this:<br />
+<br />
+java -cp C:\Oracle\Middleware\wlserver_10.3\server\lib\wlfullclient.jar -Duser=weblogic -Dpass=weblogic1 -Djava.naming.factory.initial=weblogic.jndi.WLInitialContextFactory -Dplugins.include=jmx -jar C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\hq-pdk-4.6.5.jar jmx MBeanDumper service:jmx:iiop://myhost:8001/jndi/weblogic.management.mbeanservers.runtime<br />
+<br />
+but adding the wlfullclient.jar is not enough, because the classpath is set in the MANIFEST.MF of the hq-pdk-4.6.5.jar:<br />
+<br />
+<pre>Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: bob
+Build-Jdk: 1.6.0_29
+Main-Class: org.hyperic.hq.product.util.PluginMain
+Class-Path: hq-common-4.6.5.jar hq-util-4.6.5.jar commons-logging-1.0.
+ 4.jar httpclient-4.1.1.jar httpcore-4.1.jar commons-codec-1.4.jar com
+ mons-validator-1.3.1.jar commons-beanutils-1.7.0.jar commons-digester
+ -1.6.jar commons-collections-2.1.1.jar xml-apis-1.3.04.jar jsch-0.1.4
+ 2.jar log4j-1.2.14.jar velocity-1.6.3.jar commons-lang-2.4.jar oro-2.
+ 0.8.jar sigar-1.6.4.jar jdom-1.1.jar spring-beans-3.0.5.RELEASE.jar s
+ pring-asm-3.0.5.RELEASE.jar spring-context-3.0.5.RELEASE.jar spring-a
+ op-3.0.5.RELEASE.jar aopalliance-1.0.jar spring-expression-3.0.5.RELE
+ ASE.jar org.springframework.roo.file.monitor-1.0.2.RELEASE.jar org.sp
+ ringframework.roo.support-1.0.2.RELEASE.jar org.springframework.roo.f
+ ile.monitor.polling-1.0.2.RELEASE.jar wrapper-3.5.6.jar xstream-1.3.1
+ .jar xpp3_min-1.1.4c.jar hibernate-3.2.6.ga.jar asm-attrs-1.5.3.jar d
+ om4j-1.6.1.jar antlr-2.7.6.jar cglib-2.1_3.jar asm-1.5.3.jar spring-t
+ x-3.0.5.RELEASE.jar jboss-remoting-2.2.2.SP8.jar jboss-common-logging
+ -spi-2.0.4.GA.jar hq-lather-4.6.5.jar backport-util-concurrent-3.1.ja
+ r getopt-1.0.13.jar geronimo-j2ee-management_1.0_spec-1.1.jar snmp4j-
+ 1.11.jar xalan-2.7.1.jar serializer-2.7.1.jar cm-file-monitor-1.0.1.j
+ ar cm-versioncontrol-1.0.1.jar slf4j-log4j12-1.6.1.jar slf4j-api-1.6.
+ 1.jar jcl-over-slf4j-1.6.1.jar org.eclipse.jgit-1.0.0.201106090707-r.
+ jar org.eclipse.jgit.junit-1.0.0.201106090707-r.jar spring-oxm-3.0.5.
+ RELEASE.jar jpathwatch-0-94.jar jaxb-api-2.1.jar stax-api-1.0-2.jar a
+ ctivation-1.1.jar jaxb-impl-2.1.3.jar
+
+</pre><br />
+all those classes are in<br />
+C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib<br />
+<br />
+I copy there the wlfullclient.jar<br />
+<br />
+and I run<br />
+java -cp "C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\*" -Duser=weblogic -Dpass=weblogic1 -Djava.naming.factory.initial=weblogic.jndi.WLInitialContextFactory -Dplugins.include=jmx org.hyperic.hq.product.util.PluginMain jmx MBeanDumper service:jmx:iiop://myhost:8001/jndi/weblogic.management.mbeanservers.runtime<br />
+<br />
+<br />
+and I get<br />
+<br />
+<pre>java.io.IOException: Failed to retrieve RMIServer stub: javax.naming.CommunicationException [Root ex
+ception is java.net.ConnectException: t3://localhost:7001: Destination unreachable; nested exception
+ is:
+        java.net.ConnectException: Connection refused: connect; No available router to destination]
+        at javax.management.remote.rmi.RMIConnector.connect(Unknown Source)
+        at javax.management.remote.JMXConnectorFactory.connect(Unknown Source)
+        at org.hyperic.hq.product.jmx.MxUtil.getMBeanConnector(MxUtil.java:538)
+        at org.hyperic.hq.product.jmx.MxUtil.connect(MxUtil.java:564)
+        at org.hyperic.hq.product.jmx.MxUtil.getMBeanServer(MxUtil.java:621)
+        at org.hyperic.hq.product.jmx.MBeanDumper.getMBeanServer(MBeanDumper.java:138)
+        at org.hyperic.hq.product.jmx.MBeanDumper.dump(MBeanDumper.java:164)
+        at org.hyperic.hq.product.jmx.MBeanDumper.dump(MBeanDumper.java:160)
+        at org.hyperic.hq.product.jmx.MBeanDumper.main(MBeanDumper.java:235)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+        at java.lang.reflect.Method.invoke(Unknown Source)
+        at org.hyperic.hq.product.util.PluginMain.runMain(PluginMain.java:218)
+        at org.hyperic.hq.product.util.PluginMain.main(PluginMain.java:317)
+</pre><br />
+<br />
+Were on earth is this "t3://localhost:7001" ? crap!!!<br />
+<br />
+<br />
+First, enable your Java process to be monitored by remote jmx (see help name="Java" at the end of the myfirstplugin.xml plugin below)<br />
+<br />
+take this file myfirstplugin.xml and put it into $HQ_AGENT_HOME/pdk/plugins<br />
+(like /opt/hyperic/agent/agent-4.6.5-EE/bundles/agent-4.6.5/pdk/plugins)<br />
+<br />
+and adjust the localhost:6969 bit:<br />
+<br />
+<pre class="brush: xml" name="code">&lt;?xml version="1.0"?&gt;
+ 
+&lt;!DOCTYPE plugin [&lt;!ENTITY process-metrics SYSTEM "/pdk/plugins/process-metrics.xml"&gt;]&gt;
+ 
+&lt;plugin package="org.hyperic.hq.plugin.java"&gt;
+ 
+&lt;classpath&gt;
+&lt;include name="pdk/lib/mx4j"/&gt;
+&lt;/classpath&gt;
+ 
+&lt;filter name="template" value="${OBJECT_NAME}:${alias}"/&gt;
+ 
+&lt;metrics name="Class Loading Metrics"&gt;
+&lt;metric name="Loaded Class Count" indicator="false" category="THROUGHPUT"/&gt;
+&lt;metric name="Total Loaded Class Count" indicator="false" category="THROUGHPUT"/&gt;
+&lt;metric name="Unloaded Class Count" indicator="false" category="THROUGHPUT"/&gt;
+&lt;/metrics&gt;
+ 
+&lt;metrics name="Compilation"&gt;
+&lt;metric name="Total Compilation Time" indicator="false" category="THROUGHPUT" collectionType="trendsup" units="ms"/&gt;
+&lt;/metrics&gt;
+ 
+&lt;metrics name="Garbage Collector"&gt;
+&lt;metric name="Collection Count" indicator="false" category="THROUGHPUT" collectionType="trendsup"/&gt;
+&lt;metric name="Collection Time" indicator="false" category="THROUGHPUT" collectionType="trendsup"/&gt;
+&lt;/metrics&gt;
+ 
+&lt;metrics name="Memory"&gt;
+&lt;metric name="Object Pending Finalization Count" category="THROUGHPUT" indicator="false"/&gt;
+&lt;/metrics&gt;
+ 
+&lt;metrics name="Threading"&gt;
+&lt;metric name="Thread Count" category="UTILIZATION" indicator="false"/&gt;
+&lt;metric name="Daemon Thread Count" category="UTILIZATION" indicator="false"/&gt;
+&lt;/metrics&gt;
+ 
+&lt;server name="Java" version="1.5.x"&gt;
+&lt;property name="HAS_BUILTIN_SERVICES" value="true"/&gt;
+&lt;property name="VERSION_FILE" value="jre/lib/fontconfig.Sun.2003.bfc"/&gt;
+&lt;property name="DEFAULT_PROGRAM" value="bin/java"/&gt;
+&lt;property name="domain" value="Java"/&gt;
+ 
+&lt;config&gt;
+&lt;option name="jmx.url" description="JMX URL to MBeanServer"  default="service:jmx:rmi:///jndi/rmi://localhost:6969/jmxrmi"/&gt;
+&lt;option name="jmx.username" description="JMX username" optional="true" default=""/&gt;
+&lt;option name="jmx.password" description="JMX password" optional="true" default="" type="secret"/&gt;
+&lt;option name="process.query" description="PTQL for Java Process" default="State.Name.eq=java,Args.*.ct=proc.java.home"/&gt;
+&lt;/config&gt;
+ 
+&lt;metric name="Availability" template="sigar:Type=ProcState,Arg=%process.query%:State" indicator="true"/&gt;
+&amp;process-metrics;
+ 
+&lt;property name="OBJECT_NAME" value="java.lang:type=ClassLoading"/&gt;
+ 
+&lt;metrics include="Class Loading Metrics"/&gt;
+&lt;property name="OBJECT_NAME" value="java.lang:type=Compilation"/&gt;
+ 
+&lt;metrics include="Compilation"/&gt;
+&lt;property name="OBJECT_NAME" value="java.lang:type=Memory"/&gt;
+ 
+&lt;plugin type="log_track" class="org.hyperic.hq.product.jmx.MxNotificationPlugin"/&gt;
+ 
+&lt;property name="OBJECT_NAME" value="java.lang:type=Threading"/&gt;
+&lt;metrics include="Threading"/&gt;
+ 
+&lt;!-- derive installpath from JAVA_HOME env prop... --&gt;
+&lt;property name="PROC_HOME_ENV" value="JAVA_HOME"/&gt;
+ 
+&lt;!-- derive installpath from -Dproc.java.home=... --&gt;
+&lt;property name="PROC_HOME_PROPERTY" value="proc.java.home"/&gt;
+&lt;plugin type="autoinventory" class="org.hyperic.hq.product.jmx.MxServerDetector"/&gt;
+&lt;plugin type="measurement" class="org.hyperic.hq.product.jmx.MxMeasurementPlugin"/&gt;
+ 
+&lt;service name="Java GC"&gt;
+&lt;plugin type="autoinventory"/&gt;
+&lt;property name="OBJECT_NAME" value="java.lang:type=GarbageCollector,name=*"/&gt;
+&lt;metrics include="Garbage Collector"/&gt;
+&lt;/service&gt;
+&lt;/server&gt;
+ 
+&lt;server name="Java" version="1.6.x" include="1.5.x"&gt;
+&lt;property name="VERSION_FILE" value="jre/lib/management-agent.jar"/&gt;
+&lt;/server&gt;
+ 
+&lt;!--
+ ==================== Plugin Help ===========================
+--&gt;
+&lt;help name="Java"&gt;
+&lt;![CDATA[
+  &lt;p&gt;
+  &lt;h3&gt;Configure HQ for monitoring Java&lt;/h3&gt;
+  &lt;/p&gt;
+  &lt;p&gt;
+  1) Add this line to the java options when executing the binary.
+  &lt;br&gt;
+  "-Dcom.sun.management.jmxremote \
+  &lt;br&gt;
+  -Dcom.sun.management.jmxremote.port=6969 \
+  &lt;br&gt;
+  -Dcom.sun.management.jmxremote.ssl=false \
+  &lt;br&gt;
+  -Dcom.sun.management.jmxremote.authenticate=false"
+  &lt;br&gt;
+  &lt;/p&gt;
+]]&gt;
+&lt;/help&gt;
+&lt;help name="Java 1.5.x" include="Java"/&gt;
+&lt;help name="Java 1.6.x" include="Java"/&gt;
+&lt;/plugin&gt;
+
+</pre><br />
+restart the agent:<br />
+<br />
+./hq-agent.sh restart

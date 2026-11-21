@@ -1,0 +1,83 @@
+---
+layout: post
+title: "ClientHello and ServerHello"
+date: 2016-08-18T04:13:00.002+02:00
+permalink: /2016/08/clienthello-and-serverhello.html
+blogger_id: "7531931604442828011"
+tags: ["ssl", "tls"]
+---
+When you enable -Dssl.debug=true -Djavax.net.debug=ssl -Dweblogic.log.StdoutSeverity=Debug  you get a lot of cryptic information in the logs
+
+<br/>
+
+This document <a href="http://www.cisco.com/c/en/us/support/docs/security-vpn/secure-socket-layer-ssl/116181-technote-product-00.html">http://www.cisco.com/c/en/us/support/docs/security-vpn/secure-socket-layer-ssl/116181-technote-product-00.html</a> explains quite well the SSL exchange protocol.
+
+<br/>
+
+<br/>
+
+
+<br/>
+
+
+
+<a href="http://security.stackexchange.com/questions/19473/understanding-2048-bit-ssl-and-256-bit-encryption">http://security.stackexchange.com/questions/19473/understanding-2048-bit-ssl-and-256-bit-encryption</a>
+
+<br/><br/>
+this is a sample ClientHello:
+<br/><br/>
+<pre>
+*** ClientHello, TLSv1
+RandomCookie:  GMT: 1454428615 bytes = { 69, 83, 231, 161, 89, 17, 57, 52, 161, 204, 30, 120, 164, 155, 109, 48, 216, 11, 123, 111, 55, 22, 86, 64, 123, 128, 64, 180 }
+Session ID:  {}
+Cipher Suites: [TLS_RSA_WITH_AES_256_CBC_SHA, TLS_DHE_RSA_WITH_AES_256_CBC_SHA, TLS_DHE_DSS_WITH_AES_256_CBC_SHA, TLS_RSA_WITH_AES_128_CBC_SHA, TLS_DHE_RSA_WITH_AES_128_CBC_SHA, TLS_DHE_DSS_WITH_AES_128_CBC_SHA, SSL_RSA_WITH_3DES_EDE_CBC_SHA, SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA, SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA, TLS_EMPTY_RENEGOTIATION_INFO_SCSV]
+Compression Methods:  { 0 }
+Extension server_name, server_name: [host_name: ldap.pippo.net]
+***
+[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)', WRITE: TLSv1 Handshake, length = 94
+[ACTIVE] ExecuteThread: '0' for queue: 'weblogic.kernel.Default (self-tuning)', READ: TLSv1 Handshake, length = 3726
+</pre>
+
+<br/><br/>
+this is a sample ServerHello:
+<br/><br/>
+<pre>
+*** ServerHello, TLSv1
+RandomCookie:  GMT: 1454428615 bytes = { 173, 6, 9, 133, 26, 24, 40, 154, 88, 2, 88, 175, 59, 169, 225, 31, 240, 132, 194, 100, 230, 48, 159, 177, 56, 91, 246, 67 }
+Session ID:  {49, 77, 200, 173, 221, 205, 188, 24, 24, 109, 151, 39, 90, 35, 26, 224, 39, 31, 102, 10, 125, 130, 207, 170, 124, 33, 67, 152, 53, 80, 6, 204}
+Cipher Suite: TLS_RSA_WITH_AES_256_CBC_SHA
+Compression Method: 0
+Extension renegotiation_info, renegotiated_connection: <empty>
+***
+%% Initialized:  [Session-1, TLS_RSA_WITH_AES_256_CBC_SHA]
+** TLS_RSA_WITH_AES_256_CBC_SHA
+*** Certificate chain
+chain [0] = [
+[
+  Version: V3
+
+...... details about certificate chain
+
+
+]
+***
+*** CertificateRequest
+Cert Types: RSA, DSS, ECDSA
+Cert Authorities:
+<CN=TEST Pippo Internal CA, CN=BLA, CN=Public Key Services, CN=Services, CN=Configuration, DC=pippedi, DC=etit>
+<CN=Pippo Internal CA, CN=BLA, CN=Public Key Services, CN=Services, CN=Configuration, DC=pippedi, DC=net>
+*** ServerHelloDone
+
+</pre>
+<br/><br/>
+
+<br/><br/>
+
+
+<br/><br/>
+
+
+
+
+
+

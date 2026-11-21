@@ -1,0 +1,155 @@
+---
+layout: post
+title: "Axis 1.6.1 or Flash Builder 4.6: Unsupported content Simple Content"
+date: 2013-03-05T14:05:00.004+01:00
+permalink: /2013/03/axis-161-or-flash-unsupported-content.html
+blogger_id: "1680359309489204641"
+tags: ["Axis2"]
+---
+if you get "log4j:WARN Please initialize the log4j system properly",
+create the file log4j.properties in C:\apps\axis2-1.6.1  (AXIS_HOME):
+
+<pre>
+
+log4j.rootLogger=debug, stdout
+ 
+# Direct log messages to stdout
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.Target=System.out
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n
+
+</pre>
+
+
+
+After that I see that by running: <br/>
+wsdl2java -d adb -uri yourwslduri<br/>
+<br/>
+I get <br/><br/>
+
+<pre>
+2013-03-05 11:41:46 DEBUG ProjectResourceBundle:70 - org.apache.axis2.schema.i18n.resource::handleGe
+tObject(schema.unsupportedcontenterror)
+Exception in thread "main" org.apache.axis2.wsdl.codegen.CodeGenerationException: java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+        at org.apache.axis2.wsdl.codegen.CodeGenerationEngine.generate(CodeGenerationEngine.java:293)
+        at org.apache.axis2.wsdl.WSDL2Code.main(WSDL2Code.java:35)
+        at org.apache.axis2.wsdl.WSDL2Java.main(WSDL2Java.java:24)
+Caused by: java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+        at org.apache.axis2.wsdl.codegen.extension.SimpleDBExtension.engage(SimpleDBExtension.java:53)
+        at org.apache.axis2.wsdl.codegen.CodeGenerationEngine.generate(CodeGenerationEngine.java:246
+)
+        ... 2 more
+Caused by: java.lang.reflect.InvocationTargetException
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+        at java.lang.reflect.Method.invoke(Method.java:597)
+        at org.apache.axis2.wsdl.codegen.extension.SimpleDBExtension.engage(SimpleDBExtension.java:50)
+        ... 3 more
+Caused by: org.apache.axis2.schema.SchemaCompilationException: Unsupported content Simple Content !
+        at org.apache.axis2.schema.SchemaCompiler.copyMetaInfoHierarchy(SchemaCompiler.java:1412)
+        at org.apache.axis2.schema.SchemaCompiler.processComplexContent(SchemaCompiler.java:1278)
+        at org.apache.axis2.schema.SchemaCompiler.processContentModel(SchemaCompiler.java:1227)
+        at org.apache.axis2.schema.SchemaCompiler.processComplexType(SchemaCompiler.java:1171)
+        at org.apache.axis2.schema.SchemaCompiler.processNamedComplexSchemaType(SchemaCompiler.java:1091)
+        at org.apache.axis2.schema.SchemaCompiler.processSchema(SchemaCompiler.java:1005)
+        at org.apache.axis2.schema.SchemaCompiler.processElement(SchemaCompiler.java:644)
+        at org.apache.axis2.schema.SchemaCompiler.processElement(SchemaCompiler.java:614)
+        at org.apache.axis2.schema.SchemaCompiler.compile(SchemaCompiler.java:422)
+        at org.apache.axis2.schema.SchemaCompiler.compile(SchemaCompiler.java:381)
+        at org.apache.axis2.schema.SchemaCompiler.compile(SchemaCompiler.java:381)
+        at org.apache.axis2.schema.SchemaCompiler.compile(SchemaCompiler.java:381)
+        at org.apache.axis2.schema.SchemaCompiler.compile(SchemaCompiler.java:291)
+        at org.apache.axis2.schema.ExtensionUtility.invoke(ExtensionUtility.java:102)
+        ... 8 more
+
+</pre>
+
+ <br/><br/>
+while if I use -d xmlbeans, all goes fine.
+
+ <br/><br/>
+
+
+
+I see this code:
+
+<pre>
+XmlSchemaType type = resolvedSchema.getTypeByName(baseTypeName);
+
+XmlSchemaComplexType complexType = (XmlSchemaComplexType) type;
+
+XmlSchemaContentModel content = complexType.getContentModel();
+....
+if (content instanceof XmlSchemaSimpleContent) {
+   throw new SchemaCompilationException(SchemaCompilerMessages.getMessage("schema.unsupportedcontenterror", "Simple Content"));
+
+
+</pre>
+
+<br/><br/>
+
+This org.apache.axis2.schema.SchemaCompiler is in axis2-adb-codegen-1.6.1.jar
+
+<br/><br/>
+
+I have downloaded the source code, and added:
+<br/><br/>
+<pre>
+
+ try {
+     log.warn("copyMetaInfoHierarchy " + baseTypeName.toString() + " " + parentSchema.toString());
+     System.out.println("copyMetaInfoHierarchy " + baseTypeName.toString() + " " + parentSchema.toString());
+ }
+ catch (Throwable t) {
+     log.error("copyMetaInfoHierarchy", t);
+     t.printStackTrace();
+ }
+
+
+</pre>
+
+<br/><br/>
+at the beginning of copyMetaInfoHierarchy (I had also to make sure that parentSchema is declared as org.apache.ws.commons.schema.XmlSchema.
+<br/><br/>
+
+I found out that the offending element is a 
+
+<pre name="code" class="brush: xml">
+
+  &lt;xsd:complexType name="ItemClassificationCodeType">
+    &lt;xsd:simpleContent>
+      &lt;xsd:extension base="tns:CodeType" />
+    &lt;/xsd:simpleContent>
+  &lt;/xsd:complexType>
+
+  &lt;xsd:complexType name="CodeType">
+  
+    &lt;xsd:simpleContent>
+      &lt;xsd:extension base="xsd:normalizedString">
+        &lt;xsd:attribute name="listID" type="xsd:token" use="optional">
+        &lt;/xsd:attribute>
+        &lt;xsd:attribute name="listAgencyID" type="xsd:anyURI" use="optional">
+        &lt;/xsd:attribute>
+      &lt;/xsd:extension>
+    &lt;/xsd:simpleContent>
+  &lt;/xsd:complexType>
+  
+</pre>
+
+<br/><br/>
+
+I think adb doesn't like the simpleContent <a href="http://www.w3schools.com/schema/el_simpleContent.asp">http://www.w3schools.com/schema/el_simpleContent.asp</a>, and this is the JIRA issue (July 2012) :<br/>
+
+<a href="https://issues.apache.org/jira/browse/AXIS2-5357">https://issues.apache.org/jira/browse/AXIS2-5357</a>
+<br/><br/>
+it looks like even Axis 1.6.2 (April 2012) is not handling this syntax.<br/><br/>
+
+I bet my ass that Flash Builder is using Axis2 under the cover<br/><br/>
+
+
+
+
+
+

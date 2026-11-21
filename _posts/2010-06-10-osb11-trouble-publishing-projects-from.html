@@ -1,0 +1,43 @@
+---
+layout: post
+title: "OSB: trouble publishing projects from Eclipse Plugin to Server"
+date: 2010-06-10T11:11:00.002+02:00
+permalink: /2010/06/osb11-trouble-publishing-projects-from.html
+blogger_id: "2428817582305648096"
+tags: ["osb11"]
+---
+this happens whenever you REMOVE a project.<br />
+<br />
+I have the impression that deleting everything from the OSB Server, performing a clean (Servers tab) and republishing again fixes the issue. <br />
+<br />
+See also here<br />
+<a href="http://forums.oracle.com/forums/thread.jspa?messageID=4314236&amp;tstart=0">http://forums.oracle.com/forums/thread.jspa?messageID=4314236&amp;tstart=0</a><br />
+<br />
+<br />
+<i>eclipse.buildId=unknown</i><br />
+<i>java.version=1.6.0_17</i><br />
+<i>java.vendor=Oracle Corporation</i><br />
+<i>BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US</i><br />
+<i>Command-line arguments:&nbsp; -os win32 -ws win32 -arch x86</i><br />
+<i><br />
+</i><br />
+<i><br />
+</i><br />
+<i>Error</i><br />
+<i>Thu Jun 10 11:07:34 CEST 2010</i><br />
+<i>Runtime exception occurred during publish. The publish is aborted. Please report the bug with the stack trace. The stack can be found on the log and the Error Log view.</i><br />
+<i><br />
+</i><br />
+<i>java.lang.IndexOutOfBoundsException: Index: 2, Size: 2</i><br />
+<i>at java.util.ArrayList.RangeCheck(ArrayList.java:547)</i><br />
+<i>at java.util.ArrayList.get(ArrayList.java:322)</i><br />
+<i>at com.bea.alsb.server.publish.internal.ALSBModuleFactory.getDeletedContainerModules(Unknown Source)</i><br />
+<i>at com.bea.alsb.server.publish.ALSBPublishOperation.execute(Unknown Source)</i><br />
+<i>at oracle.eclipse.tools.weblogic.server.internal.WeblogicServerBehaviour.performTasks(WeblogicServerBehaviour.java:1253)</i><br />
+<i>at oracle.eclipse.tools.weblogic.server.internal.WeblogicServerBehaviour.publishToServer(WeblogicServerBehaviour.java:804)</i><br />
+<i>at oracle.eclipse.tools.weblogic.server.internal.WeblogicServerBehaviour.publishOnce(WeblogicServerBehaviour.java:660)</i><br />
+<i>at oracle.eclipse.tools.weblogic.server.internal.WeblogicServerBehaviour.publish(WeblogicServerBehaviour.java:526)</i><br />
+<i>at org.eclipse.wst.server.core.model.ServerBehaviourDelegate.publish(ServerBehaviourDelegate.java:708)</i><br />
+<i>at org.eclipse.wst.server.core.internal.Server.publishImpl(Server.java:2731)</i><br />
+<i>at org.eclipse.wst.server.core.internal.Server$PublishJob.run(Server.java:278)</i><br />
+<i>at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)</i>

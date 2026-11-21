@@ -1,0 +1,47 @@
+---
+layout: post
+title: "maven-install-plugin copies files to your local .m2 repo"
+date: 2019-06-22T16:13:00.000+02:00
+permalink: /2019/06/maven-install-plugin-copies-files-to.html
+blogger_id: "1358061454489887548"
+tags: ["maven"]
+---
+<a href="http://maven.apache.org/plugins/maven-install-plugin/usage.html">http://maven.apache.org/plugins/maven-install-plugin/usage.html</a><br />
+<br />
+you can run this command from anywhere, no need for a pom.xml:<br />
+<br />
+<br />
+$ mvn install:install-file -Dfile=/c/pierre/downloads/apache-maven-3.5.3-bin.zip -DgroupId=pippo -DartifactId=pluto -Dpackaging=zip -Dversion=3.0<br />
+[INFO] Scanning for projects...<br />
+[INFO]<br />
+[INFO] ------------------< org.apache.maven:standalone-pom >-------------------<br />
+[INFO] Building Maven Stub Project (No POM) 1<br />
+[INFO] --------------------------------[ pom ]---------------------------------<br />
+[INFO]<br />
+[INFO] --- maven-install-plugin:2.4:install-file (default-cli) @ standalone-pom ---<br />
+[INFO] Installing C:\pierre\downloads\apache-maven-3.5.3-bin.zip to c:\pierre\.m2\repository\pippo\pluto\3.0\pluto-3.0.zip<br />
+[INFO] Installing C:\Users\pierl\AppData\Local\Temp\mvninstall5440042488979291271.pom to c:\pierre\.m2\repository\pippo\pluto\3.0\pluto-3.0.pom<br />
+[INFO] ------------------------------------------------------------------------<br />
+[INFO] BUILD SUCCESS<br />
+[INFO] ------------------------------------------------------------------------<br />
+[INFO] Total time: 0.689 s<br />
+[INFO] Finished at: 2019-06-22T16:08:57+02:00<br />
+[INFO] ------------------------------------------------------------------------<br />
+<br />
+<br />
+<br />
+<br />
+and the generated pom.xml is<br />
+<br />
+<pre class="brush: xml">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;project xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot; xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot;
+    xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;groupId&gt;pippo&lt;/groupId&gt;
+  &lt;artifactId&gt;pluto&lt;/artifactId&gt;
+  &lt;version&gt;3.0&lt;/version&gt;
+  &lt;packaging&gt;zip&lt;/packaging&gt;
+  &lt;description&gt;POM was created from install:install-file&lt;/description&gt;
+&lt;/project&gt;
+
+</pre>

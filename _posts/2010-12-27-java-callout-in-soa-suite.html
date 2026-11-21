@@ -1,0 +1,61 @@
+---
+layout: post
+title: "Java callout in SOA Suite"
+date: 2010-12-27T22:11:00.003+01:00
+permalink: /2010/12/java-callout-in-soa-suite.html
+blogger_id: "6481301405205063101"
+tags: ["javacallout"]
+---
+oracle.tip.mediator.common.api.IJavaCallout  is the interface to implement.<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12839_01/integration.1111/e10224/med_createrr.htm#BGBDBHBE">Here</a> the interface is documented.<br />
+<br />
+I have been looking for the Javadoc online but could find none.<br />
+<br />
+It is in C:\Oracle1\Middleware\jdeveloper\soa\modules\oracle.soa.mediator_11.1.1\mediator.jar<br />
+<br />
+Voila a Java callback naked and crude:<br />
+<br />
+<pre name="code" class="brush: java">import java.util.logging.Logger;
+
+import oracle.tip.mediator.common.api.CalloutMediatorMessage;
+import oracle.tip.mediator.metadata.CaseType;
+
+
+public class MyClass implements oracle.tip.mediator.common.api.IJavaCallout {
+
+    public void initialize(Logger logger) {
+    }
+
+    public boolean preRouting(CalloutMediatorMessage calloutMediatorMessage) {
+        return false;
+    }
+
+    public boolean preRoutingRule(CaseType caseType, CalloutMediatorMessage calloutMediatorMessage) {
+        return false;
+    }
+
+    public boolean postRoutingRule(CaseType caseType, CalloutMediatorMessage calloutMediatorMessage, CalloutMediatorMessage calloutMediatorMessage1, Throwable throwable) {
+        return false;
+    }
+
+    public boolean postRouting(CalloutMediatorMessage calloutMediatorMessage, CalloutMediatorMessage calloutMediatorMessage1, Throwable throwable) {
+        return false;
+    }
+
+    public boolean preCallbackRouting(CalloutMediatorMessage calloutMediatorMessage) {
+        return false;
+    }
+
+    public boolean postCallbackRouting(CalloutMediatorMessage calloutMediatorMessage, Throwable throwable) {
+        return false;
+    }
+}
+
+</pre><br />
+To be noticed that the postRouting/postRoutingRule have 2 parameters, one is the request and the other the response (I guess!)<br />
+<br />
+Callback has a single parameter because there is no way to remember the request to which this callback is the response.... at least not in Mediator.<br />
+<br />
+<br />
+<a href="http://technology.amis.nl/blog/6669/soa-suite-11g-introducing-mediator-java-callouts-for-debug-audit-and">Here</a> a good Hello World tutorial on the subject.

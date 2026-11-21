@@ -1,0 +1,181 @@
+---
+layout: post
+title: "Openshift Online getting started"
+date: 2018-04-06T23:18:00.000+02:00
+permalink: /2018/04/openshift-online-getting-started.html
+blogger_id: "5008753675235365033"
+tags: ["openshift"]
+---
+Create yourself an Openshift Online account (account creation seems to me a bit buggish)<br />
+<br />
+<a href="https://docs.openshift.com/online/getting_started/basic_walkthrough.html">https://docs.openshift.com/online/getting_started/basic_walkthrough.html</a><br />
+<br />
+I follow the instructions and create my first mongodb / nodejs Openshift project<br />
+<br />
+<br />
+I download the CLI <a href="https://console.starter-ca-central-1.openshift.com/console/command-line">https://console.starter-ca-central-1.openshift.com/console/command-line</a><br />
+<br />
+<pre>oc login https://api.starter-ca-central-1.openshift.com --token=4zlxeYZvlO9FdfvcBEEVZpMca-JA5UftBzShxdkGITI
+
+oc project vernetto-example
+
+</pre><br />
+<pre>.\oc.exe status
+In project vernetto-example on server https://api.starter-ca-central-1.openshift.com:443
+
+svc/mongodb - 172.30.171.215:27017
+  dc/mongodb deploys openshift/mongodb:3.2
+    deployment #1 deployed 15 minutes ago - 1 pod
+
+http://nodejs-mongo-persistent-vernetto-example.193b.starter-ca-central-1.openshiftapps.com (svc/nodejs-mongo-persistent)
+  dc/nodejs-mongo-persistent deploys istag/nodejs-mongo-persistent:latest <-
+    bc/nodejs-mongo-persistent source builds https://github.com/vernetto/nodejs-ex.git on openshift/nodejs:6
+    deployment #1 deployed 13 minutes ago - 1 pod
+
+View details with 'oc describe <resource>/<name>' or list everything with 'oc get all'.
+
+
+</pre><br />
+<pre>.\oc.exe config view
+apiVersion: v1
+clusters:
+- cluster:
+    api-version: v1
+    server: https://api.starter-ca-central-1.openshift.com:443
+  name: api-starter-ca-central-1-openshift-com:443
+contexts:
+- context:
+    cluster: api-starter-ca-central-1-openshift-com:443
+    namespace: vernetto-example
+    user: publicpierre/api-starter-ca-central-1-openshift-com:443
+  name: vernetto-example/api-starter-ca-central-1-openshift-com:443/publicpierre
+current-context: vernetto-example/api-starter-ca-central-1-openshift-com:443/publicpierre
+kind: Config
+preferences: {}
+users:
+- name: publicpierre/api-starter-ca-central-1-openshift-com:443
+  user:
+    token: 4zlxeYZvlO9FdbvcBEEVZpMca-JA5UftBzShxdkGVTI
+
+</pre><br />
+<br />
+<pre>.\oc.exe project
+Using project "vernetto-example" on server "https://api.starter-ca-central-1.openshift.com:443".
+
+
+</pre><br />
+<br />
+<pre>.\oc.exe get svc
+NAME                      CLUSTER-IP       EXTERNAL-IP   PORT(S)     AGE
+mongodb                   172.30.171.215   <none>        27017/TCP   3h
+nodejs-mongo-persistent   172.30.187.89    <none>        8080/TCP    3h
+
+
+</pre><br />
+<br />
+The file C:\Users\publi\.kube\config contains the authentication info:<br />
+<br />
+<pre>apiVersion: v1
+clusters:
+- cluster:
+    api-version: v1
+    server: https://api.starter-ca-central-1.openshift.com:443
+  name: api-starter-ca-central-1-openshift-com:443
+contexts:
+- context:
+    cluster: api-starter-ca-central-1-openshift-com:443
+    namespace: vernetto-example
+    user: publicpierre/api-starter-ca-central-1-openshift-com:443
+  name: vernetto-example/api-starter-ca-central-1-openshift-com:443/publicpierre
+current-context: vernetto-example/api-starter-ca-central-1-openshift-com:443/publicpierre
+kind: Config
+preferences: {}
+users:
+- name: publicpierre/api-starter-ca-central-1-openshift-com:443
+  user:
+    token: 4zlxeYZvlO9FdbacBEEVqpMca-JA5UftBfShxdkGVTI
+
+</pre><br />
+with the 4 sections clusters, contexts, current-context, users<br />
+<br />
+<br />
+<pre>.\oc.exe get quota
+NAME                          AGE
+compute-resources             5h
+compute-resources-timebound   5h
+object-counts                 5h
+
+</pre><br />
+<pre>.\oc.exe describe quota compute-resources
+Name:           compute-resources
+Namespace:      vernetto-example
+Scopes:         NotTerminating
+ * Matches all pods that do not have an active deadline. 
+These pods usually include long running pods whose container command is not expected to terminate.
+Resource        Used    Hard
+--------        ----    ----
+limits.cpu      2       2
+limits.memory   1Gi     1Gi
+</pre><br />
+<br />
+<pre>.\oc.exe export services
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: Exposes the database server
+    creationTimestamp: null
+    labels:
+      app: nodejs-mongo-persistent
+      template: nodejs-mongo-persistent
+    name: mongodb
+  spec:
+    ports:
+    - name: mongodb
+      port: 27017
+      protocol: TCP
+      targetPort: 27017
+    selector:
+      name: mongodb
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: Exposes and load balances the application pods
+      service.alpha.openshift.io/dependencies: '[{"name": "mongodb", "kind": "Service"}]'
+    creationTimestamp: null
+    labels:
+      app: nodejs-mongo-persistent
+      template: nodejs-mongo-persistent
+    name: nodejs-mongo-persistent
+  spec:
+    ports:
+    - name: web
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      name: nodejs-mongo-persistent
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
+
+</pre><br />
+<br />
+to manually start a build:<br />
+<br />
+oc start-build nodejs-mongo-persistent -n vernetto-example<br />
+<br />
+<br />
+<br />
+<br />
+

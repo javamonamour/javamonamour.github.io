@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Oracle DB monitor session. ORA-00942: table or view does not exist"
+date: 2012-09-12T16:04:00.001+02:00
+permalink: /2012/09/oracle-db-monitor-session-ora-00942.html
+blogger_id: "1891155469346760783"
+tags: ["oracledb"]
+---
+<a href="/images/6cd056868265b20f.jpg" imageanchor="1"><img border="0" src="/images/6cd056868265b20f.jpg" /></a><br />
+<br />
+apparently you need to have SYS <br />
+<br />
+<a href="https://forums.oracle.com/forums/thread.jspa?threadID=714957">https://forums.oracle.com/forums/thread.jspa?threadID=714957</a><br />
+<br />
+"What roles does your user have? (One way to find out is to do a "SELECT * FROM SESSION_ROLES;" in the SQL Worksheet or SQL*Plus.) The "Monitor Sessions" tool runs a query against the V$SESSION dynamic view and according to the Oracle 10g Database Reference document only user SYS or users with the SYSDBA role have access to the dynamic views.<br />
+<br />
+I just tried using "Monitor Sessions" while connected as a user who has only the CONNECT and RESOURCE roles and got the ORA-00942 error. I connected as another user who has the DBA role and it ran without a problem."<br />
+<br />
+

@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Web Services faults caught  from a Java client"
+date: 2010-05-19T12:13:00.000+02:00
+permalink: /2010/05/web-services-faults-caught-from-java.html
+blogger_id: "5169402758107259038"
+tags: ["fault"]
+---
+If your WS returns you a fault, in Java this will be mapped to a<br />
+<br />
+<b>javax.xml.ws.soap.SOAPFaultException</b><br />
+<br />
+which is filled with a <b>detailedMessage&nbsp;</b><br />
+<br />
+Failed to invoke end component com.acme.dbaccess.CompanyDBWS (POJO), operation=insertCompany<br />
+&nbsp;-&gt; Failed to invoke method<br />
+&nbsp;-&gt; UNABLE_TO_EXECUTE_SQL<br />
+<br />
+<br />
+and a <b>fault </b>(name is SOAP-ENV:Fault) with QName {http://schemas.xmlsoap.org/soap/envelope/}Fault

@@ -1,0 +1,56 @@
+---
+layout: post
+title: "sudoers file syntax (sudo by example)"
+date: 2013-09-22T19:19:00.000+02:00
+permalink: /2013/09/sudoers-file-syntax-sudo-by-example.html
+blogger_id: "4674107138337580711"
+tags: ["sudo"]
+---
+Here the official (?) doc for <a href="http://www.sudo.ws/sudo/sudoers.man.html">sudoers</a> and <a href="http://www.sudo.ws/sudo/sudo.man.html">sudo</a>. Particularly important in the <a href="http://www.sudo.ws/sudo/sudoers.man.html#x5355444f4552532046494c4520464f524d4154">sudoers file format</a>. It's very important to read all the options, since it's very versatile and allows you to get well organized if you know them.
+<br/><br/>
+The sudoers file format is:
+<br/><br/>
+"user list" "host list" = "operator list" "tag list" "command list"
+<br/>
+"tag list" is the NOPASSWD / PASSWD option, and it's optional.
+<br/>
+where each list can be made of actual values or aliases (User_Alias Runas_Alias Host_Alias Cmnd_Alias)
+
+<br/><br/>
+A simple example here: how to give all root privileges to user vagrant:
+
+<br/><br/>
+Login as root
+<br/>
+visudo 
+<br/>
+append this:<br/>
+<pre>
+vagrant    ALL=(ALL)       ALL
+</pre>
+exit visudo with :wq
+<br/>
+
+sudo su - vagrant
+<br/>
+cat /etc/sudoers
+<br/><br/>
+
+cat: /etc/sudoers: Permission denied
+
+(of course, vagrant user cannot see the /etc/sudoers file which is only read for root)
+<br/><br/>
+
+
+sudo cat /etc/sudoers
+<br/><br/>
+this one works, because it's being executed as the root user !
+<br/><br/>
+
+
+
+Hint: you can also use <i>visudo -f /etc/sudoers.d/filename</i>
+<br/><br/>
+
+
+

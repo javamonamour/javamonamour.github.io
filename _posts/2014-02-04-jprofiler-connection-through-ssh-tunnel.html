@@ -1,0 +1,50 @@
+---
+layout: post
+title: "JProfiler connection through SSH Tunnel"
+date: 2014-02-04T12:09:00.002+01:00
+permalink: /2014/02/jprofiler-connection-through-ssh-tunnel.html
+blogger_id: "5901333207977009575"
+tags: ["jprofiler", "ssh"]
+---
+If you don't want to open a firewall for JProfiler, here is a simple trick:
+
+<br />
+- <a href="/2014/02/configuring-jprofiler-for-weblogic.html">on the monitored server, run the startManagedWebLogic_jprofiler.sh</a>
+<br />
+- make sure the port 8849 is being listened to (netstat -an | grep 8849)
+<br />
+- open putty
+<br />
+- open a connection to your monitored server, using this setting for SSH tunnel:
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/4d9bb68f6d4497bd.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/56e4488e38c1697e.png" /></a></div>
+<br />
+<br />
+(the obscured hostname is the FQDN of the monitored server)
+<br />
+<br />
+you will notice that on your laptop, BEFORE the connection you have nothing on port 8849, while AFTER you have a LOCAL port open, and being forwarded to the remote host:
+
+<br />
+<br />
+<pre>netstat -an | find "8849"
+  TCP    127.0.0.1:8849         0.0.0.0:0              LISTENING
+  TCP    [::1]:8849             [::]:0                 LISTENING
+
+netstat -an | find "10.56.10.126"
+  TCP    10.240.21.73:58756     10.56.10.126:22        ESTABLISHED
+  TCP    10.240.21.73:58944     10.56.10.126:22        ESTABLISHED
+  TCP    10.240.21.73:58969     10.56.10.126:22        ESTABLISHED
+</pre>
+<br />
+<br />
+(10.56.80.126 is the remote IP, 10.240.21.73 is the local IP... you see several connections, one is my putty open, the others are Tunnel)
+<br />
+<br />
+You can now open your JProfiler session, but make it point to localhost:8849, not to the remotehost:8849. It works!
+
+
+
+

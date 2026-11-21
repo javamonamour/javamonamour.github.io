@@ -1,0 +1,35 @@
+---
+layout: post
+title: "weblogic startup.properties"
+date: 2014-03-20T10:12:00.001+01:00
+permalink: /2014/03/weblogic-startupproperties.html
+blogger_id: "1678246937942423771"
+tags: ["weblogic"]
+---
+I was trying desperately to pass an argument to the JVM:
+<br/>
+-Dweblogic.security.SSL.ignoreHostnameVerification=true 
+<br/>
+by setting it in the JAVA_OPTIONS in the DOMAIN_HOME/bin/startManagedWebLogic.sh
+<br/>
+Much to my dismay, the MS - started via NM with "usestartscript=true", would always come up with the same property=false.
+<br/>
+After hours of grepping and swearing, I found out that in the domain_home/servers/AdminServer/data/nodemanager/startup.properties this value was set to false. this was overriding my settings. The same setting was in the startup.properties of every MS, but it was overwritten at startup, so no point in changing it.
+<br/>
+
+<br/>
+
+<a href="http://docs.oracle.com/cd/E13222_01/wls/docs92/server_start/nodemgr.html#wp1101026">http://docs.oracle.com/cd/E13222_01/wls/docs92/server_start/nodemgr.html#wp1101026</a>
+<br/>
+<i>
+"Node Manager uses the startup.properties file to determine the startup and configuration when starting a server. This file is defined for each server instance and is located in:
+<br/><br/>
+domain_home/servers/server_name/data/nodemanager/startup.properties "
+<br/><br/>
+"Each Managed Server instance has its own startup.properties file with properties that control how Node Manager starts up and controls the server. Node Manager automatically creates this file by using properties passed to Node Manager when the Administrative Server was last used to start the server. This allows a Node Manager client or startup scripts to restart a Managed Server using the same properties last used by the Administrative Server. "
+
+</i>
+
+<br/><br/>
+
+Once you change the startup.properties of the Admin, remember to restart the NM.

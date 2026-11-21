@@ -1,0 +1,57 @@
+---
+layout: post
+title: "Github: Failed to connect to github.com:443; No error"
+date: 2013-09-12T20:56:00.000+02:00
+permalink: /2013/09/github-failed-to-connect-to.html
+blogger_id: "5739041393327286031"
+tags: ["git"]
+---
+I have been swearing for a while to realize that the git client (<a href="http://msysgit.github.com/">http://msysgit.github.com/</a>) requires a proxy settings to be able to contact github. <br/>
+Here are all the commands (don't tell me git is intuitive.... it's a hell of a lot of work only to get the basic done). 
+<br/>
+The command is "git config --global http.proxy http://proxyuser:proxypwd@proxy.server.com:8080"
+<br/>
+All the git config settings are <a href="http://git-scm.com/docs/git-config">documented here</a>
+<br/>
+
+<pre>
+
+$ git config --global user.name "vernetto"
+
+$ git config --global user.email pvernetto@gmail.com
+
+$ mkdir kitammuort
+
+$ cd kitammuort/
+
+$ git init
+Initialized empty Git repository in c:/pierre/workspaceGIT/kitammuort/.git/
+
+$ touch README
+
+$ git add README
+
+$ git commit -m 'first commit'
+[master (root-commit) e5310e1] first commit
+ 1 file changed, 1 insertion(+)
+ create mode 100644 README
+
+$ git remote add origin https://github.com/vernetto/kitammuort.git
+
+$ git push origin master
+fatal: unable to access 'https://github.com/vernetto/kitammuort.git/': Failed to connect to github.com:443; No error
+
+ 
+git remote set-url origin https://vernetto@github.com/user/kitammuort.git
+
+git config --global http.proxy http://proxyuser:proxypwd@proxy.server.com:8080
+
+git pull origin master
+
+git push origin master
+
+</pre>
+
+
+
+

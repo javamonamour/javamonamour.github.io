@@ -1,0 +1,22 @@
+---
+layout: post
+title: "mv cannot move Directory not empty"
+date: 2013-11-20T15:00:00.002+01:00
+permalink: /2013/11/mv-cannot-move-directory-not-empty.html
+blogger_id: "6208083110532815890"
+---
+if this command fails:
+<br />
+<br />
+<b>mv fromdir/* todir/</b>
+<br />
+<br />
+then try: 
+<br />
+<br />
+<b>rsync -avf  fromdir/* todir/</b>
+<br />
+followed by 
+<br />
+<b>rm -rf fromdir</b>
+

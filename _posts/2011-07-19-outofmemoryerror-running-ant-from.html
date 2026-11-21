@@ -1,0 +1,28 @@
+---
+layout: post
+title: "OutOfMemoryError running Ant from Hudson"
+date: 2011-07-19T16:04:00.000+02:00
+permalink: /2011/07/outofmemoryerror-running-ant-from.html
+blogger_id: "8233708447975649233"
+tags: ["OutOfMemoryError"]
+---
+java.lang.OutOfMemoryError: unable to create new native thread<br />
+    at java.lang.Thread.start0(Native Method)<br />
+    at java.lang.Thread.start(Thread.java:640)<br />
+    at java.util.concurrent.ThreadPoolExecutor.addIfUnderCorePoolSize(ThreadPoolExecutor.java:703)<br />
+    at java.util.concurrent.ThreadPoolExecutor.execute(ThreadPoolExecutor.java:652)<br />
+<br />
+<br />
+Increasing Hudson heap will do no good, since Hudson runs Ant tasks in a separate JVM (I think!).<br />
+<br />
+Rather define <br />
+<br />
+export ANT_OPTS="-Xmx1024m -Xms1024m"<br />
+<br />
+and ant_exec_debug=true<br />
+<br />
+<br />
+<br />
+In any case - after a lot of tears and pain - we discovered by running "free" that the Unix box memory was simply totally occupied by running processes.... :o(<br />
+<br />
+Java doesn't differentiate between an OutOfMemory caused by hitting the Heap limit imposed by the -Xms and -Xmx flags, and one caused by hitting physical limits of the host.

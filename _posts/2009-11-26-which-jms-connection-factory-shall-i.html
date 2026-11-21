@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Which JMS Connection Factory shall I use?"
+date: 2009-11-26T20:06:00.001+01:00
+permalink: /2009/11/which-jms-connection-factory-shall-i.html
+blogger_id: "8189791785306894147"
+---
+unless a Connection Factory has been explicitely specified for a Queue, WebLogic will use a default connection factory named: <br />
+<br />
+JMS_FACTORY="weblogic.jms.ConnectionFactory"<br />
+<br />
+this will be in the JNDI_TREE for you to use:<br />
+<br />
+Here is the (crazy and cumbersome) code:<br />
+<br />
+Hashtable env = new Hashtable();<br />
+env.put(Context.INITIAL_CONTEXT_FACTORY, "weblogic.jndi.WLInitialContextFactory");<br />
+env.put(Context.PROVIDER_URL,"t3://localhost:7001");<br />
+InitialContext ctx = new InitialContext(env);<br />
+<br />
+<br />
+QueueConnectionFactory&nbsp;&nbsp; qConFactory = (QueueConnectionFactory)ctx.lookup("weblogic.jms.ConnectionFactory");<br />
+QueueConnection&nbsp;&nbsp;&nbsp;&nbsp; qCon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = qConFactory.createQueueConnection();<br />
+QueueSession&nbsp;&nbsp;&nbsp;&nbsp; qSession&nbsp;&nbsp;&nbsp; = qCon.createQueueSession(false,Session.AUTO_ACKNOWLEDGE);<br />
+Queue&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; queue2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = (Queue)ctx.lookup(jms_queue);<br />
+QueueSender&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; qSender&nbsp;&nbsp;&nbsp;&nbsp; = qSession.createSender(queue2);<br />
+TextMessage&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; msg&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = qSession.createTextMessage();<br />
+<br />
+qCon.start();

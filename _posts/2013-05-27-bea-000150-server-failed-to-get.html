@@ -1,0 +1,35 @@
+---
+layout: post
+title: "BEA-000150, Server failed to get a connection to the database in the past 30 seconds for lease renewal. Server will shut itself down."
+date: 2013-05-27T09:24:00.001+02:00
+permalink: /2013/05/bea-000150-server-failed-to-get.html
+blogger_id: "8573878147838007869"
+tags: ["OracleRAC"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2018-04-15
+    html: "no... sorry... and I am moved away from WebLogic in favour of JBoss, so I am not seeing this error any more :o)"
+  - author: "Anonymous"
+    date: 2018-04-15
+    html: "Hi <br />Did you manage to resolve this?"
+  - author: "Anonymous"
+    date: 2018-04-16
+    html: " We are having the same issue. Thanks for your help :)"
+  - author: "vernetto"
+    date: 2018-04-16
+    html: "yes I remember there were NFS4 disks...."
+  - author: "Anonymous"
+    date: 2018-04-16
+    html: "Ok thanks for your response but were you by any chance using shared storage for your domain?"
+---
+We are using a Database-based lease renewal for automated server migration (I personally think it's a bad idea), we occasionally (once a month) have a server restarting with 
+<br/><br/>
+<pre>
+BEA-000150 Server failed to get a connection to the database in the past 30 seconds for lease renewal. Server will shut itself down.
+
+</pre>
+<br/><br/>
+An Oracle DOC 
+"With Database Leasing Server Migration WebLogic Servers Part Of Cluster Restarting Intermittently With Unable Renew Lease Errors [ID 1550164.1]"
+
+suggests that we should check for time skew in the different RAC nodes, which makes perfectly sense. However this is not our case. We shall keep investigating.

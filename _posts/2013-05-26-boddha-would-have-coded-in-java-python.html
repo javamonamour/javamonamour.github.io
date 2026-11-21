@@ -1,0 +1,60 @@
+---
+layout: post
+title: "Buddha would have coded in Java, Python, Ruby, Scala or Groovy?"
+date: 2013-05-26T12:01:00.002+02:00
+permalink: /2013/05/boddha-would-have-coded-in-java-python.html
+blogger_id: "6543955557072797738"
+---
+From the (very nice) <a href="http://www.germane-software.com/software/rexml/">presentation of REXML</a> I read:
+<br />
+<br />
+in Java:
+<br />
+<pre>for (Enumeration e=parent.getChildren(); e.hasMoreElements(); ) { 
+  Element child = (Element)e.nextElement(); // Do something with child 
+}
+
+</pre>
+<br />
+in Ruby:
+<br />
+<pre>parent.each_child{ |child| # Do something with child }
+</pre>
+<br />
+Then he says:
+<i>Can't you feel the peace and contentment in this block of code? Ruby is the language Buddha would have programmed in.
+</i>
+<br />
+<div style="text-align: center;">
+<a href="/images/54258460f5c6238a.jpg" imageanchor="1"><img border="0" height="400" src="/images/19f64b1207057cef.jpg" width="281" /></a>
+
+</div>
+However, in groovy:<br />
+<pre>parent.each {
+ // do something with "it", process(it) 
+}
+</pre>
+<br />
+or<br />
+<pre>parent.each { child -&gt;
+ // do something with child
+}
+</pre>
+<br />
+in Scala:<br />
+<pre>parent.foreach ( thing =&gt;
+ // do somthing with thing
+)
+</pre>
+<br />
+in python:<br />
+<pre>for child in parent:
+   # do stuff with child
+
+</pre>
+<br />
+So, all in all if I were Buddha (in common we have only a large belly) I would have coded in Python
+
+<br />
+Keep it Simple, Luke!
+

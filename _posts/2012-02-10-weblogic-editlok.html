@@ -1,0 +1,44 @@
+---
+layout: post
+title: "weblogic edit.lok"
+date: 2012-02-10T13:04:00.000+01:00
+permalink: /2012/02/weblogic-editlok.html
+blogger_id: "8550115834697477190"
+tags: ["locks", "weblogic"]
+---
+cd $DOMAIN_HOME<br />
+(nobody has acquired the lock to edit the domain configuration)<br />
+<br />
+<b>ls -ltr</b><br />
+<br />
+<i>-rw-r-----  1 soa soa     32 Feb 10 12:58 edit.lok</i><br />
+<br />
+<b>cat edit.lok</b><br />
+<i>#<br />
+#Fri Feb 10 12:58:15 CET 2012</i><br />
+<br />
+This should be the last time someone released the lock<br />
+<br />
+<br />
+Now I acquire the lock on the console:<br />
+<br />
+<b>ls -ltr</b><br />
+<br />
+<i>-rw-r-----  1 soa soa    138 Feb 10 12:59 edit.lok</i><br />
+<br />
+<br />
+<b>cat edit.lok</b><br />
+<i>#<br />
+#Fri Feb 10 12:59:05 CET 2012<br />
+acquired=1328875145953<br />
+owner={AES}vIa1WfKmdgbwwTw8L2mLn1KSWZ0dzICRW3YTIffAODU\=<br />
+expires=0<br />
+exclusive=false</i><br />
+<br />
+The timestamp shows the time at which it was acquired<br />
+<br />
+I release it, and here we go again with the timestamp showing the release time:<br />
+<br />
+<b>cat edit.lok</b><br />
+<i>#<br />
+#Fri Feb 10 13:02:08 CET 2012</i>

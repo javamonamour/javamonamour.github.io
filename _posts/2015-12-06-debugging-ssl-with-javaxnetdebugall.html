@@ -1,0 +1,99 @@
+---
+layout: post
+title: "Debugging SSL with javax.net.debug=all"
+date: 2015-12-06T08:26:00.004+01:00
+permalink: /2015/12/debugging-ssl-with-javaxnetdebugall.html
+blogger_id: "1120637486394151275"
+tags: ["ssl"]
+---
+This is a guide to interpreting the output of -Djavax.net.debug=all:
+<br/>
+<a href="https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html">https://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/ReadDebug.html</a>
+
+<br/>
+and this is what I get 
+<br/>
+<a href=" https://gist.github.com/vernetto/4b5c1e5b9562143998e0">
+https://gist.github.com/vernetto/4b5c1e5b9562143998e0</a>
+<br/>
+
+by running this code with args[0]=www.usps.com (code courtesy of the excellent book "Java Network Programming, 4th Edition" that I highly recommend reading)
+<br/>
+<pre class="brush: java">
+
+
+
+import java.io.*;
+import javax.net.ssl.*;
+
+public class HTTPSClient {
+
+  public static void main(String[] args) {
+
+    if (args.length == 0) {
+      System.out.println("Usage: java HTTPSClient2 host");
+      return;
+    }
+
+    int port = 443; // default https port
+    String host = args[0];
+
+    SSLSocketFactory factory
+        = (SSLSocketFactory) SSLSocketFactory.getDefault();
+    SSLSocket socket = null;
+    try {
+      socket = (SSLSocket) factory.createSocket(host, port);
+
+      // enable all the suites
+      String[] supported = socket.getSupportedCipherSuites();
+      socket.setEnabledCipherSuites(supported);
+
+      Writer out = new OutputStreamWriter(socket.getOutputStream(), "UTF-8");
+      // https requires the full URL in the GET line
+      out.write("GET http://" + host + "/ HTTP/1.1\r\n");
+      out.write("Host: " + host + "\r\n");
+      out.write("\r\n");
+      out.flush();
+
+      // read response
+      BufferedReader in = new BufferedReader(
+          new InputStreamReader(socket.getInputStream()));
+
+      // read the header
+      String s;
+      while (!(s = in.readLine()).equals("")) {
+        System.out.println(s);
+      }
+      System.out.println();
+
+      // read the length
+      String contentLength = in.readLine();
+      int length = Integer.MAX_VALUE;
+      try {
+        length = Integer.parseInt(contentLength.trim(), 16);
+      } catch (NumberFormatException ex) {
+        // This server doesn't send the content-length
+        // in the first line of the response body
+      }
+      System.out.println(contentLength);
+
+      int c;
+      int i = 0;
+      while ((c = in.read()) != -1 && i++ &lt; length) {
+        System.out.write(c);
+      }
+
+      System.out.println();
+    } catch (IOException ex) {
+      System.err.println(ex);
+    } finally {
+        try {
+          if (socket != null) socket.close();
+        } catch (IOException e) {}
+    }
+  }
+}
+
+
+
+</pre>

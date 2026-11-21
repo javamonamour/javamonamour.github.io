@@ -1,0 +1,94 @@
+---
+layout: post
+title: "WLI processes terminator!"
+date: 2010-02-09T19:20:00.000+01:00
+permalink: /2010/02/wli-processes-terminator.html
+blogger_id: "2836600104794464546"
+---
+a very similar utility has already been published here<br />
+<a href="/2009/11/querying-and-terminating-wli-instances.html">/2009/11/querying-and-terminating-wli-instances.html</a><br />
+<br />
+<br />
+package com.acme.integration.tools;<br />
+<br />
+<br />
+import java.util.Iterator;<br />
+import java.util.Set;<br />
+<br />
+import javax.management.MBeanException;<br />
+import javax.naming.Context;<br />
+import javax.naming.NamingException;<br />
+<br />
+import weblogic.jndi.Environment;<br />
+import weblogic.management.MBeanHome;<br />
+<br />
+import com.bea.wli.bpm.runtime.ProcessInstanceNotFoundException;<br />
+import com.bea.wli.bpm.runtime.ProcessNotFoundException;<br />
+import com.bea.wli.bpm.runtime.ProcessStatus;<br />
+import com.bea.wli.knex.runtime.core.bean.ConversationNotFoundException;<br />
+import com.bea.wli.management.runtime.ProcessInstanceInfo;<br />
+import com.bea.wli.management.runtime.ProcessInstanceQuery;<br />
+import com.bea.wli.management.runtime.ProcessInstanceQueryResult;<br />
+import com.bea.wli.management.runtime.ProcessRuntimeMBean;<br />
+<br />
+public class WLITerminator {<br />
+&nbsp;&nbsp; String SERVICE_URI = "url/to/your/process.jpd";<br />
+<br />
+&nbsp;&nbsp;&nbsp; private static final ProcessStatus[] processStatusToTerminate = new ProcessStatus[] {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ProcessStatus.ABORTED, ProcessStatus.COMPLETED, ProcessStatus.FROZEN, ProcessStatus.RUNNING};<br />
+&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; public static void main(String[] args) throws NamingException {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; terminateAll("weblogic", "weblogic", "t3://localhost:7001");&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp;&nbsp; private static void terminateAll(String username, String password, String url) throws NamingException {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Environment env = new Environment();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; env.setSecurityPrincipal(username);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; env.setSecurityCredentials(password);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; env.setProviderUrl(url);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Context ctx = env.getInitialContext();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; MBeanHome home = (MBeanHome)ctx.lookup(MBeanHome.ADMIN_JNDI_NAME);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; System.out.println("Got the Server-specific MBeanHome: " + home);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Set s = home.getMBeansByType("ProcessRuntime");<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; Iterator it = s.iterator();&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; try { <br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; if (it.hasNext()) { <br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ProcessRuntimeMBean bean = (ProcessRuntimeMBean)it.next();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ProcessInstanceQuery query = new ProcessInstanceQuery();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; //query.setServiceURI(SERVICE_URI);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; for (ProcessStatus p : processStatusToTerminate) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; query.setStatus(p);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; terminateInstances(bean, query);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; } catch (Exception ex) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ex.printStackTrace();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }&nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp;&nbsp; private static void terminateInstances(ProcessRuntimeMBean bean,<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ProcessInstanceQuery query) throws MBeanException,<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ConversationNotFoundException, ProcessNotFoundException,<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ProcessInstanceNotFoundException {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ProcessInstanceQueryResult info = bean.getProcessInstances(query);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; int count = info.getResultCard();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; String[] instances = info.getInstanceIds();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; System.out.println("found " + instances.length + " instances");<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; for (int i = 0 ; i &lt;&nbsp; instances.length; i++) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; String instanceId = instances[i];<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; ProcessInstanceInfo pi = bean.getProcessInstanceInfo(instanceId, false);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; System.out.println(pi.getServiceURI() + " " + instanceId);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; bean.terminate(pi.getServiceURI(), instanceId);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp; }<br />
+}<br />
+<br />
+<br />
+and here are the .classpath entries necessary:<br />
+<br />
+classpathentry kind="lib" path="C:/beawli/wli_10.3/lib/jpdpublic.jar"&nbsp;&nbsp;<br />
+classpathentry kind="lib" path="C:/beawli/wlserver_10.3/server/lib/wls-api.jar"&nbsp;&nbsp;<br />
+classpathentry kind="lib" path="C:/beawli/modules/com.bea.core.weblogic.security.identity_1.1.0.0.jar"<br />
+classpathentry kind="lib" path="C:/beawli/modules/com.bea.core.weblogic.workmanager_1.4.0.0.jar"<br />
+classpathentry kind="lib" path="C:/beawli/wlserver_10.3/server/lib/weblogic.jar"

@@ -1,0 +1,48 @@
+---
+layout: post
+title: "Failed to execute countNodes() function : oracle.xml.parser.v2.XMLNodeList cannot be cast to java.lang.String."
+date: 2011-01-26T16:43:00.006+01:00
+permalink: /2011/01/failed-to-execute-countnodes-function.html
+blogger_id: "691815255703313832"
+tags: ["BPEL", "countNodes"]
+blogger_comments:
+  - author: "Unknown"
+    date: 2011-02-08
+    html: "Is &#39;/ns1:PreactivationLot&#39; the xpath to a repeating element?"
+  - author: "vernetto"
+    date: 2011-02-09
+    html: "yes it is indeed (please note: I have changed PreactivationLot to BookLot in my example).<br /><br />Anyway &quot;count&quot; does the job, so I don&#39;t bother any more about ora:countNodes()"
+---
+An error occurs while processing the XPath expression; the expression is ora:countNodes($inputVariable.payload/ns1:BookLot).<br />
+The XPath expression failed to execute; the reason was: Failed to execute countNodes() function : oracle.xml.parser.v2.XMLNodeList cannot be cast to java.lang.String.<br />
+<br />
+<br />
+the BPEL was:<br />
+<br />
+copy<br />
+from ora:countNodes($inputVariable.payload/ns1:BookLot) /from<br />
+to $countLots /to<br />
+/copy<br />
+<br />
+<br />
+this <a href="http://forums.oracle.com/forums/thread.jspa?threadID=632140">http://forums.oracle.com/forums/thread.jspa?threadID=632140</a> tells me that the instructions should have been rather of this type:<br />
+<br />
+<br />
+ora:countNodes('Receive_Data_receive_InputVariable','EmpCollection','/ns2:EmpCollection/ns2:Emp')<br />
+<br />
+<br />
+ora:countNodes documentation:<br />
+<br />
+<i>This function returns size of elements as an integer.The signature of this function is ora:countNodes(variableName, partName?, locationPath?). The arguments are: 1) variableName - the source variable for the data, 2) partName - the part to select from the variable (optional), 3)locationPath - provides an absolute location path (with / meaning the root of the document fragment representing the entire part) to identify the root of a subtree within the document fragment representing the part (optional).</i><br />
+<br />
+If I use<br />
+<br />
+ora:countNodes('inputVariable', 'payload', '/ns1:BookLot')<br />
+<br />
+I get always 0 in the result.<br />
+<br />
+So I use count($inputVariable.payload/ns1:BookLot)<br />
+<br />
+and I still get 0.<br />
+<br />
+AFTER I put a Mediator between the File Adapter and the BPEL process, the result of count() is correct. Apparently there was some namespace mismatch if I go directly from FileAdapter to BPEL.

@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Quick guide to OPatch"
+date: 2013-08-12T16:22:00.001+02:00
+permalink: /2013/08/quick-guide-to-opatch.html
+blogger_id: "9041321565623406650"
+tags: ["opatch"]
+---
+<a href="http://docs.oracle.com/cd/E15586_01/doc.1111/e16793/opatch.htm">http://docs.oracle.com/cd/E15586_01/doc.1111/e16793/opatch.htm</a>
+
+<br/><br/>
+Create a folder /opt/oracle/patches
+<br/>
+Copy there your patch zip file (p16266172_111150_Generic.zip)
+<br/>
+unzip p16266172_111150_Generic.zip
+<br/>
+cd /opt/oracle/patches/16266172
+<br/>
+export MW_HOME=/opt/oracle/fmw11_1_1_5/
+<br/>
+export ORACLE_HOME=/opt/oracle/fmw11_1_1_5/osb
+<br/>
+shut down all wl servers
+<br/>
+/opt/oracle/fmw11_1_1_5/oracle_common/OPatch/opatch apply -invPtrLoc /opt/oracle/fmw11_1_1_5/osb/oraInst.loc
+<br/>
+restart the domain
+
+
+<br/><br/>
+I got an error "OPatch failed with error code 73", this because opatch could not find the /etc/config/actions.xml file.

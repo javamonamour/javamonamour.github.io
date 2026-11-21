@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Useful tips to configure MDBs and EJBs"
+date: 2012-11-06T07:49:00.002+01:00
+permalink: /2012/11/useful-tips-to-configure-mdbs-and-ejbs.html
+blogger_id: "6422771518024016313"
+tags: ["ejb", "mdb"]
+---
+<a href="http://technology.amis.nl/2012/02/24/ejb-an-mdb-best-practices-on-weblogic/">http://technology.amis.nl/2012/02/24/ejb-an-mdb-best-practices-on-weblogic/</a><br />
+<br />
+&nbsp;most relevant for me:<br />
+<br />
+<ul>
+<li>home-is-clusterable in weblogic-ejb-jar.xml and set in on “true”<br /></li>
+<li>MDB listeners set setting <strong>start-mdbs-with-application</strong> to false in weblogic-ejb-jar.xml or weblogic-application.xml&nbsp; (to ensure that consumpion of messages starts only after all JCA stuff is deployed)<br /></li>
+<li>check <strong>max-messages-in-transaction</strong> element in weblogic-ejb-jar.xml deployment descriptor<br /></li>
+</ul>
+<br />
+

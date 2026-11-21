@@ -1,0 +1,193 @@
+---
+layout: post
+title: "Hibernate validator dependencies for unit testing"
+date: 2018-04-11T11:23:00.002+02:00
+permalink: /2018/04/hibernate-validator-dependencies-for.html
+blogger_id: "3594666947797393424"
+tags: ["hibernate", "validation"]
+---
+<a href="http://hibernate.org/validator/">http://hibernate.org/validator/</a> home page of validation<br />
+<br />
+<br />
+<pre class="brush: java">at javax.validation.Validation$GenericBootstrapImpl.configure(Validation.java:271)
+at javax.validation.Validation.buildDefaultValidatorFactory(Validation.java:110)
+javax.validation.ValidationException: Unable to create a Configuration, because no Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath
+</pre><br />
+<br />
+I have this in my pom.xml<br />
+<br />
+&lt;dependency><br />
+ &lt;groupId>javax.validation&lt;/groupId><br />
+ &lt;artifactId>validation-api&lt;/artifactId><br />
+ &lt;scope>provided&lt;/scope><br />
+&lt;/dependency><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+Apparently I should add this implementation<br />
+<br />
+&lt;dependency><br />
+  &lt;groupId>org.hibernate.validator&lt;/groupId><br />
+  &lt;artifactId>hibernate-validator&lt;/artifactId><br />
+  &lt;version>6.0.7.Final&lt;/version><br />
+&lt;/dependency><br />
+<br />
+<br />
+I do that, then I have :<br />
+<br />
+<br />
+<pre class="brush: java">
+java.lang.NoClassDefFoundError: javax/validation/ClockProvider
+ at org.hibernate.validator.HibernateValidator.createGenericConfiguration(HibernateValidator.java:33)
+ at javax.validation.Validation$GenericBootstrapImpl.configure(Validation.java:276)
+ at javax.validation.Validation.buildDefaultValidatorFactory(Validation.java:110)
+
+Caused by: java.lang.ClassNotFoundException: javax.validation.ClockProvider
+ at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+ at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+ at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:331)
+ at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+
+</pre><br />
+<br />
+<br />
+<br />
+Then I add<br />
+<br />
+&lt;dependency><br />
+    &lt;groupId>javax.validation&lt;/groupId><br />
+    &lt;artifactId>validation-api&lt;/artifactId><br />
+    &lt;version>1.0.0.GA&lt;/version><br />
+    &lt;scope>test&lt;/scope><br />
+&lt;/dependency><br />
+<br />
+<br />
+<br />
+<br />
+and I get<br />
+<br />
+Caused by: java.lang.ClassNotFoundException: javax.validation.ParameterNameProvider<br />
+<br />
+<br />
+Here they say you should remove the validation-api : https://stackoverflow.com/questions/24652753/java-lang-noclassdeffounderror-javax-validation-parameternameprovider<br />
+<br />
+<br />
+I do this:<br />
+<br />
+<br />
+&lt;dependency><br />
+    &lt;groupId>javax.validation&lt;/groupId><br />
+    &lt;artifactId>validation-api&lt;/artifactId><br />
+    &lt;version>2.0.1.Final&lt;/version><br />
+    &lt;scope>test&lt;/scope><br />
+&lt;/dependency><br />
+<br />
+<br />
+now I get:<br />
+<br />
+<br />
+<br />
+<pre class="brush: java">
+Caused by: javax.validation.ValidationException: HV000183: Unable to initialize 'javax.el.ExpressionFactory'. Check that you have the EL dependencies on the classpath, or use ParameterMessageInterpolator instead
+ at org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator.buildExpressionFactory(ResourceBundleMessageInterpolator.java:123)
+ at org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator.<init>(ResourceBundleMessageInterpolator.java:47)
+ at org.hibernate.validator.internal.engine.ConfigurationImpl.getDefaultMessageInterpolator(ConfigurationImpl.java:461)
+ at org.hibernate.validator.internal.engine.ConfigurationImpl.getDefaultMessageInterpolatorConfiguredWithClassLoader(ConfigurationImpl.java:637)
+ at org.hibernate.validator.internal.engine.ConfigurationImpl.getMessageInterpolator(ConfigurationImpl.java:388)
+ at org.hibernate.validator.internal.engine.ValidatorFactoryImpl.<init>(ValidatorFactoryImpl.java:179)
+ at org.hibernate.validator.HibernateValidator.buildValidatorFactory(HibernateValidator.java:38)
+ at org.hibernate.validator.internal.engine.ConfigurationImpl.buildValidatorFactory(ConfigurationImpl.java:355)
+ at javax.validation.Validation.buildDefaultValidatorFactory(Validation.java:103)
+
+</pre><br />
+<br />
+<br />
+So I add ( https://stackoverflow.com/questions/24386771/javax-validation-validationexception-hv000183-unable-to-load-javax-el-express  )<br />
+<br />
+<br />
+<br />
+&lt;dependency><br />
+   &lt;groupId>javax.el&lt;/groupId><br />
+   &lt;artifactId>javax.el-api&lt;/artifactId><br />
+   &lt;version>2.2.4&lt;/version><br />
+   &lt;scope>test&lt;/scope><br />
+&lt;/dependency><br />
+&lt;dependency><br />
+   &lt;groupId>org.glassfish.web&lt;/groupId><br />
+   &lt;artifactId>javax.el&lt;/artifactId><br />
+   &lt;version>2.2.4&lt;/version><br />
+   &lt;scope>test&lt;/scope><br />
+&lt;/dependency><br />
+<br />
+<br />
+<br />
+and I get<br />
+<br />
+java.lang.ClassNotFoundException: javax.el.ELManager<br />
+<br />
+<br />
+then I finally use<br />
+<br />
+&lt;dependency><br />
+    &lt;groupId>javax.el&lt;/groupId><br />
+    &lt;artifactId>javax.el-api&lt;/artifactId><br />
+    &lt;version>3.0.0&lt;/version><br />
+     &lt;scope>test&lt;/scope><br />
+&lt;/dependency><br />
+<br />
+<br />
+and it works!<br />
+<br />
+once more, all you need is:<br />
+<br />
+<pre class="brush: xml">
+  &lt;dependency>
+    &lt;groupId>javax.validation&lt;/groupId>
+    &lt;artifactId>validation-api&lt;/artifactId>
+    &lt;scope>provided&lt;/scope>
+  &lt;/dependency>
+
+  &lt;dependency>
+    &lt;groupId>org.hibernate.validator&lt;/groupId>
+    &lt;artifactId>hibernate-validator&lt;/artifactId>
+    &lt;version>6.0.7.Final&lt;/version>
+    &lt;scope>test&lt;/scope>
+  &lt;/dependency>
+
+  &lt;dependency>
+    &lt;groupId>javax.validation&lt;/groupId>
+    &lt;artifactId>validation-api&lt;/artifactId>
+    &lt;version>2.0.1.Final&lt;/version>
+    &lt;scope>test&lt;/scope>
+  &lt;/dependency>
+
+&lt;dependency>
+  &lt;groupId>javax.el&lt;/groupId>
+  &lt;artifactId>javax.el-api&lt;/artifactId>
+  &lt;version>3.0.0&lt;/version>
+    &lt;scope>test&lt;/scope>
+&lt;/dependency>
+
+  &lt;dependency>
+    &lt;groupId>org.glassfish.web&lt;/groupId>
+    &lt;artifactId>javax.el&lt;/artifactId>
+    &lt;version>2.2.4&lt;/version>
+    &lt;scope>test&lt;/scope>
+  &lt;/dependency>
+  
+</pre><br />
+<br />
+  <br />
+  <br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

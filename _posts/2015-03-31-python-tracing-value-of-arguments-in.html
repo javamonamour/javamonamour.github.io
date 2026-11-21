@@ -1,0 +1,45 @@
+---
+layout: post
+title: "Python: tracing value of arguments in functions"
+date: 2015-03-31T14:12:00.003+02:00
+permalink: /2015/03/python-tracing-value-of-arguments-in.html
+blogger_id: "7349635677477016232"
+tags: ["python"]
+---
+If you are lazy (I am) and don't want to write print statements to trace the value of arguments, you can use this trick:
+
+<br/>
+<a href="http://stackoverflow.com/questions/6061744/how-to-get-value-of-arguments-in-functions-at-stack">http://stackoverflow.com/questions/6061744/how-to-get-value-of-arguments-in-functions-at-stack</a>
+<br/><br/>
+to print the argument values in case of an exception (which is most of the time the only case where you want the values to be traced...)
+<br/><br/>
+
+
+<pre class="brush: java">
+import inspect
+def fn(x):
+    try:
+        print(1/0)
+    except:
+        frames = inspect.trace()
+        argvalues = inspect.getargvalues(frames[0][0])
+        print("Argvalues: ", inspect.formatargvalues(*argvalues))
+        raise
+
+fn(12)
+
+
+('Argvalues: ', '(x=12)')
+
+</pre>
+
+<br/><br/>
+
+It works like magic!
+
+<br/><br/>
+
+I love Python.... if only it was Java, I would love it even more... let's say if Java was more Pythonic it would be a perfect world... well also if USA stopped invading and destroying countries it would not hurt...
+
+<br/><br/>
+

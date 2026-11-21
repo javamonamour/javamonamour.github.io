@@ -1,0 +1,18 @@
+---
+layout: post
+title: "Error untargetting and targetting again a JMSServer"
+date: 2012-04-27T17:57:00.000+02:00
+permalink: /2012/04/error-untargetting-and-targetting-again.html
+blogger_id: "7967464884435392931"
+tags: ["JNDI"]
+---
+We had an interesting case where WebLogic was keeping in JNDI tree a reference to a JMS Connection Factory (CF) even after untargetting the JMSServer on which the CF was deployed.<br />
+When I retarget the CF, I get this error:<br />
+<br />
+<i><br />
+An error occurred during activation of changes, please see the log for details.<br />
+Message icon - Error Error preparing connection factory GM_CommonOsbJMSModule!CommonOsbCF<br />
+Message icon - Error The proposed JNDI name "jms.jndi.cf.CommonOsb.CommonOsbCF" for connection factory "GM_CommonOsbJMSModule!CommonOsbCF" is already bound by another object of type "weblogic.jms.frontend.FEConnectionFactoryImpl_1035_WLStub"<br />
+</i><br />
+<br />
+The only solution was a server restart.

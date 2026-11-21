@@ -1,0 +1,192 @@
+---
+layout: post
+title: "Securing OSB SOAP service with WS-Policy UsernameToken"
+date: 2014-06-27T11:16:00.000+02:00
+permalink: /2014/06/securing-osb-soap-service-with-ws.html
+blogger_id: "6681828502712390936"
+tags: ["OSB", "security", "ws-security"]
+---
+Since we had some issue with OWSM and Attachments (solved in 11.1.1.7, but we are on 11.1.1.5) we decided to use some Predefined Web Service Security Policy.
+<br />
+<br />
+The proxy has this WSDL :
+<br />
+<br />
+<pre class="brush: xml">&lt;wsdl:definitions name="PVHelloWorld" 
+targetNamespace="http://www.example.org/PVHelloWorld/" 
+xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.example.org/PVHelloWorld/" 
+xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+   xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"&gt;
+
+  &lt;wsdl:types&gt;
+ &lt;xsd:schema&gt;
+  &lt;xsd:import namespace="http://www.example.org/PVHelloWorld/" schemaLocation="PVHelloWorld.xsd"/&gt;
+ &lt;/xsd:schema&gt;
+  &lt;/wsdl:types&gt;
+  
+  &lt;wsdl:message name="HelloWorldRequest"&gt;
+    &lt;wsdl:part element="tns:HelloWorldRequest" name="parameters"/&gt;
+  &lt;/wsdl:message&gt;
+  
+  &lt;wsdl:message name="HelloWorldResponse"&gt;
+    &lt;wsdl:part element="tns:HelloWorldResponse" name="parameters"/&gt;
+  &lt;/wsdl:message&gt;
+  
+  &lt;wsdl:portType name="PVHelloWorldPortType"&gt;
+    &lt;wsdl:operation name="HelloWorld"&gt;
+
+      &lt;wsdl:input message="tns:HelloWorldRequest"&gt;
+
+&lt;/wsdl:input&gt;
+      &lt;wsdl:output message="tns:HelloWorldResponse"/&gt;
+    &lt;/wsdl:operation&gt;
+  &lt;/wsdl:portType&gt;
+  
+  &lt;wsdl:binding name="PVHelloWorldPortBinding" type="tns:PVHelloWorldPortType"&gt;
+
+    &lt;soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/&gt;
+    &lt;wsdl:operation name="HelloWorld"&gt;
+      &lt;soap:operation soapAction="http://www.example.org/PVHelloWorld/HelloWorld"/&gt;
+      &lt;wsdl:input&gt;
+        &lt;soap:body use="literal"/&gt;
+      &lt;/wsdl:input&gt;
+      &lt;wsdl:output&gt;
+        &lt;soap:body use="literal"/&gt;
+      &lt;/wsdl:output&gt;
+    &lt;/wsdl:operation&gt;
+  &lt;/wsdl:binding&gt;
+  
+  &lt;wsdl:service name="PVHelloWorld"&gt;
+    &lt;wsdl:port binding="tns:PVHelloWorldPortBinding" name="PVHelloWorldPort"&gt;
+      &lt;soap:address location="http://www.example.org/"/&gt;
+    &lt;/wsdl:port&gt;
+  &lt;/wsdl:service&gt;
+  
+&lt;/wsdl:definitions&gt;
+
+</pre>
+<br />
+<br />
+where the PVHelloWorld.xsd is:
+
+<br />
+<pre class="brush: xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;schema xmlns="http://www.w3.org/2001/XMLSchema" 
+ targetNamespace="http://www.example.org/PVHelloWorld/" 
+ xmlns:tns="http://www.example.org/PVHelloWorld/" 
+ elementFormDefault="qualified"&gt;
+
+    &lt;element name="HelloWorldRequest" type="string"&gt;&lt;/element&gt;
+
+    &lt;element name="HelloWorldResponse" type="string"&gt;&lt;/element&gt;
+    
+&lt;/schema&gt;
+</pre>
+<br />
+<br />
+After you have to apply security to Request only.<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/e9bbcaa2f2c84664.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/c710957e74e5ec2c.png" /></a></div>
+<br />
+<br />
+If you apply Security to Operation, then it tries to apply security also to Response, and it fails:
+
+
+<br />
+<pre class="brush: xml">####&lt;Jun 27, 2014 10:23:40 AM CEST&gt; &lt;Error&gt; &lt;OSB Security&gt; &lt;acme102&gt; &lt;osbdev1ms1&gt; &lt;[ACTIVE] ExecuteThread: '10' for queue: 'weblogic.kernel.Default (self-tuning)'&gt; &lt;&lt;anonymous&gt;&gt; &lt;&gt; &lt;7f9b72b69446518a:670088d3:146d8a74ad2:-8000-0000000000004f16&gt; &lt;1403857420200&gt; &lt;BEA-387023&gt; &lt;An error ocurred during web service security inbound response processing [error-code: Fault, message-id: 6720812917736772435-670088d3.146d8a74ad2.-7882, proxy: PVSecurityTest/PVHelloWorld, operation: HelloWorld]
+--- Error message:
+&lt;env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/"&gt;&lt;env:Header/&gt;&lt;env:Body&gt;&lt;env:Fault&gt;&lt;faultcode&gt;env:Server&lt;/faultcode&gt;&lt;faultstring&gt;Unable to add security token for identity&lt;/faultstring&gt;&lt;/env:Fault&gt;&lt;/env:Body&gt;&lt;/env:Envelope&gt;
+weblogic.xml.crypto.wss.WSSecurityException: Unable to add security token for identity
+        at weblogic.wsee.security.wss.SecurityPolicyDriver.doIdentity(SecurityPolicyDriver.java:193)
+        at weblogic.wsee.security.wss.SecurityPolicyDriver.processIdentity(SecurityPolicyDriver.java:162)
+        at weblogic.wsee.security.wss.SecurityPolicyDriver.processOutbound(SecurityPolicyDriver.java:74)
+        at weblogic.wsee.security.wss.SecurityPolicyDriver.processOutbound(SecurityPolicyDriver.java:65)
+        at weblogic.wsee.security.WssServerHandler.processOutbound(WssServerHandler.java:88)
+        at weblogic.wsee.security.WssServerHandler.processResponse(WssServerHandler.java:70)
+        at weblogic.wsee.security.WssHandler.handleResponse(WssHandler.java:127)
+        at com.bea.wli.sb.security.wss.wls.Wls92InboundHandler.processResponse(Wls92InboundHandler.java:261)
+        at com.bea.wli.sb.security.wss.WssHandlerImpl.doInboundResponse(WssHandlerImpl.java:918)
+        at com.bea.wli.sb.context.BindingLayerImpl.createTransportReplySender(BindingLayerImpl.java:416)
+        at com.bea.wli.sb.context.BindingLayerImpl.addResponse(BindingLayerImpl.java:506)
+        at com.bea.wli.sb.pipeline.MessageProcessor.finishProcessing(MessageProcessor.java:349)
+        at com.bea.wli.sb.pipeline.RouterCallback.onReceiveResponse(RouterCallback.java:108)
+        at com.bea.wli.sb.pipeline.RouterCallback.run(RouterCallback.java:183)
+        at weblogic.work.ContextWrap.run(ContextWrap.java:41)
+        at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)
+        at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+        at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+&gt;
+
+
+</pre>
+<br />
+<br />
+You must then customize the policy (by default, everyone can access):<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/a6a887303cf653ff.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/a6a887303cf653ff.png" height="283" width="640" /></a></div>
+<br />
+<br />
+<br />
+and add the condition User = BLA (it's covered in red in the picture below)<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/f8a62ade1a0f3183.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/f8a62ade1a0f3183.png" height="410" width="640" /></a></div>
+<div class="separator" style="clear: both; text-align: center;">
+</div>
+<br />
+<br />
+<br />
+The alternative is to embed policies in the WSDL:
+<br />
+<br />
+This to be put only once:
+<br />
+<br />
+&lt;wsp:UsingPolicy
+      wsdl:Required="true"
+      xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"/&gt; 
+
+<br />
+<br />
+and this to be applied for each part you want to protect with Authorization:
+<br />
+<br />
+&lt;wsp:Policy&gt;
+          &lt;wsp:PolicyReference URI="policy:Auth.xml"/&gt;
+   &lt;/wsp:Policy&gt;
+
+
+
+
+<br />
+<br />
+
+The curious thing is that if Request authentication fails, the service error handler is invoked:
+<br />
+<br />
+
+<pre class="brush: xml">
+
+ &lt;con:fault xmlns:con="http://www.bea.com/wli/sb/context">
+  &lt;con:errorCode>BEA-386201&lt;/con:errorCode>
+  &lt;con:reason>A web service security fault occurred[{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd}FailedAuthentication][Failed to assert identity with UsernameToken.]&lt;/con:reason>
+  &lt;con:details>
+    &lt;err:WebServiceSecurityFault xmlns:err="http://www.bea.com/wli/sb/errors">
+      &lt;err:faultcode xmlns:oas="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">oas:FailedAuthentication&lt;/err:faultcode>
+      &lt;err:faultstring>Failed to assert identity with UsernameToken.&lt;/err:faultstring>
+    &lt;/err:WebServiceSecurityFault>
+  &lt;/con:details>
+  &lt;con:location>
+    &lt;con:path>request-pipeline&lt;/con:path>
+  &lt;/con:location>
+&lt;/con:fault>
+
+
+</pre>
+
+<br />
+<br />
+
+

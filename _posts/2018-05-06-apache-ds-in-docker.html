@@ -1,0 +1,162 @@
+---
+layout: post
+title: "Apache DS in docker"
+date: 2018-05-06T16:24:00.001+02:00
+permalink: /2018/05/apache-ds-in-docker.html
+blogger_id: "3287787673899861228"
+tags: ["apacheadstudio", "apacheds", "LDAP"]
+---
+<a href="https://github.com/greggigon/apacheds">https://github.com/greggigon/apacheds</a><br />
+<br />
+docker run -d --rm --name apacheds -p 10389:10389 greggigon/apacheds<br />
+<br />
+docker exec -ti apacheds bash<br />
+<br />
+ps -ef  <br />
+<i>      <br />
+UID        PID  PPID  C STIME TTY          TIME CMD<br />
+root         1     0  0 18:48 ?        00:00:00 /bin/bash /usr/local/bin/apacheds.sh<br />
+apacheds    93     1  0 03:40 ?        00:00:01 /opt/apacheds-2.0.0_M24/bin/wrapper /var/lib/apacheds-2.0.0_M24/default/conf/wrapper-instance.conf set.INSTANCE_DIRECTORY=/var/lib/apacheds-2.0.0_M24/default set.A<br />
+apacheds    95    93  1 03:40 ?        00:00:10 java -Dlog4j.configuration=file:////var/lib/apacheds-2.0.0_M24/default/conf/log4j.properties -Dapacheds.var.dir=/var/lib/apacheds-2.0.0_M24/default -Dapacheds.log.<br />
+</i><br />
+<br />
+<br />
+binaries are in /opt/apacheds-2.0.0_M24/ , logs in /var/lib/apacheds-2.0.0_M24/default/log/apacheds.log<br />
+<br />
+you can use this Bind DN:<br />
+uid=admin,ou=system <br />
+with password: <br />
+secret<br />
+<br />
+this should give you ldapmodify :<br />
+sudo yum install openldap-clients<br />
+<br />
+You can connect with ldapmodify https://cwiki.apache.org/confluence/display/DIRxSRVx10/2.2.2.+Command+line+tools  <br />
+<br />
+<pre>ldapmodify -p 10389 -h 127.0.0.1 -D "uid=admin,ou=system" -w secret
+#search all
+ldapsearch -h 127.0.0.1 -p 10389  -D "uid=admin,ou=system" -w secret "(objectClass=*)"
+#search only one domain
+ldapsearch -x -h 127.0.0.1 -p 10389  -D "uid=admin,ou=system" -w secret -b 'dc=example,dc=com' '(objectclass=*)'
+</pre><br />
+<br />
+(see page 312 of the Wildfly Configuration Deployment Administration 2nd Edition" book)<br />
+<br />
+here a sample LDIF file you can import with <br />
+ldapmodify -p 10389 -h 127.0.0.1 -D "uid=admin,ou=system" -w secret -a -f example.ldif <br />
+<br />
+<br />
+<pre>dn: dc=example,dc=com
+objectclass: top
+objectclass: dcObject
+objectclass: organization
+dc: example
+o: MCC
+
+dn: ou=People,dc=example,dc=com
+objectclass: top
+objectclass: organizationalUnit
+ou: People
+
+dn: uid=admin,ou=People,dc=example,dc=com
+objectclass: top
+objectclass: uidObject
+objectclass: person
+uid: admin
+cn: Manager
+sn: Manager
+userPassword: secret
+
+dn: ou=Roles,dc=example,dc=com
+objectclass: top
+objectclass: organizationalUnit
+ou: Roles
+
+dn: cn=Manager,ou=Roles,dc=example,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: Manager
+description: the JBossAS7 group
+member: uid=admin,ou=People,dc=example,dc=com
+</pre><br />
+You can download jxplorer (see <a href="https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=29757">https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=29757</a>) , login as "uid=admin,ou=system" password secret, then Tool/Import <br />
+<br />
+I am using now Apache Directory Studio, it seems more advanced than jxplorer.<br />
+<br />
+https://cwiki.apache.org/confluence/download/attachments/29756/apache_ds_tutorial.ldif?version=1&modificationDate=1164515728000&api=v2&download=true<br />
+<br />
+but it fails.... totally broken it seems...<br />
+<br />
+Better start reading the ApacheDS Basic User Guide <a href="http://directory.apache.org/apacheds/basic-user-guide.html">http://directory.apache.org/apacheds/basic-user-guide.html</a><br />
+<br />
+<br />
+LDAP basic tutorial<br />
+<br />
+<iframe width="600" height="400" src="https://www.youtube.com/embed/di5hZZ8Ty8g" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+let me quickly say that LDAP SUCKS big time, this technology is Stone-Age old and pathetically complex and brittle.<br />
+<br />
+<br />
+<a href="http://directory.apache.org/apacheds/basic-ug/1.4.3-adding-partition.html">http://directory.apache.org/apacheds/basic-ug/1.4.3-adding-partition.html</a> how to add a partition o=sevenSeas<br />
+<br />
+<br />
+Excellent basic intro to LDAP concepts <a href="https://www.digitalocean.com/community/tutorials/understanding-the-ldap-protocol-data-hierarchy-and-entry-components">https://www.digitalocean.com/community/tutorials/understanding-the-ldap-protocol-data-hierarchy-and-entry-components</a><br />
+<br />
+<br />
+Complete code to connect to LDAP and run a query<br />
+<br />
+<pre class="brush: java">package org.pierre.pvldapconnect;
+
+import java.util.Hashtable;
+import java.util.Properties;
+
+import javax.naming.*;
+import javax.naming.directory.*;
+import javax.naming.ldap.*;
+
+public class LDAPConnect {
+ public static void main(String[] args) throws Exception {
+  //build a hashtable containing all the necessary configuration parameters
+  Hashtable&lt;String, String> environment = new Hashtable&lt;String, String>();
+
+  Properties conf;
+  environment.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+  environment.put(Context.PROVIDER_URL, "ldap://localhost:10389");
+  environment.put(Context.SECURITY_AUTHENTICATION, "simple");
+  environment.put(Context.SECURITY_PRINCIPAL, "uid=admin,ou=system");
+  environment.put(Context.SECURITY_CREDENTIALS, "secret");
+
+  // connect to LDAP
+  DirContext context = new InitialDirContext(environment);
+  System.out.println("Connected..");
+        System.out.println(context.getEnvironment());
+    
+        
+
+  // Specify the search filter
+  String FILTER = "(&(objectClass=person) ((cn=\"pierluigivernetto\")))";
+
+  // limit returned attributes to those we care about
+  String[] attrIDs = { "sn", "cn" };
+
+  SearchControls ctls = new SearchControls();
+  ctls.setReturningAttributes(attrIDs);
+  ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+
+  // Search for objects using filter and controls
+  final String ldapSearchBase = "dc=example,dc=com";
+  NamingEnumeration&lt;SearchResult> answer = context.search(ldapSearchBase, FILTER, ctls);
+  while (answer.hasMore()) {
+   SearchResult result = answer.next();
+   System.out.println(result.toString());
+  }
+
+ }
+
+}
+
+</pre>

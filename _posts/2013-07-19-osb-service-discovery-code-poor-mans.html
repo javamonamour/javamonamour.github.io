@@ -1,0 +1,259 @@
+---
+layout: post
+title: "OSB service discovery code (poor man's Amberpoint)"
+date: 2013-07-19T13:02:00.000+02:00
+permalink: /2013/07/osb-service-discovery-code-poor-mans.html
+blogger_id: "5996035974825137599"
+tags: ["amberpoint", "OSB"]
+---
+This will generate SQL code to display dependencies. You need to create 3 tables: ACME2_OSBPROJECTS, ACME2_SERVICES, ACME2_SERVICE_DEPENDENCIES
+
+<pre>
+
+  CREATE TABLE "ACME2_OSBPROJECTS" 
+   ( "OSBPROJECTNAME" VARCHAR2(50 BYTE), 
+ "MESSAGESPERDAYMAX" NUMBER(10,0), 
+ "PROJECTNAME" VARCHAR2(50 BYTE), 
+ "DEPLOYMENT_ORDER" NUMBER DEFAULT 1, 
+ "MESSAGESPERDAYMIN" NUMBER(10,0)
+   ) ;
+
+   
+
+  CREATE TABLE "ACME2_PROJECTS" 
+   ( "PROJECTNAME" VARCHAR2(20 BYTE), 
+ "DOMAINNUMBER" VARCHAR2(20 BYTE), 
+ "TYPE" VARCHAR2(20 BYTE), 
+ "BUSINESSAREA" VARCHAR2(20 BYTE), 
+ "REMARKS" VARCHAR2(100 BYTE), 
+ "STATUS" VARCHAR2(20 BYTE) DEFAULT 'ACTIVE'
+   ) ;
+
+
+  CREATE TABLE "ACME2_SERVICE_DEPENDENCIES" 
+   ( "SERVICE" VARCHAR2(200 BYTE), 
+ "DEPENDENTSERVICE" VARCHAR2(200 BYTE)
+   ) ;
+
+
+  CREATE UNIQUE INDEX "ACME2_OSBPROJECTS_PK" ON "ACME2_OSBPROJECTS" ("OSBPROJECTNAME")   ;
+
+  CREATE UNIQUE INDEX "ACME2_PROJECTS_PK" ON "ACME2_PROJECTS" ("PROJECTNAME")   ;
+
+  CREATE UNIQUE INDEX "ACME2_SERVICE_DEPENDENCI_UK1" ON "ACME2_SERVICE_DEPENDENCIES" ("SERVICE", "DEPENDENTSERVICE")   ;
+
+  ALTER TABLE "ACME2_OSBPROJECTS" MODIFY ("DEPLOYMENT_ORDER" NOT NULL ENABLE);
+  ALTER TABLE "ACME2_OSBPROJECTS" ADD CONSTRAINT "ACME2_OSBPROJECTS_PK" PRIMARY KEY ("OSBPROJECTNAME") ENABLE;
+  ALTER TABLE "ACME2_OSBPROJECTS" MODIFY ("OSBPROJECTNAME" NOT NULL ENABLE);
+
+  ALTER TABLE "ACME2_PROJECTS" ADD CONSTRAINT "ACME2_PROJECTS_CHK3" CHECK (DOMAINNUMBER IN ('1', '2', '3', '4', 'ALL', 'NONE')) ENABLE;
+  ALTER TABLE "ACME2_PROJECTS" ADD CONSTRAINT "ACME2_PROJECTS_CHK4" CHECK (STATUS IN ('ACTIVE', 'DEAD', 'FUTURE')) ENABLE;
+  ALTER TABLE "ACME2_PROJECTS" MODIFY ("STATUS" NOT NULL ENABLE);
+  ALTER TABLE "ACME2_PROJECTS" MODIFY ("DOMAINNUMBER" NOT NULL ENABLE);
+  ALTER TABLE "ACME2_PROJECTS" ADD CONSTRAINT "ACME2_PROJECTS_CHK2" CHECK (BUSINESSAREA IN ('Frontend', 'Backend')) ENABLE;
+  ALTER TABLE "ACME2_PROJECTS" ADD CONSTRAINT "ACME2_PROJECTS_CHK1" CHECK (TYPE IN ('NonCritical', 'Critical')) ENABLE;
+  ALTER TABLE "ACME2_PROJECTS" ADD CONSTRAINT "ACME2_PROJECTS_PK" PRIMARY KEY ("PROJECTNAME") ENABLE;
+  ALTER TABLE "ACME2_PROJECTS" MODIFY ("PROJECTNAME" NOT NULL ENABLE);
+
+  ALTER TABLE "ACME2_SERVICE_DEPENDENCIES" ADD CONSTRAINT "ACME2_SERVICE_DEPENDENCI_UK1" UNIQUE ("SERVICE", "DEPENDENTSERVICE") ENABLE;
+  ALTER TABLE "ACME2_SERVICE_DEPENDENCIES" MODIFY ("DEPENDENTSERVICE" NOT NULL ENABLE);
+  ALTER TABLE "ACME2_SERVICE_DEPENDENCIES" MODIFY ("SERVICE" NOT NULL ENABLE);
+
+  ALTER TABLE "ACME2_OSBPROJECTS" ADD CONSTRAINT "ACME2_OSBPROJECTS_ACME2_FK1" FOREIGN KEY ("PROJECTNAME")
+   REFERENCES "ACME2_PROJECTS" ("PROJECTNAME") ENABLE;
+
+
+</pre>
+
+<br/><br/>
+
+this is the code:
+
+<br/><br/>
+
+
+<pre name="code" class="brush: java">
+
+#There is a change to do to be able to run this WLST script:
+#vi /opt/oracle/fmw11_1_1_5/osb/common/bin/wlst.sh
+#change this:
+#export CLASSPATH
+#into this:
+#CLASSPATH=/opt/oracle/fmw11_1_1_5/osb/lib/sb-kernel-api.jar:/opt/oracle/fmw11_1_1_5/osb/modules/com.bea.common.configfwk_1.5.0.0.jar:$CLASSPATH
+#export CLASSPATH
+
+
+import javax.management
+import java.util
+import javax.management.remote
+import javax.naming
+import weblogic.management.mbeanservers.domainruntime
+import com.bea.wli.sb.management.configuration
+
+from java.util import Hashtable
+from java.util import HashSet
+from javax.management.remote import JMXServiceURL
+from weblogic.management.mbeanservers.domainruntime import DomainRuntimeServiceMBean
+from javax.naming import Context
+from javax.management.remote import JMXConnectorFactory
+from javax.management import ObjectName
+from com.bea.wli.sb.management.configuration import SessionManagementMBean
+from com.bea.wli.sb.management.configuration import ALSBConfigurationMBean
+from com.bea.wli.config import Ref
+
+from com.bea.wli.config.env import EnvValueQuery
+from com.bea.wli.config.env import QualifiedEnvValue
+from com.bea.wli.config.resource import DependencyQuery
+from com.bea.wli.sb.management.query import ProxyServiceQuery
+from com.bea.wli.sb.management.query import BusinessServiceQuery
+
+from com.bea.wli.sb.util import EnvValueTypes
+from java.util import Collection
+from java.util import Collections
+
+
+
+def displayAllProjectsAndServices():
+    sb = ""
+    refs = configMBean.getRefs(Ref.DOMAIN)
+    refsList = ArrayList()
+    refsList.addAll(refs)
+    
+    for ref in refs:
+        if (ref.isProjectRef()) :
+            sb = sb + ("insert into ACME2_OSBPROJECTS (OSBPROJECTNAME) values ('" + ref.getFullName() + "');\n")
+        
+    sb = sb + "\n\n\n"
+    
+    for ref in refsList :
+        if ref.getTypeId() == "ProxyService" or ref.getTypeId() == "BusinessService" :
+            if ref.getTypeId() == "ProxyService" :
+                isPS = "1"
+            else:
+                isPS =  "0"
+            sb = sb + ("INSERT INTO ACME2_SERVICES (SERVICENAME, SERVICEFULLPATH, OSBPROJECTNAME, ISPS) values ('" + ref.getLocalName() + "', '" + ref.getFullName() + "', '" + ref.getProjectName() + "', '" + isPS + "');\n")
+            sb = sb + ("UPDATE ACME2_SERVICES set SERVICENAME = '" + ref.getLocalName() + "', OSBPROJECTNAME='" + ref.getProjectName() + "', ISPS = '" + isPS + "' where SERVICEFULLPATH = '" + ref.getFullName() + "';\n")
+    
+    
+    sb = sb + "\n\n\n"
+    return sb
+
+
+def getAllServiceURIs():
+    sb = ""
+    evquery = EnvValueQuery(None, Collections.singleton(EnvValueTypes.SERVICE_URI), None, False, None, False)
+    founds = configMBean.findEnvValues(evquery)
+    for value in founds: 
+        sb = sb + ("UPDATE ACME2_SERVICES set SERVICE_URI = '" + value.getValue() + "' where SERVICEFULLPATH ='" + value.getOwner().getFullName() + "';\n")
+    return sb
+    
+    
+def getAllProxyServices():    
+    sb = ""
+    query = ProxyServiceQuery()
+    refs = configMBean.getRefs(query)
+    for ref in refs:
+        uriObject = configMBean.getEnvValue(ref, EnvValueTypes.SERVICE_URI, None)
+        if uriObject == None:
+            uri = "NULL"
+        else:
+            uri = uriObject
+        sb = sb + ("UPDATE ACME2_SERVICES set SERVICE_URI ='" + uri + "', TYPE = '" + lookupType(uri) + "', ISPS = 1 where SERVICEFULLPATH = '" + ref.getFullName() + "';\n")
+    
+    return sb
+
+def getAllBusinessServices():    
+    sb = ""
+    query = BusinessServiceQuery()
+    refs = configMBean.getRefs(query)
+    for ref in refs:
+        uri = getBusinessServiceURI(ref)
+        sb = sb + ("UPDATE ACME2_SERVICES set SERVICE_URI ='" + uri + "', TYPE = '" + lookupType(uri) + "', ISPS = 0 where SERVICEFULLPATH = '" + ref.getFullName() + "';\n")
+    return sb
+    
+
+
+
+def getDependentServices():
+    sb = ""
+    psQuery = ProxyServiceQuery()
+    myPSSet = configMBean.getRefs(psQuery)
+    for myPS in myPSSet:
+        depQuery = DependencyQuery(Collections.singleton(myPS), False)
+        refs = configMBean.getRefs(depQuery)
+        for ref in refs:
+            if (ref.getTypeId() == "BusinessService" or ref.getTypeId() == "ProxyService"):
+                sb = sb + ("INSERT INTO ACME2_SERVICE_DEPENDENCIES (SERVICE, DEPENDENTSERVICE) values ('" + myPS.getFullName() + "', '" + ref.getFullName() + "');\n")
+    return sb
+    
+
+def getBusinessServiceURI(ref):
+    envValueTypesToSearch = HashSet()
+    envValueTypesToSearch.add(EnvValueTypes.SERVICE_URI);
+    evquery = EnvValueQuery(None, envValueTypesToSearch, Collections.singleton(ref), False, None, False )
+    founds = configMBean.findEnvValues(evquery);
+    uri = ""
+    for qev in founds:
+        if (qev.getEnvValueType() == EnvValueTypes.SERVICE_URI):
+            uri = qev.getValue()
+    return uri;
+    
+
+
+def lookupType(uri):
+    result = "NONE"
+    if (uri == None) :
+        result = "LOCAL"
+    elif uri.startswith("/") :
+        result = "HTTP"
+    elif (uri.startswith("jca://eis/DB/")):
+        result = "DBADAPTER"
+    elif (uri.startswith("flow:")):
+        result = "SPLITJOIN"
+    elif (uri.startswith("http://")):
+        result = "HTTPBS"
+    elif (uri.startswith("jca://eis/FileAdapter")):
+        result = "HAFILEADAPTER"
+    elif (uri.startswith("jca://eis/Ftp/")):
+        result = "FTPADAPTER"
+    elif (uri.startswith("jms:")):
+        result = "JMS"
+    return result;
+
+
+
+sessionName = "MySession"
+hostname='ACME.reacm.com'
+port=7001
+username='Pierluigi'
+password='weblogic1'
+serviceURL=JMXServiceURL("t3", hostname, port, "/jndi/" + DomainRuntimeServiceMBean.MBEANSERVER_JNDI_NAME)
+h=Hashtable()
+h.put(Context.SECURITY_PRINCIPAL, username)
+h.put(Context.SECURITY_CREDENTIALS, password)
+h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, "weblogic.management.remote")
+
+conn = JMXConnectorFactory.connect(serviceURL, h)
+
+mbconn = conn.getMBeanServerConnection()
+
+sm = JMX.newMBeanProxy(mbconn, ObjectName.getInstance(SessionManagementMBean.OBJECT_NAME), SessionManagementMBean)
+
+sm.createSession(sessionName)
+
+configMBean = JMX.newMBeanProxy(mbconn, ObjectName.getInstance("com.bea:Name=" + ALSBConfigurationMBean.NAME + "." + sessionName + ",Type=" + ALSBConfigurationMBean.TYPE), ALSBConfigurationMBean)
+
+print displayAllProjectsAndServices()
+print getAllProxyServices()
+print getAllBusinessServices()
+print getAllServiceURIs()
+print getDependentServices()
+
+
+sm.discardSession(sessionName)
+conn.close()
+
+
+</pre>
+
+

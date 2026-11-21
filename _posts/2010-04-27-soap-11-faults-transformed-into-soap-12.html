@@ -1,0 +1,86 @@
+---
+layout: post
+title: "OSB faults transformed into SOAP 1.2 and SOAP 1.1 format"
+date: 2010-04-27T13:11:00.000+02:00
+permalink: /2010/04/soap-11-faults-transformed-into-soap-12.html
+blogger_id: "510387186305471443"
+tags: ["soap fault"]
+---
+If the client that invokes OSB adheres to the <b>SOAP 1.2</b> standard, you can always transform the OSB SOAP Fault into the 1.2 standard with this XQuery transformation:<br />
+<br />
+<br />
+declare namespace xf =<br />
+"http://tempuri.org/Transformations/transformations/transformCustomFaultToSoapFault/";<br />
+declare namespace soap = "http://www.w3.org/2003/05/soap-envelope";<br />
+declare namespace flt = "http://www.bea.com/wli/sb/context";<br />
+<br />
+declare function xf:<b>transformCustomFaultToSoapFault</b>($fault1 as<br />
+element(flt:fault))<br />
+&nbsp;&nbsp; as element(soap:Fault) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;soap:Fault&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;soap:Code&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;soap:Value&gt;soap:Receiver&lt;/soap:Value&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/soap:Code&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;soap:Reason&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;soap:Text&gt;{ concat(data($fault1/flt:errorCode) , "-"<br />
+, data($fault1/flt:reason)) }&lt;/soap:Text&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/soap:Reason&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />
+<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for $location in $fault1/flt:location<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let $node := data($location/flt:node)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let $pipeline := data($location/flt:pipeline)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let $stage := data($location/flt:stage)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let $error-handler := data($location/flt:error-handler)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let $path := data($location/flt:path)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;soap:Node&gt;{ concat($node ,"-" , $pipeline ,"-" ,<br />
+$stage ,"-" , $error-handler ,"-" , $path) }&lt;/soap:Node&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for $details in $fault1/flt:details<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;soap:Detail&gt;{ $details/@* , $details/node() }&lt;/soap:Detail&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/soap:Fault&gt;<br />
+};<br />
+<br />
+declare variable $fault1 as element(flt:fault) external;<br />
+<br />
+xf:transformCustomFaultToSoapFault($fault1)<br />
+<br />
+And this is the <b>SOAP 1.1</b> version:<br />
+<br />
+declare namespace xf =<br />
+"http://tempuri.org/Transformations/transformations/transformCustomFaultToSoap11Fault/";<br />
+declare namespace ns0 = "http://schemas.xmlsoap.org/soap/envelope/";<br />
+declare namespace ns1 = "http://www.bea.com/wli/sb/context";<br />
+<br />
+declare function xf:<b>transformCustomFaultToSoap11Fault</b>($fault1 as<br />
+element(ns1:fault))<br />
+&nbsp;&nbsp; as element(*) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ns0:Fault&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;faultcode&gt;soap:Server&lt;/faultcode&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;faultstring&gt;{ concat($fault1/ns1:errorCode , "-"<br />
+,$fault1/ns1:reason) }&lt;/faultstring&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for $node in $fault1/ns1:location/ns1:node<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let&nbsp; $error-handler := data($fault1/ns1:location/ns1:error-handler)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let&nbsp; $path := data($fault1/ns1:location/ns1:path)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let&nbsp; $stage := data($fault1/ns1:location/ns1:stage)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; let&nbsp; $pipeline := data($fault1/ns1:location/ns1:pipeline)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;faultactor&gt;{ concat($node , "-" , $error-handler , "-" ,<br />
+$path , "-" , $stage , "-" , $pipeline) }&lt;/faultactor&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for $details in $fault1/ns1:details<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;detail&gt;{ $details/@* , $details/node() }&lt;/detail&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ns0:Fault&gt;<br />
+};<br />
+<br />
+declare variable $fault1 as element(ns1:fault) external;<br />
+<br />
+xf:transformCustomFaultToSoap11Fault($fault1)

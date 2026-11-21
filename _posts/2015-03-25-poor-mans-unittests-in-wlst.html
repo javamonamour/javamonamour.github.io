@@ -1,0 +1,105 @@
+---
+layout: post
+title: "Poor man's unittests in WLST"
+date: 2015-03-25T14:16:00.000+01:00
+permalink: /2015/03/poor-mans-unittests-in-wlst.html
+blogger_id: "4697758262309376687"
+tags: ["unittest", "WLST"]
+---
+<a href="https://docs.python.org/3/library/unittest.html">Python comes with a very elaborate unittest module </a>, and there is no reason NOT to use it, unless a) you are bound to a VERY old implementation of Python B) you are lazy and stupid like me
+
+<br/>
+<br/>
+
+The good news is that it's really easy to implement a "poor man's" version of a unittest:
+
+
+<pre class="brush: java">
+
+totalErrors = 0
+totalTests = 0
+
+def assertTrue(booleanCondition, message):
+  global totalTests, totalErrors
+  totalTests = totalTests + 1
+  if (not booleanCondition):
+    print "ERROR:", message
+    totalErrors = totalErrors + 1
+
+
+
+#your testing code here
+
+assertTrue(domain is not None, "domain is not None")
+
+
+#print test summary
+
+print ""
+print "totalTests=", totalTests
+if (totalErrors == 0):
+  print 'SUCCESS'
+else:
+  print 'FAILURE, totalErrors=', totalErrors
+  
+
+
+
+</pre>
+
+<br/>
+<br/>
+
+
+One big step forward it to use the inspect module to print the actual assertTrue statement being executed - so you avoid having to pass also the message:
+
+<pre class="brush: java">
+
+import inspect
+
+totalErrors = 0
+totalTests = 0
+
+def assertTrue(booleanCondition, message):
+  global totalTests, totalErrors
+  totalTests = totalTests + 1
+  if (not booleanCondition):
+    frame,filename,line_number,function_name,lines,index = inspect.stack()[1]
+    print "ERROR:", message, frame,filename,line_number,function_name,lines,index
+    totalErrors = totalErrors + 1
+
+
+
+#your testing code here
+
+assertTrue(domain is not None)
+
+
+#print test summary
+
+print ""
+print "totalTests=", totalTests
+if (totalErrors == 0):
+  print 'SUCCESS'
+else:
+  print 'FAILURE, totalErrors=', totalErrors
+  
+
+
+
+</pre>
+
+
+
+
+
+<br/>
+<br/>
+
+
+
+I love being minimalistic and lazy....
+
+
+
+

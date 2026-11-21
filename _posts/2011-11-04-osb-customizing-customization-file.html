@@ -1,0 +1,75 @@
+---
+layout: post
+title: "OSB, customizing the customization file ALSBCustomizationFile.xml"
+date: 2011-11-04T23:14:00.002+01:00
+permalink: /2011/11/osb-customizing-customization-file.html
+blogger_id: "8409641025366950923"
+tags: ["customization", "OSB"]
+---
+I hate having to modify the ALSBCustomizationFile.xml with tokens to be replaced or, even worse, maintain a separate ALSBCustomizationFile.xml per environment.<br />
+<br />
+And I believe the "find and replace" strategy is weak and error-prone.<br />
+<br />
+Better define in a separate file what you want to customize and its new value. One file per environment. Sweet and simple.<br />
+<br />
+At last I can put all pieces together:<br />
+<br />
+<br />
+Your "mycustomizations.properties" file should be like this:<br />
+<br />
+<pre>#ownerType.ownerPath.envValueType=newvalue
+ProxyService:OSBProject1/ProxyService1:Service URI=/OSBProject1/ProxyServicePluto
+</pre><br />
+and this is the Groovy code:<br />
+<br />
+<br />
+<pre name="code" class="brush: java">import groovy.xml.XmlUtil
+
+/*
+ * Lookup customization file
+ * Search //cus:envValueAssignments[(cus:envValueAssignments/xt:owner/xt:type/text() == $1 
+ *          AND //cus:envValueAssignments/xt:owner/xt:path/text() = $2)][xt:envValueType == $3]
+ * and replace their xt:value with $4
+ *  
+ */
+
+def customizations = new XmlSlurper().parse("ALSBCustomizationFile.xml").declareNamespace(xt: 'http://www.bea.com/wli/config/xmltypes',xsi: 'http://www.w3.org/2001/XMLSchema-instance', cus : 'http://www.bea.com/wli/config/customizations')
+
+//println XmlUtil.serialize( customizations )
+
+File theInfoFile = new File("mycustomizations.properties")
+
+theInfoFile.eachLine { line ->
+  if ( (line.trim().size() == 0) || (line.trim().startsWith("#")) ) {
+   // ignore
+  } else {
+    words = line.split("=")
+    keys = words[0].split(":")
+    value = words[1]
+
+  ownerType = keys[0]
+  ownerPath = keys[1]
+  envValueType = keys[2]
+  
+  customizations.'cus:customization'.each {
+
+   if (it.'@xsi:type' == "cus:EnvValueCustomizationType") {
+    println "FOUND"
+    for (item in it.'cus:envValueAssignments') {
+     if ( (item.'xt:envValueType' == envValueType) &&  (item.'xt:owner'.'xt:type' = ownerType) &&  (item.'xt:owner'.'xt:path' = ownerPath) ) {
+      println "ITEM " + envValueType + " " + ownerType + " " + ownerPath + ", before is " + item.'xt:value'
+      item.'xt:value'.replaceBody(value)
+      println "ITEM " + envValueType + " " + ownerType + " " + ownerPath + ",  after is " + item.'xt:value'
+     }
+    }
+   } // if
+  } // each
+   } // if else
+}
+ 
+
+println XmlUtil.serialize( customizations )
+
+</pre><br />
+<br />
+Groovy is great but not intuitive and self-explanatory to use.... Groovy plugin for Eclipse does code completion but can't introspect the runtime type of a variable, of course...

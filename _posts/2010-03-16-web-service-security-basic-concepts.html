@@ -1,0 +1,87 @@
+---
+layout: post
+title: "Web Service Security: basic concepts"
+date: 2010-03-16T12:17:00.000+01:00
+permalink: /2010/03/web-service-security-basic-concepts.html
+blogger_id: "1297348431640969675"
+---
+<b>Message-level security:</b> it enhances transport-level security (SSL) by allowing to specify which part of the message should be encrypted<br />
+<br />
+<br />
+<b>Transport-level security:</b> can be HTTP-Basic and SSL<br />
+<br />
+<b>Access control security</b>: it doesn't encrypt the message, it simply checks that a given user is allowed to invoke a service<br />
+<br />
+<br />
+<br />
+WS-Security is available for both JAX-RPC and JAX-WS.<br />
+A message can be signed, encrypted or both. It provides integrity, confidentiality and authentication.<br />
+<br />
+<br />
+These OASIS standards are supported:<br />
+<br />
+<b>WS-Security</b> 1.0 and 1.1<br />
+<b>Username Token Profile</b> 1.0 and 1.1<br />
+<b>X.509 Token Profile</b> 1.0 and 1.1<br />
+<b>SAML Token Profile</b> 1.0 and 1.1<br />
+<br />
+Other standards covered only for JAX-RPC: <b>WS-Trust </b>and <b>WS-SecureConversation</b>.<br />
+<b>WS-Policy</b>&nbsp; and <b>WS-SecurityPolicy.</b><br />
+<br />
+<br />
+For a list of pre-packaged WebLogic policy files, see <a href="http://download.oracle.com/docs/cd/E15523_01/apirefs.1111/e13952/taskhelp/webservices/ConfigureWSPolicyFile.html">http://download.oracle.com/docs/cd/E15523_01/apirefs.1111/e13952/taskhelp/webservices/ConfigureWSPolicyFile.html</a><br />
+<br />
+and <a href="http://download.oracle.com/docs/cd/E12839_01/web.1111/e13713/message.htm#WSSOV310">http://download.oracle.com/docs/cd/E12839_01/web.1111/e13713/message.htm#WSSOV310</a><br />
+<br />
+<br />
+You should create a <b>default_wss</b> Web Services Security configuration (domain tab)<br />
+<a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/ConsoleHelp/taskhelp/webservices/webservicesecurity/CreateDefaultWSSConfig.html">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/ConsoleHelp/taskhelp/webservices/webservicesecurity/CreateDefaultWSSConfig.html</a><br />
+<br />
+&nbsp;here they explain you what to enter in this page (Oracle is very good at sending you around to 20 different documents before you can get anything done)<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/ConsoleHelp/taskhelp/webservices/webservicesecurity/CreateDigitalSignatureKeystore.html">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/ConsoleHelp/taskhelp/webservices/webservicesecurity/CreateDigitalSignatureKeystore.html</a><br />
+<br />
+basically:<br />
+<br />
+class name = weblogic.wsee.security.bst.ServerBSTCredentialProvider<br />
+token type = x509<br />
+property IntegrityKeyAlias<br />
+property IntegrityKeyPassword<br />
+property IntegrityKeyStore<br />
+property IntegrityKeyStorePassword<br />
+<br />
+<br />
+this will generate this entry in config.xml<br />
+<br />
+&lt;webservice-security&gt;<br />
+&lt;name&gt;default_wss&lt;/name&gt;<br />
+&lt;webservice-credential-provider&gt;<br />
+&lt;name&gt;CredentialProvider-0&lt;/name&gt;<br />
+&lt;class-name&gt;weblogic.wsee.security.bst.ServerBSTCredentialProvider&lt;/class-name&gt;<br />
+&lt;token-type&gt;x509&lt;/token-type&gt;<br />
+&lt;configuration-property&gt;<br />
+&lt;name&gt;IntegrityKeyStore&lt;/name&gt;<br />
+&lt;encrypt-value-required&gt;false&lt;/encrypt-value-required&gt;<br />
+&lt;value&gt;C:\beawli\wlserver_10.3\server\lib\acmeks.jks&lt;/value&gt;<br />
+&lt;/configuration-property&gt;<br />
+&lt;configuration-property&gt;<br />
+&lt;name&gt;IntegrityKeyStorePassword&lt;/name&gt;<br />
+&lt;encrypt-value-required&gt;true&lt;/encrypt-value-required&gt;<br />
+&lt;encrypted-value-encrypted&gt;{3DES}BJ5VpGM7nC0xjFy7L6sAsQ==&lt;/encrypted-value-encrypted&gt;<br />
+&lt;/configuration-property&gt;<br />
+&lt;configuration-property&gt;<br />
+&lt;name&gt;IntegrityKeyAlias&lt;/name&gt;<br />
+&lt;encrypt-value-required&gt;false&lt;/encrypt-value-required&gt;<br />
+&lt;value&gt;acme&lt;/value&gt;<br />
+&lt;/configuration-property&gt;<br />
+&lt;configuration-property&gt;<br />
+&lt;name&gt;IntegrityKeyPassword&lt;/name&gt;<br />
+&lt;encrypt-value-required&gt;true&lt;/encrypt-value-required&gt;<br />
+&lt;encrypted-value-encrypted&gt;{3DES}BJ5VpGM7nC0xjFy7L6sAsQ==&lt;/encrypted-value-encrypted&gt;<br />
+&lt;/configuration-property&gt;<br />
+&lt;/webservice-credential-provider&gt;<br />
+&lt;/webservice-security&gt;<br />
+<br />
+<br />
+Some built-in JWS policies are: Auth.xml , Sign.xml, Encode.xml<br />
+They can be specified together - a message can be subject to ANY of these 3.

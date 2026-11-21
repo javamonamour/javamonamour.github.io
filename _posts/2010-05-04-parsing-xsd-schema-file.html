@@ -1,0 +1,53 @@
+---
+layout: post
+title: "Parsing a XSD schema file"
+date: 2010-05-04T18:59:00.001+02:00
+permalink: /2010/05/parsing-xsd-schema-file.html
+blogger_id: "8847986623241099112"
+tags: ["xmlbeans", "XQuery"]
+---
+I am looking for the Philosopher's stone turning XSDs in XQuery mapping . I want to invent a tool to generate for me XQuery Mapping code in an intelligent, introspective, rule-driven way.<br />
+<br />
+This is emp.xsd<br />
+<br />
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;<br />
+&nbsp;&lt;xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="java:com.testws.data" xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;<br />
+&nbsp;&nbsp; &lt;xs:complexType name="Employee"&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp; &lt;xs:sequence&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xs:element minOccurs="1" name="Age" nillable="false" type="xs:int"/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;xs:element minOccurs="1" name="Name" nillable="true" type="xs:string"/&gt;<br />
+&nbsp;&nbsp;&nbsp;&nbsp; &lt;/xs:sequence&gt;<br />
+&nbsp;&nbsp; &lt;/xs:complexType&gt;<br />
+&nbsp;&lt;/xs:schema&gt;<br />
+<br />
+this is my code<br />
+<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; XmlObject xmlObject = XmlObject.Factory.parse(new File("emp.xsd"));<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; xmlObject.dump();<br />
+<br />
+<br />
+This is what I get:<br />
+<br />
+&nbsp; ROOT (USER) *:R:&lt;cur&gt;[0] &lt;mark&gt;[0] (DocumentXobj)<br />
+&nbsp;&nbsp;&nbsp; <b>ELEM </b>xs:<b>schema</b>@http://www.w3.org/2001/XMLSchema (ElementXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR attributeFormDefault Value( "unqualified" ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR elementFormDefault Value( "qualified" ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR targetNamespace Value( "java:com.testws.data" ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR xmlns:xs@http://www.w3.org/2000/xmlns/ Value( "http://www.w3.org/2001/XMLSchema" ) After( "\n&nbsp;&nbsp; " ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>ELEM </b>xs:<b>complexType</b>@http://www.w3.org/2001/XMLSchema After( "\n " ) (ElementXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR name Value( "<b>Employee</b>" ) After( "\n&nbsp;&nbsp;&nbsp;&nbsp; " ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ELEM xs:sequence@http://www.w3.org/2001/XMLSchema Value( "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; " ) After( "\n&nbsp;&nbsp; " ) (ElementXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>ELEM </b>xs:<b>element</b>@http://www.w3.org/2001/XMLSchema After( "\n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; " ) (ElementXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR minOccurs Value( "1" ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR name Value( "<b>Age</b>" ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR nillable Value( "false" ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR type Value( "xs:int" ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>ELEM </b>xs:<b>element</b>@http://www.w3.org/2001/XMLSchema After( "\n&nbsp;&nbsp;&nbsp;&nbsp; " ) (ElementXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR minOccurs Value( "1" ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR name Value( "<b>Name</b>" ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR nillable Value( "true" ) (AttrXobj)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ATTR type Value( "xs:string" ) (AttrXobj)<br />
+<br />
+<br />
+<br />
+to be continued.... I suspect Groovy has a far better support for XML parsing than native Java...

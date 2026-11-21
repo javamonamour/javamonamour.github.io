@@ -1,0 +1,94 @@
+---
+layout: post
+title: "WebLogic 2 Way SSL"
+date: 2017-06-10T16:33:00.000+02:00
+permalink: /2017/06/weblogic-2-way-ssl.html
+blogger_id: "9189236111409254421"
+tags: ["ssl", "weblogic"]
+---
+on the server tab, enable SSL 
+<br/><br/>
+on the SSL tab, enable "client certificate requested and enforced"
+<br/><br/>
+then enter https url in Firefox:
+<br/><br/>
+https://192.168.56.1:7002/SnoopServlet/SnoopServlet.jsp
+<br/>
+
+<br/>
+<pre>
+Your connection is not secure
+
+The owner of 192.168.56.1 has configured their website improperly. To protect your information from being stolen, Firefox has not connected to this website.
+
+</pre>
+<br/>
+
+click on "advanced"
+<br/>
+
+<pre>
+
+192.168.56.1:7002 uses an invalid security certificate. The certificate is not trusted because the issuer certificate is unknown. The server might not be sending the appropriate intermediate certificates. An additional root certificate may need to be imported. The certificate is not valid for the name 192.168.56.1. Error code: SEC_ERROR_UNKNOWN_ISSUER
+
+</pre>
+
+<br/>
+
+<br/>
+
+<br/>
+<pre>
+
+Secure Connection Failed
+
+An error occurred during a connection to 192.168.56.1:7002. SSL peer cannot verify your certificate. Error code: SSL_ERROR_BAD_CERT_ALERT
+
+    The page you are trying to view cannot be shown because the authenticity of the received data could not be verified.
+    Please contact the website owners to inform them of this problem.
+
+</pre>
+<br/>
+See https://support.mozilla.org/en-US/kb/what-does-your-connection-is-not-secure-mean
+<br/><br/>
+
+In Firefox: Tools / Options / Advanced / Certificates / View certificates / Your Certificates
+<br/><br/>
+
+Run keystore explorer (it needs unlimited cryptography strength), create new pkcs12 keystore, Tools/generate key pair, 
+rsa 2048 key length, sha-256 with RSA, 
+
+
+<br/><br/>
+
+please enter the password that was used to encrypt this certificate backup
+
+<br/><br/>
+
+
+
+
+
+
+In Chrome:
+<br/>
+<pre>
+This site can’t provide a secure connection
+
+192.168.56.1 didn’t accept your login certificate, or one may not have been provided.
+Try contacting the system admin.
+</pre>
+
+<br/><br/>
+
+I add set JAVA_OPTIONS="-Djavax.net.debug=all" to startWebLogic.cmd
+<br/><br/>
+javax.net.ssl.SSLHandshakeException: null cert chain
+
+<br/><br/>
+
+
+
+
+
+

@@ -1,0 +1,16 @@
+---
+layout: post
+title: "hudson.tasks.test.TestResult error"
+date: 2011-08-05T15:23:00.000+02:00
+permalink: /2011/08/hudsontaskstesttestresult-error.html
+blogger_id: "318723017186635587"
+tags: ["hudson"]
+---
+java.lang.ClassCastException: hudson.tasks.test.AggregatedTestResultPublisher$TestResultAction cannot be cast to hudson.tasks.test.TestResult<br />
+<br />
+<br />
+now I understand why my JUnit tests were not showing in the "Test Result Trend" graph... WTF....<br />
+<br />
+I clean up all the past files, including the exploded war, and restart Hudson...<br />
+<br />
+Now the "Test Result Trend" is showing... hurrah!

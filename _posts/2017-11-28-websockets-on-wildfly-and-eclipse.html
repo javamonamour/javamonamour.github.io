@@ -1,0 +1,26 @@
+---
+layout: post
+title: "WebSockets on WildFly and Eclipse"
+date: 2017-11-28T19:58:00.002+01:00
+permalink: /2017/11/websockets-on-wildfly-and-eclipse.html
+blogger_id: "4692498099199094272"
+tags: ["websockets", "wildfly"]
+---
+I have followed this (messy) tutorial, and eventually I have made it work on Wildfly - after a long struggle<br />
+<br />
+<a href="http://www.oracle.com/webfolder/technetwork/tutorials/obe/java/HomeWebsocket/WebsocketHome.html#overview">http://www.oracle.com/webfolder/technetwork/tutorials/obe/java/HomeWebsocket/WebsocketHome.html#overview</a><br />
+<br />
+<br />
+Here is the github repository <a href="https://github.com/vernetto/websocket">https://github.com/vernetto/websocket</a><br />
+<br />
+<br />
+Just enter in 2 different browser this URL <a href="http://localhost:8080/WebsocketHome/">http://localhost:8080/WebsocketHome/</a><br />
+<br />
+<br />
+You need these classes<br />
+<br />
+<a href="https://docs.oracle.com/javaee/7/api/javax/websocket/ClientEndpoint.html">https://docs.oracle.com/javaee/7/api/javax/websocket/ClientEndpoint.html</a> "POJO is a web socket client" and has a method annotated with @Message <a href="https://docs.oracle.com/javaee/7/api/javax/websocket/OnMessage.html">https://docs.oracle.com/javaee/7/api/javax/websocket/OnMessage.html</a><br />
+<br />
+<br />
+<br />
+ 

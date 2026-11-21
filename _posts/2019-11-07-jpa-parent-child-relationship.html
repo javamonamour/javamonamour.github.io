@@ -1,0 +1,25 @@
+---
+layout: post
+title: "JPA Parent child relationship "
+date: 2019-11-07T22:25:00.001+01:00
+permalink: /2019/11/jpa-parent-child-relationship.html
+blogger_id: "7717991866929108832"
+tags: ["JPA"]
+---
+<a href="https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/">https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/<br />
+</a><br />
+<br />
+a quick reminder to myself:<br />
+<br />
+if Post -> PostComment is a Unidirectional association (Post has a List&lt;PostComments; but PostComment has no reference to Post), <br />
+then the insertion of each PostComment is done in two phases (INSERT + UPDATE who sets the parentId on the child table).<br />
+For this reason, the parentId column CANNOT BE DECLARED AS NOT NULL.<br />
+<br />
+I don't like that.... ultimately that column should NEVER be null...<br />
+<br />
+On the other hand, if you setup a full bidirectional relationship, only ONE insert is done, and you can keep parentId as NOT NULL.<br />
+To achieve that, you must explicitely set the Post attribute on the PostComment entity, before you persist/merge (I think, at least)<br />
+<br />
+<br />
+<br />
+

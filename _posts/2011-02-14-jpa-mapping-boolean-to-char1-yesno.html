@@ -1,0 +1,29 @@
+---
+layout: post
+title: "JPA mapping boolean to CHAR(1) yes_no"
+date: 2011-02-14T17:16:00.001+01:00
+permalink: /2011/02/jpa-mapping-boolean-to-char1-yesno.html
+blogger_id: "8948647620549618846"
+tags: ["JPA"]
+blogger_comments:
+  - author: "Unknown"
+    date: 2011-04-06
+    html: "Thanks for the simple example.  I&#39;m encountering the same problem."
+---
+After having googled around and found <a href="http://coolboykl.blogspot.com/2008/04/portable-jpa-boolean-magic-converter.html">this</a> and <a href="http://www.mindbug.org/2008/03/type-conversion-with-jpa.html">this</a>, I have decided for the simplest possible solution: use a char in the Entity and expose it with a boolean getter/setter - anyway JPA uses "field" access to the Entity, so she is not disturbed by my setters and  getters.<br />
+<br />
+<pre name="code" class="brush: java">private char sysparam = 'N';
+
+public void setSysparam(boolean sysparam) {
+ this.sysparam = sysparam ? 'Y' : 'N';
+}
+
+public boolean getSysparam() {
+ return sysparam == 'Y';
+}
+
+</pre><br />
+<br />
+Incidentally all my boolean fields are NOT NULL, so I use directly a boolean rather than a Boolean.<br />
+<br />
+It's a shame that JPA doesn't cover something so basic. Everybody knows that Oracle doesn't support a BOOLEAN data type; so I expect everyone is having the same problem.

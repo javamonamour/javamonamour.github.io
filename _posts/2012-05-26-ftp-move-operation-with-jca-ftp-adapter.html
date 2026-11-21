@@ -1,0 +1,96 @@
+---
+layout: post
+title: "The FTP MOVE operation with a JCA FTP Adapter"
+date: 2012-05-26T07:24:00.003+02:00
+permalink: /2012/05/ftp-move-operation-with-jca-ftp-adapter.html
+blogger_id: "553658565627716799"
+tags: ["ftpadapter", "JCA"]
+---
+the difference between the case with RNFR-RNTO and the case of COPY/DELETE. The difference is simpls using <br />
+<br />
+UseNativeRenameOperation = "true"<br />
+UseFtpRenameOperation = "true"<br />
+<br />
+in the dynamic JCA properties of the Business Service built on top the JCA FTPAdapter<br />
+<br />
+<br />
+THIS IS THE GOOD CASE, with<br />
+UseNativeRenameOperation = "true"<br />
+UseFtpRenameOperation = "true"<br />
+<br />
+<br />
+the MOVE is done with a RNFR-RNTO:<br />
+<br />
+<b>[ INFO] 2012-05-25 23:41:17,664 [myuser] [10.19.10.100] RECEIVED: RNFR /myuser/environments/env-0/ave/tmp/POCREATE^PuO20111212_164122_1640.txt^AVE^1337982077267PO_FFMW_AVE_1337982077267.xml<br />
+[ INFO] 2012-05-25 23:41:17,665 [myuser] [10.19.10.100] SENT: 350 Requested file action pending further information.<br />
+<br />
+[ INFO] 2012-05-25 23:41:17,666 [myuser] [10.19.10.100] RECEIVED: RNTO /myuser/environments/env-0/ave/POCREATE^PuO20111212_164122_1640.txt^AVE^1337982077267PO_FFMW_AVE_1337982077267.xml<br />
+[ INFO] 2012-05-25 23:41:17,667 [myuser] [10.19.10.100] File rename from "/myuser/environments/env-0/ave/tmp/POCREATE^PuO20111212_164122_1640.txt^AVE^1337982077267PO_FFMW_AVE_1337982077267.xml" to "/myuser/environments/env-0/ave/POCREATE^PuO20111212_164122_1640.txt^AVE^1337982077267PO_FFMW_AVE_1337982077267.xml"<br />
+[ INFO] 2012-05-25 23:41:17,668 [myuser] [10.19.10.100] SENT: 250 Requested file action okay, file renamed.<br />
+</b><br />
+<br />
+THIS IS THE BAD CASE, without using the "UseNative" options: the move is done by RETRIEVING locally the file, COPYING it to destination and DELETING the remote source:<br />
+<br />
+<b><br />
+[ INFO] 2012-05-25 23:47:17,806 [myuser] [10.19.10.100] RECEIVED: RETR /myuser/environments/env-0/ave/tmp/POCREATE^PuO20111212_164122_1640.txt^AVE^1337982437334PO_FFMW_AVE_1337982437334.xml<br />
+[ INFO] 2012-05-25 23:47:17,807 [myuser] [10.19.10.100] File downloaded /myuser/environments/env-0/ave/tmp/POCREATE^PuO20111212_164122_1640.txt^AVE^1337982437334PO_FFMW_AVE_1337982437334.xml<br />
+[ WARN] 2012-05-25 23:47:17,808 [myuser] [10.19.10.100] Releasing unreserved passive port: 54862<br />
+[ INFO] 2012-05-25 23:47:17,808 [myuser] [10.19.10.100] SENT: 150 File status okay; about to open data connection.<br />
+<br />
+[ INFO] 2012-05-25 23:47:17,808 [myuser] [10.19.10.100] SENT: 226 Transfer complete.<br />
+<br />
+[ INFO] 2012-05-25 23:47:17,847 [myuser] [10.19.10.100] RECEIVED: PWD<br />
+[ INFO] 2012-05-25 23:47:17,848 [myuser] [10.19.10.100] SENT: 257 "/" is current directory.<br />
+<br />
+[ INFO] 2012-05-25 23:47:17,848 [myuser] [10.19.10.100] RECEIVED: TYPE I<br />
+[ INFO] 2012-05-25 23:47:17,849 [myuser] [10.19.10.100] SENT: 200 Command TYPE okay.<br />
+<br />
+[ INFO] 2012-05-25 23:47:17,849 [myuser] [10.19.10.100] RECEIVED: PWD<br />
+[ INFO] 2012-05-25 23:47:17,850 [myuser] [10.19.10.100] SENT: 257 "/" is current directory.<br />
+<br />
+[ INFO] 2012-05-25 23:47:17,850 [myuser] [10.19.10.100] RECEIVED: CWD /myuser/environments/env-0/ave<br />
+[ INFO] 2012-05-25 23:47:17,851 [myuser] [10.19.10.100] SENT: 250 Directory changed to /myuser/environments/env-0/ave<br />
+<br />
+[ INFO] 2012-05-25 23:47:17,851 [myuser] [10.19.10.100] RECEIVED: PASV<br />
+[ INFO] 2012-05-25 23:47:17,852 [myuser] [10.19.10.100] SENT: 227 Entering Passive Mode (10,56,5,192,234,152)<br />
+<br />
+[ INFO] 2012-05-25 23:47:17,852 [myuser] [10.19.10.100] RECEIVED: STOR POCREATE^PuO20111212_164122_1640.txt^AVE^1337982437334PO_FFMW_AVE_1337982437334.xml<br />
+[ INFO] 2012-05-25 23:47:17,853 [myuser] [10.19.10.100] File uploaded /myuser/environments/env-0/ave/POCREATE^PuO20111212_164122_1640.txt^AVE^1337982437334PO_FFMW_AVE_1337982437334.xml<br />
+[ WARN] 2012-05-25 23:47:17,853 [myuser] [10.19.10.100] Releasing unreserved passive port: 60056<br />
+[ INFO] 2012-05-25 23:47:17,853 [myuser] [10.19.10.100] SENT: 150 File status okay; about to open data connection.<br />
+<br />
+[ INFO] 2012-05-25 23:47:17,854 [myuser] [10.19.10.100] SENT: 226 Transfer complete.<br />
+<br />
+[ INFO] 2012-05-25 23:47:17,894 [myuser] [10.19.10.100] RECEIVED: CWD /<br />
+[ INFO] 2012-05-25 23:47:17,895 [myuser] [10.19.10.100] SENT: 250 Directory changed to /<br />
+<br />
+[ INFO] 2012-05-25 23:47:17,896 [myuser] [10.19.10.100] RECEIVED: PWD<br />
+[ INFO] 2012-05-25 23:47:17,897 [myuser] [10.19.10.100] SENT: 257 "/" is current directory.<br />
+<br />
+[ INFO] 2012-05-25 23:47:17,898 [myuser] [10.19.10.100] RECEIVED: DELE /myuser/environments/env-0/ave/tmp/POCREATE^PuO20111212_164122_1640.txt^AVE^1337982437334PO_FFMW_AVE_1337982437334.xml<br />
+[ INFO] 2012-05-25 23:47:17,899 [myuser] [10.19.10.100] File delete : myuser - /myuser/environments/env-0/ave/tmp/POCREATE^PuO20111212_164122_1640.txt^AVE^1337982437334PO_FFMW_AVE_1337982437334.xml<br />
+[ INFO] 2012-05-25 23:47:17,899 [myuser] [10.19.10.100] SENT: 250 Requested file action okay, deleted /myuser/environments/env-0/ave/tmp/POCREATE^PuO20111212_164122_1640.txt^AVE^1337982437334PO_FFMW_AVE_1337982437334.xml.<br />
+</b><br />
+<br />
+<br />
+<br />
+<br />
+note: those options are totally undocumented<br />
+<br />
+you need to add this<br />
+<br />
+<pre name="code" class="brush: xml">&lt;jca:dynamic-endpoint-properties>
+        &lt;jca:endpoint-property>
+          &lt;jca:name>UseNativeRenameOperation&lt;/jca:name>
+          &lt;jca:value>true&lt;/jca:value>
+        &lt;/jca:endpoint-property>
+        &lt;jca:endpoint-property>
+          &lt;jca:name>UseFtpRenameOperation&lt;/jca:name>
+          &lt;jca:value>true&lt;/jca:value>
+        &lt;/jca:endpoint-property>
+      &lt;/jca:dynamic-endpoint-properties>
+</pre><br />
+in your BS at the end of the tran:provider-specific section<br />
+<br />
+<br />
+These events are visible also in the WLS logs if you enable java:alsb-jca-framework-adapter-debug  in alsbdebug.xml

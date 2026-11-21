@@ -1,0 +1,63 @@
+---
+layout: post
+title: "Thread blocked on \"oracle.jdbc.driver.OracleStatement.close\""
+date: 2013-04-11T11:08:00.002+02:00
+permalink: /2013/04/thread-blocked-on-oraclejdbcdriveroracl.html
+blogger_id: "1051975044359182462"
+---
+Be aware that there is a document ID 1362587.1<br />
+<br />
+The cause of this problem has been identified in unpublished Bug:12346819 STUCK THREADS INVOLVING WLS CONNECTION POOL. It is caused by checkHang() code error which loses the abort method that was set by the factory initially. Some cases where JDBC/pool threads could hang. There is a Patch 12346819.
+<br />
+
+This is what we get:
+<br />
+<pre>
+
+"[STUCK] ExecuteThread: '22' for queue: 'weblogic.kernel.Default (self-tuning)'" daemon prio=10 tid=0x00002aaab3099000 nid=0x15e2 waiting for monitor entry [0x000000004a351000]
+   java.lang.Thread.State: BLOCKED (on object monitor)
+ at oracle.jdbc.driver.OracleStatement.close(OracleStatement.java:1788)
+ - waiting to lock &lt;0x00000007b63b3738> (a oracle.jdbc.driver.T4CConnection)
+ at oracle.jdbc.driver.OracleStatementWrapper.close(OracleStatementWrapper.java:83)
+ at oracle.jdbc.driver.OraclePreparedStatementWrapper.close(OraclePreparedStatementWrapper.java:80)
+ at weblogic.jdbc.common.internal.ConnectionEnv.initializeTest(ConnectionEnv.java:940)
+ at weblogic.jdbc.common.internal.ConnectionEnv.destroyForFlush(ConnectionEnv.java:529)
+ - locked &lt;0x00000007b5e9aeb8> (a weblogic.jdbc.common.internal.ConnectionEnv)
+ at weblogic.jdbc.common.internal.ConnectionEnv.destroy(ConnectionEnv.java:507)
+ - locked &lt;0x00000007b5e9aeb8> (a weblogic.jdbc.common.internal.ConnectionEnv)
+ at weblogic.common.resourcepool.ResourcePoolImpl.destroyResource(ResourcePoolImpl.java:1802)
+ at weblogic.common.resourcepool.ResourcePoolImpl.access$500(ResourcePoolImpl.java:41)
+ at weblogic.common.resourcepool.ResourcePoolImpl$Group.killAllConnectionsBeingTested(ResourcePoolImpl.java:2399)
+ - locked &lt;0x000000078dbd41d8> (a java.util.TreeSet)
+ at weblogic.common.resourcepool.ResourcePoolImpl$Group.destroyIdleResources(ResourcePoolImpl.java:2267)
+ - locked &lt;0x0000000785536c30> (a weblogic.jdbc.common.internal.GenericConnectionPool)
+ at weblogic.common.resourcepool.ResourcePoolImpl$Group.checkHang(ResourcePoolImpl.java:2475)
+ at weblogic.common.resourcepool.ResourcePoolImpl$Group.access$100(ResourcePoolImpl.java:2210)
+ at weblogic.common.resourcepool.ResourcePoolImpl.checkResource(ResourcePoolImpl.java:1677)
+ at weblogic.common.resourcepool.ResourcePoolImpl.checkAndReturnResource(ResourcePoolImpl.java:1588)
+ at weblogic.common.resourcepool.ResourcePoolImpl.checkAndReturnResource(ResourcePoolImpl.java:1577)
+ at weblogic.common.resourcepool.ResourcePoolImpl.reserveResourceInternal(ResourcePoolImpl.java:395)
+ at weblogic.common.resourcepool.ResourcePoolImpl.reserveResource(ResourcePoolImpl.java:342)
+ at weblogic.common.resourcepool.ResourcePoolImpl.reserveResource(ResourcePoolImpl.java:329)
+ at weblogic.jdbc.common.internal.ConnectionPool.reserve(ConnectionPool.java:417)
+ at weblogic.jdbc.common.internal.ConnectionPool.reserve(ConnectionPool.java:324)
+ at weblogic.jdbc.common.internal.ConnectionPoolManager.reserve(ConnectionPoolManager.java:94)
+ at weblogic.jdbc.common.internal.RmiDataSource.getPoolConnection(RmiDataSource.java:350)
+ at weblogic.jdbc.common.internal.RmiDataSource.getConnection(RmiDataSource.java:369)
+ at org.eclipse.persistence.sessions.JNDIConnector.connect(JNDIConnector.java:126)
+ at org.eclipse.persistence.sessions.JNDIConnector.connect(JNDIConnector.java:94)
+ at org.eclipse.persistence.sessions.DatasourceLogin.connectToDatasource(DatasourceLogin.java:162)
+ at org.eclipse.persistence.internal.databaseaccess.DatasourceAccessor.connectInternal(DatasourceAccessor.java:327)
+ at org.eclipse.persistence.internal.databaseaccess.DatabaseAccessor.connectInternal(DatabaseAccessor.java:291)
+ at org.eclipse.persistence.internal.databaseaccess.DatasourceAccessor.connect(DatasourceAccessor.java:415)
+ at org.eclipse.persistence.internal.sessions.DatabaseSessionImpl.connect(DatabaseSessionImpl.java:246)
+ at org.eclipse.persistence.internal.sessions.DatabaseSessionImpl.login(DatabaseSessionImpl.java:627)
+ at oracle.tip.adapter.db.DBManagedConnectionFactory.createDatabaseSession(DBManagedConnectionFactory.java:1143)
+ at oracle.tip.adapter.db.DBManagedConnectionFactory.acquireSession(DBManagedConnectionFactory.java:815)
+ at oracle.tip.adapter.db.transaction.DBTransaction.getSession(DBTransaction.java:375)
+ at oracle.tip.adapter.db.DBConnection.getSession(DBConnection.java:256)
+ at oracle.tip.adapter.db.DBInteraction.executeStoredProcedure(DBInteraction.java:1089)
+ at oracle.tip.adapter.db.DBInteraction.execute(DBInteraction.java:247)
+
+</pre>
+<br />

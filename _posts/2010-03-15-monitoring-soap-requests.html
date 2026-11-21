@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Monitoring SOAP requests"
+date: 2010-03-15T13:16:00.000+01:00
+permalink: /2010/03/monitoring-soap-requests.html
+blogger_id: "389904434629788890"
+---
+The easiest way is to use <b>TCP-Monitor</b> (either the Eclipse plugin or the standalone application <a href="https://tcpmon.dev.java.net/">https://tcpmon.dev.java.net/</a> );<br />
+<br />
+this entails pointing your test suite to a different port, and with WLI test client (Web) this doesn't work because they hardcode the portnumber in the HTTP Response (smart!).<br />
+<br />
+Perhaps using this trick http://tompson.wordpress.com/2006/12/20/tcp-monitor-plugin-for-eclipse/ of pointing the JVM to use the TCP mon as a proxy (<code>-Dhttp.proxyHost=localhost -Dhttp.proxyPort=8080) </code>you can make it work...<br />
+<br />
+I have tried this <b>PortPeeker</b> port traffic monitoring tool:<br />
+<a href="http://www.gold-software.com/PortPeeker-file2605.html">http://www.gold-software.com/PortPeeker-file2605.html</a><br />
+but it cannot examine an already opened port.... pretty useless for a sniffer tool... <br />
+<br />
+Let's try then <b>Wireshark</b> <a href="http://www.wireshark.org/">http://www.wireshark.org/</a><br />
+or <b>tcpdump</b> / <b>windump</b> <a href="http://www.mirrorservice.org/sites/ftp.wiretapped.net/pub/security/packet-capture/winpcap/windump/">http://www.mirrorservice.org/sites/ftp.wiretapped.net/pub/security/packet-capture/winpcap/windump/</a><br />
+(both Wireshark and WinDumo use <b>WinpCap</b> libraries to capture traffic)

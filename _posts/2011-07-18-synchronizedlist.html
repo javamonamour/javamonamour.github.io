@@ -1,0 +1,47 @@
+---
+layout: post
+title: "synchronizedList"
+date: 2011-07-18T18:28:00.001+02:00
+permalink: /2011/07/synchronizedlist.html
+blogger_id: "8443767737322568031"
+tags: ["collections"]
+---
+I have created an attribute<br />
+<br />
+private List<long> measurements = new ArrayList<long>();<br />
+<br />
+and I keep getting an exception:<br />
+<br />
+java.lang.ArrayIndexOutOfBoundsException: 10<br />
+at java.util.ArrayList.add(ArrayList.java:352)<br />
+<br />
+<br />
+whenever I do<br />
+<br />
+public void addEntry(long elapsed) {<br />
+     measurements.add(elapsed);<br />
+}<br />
+<br />
+<br />
+<br />
+In fact, ArrayList constructor does:<br />
+<br />
+public ArrayList() {<br />
+   this(10);<br />
+}<br />
+<br />
+<br />
+and its "add" method verifies that there is enough capacity:<br />
+<br />
+public boolean add(E e) {<br />
+   ensureCapacity(size + 1); <br />
+   elementData[size++] = e;<br />
+   return true;<br />
+}<br />
+<br />
+<br />
+<br />
+it is self evident that this code is not thread safe.... so if you plan to use an ArrayList in a concurrent scenario, you better synchronize here and there...<br />
+otherwise use <a href="http://download.oracle.com/javase/6/docs/api/java/util/Collections.html#synchronizedList%28java.util.List%29">http://download.oracle.com/javase/6/docs/api/java/util/Collections.html#synchronizedList%28java.util.List%29</a> <br />
+<br />
+List list = Collections.synchronizedList(new ArrayList());

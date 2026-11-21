@@ -1,0 +1,93 @@
+---
+layout: post
+title: "OSB custom reporting provider"
+date: 2011-11-26T22:00:00.001+01:00
+permalink: /2011/11/osb-custom-reporting-provider.html
+blogger_id: "7871683126237764511"
+tags: ["OSB", "reporting"]
+---
+Here an example:<br />
+<a href="http://www.oracle.com/technetwork/middleware/service-bus/learnmore/index.html">http://www.oracle.com/technetwork/middleware/service-bus/learnmore/index.html</a><br />
+<br />
+download link:<br />
+<a href="http://java.net/projects/oracleservicebus1031/downloads/download/SAMPLE-REPORTPROVIDER.zip">http://java.net/projects/oracleservicebus1031/downloads/download/SAMPLE-REPORTPROVIDER.zip<br />
+</a><br />
+<br />
+Here an interesting presentation <a href="http://www.slideshare.net/guest6070853/osb-bam-integration">http://www.slideshare.net/guest6070853/osb-bam-integration</a><br />
+<br />
+In a nutshell this is what I understand:<br />
+<br />
+a Reporting Provider should implement a com.bea.wli.reporting.ReportingDataHandler<br />
+<br />
+<pre name="code" class="brush: java">public interface ReportingDataHandler
+{
+
+    public abstract void handle(XmlObject xmlobject, String s)
+        throws Exception;
+
+    public abstract void handle(XmlObject xmlobject, InputStream inputstream)
+        throws Exception;
+
+    public abstract void handle(XmlObject xmlobject, XmlObject xmlobject1)
+        throws Exception;
+
+    public abstract void handle(XmlObject xmlobject, XmlTokenSource xmltokensource)
+        throws Exception;
+
+    public abstract void handle(XmlObject xmlobject, Serializable serializable)
+        throws Exception;
+
+    public abstract void close();
+
+    public abstract void flush();
+}
+
+</pre><br />
+<br />
+apparently you only need to implement 3 handle methods:<br />
+handle( XmlObject metadata, String str ) <br />
+void handle( XmlObject metadata, InputStream is )<br />
+handle( XmlObject metadata, XmlObject data )<br />
+<br />
+and close() and flush()<br />
+<br />
+(see the CustomReportDataFileProvider associated with the ZIP file above)<br />
+<br />
+<br />
+The implementation seems quite straightforward.<br />
+<br />
+<br />
+<br />
+The OOTB JMS Report Provider uses a<br />
+com.bea.wli.reporting.jmsprovider.init.JmsReportingDataHandler implementation,<br />
+which uses wli.reporting.jmsprovider.ConnectionFactory and wli.reporting.jmsprovider.queue<br />
+<br />
+Interestingly, the JmsReportingDataHandler suspends the Transaction if there is a non-XA transaction in course.<br />
+<br />
+<br />
+For the OOTB JMS Reporting provider:<br />
+<br />
+if the Proxy Service where you use the Report action has "Transaction Required" = true, and the Tx fails (reply with error, or no reply), then the Report JMS message will not be produced.<br />
+<br />
+if the Proxy Service where you use the Report action has "Transaction Required" = false, the Report JMS message will be produced no matter what.
+
+
+
+<br/>
+
+See also <a href="http://jvzoggel.wordpress.com/2012/02/15/oracle-service-bus-logging-tracing-iii-create-custom-report-provider/">http://jvzoggel.wordpress.com/2012/02/15/oracle-service-bus-logging-tracing-iii-create-custom-report-provider/</a> and <a href="http://docs.oracle.com/cd/E21764_01/doc.1111/e15867/reporting.htm">http://docs.oracle.com/cd/E21764_01/doc.1111/e15867/reporting.htm</a>
+and 
+<a href="http://biemond.blogspot.ch/2013/06/custom-osb-reporting-provider.html">http://biemond.blogspot.ch/2013/06/custom-osb-reporting-provider.html</a>
+
+<br/>
+
+
+The classes involved in persisting the data in the WLI tables are:
+<br/>
+com\bea\wli\reporting\jmsprovider\runtime\MDBMessageReporting<br/>
+com\bea\wli\reporting\jmsprovider\runtime\ReportingDataAccessImpl<br/>
+com\bea\wli\reporting\jmsprovider\utils\StatementFactory<br/>
+<br/><br/>
+
+
+

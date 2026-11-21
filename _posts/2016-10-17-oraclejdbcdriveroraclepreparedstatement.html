@@ -1,0 +1,38 @@
+---
+layout: post
+title: "oracle.jdbc.driver.OraclePreparedStatement.setupDbaBindBuffers  ArrayIndexOutOfBoundsException"
+date: 2016-10-17T17:08:00.002+02:00
+permalink: /2016/10/oraclejdbcdriveroraclepreparedstatement.html
+blogger_id: "1318416334581902832"
+tags: ["jdbc", "weblogic"]
+---
+We occasionally get this stacktrace in an application processing XA transactions
+
+<pre>
+Caused By: java.lang.ArrayIndexOutOfBoundsException: -1
+ at oracle.jdbc.driver.OraclePreparedStatement.setupDbaBindBuffers(OraclePreparedStatement.java:3528)
+ at oracle.jdbc.driver.OraclePreparedStatement.setupBindBuffers(OraclePreparedStatement.java:3046)
+ at oracle.jdbc.driver.OraclePreparedStatement.executeBatch(OraclePreparedStatement.java:12194)
+ at oracle.jdbc.driver.OracleStatementWrapper.executeBatch(OracleStatementWrapper.java:246)
+ at weblogic.jdbc.wrapper.PreparedStatement.executeBatch(PreparedStatement.java:216)
+ at weblogic.store.io.jdbc.ReservedConnection.executeBatchForStatement(ReservedConnection.java:1204)
+ at weblogic.store.io.jdbc.JDBCStoreIO.flushInner(JDBCStoreIO.java:2603)
+ at weblogic.store.io.jdbc.JDBCStoreIO.flushWithRetry(JDBCStoreIO.java:2413)
+ at weblogic.store.io.jdbc.JDBCStoreIO.flush(JDBCStoreIO.java:1999)
+ at weblogic.store.io.jdbc.JDBCStoreIO.flush(JDBCStoreIO.java:1955)
+ at weblogic.store.internal.PersistentStoreImpl.synchronousFlush(PersistentStoreImpl.java:1143)
+ at weblogic.store.internal.PersistentStoreImpl.run(PersistentStoreImpl.java:1116)
+ at java.lang.Thread.run(Thread.java:745)
+
+
+</pre>
+
+ <br/>
+
+It seems there is a patch for this
+ <br/>
+"Getting ArrayIndexOutOfBoundsException When Doing ExecuteBatch With Oracle JDBC Driver 12.1.0.2 (Doc ID 1985195.1)"
+ <br/>
+Patch 19002423
+
+ <br/>

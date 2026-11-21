@@ -1,0 +1,45 @@
+---
+layout: post
+title: "WLST, redirecting all output to a file"
+date: 2011-08-17T04:51:00.000+02:00
+permalink: /2011/08/wlst-redirecting-all-output-to-file.html
+blogger_id: "1169098743209937872"
+tags: ["WLST"]
+blogger_comments:
+  - author: "Phalanx"
+    date: 2013-09-11
+    html: "Hi <br /><br />This is great working script... I am looking for a feature that needs to be included in deployment automations. For development/testing environments, the frequency of deployments are quite high... I was wondering if there was a way a log the events that happen from start to end of a deployment in DEBUG mode and store it in a log file. I can send this file to the developers for troubleshooting purposes if a deployments fails or does not work as per their expectations.<br /><br />I tried this solution..<br />http://www.javamonamour.org/2011/08/wlst-redirecting-all-output-to-file.html<br />but it just logs the print commands of the script. I was wondering if it can also include the java deployment logs in this...<br />I have been looking for a way to do this... but with my limited scripting skills I am finding it hard to find a solution... can u provide some help..<br /><br />Thanks<br /><br />Anto"
+  - author: "vernetto"
+    date: 2013-09-15
+    html: "probably the simplest way is to launch wlst from a shell script which redirects ALL to a file:<br /><br />wlst myscript.py &gt; mylog.log 2&gt;&amp;1<br /><br />This is what I do anyway and it works so far... maybe not very elegant, but it works..."
+  - author: "Prasad Shenwai"
+    date: 2019-09-03
+    html: "Thanks a lot ! I was looking for this."
+---
+if you do <br />
+redirect('myfile.lot') <br />
+the result of "print" statements will still go to stdout.<br />
+<br />
+If you do<br />
+<br />
+from java.io import File<br />
+from java.io import FileOutputStream<br />
+f = File("./wlst.log")<br />
+fos = FileOutputStream(f)<br />
+theInterpreter.setOut(fos)<br />
+print "start the script"<br />
+<br />
+(see <a href="https://forums.oracle.com/forums/thread.jspa?threadID=826716">https://forums.oracle.com/forums/thread.jspa?threadID=826716</a>) <br />
+<br />
+you will be able to send everything to the file.<br />
+<br />
+The problem is how to get back to normal mode of operations... apart from restarting WLST, I mean.<br />
+One way could be<br />
+prev = theInterpreter.getOut()<br />
+theInterpreter.setOut(fos)<br />
+....<br />
+theInterpreter.setOut(prev)<br />
+<br />
+<br />
+<br />
+

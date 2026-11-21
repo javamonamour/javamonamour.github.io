@@ -1,0 +1,43 @@
+---
+layout: post
+title: "SOAPUI: groovy script to choose a different line in a file for each test iteration"
+date: 2012-08-09T15:40:00.000+02:00
+permalink: /2012/08/soapui-groovy-script-to-choose.html
+blogger_id: "9117656357803922570"
+tags: ["groovy", "soapui"]
+---
+We have a Property test step containing 2 properties:<br />
+Hostname and linecount<br />
+We initialize linecount to 0<br />
+<br />
+At each iteration, this Groovy test step will assign to Hostname the next value from a file C:/pierre/workspace/SSS_AutomatedTests/SOAPUIArtifacts/hostnames.txt<br />
+Arrived at the end of the file, it will restart from the first line.<br />
+<br />
+<pre name="code" class="brush: java">
+linecount= testRunner.testCase.testSteps["Properties"].getPropertyValue( "linecount" )
+linecountInt = linecount.toInteger() + 1
+//increment property linecount by one
+testRunner.testCase.testSteps["Properties"].setPropertyValue( "linecount", String.valueOf(linecountInt) )
+
+def myhostnamesFile = new File("C:/pierre/workspace/SSS_AutomatedTests/SOAPUIArtifacts/hostnames.txt")
+
+//find number of lines in hostnames file
+hostnamesinthefile = 0;
+myhostnamesFile.eachLine { hostnamesinthefile++ }
+log.info( "hostnames in the file: " + hostnamesinthefile)
+
+//divide modulo
+theLineNumber = (linecountInt % hostnamesinthefile) + 1
+log.info("theLineNumber to choose=" + theLineNumber)
+theHostnameToChoose = ""
+//scan all lines, line contains the text and lineNo the line number starting from 1
+myhostnamesFile.eachLine() { line, lineNo ->
+ if ( lineNo == theLineNumber) 
+  theHostnameToChoose = line
+}
+
+log.info( "theHostnameToChoose=" + theHostnameToChoose)
+
+testRunner.testCase.testSteps["Properties"].setPropertyValue( "Hostname", theHostnameToChoose )
+
+</pre>

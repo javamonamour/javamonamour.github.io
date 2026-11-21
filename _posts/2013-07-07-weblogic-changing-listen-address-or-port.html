@@ -1,0 +1,48 @@
+---
+layout: post
+title: "WebLogic, changing the listen address or port"
+date: 2013-07-07T12:24:00.002+02:00
+permalink: /2013/07/weblogic-changing-listen-address-or-port.html
+blogger_id: "7265622684392141319"
+tags: ["weblogic"]
+---
+<div class="post-text">
+if your port is 7001, since it's the default 
+it might not be mentioned in the config.xml. config.xml only reports 
+stuff which differs from the default, for sake of simplicity.<br />
+apart from the config.xml, you should look into a number of other places under your domain-home:<br />
+<br />
+<pre><code>bin/stopWebLogic.sh
+bin/stopManagedWebLogic.sh
+bin/startManagedWebLogic.sh
+config/fmwconfig/servers/osbts1as/applications/em/META-INF/emoms.properties
+config/config.xml
+init-info/startscript.xml
+init-info/tokenValue.properties
+
+servers/osbts1as/data/nodemanager/osbts1as.url
+servers/osbts1as/data/ldap/conf/replicas.prop
+servers/osbts1ms1/data/nodemanager/osbts1ms1.url
+servers/osbts1ms1/data/nodemanager/startup.properties
+
+servers/osbts1ms2/data/nodemanager/osbts1ms2.url
+servers/osbts1ms2/data/nodemanager/startup.properties
+startManagedWebLogic_readme.txt
+sysman/state/targets.xml</code></pre>
+<pre><code>&nbsp;</code></pre>
+with osbts1as being the admin, osbts1do the domain name, osbts1ms1 and 2 the MS. <br />
+<br />
+And don't forget to update any internal URIs of your deployed code.<br />
+Especially changing the listen address/port of the admin can be 
+troublesome. If you change only the managed server, it's a lot easier.<br />
+The best option is just rebuilding the domain.<br />
+</div>
+<div class="post-text">
+Here <a href="/2013/04/weblogic-change-admin-port-number.html">/2013/04/weblogic-change-admin-port-number.html</a> another post on the same topic.</div>
+<div class="post-text">
+</div>
+<div class="post-text">
+(see also <a href="http://stackoverflow.com/questions/8082222/how-to-change-listen-port-from-default-7001-to-something-different/17511271#17511271">http://stackoverflow.com/questions/8082222/how-to-change-listen-port-from-default-7001-to-something-different/17511271#17511271</a> )</div>
+<div class="post-text">
+</div>
+

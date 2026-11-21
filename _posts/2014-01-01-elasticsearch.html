@@ -1,0 +1,108 @@
+---
+layout: post
+title: "Elasticsearch"
+date: 2014-01-01T11:14:00.000+01:00
+permalink: /2014/01/elasticsearch.html
+blogger_id: "2097268304786651541"
+tags: ["elasticsearch"]
+---
+download the rmp: <a href="http://www.elasticsearch.org/download/">http://www.elasticsearch.org/download/</a>  <br />
+<b>rpm -i elasticsearch-0.90.9.noarch.rpm</b> <br />
+<b>ps -ef | grep elasti</b> <br />
+<pre>496       1734     1  1 10:32 ?        00:00:10 /usr/bin/java -Xms256m -Xmx1g -Xss256k -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -Delasticsearch -Des.pidfile=/var/run/elasticsearch/elasticsearch.pid -Des.path.home=/usr/share/elasticsearch -cp :/usr/share/elasticsearch/lib/elasticsearch-0.90.9.jar:/usr/share/elasticsearch/lib/*:/usr/share/elasticsearch/lib/sigar/* -Des.default.path.home=/usr/share/elasticsearch -Des.default.path.logs=/var/log/elasticsearch -Des.default.path.data=/var/lib/elasticsearch -Des.default.path.work=/tmp/elasticsearch -Des.default.path.conf=/etc/elasticsearch org.elasticsearch.bootstrap.ElasticSearch
+</pre><br />
+<br />
+<b>less /var/log/elasticsearch/elasticsearch.log</b>  <br />
+<br />
+<pre>[2014-01-01 10:29:43,058][INFO ][node                     ] [Kala] version[0.90.9], pid[1734], build[a968646/2013-12-23T10:35:28Z]
+[2014-01-01 10:29:43,058][INFO ][node                     ] [Kala] initializing ...
+[2014-01-01 10:29:43,063][INFO ][plugins                  ] [Kala] loaded [], sites []
+[2014-01-01 10:29:45,289][INFO ][node                     ] [Kala] initialized
+[2014-01-01 10:29:45,289][INFO ][node                     ] [Kala] starting ...
+[2014-01-01 10:29:45,377][INFO ][transport                ] [Kala] bound_address {inet[/0:0:0:0:0:0:0:0:9300]}, publish_address {inet[/10.0.2.15:9300]}
+[2014-01-01 10:29:48,424][INFO ][cluster.service          ] [Kala] new_master [Kala][Z9XUjvk0QxK6aXyCOhExqg][inet[/10.0.2.15:9300]], reason: zen-disco-join (elected_as_master)
+[2014-01-01 10:29:48,498][INFO ][discovery                ] [Kala] elasticsearch/Z9XUjvk0QxK6aXyCOhExqg
+[2014-01-01 10:29:48,526][INFO ][http                     ] [Kala] bound_address {inet[/0:0:0:0:0:0:0:0:9200]}, publish_address {inet[/10.0.2.15:9200]}
+[2014-01-01 10:29:48,527][INFO ][node                     ] [Kala] started
+[2014-01-01 10:29:48,543][INFO ][gateway                  ] [Kala] recovered [0] indices into cluster_state
+[2014-01-01 10:35:47,549][INFO ][cluster.service          ] [Kala] added {[Grant, Greer][-TR-MXApSOqMcPWw7_qYMg][inet[/10.0.2.15:9301]],}, reason: zen-disco-receive(join from node[[Grant, Greer][-TR-MXApSOqMcPWw7_qYMg][inet[/10.0.2.15:9301]]])
+[2014-01-01 10:42:00,830][INFO ][cluster.service          ] [Kala] removed {[Grant, Greer][-TR-MXApSOqMcPWw7_qYMg][inet[/10.0.2.15:9301]],}, reason: zen-disco-node_left([Grant, Greer][-TR-MXApSOqMcPWw7_qYMg][inet[/10.0.2.15:9301]])
+
+</pre><br />
+<br />
+<a href="http://www.elasticsearch.org/webinars/getting-started-with-elasticsearch/?watch=1">Watch the excellent tutorial </a>  <br />
+<br />
+<b>curl 10.0.2.15:9200</b> <pre>{
+  "ok" : true,
+  "status" : 200,
+  "name" : "Kala",
+  "version" : {
+    "number" : "0.90.9",
+    "build_hash" : "a968646da4b6a2d9d8bca9e51e92597fe64e8d1a",
+    "build_timestamp" : "2013-12-23T10:35:28Z",
+    "build_snapshot" : false,
+    "lucene_version" : "4.6"
+  },
+  "tagline" : "You Know, for Search"
+}
+</pre><br />
+<br />
+Let's put some data: <pre>curl -XPUT 10.0.2.15:9200/books/eco/one -d '
+> {
+>   "author" : "pierre",
+>   "title" : "how to cook Pizza"
+> }'
+</pre><br />
+I get a response: <br />
+<br />
+{"ok":true,"_index":"books","_type":"eco","_id":"one","_version":1}  <br />
+<br />
+I can examine the mapping: <br />
+<br />
+<b>curl 10.0.2.15:9200/books/_mapping</b> <br />
+<br />
+<i>{"books":{"eco":{"properties":{"author":{"type":"string"},"title":{"type":"string"}}}}}</i> <br />
+<br />
+I can get my document back: <br />
+<br />
+<b> curl 10.0.2.15:9200/books/eco/one</b> <br />
+<br />
+<pre>{"_index":"books","_type":"eco","_id":"one","_version":1,"exists":true, "_source" :
+{
+  "author" : "pierre",
+  "title" : "how to cook Pizza"
+}}
+</pre><br />
+<br />
+I can search based on an attribute:<br />
+<b>curl 10.0.2.15:9200/books/_search?q=_author=pierre</b><br />
+<pre>{"took":71,"timed_out":false,"_shards":{"total":5,"successful":5,"failed":0},"hits":{"total":1,"max_score":0.02250402,"hits":[{"_index":"books","_type":"eco","_id":"one","_score":0.02250402, "_source" :
+{
+  "author" : "pierre",
+  "title" : "how to cook Pizza"
+}}]}}
+</pre><br />
+<br />
+start and stop:<br />
+/etc/init.d/elasticsearch start<br />
+/etc/init.d/elasticsearch stop<br />
+<br />
+<br />
+edit configuration:<br />
+vi /etc/elasticsearch/elasticsearch.yml<br />
+<br />
+To view configuration:  http://youripaddress:9200/  and more http://youripaddress:9200/_status?pretty=true  <br />
+<br />
+<br />
+<br />
+If you get Content-Type header [application/x-www-form-urlencoded] is not supported", add this: -H 'Content-Type: application/json'<br />
+<br />
+If you get "Compressor detection can only be called on some xcontent bytes or compressed xcontent bytes", put the json in a file pizza.json and invoke curl -H 'Content-Type: application/json' -XPUT 10.0.2.15:9200/books/eco/one -d@pizza.json<br />
+<br />
+<br />
+References: <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html#getting-started">https://www.elastic.co/guide/en/elasticsearch/reference/current/getting-started.html#getting-started</a><br />
+<br />
+<br />
+<br />
+<br />
+

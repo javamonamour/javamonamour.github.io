@@ -1,0 +1,27 @@
+---
+layout: post
+title: "Apache POI is a Memory Pig"
+date: 2016-10-25T09:40:00.001+02:00
+permalink: /2016/10/apache-poi-is-memory-pig.html
+blogger_id: "4638664184077468908"
+---
+We get this stacktrace
+<br/><br/>
+<pre>
+
+java.lang.OutOfMemoryError: Java heap space
+ at java.util.Arrays.copyOf(Arrays.java:2271)
+ at java.io.ByteArrayOutputStream.toByteArray(ByteArrayOutputStream.java:191)
+ at org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource$FakeZipEntry.<init>(ZipInputStreamZipEntrySource.java:132)
+ at org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource.<init>(ZipInputStreamZipEntrySource.java:55)
+ at org.apache.poi.openxml4j.opc.ZipPackage.<init>(ZipPackage.java:88)
+ at org.apache.poi.openxml4j.opc.OPCPackage.open(OPCPackage.java:273)
+
+
+</pre>
+
+<br/>
+This even processing relatively small (10 MB) Excel files.
+<br/>
+It seems that <a href="http://stackoverflow.com/questions/25796777/apache-poi-workbookfactory-create-throws-java-lang-outofmemoryerror-java-heap-s">we are not alone on this Planet</a> to experience this problem. And there doesn't seem to be a workaround, apart increasing heap, for lack of a Streaming Interface.
+

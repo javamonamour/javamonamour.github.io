@@ -1,0 +1,20 @@
+---
+layout: post
+title: "dial tcp lookup index.docker.io connection refused"
+date: 2018-01-16T03:00:00.002+01:00
+permalink: /2018/01/dial-tcp-lookup-indexdockerio.html
+blogger_id: "4291029960438002530"
+tags: ["docker"]
+---
+I was trying to <br />
+<br />
+docker run -d -p 8081:8081 --name nexus sonatype/nexus3<br />
+<br />
+and I got the scary error "dial tcp lookup index.docker.io connection refused"<br />
+<br />
+googling around, they suggest to "reset the docker settings to factory defaults." . <br />
+Everybody keeps repeating this mantra "reset to factory defaults" but nobody explains how to do it on Linux. I hate it. So I could not figure out what to do.  iptables -F didn't work.<br />
+<br />
+Someone mentions to add index.docker.io to the /etc/hosts file because the DNS playing tricks and truncate.. scary....<br />
+<br />
+Eventually I rebooted the machine and it all works again. I only wish that Docker Inc stopped playing with docker and kept it stable. I hate them. They are destroying a great product.

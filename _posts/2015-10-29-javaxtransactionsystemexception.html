@@ -1,0 +1,11 @@
+---
+layout: post
+title: "javax.transaction.SystemException: SubCoordinator  not available"
+date: 2015-10-29T14:54:00.001+01:00
+permalink: /2015/10/javaxtransactionsystemexception.html
+blogger_id: "2769065776317391922"
+tags: ["xa"]
+---
+If you see this "javax.transaction.SystemException: SubCoordinator  not available" in the logs, AND you have recently moved your domain to new servers, it could very well be that you need to purge your TLOG DB tables (of file store).. in fact, IP address of previous servers is still hardcoded in the TLOG info, so those TX will still linger around failing recovery until the Abandon Timeout is hit (read the "Moving the Server" chapter here <a href="http://docs.oracle.com/cd/E24329_01/web.1211/e24377/trxman.htm#WLJTA176">http://docs.oracle.com/cd/E24329_01/web.1211/e24377/trxman.htm#WLJTA176</a>  " the server identity may no longer match the information stored in the transaction logs"
+
+

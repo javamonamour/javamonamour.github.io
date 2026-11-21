@@ -1,0 +1,51 @@
+---
+layout: post
+title: "OSB move remote file with JCA FTP Adapter"
+date: 2011-12-03T13:32:00.002+01:00
+permalink: /2011/12/osb-move-remote-file-with-jca-ftp.html
+blogger_id: "1757065964533411992"
+tags: ["ftpadapter", "JCA"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2012-01-21
+    html: "somehow you are FTP&#39;ing in a transaction where also SOADataSource_ohsdomain is enrolled as a participant <br /><br />If you activate the WebLogic debug flag JTA you should have plenty of info about TX in the logs... but even without it, on the Server/Monitoring/JTA console you should see all the resources enrolled in your active transaction while you are FTP&#39;ing..."
+  - author: "idavistro"
+    date: 2012-01-21
+    html: "But if it&#39;s an ftp adapter, how I can change de XA datasource?; in other web pages I read about &quot;SOADatasource&quot; but I don&#39;t understand if I need change the values of XA and timeout in this datasource because I&#39;m using the FTP Adapter."
+  - author: "vernetto"
+    date: 2012-01-21
+    html: "&quot;The XID is not valid&quot; is typically a DB transaction Timeout... the transaction has been rolled back on the DB due to a Distributed Timeout, and when you try to commit it from the Transaction coordinator (WebLogic JTA) the transaction is no longer there on the DB.<br /><br />I would suggest you to <br />- either avoid using a XA datasource for the access to the DB in this specific interface<br /><br />- or increasing the default distributed timeout at DB level (talk to a DBA for this)"
+  - author: "idavistro"
+    date: 2012-01-21
+    html: "Hi, I follow your post but I have a trouble when I move big files, the error message is:<br /><br />Exception occured when binding was invoked. Exception occured during invocation of JCA binding: &quot;JCA Binding execute of Reference operation &#39;readEBS&#39; <br />failed due to: The IO operation failed. The IO operation failed. The &quot;OPER[NOOP][NONE]&quot; IO operation for &quot;/tmp/TestLogSOA/DetalleCostos3333333.dvd&quot; <br />failed. &quot;. The invoked JCA adapter raised a resource exception. Please examine the above error message carefully to determine a resolution. <br /><br />java.sql.SQLException: Unexpected exception while enlisting XAConnection java.sql.SQLException: XA error: XAResource.XAER_NOTA start() failed on <br />resource &#39;SOADataSource_ohsdomain&#39;: XAER_NOTA : The XID is not valid oracle.jdbc.xa.OracleXAException at <br />oracle.jdbc.xa.OracleXAResource.checkError(OracleXAResource.java:1532) at oracle.jdbc.xa.client.OracleXAResource.start(OracleXAResource.java:321) at <br />weblogic.jdbc.wrapper.VendorXAResource.start(VendorXAResource.java:51) at weblogic.jdbc.jta.DataSource.start(DataSource.java:722) at <br />weblogic.transaction.internal.XAServerResourceInfo.start(XAServerResourceInfo.java:1228) at <br />weblogic.transaction.internal.XAServerResourceInfo.xaStart(XAServerResourceInfo.java:1161) at ...<br /><br />When I&#39;m moving small files everything it&#39;s OK except when the files are more than 50 MB.<br /><br />Thanks!!"
+---
+A common requirement is to add a bit of transactional behavior  in FTP operations:<br />
+<br />
+Example:<br />
+<br />
+- FTP file1 to remote dir /path/to/myfiles<br />
+- FTP file2 to remote dir /path/to/myfiles<br />
+- tell remote system that he can start processing file1 and file2<br />
+<br />
+If FTP of file2 fails, you don't want to leave file1 hanging around.<br />
+So you should add a fastidious compensation action in the Error Handler of "FTP file2" to undo the "FTP file1" operation.<br />
+Also, fastidiously the file could be picked up by remote system before I end transferring it (it should not happen, I guess it depends on the FTP server implementation, it's just one extra concern I have).<br />
+<br />
+This clearly sucks.<br />
+<br />
+Luckily the <a href="http://docs.oracle.com/cd/E21764_01/integration.1111/e10231/adptr_file.htm#BABEBDGI">Oracle JCA FTP Adapter supports moving remote files</a>.<br />
+<br />
+The FTPMove operation with Type="MOVE" has been successfully tested, using Transport Headers to pass the "file name from" and "to" parameters to the JCA Adapter.<br />
+<br />
+Interestingly enough, you can also COPY and DELETE files remotely.<br />
+<br />
+So our flow will be:<br />
+<br />
+- FTP file1 to remote dir /path/to/myfilestemp<br />
+- FTP file2 to remote dir /path/to/myfilestemp<br />
+- FTP move file1 to /path/to/myfiles<br />
+- FTP move file2 to /path/to/myfiles<br />
+<br />
+<br />
+Ok you will say "what if - ##FTP move file2 to /path/to/myfiles## fails?".<br />
+Well, I guess that can happen....

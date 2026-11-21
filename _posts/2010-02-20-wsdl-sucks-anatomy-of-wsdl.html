@@ -1,0 +1,145 @@
+---
+layout: post
+title: "WSDL sucks - anatomy of a WSDL, WSDL for dummies"
+date: 2010-02-20T08:00:00.001+01:00
+permalink: /2010/02/wsdl-sucks-anatomy-of-wsdl.html
+blogger_id: "566923945983689504"
+tags: ["wsdl", "wsdl20"]
+blogger_comments:
+  - author: "Pascal Grange"
+    date: 2010-07-23
+    html: "Explicit promotion ;)<br /><br />For desperate Java developpers that have to request SOAP web-services, there is a new API available in a early version : http://soap-dust.sourceforge.net/<br /><br />It fits in one jar.<br /><br />It does not require to generate a bunch of Java code before requesting the web-service.<br /><br />Until SOAP is definitely deprecated, this may be helpfull."
+---
+A very good presentation on the differences between WSDL 1.1 and 2.0 is here<br />
+<a href="http://people.apache.org/%7Ehughesj/woden/WodenWSDL2Processor_WE12.pdf">http://people.apache.org/~hughesj/woden/WodenWSDL2Processor_WE12.pdf</a><br />
+<br />
+This is a sample WSDL 2.0 file:<br />
+<br />
+service has binding, binding has interface, interface has operations, operation has input and output (and fault)<br />
+<br />
+
+<pre name="code" class="brush: xml">
+
+&lt;?xml  version="1.0" encoding="UTF-8"?&gt;<br />
+&lt;wsdl:<b>description  </b>targetNamespace="http://new.webservice.namespace"  xmlns:wsdl="http://www.w3.org/ns/wsdl"  xmlns:wsoap="http://www.w3.org/ns/wsdl/soap"  xmlns:whttp="http://www.w3.org/ns/wsdl/http"  xmlns:xs="http://www.w3.org/2001/XMLSchema"  xmlns:tns="http://new.webservice.namespace"&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;wsdl:<b>types</b>&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;xs:<b>schema </b>targetNamespace="http://new.webservice.namespace"  elementFormDefault="qualified"&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  &lt;xs:element name="NewMessageRequest" type="xs:string"/&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;xs:element name="NewMessageResponse"  type="xs:string"/&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/xs:schema&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;/wsdl:types&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;wsdl:<b>interface </b>name="NewInterface"&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &lt;wsdl:<b>operation </b>name="NewOperation"  pattern="http://www.w3.org/ns/wsdl/in-out"&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  &lt;wsdl:input messageLabel="In"  element="tns:NewMessageRequest"/&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  &lt;wsdl:output messageLabel="Out"  element="tns:NewMessageResponse"/&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  &lt;/wsdl:operation&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;/wsdl:interface&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;wsdl:<b>binding </b>name="NewBinding"  interface="tns:NewInterface" type="http://www.w3.org/ns/wsdl/soap"  wsoap:protocol="http://www.w3.org/2003/05/soap/bindings/HTTP/"&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &lt;wsdl:operation ref="tns:NewOperation"  wsoap:mep="http://www.w3.org/2003/05/soap/mep/request-response/"/&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;/wsdl:binding&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;wsdl:<b>service </b>name="NewService"  interface="tns:NewInterface"&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  &lt;wsdl:endpoint name="NewEndpoint"  binding="tns:NewBinding"/&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;/wsdl:service&gt;<br />
+&lt;/wsdl:description&gt;
+</pre>
+
+<br />
+<br />
+<br />
+This  is the same service in WSDL 1.1 - notice the verbosity compared to 2.0:<br />
+<br />
+service has binding, binding has porttype, porttype has operations, operation has message... what a mess!<br />
+<br />
+&lt;?xml  version="1.0" encoding="UTF-8"?&gt;<br />
+&lt;wsdl:definitions  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"  xmlns:xs="http://www.w3.org/2001/XMLSchema"  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xmlns:tns="http://new.webservice.namespace"  targetNamespace="http://new.webservice.namespace"&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;wsdl:types&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;xs:schema  targetNamespace="http://new.webservice.namespace"  elementFormDefault="qualified"/&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;/wsdl:types&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;wsdl:message  name="NewMessageRequest"&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;wsdl:part  name="parameter" type="xs:string"/&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;/wsdl:message&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;wsdl:<b>message </b>name="NewMessageResponse"&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &lt;wsdl:part name="parameter" type="xs:string"/&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;/wsdl:message&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;wsdl:<b>portType </b>name="NewPortType"&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &lt;wsdl:<b>operation </b>name="NewOperation"&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;wsdl:input message="tns:NewMessageRequest"/&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;wsdl:output message="tns:NewMessageResponse"/&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &lt;/wsdl:operation&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;/wsdl:portType&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;wsdl:<b>binding </b>name="NewBinding"  type="tns:NewPortType"&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;soap:binding  style="document"  transport="http://schemas.xmlsoap.org/soap/http"/&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  &lt;wsdl:operation name="NewOperation"&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  &lt;soap:operation soapAction="urn:#NewOperation"/&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;wsdl:input&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  &lt;soap:body use="literal"/&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  &lt;/wsdl:input&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;  &lt;wsdl:output&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;soap:body  use="literal"/&gt;<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;/wsdl:output&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &lt;/wsdl:operation&gt;<br />
+&nbsp;&nbsp;&nbsp;  &lt;/wsdl:binding&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;wsdl:<b>service </b>name="NewService"&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &lt;wsdl:port name="NewPort" binding="tns:NewBinding"&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &lt;soap:address location="No Target Adress"/&gt;<br />
+&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp; &lt;/wsdl:port&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;/wsdl:service&gt;<br />
+&lt;/wsdl:definitions&gt;<br />
+<br />
+<br />
+<br />
+<br />
+I hate WSDL, and the whole XML paraphernalia created to implement distributed computing around the XML paradigm.<br />
+I am trying to understand why I hate this entire technology.<br />
+Being a Java developer, I like the extreme coherence of Data and Interfaces definitions implemented in Java:<br />
+if you break something, you will immediately notice at design time.<br />
+With XML and WSDL, you always have the impression of handling a wobbly jellyfish, overly complex and redundant, leaving open holes for ambiguity and crappy implementations.<br />
+In fact, in my own experience AXIS2, SOAPUI and Clientgen operate differently, a WSDL which works with the first 2 doesn't work in Clientgen.... CRAP!<br />
+<br />
+<a href="http://en.wikipedia.org/wiki/Web_Services_Description_Language">http://en.wikipedia.org/wiki/Web_Services_Description_Language</a><br />
+<br />
+In a WSDL you have DEFINITIONS of public services.<br />
+<br />
+NAMESPACES are used to make names less ambiguous, and should regarded as packages. Their syntax in reality is obscure and ambiguous.<br />
+<br />
+SERVICES are exposed in the service URL; http://host:port/WEB_CONTEXT_ROOT/service<br />
+<br />
+<br />
+A SERVICE is associated to a BINDING, which defines the protocol (SOAP) and the way to pass arguments (DOCUMENT).<br />
+<br />
+<br />
+<br />
+in the BINDING you MAY redefine OPERATIONS, but they are already defined in the PORT TYPE.<br />
+OPERATIONS are associated at times with SOAP ACTION.<br />
+<br />
+A PORT TYPE is a misnomer, in WSDL 2.0 it is called INTERFACE, which is what it actually is. It defines OPERATIONS (=method) and their MESSAGES (=parameters).<br />
+<br />
+In TYPES there is the type definition of method parameters.<br />
+<br />
+<br />
+So all in all you have a very complex and articulated document to do very simple stuff:<br />
+defining <b>ENDPOINTS, PROTOCOL, PUBLIC INTERFACES, DATA TYPES</b><br />
+Why all this could not be done in a simpler way....finally leaving the developer to rely on automated tools.... EJB 2.0 reloaded.... we already know that it will all end up in a EJB 3.0 where AT LAST the good stuff is done.... so why not do it since the beginning...<br />
+<br />
+<br />
+Let's look in Wikipedia <b>the changes made in WSDL 2.0:</b><br />
+<br />
+- Removal of message constructs<br />
+EXACTLY! There should be only OPERATIONS. MESSAGES are useless indirection.<br />
+<br />
+- PortTypes renamed to interfaces<br />
+PortTypes are simply a list of Operations... so... call it Interface, no?<br />
+<br />
+- Ports renamed to endpoints.<br />
+In fact it simply defines a URL for the Service<br />
+<br />
+Furthermore, some definitions - like endpoint - have been inlined in WSDL 2.0, making the document more compact and readable.<br />
+<br />
+WSDL 2.0 is barely tolerable, WDSL 1.0 is simply outrageous, my grand mother could have done a better job.<br />
+<br />
+<br />
+<br />
+<span style="font-size: large;">UNFORTUNATELY OSB 3.0 doesn't seem to recognize this WSDL 2.0 format</span>, when I try to import the WSLD it complains about:<br />
+<br />
+<i><span class="statusmessageerror">An error occurred creating the  resource:<br />
+org.apache.xmlbeans.XmlException: error: The document is  not a definitions@http://schemas.xmlsoap.org/wsdl/: document element  mismatch got description@http://www.w3.org/ns/wsdl</span></i>

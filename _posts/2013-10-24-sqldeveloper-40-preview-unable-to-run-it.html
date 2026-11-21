@@ -1,0 +1,49 @@
+---
+layout: post
+title: "SQLDeveloper 4.0 preview: unable to run it"
+date: 2013-10-24T15:10:00.001+02:00
+permalink: /2013/10/sqldeveloper-40-preview-unable-to-run-it.html
+blogger_id: "1965506249695753844"
+tags: ["sqldeveloper"]
+---
+I have installed Java 7 and added 2 extra lines to sqldeveloper.bat:
+<br/>
+<pre>
+cd C:\pierre\sqldeveloper-4\sqldeveloper\sqldeveloper\bin
+sqldeveloper.bat
+
+set JAVA_HOME=C:\pierre\Java\jdk1.7.0_45
+
+set PATH=C:\pierre\Java\jdk1.7.0_45\bin
+
+java -Xmx640M -Xms128M -Xverify:none -Doracle.ide.util.AddinPolicyUtils.OVERRIDE_FLAG=false -Dsun.java2d.
+ddoffscreen=false -Dwindows.shell.font.languages= -XX:MaxPermSize=128M -Dide.AssertTracingDisabled=true -Doracle.ide.util.AddinPolicyUtils.OVERRIDE_FLAG=true -Djava.util.logging.config.file=logging.conf -Dsqldev.debug=false -Dide.conf="./sqldeveloper.conf" -Dide.startingcwd="." -classpath ../../ide/lib/ide-boot.jar oracle.ide.boot.Launcher
+
+ERROR: You're trying to run the product with the legacy launcher oracle.ide.boot.Launcher . Check your <product>.conf file and be sure to include:
+        AddJavaLibFile  ../../ide/lib/fcpboot.jar
+        SetMainClass    oracle.ide.osgi.boot.NbLauncher
+
+</pre>
+
+
+<br/>
+
+I have added the 2 extra lines
+<br/>
+<pre>
+AddJavaLibFile  ../../ide/lib/fcpboot.jar
+SetMainClass    oracle.ide.osgi.boot.NbLauncher
+</pre>
+<br/>
+to sqldeveloper.conf, but I still get the same error. 
+<br/>
+Giving up.
+<br/>
+So sad.
+
+
+
+
+
+
+

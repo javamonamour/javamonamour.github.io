@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Cool Java library to handle github "
+date: 2018-04-29T21:10:00.000+02:00
+permalink: /2018/04/cool-java-library-to-handle-github.html
+blogger_id: "5161368856540741448"
+tags: ["github"]
+---
+Especially useful is the Authentication API, it's really very simple.<br />
+<br />
+<a href="http://github.jcabi.com/index.html">http://github.jcabi.com/index.html</a><br />
+<br />
+<pre class="brush: java">package pvgithubclient;
+
+import com.jcabi.github.Coordinates;
+import com.jcabi.github.Github;
+import com.jcabi.github.Issue;
+import com.jcabi.github.Repo;
+import com.jcabi.github.RtGithub;
+
+/**
+ * http://github.jcabi.com/index.html
+ * http://github.jcabi.com/apidocs-0.38/index.html
+ *
+ */
+public class GitClient {
+ public static void main(String[] args) throws Exception {
+  Github github = new RtGithub("myusername", "mypassword");
+  Repo repo = github.repos().get(new Coordinates.Simple("myusername", "myrepository"));
+  Issue issue = repo.issues().create("How are you?", "Please tell me...");
+     issue.comments().post("My first comment!");
+ }
+}
+</pre><br />
+<br />
+<br />
+Farewall to all those horrible REST calls with hand-made JSON or even worse XML.<br />
+Yes, "FareWALL" in the sense that I hope that whoever invented REST and XML and JSON can hit a WALL with his bicycle. Proper APIs is the only way to handle everything.<br />
+<br />
+Ah, beware that you cannot DELETE an issue in github, once created.... this because some MORONIC FASCIST decided so, despite public outrage. So use this example with care.<br />
+<br />
+<br />
+<br />
+

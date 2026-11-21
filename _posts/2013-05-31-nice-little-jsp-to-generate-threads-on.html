@@ -1,0 +1,93 @@
+---
+layout: post
+title: "Nice little JSP to generate threads on demand"
+date: 2013-05-31T16:58:00.002+02:00
+permalink: /2013/05/nice-little-jsp-to-generate-threads-on.html
+blogger_id: "1916261782371470194"
+tags: ["jsp", "stuckthread"]
+---
+<pre name="code" class="brush: java">
+
+&lt;%
+
+ final String threads = request.getParameter("threads");
+ final String period = request.getParameter("period");
+ try {
+  for (int t = 0; t < Integer.parseInt(threads); t++ ) {
+   System.out.println("starting thread " + t + " of " + threads);
+   Thread thread = new Thread(new Runnable() {
+       public void run() {
+        try {
+         System.out.println("started with period " + period);
+         Thread.sleep(Integer.parseInt(period) * 1000);
+     }
+     catch (Throwable t) {
+      t.printStackTrace();
+     }
+       }
+   });
+   
+   thread.start();
+  
+  };
+ }
+ catch (Throwable t) {
+  t.printStackTrace();
+ }
+
+%>
+
+</pre>
+
+<br/><br/>
+
+and you invoke it as
+
+<br/><br/>
+
+http://acme.com:10001/wlstuck/index.jsp?threads=30&period=40
+
+<br/><br/>
+
+
+and you redeploy with
+
+<pre name="code" class="brush: java">
+
+import os
+
+theapplication=str(sys.argv[1])
+
+
+print "redeploying", theapplication
+os.system("rm -rf /opt/oracle/domains/osbts1do/servers/osbts1as/tmp/_WL_user/" + theapplication + "/")
+connect('Pierluigi', 'weblogic1', 't3://acme.com:9001')
+redeploy(theapplication)
+exit()
+
+</pre>
+
+
+<br/><br/>
+problem is that these threads will not be part of the WebLogic thread pool, and as such they will not be monitored.
+<br/><br/>
+A better option is a shell script:
+<br/><br/>
+<pre>
+for i in {1..30}
+do
+     wget http://acme.com:10001//wlstuck &
+done
+
+</pre>
+
+<br/><br/>
+and the index.jst is simply:
+<br/><br/>
+<pre>
+Thread.sleep(390 * 1000);
+</pre>
+
+<br/><br/>
+
+

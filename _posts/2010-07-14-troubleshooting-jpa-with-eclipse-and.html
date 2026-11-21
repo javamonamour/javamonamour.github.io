@@ -1,0 +1,33 @@
+---
+layout: post
+title: "Troubleshooting JPA with Eclipse and Toplink"
+date: 2010-07-14T10:07:00.000+02:00
+permalink: /2010/07/troubleshooting-jpa-with-eclipse-and.html
+blogger_id: "2002490036838516457"
+tags: ["JPA", "toplink"]
+---
+The error messages provided by JPA demand some interpretation.<br />
+<br />
+<b>Case 1: wrong persistence unit name </b><br />
+<br />
+make sure that in persistence.xml the persistence-unit name matches what you use in your code, otherwise you get this error:<br />
+<br />
+<pre>javax.persistence.PersistenceException: No Persistence provider for EntityManager named GEO_OSB_Persistences:  The following providers:
+oracle.toplink.essentials.PersistenceProvider
+org.eclipse.persistence.jpa.PersistenceProvider
+oracle.toplink.essentials.ejb.cmp3.EntityManagerFactoryProvider
+Returned null to createEntityManagerFactory.
+
+ at javax.persistence.Persistence.createEntityManagerFactory(Persistence.java:154)
+</pre><br />
+<br />
+<b>Case 2: you did not specify correctly the jta-data-source properties in persistence.xml</b><br />
+<br />
+<pre>SEVERE: Exception in PersistenceManager.getEntityManager: Exception [TOPLINK-4002] (Oracle TopLink Essentials - 2.0 (Build b41-beta2 (03/30/2007))): oracle.toplink.essentials.exceptions.DatabaseException
+Internal Exception: java.sql.SQLException: [Microsoft][ODBC Driver Manager] Data source name not found and no default driver specified
+Error Code: 0
+</pre><br />
+<br />
+well, in my case it was because I was using as provider Toplink but the properties were still the Eclipse ones:<br />
+<br />
+eclipselink.jdbc.url instead of toplink.jdbc.url

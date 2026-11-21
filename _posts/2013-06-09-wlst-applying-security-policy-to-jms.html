@@ -1,0 +1,71 @@
+---
+layout: post
+title: "WLST, applying security policy to a JMS Module"
+date: 2013-06-09T09:50:00.004+02:00
+permalink: /2013/06/wlst-applying-security-policy-to-jms.html
+blogger_id: "2171498261751635530"
+tags: ["jms", "security"]
+---
+The requirement is: only an authenticated user belonging to the Administrator group can access any JMS queue in a JMS module.
+<br/><br/>
+
+On Console, to understand what this operation entails, I associate this policy to PV_OSB_TESTModule JMSModule:
+<br/>
+Group = Administrators
+<br/><br/>
+
+There is no change in the config.xml and other config files. All goes in LDAP.
+<br/><br/>
+<a href="http://suhasonstuff.blogspot.com/2011/05/adding-weblogic-security-policies-using.html?_sm_au_=iVVVJWHWn1D3340S">http://suhasonstuff.blogspot.com/2011/05/adding-weblogic-security-policies-using.html?_sm_au_=iVVVJWHWn1D3340S</a>
+<br/><br/>
+
+<a href="http://atheek.wordpress.com/2011/12/20/granting-integration-monitors-access-to-osb-test-console/">http://atheek.wordpress.com/2011/12/20/granting-integration-monitors-access-to-osb-test-console/</a>
+<br/><br/>
+To visualize the policyId, I do the following in the WLConsole:
+<br/>
+myrealm/migration/export and I export to folder /tmp/exportmyrealm
+<br/>
+these files are generated:
+<br/>
+
+DefaultAuthenticator.dat<br/>
+DefaultCredentialMapper.dat<br/>
+exportIndex.dat<br/>
+XACMLAuthorizer.dat<br/>
+XACMLRoleMapper.dat<br/>
+
+<br/>
+I dig into XACMLAuthorizer.dat and I see:
+
+<br/>
+<pre name="code" class="brush: xml">
+
+&lt;Policy PolicyId="urn:bea:xacml:2.0:entitlement:resource:type@E@Fjms@G@M@Oapplication@EPV_OSB_TESTModule" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">&lt;Description>Grp(Administrators)&lt;/Description>&lt;Target>&lt;Resources>&lt;Resource>&lt;ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">type=&lt;jms&gt;, application=PV_OSB_TESTModule&lt;/AttributeValue>&lt;ResourceAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:resource:resource-ancestor-or-self" DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="true"/>&lt;/ResourceMatch>&lt;/Resource>&lt;/Resources>&lt;/Target>&lt;Rule RuleId="primary-rule" Effect="Permit">&lt;Condition>&lt;Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">&lt;AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Administrators&lt;/AttributeValue>&lt;SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:2.0:subject:group" DataType="http://www.w3.org/2001/XMLSchema#string"/>&lt;/Apply>&lt;/Condition>&lt;/Rule>&lt;Rule RuleId="deny-rule" Effect="Deny">&lt;/Rule>&lt;/Policy>
+</pre>
+<br/>
+
+NOTE: it should be "type= & lt ; jms & gt ;" (remove the blanks.... XML encoding is HELLONEARTH)
+<br/>
+
+This WLST can automate the operation:
+<br/>
+
+<pre>
+connect('weblogic', 'weblogic1', 't3://myserver.acme.com:9001')  
+easeSyntax()
+
+cd /SecurityConfiguration/osbpl1do/DefaultRealm/myrealm/Authorizers/XACMLAuthorizer
+xacmlFile=open('policy.xml','r')
+xacmlDoc=xacmlFile.read()
+cmo.addPolicy(xacmlDoc)
+
+</pre>
+
+
+<br/>
+
+This can be automated for any JMSModule, just change PV_OSB_TESTModule to YourModuleName in the policy.xml and WLST.
+
+
+
+

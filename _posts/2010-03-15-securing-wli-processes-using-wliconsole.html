@@ -1,0 +1,20 @@
+---
+layout: post
+title: "Securing WLI processes using the WLIConsole and Method Authorization Policy"
+date: 2010-03-15T09:20:00.000+01:00
+permalink: /2010/03/securing-wli-processes-using-wliconsole.html
+blogger_id: "4069836174755235630"
+tags: ["security", "wli", "ws-security"]
+---
+Log into WLIConsole, go to process configuration and search for Method Authorization Policy.<br />
+<br />
+Find your <span class="bea-portal-theme-taskcontent">clientRequestwithReturn method (or whatever is called the public entry method of your process) and configure.</span><br />
+<span class="bea-portal-theme-taskcontent">If you add the Anonymous user to the list of Authorized Roles, anybody can call your process.</span><br />
+<span class="bea-portal-theme-taskcontent">If you set any other Role, the test console will stop working and you get this error:</span><br />
+<span class="bea-portal-theme-taskcontent"><br />
+</span><br />
+<span class="bea-portal-theme-taskcontent">&lt;faultcode&gt;JWSError&lt;/faultcode&gt;<br />
+<br />
+&lt;faultstring&gt;EJB Exception: ; nested exception is: java.lang.SecurityException: Access method: clientRequestwithReturn in application: PVHelloEAR, webapp: PVHelloWebjpd: hello.PVHelloSync1 not allowed for subject: principals=[]&lt;/faultstring&gt;<br />
+<br />
+&lt;detail&gt;</span>

@@ -1,0 +1,71 @@
+---
+layout: post
+title: "CDI in Java SE 8"
+date: 2017-11-05T17:30:00.001+01:00
+permalink: /2017/11/cdi-in-java-se-8.html
+blogger_id: "785328046292642574"
+tags: ["cdi", "weld"]
+---
+In Eclipse (pueah, I know, IntelliJ is much better) create a simple Java project, give it the Maven feature, and create this structure:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/9675d7b21be61036.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/86b8080aa02762e8.jpg" width="640" height="445" data-original-width="398" data-original-height="277" /></a></div><br />
+Add this dependency:<br />
+<br />
+&lt;dependency&gt;<br />
+&lt;groupId&gt;org.jboss.weld.se&lt;/groupId&gt;<br />
+&lt;artifactId&gt;weld-se-shaded&lt;/artifactId&gt;<br />
+&lt;version&gt;3.0.0.Final&lt;/version&gt;<br />
+&lt;/dependency&gt;<br />
+<br />
+<br />
+and the code to bootstrap the WELD engine is:<br />
+<br />
+<pre class="brush: java">import javax.enterprise.inject.se.SeContainer;
+import javax.enterprise.inject.se.SeContainerInitializer;
+
+public class MyMain {
+ public static void main(String[] args) {
+  SeContainer container = SeContainerInitializer.newInstance().initialize();
+  CDITester cdiTester = container.select(CDITester.class).get();
+  cdiTester.greet();
+ }
+}
+
+</pre><br />
+<br />
+or also (thanks gist-it)<br />
+<br />
+<script src="http://gist-it.appspot.com/https://github.com/vernetto/JavaMonAmour/blob/master/pvcdi/src/org/pierre/cditests/MyMain.java"></script><br />
+<br />
+The beans.xml file is empty and required, without it you would get this error:<br />
+<br />
+<i><br />
+Exception in thread "main" java.lang.IllegalStateException: WELD-ENV-000016: Missing beans.xml file in META-INF<br />
+at org.jboss.weld.environment.se.Weld.initialize(Weld.java:742)<br />
+at org.jboss.weld.environment.se.Weld.initialize(Weld.java:174)<br />
+at org.pierre.cditests.MyMain.main(MyMain.java:8)<br />
+<br />
+</i><br />
+<br />
+<br />
+The whole solution is here <a href="https://github.com/vernetto/JavaMonAmour/tree/master/pvcdi">https://github.com/vernetto/JavaMonAmour/tree/master/pvcdi</a>. <br />
+When you start the MyMain inside Eclipse (no need to deploy it Wildfly!!!) you should see:<br />
+<br />
+<br />
+Nov 05, 2017 5:13:17 PM org.jboss.weld.bootstrap.WeldStartup <clinit><br />
+INFO: WELD-000900: 3.0.0 (Final)<br />
+Nov 05, 2017 5:13:17 PM org.jboss.weld.bootstrap.WeldStartup startContainer<br />
+INFO: WELD-000101: Transactional services not available. Injection of @Inject UserTransaction not available. Transactional observers will be invoked synchronously.<br />
+Nov 05, 2017 5:13:17 PM org.jboss.weld.environment.se.WeldContainer fireContainerInitializedEvent<br />
+INFO: WELD-ENV-002003: Weld SE container aabfa8d7-3cf1-44da-8b63-173e651f18a8 initialized<br />
+Hello, pierre.<br />
+Weld SE container aabfa8d7-3cf1-44da-8b63-173e651f18a8 shut down by shutdown hook<br />
+<br />
+<br />
+I really wonder why Java still in 2017 doesn't offer you an ready-made CDI engine in SE.... in fact, I wonder why we still have this separation between SE and EE.... nonsense.... it will go away, like all the nonsense...<br />
+<br />
+<br />
+Incidentally , <a href="https://dzone.com/articles/how-to-inject-property-file-properties-with-cdi">https://dzone.com/articles/how-to-inject-property-file-properties-with-cdi</a> really simple way to inject property values with annotations (Spring has a similar concept<br />
+<br />
+<br />
+

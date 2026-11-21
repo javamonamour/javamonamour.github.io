@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Sitescope and Weblogic using JMX"
+date: 2009-11-02T11:39:00.001+01:00
+permalink: /2009/11/sitescope-and-weblogic.html
+blogger_id: "5542743718912613588"
+tags: ["JMX"]
+---
+a good introduction on the topic:<br />
+<br />
+<a href="http://90kts.com/blog/2008/monitoring-weblogic-using-jmx-in-sitescope/">http://90kts.com/blog/2008/monitoring-weblogic-using-jmx-in-sitescope/</a><br />
+<br />
+especially useful is the test using JConsole:<br />
+<br />
+jconsole.exe -J-Dcom.sun.CORBA.transport.ORBTCPReadTimeouts=10:60000:500:10<br />
+<br />
+and connecting to<br />
+service:jmx:rmi://jndi/iiop://yourserver:yourport/weblogic.management.mbeanservers.runtime<br />
+<br />
+Anyway Sitescrotum UI is a POC (piece of crap), for instance if you enter the good JMX URL with the wrong weblogic username you still get "invalid URL" error...<br />
+frankly pathetic.<br />
+<br />
+I could make Sitescrotum work only by adding <br />
+-Dcom.sun.CORBA.transport.ORBTCPReadTimeouts=10:30000:500:10<br />
+<br />
+of course Sitescrotum doesn't give you any warning or error message...<br />
+also I didn't provide the optional domain name... also try hitting the "clear selection" and "reload configuration" many times...<br />
+<br />
+Sitescrotum UI sucks!

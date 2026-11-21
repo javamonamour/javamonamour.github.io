@@ -1,0 +1,8 @@
+---
+layout: post
+title: "The SOAP action specified on the message, '', does not match the HTTP SOAP Action"
+date: 2011-06-09T18:31:00.001+02:00
+permalink: /2011/06/soap-action-specified-on-message-does.html
+blogger_id: "5916815846374644793"
+---
+this <a href="http://social.msdn.microsoft.com/forums/en-US/wcf/thread/ed32328d-e3ad-47dd-bcb0-3db9e6205f9c/">http://social.msdn.microsoft.com/forums/en-US/wcf/thread/ed32328d-e3ad-47dd-bcb0-3db9e6205f9c/</a><br>post helped me a lot:<br>  <br>in my WSDL I was using<br><br>    wsdl:binding name=&quot;MyServiceBinding&quot; type=&quot;tns:IMyService&quot;<br>        soap:binding style=&quot;document&quot;<br>            transport=&quot;<a href="http://schemas.xmlsoap.org/soap/http">http://schemas.xmlsoap.org/soap/http</a>&quot; <br clear="all">  <br><br>which meant that not only I must specify the HTTP header <span class="bea-portal-theme-popupwindow"><span class="help" title="SOAPAction">SOAPAction: &quot;http://www.bla.com:MyAction&quot;</span></span><br><br>but I need to specify also in the SOAP Envelope the header:<br>  <br>&lt;soap:Header xmlns:soap=&quot;<a href="http://schemas.xmlsoap.org/soap/envelope/">http://schemas.xmlsoap.org/soap/envelope/</a>&quot; xmlns:wsa=&quot;<a href="http://www.w3.org/2005/08/addressing">http://www.w3.org/2005/08/addressing</a>&quot;&gt;<br>  &lt;wsa:Action&gt;<span class="bea-portal-theme-popupwindow"><span class="help" title="SOAPAction">http://www.bla.com:MyAction</span></span>&lt;/wsa:Action&gt;<br>&lt;/soap:Header&gt;<br><br><br><br>(make sure you pick up the right wsa namespace, there are many flavors around)<br>  <br><br><br> 

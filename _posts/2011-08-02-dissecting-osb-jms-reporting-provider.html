@@ -1,0 +1,103 @@
+---
+layout: post
+title: "Dissecting the OSB JMS Reporting Provider"
+date: 2011-08-02T17:51:00.006+02:00
+permalink: /2011/08/dissecting-osb-jms-reporting-provider.html
+blogger_id: "8710629739706219094"
+tags: ["OSB", "reporting"]
+blogger_comments:
+  - author: "Romain Testu"
+    date: 2011-11-24
+    html: "Hi !<br /><br />I&#39;ve observed the same behaviour concerning the null values (stage_name,etc.) when you populate data through report in an error handler.<br /><br />Can you explain that behaviour ? Is there a workaround ?<br /><br />Thanks,<br /><br />Romain."
+  - author: "vernetto"
+    date: 2011-11-26
+    html: "I am still pondering if I should really use the JMS Reporting provider, or write my own little reporting utility... unless you hack the code (surely not supported by Oracle), or write your own custom reporting provider....<br />anyway in the fault section you &quot;should&quot; find the exact location of the error..."
+  - author: "vernetto"
+    date: 2012-01-05
+    html: "I have written something about the Custom reporting provider here<br />http://www.javamonamour.org/2011/11/osb-custom-reporting-provider.html<br /><br />but I have never implemented one... it doesn&#39;t seem terribly difficult though..."
+  - author: "NN"
+    date: 2012-01-05
+    html: "can i have the detailed information about custom reporting provider.."
+---
+I have created a new Oracle user DEV_SOAINFRA, granted all privileges, created the reporting tables as per Oracle_OSB1/dbscripts/oracle/reporting_runtime.sql script.<br />
+<br />
+In WL Console I have created a DataSource pointing to this schema,<br />
+using wlsbjmsrpDataSource as JNDI name (I first needed to rename the existing Derby datasource JNDI name, otherwise it would give conflict).<br />
+<br />
+I restarted WebLogic, because the JNDI entry was being cached by the provider and it would keep pointing to Derby.<br />
+<br />
+Each time I do a Report action, a row is created in WLI_QS_REPORT_DATA and in WLI_QS_REPORT_ATTRIBUTE tables.<br />
+<br />
+<b>WLI_QS_REPORT_DATA</b>.<b>DATA_VALUE</b> (blob) contains the data associated with the Report action (if you do "report $body", the payload will end up here)<br />
+<br />
+the labels are in WLI_QS_REPORT_ATTRIBUTE.<b>MSG_LABELS</b>, in a list:<br />
+<br />
+keyone=24;keytwo=pierre<br />
+<br />
+<br />
+WLI_QS_REPORT_ATTRIBUTE.INBOUND_SERVICE_NAME is filled with ProxyService$ReportingTest$reportingPS<br />
+(ReportingTest = project name, reportingPS = proxy name)<br />
+<br />
+WLI_QS_REPORT_ATTRIBUTE.INBOUND_SERVICE_URI = /ReportingTest/reportingPS<br />
+<br />
+WLI_QS_REPORT_ATTRIBUTE.OUTBOUND* are NULL, such as WLI_QS_REPORT_ATTRIBUTE.*<br />
+<br />
+WLI_QS_REPORT_ATTRIBUTE.STATE = REQUEST<br />
+<br />
+node, pipeline name and stage info are duly filled.<br />
+<br />
+<br />
+<br />
+Things change radically if the Report action is in a Error Handler.<br />
+I trigger the error with a "Raise Error" action, error code="MYERRORCODE" and error reason "MYERRORREASON".<br />
+<br />
+This is the $fault originated:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;con:fault   xmlns:con="http://www.bea.com/wli/sb/context"&gt;
+ &lt;con:errorCode&gt;MYERRORCODE&lt;/con:errorCode&gt;
+ &lt;con:reason&gt;MYERRORREASON&lt;/con:reason&gt;
+ &lt;con:location&gt;
+ &lt;con:node&gt;PipelinePairNode1&lt;/con:node&gt;
+ &lt;con:pipeline&gt;PipelinePairNode1_request&lt;/con:pipeline&gt;
+ &lt;con:stage&gt;stage1&lt;/con:stage&gt;
+ &lt;con:path&gt;request-pipeline&lt;/con:path&gt;
+ &lt;/con:location&gt;
+ &lt;/con:fault&gt;
+
+</pre><br />
+<br />
+In this case:<br />
+<br />
+<br />
+WLI_QS_REPORT_ATTRIBUTE.STATE = ERROR<br />
+<br />
+WLI_QS_REPORT_ATTRIBUTE.ERROR_CODE = MYERRORCODE<br />
+<br />
+WLI_QS_REPORT_ATTRIBUTE.ERROR_REASON = MYERRORREASON<br />
+<br />
+<br />
+and all the node, pipeline name and stage info are blank.<br />
+<br />
+WLI_QS_REPORT_ATTRIBUTE.ERROR_DETAILS is empty<br />
+<br />
+<br />
+<br />
+<br />
+The ReportingMDB consumes messages from the JMS queue wli.reporting.jmsprovider.queue, and inserts them into the DB.<br />
+If you pause consumption on the jmsResources!wli.reporting.jmsprovider.queue you can see the XML message itself, which is a:<br />
+<br />
+ObjectMessage[ID:<997757.1312300601672.0>,com.bea.wli.reporting.jmsprovider.runtime.ReportMessage@368701b]<br />
+<br />
+with some custom JMS properties like<br />
+REPORTINGDATATYPE=2<br />
+MSGTYPE=1<br />
+<br />
+the meaning of REPORTINGDATATYPE should be:<br />
+STRING_MSGCONTENT = 1;<br/>
+XML_MSGCONTENT = 2;<br/>
+BINARY_MSGCONTENT = 3;<br/><br/>
+as defined in com.bea.wli.reporting.jmsprovider.utils.ReportingConstants
+<br />
+<br />
+The ReportingMDB is deployed as a EJB module of:<br />
+C:\Oracle\Middleware\Oracle_OSB1\lib\common\jmsreportprovider.ear

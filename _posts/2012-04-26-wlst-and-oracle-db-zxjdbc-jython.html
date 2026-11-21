@@ -1,0 +1,91 @@
+---
+layout: post
+title: "WLST and Oracle DB, zxJDBC, Jython..."
+date: 2012-04-26T07:21:00.004+02:00
+permalink: /2012/04/wlst-and-oracle-db-zxjdbc-jython.html
+blogger_id: "7181053205457837902"
+tags: ["WLST", "zxJDBC"]
+---
+the zxJDBC doc:<br />
+<a href="http://www.jython.org/jythonbook/en/1.0/DatabasesAndJython.html">http://www.jython.org/jythonbook/en/1.0/DatabasesAndJython.html</a><br />
+and also here<br />
+<a href="http://www.jython.org/archive/21/docs/zxjdbc.html">http://www.jython.org/archive/21/docs/zxjdbc.html</a><br />
+<br />
+it seems that WLS 10.3.5 incorporates this library (enter zxJDBC in Everything Search)<br />
+<br />
+<br />
+<pre name="code" class="brush: java">
+java weblogic.WLST
+
+from com.ziclix.python.sql import zxJDBC
+params = {}
+params['serverName'] = 'localhost'
+params['databaseName'] = 'xe'
+params['user'] = 'DEV_SOAINFRA'
+params['password'] = 'DEV_SOAINFRA'
+params['port'] = 1521
+db = apply(zxJDBC.connectx, ("oracle.jdbc.xa.client.OracleXADataSource",), params)
+</pre><br />
+this fails with "Error: no such method [setPort] using arg type [class java.lang.Integer], value [1521]"<br />
+<br />
+<br />
+then I try<br />
+<br />
+<pre name="code" class="brush: java">jdbc_url = "jdbc:oracle:thin:@pierrepc:1521:XE"
+username = "DEV_SOAINFRA"
+password = "DEV_SOAINFRA"
+driver = "oracle.jdbc.xa.client.OracleXADataSource"
+
+conn = zxJDBC.connect(jdbc_url, username, password, driver)
+
+cursor = conn.cursor(1)
+cursor.execute("select count(*) from WLI_QS_REPORT_ATTRIBUTE")
+print cursor.rowcount
+0
+cursor.fetchone()
+(4.0,)
+print cursor.rowcount
+1
+
+</pre><br />
+it seems to work!<br />
+<br />
+<pre name="code" class="brush: java">cursor.execute("select MSG_LABELS from WLI_QS_REPORT_ATTRIBUTE")
+for a in cursor.description:
+print a
+
+('MSG_LABELS', 12, 2048, None, None, None, 1)
+</pre><br />
+try also<br />
+<br />
+<pre name="code" class="brush: java">print cursor.fetchall()
+print cursor.fetchmany()
+
+cursor.execute("select MSG_GUID from WLI_QS_REPORT_ATTRIBUTE order by MSG_GUID")
+res = cursor.fetchall()
+print res
+
+for a in res:
+   print a
+
+for a in res:
+   print a[0]
+
+</pre><br />
+<br />
+To access a specific column without guessing its position:<br />
+<br />
+<pre name="code" class="brush: java">cursor.execute("select * from SOMETABLE where ID = '29'")
+
+columnNames = []
+for item in cursor.description:
+ columnNames.append(item[0])
+ 
+for a in cursor.fetchall():
+ ID = a[columnNames.index('ID')]
+ DSNAME = a[columnNames.index('DSNAME')]
+ print 'ID=' + ID
+ print 'DSNAME=' + DSNAME
+</pre><br />
+<br />
+where ID and DSNAME are column names

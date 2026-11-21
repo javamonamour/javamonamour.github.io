@@ -1,0 +1,62 @@
+---
+layout: post
+title: "WLST deleting Durable Subscribers"
+date: 2011-09-29T12:00:00.000+02:00
+permalink: /2011/09/wlst-deleting-durable-subscribers.html
+blogger_id: "8436585898954513257"
+tags: ["topic"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2015-04-08
+    html: "I am sorry Sapp, I have looked in my notes but could not find anything"
+  - author: "Sapp"
+    date: 2015-04-08
+    html: "Great site! Could you maybe explain how to kill the active Subscriber? We have the problem, that Subscriber, which were deleted in OSB are still active on a topic.<br />Thanks!"
+---
+I was following Kathiravan excellent document http://jeanfrancoisoracle.free.fr/Tools/JMS_Message_Management.doc<br />
+<br />
+to delete durable subscribers in WLST, <br />
+slightly modified here to delete ALL durable subscribers:<br />
+<br />
+<pre name="code" class="brush: java">
+# connect to the server
+connect(‘weblogic’,’weblogic’,’t3://localhost:7001’)
+
+# navigate to the root of the server’s Runtime MBean tree
+serverRuntime()
+
+# navigate to the JMSRuntime
+cd(‘JMSRuntime/myserver.jms’)
+
+# navigate to the JMSServer that the queue is on
+cd(‘JMSServers/MyJMSServer1’)
+
+# navigate to “MyTopic1” where the durable subscriber will be created
+cd (‘Destinations/MyJmsSystemResource!MyTopic1’)
+
+# get all the durable subscriber runtime MBeans on this topic
+# note that this operation would return an array of dsub runtimes
+dsubs1=cmo.getDurableSubscribers()
+
+# then pass it as an argument to the delete method as below
+for ds in dsubs1:
+    try:
+        cmo.destroyJMSDurableSubscriberRuntime(ds)
+    except:
+        print "Unexpected error:", sys.exc_info()[0]
+ 
+
+
+</pre><br />
+<br />
+If the Durable Subscriber is active, you get this error:<br />
+<br />
+<i><br />
+weblogic.jms.common.JMSException: Active topicSubscriber is using this subscription right now<br />
+        at weblogic.jms.backend.BEConsumerImpl.delete(BEConsumerImpl.java:968)<br />
+        at weblogic.jms.backend.BEDurableSubscriberRuntimeMBeanImpl.destroy(BEDurableSubscriberRuntimeMBeanImpl.java:121)<br />
+        at weblogic.jms.backend.BEDestinationRuntimeMBeanImpl.destroyJMSDurableSubscriberRuntime(BEDestinationRuntimeMBeanImpl.java:85)<br />
+</i><br />
+<br />
+<br />
+so make sure you kill the Durable Subscriber process before deleting its subscription.... I wish there was a better way...

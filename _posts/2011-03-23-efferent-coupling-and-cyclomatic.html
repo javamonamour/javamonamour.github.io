@@ -1,0 +1,31 @@
+---
+layout: post
+title: "Efferent Coupling and Cyclomatic Complexity"
+date: 2011-03-23T18:46:00.001+01:00
+permalink: /2011/03/efferent-coupling-and-cyclomatic.html
+blogger_id: "4381230319260402897"
+tags: ["antipatterns"]
+---
+<a href="http://en.wikipedia.org/wiki/Efferent_coupling">http://en.wikipedia.org/wiki/Efferent_coupling</a><br />
+<br />
+<i>"Efferent Coupling is a metric in software development. It measures the number of data types a class knows about.<br />
+<br />
+This includes inheritance, interface implementation, parameter types, variable types, and exceptions.<br />
+<br />
+A large efferent coupling can indicate that a class is <b>unfocused</b>. It may also indicate <b>brittleness</b>, since it depends on the stability of all the types to which it is coupled."</i><br />
+<br />
+<br />
+(my idea of a too much "Efferent Coupled" class is the typical implementation of a Service which does everything on it own, like sending JMS messages, querying the DB, applying all sort of Business Rule referring lot of Domain Objects)<br />
+<br />
+<br />
+<a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity">http://en.wikipedia.org/wiki/Cyclomatic_complexity</a> <br />
+<br />
+<i>"It directly measures the number of linearly independent paths through a program's source code"<br />
+</i><br />
+<br />
+(the way I see it, a method with a lot of if/then/else, exception handling etc... The great danger is that your unit tests might not address all the possible branches of the code. I find fascinating the idea that you can generate a graph and devise a way to generate tests which exercise each node of the graph)<br />
+<br />
+<br />
+This "cyclomatic" reminds me of the <a href="http://en.wikipedia.org/wiki/Polyphemus">Cyclops Polyphemus</a>  (one cyclops, 2 cyclopes... complex, uh?)<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="http://classics.uc.edu/~johnson/myth/homer_images/polyphemus.jpg" imageanchor="1" style=""><img border="0" height="480" width="640" src="http://classics.uc.edu/~johnson/myth/homer_images/polyphemus.jpg" /></a></div>

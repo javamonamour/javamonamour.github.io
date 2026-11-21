@@ -1,0 +1,73 @@
+---
+layout: post
+title: "Puppet: getting started with hiera (hiera example)"
+date: 2013-08-31T16:48:00.001+02:00
+permalink: /2013/08/puppet-getting-started-with-hiera-hiera.html
+blogger_id: "6698799583257685736"
+tags: ["hiera", "puppet"]
+---
+<a href="http://docs.puppetlabs.com/hiera/1/configuring.html">Official doc here</a><br/><br/>
+
+I don't like hiera, but it's better than hardcoding configuration in .pp files.
+<br/>
+
+First attempt:
+<br/>
+vi  hieratest.pp
+<br/>
+<pre>
+$pippo = hiera('pippo')
+notify { "${pippo}" : }
+</pre>
+
+<br/>
+I run "puppet apply hieratest.pp" and I get: 
+<br/>
+<i>Hiera config file /etc/puppetlabs/puppet/hiera.yaml not readable at /root/puppettests/hieratest.pp:1 </i>
+
+<br/>
+then I do vi /etc/puppetlabs/puppet/hiera.yaml and I enter:
+<br/>
+<pre>
+:hierarchy:
+    - hosts/%{::fqdn}
+    - environments/%{environment}
+    - common
+    - users
+
+:backends:
+    - yaml
+
+:yaml:
+    :datadir: '/etc/puppetlabs/puppet/hieradata/'
+
+</pre>
+<br/>
+
+and rerun "puppet apply hieratest.pp" and I get:
+<br/>
+<pre>
+Could not find data item pippo in any Hiera data file and no default supplied at /root/puppettests/hieratest.pp:1
+</pre>
+Better than before :o) <br/>
+
+so I do <br/>
+mkdir /etc/puppetlabs/puppet/hieradata/<br/>
+vi /etc/puppetlabs/puppet/hieradata/common.yaml<br/>
+(remark: common is a member of the hierarchy in the hiera.yaml' and I enter <br/>
+<pre>
+pippo : 'hello world!'
+</pre>
+<br/>
+
+Again "puppet apply hieratest.pp":
+<br/>
+
+notice: hello world!
+ 
+<br/>
+
+Hurrah! My first hiera-based module!
+<br/>
+
+

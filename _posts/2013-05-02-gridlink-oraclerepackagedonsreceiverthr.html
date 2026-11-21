@@ -1,0 +1,29 @@
+---
+layout: post
+title: "GridLink: oracle.repackaged.ons.ReceiverThread.run and oracle.repackaged.ons.SenderThread.run"
+date: 2013-05-02T14:41:00.001+02:00
+permalink: /2013/05/gridlink-oraclerepackagedonsreceiverthr.html
+blogger_id: "1213308943214649459"
+tags: ["gridlink"]
+---
+We have 7 GridLink Datasources, all configured with the same ONS parameter (same host and port). 
+<br/><br/>
+However, we have 21 (=7*3) threads with oracle.repackaged.ons.ReceiverThread.run, and 21 with oracle.repackaged.ons.SenderThread.run. 
+<br/><br/>
+I wonder why:
+<br/><br/>
+a) 3 Receiver threads and 3 Sender threads are required per each Datasource
+<br/><br/>
+b) why all these Datasources could simply not SHARE the same Receiver and Sender threads, since most likely they will be sharing exactly the same informations.
+<br/><br/>
+
+
+We also have 7 threads oracle.repackaged.ucp.jdbc.oracle.ONSRuntimeLBEventHandlerThread.run. And 21 tcp ESTABLISHED connections to ONS.
+
+<br/><br/>
+
+I really don't like having 42 threads dedicated only to Grdilink notifications (plus all the sockets open by them)
+
+
+
+

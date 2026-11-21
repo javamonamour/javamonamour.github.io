@@ -1,0 +1,47 @@
+---
+layout: post
+title: "start-mdbs-with-application"
+date: 2012-11-09T14:49:00.003+01:00
+permalink: /2012/11/start-mdbs-with-application.html
+blogger_id: "1684713238009346833"
+tags: ["mdb"]
+---
+<a href="http://docs.oracle.com/cd/E17904_01/web.1111/e15493/summary.htm">http://docs.oracle.com/cd/E17904_01/web.1111/e15493/summary.htm</a><br />
+<br />
+<br />
+"Controls when MDBs start processing messages. When set totrue, an MDB starts processing messages as soon as it is deployed, even if WebLogic Server has not completed booting. This can cause an MDB application to access uninitialized services or applications during boot up and, therefore, to fail.
+Set to false to defer message processing until after WebLogic Server opens its listen port."
+
+<br />
+<br />
+In OSB, a ProxyService consuming messages from a JMS queue is deployed as a MDB. Its weblogic-application.xml is:
+
+<br/>
+<br/>
+<br/>
+
+<pre name="code" class="brush: xml">
+&lt;?xml version='1.0' encoding='UTF-8'?>
+&lt;web:weblogic-application xmlns:web="http://xmlns.oracle.com/weblogic/weblogic-application">
+  &lt;web:ejb>
+    &lt;web:start-mdbs-with-application>false&lt;/web:start-mdbs-with-application>
+  &lt;/web:ejb>
+  &lt;web:application-param>
+    &lt;web:param-name>service-ref&lt;/web:param-name>
+    &lt;web:param-value>ProxyService$OSBProject$ProxyServices$MyJMSService&lt;/web:param-value>
+  &lt;/web:application-param>
+  &lt;web:listener>
+    &lt;web:listener-class>com.bea.wli.sb.transports.jms.JmsEndPointAppListener&lt;/web:listener-class>
+  &lt;/web:listener>
+&lt;/web:weblogic-application>
+
+</pre>
+
+<br/>
+
+The parameter is set to false for all the OSB JMS services.
+
+
+
+
+

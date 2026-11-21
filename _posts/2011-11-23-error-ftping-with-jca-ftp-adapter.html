@@ -1,0 +1,66 @@
+---
+layout: post
+title: "Error FTPing with JCA FTP Adapter"
+date: 2011-11-23T15:12:00.006+01:00
+permalink: /2011/11/error-ftping-with-jca-ftp-adapter.html
+blogger_id: "5997359901849740263"
+tags: ["ftpadapter", "JCA"]
+---
+<i><br />
+BEA-381971<br />
+<br />
+<br />
+Invoke JCA outbound service failed with connection error, exception: com.bea.wli.sb.transports.jca.JCATransportException: oracle.tip.adapter.sa.api.JCABindingException: oracle.tip.adapter.sa.impl.fw.ext.org.collaxa.thirdparty.apache.wsif.WSIFException: servicebus:/WSDL/ACME_PurchaseOrder/PV_FtpToACME [ Put_ptt::Put(body) ] - WSIF JCA Execute of operation 'Put' failed due to: Error in establishing connection to FTP Server.<br />
+Error in establishing connection to FTP Server.<br />
+Unable to establish connection to server.<br />
+; nested exception is: <br />
+BINDING.JCA-11438<br />
+Error in establishing connection to FTP Server.<br />
+Error in establishing connection to FTP Server.<br />
+Unable to establish connection to server.<br />
+Please ensure hostname and port specified to login to the server is correct.<br />
+<br />
+</i><br />
+<br />
+The FTP Put is done in a Local Transaction:<br />
+<br />
+in the log you will find:<br />
+<br />
+<i>JCA_FRAMEWORK_AND_ADAPTER Starting JCA LocalTransaction</i><br />
+<br />
+and when the error occurs:<br />
+<br />
+<i>JCA_FRAMEWORK_AND_ADAPTER Rolling back JCA LocalTransaction</i><br />
+<br />
+<i>For the NoTransConnEventListener of pool 'eis/Ftp/ACMEFtpAdapter' CONNECTION_CLOSED event received</i><br />
+<br />
+<i>servicebus:/WSDL/ACME_PurchaseOrder/PV_FtpToACME [ Put_ptt::Put(body) ] - Marking this exception as Locally Retryable</i><br />
+<br />
+<i>WSIFCache: Closing CCI Connection</i><br />
+<br />
+In fact the JCA Adapter for File and FTP do not support XA Transaction, but only Local Transactions. <br />
+<br />
+<br />
+The message is retried the number of times determined by the Business Service generated on top of the JCA Adapter:<br />
+<br />
+Transport Configuration  <br />
+Protocol    jca<br />
+Load Balancing Algorithm    round-robin<br />
+Endpoint URI    <br />
+jca://eis/Ftp/ACMEFtpAdapter<br />
+Retry Count    2<br />
+Retry Iteration Interval    30<br />
+Retry Application Errors    No<br />
+<br />
+So in this case the message will be tried 3 times (2 retries) before erroring out. The local transaction only is retried, while the global transaction is still active. This makes the global transaction last 60 seconds.<br />
+<br />
+Be aware that these local transactions are executed as part of the Proxy Service transaction: if you define 10 retries at 1 minute interval, your global transaction will be open for 10 minutes. So this is not a viable solution. <br />
+<br />
+This is what you will see at the end of the TX:<br />
+<br />
+&lt;BEA-010213&gt; &lt;Message-Driven EJB: RequestEJB-7263521924761754948--49bf0c34.133cb4ae47d.-7fe0's transaction was rolled back. The transaction details are: Xid=BEA1-01DB458350C2A589D5FB(10150583),Status=Rolled back. [Reason=weblogic.transaction.internal.AppSetRollbackOnlyException: setRollbackOnly called on transaction],numRepliesOwedMe=0,numRepliesOwedOthers=0,seconds since begin=306,seconds left=60,XAServerResourceInfo[WLStore_prod_domain_FileStore_auto_1]=(ServerResourceInfo[WLStore_prod_domain_FileStore_auto_1]=(state=rolledback,assigned=osb_server1),xar=WLStore_prod_domain_FileStore_auto_121108363,re-Registered = false),SCInfo[prod_domain+osb_server1]=(state=rolledback),OwnerTransactionManager=ServerTM[ServerCoordinatorDescriptor=(CoordinatorURL=osb_server1+pierrepc:7011+prod_domain+t3+, XAResources={eis/tibjms/Topic, WLStore_prod_domain_FileStore_auto_1, eis/aqjms/Queue, eis/fioranomq/Topic, eis/wls/Queue, eis/tibjms/Queue, eis/activemq/Queue, WLStore_prod_domain_ACMEFileStore1, eis/pramati/Queue, WLStore_prod_domain__WLS_osb_server1, eis/tibjmsDirect/Queue, eis/Apps/Apps, eis/jbossmq/Queue, eis/sunmq/Queue, WSATGatewayRM_osb_server1_prod_domain, eis/aqjms/Topic, eis/tibjmsDirect/Topic, eis/wls/Topic, eis/AQ/aqSample, wlsbjmsrpDataSource_prod_domain, eis/webspheremq/Queue, WLStore_prod_domain_WseeFileStore_auto_1},NonXAResources={})],CoordinatorURL=osb_server1+pierrepc:7011+prod_domain+t3+).&gt; <br />
+<br />
+<br />
+Go to the Server/MOnitoring/JTA/Transaction tab and you will see the transaction open for the entire duration of the retries. The transactionId is also traced in the logs.<br />
+<br />
+We were consuming the message from a JMS queue, and redirecting on error to an ErrorQueue.

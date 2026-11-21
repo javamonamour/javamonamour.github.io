@@ -1,0 +1,57 @@
+---
+layout: post
+title: "kubernetes \"change-cause\" to describe a deployment "
+date: 2019-10-15T21:12:00.001+02:00
+permalink: /2019/10/kubernetes-change-cause-to-describe.html
+blogger_id: "3165668156963940061"
+tags: ["kubernetes"]
+---
+$ <b>kubectl run nginx --image=nginx --replicas=4</b><br />
+<br />
+$ <b>kubectl annotate deployment/nginx kubernetes.io/change-cause='initial deployment'</b><br />
+deployment.extensions/nginx annotated<br />
+<br />
+$ <b>kubectl set image deploy nginx nginx=nginx:1.7.9</b><br />
+<br />
+$ <b>kubectl annotate deployment/nginx kubernetes.io/change-cause='nginx:1.7.9'</b><br />
+deployment.extensions/nginx annotated<br />
+<br />
+$ <b>kubectl set image deploy nginx nginx=nginx:1.9.1</b><br />
+<br />
+$ <b>kubectl annotate deployment/nginx kubernetes.io/change-cause='nginx:1.9.1'</b><br />
+deployment.extensions/nginx annotated<br />
+<br />
+<br />
+$ <b>kubectl rollout history deploy nginx</b><br />
+deployment.extensions/nginx<br />
+REVISION  CHANGE-CAUSE<br />
+<br />
+5         initial deployment<br />
+6         nginx:1.7.9<br />
+7         nginx:1.9.1<br />
+<br />
+<br />
+<br />
+This seems to me a very good practice, to be able to trace all changes in PROD.<br />
+<br />
+You can always trace what changed:<br />
+<br />
+<b>kubectl rollout history deploy nginx --revision=6</b><br />
+<br />
+<pre>deployment.extensions/nginx with revision #6
+Pod Template:
+  Labels:       pod-template-hash=7b74859c78
+        run=nginx
+  Containers:
+   nginx:
+    Image:      nginx:1.7.9
+    Port:       <none>
+    Host Port:  <none>
+    Environment:        <none>
+    Mounts:     <none>
+  Volumes:      <none>
+
+</pre><br />
+<br />
+<br />
+

@@ -1,0 +1,77 @@
+---
+layout: post
+title: "WLST and DBEXTS"
+date: 2012-04-27T04:24:00.000+02:00
+permalink: /2012/04/wlst-and-dbexts.html
+blogger_id: "2263365179198276523"
+tags: ["dbexts", "WLST"]
+---
+wls:/offline> from dbexts import dbexts<br />
+wls:/offline> d = dbexts()<br />
+Traceback (innermost last):<br />
+  File "<console>", line 1, in ?<br />
+  File "C:\bea1035\WLSERV~1.3\common\wlst\modules\jython-modules.jar\Lib/dbexts.py", line 188, in __init__<br />
+  File "C:\bea1035\WLSERV~1.3\common\wlst\modules\jython-modules.jar\Lib/javaos$py.class", line 256, in __getitem__<br />
+  File "C:\bea1035\WLSERV~1.3\common\wlst\modules\jython-modules.jar\Lib/UserDict$py.class", line 14, in __getitem__<br />
+  File "C:\bea1035\WLSERV~1.3\common\wlst\modules\jython-modules.jar\Lib/javaos$py.class", line 256, in __getitem__<br />
+  File "C:\bea1035\WLSERV~1.3\common\wlst\modules\jython-modules.jar\Lib/UserDict$py.class", line 14, in __getitem__<br />
+KeyError: HOME<br />
+<br />
+<br />
+we need a dbexts.ini<br />
+<a href="http://wiki.python.org/jython/UserGuide#dbexts">Here</a> it says:<br />
+"dbexts will default to looking for a file named 'dbexts.ini' in the same directory as dbexts.py but can optionally be passed a filename to the cfg attribute."<br />
+<br />
+<br />
+I find out many "dbexts.py", one looking promising is:<br />
+C:\bea1035\wlserver_10.3\common\wlst\modules\jython-modules\Lib\dbexts.py<br />
+<br />
+I try putting a dbexts.ini in <br />
+C:\bea1035\wlserver_10.3\common\wlst\modules\jython-modules\Lib\dbexts.ini<br />
+<br />
+my dbexts.ini is:<br />
+<pre>[default]
+name=ora
+
+[jdbc]
+name=mysql
+url=jdbc:mysql://localhost/ziclix
+user=
+pwd=
+driver=org.gjt.mm.mysql.Driver
+datahandler=com.ziclix.python.sql.handler.MySQLDataHandler
+
+[jdbc]
+name=ora
+url=jdbc:oracle:thin:@localhost:1521:xe
+user=DEV_SOAINFRA
+pwd=DEV_SOAINFRA
+driver=oracle.jdbc.driver.OracleDriver
+datahandler=com.ziclix.python.sql.handler.OracleDataHandler
+</pre><br />
+and still get the same "KeyError: HOME" error.<br />
+<br />
+Looking in the code I find:<br />
+<br />
+fn = os.path.join(os.path.split(__file__)[0], "dbexts.ini")<br />
+if not os.path.exists(fn):<br />
+       fn = os.path.join(os.environ['HOME'], ".dbexts")<br />
+<br />
+<br />
+So I need to declare a HOME System property:<br />
+<b>set HOME=C:\bea1035\wlserver_10.3\common\wlst\modules\jython-modules\Lib\</b><br />
+<br />
+<br />
+This time around I get:<br />
+<br />
+  File "<console>", line 1, in ?<br />
+  File "C:\bea1035\WLSERV~1.3\common\wlst\modules\jython-modules.jar\Lib/dbexts.py", line 189, in __init__<br />
+  File "C:\bea1035\WLSERV~1.3\common\wlst\modules\jython-modules.jar\Lib/dbexts.py", line 661, in __init__<br />
+  File "C:\bea1035\WLSERV~1.3\common\wlst\modules\jython-modules.jar\Lib/dbexts.py", line 664, in parse<br />
+IOError: No such file or directory: C:\bea1035\wlserver_10.3\common\wlst\modules\jython-modules\Lib\.dbexts<br />
+<br />
+then I realize the file should be called <b>".dbexts"</b> rather than dbexts.ini<br />
+<br />
+and this time around IT WORKS!<br />
+<br />
+The mystery is how to pass the dbexts.ini file location in the cfg parameter... really confusing and poorly documented...

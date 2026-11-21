@@ -1,0 +1,32 @@
+---
+layout: post
+title: "keytool error :java.io.IoException:Incorrect AVA format"
+date: 2013-08-25T00:39:00.001+02:00
+permalink: /2013/08/keytool-error-javaioioexceptionincorrec.html
+blogger_id: "6979782945685778906"
+tags: ["keytool"]
+---
+I run this command:
+<br/><br/>
+<pre>
+keytool -genkeypair -alias alias -keyalg RSA -keysize 1024 -dname dn -keystore keystore
+</pre>
+<br/><br/>
+
+and this fails with "keytool error :java.io.IoException:Incorrect AVA format"
+
+<br/><br/>
+
+Just remove -dname:
+
+<pre>
+keytool -genkeypair -alias alias -keyalg RSA -keysize 1024 -keystore keystore
+</pre>
+<br/><br/>
+and answer all questions directly, and you will be fine.
+Otherwise, provide a proper dname, like "CN=Mark Smith, OU=JavaSoft, O=Sun, L=Cupertino, S=California, C=US". For details, see the EXCELLENT <a href="http://docs.oracle.com/javase/6/docs/technotes/tools/windows/keytool.html">http://docs.oracle.com/javase/6/docs/technotes/tools/windows/keytool.html</a> (when everything else fails, read the manual). Especially, avoid funny characters in the dname, including . or $ or #
+
+<br/><br/>
+
+
+

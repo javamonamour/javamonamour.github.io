@@ -1,0 +1,69 @@
+---
+layout: post
+title: "ServerSocket: listening on a port in 2 seconds"
+date: 2015-03-15T16:04:00.003+01:00
+permalink: /2015/03/serversocket-listening-on-port-in-2.html
+blogger_id: "7224282097091369085"
+tags: ["socket"]
+---
+<pre class="brush:java">
+
+
+
+import java.net.InetAddress;
+import java.net.ServerSocket;
+
+
+public class SS {
+ public static void main(String[] args) throws Throwable {
+  InetAddress inet = InetAddress.getByName("192.168.6.110");
+  ServerSocket ss = new ServerSocket(7001, 100, inet);
+  ss.accept();
+ }
+}
+
+
+</pre>
+
+<br/>
+<br/>
+
+
+After that, if you run 
+<br/>
+ss -ln | grep 7001 
+
+<br/>
+
+you should see your fish swimming, and be able to telnet into it.
+
+
+<br/>
+
+(ah of course: javac SS.java, java SS)
+
+
+To check if something is listening on an IP/port:
+
+<pre class="brush:java">
+
+
+import java.net.InetAddress;
+import java.net.Socket;
+
+
+public class CS {
+ public static void main(String[] args) throws Throwable {
+  InetAddress inet = InetAddress.getByName("192.168.6.110");
+  Socket so = new Socket(inet, 7001);
+  so.getInputStream();
+ }
+}
+
+</pre>
+
+<br/>
+<br/>
+
+
+

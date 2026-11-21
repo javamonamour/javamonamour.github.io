@@ -1,0 +1,32 @@
+---
+layout: post
+title: "git bare repository"
+date: 2014-05-24T16:20:00.001+02:00
+permalink: /2014/05/git-bare-repository.html
+blogger_id: "8822366521395935775"
+tags: ["git"]
+---
+mkdir&nbsp; repo1<br />
+cd repo1 <br />
+<b>git init</b><br />
+Initialized empty Git repository in C:/pierre/gittests/repo1/.git/<br />
+<br />
+this repo1 will contain the .git folder with hooks, info, objects, refs<br />
+<br />
+mkdir&nbsp; barerepo2.git<br />
+cd barerepo2.git <br />
+<b>git init --bare</b><br />
+Initialized empty Git repository in C:/pierre/gittests/barerepo2.git/<br />
+<br />
+this barerepo2.git will contain the same files/folders that were in the previous non-bare .git folder,<br />
+but they will be directly in C:/pierre/gittests/barerepo2.git/, rather than in C:/pierre/gittests/barerepo2.git/.git<br />
+<br />
+The idea behind a "bare" repository is to use it only for "shared" storage of a project,<br />
+and not as a working project. So, "bare" repo is used only on a git server, not on a workstation.<br />
+To <a href="http://stackoverflow.com/a/7861243/651288">quote SO</a>:<br />
+<i>A bare repository is a git repository without a working copy, therefore the content of .git is top-level for that directory.</i>
+<br /><br />
+By convention, folder containing a bare repo should carry the .git extension.
+<br /><br />
+
+In the config file there will be a "bare = true" setting.

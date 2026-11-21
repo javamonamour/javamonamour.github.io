@@ -1,0 +1,45 @@
+---
+layout: post
+title: "Logging Return Value and Method Arguments with Spring AOP"
+date: 2009-03-12T18:34:00.003+01:00
+permalink: /2009/03/logging-return-value-and-method.html
+blogger_id: "7798474345389307912"
+tags: ["AOP", "Spring"]
+---
+as in the previous example, but use this:<br />
+<br />
+<br />
+<pre name="code" class="brush: xml">&lt;aop:after-returning method="logExitAfterReturn" ref="loggingPointcut" returning="retVal">&lt;/aop:after-returning>
+
+</pre><br />
+and the method becomes:<br />
+<br />
+<pre>public void logExitAfterReturn(final JoinPoint joinPoint, Object retVal)
+
+{
+log( "Exiting method (after return) " + joinPoint.getSignature().getName() + ", retValue = " + retVal + ".");
+}
+
+</pre><br />
+while the logEntry becomes:<br />
+<br />
+<pre>public void logEntry(final JoinPoint joinPoint)
+
+{
+
+StringBuilder arguments = new StringBuilder();
+
+arguments.append(" args= ");
+
+for (Object arg : joinPoint.getArgs()) {
+
+arguments.append(arg).append(", ");
+
+}
+
+log("Entering method " + joinPoint.getSignature().getName() + arguments.toString() + "...");
+
+}
+
+
+</pre>

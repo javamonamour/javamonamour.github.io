@@ -1,0 +1,47 @@
+---
+layout: post
+title: "WebLogic HTTP access.log not being written"
+date: 2012-04-23T08:37:00.000+02:00
+permalink: /2012/04/weblogic-http-accesslog-not-being.html
+blogger_id: "731249973731959858"
+tags: ["weblogic"]
+---
+(aka How To Change the Buffer Size for the WebLogic Server Http Access Log [ID 1113583.1] )<br />
+<br />
+HTTP access logs are buffered for performance reasons. <br />
+By default logs are buffered until reaching 8kb when they are flushed to the file. <br />
+You can configure this buffer - if set to zero then logs will be written immediately. <br />
+<br />
+<br />
+The HTTPAccessLog could sometimes not be viewed from the console.<br />
+Solution:<br />
+The LogFileMBean now includes a buffer-size-kb parameter. This parameter has a default value of 8 KB; when set to zero or less, it will not buffer the log messages.<br />
+For example, to set the buffer size for access.log in config.xml:<br />
+<br />
+&lt;server><br />
+...<br />
+&lt;web-server><br />
+&lt;web-server-log><br />
+&lt;buffer-size-kb>0&lt;/buffer-size-kb><br />
+&lt;web-server-log>
+
+
+See also LogFileFlushSecs, which is deprecated and no longer available:
+
+<a href="http://docs.oracle.com/cd/E17904_01/apirefs.1111/e13945/weblogic/management/configuration/WebServerMBean.html#setLogFileFlushSecs%28int%29">http://docs.oracle.com/cd/E17904_01/apirefs.1111/e13945/weblogic/management/configuration/WebServerMBean.html#setLogFileFlushSecs%28int%29</a>
+
+
+so your only chance it to change the BufferSize
+
+<pre>
+
+edit()
+startEdit()
+cd /Servers/osbdv2ms1/WebServer/osbdv2ms1/WebServerLog/osbdv2ms1
+set('BufferSizeKB',1)
+save()
+activate()
+
+</pre>
+
+

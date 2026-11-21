@@ -1,0 +1,39 @@
+---
+layout: post
+title: "Spring MVC"
+date: 2011-03-12T18:31:00.002+01:00
+permalink: /2011/03/spring-mvc.html
+blogger_id: "894364750120040085"
+tags: ["SpringMVC"]
+---
+<a href="http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/mvc.html">This</a> is the official doc.<br />
+<br />
+here a nice getting started guide <a href="http://www.giantflyingsaucer.com/blog/?p=2373">http://www.giantflyingsaucer.com/blog/?p=2373</a>.<br />
+<br />
+And <a href="http://www.javacodegeeks.com/2011/04/spring-mvc3-hibernate-crud-sample.html">here</a> a "Spring MVC + Hibernate" template application to get started in 2 minutes.<br />
+<br />
+this presentation is quite impressive:<br />
+<br />
+<a href="http://www.infoq.com/presentations/Mastering-Spring-MVC-3">http://www.infoq.com/presentations/Mastering-Spring-MVC-3</a><br />
+<br />
+although Web programming is really not my cup of tea, so I fell asleep after 40 minutes.<br />
+<br />
+<br />
+some notes here:<br />
+<br />
+DispatcherServlet is the "universal handler"<br />
+defined in web.xml<br />
+<br />
+the ContextLoaderServlet bootstraps Spring and make it available in the web context<br />
+<br />
+the controller runs a scan in the classpath to automatically instantiate all beans<br />
+<br />
+@Controller defines a controller<br />
+@RequestMapping defines a request handler<br />
+<br />
+<br />
+data binding and unmarshalling can be done automatically with annotations - and supports many technologies (REST, JSON...)<br />
+<br />
+<a href="http://static.springsource.org/spring-roo/org.springframework.roo.annotations/apidocs/org/springframework/roo/addon/javabean/RooJavaBean.html">RooJavaBean</a> generates getters and setters<br />
+<br />
+Many standard arguments are supported and injected by Spring, resolved based on their type.

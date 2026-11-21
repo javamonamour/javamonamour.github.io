@@ -1,0 +1,41 @@
+---
+layout: post
+title: "kubernetes quotas"
+date: 2019-11-09T17:05:00.000+01:00
+permalink: /2019/11/kubernetes-quotas.html
+blogger_id: "2558270658422987392"
+tags: ["kubernetes", "quota"]
+---
+<b>kubectl create namespace pippo<br />
+kubectl create quota myhq --hard=cpu=1,memory=1G,pods=2 --namespace=pippo<br />
+kubectl run --restart=Never busybox --image=busybox --namespace=pippo<br />
+</b><br />
+<br />
+<br />
+<i><br />
+Error from server (Forbidden): pods "busybox" is forbidden: failed quota: myhq: must specify cpu,memory<br />
+</i><br />
+<br />
+You can create your pod with requests and limits:<br />
+<br />
+<br />
+kubectl run --restart=Never busybox --image=busybox --namespace=pippo --limits=cpu=100m,memory=512Mi --requests=cpu=50m,memory=256Mi --dry-run -o yaml > mypod.yaml<br />
+<br />
+<br />
+<pre>spec:
+  containers:
+  - image: busybox
+    imagePullPolicy: IfNotPresent
+    name: busybox
+    resources:
+      limits:
+        cpu: 100m
+        memory: 512Mi
+      requests:
+        cpu: 50m
+        memory: 256Mi
+</pre><br />
+<br />
+obviously all values in "requests" must be <= values in limits<br />
+<br />
+

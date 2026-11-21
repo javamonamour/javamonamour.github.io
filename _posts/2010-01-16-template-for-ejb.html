@@ -1,0 +1,39 @@
+---
+layout: post
+title: "Template for a EJB"
+date: 2010-01-16T23:57:00.000+01:00
+permalink: /2010/01/template-for-ejb.html
+blogger_id: "1220789659128064420"
+---
+package com.pierre.ejb;<br />
+<br />
+<br />
+import javax.ejb.SessionBean;<br />
+import weblogic.ejb.GenericSessionBean;<br />
+import weblogic.ejbgen.RemoteMethod;<br />
+import weblogic.ejbgen.Session;<br />
+import weblogic.ejbgen.JndiName;<br />
+import weblogic.ejbgen.FileGeneration;<br />
+import weblogic.ejbgen.Constants;<br />
+<br />
+<br />
+@Session(ejbName = "MyEJB")<br />
+@JndiName(remote = "ejb.MyEJBRemoteHome")<br />
+@FileGeneration(remoteClass = Constants.Bool.TRUE, remoteHome = Constants.Bool.TRUE, localClass = Constants.Bool.FALSE, localHome = Constants.Bool.FALSE)<br />
+<br />
+public class MyEJB extends GenericSessionBean implements SessionBean {<br />
+&nbsp;&nbsp;&nbsp; private static final long serialVersionUID = 1L;<br />
+<br />
+&nbsp;&nbsp;&nbsp; /* (non-Javadoc)<br />
+&nbsp;&nbsp;&nbsp; &nbsp;* @see weblogic.ejb.GenericSessionBean#ejbCreate()<br />
+&nbsp;&nbsp;&nbsp; &nbsp;*/<br />
+&nbsp;&nbsp;&nbsp; public void ejbCreate() {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; System.out.println("ejbCreate was invoked for MyEJB");<br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+&nbsp;&nbsp;&nbsp; @RemoteMethod(transactionAttribute=Constants.TransactionAttribute.SUPPORTS)<br />
+&nbsp;&nbsp;&nbsp; public String sayHello(String name) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return name + " , hello";<br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+}&nbsp;&nbsp;&nbsp;

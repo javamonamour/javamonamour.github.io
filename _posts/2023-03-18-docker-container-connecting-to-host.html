@@ -1,0 +1,94 @@
+---
+layout: post
+title: "Docker container connecting to host service on Windows"
+date: 2023-03-18T16:48:00.004+01:00
+permalink: /2023/03/docker-container-connecting-to-host.html
+blogger_id: "344284453833777290"
+tags: ["docker"]
+---
+docker run -d -p 80:80 --name webserver nginx
+<br/>
+docker ps
+<pre>
+CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS                NAMES
+2733688156aa   nginx     "/docker-entrypoint.…"   14 seconds ago   Up 13 seconds   0.0.0.0:80->80/tcp   webserver
+</pre>
+<br/>
+<br/>
+on my windows host I have a Spring Boot application running at port 10090:
+<br/>
+<pre>
+netstat -an | grep 10090
+  TCP    0.0.0.0:10090          0.0.0.0:0              LISTENING
+  TCP    [::]:10090             [::]:0                 LISTENING
+  TCP    [::1]:53110            [::1]:10090            TIME_WAIT
+  TCP    [::1]:53123            [::1]:10090            TIME_WAIT
+  TCP    [::1]:53126            [::1]:10090            TIME_WAIT
+</pre>
+<br/>
+and I can also see the nginx container
+<br/>
+<pre>
+netstat -an | grep 80
+  TCP    0.0.0.0:80             0.0.0.0:0              LISTENING
+  TCP    [::]:80                [::]:0                 LISTENING
+  TCP    [::1]:80               [::]:0                 LISTENING
+</pre>
+<br/><br/>
+
+If in browser you type "localhost" you should get nginx welcome page (at port 80, default)
+<br/><br/>
+
+Now log into container: 
+<br/>
+docker exec -it webserver sh
+<br/><br/>
+from the container you can connect to
+<br/>
+curl host.docker.internal
+<br/>
+curl host.docker.internal:10090
+<br/>
+they both work, because they "resolve to the internal IP address used by the host" 
+
+<br/>
+
+On my Windows host, if I type "ipconfig" I see that I have
+<br/>
+Ethernet adapter vEthernet (WSL):  172.28.176.1
+<br/>
+Ethernet adapter Ethernet: 192.168.0.248
+<br/>
+
+
+If I try:
+<br/>
+curl 172.28.176.1:10090
+<br/>
+curl 192.168.0.248:10090
+<br/>
+they both work on both host and container, but the first is a lot more responsive.
+<br/>
+This proves that from container you can access a service running on host.
+
+<br/><br/>
+References:
+<br/><br/>
+
+http://man.hubwiz.com/docset/Docker.docset/Contents/Resources/Documents/docs.docker.com/docker-for-windows/networking.html
+<br/><br/>
+
+
+
+
+NB: besides host.docker.internal  , also docker.for.win.localhost  can be used, but they have different values (which?) 
+
+
+
+
+
+
+
+
+
+

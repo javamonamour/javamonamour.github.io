@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Downgrade from Docker 18 to Docker 1.12"
+date: 2018-03-21T15:31:00.000+01:00
+permalink: /2018/03/downgrade-from-docker-18-to-docker-112.html
+blogger_id: "532679812539627135"
+tags: ["docker"]
+---
+sudo yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-selinux docker-engine-selinux docker-engine<br />
+yum list installed | grep docker<br />
+<br />
+THIS IS NOT WORKING (it installs Docker 18 !!!)<br />
+<br />
+sudo yum -y update<br />
+sudo yum -y install yum-utils<br />
+sudo yum-config-manager --add-repo https://yum.dockerproject.org/repo/main/centos/7<br />
+sudo yum -y update<br />
+# yum search --showduplicates docker-engine<br />
+sudo yum -y --nogpgcheck install docker-engine-1.12.6-1.el7.centos.x86_64<br />
+sudo systemctl enable docker<br />
+sudo systemctl start docker<br />
+yum list installed | grep docker<br />
+docker version<br />
+<br />
+<br />
+<br />
+THIS IS WORKING<br />
+sudo yum remove docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-selinux docker-engine-selinux docker-engine<br />
+yum list installed | grep docker<br />
+sudo yum install -y libtool-ltdl libseccomp<br />
+mkdir docker<br />
+cd docker<br />
+wget https://yum.dockerproject.org/repo/main/centos/7/Packages/docker-engine-1.12.6-1.el7.centos.x86_64.rpm     https://yum.dockerproject.org/repo/main/centos/7/Packages/docker-engine-selinux-1.12.6-1.el7.centos.noarch.rpm<br />
+wget https://yum.dockerproject.org/repo/main/centos/7/Packages/docker-engine-1.12.6-1.el7.centos.x86_64.rpm \<br />
+sudo rpm -ivh docker-engine-1.12.6-1.el7.centos.x86_64.rpm docker-engine-selinux-1.12.6-1.el7.centos.noarch.rpm<br />
+yum list installed | grep docker<br />
+sudo systemctl start docker<br />
+sudo systemctl enable docker<br />
+docker version<br />
+<br />
+<br />
+

@@ -1,0 +1,47 @@
+---
+layout: post
+title: "JRockit and Lock Profiling"
+date: 2009-12-08T12:30:00.000+01:00
+permalink: /2009/12/jrockit-and-lock-profiling.html
+blogger_id: "4824564608308729591"
+---
+<b>http://download.oracle.com/docs/cd/E13188_01/jrockit/docs142/usingJRA/looking.html#1056684 <br />
+</b><br />
+<br />
+<b>Lock Profiling</b><br />
+<br />
+<i>You can enable the JRockit Runtime Analyzer to collect and analyze information about the locks</i><br />
+<i>and the contention that has occurred while the runtime analyzer was recording. To do this, add</i><br />
+<i>the following option when you start your application:</i><br />
+<i><br />
+</i><br />
+<i>-Djrockit.lockprofiling=true</i><br />
+<i><br />
+</i><br />
+<i>When lock profiling has been enabled, you can view information about Java locks on the Lock</i><br />
+<i>Profiling tab in Mission Control.</i><br />
+<br />
+<br />
+You can dump at any time the lock profiling:<br />
+<br />
+jrcmd 3863 <b>lockprofile_print</b><br />
+<br />
+<span style="font-size: x-small;"><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">Class, Lazy Banned, Thin Uncontended, Thin Contended, Lazy Reservation, Lazy lock, Lazy Reverted, Lazy Coop-Reverted, Thin Recursive, Fat Uncontended, Fat Contended, Fat Recursive, Fat Contended Sleep, Reserve Bit Uncontended, Reserve Bit Contended</span><br style="font-family: &quot;Courier New&quot;,Courier,monospace;" /><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">[I, false, 546, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0</span><br style="font-family: &quot;Courier New&quot;,Courier,monospace;" /><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">java/util/WeakHashMap$Entry, false, 266, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0</span><br style="font-family: &quot;Courier New&quot;,Courier,monospace;" /><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">weblogic/timers/internal/TimerManagerImpl, false, 4398, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0</span><br style="font-family: &quot;Courier New&quot;,Courier,monospace;" /><span style="font-family: &quot;Courier New&quot;,Courier,monospace;">sun/text/resources/DateFormatZoneData, false, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0</span></span><br />
+<br />
+<br />
+The alternative is:<br />
+you examine the thread dumps, looking for a pattern like:<br />
+<br />
+-- Blocked trying to get lock: oracle/toplink/sessions/DatabaseLogin@0x2b9dd61a9968<b>[fat lock]</b><br />
+<br />
+The target of your search should be the [fat lock] with a number of locks on the same monitor (oracle/toplink/sessions/DatabaseLogin@0x2b9dd61a9968)<br />
+<br />
+Plotting the number of threads waiting on the monitor, against the time of the thread dump, can prove whether a lock is really problematic.<br />
+<br />
+<br />
+<i>About JRA Overhead when Recording <br />
+The overhead while recording is very low—typically less than two percent. If you enable Java lock profiling with the system property – Djrockit.lockprofiling=true<b> the overhead could be considerable</b> greater, typically between 3% and 25% depending upon the application. <br />
+</i><br />
+More on the topic:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E13188_01/jrockit/docs142/usingJRA/applocks.html">http://download.oracle.com/docs/cd/E13188_01/jrockit/docs142/usingJRA/applocks.html</a>

@@ -1,0 +1,17 @@
+---
+layout: post
+title: "Is storing JMS and TLOG files on a shared folder a good practice?"
+date: 2014-03-13T16:44:00.000+01:00
+permalink: /2014/03/is-storing-jms-and-tlog-files-on-shared.html
+blogger_id: "1452272442782247482"
+tags: ["nfs"]
+---
+A friend of mine has JMS and TLOG files on a NFS4 shared folder, and shared among the 4 machines of his cluster.<br />
+<br />
+Allegedly this should make his solution more "fault tolerant".<br />
+<br />
+However, after 2 years in Production he has never, I say NEVER had a single machine outage (in any case, who cares about losing one, he has 4 machines in the cluster!) , on the other hand he had a few (at least 3) network glitches who made the NFS server unreachable for a period between a few minutes to a couple of hours.... this making ALL his solution completely unavailable.<br />
+<br />
+So... if I had to make a choice, I would rather avoid NFS at all. If your main use case for NFS is that it makes it easier to deploy configuration files and applications, then consider using Puppet or use a different staging model.<br />
+<br />
+<br />

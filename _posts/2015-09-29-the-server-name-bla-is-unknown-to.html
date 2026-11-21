@@ -1,0 +1,38 @@
+---
+layout: post
+title: "The server name bla is unknown to the administration server"
+date: 2015-09-29T17:00:00.001+02:00
+permalink: /2015/09/the-server-name-bla-is-unknown-to.html
+blogger_id: "6238716384173813114"
+tags: ["weblogic"]
+---
+If you get this:
+<br/><br/>
+
+<pre>
+weblogic.management.ManagementException: The server name bla is unknown to the administration server. Check if restart is required.
+        at weblogic.management.provider.internal.RuntimeAccessImpl.initialize(RuntimeAccessImpl.java:447)
+        at weblogic.management.provider.internal.RuntimeAccessService.start(RuntimeAccessService.java:49)
+        at weblogic.t3.srvr.ServerServicesManager.startService(ServerServicesManager.java:462)
+        at weblogic.t3.srvr.ServerServicesManager.startInStandbyState(ServerServicesManager.java:167)
+        at weblogic.t3.srvr.T3Srvr.initializeStandby(T3Srvr.java:881)
+        at weblogic.t3.srvr.T3Srvr.startup(T3Srvr.java:568)
+        at weblogic.t3.srvr.T3Srvr.run(T3Srvr.java:469)
+        at weblogic.Server.main(Server.java:71)
+</pre>
+
+<br/><br/>
+
+oracle documentation says:
+<br/><br/>
+<a href="http://docs.oracle.com/cd/E23943_01/apirefs.1111/e14397/Config.html">http://docs.oracle.com/cd/E23943_01/apirefs.1111/e14397/Config.html</a>
+<br/><br/>
+<b>Cause</b> The -Dweblogic.Name command line property specifies a server that does not exist in the configuration that is active on the administration server. This can occur if the managed server was added to the configuration along with non-dynamic changes that affect the administration server. In this case, the administration server must be restarted.
+<br/><br/>
+<b>Action</b>  Check to see if the administration server is marked as needing a restart. If it is, then restart the administration server before trying to boot this managed server. Check the configuration for the list of configured servers.
+<br/><br/>
+
+Yet there is another explanation: that your managed server is connecting to an admin belonging to a different domain! Check that there are no processing listening on the ip/port that you have given as admin url to the weblogic server. 
+
+
+

@@ -1,0 +1,80 @@
+---
+layout: post
+title: "Linux directory read and execute bits"
+date: 2013-10-26T09:20:00.003+02:00
+permalink: /2013/10/linux-directory-read-and-execute-bits.html
+blogger_id: "1959588157796769151"
+tags: ["linux"]
+---
+file pippo.txt is in /vagrant/one/two, and it belongs to root, just like directories one and two.
+
+
+<pre>
+[root@osb-vagrant vagrant]# ls -Rlt /vagrant
+/vagrant:
+total 4
+drwxr-xr-x 3 root root 4096 Oct 26 08:29 one
+
+/vagrant/one:
+total 4
+drwxr-x--x 2 root root 4096 Oct 26 08:29 two
+
+/vagrant/one/two:
+total 0
+-rw-r--r-- 1 root root 0 Oct 26 08:29 pippo.txt
+
+</pre>
+
+<br/>
+Question: will user vagrant be able to do ls /vagrant/one/two?
+<br/>
+Answer: NO
+<br/>
+<pre>
+[vagrant@osb-vagrant vagrant]$ ls /vagrant/one/two/
+ls: cannot open directory /vagrant/one/two/: Permission denied
+</pre>
+
+Why not? Because the "two" read bit is not set. It is set on "one" however". 
+The "read" bit for a folder means "let me list its content".
+
+However, user vagrant can "cat /vagrant/one/two/pippo.txt", because the read bit is set on pippo.txt, and the execute bit is set on "two".
+
+<br/>
+
+If I remove the execute bit on "two":
+<pre>
+chmod 770 /vagrant/one/two
+ls -ltr /vagrant/one/two
+total 0
+-rw-r--r-- 1 root root 0 Oct 26 08:29 pippo.txt
+</pre>
+
+<br/>
+then I even lose the right to view pippo.txt content, although the file itself is readable for vagrant.
+
+<pre>
+[vagrant@osb-vagrant vagrant]$ cat /vagrant/one/two/pippo.txt
+cat: /vagrant/one/two/pippo.txt: Permission denied
+</pre>
+
+<br/><br/>
+
+To recap: execute bit on a folder allows me to "traverse it". read bit on a folder allows me to view its content. This is very un-intuitive and derives from an overloaded use of bits which were originally meant for files. Files and directories are totally different beasts, so they should be modeled differently.
+<br/><br/>
+
+How about deleting files? It's not enough that you have "write" access to the file: you should also have execute access to the folder.
+<br/><br/>
+See also these excellent tutorials <a href="http://www.hackinglinuxexposed.com/articles/20030417.html">http://www.hackinglinuxexposed.com/articles/20030417.html</a> <a href="http://www.hackinglinuxexposed.com/articles/20030424.html">http://www.hackinglinuxexposed.com/articles/20030424.html</a>
+
+
+
+
+
+
+
+
+
+
+
+

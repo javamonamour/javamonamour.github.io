@@ -1,0 +1,28 @@
+---
+layout: post
+title: "noNamespaceSchemaLocation"
+date: 2011-07-19T13:46:00.001+02:00
+permalink: /2011/07/nonamespaceschemalocation.html
+blogger_id: "9179195052659622934"
+tags: ["noNamespaceSchemaLocation"]
+---
+I do an xsd:import<br />
+<br />
+xsd:import namespace="" schemaLocation="bla.xsd"<br />
+<br />
+and bla.xsd doesn't define a namespace for its elements.<br />
+<br />
+No way. I get an error<br />
+<br />
+<i>Imported schema has a target namespace "null" that does not match the specified ""</i><br />
+<br />
+If you specify a namespace, Eclipse complains that it's different from the one used in bla.xsd. <br />
+If you leave it empty, "", still it complains. If you omit the namespace="" clause, again it complains. I have tried xsd:nil, no way.<br />
+<br />
+The only way is to use <br />
+<br />
+<b>xsd:include schemaLocation="bla.xsd"</b><br />
+<br />
+or <br />
+<br />
+<b>xsd:import xsi:noNamespaceSchemaLocation="bla.xsd"</b>

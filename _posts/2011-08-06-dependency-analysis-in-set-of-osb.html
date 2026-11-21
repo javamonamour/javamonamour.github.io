@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Dependency analysis in a set of OSB Projects"
+date: 2011-08-06T15:55:00.000+02:00
+permalink: /2011/08/dependency-analysis-in-set-of-osb.html
+blogger_id: "8924216516212613367"
+tags: ["dependencies", "OSB"]
+---
+It is very important to keep track of dependencies in a OSB project. <br />
+<br />
+* Who does what <br />
+* Who uses what <br />
+* Who is used by whom<br />
+<br />
+In a sbconfig.jar, ExportInfo contains all info on the dependencies amongst artifacts, using a list of properties "extrefs"<br />
+<br />
+<br />
+<i>NB: in order to evaluate these XPaths with XmpSpy/Xml/Evaluate XPath, you might have to tweak the document adding xmlns:imp definition to the root element:<br />
+<br />
+xml-fragment name="" version="v2" xmlns:imp="http://www.bea.com/wli/config/importexport"<br />
+</i><br />
+<br />
+<br />
+Xpath to retrieve all artifacts:<br />
+<b>/xml-fragment/imp:exportedItemInfo/@instanceId</b><br />
+<br />
+Xpath to retrieve all artifacts of a given type:<br />
+/xml-fragment/imp:exportedItemInfo[@typeId='Xquery']/@instanceId<br />
+<br />
+<br />
+Xpath to retrieve all dependencies of a given artifact:<br />
+<b>/xml-fragment/imp:exportedItemInfo[@instanceId='InterfacesBLA/CommonSchemas/FilterTypes']/imp:properties/imp:property[@name='extrefs']/@value </b><br />
+<br />
+<br />
+At this point it's not difficult to write a small HTML Report Writer who formats all this info in a nice way

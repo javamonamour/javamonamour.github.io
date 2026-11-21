@@ -1,0 +1,13 @@
+---
+layout: post
+title: "SOAP over JMS"
+date: 2010-01-22T22:10:00.000+01:00
+permalink: /2010/01/soap-over-jms.html
+blogger_id: "7446355736859920143"
+---
+excellent article: <br />
+http://www.oracle.com/technology/pub/articles/murphy-soa-jms.html<br />
+<br />
+The Asynchronous message is posted on a JMS queue, consumed by a WS which replies on a temporary queue created by the client on the same JMS session.The client waits on the temporary queue.<br />
+<br />
+Your WS can serve both JMS and HTTP, with the annotations WLHttpTransport and WLJmsTransport.

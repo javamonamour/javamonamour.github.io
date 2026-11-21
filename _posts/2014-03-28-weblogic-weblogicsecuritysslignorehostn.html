@@ -1,0 +1,28 @@
+---
+layout: post
+title: "WebLogic weblogic.security.SSL.ignoreHostnameVerification"
+date: 2014-03-28T10:59:00.002+01:00
+permalink: /2014/03/weblogic-weblogicsecuritysslignorehostn.html
+blogger_id: "7651440211681844269"
+tags: ["ssl", "weblogic"]
+---
+I went completely mad chasing why on earth an admin server was starting with weblogic.security.SSL.ignoreHostnameVerification=false, even if all the possible places (startWebLogic.sh, startup.properties in the data/nodemanager folder...) I had specified -Dweblogic.security.SSL.ignoreHostnameVerification=true.
+<br/><br/>
+After hours, I found out that I forgot to set the Hostname Verification to "None" (in server/SSL/advanced), it was instead the BEA Hostname Verifier
+<br/><br/>
+
+
+in WLST:
+<br/><br/>
+
+cd("/Servers/" + serverName + "/SSL/" + serverName )<br/>
+set( 'HostnameVerificationIgnored', 1 )<br/>
+
+<br/><br/>
+
+
+Unless you turn it off, in some cases you can get the dreaded BEA-090482 BAD_CERTIFICATE alert .
+
+
+
+

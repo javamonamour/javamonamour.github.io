@@ -1,0 +1,122 @@
+---
+layout: post
+title: "Using gmail as a SMTP server"
+date: 2011-03-03T18:17:00.002+01:00
+permalink: /2011/03/using-gmail-as-smtp-server.html
+blogger_id: "6355409464353020532"
+tags: ["gmail", "smtp"]
+---
+SMTP Server: smtp.gmail.com<br />
+Use Authentication: Yes<br />
+Use Secure Connection: Yes (this can be TLS or SSL depending on your mail client)<br />
+Username: your GMail account<br />
+Password: your GMail password<br />
+Port: 465 or 587<br />
+<br />
+(see <a href="http://kb.siteground.com/article/How_to_use_Googles_free_SMTP_server.html">http://kb.siteground.com/article/How_to_use_Googles_free_SMTP_server.html</a> from which I have copied this info)<br />
+<br />
+<br />
+Remember to add activation.jar and mail.jar to your CP.<br />
+<br />
+If you get <br />
+java.net.UnknownHostException: smtp.gmail.com<br />
+<br />
+try 66.249.93.109 instead<br />
+<br />
+if you are behind a Proxy; you are screwed<br />
+<a href="http://www.oracle.com/technetwork/java/faq-135477.html#proxy">http://www.oracle.com/technetwork/java/faq-135477.html#proxy</a><br />
+<br />
+see also <a href="http://java.sun.com/developer/onlineTraining/JavaMail/contents.html#RelatedProtocols">here</a> for more on JavaMail API<br />
+<br />
+and <a href="http://www.javaworld.com/jw-10-2001/jw-1026-javamail.html">here</a> for a working example.<br />
+<br />
+Create an account in gmail, say "hellopippo@gmail.com" with password "hello"<br />
+<br />
+This code should definitely work - unless you are behind a proxy:<br />
+<br />
+<pre name="code" class="brush: java">package com.pierre.email;
+
+import javax.mail.*;
+import javax.mail.internet.*;
+import java.util.*;
+
+/**
+ * A simple email sender class.
+ */
+public class SimpleSender
+{
+    /**
+     * Main method to send a message given on the command line.
+     */
+    public static void main(String args[])
+    {
+       
+        try
+        {
+            String to="vernetto@yahoo.com";
+            String from="hellopippo@gmail.com";
+            String subject="fanculo";
+            String body="sei scemissimo";
+            send(to, from, subject, body);
+        }
+        catch (Exception ex)
+        {
+            System.out.println("Usage: java com.pierre.email.SimpleSender"
+                    + "toAddress fromAddress subjectText bodyText");
+        }
+        System.exit(0);
+    }
+
+    /**
+     * "send" method to send the message.
+     */
+    public static void send(String to, String from
+            , String subject, String body)
+    {
+     String smtpServer = "smtp.gmail.com"; // or 74.125.91.109
+        String username = "hellopippo@gmail.com";
+        String password = "hello";
+        try
+        {
+            Properties props = System.getProperties();
+            // -- Attaching to default Session, or we could start a new one --
+           
+            props.put("mail.smtp.host", smtpServer); 
+            props.put("mail.smtp.port", "587"); // 587 465
+     
+   props.put("mail.smtp.user", username);
+   props.put("mail.smtp.password", password);
+            props.put("mail.smtp.starttls.enable","true");
+            props.put("mail.smtp.auth", "true");           
+           
+            Session session = Session.getDefaultInstance(props, null);
+            // -- Create a new message --
+            Message message = new MimeMessage(session);
+           
+            message.setFrom(new InternetAddress(from));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+           
+            message.setSubject(subject);
+            message.setText(body);
+            // -- Set some other header information --
+            message.setHeader("X-Mailer", "ThisIsPierre");
+            message.setSentDate(new Date());
+            // -- Send the message --
+       
+            Transport transport = session.getTransport("smtp");
+            transport.connect(smtpServer, username, password);
+            transport.sendMessage(message, message.getAllRecipients());
+            transport.close();
+       
+            System.out.println("Message sent OK.");
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+}
+
+</pre><br />
+<br />
+Download JavaMail <a href="https://cds.sun.com/is-bin/INTERSHOP.enfinity/WFS/CDS-CDS_Developer-Site/en_US/-/USD/ViewProductDetail-Start?ProductRef=javamail-1.4.4-oth-JPR@CDS-CDS_Developer">here</a>

@@ -1,0 +1,8 @@
+---
+layout: post
+title: "OSB: Business Service providing a caching wrapper to a Proxy Service"
+date: 2011-06-27T21:09:00.000+02:00
+permalink: /2011/06/osb-business-service-providing-caching.html
+blogger_id: "2411281647675320620"
+---
+I have implemented a Proxy Service, and now I want to be able to cache<br>its response.<br>The only way is through a &quot;Cache Enabled&quot; Business Service.<p>Normally a Business Service is meant to expose EXTERNAL services, so<br>it doesn&#39;t happen so often to expose a LOCAL Proxy Service....<br>Obviously I wan to use the LOCAL protocol for performance reasons.<p>Well, it turns out that it is impossible to connect from a BS to a PS<br>using &quot;local&quot;.<br>I had to turn to the sb protocol (=RMI), which is a bit of a pain<br>because it involves serialization of payload.<br>I am not too worried because in any case I am caching the result,<br>still I feel puzzled about the lack of support for &quot;local&quot; protocol<br>between BS and PS.

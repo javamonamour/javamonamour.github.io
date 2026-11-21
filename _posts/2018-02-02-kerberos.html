@@ -1,0 +1,57 @@
+---
+layout: post
+title: "Kerberos"
+date: 2018-02-02T03:05:00.001+01:00
+permalink: /2018/02/kerberos.html
+blogger_id: "4288803862861233552"
+tags: ["kerberos"]
+---
+<a href="https://en.wikipedia.org/wiki/Kerberos_(protocol)">https://en.wikipedia.org/wiki/Kerberos_(protocol)</a><br />
+<br />
+symmetric key cryptography + trusted 3rd party<br />
+UDP port 88 <br />
+<br />
+<br />
+<br />
+<a href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/how_to_set_up_sso_with_kerberos/sso_with_kerberos_deeper_dive">https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/how_to_set_up_sso_with_kerberos/sso_with_kerberos_deeper_dive<br />
+<br />
+</a><br />
+<br />
+<br />
+<a href="https://en.wikipedia.org/wiki/Generic_Security_Services_Application_Program_Interface">https://en.wikipedia.org/wiki/Generic_Security_Services_Application_Program_Interface</a><br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/0ede3ad1a9bae7b3.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="1200" data-original-width="1600" height="480" src="/images/f334a17dfe443eb3.jpg" width="640" /></a></div><br />
+<br />
+KDC = Key Distribution Center<br />
+<br />
+TGT = Ticket-Getting Ticket<br />
+<br />
+AS = Authorization Server<br />
+<br />
+ST = Service Ticket<br />
+<br />
+TGS = Ticket Granting Service<br />
+<br />
+SPN = Service Principal Name<br />
+<br />
+1) AS-REQ / AS-REP : user logs in, using key in keytab file he authenticates in AS/KDC. AS/KDC checks if user exists in its DB. User gets a TGT (time limited)<br />
+2) user <br />
+<br />
+<br />
+Kerberos uses a keytab file <a href="https://kb.iu.edu/d/aumh">https://kb.iu.edu/d/aumh</a><br />
+<br />
+Microsoft articles:<br />
+<br />
+<a href="https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx">https://technet.microsoft.com/en-us/library/cc772815(v=ws.10).aspx</a><br />
+<br />
+<a href="https://msdn.microsoft.com/en-us/library/cc246080.aspx">https://msdn.microsoft.com/en-us/library/cc246080.aspx</a><br />
+<br />
+Microsoft Kerberos training videos (4):<br />
+<br />
+<a href="https://www.youtube.com/playlist?list=PL97898A4367BC1A7B">https://www.youtube.com/playlist?list=PL97898A4367BC1A7B</a><br />
+<br />
+Kerberos Constrained Delegation <a href="https://docs.microsoft.com/en-us/windows-server/security/kerberos/kerberos-constrained-delegation-overview">https://docs.microsoft.com/en-us/windows-server/security/kerberos/kerberos-constrained-delegation-overview<br />
+</a><br />
+<br />
+<br />
+

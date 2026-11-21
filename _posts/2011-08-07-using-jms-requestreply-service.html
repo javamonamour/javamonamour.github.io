@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Using the JMS Request/Reply service"
+date: 2011-08-07T17:06:00.001+02:00
+permalink: /2011/08/using-jms-requestreply-service.html
+blogger_id: "950549845160703611"
+tags: ["correlationId", "request-reply"]
+---
+Create a RRBS, Any XML, protocol JMS, <br />
+URL jms://localhost:7001/weblogic.jms.XAConnectionFactory/RRPSRequest  (it's the Queue on which the RRPS listens)<br />
+<br />
+Response Queue: One for all Request URIs<br />
+Response Pattern  : JMSCorrelationID<br />
+Response URI: jms://localhost:7001/weblogic.jms.XAConnectionFactory/RRPSResponse<br />
+<br />
+<br />
+<br />
+Create a HTTP Any XML Request/Reply "entryWS", route to RRBS ("pass all headers")<br />
+<br />
+So:<br />
+<br />
+Proxy Service entryWS writes to Business Service RRBS<br />
+Business Service RRBS writes to Queue RRPSRequest  <br />
+Proxy Service RRPS reads from Queue RRPSRequest and writes to Queue RRPSResponse<br />
+Business Service RRBS reades from Queue RRPSResponse and returns to entryWS <br />
+<br />
+<br />
+If you log $inbound, you will see that the RRBS sets a correlation Id on the message sent to RRPSRequest.<br />
+The messageId of the message in RRPSRequest is different from the messageId in the message in RRPSResponse, but the correlationId is the same.<br />
+The correlationId is required by the RRBS to match the response to the request on the 2 Queues.<br />
+<br />
+<a href="http://code.google.com/p/javatoolsforweblogic/source/browse/trunk/OSBArtifacts/sbconfigRRJMS.jar">Here the OSB jar file with the code</a>

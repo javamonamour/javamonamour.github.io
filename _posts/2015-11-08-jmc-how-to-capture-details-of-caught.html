@@ -1,0 +1,40 @@
+---
+layout: post
+title: "JMC: how to capture details of caught and unlogged exceptions"
+date: 2015-11-08T23:57:00.001+01:00
+permalink: /2015/11/jmc-how-to-capture-details-of-caught.html
+blogger_id: "7043614438258876032"
+tags: ["jmc"]
+---
+It happens occasionally that inexperienced programmers catch an exception and ignore it, or they catch it and throw another exception without reporting the full details of the root cause.
+<br />
+<br />
+This situation turns naturally in an operational nightmare.
+<br />
+<br />
+But Java Mission Control can really help you out. Let´s run this code (remember the -XX:+UnlockCommercialFeatures -XX:+FlightRecorder ) :
+
+<br />
+<pre class="brush: java">public class ThrowsException {
+ public static void main(String[] args) {
+  while (true) {
+   try {
+    Thread.sleep(1000);
+    throw new Exception("ciao bella gioia");
+   }
+   catch (Throwable t) {
+   }
+  }
+ }
+}
+</pre>
+<br />
+<br />
+I run the JMC flight recorder, then go to the Code/Exceptions tab and this is what I get:
+
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/551fcf3a506c6f84.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="369" src="/images/6bfc7117f39ce3fc.jpg" width="640" /></a></div>
+

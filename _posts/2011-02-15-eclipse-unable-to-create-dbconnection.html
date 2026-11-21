@@ -1,0 +1,23 @@
+---
+layout: post
+title: "Eclipse unable to create a DBConnection"
+date: 2011-02-15T14:09:00.001+01:00
+permalink: /2011/02/eclipse-unable-to-create-dbconnection.html
+blogger_id: "7325756365584062163"
+tags: ["eclipse"]
+---
+The custom JDBC URL is:<br />
+<br />
+jdbc:oracle:thin:@ldap://oid.acme:389/BLABLA,cn=OracleContext,dc=pr,dc=acme,dc=be<br />
+<br />
+In SQL Developer you can specify a custom URL;<br />
+<br />
+In Eclipse, no way, you must enter the individual fields and no matter what, it keeps appending a ":" after 389<br />
+<br />
+The only workaround is to create a dummy connection, then edit the SID in the "Database Connections" "properties".... a terrible hack for a terrible product (Eclipse)<br />
+<br />
+You should set this:<br />
+<br />
+SID=389/BLABLA,cn=OracleContext,dc=pr,dc=acme,dc=be<br />
+HOST=ldap<br />
+PORT NUMBER=//oid.acme

@@ -1,0 +1,32 @@
+---
+layout: post
+title: "ORA-00932: inconsistent datatypes: expected NUMBER got INTERVAL DAY TO SECOND"
+date: 2014-06-24T21:58:00.000+02:00
+permalink: /2014/06/ora-00932-inconsistent-datatypes.html
+blogger_id: "49697698806364172"
+tags: ["oracledb"]
+---
+It looks like you are trying to do maths (+, -) with TIMESTAMP.<br />
+<br />
+If you try to sum or subtract two timestamps, you will get:<br />
+<br />
+<i>ORA-00932: inconsistent datatypes: expected NUMBER got INTERVAL DAY TO SECOND</i><br />
+<br />
+<br />
+TIMESTAMP doesn't like that. you should CAST the TIMESTAMP to DATE:<br />
+<br />
+rather than <br />
+<b>bla - blu</b> (where bla and blu are TIMESTAMP) <br />
+do<br />
+<b>CAST (bla as DATE) - CAST (blu as DATE)</b><br />
+<br />
+and you will get a NUMBER (multiply it by 3600 * 24 and you will turn it into seconds)<br />
+<br />
+BUT<br />
+you will lose the millisecond info<br />
+<br />
+<br />
+Here you have the <a href="http://docs.oracle.com/cd/B19306_01/server.102/b14200/sql_elements001.htm">definition of the TIMESTAMP</a><br />
+<br />
+<br />
+<br />

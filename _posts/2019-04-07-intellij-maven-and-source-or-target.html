@@ -1,0 +1,53 @@
+---
+layout: post
+title: "Intellij , maven and the source or target java language  level"
+date: 2019-04-07T14:42:00.001+02:00
+permalink: /2019/04/intellij-maven-and-source-or-target.html
+blogger_id: "4234479901322101043"
+tags: ["intellij"]
+---
+I create a new Java "maven" project, set it to Java 12 (ctrl-alt-shift-S, MOdules, Language level), but when I build I get:<br />
+<br />
+"Warning:java: source value 1.5 is obsolete and will be removed in a future release"<br />
+<br />
+<br />
+Apparently this is due to the prehistoric, nonsensical Maven Compiler Plugin using Java 1.5 by default<br />
+<br />
+<a href="https://stackoverflow.com/questions/27037657/stop-intellij-idea-to-switch-java-language-level-every-time-the-pom-is-reloaded">https://stackoverflow.com/questions/27037657/stop-intellij-idea-to-switch-java-language-level-every-time-the-pom-is-reloaded</a><br />
+<br />
+<br />
+you can either insert in the pom.xml :<br />
+<pre>&lt;properties&gt;
+        &lt;maven.compiler.source&gt;1.8&lt;/maven.compiler.source&gt;
+        &lt;maven.compiler.target&gt;1.8&lt;/maven.compiler.target&gt;
+    &lt;/properties&gt;
+
+</pre><br />
+<br />
+or<br />
+<pre>&lt;build&gt;
+    &lt;plugins&gt;
+        &lt;plugin&gt;
+            &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+            &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+            &lt;version&gt;3.8.0&lt;/version&gt;
+            &lt;configuration&gt;
+                &lt;source&gt;1.11&lt;/source&gt;
+                &lt;target&gt;1.11&lt;/target&gt;
+            &lt;/configuration&gt;
+        &lt;/plugin&gt;
+
+    &lt;/plugins&gt;
+
+&lt;/build&gt;
+
+</pre><br />
+<br />
+Remember also to make sure that ctrl-alt-S (Settings)  Settings -> Build, Execution, Deployment -> Build Tools -> Maven -> Importing is set to use JDK 12. So complicated. So brittle. So Maven.<br />
+<br />
+Working with Maven is like traveling back to prehistoric times, like the Mural de la Prehistoria in Cuba, <a href="https://en.wikipedia.org/wiki/Vi%C3%B1ales_Valley">https://en.wikipedia.org/wiki/Vi%C3%B1ales_Valley</a><br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/0b22f0ac7a308d35.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="1158" data-original-width="1600" height="464" src="/images/5df5657e72db0a89.jpg" width="640" /></a></div><br />
+<br />
+developers on the right about to be eaten by Maven on the left<br />
+

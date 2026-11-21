@@ -1,0 +1,23 @@
+---
+layout: post
+title: "OracleDB: How to save a byte array to a BLOB field in Java"
+date: 2013-09-04T10:48:00.003+02:00
+permalink: /2013/09/oracledb-how-to-save-byte-array-to-blob.html
+blogger_id: "3166726472935502611"
+tags: ["blob"]
+---
+
+<pre name="code" class="brush: java">
+
+PreparedStatement statement= getConnection().prepareStatement("INSERT INTO MYTABLE(MYBLODFIELD) VALUES(?)");
+
+
+byte binData[] = myString.getBytes();
+inStream = new ByteArrayInputStream(binData)
+statement.setBinaryStream(1, inStream, binData.length);
+statement.executeUpdate();
+
+</pre>
+
+
+

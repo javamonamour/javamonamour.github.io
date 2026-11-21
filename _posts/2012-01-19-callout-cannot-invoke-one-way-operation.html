@@ -1,0 +1,44 @@
+---
+layout: post
+title: "A callout cannot invoke a one-way operation"
+date: 2012-01-19T14:41:00.001+01:00
+permalink: /2012/01/callout-cannot-invoke-one-way-operation.html
+blogger_id: "5112340986191848641"
+tags: ["JCA"]
+blogger_comments:
+  - author: "Eric Elzinga"
+    date: 2012-01-28
+    html: "Or edit the generated wsdl to make the insert a sync operation. In that case it will just return a dummy response"
+---
+I have created a DBAdapter JCA Client invoking an INSERT operation<br />
+JDeveloper generates this WLSD:<br />
+<br />
+<pre name="code" class="brush: xml">&lt;?binding.jca AcmeDBInsert_db_db.jca?&gt;
+&lt;wsdl:definitions name="AcmeDBInsert_db" targetNamespace="http://xmlns.oracle.com/pcbpel/adapter/db/AcmePOC_Sharath/Acme_POC_Acme_WMS/AcmeDBInsert_db" xmlns:tns="http://xmlns.oracle.com/pcbpel/adapter/db/AcmePOC/Acme_POC_Acme_WMS/AcmeDBInsert_db" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:plt="http://schemas.xmlsoap.org/ws/2003/05/partner-link/" xmlns:top="http://xmlns.oracle.com/pcbpel/adapter/db/top/AcmeDBInsert_db"&gt;
+    &lt;plt:partnerLinkType name="AcmeDBInsert_db_plt"&gt;
+        &lt;plt:role name="AcmeDBInsert_db_role"&gt;
+            &lt;plt:portType name="tns:AcmeDBInsert_db_ptt"/&gt;
+        &lt;/plt:role&gt;
+    &lt;/plt:partnerLinkType&gt;
+    &lt;wsdl:types&gt;
+        &lt;schema xmlns="http://www.w3.org/2001/XMLSchema"&gt;
+            &lt;import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/AcmeDBInsert_db" schemaLocation="xsd/AcmeDBInsert_db_table.xsd"/&gt;
+        &lt;/schema&gt;
+    &lt;/wsdl:types&gt;
+    &lt;wsdl:message name="GmAcmeTrackerCollection_msg"&gt;
+        &lt;wsdl:part name="GmAcmeTrackerCollection" element="top:GmAcmeTrackerCollection"/&gt;
+    &lt;/wsdl:message&gt;
+    &lt;wsdl:portType name="AcmeDBInsert_db_ptt"&gt;
+        &lt;wsdl:operation name="insert"&gt;
+            &lt;wsdl:input message="tns:GmAcmeTrackerCollection_msg"/&gt;
+        &lt;/wsdl:operation&gt;
+    &lt;/wsdl:portType&gt;
+&lt;/wsdl:definitions&gt;
+</pre><br />
+<br />
+<br />
+the "insert" operation is a one-way operation (no wlsd:output clause)<br />
+<br />
+The problem is that the Service Callout expects a request-reply pattern.<br />
+<br />
+So in this case you must necessarily use a Publish, with Quality of Service "Exactly Once" to execute in the same transaction and with a blocking operation.

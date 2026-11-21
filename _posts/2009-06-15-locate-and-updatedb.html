@@ -1,0 +1,9 @@
+---
+layout: post
+title: "locate and updatedb"
+date: 2009-06-15T12:37:00.000+02:00
+permalink: /2009/06/locate-and-updatedb.html
+blogger_id: "1639366297000985036"
+tags: ["locate"]
+---
+if you run:<br />locate lsof<br /><br />and you get this error message:<br />can not open /var/lib/mlocate/mlocate.db <br /><br />what you should try is running<br />updatedb<br /><br />if you get this:<br />can not open a temporary file for /var/lib/mlocate/mlocate.db<br /><br />try<br />sudo updatedb

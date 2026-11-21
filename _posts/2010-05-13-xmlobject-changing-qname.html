@@ -1,0 +1,42 @@
+---
+layout: post
+title: "XmlObject, changing QName"
+date: 2010-05-13T17:39:00.000+02:00
+permalink: /2010/05/xmlobject-changing-qname.html
+blogger_id: "3281235118886855344"
+tags: ["xmlobject"]
+---
+snippet of code to change the name of an element <br />
+<br />
+&nbsp;&nbsp;&nbsp; public static XmlObject changeOperation(XmlObject body) {<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; System.out.println("JAVACALLOUT " + body.xmlText());<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; XmlCursor cur = body.newCursor();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; cur.toFirstChild();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; QName oldQName = cur.getName();<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; QName newName = new QName(oldQName.getNamespaceURI(), "newOperation", oldQName.getPrefix());<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; cur.setName(newName);<br />
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; return body;<br />
+&nbsp;&nbsp;&nbsp; }<br />
+<br />
+<br />
+this is the input:<br />
+<br />
+JAVACALLOUT &lt;dbac:<b>insertCompany </b>xmlns:dbac="http://com/acme/dbaccess"&gt;<br />
+&nbsp; &lt;dbac:company xmlns:java="java:com.acme.dbaccess"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:CreationDate&gt;3&lt;/java:CreationDate&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:Id&gt;10&lt;/java:Id&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:Name&gt;string&lt;/java:Name&gt;<br />
+&nbsp; &lt;/dbac:company&gt;<br />
+&lt;/dbac:<b>insertCompany</b>&gt;<br />
+<br />
+this is the output<br />
+<br />
+<br />
+AFTER &lt;dbac:<b>newOperation </b>xmlns:dbac="http://com/acme/dbaccess"&gt;<br />
+&nbsp; &lt;dbac:company xmlns:java="java:com.acme.dbaccess"&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:CreationDate&gt;3&lt;/java:CreationDate&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:Id&gt;10&lt;/java:Id&gt;<br />
+&nbsp;&nbsp;&nbsp; &lt;java:Name&gt;string&lt;/java:Name&gt;<br />
+&nbsp; &lt;/dbac:company&gt;<br />
+&lt;/dbac:<b>newOperation</b>&gt;

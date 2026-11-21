@@ -1,0 +1,43 @@
+---
+layout: post
+title: "docker latest update fails miserably"
+date: 2018-08-27T12:49:00.002+02:00
+permalink: /2018/08/docker-latest-update-fails-miserably.html
+blogger_id: "4332691834083764128"
+tags: ["docker"]
+---
+sudo journalctl -xe<br />
+<br />
+mkdir /run/containerd/io.containerd.runtime.v2.task/docker/dockerd: file exists: unknown<br />
+<br />
+<br />
+it seems a bug of the latest (nightly) release.... which was installed automatically by the Centos updates process.<br />
+<br />
+<br />
+I uninstall everything:<br />
+<br />
+sudo yum remove docker docker-common docker-selinux docker-engine<br />
+<br />
+Then I install <br />
+<br />
+https://docs.docker.com/install/linux/docker-ce/centos/#set-up-the-repository<br />
+<br />
+sudo yum-config-manager --disable docker-ce-edge<br />
+<br />
+sudo yum install docker-ce<br />
+sudo systemctl enable docker<br />
+systemctl start docker<br />
+<br />
+systemctl status docker.service<br />
+<br />
+Error starting daemon: error initializing graphdriver: /var/lib/docker contains several valid graphdrivers: devicemapper, overlay2; Please cleanup or explicit<br />
+<br />
+sudo vi  /usr/lib/systemd/system/docker.service<br />
+<br />
+ExecStart=/usr/bin/dockerd -s=devicemapper -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock<br />
+<br />
+sudo systemctl daemon-reload<br />
+sudo systemctl start docker<br />
+<br />
+<br />
+

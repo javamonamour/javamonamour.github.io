@@ -1,0 +1,25 @@
+---
+layout: post
+title: "Hudson project \"depends\" on another project"
+date: 2011-11-06T19:19:00.001+01:00
+permalink: /2011/11/hudson-project-depends-on-another.html
+blogger_id: "1522386230308435974"
+tags: ["hudson"]
+---
+I have Project A, and I want to execute Project B BEFORE I run A.<br />
+<br />
+In Ant, I would simply say <br />
+target A depends="B"<br />
+<br />
+In Hudson, they made it more workaroundish.<br />
+<br />
+In Project B, enable "Trigger builds remotely (e.g., from scripts)", specify a token (eg TOKEN); to trigger the job you do:<br />
+wget http://localhost:8080/job/OSBProject1/build?token=TOKEN<br />
+<br />
+In Widows (the Windows users commit often suicide) you can use  Wget for Widows: <a href="http://gnuwin32.sourceforge.net/packages/wget.htm">http://gnuwin32.sourceforge.net/packages/wget.htm</a><br />
+<br />
+<a href="http://stackoverflow.com/questions/2674468/making-jenkins-hudson-job-depend-on-another-job">see also here</a><br />
+<br />
+An alternative is using the <a href="https://wiki.jenkins-ci.org/display/JENKINS/Parameterized+Trigger+Plugin">Parametrized Trigger Plugin</a> and have a dummy Project C run B and A<br />
+<br />
+All this is very silly, there should be a pre-dependencies and post-dependencies list.

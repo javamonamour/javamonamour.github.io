@@ -1,0 +1,21 @@
+---
+layout: post
+title: "WebLogic: how to recover a config.xml reduced to 0 size"
+date: 2014-02-17T11:16:00.002+01:00
+permalink: /2014/02/weblogic-how-to-recover-configxml.html
+blogger_id: "3278402084444178098"
+tags: ["weblogic"]
+---
+<ul>
+<li>if you have "configuration archive enabled" in your domain, you can retrieve the latest archive and apply diffs since last configuration change</li>
+<li>or you can do the same using the config.xml.bck</li>
+<li>if your domain admin server is still&nbsp; running, connect with the console, open a session, make a minor configuration change, and activate the session: this should regenerate the whole config.xml</li>
+<li>otherwise, connect with WLST and run configToScript() </li>
+</ul>
+<br />
+
+<br/><br/>
+
+In any case, please take regular backups of your PROD domains!!!
+
+<br/><br/>

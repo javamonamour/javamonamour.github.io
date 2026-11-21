@@ -1,0 +1,60 @@
+---
+layout: post
+title: "Book: Spring Microservices in Action "
+date: 2019-07-13T19:43:00.000+02:00
+permalink: /2019/07/book-spring-microservices-in-action.html
+blogger_id: "2322951708317623281"
+tags: ["12factor", "books", "microservices", "Spring"]
+---
+<div class="separator" style="clear: both; text-align: center;"><a href="https://www.manning.com/books/spring-microservices-in-action" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/645642765c2d66b4.jpg" width="319" height="400" data-original-width="720" data-original-height="903" /></a></div><br />
+This is a brilliantly written book.<br />
+<br />
+<a href="https://github.com/carnellj/spmia-chapter1">https://github.com/carnellj/spmia-chapter1</a><br />
+<br />
+Microservice Architecture<br />
+<br />
+@SpringBootApplication<br />
+@RestController<br />
+@RequestMapping<br />
+@PathVariable<br />
+<br />
+Flexible, Resilient, Scalable<br />
+<br />
+IaaS, PaaS, SaaS, FaaS, CaaS<br />
+<br />
+Client-side load balancing, Circuit breaker, Fallback, Bulkhead<br />
+<br />
+Log correlation. Log aggregation. Microservice tracing<br />
+<br />
+Spring Cloud:<br />
+Netflix Eureka (discovery), Zuul (routing), Ribbon (LN), Hystrix (Circuit Breaker), Sleuth/Uipkin (logging, tracing, aggregation), Oauth2/JWT<br />
+<br />
+<a href="https://cloud.spring.io/spring-cloud-security/">https://cloud.spring.io/spring-cloud-security/</a> Spring Security <br />
+<br />
+<a href="https://jwt.io">https://jwt.io</a> JavaScript Web Token<br />
+<br />
+<a href="https://travis-ci.org">https://travis-ci.org</a><br />
+<br />
+<br />
+Hystrix proxies all RestTemplate. calls to add timeout. Ribbon also injects RestTemplate with all available service instances for LB and FO<br />
+<br />
+<br />
+to expose a bean there are 2 ways:<br />
+either one of @Component, @Service, @Repository<br />
+or @Configuration + @Bean<br />
+<br />
+<br />
+Apache Thrift, Apache Avro<br />
+<br />
+12 factor apps: codebase in git, dependencies in maven, config in separate files, backing services (DB etc) cloud-ready,<br />
+immutable builds, stateless processes, port binding, horizontal scaling, disposable services, dev=prod, streamable logs (splunk, fluentd), scripted admin tasks.<br />
+<br />
+<br />
+Actuator health check.<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

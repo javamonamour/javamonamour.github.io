@@ -1,0 +1,39 @@
+---
+layout: post
+title: "SOAPUI Properties and Groovy Steps"
+date: 2012-08-08T18:44:00.004+02:00
+permalink: /2012/08/soapui-properties-and-groovy-steps.html
+blogger_id: "1369776112420096904"
+tags: ["soapui"]
+blogger_comments:
+  - author: "Anon"
+    date: 2013-03-18
+    html: "This comment has been removed by the author."
+---
+Losing my mind for how a simple thing was turned into a complicated riddle.<br />
+<br />
+See http://www.soapui.org/Functional-Testing/working-with-properties.html<br />
+<br />
+If you do this:<br />
+<br />
+testRunner.testCase.testSuite.setPropertyValue("Hostname", "02B3TEST0004")<br />
+log.info(  testRunner.testCase.testSuite.getPropertyValue("Hostname"))<br />
+<br />
+you will set a <b>TestSuite </b>level property:<br />
+<br />
+<a href="/images/9c42f665e4b6c6f3.jpg" imageanchor="1"><img border="0" height="468" src="/images/698ded9e8719cb2a.jpg" width="640" /></a><br />
+<br />
+After a lot of trial and error, I found out that if you want to get/set properties defined in a <b>Properties Test Step</b>, you must do this:<br />
+<br />
+<b>testRunner.testCase.testSteps["Properties"].setPropertyValue( "Hostname", "fanculo" )<br />
+<br />
+log.info( testRunner.testCase.testSteps["Properties"].getPropertyValue( "Hostname" ))<br />
+</b><br />
+<br />
+<a href="/images/ebf0f8fc73f43949.jpg" imageanchor="1"><img border="0" src="/images/ebf0f8fc73f43949.jpg" /></a><br />
+<br />
+<br />
+<br />
+very properly undocumented, thank you SmartBear... if this Bear is smart, I wonder the dummy ones...<br />
+<br />
+So now we are ready to implement the <a href="http://www.soapui.org/Scripting-Properties/tips-a-tricks.html">DataSources in Groovy</a> by reading a file and setting a property in a GroovyStep

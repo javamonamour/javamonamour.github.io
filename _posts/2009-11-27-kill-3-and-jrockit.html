@@ -1,0 +1,21 @@
+---
+layout: post
+title: "kill -3 and JRockit"
+date: 2009-11-27T14:30:00.000+01:00
+permalink: /2009/11/kill-3-and-jrockit.html
+blogger_id: "3913285130104755573"
+---
+in your domain home, create a file ctrlhandler.act<br />
+<br />
+set_filename filename=/tmp/output.txt<br />
+print_class_summary<br />
+heap_diagnostics<br />
+print_threads<br />
+timestamp<br />
+jrarecording nativesamples=false latency filename=myjrarecording time=120<br />
+stop<br />
+<br />
+<br />
+every time you do a kill -3 pid, the JRockit VM will execute the control handler.<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E13188_01/jrockit/geninfo/diagnos/ctrlbreakhndlr.html">http://download.oracle.com/docs/cd/E13188_01/jrockit/geninfo/diagnos/ctrlbreakhndlr.html</a>

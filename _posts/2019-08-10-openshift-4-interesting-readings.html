@@ -1,0 +1,40 @@
+---
+layout: post
+title: "Openshift 4, interesting readings"
+date: 2019-08-10T10:09:00.000+02:00
+permalink: /2019/08/openshift-4-interesting-readings.html
+blogger_id: "1556167569404631507"
+tags: ["openshift"]
+---
+<a href="https://computingforgeeks.com/red-hat-openshift-4-new-features/">https://computingforgeeks.com/red-hat-openshift-4-new-features/</a><br />
+<br />
+<a href="https://cloudowski.com/articles/10-differences-between-openshift-and-kubernetes/">https://cloudowski.com/articles/10-differences-between-openshift-and-kubernetes/</a><br />
+<br />
+<a href="https://cloudowski.com/articles/honest-review-of-openshift-4/">https://cloudowski.com/articles/honest-review-of-openshift-4/</a> <br />
+<br />
+<a href="https://cloudowski.com/articles/why-managing-container-images-on-openshift-is-better-than-on-kubernetes/">https://cloudowski.com/articles/why-managing-container-images-on-openshift-is-better-than-on-kubernetes/</a><br />
+<br />
+<a href="https://computingforgeeks.com/setup-openshift-origin-local-cluster-on-centos/">https://computingforgeeks.com/setup-openshift-origin-local-cluster-on-centos/</a> ( not working for me.... ) see also <a href="https://github.com/openshift/origin/blob/v4.0.0-alpha.0/docs/cluster_up_down.md">https://github.com/openshift/origin/blob/v4.0.0-alpha.0/docs/cluster_up_down.md</a> <br />
+<br />
+<br />
+I have deployed <a href="https://github.com/vernetto/sbhello">https://github.com/vernetto/sbhello</a> with OpenShift Online, <br />
+using the Catalog option "Red Hat OpenJDK 8". <br />
+<br />
+<br />
+<pre>.\oc.exe new-app openshift/java:8~https://github.com/vernetto/sbhello.git --name=sbhwpv3
+.\oc.exe expose service sbhwpv3
+</pre><br />
+<br />
+<a href="https://github.com/fabric8io-images/run-java-sh">https://github.com/fabric8io-images/run-java-sh</a><br />
+<br />
+<br />
+<br />
+This makes still a very good Developer introducton  <a href="https://www.youtube.com/watch?v=cY7KIEajqx4">https://www.youtube.com/watch?v=cY7KIEajqx4</a> (a bit outdated) by Grant Shipley, really intense and focused.<br />
+<br />
+<br />
+<a href="https://www.youtube.com/watch?v=-xJIvBpvEeE">https://www.youtube.com/watch?v=-xJIvBpvEeE</a> amazing on Openshift infrastructure management<br />
+<br />
+<br />
+<a href="https://coreos.com/ignition/docs/latest/">https://coreos.com/ignition/docs/latest/</a>  what is ignition<br />
+<br />
+<a href="https://www.terraform.io/intro/index.html">https://www.terraform.io/intro/index.html</a> what is terraform

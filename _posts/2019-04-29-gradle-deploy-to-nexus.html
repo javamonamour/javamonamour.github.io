@@ -1,0 +1,46 @@
+---
+layout: post
+title: "Gradle deploy to Nexus"
+date: 2019-04-29T15:53:00.002+02:00
+permalink: /2019/04/gradle-deploy-to-nexus.html
+blogger_id: "3007938485295856301"
+tags: ["Gradle", "nexus"]
+---
+mkdir /home/centos/gitclones/gradletest<br />
+cd  /home/centos/gitclones/gradletest<br />
+gradle init --type java-application<br />
+<br />
+gradle build<br />
+<br />
+vi build.gradle<br />
+add to plugins: <br />
+id 'maven'<br />
+<br />
+maven Plugin for Gradle is documented here <a href="https://docs.gradle.org/current/userguide/maven_plugin.html">https://docs.gradle.org/current/userguide/maven_plugin.html</a><br />
+<br />
+gradle install<br />
+<br />
+ls -ltra /home/centos/.m2/repository/gradletest/unspecified/<br />
+<pre>total 4956
+-rw-r--r-- 1 centos docker 2371522 Apr 29 13:23 gradletest-unspecified.zip
+-rw-r--r-- 1 centos docker 2693120 Apr 29 13:23 gradletest-unspecified.tar
+-rw-r--r-- 1 centos docker     752 Apr 29 13:23 gradletest-unspecified.jar
+-rw-r--r-- 1 centos docker     756 Apr 29 13:23 gradletest-unspecified.pom
+</pre><br />
+<br />
+cat /home/centos/.m2/repository/gradletest/unspecified/gradletest-unspecified.pom<br />
+<br />
+<pre>  &lt;groupId&gt;&lt;/groupId&gt;
+  &lt;artifactId&gt;gradletest&lt;/artifactId&gt;
+  &lt;version&gt;unspecified&lt;/version&gt;
+</pre><br />
+<br />
+group and version are missing!<br />
+<br />
+then you can follow the steps here https://medium.com/dot-debug/deploying-artifacts-to-maven-using-gradle-b669acc1b6f8<br />
+<br />
+you define the group and version in your projects' build.gradle, you define nexus username/password/url in ~/.gradle/gradle.properties and you use the maven-publish plugin to publish to Nexus<br />
+<br />
+<br />
+<br />
+

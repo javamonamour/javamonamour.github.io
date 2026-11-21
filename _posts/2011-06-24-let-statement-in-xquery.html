@@ -1,0 +1,8 @@
+---
+layout: post
+title: "the let statement in XQuery"
+date: 2011-06-24T18:55:00.001+02:00
+permalink: /2011/06/let-statement-in-xquery.html
+blogger_id: "8360361223396412257"
+---
+if you are trying to update a variable in a for loop in XQuery, you will face a lot of frustration<br><br>if you do this:<br><br>let $count := 1<br><br>for $bla in $mumble<br>     let $count := $count + 1<br><br><br>IT WILL NOT WORK! On the left hand side ot the &quot;let&quot; you will keep updating a local scope variable, while in the right hand side of the &quot;let&quot; you will access the global $count variable declared above the &quot;for&quot;<br>  <br>Read the excellent XQuery book <a href="/2010/05/excellent-xquery-book.html">/2010/05/excellent-xquery-book.html</a> by Priscilla Walmsley, especially chapter 9 &quot;Working with Positions and Sequence Numbers&quot; is dedicate to this quirk.<br>  <br>XQuery is not a normal programming language, there are operations that are simply not allowed. It can be frustrating sometimes - actually quite often - and the learning curve is not flat.<br><br> 

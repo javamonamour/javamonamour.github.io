@@ -1,0 +1,24 @@
+---
+layout: post
+title: "WebLogic graceful shutdown command"
+date: 2012-02-18T19:28:00.002+01:00
+permalink: /2012/02/weblogic-graceful-shutdown-command.html
+blogger_id: "6157079771158052603"
+tags: ["shutdown", "weblogic"]
+---
+I believe most of us shutdown WebLogic with a kill "pid" .<br />
+<br />
+If the process doesn't want to die, we do a kill -9 "pid" and we mutter "die, bastard!"<br />
+<br />
+This is not very elegant and ladylike.<br />
+<br />
+The alternative is through the Web Console, you can control each instance inclusive the Admin.<br />
+<br />
+Otherwise you can use:<br />
+java weblogic.Admin -url t3://localhost:7001/ -username weblogic -password weblogic FORCESHUTDOWN yourserver<br />
+<br />
+or the $DOMAIN_HOME/stopWebLogic.sh which in turns uses a WLST script invoking the WLST shutdown command<br />
+<br />
+Here <br />
+<a href="http://docs.oracle.com/cd/E15523_01/web.1111/e13708/overview.htm">http://docs.oracle.com/cd/E15523_01/web.1111/e13708/overview.htm</a><br />
+the official documentation on how to startup and shutdown

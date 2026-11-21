@@ -1,0 +1,54 @@
+---
+layout: post
+title: "find class or classes in jar for Unix or Windows"
+date: 2009-10-06T14:55:00.003+02:00
+permalink: /2009/10/find-classes-in-unix-or-windows.html
+blogger_id: "163173163692923767"
+tags: ["find", "jar"]
+---
+<a href="http://www.inetfeedback.com/jarscan/">http://www.inetfeedback.com/jarscan/</a> on Unix<br />
+<br />
+<br />
+Examples ...<br />
+# To display the help message type:<br />
+java -jar jarscan.jar -help OR java -jar jarscan.jar<br />
+# To find the class ArrayList starting from the root of your c: drive type:<br />
+java -jar jarscan.jar -dir c:\ -class ArrayList<br />
+<br />
+<br />
+<br />
+<a href="http://www.idesksoft.com/classfinder.html">http://www.idesksoft.com/classfinder.html</a> on Windows<br />
+<br />
+<br />
+Also, this command works on Linux:<br />
+<br />
+find / -name '*.jar' 2> /dev/null | while read jarfile; do if jar tf "$jarfile" 2> /dev/null | grep FabricMeshUtils; then echo "$jarfile"; fi; done<br />
+<br />
+(maybe you want to add a "| grep jar", otherwise it returns also .class files.
+<br /><br />
+To dump all classes preceded by their jar file name:
+<br />
+
+find /acme/appsrv/bin/wl12.1a/ -type f -name '*.jar' | while read jarfile; do echo "$jarfile"; /acme/java/jdk170_71-64b/bin/jar -tf "$jarfile" ; done > /tmp/alljars.txt
+
+<br /><br />
+
+Last but not least the great jar-explorer <a href="https://code.google.com/p/jar-explorer/wiki/HowToInstall">https://code.google.com/p/jar-explorer/wiki/HowToInstall</a>, or rather <a href="https://github.com/javalite/jar-explorer">https://github.com/javalite/jar-explorer</a>. just run:
+
+<br /><br />
+java -jar jarexplorer-0.7-BETA.jar
+<br /><br />
+and remember that to search a class with package names you have to use the / and not the . as separator.
+
+<br /><br />
+
+This command works also wonderfully:
+<br /><br />
+find /cs/cfw/ -name "*.jar" -exec grep -Hls MyClass {} \;
+
+<br /><br />
+
+
+
+
+

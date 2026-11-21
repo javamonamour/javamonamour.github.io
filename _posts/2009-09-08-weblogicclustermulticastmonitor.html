@@ -1,0 +1,9 @@
+---
+layout: post
+title: "weblogic.cluster.MulticastMonitor, monitoring multicast traffic in a Weblogic Cluster"
+date: 2009-09-08T10:52:00.000+02:00
+permalink: /2009/09/weblogicclustermulticastmonitor.html
+blogger_id: "4277969364997813691"
+tags: ["multicast"]
+---
+First, do a $WL_HOME/server/bin/setWLSEnv.sh, to put weblogic.jar in your classpath.<br /><br />java weblogic.cluster.MulticastMonitor &lt;multicastaddress&gt; &lt;port&gt; &lt;domainname&gt; &lt;clustername&gt; [&lt;domaindir&gt;]<br /><br />example:<br /><br />java weblogic.cluster.MulticastMonitor 239.190.1.15 18224 ACMEDomain acmeclusterappli<br /> Received heartbeat message of size 251 from acmeappli1 @ Tue Sep 08 11:04:37 CEST 2009 messageVersion:0,0,0 seqNum:365 fragment # 0<br /> Received heartbeat message of size 251 from acmeappli2 @ Tue Sep 08 11:04:37 CEST 2009 messageVersion:0,0,0 seqNum:382 fragment # 0<br /> Received heartbeat message of size 251 from acmeappli1 @ Tue Sep 08 11:04:46 CEST 2009 messageVersion:0,0,0 seqNum:366 fragment # 0<br /> Received heartbeat message of size 251 from acmeappli2 @ Tue Sep 08 11:04:47 CEST 2009 messageVersion:0,0,0 seqNum:383 fragment # 0

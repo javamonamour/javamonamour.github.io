@@ -1,0 +1,39 @@
+---
+layout: post
+title: "Funny error message using t3s and 2 way SSL"
+date: 2016-02-18T14:08:00.001+01:00
+permalink: /2016/02/funny-error-message-using-t3s-and-2-way.html
+blogger_id: "8628283851357383106"
+tags: ["jks", "weblogic"]
+---
+
+
+<pre>
+javax.naming.CommunicationException: t3s://localhost:25001: Destination 0:0:0:0:0:0:0:1, 25001 unreachable; nested exception is:
+        javax.net.ssl.SSLException: Received fatal alert: bad_certificate; No available router to destination 
+
+</pre>
+
+but there was absolutely no issue with the localhost or the port or anything else... WebLogic was listening on all IPv4 and IPv6 addresses on 25001...
+<br/>
+
+googling around I find:
+<br/>
+
+<a href="http://middlewaremagic.com/weblogic/">http://middlewaremagic.com/weblogic/</a> 
+<br/>
+<br/>
+<pre>
+If the Client keystore/truststore PATH is not valid, so check the path specified in “-Djavax.net.ssl.trustStore” (OR) if the client keystore does not include the WebLogic certificate imported in it then we may see the following kind of error: Destination 0:0:0:0:0:0:0:1, 7443 unreachable.; nested exception is: 
+    javax.net.ssl.SSLHandshakeException: Received fatal alert: handshake_failure; [RJVM:000576]No available router to destination.; nested exception is: 
+    java.rmi.ConnectException: [RJVM:000576]No available router to destination.
+
+</pre>
+
+
+<br/>
+
+check that what you are using as trust store and identity store are valid, and that valid password and alias is provided....
+
+<br/>
+

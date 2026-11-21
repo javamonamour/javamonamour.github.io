@@ -1,0 +1,82 @@
+---
+layout: post
+title: "Spring bean lifecycles and BeanPostProcessor "
+date: 2019-06-16T20:14:00.000+02:00
+permalink: /2019/06/spring-bean-lifecycles-and.html
+blogger_id: "4238268273962272984"
+tags: ["Spring"]
+---
+<br />
+import org.springframework.beans.factory.DisposableBean;<br />
+import org.springframework.beans.factory.InitializingBean;<br />
+import org.springframework.stereotype.Component;<br />
+<br />
+import javax.annotation.PostConstruct;<br />
+import javax.annotation.PreDestroy;<br />
+<br />
+@Component<br />
+public class MyComponent implements InitializingBean, DisposableBean {<br />
+    @Override<br />
+    public void afterPropertiesSet() throws Exception {<br />
+        System.out.println("afterPropertiesSet from InitializingBean");<br />
+    }<br />
+<br />
+    @PostConstruct<br />
+    public void onPostConstruct() {<br />
+        System.out.println("onPostConstruct");<br />
+    }<br />
+<br />
+    @PreDestroy<br />
+    public void onPreDestroy() {<br />
+        System.out.println("onPreDestroy");<br />
+    }<br />
+<br />
+<br />
+    @Override<br />
+    public void destroy() throws Exception {<br />
+        System.out.println("destroy from DisposableBean ");<br />
+    }<br />
+<br />
+<br />
+}<br />
+<br />
+the sequence is:<br />
+<br />
+onPostConstruct<br />
+afterPropertiesSet from InitializingBean<br />
+onPreDestroy<br />
+destroy from DisposableBean <br />
+<br />
+<br />
+<br />
+and you can intercept instantiatio of every bean with a BPP :<br />
+<br />
+<br />
+<pre class="brush: java">
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class CustomBeanPostProcessor implements BeanPostProcessor {
+
+    public CustomBeanPostProcessor() {
+        System.out.println("0. Spring calls constructor");
+    }
+
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName)
+            throws BeansException {
+        System.out.println(bean.getClass() + "  " + beanName);
+        return bean;
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName)
+            throws BeansException {
+        System.out.println(bean.getClass() + "  " + beanName);
+        return bean;
+    }
+}
+</pre><br />
+

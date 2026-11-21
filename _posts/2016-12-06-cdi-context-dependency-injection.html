@@ -1,0 +1,32 @@
+---
+layout: post
+title: "CDI context dependency injection"
+date: 2016-12-06T09:29:00.000+01:00
+permalink: /2016/12/cdi-context-dependency-injection.html
+blogger_id: "3448436515066460857"
+tags: ["cdi"]
+---
+CDI is a powerful concept, but as usual implementation is pathetic (Spring, Java EE, whatever). 
+<br/>
+
+Annotations make code less readable, they leak concern, are extremely hard to debug (ever tried to find out why one of your references if not getting injected?). Read this excellent article <a href="https://www.javacodegeeks.com/2016/11/java-annotations-big-mistake.html">https://www.javacodegeeks.com/2016/11/java-annotations-big-mistake.html</a> 
+<br/>
+XML is easily broken, has to be mostly manually maintained, quickly becomes unmanageable and unstructured.
+<br/>
+I still prefer a pure coded approach, where dependencies and injected by an "injector" bean, but in a Java EE container this would not retain the specific features of the bean. So it's not a choice available for now (maybe yes, I should investigate)
+<br/><br/>
+
+This is a quite decent introduction on CDI in a Java EE (CDI) container:
+
+<br/><br/>
+
+<iframe width="640" height="360" src="https://www.youtube.com/embed/ZKpUoatSkTc" frameborder="0" allowfullscreen></iframe>
+
+<br/><br/>
+
+<br/><br/>
+
+
+<br/><br/>
+
+

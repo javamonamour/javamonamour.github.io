@@ -1,0 +1,81 @@
+---
+layout: post
+title: "JAXRS all-in-one"
+date: 2019-05-19T03:32:00.000+02:00
+permalink: /2019/05/jaxrs-all-in-one.html
+blogger_id: "1145640297053280643"
+tags: ["jaxrs"]
+---
+All annotations are summarized here <a href="https://dzone.com/articles/introduction-to-restful-web-service-a-jax-rs-speci">https://dzone.com/articles/introduction-to-restful-web-service-a-jax-rs-speci</a><br />
+<br />
+"Base URL for any web application is:<br />
+<br />
+http://&lt;server>:&lt;port>/&lt;context-root><br />
+<br />
+Append <url-pattern> tag from web.xml with Base URL that forms:<br />
+<br />
+http://&lt;server>:&lt;port>/&lt;context-root>/&lt;url-pattern><br />
+<br />
+Append class-level @Path(“class-level”) annotation and then method-level @Path(“method-level”) annotation that forms:<br />
+<br />
+http://&lt;server>:&lt;port>/&lt;context-root>/&lt;url-apptern>/&lt;class-level>/&lt;method-level>"<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<a href="https://dzone.com/articles/an-introduction-to-jax-rs-annotations-part-1">https://dzone.com/articles/an-introduction-to-jax-rs-annotations-part-1</a><br />
+<br />
+<a href="https://dzone.com/articles/what-are-jax-rs-annotations">https://dzone.com/articles/what-are-jax-rs-annotations</a><br />
+<br />
+<br />
+<a href="https://readlearncode.com/java-ee/what-is-javax-ws-rs-core-context-httpservletresponse-and-httpservletrequest/">https://readlearncode.com/java-ee/what-is-javax-ws-rs-core-context-httpservletresponse-and-httpservletrequest/</a><br />
+<br />
+<br />
+<a href="https://readlearncode.com/java-ee/what-are-the-jax-rs-annotations-get-post-path-applicationpath/">https://readlearncode.com/java-ee/what-are-the-jax-rs-annotations-get-post-path-applicationpath/</a><br />
+<br />
+<a href=" https://dzone.com/articles/what-is-javaxwsrscorecontext"><br />
+https://dzone.com/articles/what-is-javaxwsrscorecontext</a><br />
+<br />
+<br />
+@ApplicationPath("api")<br />
+extends Application<br />
+<br />
+@Path("/books")<br />
+<br />
+@GET<br />
+@Produces(MediaType.APPLICATION_JSON)<br />
+<br />
+@POST<br />
+@Consumes(MediaType.APPLICATION_JSON)<br />
+<br />
+@PUT<br />
+@HEAD<br />
+<br />
+@DELETE<br />
+<br />
+@Path("{isbn}")<br />
+<br />
+@PathParam("isbn") String isbn<br />
+<br />
+@QueryParam<br />
+<br />
+@OPTIONS<br />
+<br />
+@javax.ws.rs.HeaderParam<br />
+javax.ws.rs.core.Response<br />
+<br />
+javax.ws.rs.core.SecurityContext<br />
+<br />
+<br />
+<br />
+It's all very clear apart @Context... read here to understand @Context <br />
+<a href="https://readlearncode.com/java-ee/what-is-javax-ws-rs-core-context-httpheaders-and-uriinfo/">https://readlearncode.com/java-ee/what-is-javax-ws-rs-core-context-httpheaders-and-uriinfo/  </a><br />
+<br />
+this for SecurityContext : <a href="https://readlearncode.com/java-ee/what-is-javax-ws-rs-core-context-securitycontext/">https://readlearncode.com/java-ee/what-is-javax-ws-rs-core-context-securitycontext/</a><br />
+<br />
+<br />
+and some more coding examples here <a href="https://www.mkyong.com/webservices/jax-rs/get-http-header-in-jax-rs/">https://www.mkyong.com/webservices/jax-rs/get-http-header-in-jax-rs/</a><br />
+<br />
+<br />
+

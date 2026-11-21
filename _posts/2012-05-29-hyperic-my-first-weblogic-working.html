@@ -1,0 +1,76 @@
+---
+layout: post
+title: "Hyperic, my first WEBLOGIC working plugin (Still not working...)"
+date: 2012-05-29T10:39:00.000+02:00
+permalink: /2012/05/hyperic-my-first-weblogic-working.html
+blogger_id: "3372580218240434829"
+tags: ["hyperic"]
+---
+java -Dplugins.include=mysecondplugin -Djmx.url=service:jmx:iiop://localhost:8001/jndi/weblogic.management.mbeanservers.runtime -Djava.naming.factory.initial=weblogic.jndi.WLInitialContextFactory -jar C:\pierre\hypericagent\agent-4.6.5-EE\bundles\agent-4.6.5\pdk\lib\hq-pdk-4.6.5.jar -m discover -a metric -Dlog=debug<br />
+<br />
+WebLogic Cluster Availability:<br />
+com.bea:type=ClusterRuntime,name=%name%:AliveServerCount:jmx.url=service%3Ajmx%3Aiiop%3A//localhost%3A8001/jndi/weblogic.management.mbeanservers.runtime,jmx.username=weblogic,jmx.password=<br />
+getValue failed for metric: WebLogic Cluster:com.bea:type=ClusterRuntime,name=%name%:AliveServerCount:jmx.url=service%3Ajmx%3Aiiop%3A//localhost%3A8001/jndi/weblogic.management.mbeanservers.runtime,jmx.username=weblogic,jmx.password=%jmx.password%<br />
+MetricUnreachableException: Can't connect to MBeanServer [{jmx.username=weblogic, jmx.url=service:jmx:iiop://localhost:8001/jndi/weblogic.management.mbeanservers.runtime}]: java.io.IOException: Failed to retrieve RMIServer stub: javax.naming.CommunicationException [Root exception is java.net.ConnectException: t3://localhost:7001: Destination unreachable; nested exception is:<br />
+java.net.ConnectException: Connection refused: connect; No available router to destination]<br />
+org.hyperic.hq.product.MetricUnreachableException: Can't connect to MBeanServer [{jmx.username=weblogic, jmx.url=service:jmx:iiop://localhost:8001/jndi/weblogic.management.mbeanservers.runtime}]: java.io.IOException: Failed to retrieve RMIServer stub: javax.naming.CommunicationException [Root exception is java.net.ConnectException: t3://localhost:7001: Destination unreachable; nested exception is:<br />
+java.net.ConnectException: Connection refused: connect; No available router to destination]<br />
+at org.hyperic.hq.product.jmx.MxUtil.unreachable(MxUtil.java:156)<br />
+at org.hyperic.hq.product.jmx.MxUtil.getValue(MxUtil.java:320)<br />
+at org.hyperic.hq.product.jmx.MxMeasurementPlugin.getValue(MxMeasurementPlugin.java:58)<br />
+at org.hyperic.hq.product.MeasurementPluginManager.getPluginValue(MeasurementPluginManager.java:171)<br />
+at org.hyperic.hq.product.MeasurementPluginManager.getValue(MeasurementPluginManager.java:269)<br />
+at org.hyperic.hq.product.MeasurementPluginManager.getValue(MeasurementPluginManager.java:130)<br />
+at org.hyperic.hq.product.MeasurementPluginManager.getValue(MeasurementPluginManager.java:122)<br />
+at org.hyperic.hq.product.util.PluginDumper.getValue(PluginDumper.java:644)<br />
+at org.hyperic.hq.product.util.PluginDumper.fetchMetrics(PluginDumper.java:790)<br />
+at org.hyperic.hq.product.util.PluginDiscoverer.dumpProperties(PluginDiscoverer.java:375)<br />
+at org.hyperic.hq.product.util.PluginDiscoverer.dumpProperties(PluginDiscoverer.java:424)<br />
+at org.hyperic.hq.product.util.PluginDiscoverer.dumpServer(PluginDiscoverer.java:488)<br />
+at org.hyperic.hq.product.util.PluginDiscoverer.runtimeScan(PluginDiscoverer.java:563)<br />
+at org.hyperic.hq.product.util.PluginDiscoverer.start(PluginDiscoverer.java:321)<br />
+at org.hyperic.hq.product.util.PluginDumper.testDiscovery(PluginDumper.java:1148)<br />
+at org.hyperic.hq.product.util.PluginDumper.invoke(PluginDumper.java:456)<br />
+at org.hyperic.hq.product.util.PluginMain.main(PluginMain.java:321)<br />
+Caused by: java.io.IOException: Failed to retrieve RMIServer stub: javax.naming.CommunicationException [Root exception is java.net.ConnectException: t3://localhost:7001: Destination unreachable; nested exception is:<br />
+java.net.ConnectException: Connection refused: connect; No available router to destination]<br />
+at javax.management.remote.rmi.RMIConnector.connect(Unknown Source)<br />
+at javax.management.remote.JMXConnectorFactory.connect(Unknown Source)<br />
+at org.hyperic.hq.product.jmx.MxUtil.getMBeanConnector(MxUtil.java:538)<br />
+at org.hyperic.hq.product.jmx.MxUtil.getCachedMBeanConnector(MxUtil.java:434)<br />
+at org.hyperic.hq.product.jmx.MxUtil.getValue(MxUtil.java:651)<br />
+at org.hyperic.hq.product.jmx.MxUtil.getValue(MxUtil.java:310)<br />
+... 15 more<br />
+<br />
+<br />
+class is org.hyperic.hq.product.servlet.client.JMXRemote<br />
+<br />
+<br />
+<br />
+C:\Oracle\Middleware\user_projects\domains\prod_domain>java weblogic.Admin -url t3://localhost:8001 -username weblogic -password weblogic1 -pretty GET -type ClusterRuntime<br />
+---------------------------<br />
+MBeanName: "prod_domain:ServerRuntime=ms1,Name=mycluster,Type=ClusterRuntime,Location=ms1"<br />
+ActiveSingletonServices:<br />
+AliveServerCount: 1<br />
+CachingDisabled: true<br />
+CurrentMachine: mymachine<br />
+CurrentSecondaryServer:<br />
+DetailedSecondariesDistribution:<br />
+ForeignFragmentsDroppedCount: 0<br />
+FragmentsReceivedCount: 0<br />
+FragmentsSentCount: 109<br />
+HealthState: Component:null,State:HEALTH_OK,MBean:null,ReasonCode:[]<br />
+JobSchedulerRuntime:<br />
+MulticastMessagesLostCount: 0<br />
+Name: mycluster<br />
+Parent: ms1<br />
+PrimaryCount: 0<br />
+Registered: true<br />
+ResendRequestsCount: 0<br />
+SecondaryCount: 0<br />
+SecondaryDistributionNames:<br />
+SecondaryServerDetails:<br />
+ServerMigrationRuntime: ServerMigrationRuntime<br />
+ServerNames: ms1<br />
+Type: ClusterRuntime<br />
+UnicastMessaging: UnicastMessagingRuntime

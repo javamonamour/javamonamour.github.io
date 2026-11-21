@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Java Collections, some important facts"
+date: 2010-10-04T11:18:00.000+02:00
+permalink: /2010/10/java-collections-some-important-facts.html
+blogger_id: "8738761265814252816"
+tags: ["collections"]
+---
+<a href="http://download.oracle.com/javase/6/docs/technotes/guides/collections/index.html">Here</a> the main entry point, with an excellent <a href="http://download.oracle.com/javase/tutorial/collections/index.html">tutorial</a> by Joshua Bloch.<br />
+<br />
+Collections can be: Set (TreeSet, HashSet), List (Vector, LinkedList), Queue (LinkedList), Map (HashMap, TreeMap, LinkedHashMap)<br />
+<br />
+Some implementations are <b>Synchronized</b> (Vector), other no (ArrayList)<br />
+<br />
+Collections provide Enumeration or Iterator to scan them.<br />
+Use <b>Iterator</b> when you might want to make changes to the collection, use <b>Enumeration</b> when R/O. You have also <a href="http://download.oracle.com/javase/6/docs/api/java/util/ListIterator.html">ListIterator</a> <br />
+<br />
+java.util.concurrent package provide thread-safe optimized implementation of most collections.<br />
+<br />
+<br />
+<b>ArrayList</b> and <b>Vector</b> use a dynamic array as an implementation,<br />
+<b>LinkedList</b> uses a doubly linked list, and it's faster for insert/delete<br />
+<br />
+Queue: FIFO<br />
+Stack: LIFO<br />
+<br />
+<br />
+<br />
+Interview questions here:<br />
+http://www.interview-questions-java.com/java-collections.htm

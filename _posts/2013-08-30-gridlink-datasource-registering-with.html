@@ -1,0 +1,18 @@
+---
+layout: post
+title: "Gridlink Datasource registering with ONS daemons"
+date: 2013-08-30T17:54:00.000+02:00
+permalink: /2013/08/gridlink-datasource-registering-with.html
+blogger_id: "278822171707283259"
+tags: ["ons"]
+---
+When you have Gridlink DS, you will see in the logs this debug message (of course if your log level is debug :o) )
+
+<br/><br/>
+&lt;BEA-001556> &lt;Data Source ACME_ConfigDS for service o01osb_app.acme.com registering with ONS daemons using configuration string nodes=acme535:6200,acme536:6200,acme531:6200,acme532:6200,acme533:6200,acme534:6200
+
+<br/><br/>
+
+In our case, this would take 30 seconds for each DS, and make the restart of the cluster painfully slow.
+<br/><br/>
+Check that each individual node in the list, running ONS agent, is actually reachable (no firewall!). Check also that it's up and running.

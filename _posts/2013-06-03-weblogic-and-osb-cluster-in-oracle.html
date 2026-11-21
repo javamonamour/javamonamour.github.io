@@ -1,0 +1,36 @@
+---
+layout: post
+title: "WebLogic and OSB cluster in an Oracle VirtualBox"
+date: 2013-06-03T09:56:00.000+02:00
+permalink: /2013/06/weblogic-and-osb-cluster-in-oracle.html
+blogger_id: "7060381129657679413"
+---
+I want to run a OSB-WebLogic cluster spanning 2 machines (VBs).<br />
+<br />
+Official doc here <a href="http://www.virtualbox.org/manual/ch06.html">http://www.virtualbox.org/manual/ch06.html</a>
+<br />
+<br />
+An extra requirement is being able to<b> mount an arbitrary IP alias</b> on the NIC, to dedicate an IP (channel) to each managed server/admin. This with the certitude that this IP should not interfere with the Host network (enough of duplicate IPs causing panic in the firm).<br />
+<br />
+I wonder what is the best strategy to configure the Virtual Network in the VB. <br />
+<br />
+Excellent post on the different virtual networking modes in VirtualBox:<br />
+<br />
+<a href="https://blogs.oracle.com/fatbloke/entry/networking_in_virtualbox1">https://blogs.oracle.com/fatbloke/entry/networking_in_virtualbox1</a><br />
+<br />
+These are the alternatives:
+
+
+<br />
+<br />
+<ul>
+<li>Network Address Translation (NAT)</li>
+<li>Bridged Networking</li>
+<li>Internal Networking</li>
+<li>Host-only Networking</li>
+<li>Port-Forwarding with NAT Networking</li>
+</ul>
+<br />
+I feel more inspired by an Internal Networking, since I need no access from the outside world, and actually I want to shield myself from causing trouble to the rest of the organization - for instance by mounting unwanted IPs.
+<br />
+more later...

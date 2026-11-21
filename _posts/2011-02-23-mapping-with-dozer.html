@@ -1,0 +1,52 @@
+---
+layout: post
+title: "Mapping with Dozer"
+date: 2011-02-23T17:23:00.005+01:00
+permalink: /2011/02/mapping-with-dozer.html
+blogger_id: "1381057185913373340"
+tags: ["dozer"]
+---
+<a href="http://dozer.sourceforge.net/">http://dozer.sourceforge.net/</a><br />
+<br />
+I can't praise enough this little gem.<br />
+<br />
+Just do:<br />
+MapperIF mapper = DozerBeanMapperSingletonWrapper.getInstance();<br />
+<br />
+<br />
+put dozerBeanMapping.xml in your classpath and in it you map:<br />
+<br />
+<pre name="code" class="brush: xml"><?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozer.sourceforge.net" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://dozer.sourceforge.net
+          http://dozer.sourceforge.net/schema/beanmapping.xsd">
+
+ <configuration>
+  <stop-on-errors>true</stop-on-errors>
+  <date-format>MM/dd/yyyy HH:mm</date-format>
+  <wildcard>true</wildcard>
+ </configuration>
+
+ <mapping>
+  <class-a>acme.Product
+  </class-a>
+  <class-b>acme.model.Product</class-b>
+  <field>
+   <a>dimensions.height</a>
+   <b>dimHeight</b>
+  </field>
+ </mapping>
+
+</mappings>
+
+
+</pre><br />
+<br />
+If you receive an error:<br />
+<br />
+net.sf.dozer.util.mapping.MappingException: org.xml.sax.SAXException: Parsing Error<br />
+<br />
+Message: Document root element "mappings", must match DOCTYPE root "null".<br />
+<br />
+<br />
+then you are screwed and probably give up using Dozer. I Hate Xml.

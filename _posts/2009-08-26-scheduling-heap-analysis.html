@@ -1,0 +1,8 @@
+---
+layout: post
+title: "Scheduling heap analysis"
+date: 2009-08-26T15:40:00.000+02:00
+permalink: /2009/08/scheduling-heap-analysis.html
+blogger_id: "5344451080493087842"
+---
+write a shell script dumpHeap.sh with this content:<br /><br />export mypid=$(ps -efa|grep Dweblogic.Name=myservername |grep  -v grep| awk -F " " '{print $2}')<br />echo PID=$mypid<br />jrcmd $mypid print_object_summary cutoff=0 > heapcontent$1.log<br /><br /><br />then schedule it this way:<br /><br />echo "dumpHeap.sh 1" | at 20:00<br />echo "dumpHeap.sh 2" | at 21:00<br />echo "dumpHeap.sh 3" | at 22:00<br />echo "dumpHeap.sh 4" | at 23:00<br />echo "dumpHeap.sh 5" | at 00:00 tomorrow<br />echo "dumpHeap.sh 6" | at 01:00 tomorrow<br />echo "dumpHeap.sh 7" | at 02:00 tomorrow<br />echo "dumpHeap.sh 8" | at 03:00 tomorrow

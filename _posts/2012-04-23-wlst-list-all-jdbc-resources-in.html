@@ -1,0 +1,15 @@
+---
+layout: post
+title: "WLST list all JDBC resources (datasources) in WebLogic"
+date: 2012-04-23T23:46:00.000+02:00
+permalink: /2012/04/wlst-list-all-jdbc-resources-in.html
+blogger_id: "5614343965649533979"
+tags: ["WLST"]
+---
+<pre class="brush: java" name="code">allJDBCResources = cmo.getJDBCSystemResources()
+for jdbcResource in allJDBCResources:
+   dsname = jdbcResource.getName()
+   print dsname, jdbcResource.getJDBCResource().getJDBCDataSourceParams().getJNDINames()[0], jdbcResource.getJDBCResource().getJDBCDriverParams().getUrl() 
+
+</pre>
+

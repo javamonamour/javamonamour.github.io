@@ -1,0 +1,59 @@
+---
+layout: post
+title: "Remote compare directories, diff for Linux: rsync --dry-run"
+date: 2013-02-06T11:16:00.000+01:00
+permalink: /2013/02/remote-compare-directories-diff-for.html
+blogger_id: "401071412594011415"
+tags: ["linux"]
+---
+Plenty of examples here: <br/><br/>
+
+<a href="http://www.thegeekstuff.com/2010/09/rsync-command-examples/">http://www.thegeekstuff.com/2010/09/rsync-command-examples/</a>
+
+<br/><br/>
+
+Priceless is the option <b>dry-run</b>:<br/><br/>
+rsync -v --dry-run /home/soa/obelix/scripts/ /tmp/DELETEME <br/><br/>
+
+<br/><br/>
+
+
+ls /tmp/TEST01/<br/>
+pippo2.txt  pippo.txt<br/>
+
+<br/><br/>
+
+ls /tmp/TEST02/<br/>
+pippo2.txt<br/>
+<br/><br/>
+
+
+<b>rsync -avz --dry-run --progress --delete /tmp/TEST02/ /tmp/TEST01/</b><br/>
+sending incremental file list<br/>
+./<br/>
+deleting pippo.txt<br/>
+pippo2.txt<br/>
+<br/><br/>
+
+<b>rsync -avz --dry-run --progress --delete /tmp/TEST01/ /tmp/TEST02/</b><br/>
+sending incremental file list<br/>
+./<br/>
+pippo.txt<br/>
+pippo2.txt<br/>
+<br/><br/>
+
+
+So rsync can be used to detect extra files in one directory by using the --delete option, but you should run it twice.
+<br/><br/>
+
+
+I find rsync very hard to use and it doesn't really behave as I expect it. Forget it. <br/><br/>
+
+Let me look into how to use Beyond Compare with remote Linux directories.<br/><br/>
+
+Beyond Compare supports SFTP.<br/>
+
+
+
+
+

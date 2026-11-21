@@ -1,0 +1,18 @@
+---
+layout: post
+title: "GC overhead limit exceeded"
+date: 2011-10-05T00:29:00.000+02:00
+permalink: /2011/10/gc-overhead-limit-exceeded.html
+blogger_id: "3268560138259828229"
+tags: ["gc"]
+---
+http://stackoverflow.com/questions/4371505/gc-overhead-limit-exceeded<br />
+<br />
+parameters which influence this message:<br />
+<br />
+GCTimeLimit <br />
+GCHeapFreeLimit <br />
+<br />
+-XX:-UseGCOverheadLimit  to switch control off<br />
+<br />
+Anyway rather than trying to hide the problem, I would rather try to fix the bloody code.

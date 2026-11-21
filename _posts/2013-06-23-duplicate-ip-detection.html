@@ -1,0 +1,30 @@
+---
+layout: post
+title: "Duplicate IP detection"
+date: 2013-06-23T11:03:00.001+02:00
+permalink: /2013/06/duplicate-ip-detection.html
+blogger_id: "4995472264632953253"
+tags: ["TCP-IP"]
+---
+First, check that you can sudo arping:<br/><br/>
+
+sudo -l<br/>
+you should see something like:
+<br/>
+<i>(root) NOPASSWD: /sbin/ifconfig, (root) /sbin/arping</i>
+<br/>
+then, you can issue the command<br/>
+
+sudo /sbin/arping -D -I bond0 -c 2 10.78.1.1<br/>
+
+
+<br/><br/>
+
+to check if the IP 10.78.1.1 is mounted in 2 places.
+<br/><br/>
+
+
+
+
+
+

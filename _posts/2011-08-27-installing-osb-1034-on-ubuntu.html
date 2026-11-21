@@ -1,0 +1,60 @@
+---
+layout: post
+title: "Installing OSB 10.3.4 on Ubuntu"
+date: 2011-08-27T17:47:00.000+02:00
+permalink: /2011/08/installing-osb-1034-on-ubuntu.html
+blogger_id: "5800134929749799728"
+tags: ["osb11"]
+---
+The installation was not free from problems:<br />
+<br />
+It is very well documented here:<br />
+<a href="http://soa-playground.blogspot.com/2011/03/oracle-service-bus-osb-on-ubuntu-linux.html">http://soa-playground.blogspot.com/2011/03/oracle-service-bus-osb-on-ubuntu-linux.html</a><br />
+<br />
+but something must be added:<br />
+<br />
+ignore the warning you get about the insufficient swap space:<br />
+<br />
+<i>Starting Oracle Universal Installer...<br />
+<br />
+Checking if CPU speed is above 300 MHz.    Actual 2094 MHz    Passed<br />
+Checking Temp space: must be greater than 150 MB.   Actual 10273 MB    Passed<br />
+Checking swap space: 509 MB available, 512 MB required.    Failed <<<<
+Checking monitor: must be configured to display at least 256 colors.    Actual 16777216    Passed
+
+Some requirement checks failed. You must fulfill these requirements before
+
+continuing with the installation,
+
+Continue? (y/n) [n] y
+</i><br />
+<br />
+<br />
+just say yes...<br />
+<br />
+<i><br />
+>>> Ignoring required pre-requisite failures. Continuing...<br />
+Preparing to launch Oracle Universal Installer from /tmp/OraInstall2011-08-27_02-56-56PM. Please wait ...<br />
+Please specify JRE/JDK location ( Ex. /home/jre ), <location>/bin/java should exist :/ora1034/jdk160_21/<br />
+oracle@ubuntu:~/Downloads/osbgeneric/Disk1/install/linux$ Log: /home/oracle/oraInventory/logs/install2011-08-27_02-56-56PM.log<br />
+sh: /bin/rpm: not found<br />
+sh: /bin/rpm: not found<br />
+sh: /bin/rpm: not found<br />
+sh: /bin/rpm: not found<br />
+sh: /bin/rpm: not found<br />
+sh: /bin/rpm: not found<br />
+sh: /bin/rpm: not found<br />
+sh: /bin/rpm: not found<br />
+sh: /bin/rpm: not found<br />
+sh: /bin/rpm: not found<br />
+<br />
+</i><br />
+<br />
+just ignore the message "sh: /bin/rpm: not found"<br />
+<br />
+Plenty of prerequisite checks fail... I could not find a way to display the cause of their failure. Yet if you click on the upper button (ignore the lowermost ones) "continue" the installation proceeds without other issues.... weird...<br />
+<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,70 @@
+---
+layout: post
+title: "Installing JIRA"
+date: 2018-10-15T12:10:00.001+02:00
+permalink: /2018/10/installing-jira.html
+blogger_id: "2096617821741448026"
+tags: ["JIRA"]
+---
+https://www.atlassian.com/software/jira/download<br />
+Linux 64 bit<br />
+<br />
+cd Downloads<br />
+sudo ./atlassian-jira-software-7.12.3-x64.bin<br />
+<pre>Unpacking JRE ...
+Starting Installer ...
+
+This will install JIRA Software 7.12.3 on your computer.
+OK [o, Enter], Cancel [c]
+
+Choose the appropriate installation or upgrade option.
+Please choose one of the following:
+Express Install (use default settings) [1], Custom Install (recommended for advanced users) [2, Enter], Upgrade an existing JIRA installation [3]
+1
+Details on where JIRA Software will be installed and the settings that will be used.
+Installation Directory: /opt/atlassian/jira 
+Home Directory: /var/atlassian/application-data/jira 
+HTTP Port: 8080 
+RMI Port: 8005 
+Install as service: Yes 
+Install [i, Enter], Exit [e]
+i
+
+Extracting files ...
+                                                                           
+
+Please wait a few moments while JIRA Software is configured.
+Installation of JIRA Software 7.12.3 is complete
+Start JIRA Software 7.12.3 now?
+Yes [y, Enter], No [n]
+y
+
+Please wait a few moments while JIRA Software starts up.
+Launching JIRA Software ...
+Installation of JIRA Software 7.12.3 is complete
+Your installation of JIRA Software 7.12.3 is now ready and can be accessed
+via your browser.
+JIRA Software 7.12.3 can be accessed at http://localhost:8080
+Finishing installation ...
+
+</pre><br />
+http://localhost:8080<br />
+<br />
+generating the evaluation license key is very simple (you should create an account with Atlassian)<br />
+<br />
+the product is installed for user "jira":<br />
+sudo su - jira<br />
+<br />
+logs are in /opt/atlassian/jira/logs/<br />
+<br />
+<br />
+To troubleshoot webhooks, you should enable DEBUG loggin as default in http://localhost:8080/secure/admin/ViewLogging.jspa<br />
+then you see the webhook body being traced in /opt/atlassian/jira/logs/catalina.out<br />
+<br />
+Start and stop:<br />
+sudo /etc/init.d/jira start<br />
+sudo /etc/init.d/jira stop<br />
+<br />
+<br />
+<br />
+

@@ -1,0 +1,92 @@
+---
+layout: post
+title: "H2 autogenerating unique IDs from Sequence"
+date: 2018-04-07T12:04:00.002+02:00
+permalink: /2018/04/h2-autogenerating-unique-ids-from.html
+blogger_id: "117320974349416428"
+tags: ["h2", "JPA", "Sequences"]
+---
+if you have annotated the ID with<br />
+<br />
+<pre class="brush: java">import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Entity;
+
+@Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "ID"), name = "VOCABULARY")
+public class Vocabulary implements Serializable {
+
+@Id
+@GeneratedValue
+private Long id;
+</pre><br />
+and declared the ID as<br />
+<pre>CREATE TABLE "VOCABULARY" (
+    "ID" NUMBER(10,0) NOT NULL
+...
+)
+CREATE UNIQUE INDEX "VOCABULARY_UNIQ_ID" ON "VOCABULARY" ("ID") ;
+ALTER TABLE "VOCABULARY" ADD PRIMARY KEY ("ID");
+</pre><br />
+this is not enough... you will get this when you try to insert a new record:<br />
+<br />
+<pre class="brush: java">org.h2.jdbc.JdbcSQLException: Sequence "HIBERNATE_SEQUENCE" not found; SQL statement:
+call next value for hibernate_sequence [90036-197]
+        at org.h2.message.DbException.getJdbcSQLException(DbException.java:357)
+        at org.h2.message.DbException.get(DbException.java:179)
+        at org.h2.message.DbException.get(DbException.java:155)
+        at org.h2.command.Parser.readSequence(Parser.java:5970)
+        at org.h2.command.Parser.readTerm(Parser.java:3131)
+        at org.h2.command.Parser.readFactor(Parser.java:2587)
+        at org.h2.command.Parser.readSum(Parser.java:2574)
+        at org.h2.command.Parser.readConcat(Parser.java:2544)
+        at org.h2.command.Parser.readCondition(Parser.java:2370)
+        at org.h2.command.Parser.readAnd(Parser.java:2342)
+        at org.h2.command.Parser.readExpression(Parser.java:2334)
+        at org.h2.command.Parser.parseCall(Parser.java:4854)
+        at org.h2.command.Parser.parsePrepared(Parser.java:382)
+        at org.h2.command.Parser.parse(Parser.java:335)
+        at org.h2.command.Parser.parse(Parser.java:307)
+        at org.h2.command.Parser.prepareCommand(Parser.java:278)
+        at org.h2.engine.Session.prepareLocal(Session.java:611)
+        at org.h2.server.TcpServerThread.process(TcpServerThread.java:271)
+        at org.h2.server.TcpServerThread.run(TcpServerThread.java:165)
+        at java.lang.Thread.run(Thread.java:748)
+
+        at org.h2.engine.SessionRemote.done(SessionRemote.java:624)
+        at org.h2.command.CommandRemote.prepare(CommandRemote.java:68)
+        at org.h2.command.CommandRemote.<init>(CommandRemote.java:45)
+        at org.h2.engine.SessionRemote.prepareCommand(SessionRemote.java:494)
+        at org.h2.jdbc.JdbcConnection.prepareCommand(JdbcConnection.java:1203)
+        at org.h2.jdbc.JdbcPreparedStatement.<init>(JdbcPreparedStatement.java:73)
+        at org.h2.jdbc.JdbcConnection.prepareStatement(JdbcConnection.java:676)
+        at org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnection.doPrepareStatement(BaseWrapperManagedConnection.java:757)
+        at org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnection.prepareStatement(BaseWrapperManagedConnection.java:743)
+        at org.jboss.jca.adapters.jdbc.WrappedConnection.prepareStatement(WrappedConnection.java:454)
+        at org.hibernate.engine.jdbc.internal.StatementPreparerImpl$1.doPrepare(StatementPreparerImpl.java:87)
+        at org.hibernate.engine.jdbc.internal.StatementPreparerImpl$StatementPreparationTemplate.prepareStatement(StatementPreparerImpl.java:172)
+</pre><br />
+<br />
+<br />
+Solution is:<br />
+<br />
+CREATE SEQUENCE VOCABULARY_SEQUENCE_ID START WITH (select max(ID) + 1 from VOCABULARY);<br />
+<br />
+(this allows me to prepopulate the VOCABULARY with static values, and initialize the sequence accordingly)<br />
+<br />
+and in Java<br />
+<br />
+<pre class="brush: java">@Id
+@SequenceGenerator(name= "VOCABULARY_SEQUENCE", sequenceName = "VOCABULARY_SEQUENCE_ID", initialValue=1, allocationSize = 1)
+@GeneratedValue(strategy=GenerationType.AUTO, generator="VOCABULARY_SEQUENCE")
+private Long id;
+
+</pre><br />
+<br />
+Why in 2018 such common things have to be still so complicated, no clue, something is really going wrong in the Java world... maybe using Spring it's only a matter of 1 annotation... no clue...<br />
+<br />
+<br />
+<br />
+

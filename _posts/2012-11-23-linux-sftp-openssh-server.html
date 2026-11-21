@@ -1,0 +1,45 @@
+---
+layout: post
+title: "Linux SFTP openSSH server"
+date: 2012-11-23T02:40:00.002+01:00
+permalink: /2012/11/linux-sftp-openssh-server.html
+blogger_id: "6436796921217544750"
+tags: ["sftp"]
+---
+<br />
+<b>cat /etc/ssh/sshd_config</b><br />
+<i>cat: /etc/ssh/sshd_config: Permission denied</i><br />
+<br />
+<br />
+<br />
+<b>which sftp</b><br />
+<i>/usr/bin/sftp</i><br />
+<br />
+<br />
+<b>ps -ef | grep sshd</b><br />
+<i>root &nbsp; &nbsp; &nbsp;4891 &nbsp;6172 &nbsp;0 02:10 ? &nbsp; &nbsp; &nbsp; &nbsp;00:00:00 sshd: soa [priv]</i><br />
+<i>soa &nbsp; &nbsp; &nbsp; 4893 &nbsp;4891 &nbsp;0 02:10 ? &nbsp; &nbsp; &nbsp; &nbsp;00:00:00 sshd: soa@pts/0</i><br />
+<i>root &nbsp; &nbsp; &nbsp;6172 &nbsp; &nbsp; 1 &nbsp;0 Jun26 ? &nbsp; &nbsp; &nbsp; &nbsp;00:00:00 /usr/sbin/sshd</i><br />
+<i>soa &nbsp; &nbsp; &nbsp; 7158 &nbsp;4894 &nbsp;0 02:13 pts/0 &nbsp; &nbsp;00:00:00 grep sshd</i><br />
+
+<br />
+<br />
+<b>ls -ltr /usr/libexec/openssh/sftp-server</b><br />
+
+<i>-rwxr-xr-x 1 root root 53312 Jan  4  2012 /usr/libexec/openssh/sftp-server</i>
+
+
+
+
+<br />
+<b>ps -ef | grep sftp</b><br />
+<i>soa &nbsp; &nbsp; &nbsp;29622 26654 &nbsp;0 02:41 pts/0 &nbsp; &nbsp;00:00:00 grep sftp</i><br />
+
+
+<br/>
+<br/>
+man sshd and man sshd_config
+<br/><br/>
+
+
+

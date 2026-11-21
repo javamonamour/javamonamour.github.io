@@ -1,0 +1,246 @@
+---
+layout: post
+title: "ALSB (OSB) Coherence Cache Provider"
+date: 2010-09-05T13:52:00.009+02:00
+permalink: /2010/09/alsb-osb-coherence-cache-provider.html
+blogger_id: "4025887120685192513"
+tags: ["coherence", "OSB"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2013-08-21
+    html: "OSB ResultCache Invalidation:<br /><br />Hi,<br /><br />I am working on OSB-Coherence Integration.But i am not getting how the data is stored in OSB Resultcache. when i connected to the Resultcache through Coherence Console and when i type list there,it is displaying as below:<br /><br /> <br /><br />Map (?): cache /osb/service/ResultCache<br /><br />2013-07-30 19:20:54.888/13.256 Oracle Coherence GE 3.6.0.4  (thread=main, member=3): Loaded cache configuration from &quot;file:/D:/Oracle/Middleware/user_projects/domai<br /><br />2013-07-30 19:20:55.112/13.480 Oracle Coherence GE 3.6.0.4  (thread=DistributedCache:ORA-OSB-deployments, member=3): Service ORA-OSB-deployments joined the cluster wi<br /><br /><br /><br />  expiring-distributed<br /><br />  ORA-OSB-deployments<br /><br />  <br /><br />    <br /><br />      expiring-backing-map<br /><br />    <br /><br />  <br /><br />  true<br /><br /><br /><br /> <br /><br />Map (/osb/service/ResultCache): list<br /><br />PipelineResultCacheKey[BusinessService Customer/CustomerBS,getCustomerdetails,3) = owner=BusinessService Customer/CustomerBS,value=[B@1167e3a5<br /><br /><br />But i want to know exactly what is the datatype of key it is using and the object structure(skeleton of the object) which it is storing as value.<br /><br /> <br /><br />Any suggestions would be great.<br /><br /><br />Thanks,<br /><br />Praveen"
+---
+From OSB logs:<br />
+<br />
+<br />
+<i><br />
+Creating WorkManager from "weblogic.wsee.mdb.DispatchPolicy" WorkManagerMBean for application "ALSB Coherence Cache Provider"<br />
+<br />
+Oracle Coherence 3.5.3/465p2 (member=n/a): Loaded operational configuration from resource "zip:/Oracle/Middleware/coherence_3.5/lib/coherence.jar!/tangosol-coherence.xml<br />
+<br />
+Oracle Coherence 3.5.3/465p2 (member=n/a): Loaded operational overrides from resource "zip:/Oracle/Middleware/user_projects/domains/OSBDomainBasic/servers/AdminServer/tmp/_WL_user/ALSB Coherence Cache Provider/sm027g/APP-INF/lib/com.bea.alsb.coherence-impl.jar!/tangosol-coherence-override.xml<br />
+<br />
+<br />
+Oracle Coherence 3.5.3/465p2 (member=n/a): Loaded operational overrides from resource "file:/Oracle/Middleware/user_projects/domains/OSBDomainBasic/config/osb/coherence/osb-coherence-override.xml<br />
+<br />
+<br />
+<br />
+<br />
+Oracle Coherence 3.5.3/465p2 (member=n/a): Created a new cluster "OSB-cluster" with Member(Id=1, Timestamp=2010-09-04 19:00:46.957, Address=127.0.0.1:7890, MachineId=32896, Location=site:localdomain,machine:localhost,process:9285, Role=OSB-node, Edition=Grid Edition, Mode=Production, CpuCount=2, SocketCount=2) UID=0x7F0000010000012ADDB16DED80801ED2<br />
+<br />
+</i><br />
+<br />
+<br />
+So I gather that OSB internally uses the "ALSB Coherence Cache Provider" Enterprise Application, deployed as /Oracle/Middleware/Oracle_OSB1/lib/coherence.ear and targeted to the cluster.<br />
+<br />
+This ear contains:<br />
+<i><br />
+jar xvf coherence.ear<br />
+<br />
+created: META-INF/<br />
+inflated: META-INF/MANIFEST.MF<br />
+inflated: META-INF/application.xml<br />
+created: APP-INF/<br />
+created: APP-INF/classes/<br />
+created: APP-INF/classes/com/<br />
+created: APP-INF/classes/com/bea/<br />
+created: APP-INF/classes/com/bea/alsb/<br />
+created: APP-INF/classes/com/bea/alsb/coherence/<br />
+created: APP-INF/classes/com/bea/alsb/coherence/init/<br />
+created: APP-INF/lib/<br />
+inflated: APP-INF/classes/com/bea/alsb/coherence/init/CoherenceAppListener$1.class<br />
+inflated: APP-INF/classes/com/bea/alsb/coherence/init/CoherenceAppListener.class<br />
+inflated: APP-INF/lib/com.bea.alsb.coherence-impl.jar<br />
+inflated: META-INF/weblogic-application.xml<br />
+<br />
+</i><br />
+<br />
+the META-INF/weblogic-application.xml is revealing, basically it says "disregard any classes com.tangosol...." already loaded in the System classpath and load them in my EAR classloader. THIS IS EXTREMELY IMPORTANT! For multiple clusters to work in the same JVM, the coherence framework classes must be loaded in separate classloaders!<br />
+<br />
+<br />
+<pre class="brush: xml" name="code"><listener>
+        <listener-class>com.bea.alsb.coherence.init.CoherenceAppListener</listener-class>
+</listener>
+<prefer-application-packages>
+        <package-name>com.tangosol.*</package-name>
+</prefer-application-packages>
+
+</pre><br />
+<br />
+<br />
+Here is the content of the "client-side" library jar, with the strategic tangosol-coherence-override.xml:<br />
+<br />
+<i><br />
+jar xvf com.bea.alsb.coherence-impl.jar <br />
+created: META-INF/<br />
+inflated: META-INF/MANIFEST.MF<br />
+created: com/<br />
+created: com/bea/<br />
+created: com/bea/alsb/<br />
+created: com/bea/alsb/coherence/<br />
+created: com/bea/alsb/coherence/impl/<br />
+created: com/bea/alsb/coherence/impl/messages/<br />
+inflated: com/bea/alsb/coherence/impl/messages/CoherenceLogLogger$MessageLoggerInitializer.class<br />
+inflated: com/bea/alsb/coherence/impl/messages/CoherenceLogLogger.class<br />
+inflated: com/bea/alsb/coherence/impl/messages/CoherenceLogLogLocalizer.properties<br />
+inflated: com/bea/alsb/coherence/impl/messages/CoherenceLogLogLocalizerDetail.properties<br />
+inflated: <b>tangosol-coherence-override.xml</b><br />
+inflated: com/bea/alsb/coherence/impl/CacheValue.class<br />
+inflated: com/bea/alsb/coherence/impl/CoherenceCache$1.class<br />
+inflated: com/bea/alsb/coherence/impl/CoherenceCache$RemoveProcessor.class<br />
+inflated: com/bea/alsb/coherence/impl/CoherenceCache.class<br />
+inflated: com/bea/alsb/coherence/impl/CoherenceNotInstalledException.class<br />
+inflated: com/bea/alsb/coherence/impl/CoherenceProvider.class<br />
+inflated: com/bea/alsb/coherence/impl/CoherenceProviderFactory.class<br />
+inflated: com/bea/alsb/coherence/impl/ConfigurationException.class<br />
+inflated: com/bea/alsb/coherence/impl/OwnerValueExtractor.class<br />
+<br />
+</i><br />
+<br />
+in this instance, tangosol-coherence-override.xml doesn't override the OOTB settings, it simply defines the cluster-name:<br />
+<br />
+<pre class="brush: xml" name="code"><coherence xml-override="/coherence/osb-coherence-override.xml">
+    <cluster-config>
+        <member-identity>
+            <cluster-name system-property="OSB.coherence.cluster">OSB-cluster</cluster-name>
+            <role-name system-property="OSB.coherence.role">OSB-node</role-name>
+        </member-identity>
+    </cluster-config>
+    <logging-config>
+        <destination system-property="OSB.coherence.log">jdk</destination>
+        <message-format>Oracle Coherence {version} (member={member}): {text}</message-format>
+    </logging-config>
+</coherence>
+
+</pre><br />
+<br />
+<br />
+And the Initializing class does this:<br />
+<br />
+<pre class="brush: java" name="code">package com.bea.alsb.coherence.init;
+
+import com.bea.alsb.coherence.CacheProviderManager;
+import com.bea.alsb.coherence.impl.*;
+import com.bea.alsb.coherence.init.messages.CoherenceLogLogger;
+import java.util.logging.*;
+import weblogic.application.ApplicationLifecycleEvent;
+import weblogic.application.ApplicationLifecycleListener;
+import weblogic.logging.LoggingHelper;
+
+public class CoherenceAppListener extends ApplicationLifecycleListener
+{
+
+    public CoherenceAppListener()
+    {
+    }
+
+    public void preStart(ApplicationLifecycleEvent evt)
+    {
+        try
+        {
+            redirectCoherenceLogger();
+            com.bea.alsb.coherence.CacheProvider provider = CoherenceProviderFactory.newInstance("/coherence/osb-coherence-cache-config.xml");
+            CacheProviderManager.initialize(provider);
+            CoherenceLogLogger.logCacheProviderInitialized(provider);
+        }
+        catch(CoherenceNotInstalledException ex)
+        {
+            CacheProviderManager.reset();
+            CoherenceLogLogger.raiseCoherenceNotInstalled();
+        }
+        catch(ConfigurationException ex)
+        {
+            CacheProviderManager.reset();
+            CoherenceLogLogger.raiseInvalidConfiguration(ex);
+        }
+    }
+
+    public void postStop(ApplicationLifecycleEvent applicationLifecycleEvent)
+    {
+        try
+        {
+            CacheProviderManager.reset();
+            CoherenceLogLogger.logCacheProviderReset();
+        }
+        catch(Exception ex)
+        {
+            CoherenceLogLogger.raiseShutdownError(ex);
+        }
+    }
+
+    private static void redirectCoherenceLogger()
+    {
+        Handler h = new Handler() {
+
+            public void close()
+                throws SecurityException
+            {
+            }
+
+            public void flush()
+            {
+            }
+
+            public void publish(LogRecord record)
+            {
+                if(serverLogger != null)
+                    serverLogger.log(record);
+            }
+
+            Logger serverLogger;
+
+           
+            {
+                serverLogger = LoggingHelper.getServerLogger();
+            }
+        }
+;
+        Logger coherenceLogger = Logger.getLogger("Coherence");
+        coherenceLogger.setLevel(Level.ALL);
+        coherenceLogger.addHandler(h);
+        coherenceLogger.setUseParentHandlers(false);
+    }
+
+    private static final String CONFIG_FILE = "/coherence/osb-coherence-cache-config.xml";
+    private static final String COHERENCE_LOGGER_NAME = "Coherence";
+}
+
+
+
+
+</pre><br />
+<br />
+<br />
+This osb-coherence-cache-config.xml is actually in $DOMAIN_HOME/config/osb/coherence/osb-coherence-cache-config.xml, this file was shown above.<br />
+<br />
+<br />
+<br />
+Incidentally, the content of $DOMAIN_HOME/config/osb/coherence/osb-coherence-override.xml contains the network parameters for this cluster; it is evident that each cluster must provide its configuration:<br />
+<br />
+<pre name="code" class="brush: xml"><!DOCTYPE coherence SYSTEM "coherence.dtd">
+<coherence>
+        <cluster-config>
+        <!--
+            By specifying a well-known-address we disable the mutlicast listener.
+            This ensures that the Coherence cluster for OSB will be isolated to this machine only.
+        -->
+                <unicast-listener>
+                        <well-known-addresses>
+                <socket-address id="1">
+                    <address system-property="OSB.coherence.wka1">127.0.0.1</address><port system-property="OSB.coherence.wka1.port">7890</port>
+                </socket-address>
+                        </well-known-addresses>
+            <address system-property="OSB.coherence.localhost">127.0.0.1</address><port system-property="OSB.coherence.localport">7890</port>
+                </unicast-listener>
+                <multicast-listener>
+                        <time-to-live system-property="OSB.coherence.ttl">0</time-to-live>
+                </multicast-listener>
+        </cluster-config>
+</coherence>
+
+</pre><br />
+<br />
+<br />
+But, wait a second, what is this com.bea.alsb.coherence.CacheProviderManager ?<br />
+<br />
+It turns out that CacheProviderManager is in /Oracle/Middleware/Oracle_OSB1/lib/modules/com.bea.alsb.coherence-api.jar. It's a basic singleton holder class for a SINGLE instance of CacheProvider - which means that in OSB only 1 OSB cache provider is supported. So if we want to access to our "custom " cache provider we must find another path: it's necessary to instantiate the tangosol classes in the same EAR (or WAR) where the client resides; or otherwise find a mechanism where we register the classloader of the CacheProvider and we retrieve  from somewhere else.

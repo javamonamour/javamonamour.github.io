@@ -1,0 +1,80 @@
+---
+layout: post
+title: "WebLogic \"run as\" webApplication"
+date: 2013-12-17T18:32:00.001+01:00
+permalink: /2013/12/weblogic-run-as-webapplication.html
+blogger_id: "4933610772083006143"
+tags: ["security", "weblogic"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2016-03-20
+    html: "the documentation linked in my post says:<br /><br /> Therefore, use the Administration Console to define the admin group, and define user joe and add joe to the admin group<br /><br />honestly I don&#39;t remember...can you please try and let us know?"
+  - author: "Anonymous"
+    date: 2016-03-20
+    html: "hi,  do you need to create a &quot;run-as-user&quot; in the weblogic console myrealm? "
+---
+Here <a href="http://docs.oracle.com/cd/E11035_01/wls100/security/thin_client.html#wp1046373">http://docs.oracle.com/cd/E11035_01/wls100/security/thin_client.html#wp1046373</a> you find an example on how to attach a principal to a webapp request, without having to explicitly passing it like in:
+
+<br/><br/>
+
+curl -u username:password url
+
+<br/><br/>
+
+it works like a breeze
+<br/><br/>
+
+weblogic.xml:
+
+<pre class="brush: xml">
+
+&lt;?xml version = '1.0' encoding = 'windows-1252'?>
+&lt;weblogic-web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.bea.com/ns/weblogic/weblogic-web-app http://www.bea.com/ns/weblogic/weblogic-web-app/1.0/weblogic-web-app.xsd" xmlns="http://www.bea.com/ns/weblogic/weblogic-web-app">
+  &lt;context-root>gridlinkha&lt;/context-root>
+    &lt;run-as-role-assignment>
+       &lt;role-name>hypericrole&lt;/role-name>
+       &lt;run-as-principal-name>weblogic&lt;/run-as-principal-name>
+     &lt;/run-as-role-assignment>  
+&lt;/weblogic-web-app>
+
+
+</pre>
+
+<br/><br/>
+
+web.xml:
+
+<br/><br/>
+
+<pre class="brush: xml">
+
+&lt;?xml version = '1.0' encoding = 'windows-1252'?>
+&lt;web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
+  &lt;servlet>
+    &lt;servlet-name>FCFHAServlet&lt;/servlet-name>
+    &lt;servlet-class>oracle.support.ha.FCFHAServlet&lt;/servlet-class>
+        &lt;run-as>
+      &lt;role-name>hypericrole&lt;/role-name>
+    &lt;/run-as>
+  &lt;/servlet>
+    &lt;security-role>
+    &lt;role-name>hypericrole&lt;/role-name>
+  &lt;/security-role>
+  &lt;servlet-mapping>
+    &lt;servlet-name>FCFHAServlet&lt;/servlet-name>
+    &lt;url-pattern>/fcfhaservlet&lt;/url-pattern>
+  &lt;/servlet-mapping>
+  &lt;welcome-file-list>
+    &lt;welcome-file>/index.html&lt;/welcome-file>
+  &lt;/welcome-file-list>
+&lt;/web-app>
+
+
+</pre>
+
+
+
+
+

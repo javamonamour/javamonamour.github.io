@@ -1,0 +1,17 @@
+---
+layout: post
+title: "WebLogic and RAC"
+date: 2012-06-18T17:30:00.002+02:00
+permalink: /2012/06/weblogic-and-rac.html
+blogger_id: "8167402653004163975"
+tags: ["RAC", "weblogic"]
+---
+in fact the GridLink DataSource<br />
+http://docs.oracle.com/cd/E21764_01/apirefs.1111/e13951/mbeans/JDBCOracleDataSourceRuntimeMBean.html<br />
+<br />
+contains an array of instances, one per Oracle RAC instance<br />
+http://docs.oracle.com/cd/E17904_01/apirefs.1111/e13951/mbeans/JDBCOracleDataSourceInstanceRuntimeMBean.html<br />
+<br />
+plus a ONSClientRuntimeMBean  to handle communication with the ONS (oracle notification service) .<br />
+<br />
+One could monitor in WebLogic the status of each individual Oracle RAC Instance...

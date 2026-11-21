@@ -1,0 +1,102 @@
+---
+layout: post
+title: "Oracle JCA DbAdapter db poller at work"
+date: 2014-02-27T18:48:00.000+01:00
+permalink: /2014/02/oracle-jca-dbadapter-db-poller-at-work.html
+blogger_id: "4048872134518786031"
+tags: ["OSB"]
+---
+I can see 4 threads
+
+<pre>
+"[ACTIVE] ExecuteThread: '24' for queue: 'weblogic.kernel.Default (self-tuning)'" waiting for lock oracle.tip.adapter.db.InboundWork@5adcf919 TIMED_WAITING
+
+ java.lang.Object.wait(Native Method)
+
+ oracle.tip.adapter.db.InboundWork.run(InboundWork.java:609)
+
+ oracle.tip.adapter.db.inbound.InboundWorkWrapper.run(InboundWorkWrapper.java:43)
+
+ weblogic.work.ContextWrap.run(ContextWrap.java:41)
+
+ weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)
+
+ weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+
+ weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+
+</pre>
+
+<br/>
+and when it fails I see the full stack trace:
+<br/>
+
+<pre>
+at oracle.jdbc.driver.T4CTTIfun.receive(T4CTTIfun.java:476)
+at oracle.jdbc.driver.T4CTTIfun.doRPC(T4CTTIfun.java:204)
+at oracle.jdbc.driver.T4C8Oall.doOALL(T4C8Oall.java:540)
+at oracle.jdbc.driver.T4CPreparedStatement.doOall8(T4CPreparedStatement.java:217)
+at oracle.jdbc.driver.T4CPreparedStatement.executeForRows(T4CPreparedStatement.java:1079)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1466)
+at oracle.jdbc.driver.OraclePreparedStatement.executeInternal(OraclePreparedStatement.java:3752)
+at oracle.jdbc.driver.OraclePreparedStatement.executeUpdate(OraclePreparedStatement.java:3887)
+at oracle.jdbc.driver.OraclePreparedStatementWrapper.executeUpdate(OraclePreparedStatementWrapper.java:1508)
+at weblogic.jdbc.wrapper.PreparedStatement.executeUpdate(PreparedStatement.java:172)
+at oracle.tip.adapter.db.inbound.DestructivePollingStrategy.poll(DestructivePollingStrategy.java:434)
+at oracle.tip.adapter.db.InboundWork.runOnce(InboundWork.java:699)
+at oracle.tip.adapter.db.InboundWork.run(InboundWork.java:578)
+at oracle.tip.adapter.db.inbound.InboundWorkWrapper.run(InboundWorkWrapper.java:43)
+at weblogic.work.ContextWrap.run(ContextWrap.java:41)
+at weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)
+at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+</pre>
+
+
+
+<br/><br/>
+
+I note down the 4 threads name (12,13,14,24) and execute a poll on a record.<br/>
+Why 4 threads? Because we have 4 Proxy Services using the oracle.tip.adapter.db.DBActivationSpec to poll a table, and each is configured in the JCA file with NumberOfThreads=1:
+
+<pre class="brush: xml">
+  &lt;endpoint-activation portType="SSS_Batching_Service_ptt" operation="receive">
+    &lt;activation-spec className="oracle.tip.adapter.db.DBActivationSpec">
+      &lt;property name="DescriptorName" value="SSS_Batching_Service.SssBatchOrder"/>
+      &lt;property name="QueryName" value="SSS_Batching_ServiceSelect"/>
+      &lt;property name="MappingsMetaDataURL" value="NCube_Batching_Service-or-mappings.xml"/>
+      &lt;property name="PollingStrategy" value="LogicalDeletePollingStrategy"/>
+      &lt;property name="MarkReadColumn" value="STATUS"/>
+      &lt;property name="MarkReadValue" value="PROCESSED"/>
+      &lt;property name="MarkReservedValue" value="R${weblogic.Name-2}-${IP-2}"/>
+      &lt;property name="MarkUnreadValue" value="CREATED"/>
+      &lt;property name="PollingInterval" value="60"/>
+      &lt;property name="MaxRaiseSize" value="10"/>
+      &lt;property name="MaxTransactionSize" value="10"/>
+      &lt;property name="NumberOfThreads" value="1"/>
+      &lt;property name="ReturnSingleResultSet" value="false"/>
+    &lt;/activation-spec>
+  &lt;/endpoint-activation>
+</pre>
+
+
+<br/><br/>
+
+<a href="http://docs.oracle.com/cd/E13159_01/osb/docs10gr3/jcatransport/transport.html#wp1107788">See here</a>
+
+
+Polling Thread: By default, as a performance best practice, the Oracle Database Adapter uses one thread to poll the database (NumberOfThreads=1 property in the activation spec). Because the adapter never releases that thread, which is by design, you may see a stuck thread stack trace in the server log. If you set the NumberOfThreads to more than one, you may see stack traces for all of those threads. You can ignore stuck thread stack traces.
+
+<br/><br/>
+
+
+Analyzing the logs, it's evident that THE SAME POLLING THREAD IS USED IN OSB TO PROCESS THE MESSAGE. 
+<br/><br/>
+We have an issue here: if the Processing Time for a batch is > the Polling Period, the Polling Period is not guaranteed.
+<br/><br/>
+Something else to explore is to understand the behaviour of the component if we set NumberOfThreads to something > 1.
+
+
+
+
+

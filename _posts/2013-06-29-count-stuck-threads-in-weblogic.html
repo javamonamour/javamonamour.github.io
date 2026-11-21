@@ -1,0 +1,41 @@
+---
+layout: post
+title: "Count stuck threads in WebLogic"
+date: 2013-06-29T09:07:00.002+02:00
+permalink: /2013/06/count-stuck-threads-in-weblogic.html
+blogger_id: "7265122067475396844"
+tags: ["stuckthread"]
+---
+nice little script to count the stuck threads in all instances of WebLogic (or any other Java processes) running under the current user:
+
+<br/><br/>
+
+<pre>
+
+#!/bin/bash
+
+
+CURRENTUSER=`whoami`
+echo "pid user stuck"
+ps -ef | grep java | grep -v grep | while read LINE
+do
+  SOAUSER=$(echo $LINE | awk '{print $1}')
+  if [ $SOAUSER == $CURRENTUSER ] 
+  then
+   PID=$(echo $LINE | awk '{print $2}')
+   NAME=$(echo $LINE | sed -n -e 's/.*-Dweblogic.Name=\([^ ]*\).*/\1/p')
+   if [ -z "$NAME" ] ; then
+     NAME=$(echo $LINE | sed -n -e 's/.*weblogic.\(NodeManager\).*/\1/p')
+   fi
+   if [ -z "$NAME" ] ; then
+     NAME="UnknownApp"
+   fi
+   STUCKCOUNT=`jstack $PID | grep "STUCK" | wc -l`
+   echo "PID=" $PID "NAME=" $NAME "STUCKCOUNT" $STUCKCOUNT
+  fi
+done
+
+
+</pre>
+
+

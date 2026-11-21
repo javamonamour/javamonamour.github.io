@@ -1,0 +1,42 @@
+---
+layout: post
+title: "WLST: difference between SystemResources and JMSSystemResources"
+date: 2012-08-12T21:19:00.000+02:00
+permalink: /2012/08/wlst-difference-between-systemresources.html
+blogger_id: "8005220943840218474"
+tags: ["WLST"]
+---
+I have created a JMS Module "GM_CommonOsbJMSModule", and if I do <br />
+<br />
+cd GM_CommonOsbJMSModule<br />
+<br />
+I can see it contains pretty much all the possible resources I can create in a Module:<br />
+<br />
+ls /<b>SystemResources</b>/GM_CommonOsbJMSModule/<b>JMSResource</b>/GM_CommonOsbJMSModule<br />
+<br />
+dr--   ConnectionFactories<br />
+dr--   DestinationKeys<br />
+dr--   DistributedQueues<br />
+dr--   DistributedTopics<br />
+dr--   ForeignServers<br />
+dr--   Queues<br />
+dr--   Quotas<br />
+dr--   SAFErrorHandlings<br />
+dr--   SAFImportedDestinations<br />
+dr--   SAFRemoteContexts<br />
+dr--   Templates<br />
+dr--   Topics<br />
+dr--   UniformDistributedQueues<br />
+dr--   UniformDistributedTopics<br />
+<br />
+<br />
+also if I do<br />
+<br />
+cd /<b>SystemResources</b>/GM_CommonOsbJMSModule/<b>Resource</b>/GM_CommonOsbJMSModule<br />
+<br />
+I get the same tree<br />
+<br />
+The funny thing is that if I do:<br />
+cd /<b>JMSSystemResources</b>/GM_CommonOsbJMSModule/JMSResource/GM_CommonOsbJMSModule<br />
+<br />
+I get very much the same picture... confusing... I don't quite like this...maybe I am simply stupid...

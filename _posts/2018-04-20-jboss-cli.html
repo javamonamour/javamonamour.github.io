@@ -1,0 +1,100 @@
+---
+layout: post
+title: "jboss-cli"
+date: 2018-04-20T03:11:00.002+02:00
+permalink: /2018/04/jboss-cli.html
+blogger_id: "4387619377395116921"
+tags: ["cli", "jboss", "jbosscli"]
+---
+<a href="https://docs.jboss.org/author/display/WFLY/Command+Line+Interface">https://docs.jboss.org/author/display/WFLY/Command+Line+Interface</a><br />
+<br />
+$ <b>./jboss-cli.sh</b><br />
+<br />
+<br />
+<i><span style="font-size: x-small;"><br />
+<pre>Unable to read the logging configuration from 'file:/d/apps/wildfly12/bin/jboss-cli-logging.properties' (java.io.FileNotFoundException: \d\apps\wildfly12\bin\jboss-cli-logging.properties (The system cannot find the path specified))</span></i>
+<i><span style="font-size: x-small;">INFO  [org.jboss.modules] JBoss Modules version 1.7.0.Final</span></i>
+<i><span style="font-size: x-small;">INFO  [org.jboss.as.cli.CommandContext] You are disconnected at the moment. Type 'connect' to connect to the server or 'help' for the list of supported commands.</span></i>
+<i><span style="font-size: x-small;">You are disconnected at the moment. Type 'connect' to connect to the server or 'help' for the list of supported commands.</span></i>
+<i><span style="font-size: x-small;">[disconnected /] connect</span></i>
+<i><span style="font-size: x-small;">connect</span></i>
+<i><span style="font-size: x-small;">INFO  [org.xnio] XNIO version 3.6.2.Final</span></i>
+<i><span style="font-size: x-small;">INFO  [org.xnio.nio] XNIO NIO Implementation Version 3.6.2.Final</span></i>
+<i><span style="font-size: x-small;">INFO  [org.jboss.remoting] JBoss Remoting version 5.0.5.Final</span></i>
+<i><span style="font-size: x-small;">INFO  [org.jboss.threads] JBoss Threads version 2.3.1.Final</span></i>
+<i><span style="font-size: x-small;">INFO  [org.wildfly.security] ELY00001: WildFly Elytron version 1.2.2.Final</span></i>
+<i><span style="font-size: x-small;">ERROR [org.jboss.as.cli.CommandContext] The controller is not available at localhost:9990: java.net.ConnectException: WFLYPRT0053: Could not connect to remote+http://localhost:9990. The connection failed: WFLYPRT0053: Could not connect to remote+http://localhost:9990. The connection failed: Connection refused: no further information</span></i>
+<i><span style="font-size: x-small;">The controller is not available at localhost:9990: java.net.ConnectException: WFLYPRT0053: Could not connect to remote+http://localhost:9990. The connection failed: WFLYPRT0053: Could not connect to remote+http://localhost:9990. The connection failed: Connection refused: no further information
+</pre></span></i><br />
+<br />
+<br />
+Instead of the normal ports 8080/9990 I have 8180/10090 , because in standalone.xml I have specified in socket-binding-group a jboss.socket.binding.port-offset:100<br />
+<br />
+So I try with <br />
+<br />
+<b>./jboss-cli.sh --controller=localhost:10090</b><br />
+<br />
+and I get a beautiful<br />
+<br />
+<pre>INFO  [org.xnio] XNIO version 3.6.2.Final
+INFO  [org.xnio.nio] XNIO NIO Implementation Version 3.6.2.Final
+INFO  [org.jboss.remoting] JBoss Remoting version 5.0.5.Final
+INFO  [org.jboss.threads] JBoss Threads version 2.3.1.Final
+INFO  [org.wildfly.security] ELY00001: WildFly Elytron version 1.2.2.Final
+[standalone@localhost:10090 /]
+</pre><br />
+<br />
+<br />
+If you look in jboss-cli.xml you see that the default controller is configured in it:<br />
+<br />
+<pre class="brush : xml">&lt;!-- The default controller to connect to when 'connect' command is executed w/o arguments --&gt;
+    &lt;default-controller&gt;
+        &lt;protocol&gt;remote+http&lt;/protocol&gt;
+        &lt;host&gt;localhost&lt;/host&gt;
+        &lt;port&gt;9990&lt;/port&gt;
+    &lt;/default-controller&gt;
+</pre><br />
+If I change 9990 to 10090, I can seamlessly connect without having to specify the --controller=localhost:10090<br />
+<br />
+Remarkable also the <b>.jbossclirc</b> file. "# WildFly (JBoss) CLI will execute commands from this file before<br />
+# the command line session (interactive or not) will start."<br />
+<br />
+<br />
+Regarding the message "Unable to read the logging configuration from 'file:/d/apps/wildfly12/bin/jboss-cli-logging.properties' ", I have it only when running the jboss-cli.sh in git bash.... if I run jboss-cli.bat I don't have the problem. Most likely it's due to the fact that in git bash the $JBOSS_HOME is rendered as file:/d/apps/wildfly12/ , and Java can't handle this... welcome to the messy world of Windows...<br />
+<br />
+<br />
+It seems also that the TAB autocomplete is not working under git bash.... I am switching permanently to a DOS console.... how sad..<br />
+<br />
+<br />
+<br />
+Useful CLI:<br />
+<br />
+#dump elytron configuration<br />
+/subsystem=elytron:read-resource(recursive=true)<br />
+<br />
+#dump logger configuration<br />
+/subsystem=logging/console-handler=CONSOLE:read-resource<br />
+<br />
+#add a filesystem-realm and add a user<br />
+#see <a href="https://docs.jboss.org/author/display/WFLY/WildFly+Elytron+Security#WildFlyElytronSecurity-ConfigureAuthenticationwithaFilesystemBasedIdentityStore">https://docs.jboss.org/author/display/WFLY/WildFly+Elytron+Security#WildFlyElytronSecurity-ConfigureAuthenticationwithaFilesystemBasedIdentityStore</a><br />
+<br />
+/subsystem=elytron/filesystem-realm=exampleFsRealm:add(path=fs-realm-users,relative-to=jboss.server.config.dir)<br />
+/subsystem=elytron/filesystem-realm=exampleFsRealm/:add-identity(identity=user1)<br />
+cd subsystem=elytron<br />
+cd filesystem-realm=exampleFsRealm<br />
+:set-password(identity=user1,clear={password="password123"})<br />
+<br />
+#(this creates a file user1-OVZWK4RR.xml with inside 'identity xmlns="urn:elytron:1.0"' )<br />
+<br />
+<br />
+<br />
+<br />
+PRICELESS: ./jboss-cli.sh --gui opens a UI which really simplifies the discovery of CLI syntax<br />
+<br />
+PRICELESS: <a href="https://wildscribe.github.io/WildFly/12.0/index.html">https://wildscribe.github.io/WildFly/12.0/index.html</a> Wildfly Reference model, all attributes and operations explained (very briefly, but better than nothing)<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

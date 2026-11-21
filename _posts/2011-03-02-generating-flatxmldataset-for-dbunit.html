@@ -1,0 +1,32 @@
+---
+layout: post
+title: "Generating a FlatXmlDataSet for dbunit"
+date: 2011-03-02T16:34:00.001+01:00
+permalink: /2011/03/generating-flatxmldataset-for-dbunit.html
+blogger_id: "3119244322737019322"
+tags: ["FlatXmlDataSet"]
+---
+If you use Unitils, you can simplify the sample code provided by DBUnit<br />
+<br />
+(see <a href="http://www.dbunit.org/faq.html">http://www.dbunit.org/faq.html</a> "How to extract a flat XML dataset from my database? ")<br />
+<br />
+<br />
+<pre name="code" class="brush: java">Unitils unitilsInstance = Unitils.getInstance();
+unitilsInstance.init();
+
+Properties properties = unitilsInstance.getConfiguration();
+
+// database connection
+Class driverClass = Class.forName(properties.getProperty("database.driverClassName")); 
+Connection jdbcConnection = DriverManager.getConnection(properties.getProperty("database.url"), properties.getProperty("database.userName"), properties.getProperty("database.password"));
+IDatabaseConnection connection = new DatabaseConnection(jdbcConnection);
+
+// partial database export
+QueryDataSet partialDataSet = new QueryDataSet(connection);
+partialDataSet.addTable("PRODUCT", "SELECT * FROM MYTABLE");
+
+FlatXmlDataSet.write(partialDataSet, new FileOutputStream("c:/MYTABLE.xml"));
+
+</pre><br />
+<br />
+It works like a charm... never ever again shall I manually produce those boring dataset XML files...

@@ -1,0 +1,226 @@
+---
+layout: post
+title: "play with kubernetes"
+date: 2018-01-28T13:54:00.001+01:00
+permalink: /2018/01/play-with-kubernetes.html
+blogger_id: "6603134425987059488"
+tags: ["kubernetes"]
+blogger_comments:
+  - author: "Richard Chesterwood"
+    date: 2018-05-08
+    html: "Don&#39;t worry about the external IP address never appearing, it won&#39;t do so - the pending is a minomer. <br /><br />In play-with-k8s, any NodePort service will be displayed on the user interface - at the top of the screen, next to the private IP address of the master node will be a series of links to each port exposed by the cluster. Just click on any of these and it will open up a new page with a DNS entry pointing to your cluster.<br />"
+---
+<a href="https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/">https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/</a><br />
+<br />
+<br />
+<a href="https://labs.play-with-k8s.com/">https://labs.play-with-k8s.com/</a><br />
+<br />
+login with your github account<br />
+<br />
+create new instance<br />
+<br />
+kubeadm init --apiserver-advertise-address $(hostname -i)<br />
+<br />
+kubectl apply -n kube-system -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 |tr -d '\n')"<br />
+<br />
+<br />
+kubectl apply -f https://k8s.io/docs/user-guide//nginx-app.yaml<br />
+which contains this:<br />
+<pre>apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx-svc
+  labels:
+    app: nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: my-nginx
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+</pre><br />
+<br />
+<br />
+<br />
+kubectl describe deployment my-nginx <br />
+kubectl get pods -l app=nginx<br />
+<br />
+<br />
+How to expose the service to a public IP ? No clue!<br />
+<br />
+<a href="https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/">https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/</a><br />
+<br />
+kubectl run hello-world --replicas=5 --labels="run=load-balancer-example" --image=gcr.io/google-samples/node-hello:1.0  --port=8080<br />
+<br />
+kubectl get deployments hello-world<br />
+kubectl describe deployments hello-world<br />
+<br />
+kubectl get replicasets<br />
+kubectl describe replicasets<br />
+kubectl expose deployment hello-world --type=LoadBalancer --name=my-service<br />
+<br />
+kubectl get services my-service<br />
+<br />
+<pre>NAME         TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+my-service   LoadBalancer   10.108.227.102   &lt;pending>     8080:31900/TCP   50s
+</pre><br />
+pending means "wait".... but it seems that in the playground you will NEVER get an external IP!<br />
+<br />
+kubectl describe services my-service<br />
+<br />
+kubectl get pods --output=wide<br />
+<br />
+in fact, all pods are also in "pending" state<br />
+<br />
+<br />
+<h3>Appendix 1: logs</h3><br />
+<pre>
+ You can bootstrap a cluster as follows:
+
+ 1. Initializes cluster master node:
+
+ kubeadm init --apiserver-advertise-address $(hostname -i)
+
+ 2. Initialize cluster networking:
+
+ kubectl apply -n kube-system -f \
+    "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 |tr -d '\n')"
+
+
+ 3. (Optional) Create an nginx deployment:
+
+ kubectl apply -f https://k8s.io/docs/user-guide//nginx-app.yaml
+
+
+                          The PWK team.
+
+
+[node1 /]$ kubeadm init --apiserver-advertise-address $(hostname -i)
+Initializing machine ID from random generator.
+[kubeadm] WARNING: kubeadm is in beta, please do not use it for production clusters.
+[init] Using Kubernetes version: v1.8.7
+[init] Using Authorization modes: [Node RBAC]
+[preflight] Skipping pre-flight checks
+[kubeadm] WARNING: starting in 1.8, tokens expire after 24 hours by default (if you require a non-expiring token use --token-ttl 0)
+[certificates] Generated ca certificate and key.
+[certificates] Generated apiserver certificate and key.
+[certificates] apiserver serving cert is signed for DNS names [node1 kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 192.168.0.23]
+[certificates] Generated apiserver-kubelet-client certificate and key.
+[certificates] Generated sa key and public key.
+[certificates] Generated front-proxy-ca certificate and key.
+[certificates] Generated front-proxy-client certificate and key.
+[certificates] Valid certificates and keys now exist in "/etc/kubernetes/pki"
+[kubeconfig] Wrote KubeConfig file to disk: "admin.conf"
+[kubeconfig] Wrote KubeConfig file to disk: "kubelet.conf"
+[kubeconfig] Wrote KubeConfig file to disk: "controller-manager.conf"
+[kubeconfig] Wrote KubeConfig file to disk: "scheduler.conf"
+[controlplane] Wrote Static Pod manifest for component kube-apiserver to "/etc/kubernetes/manifests/kube-apiserver.yaml"
+[controlplane] Wrote Static Pod manifest for component kube-controller-manager to "/etc/kubernetes/manifests/kube-controller-manager.yaml"
+[controlplane] Wrote Static Pod manifest for component kube-scheduler to "/etc/kubernetes/manifests/kube-scheduler.yaml"
+[etcd] Wrote Static Pod manifest for a local etcd instance to "/etc/kubernetes/manifests/etcd.yaml"
+[init] Waiting for the kubelet to boot up the control plane as Static Pods from directory "/etc/kubernetes/manifests"
+[init] This often takes around a minute; or longer if the control plane images have to be pulled.
+[apiclient] All control plane components are healthy after 31.002238 seconds
+[uploadconfig] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[markmaster] Will mark node node1 as master by adding a label and a taint
+[markmaster] Master node1 tainted and labelled with key/value: node-role.kubernetes.io/master=""
+[bootstraptoken] Using token: f7996a.e54fe4f219d3e1d8
+[bootstraptoken] Configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstraptoken] Configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstraptoken] Configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstraptoken] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[addons] Applied essential addon: kube-dns
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes master has initialized successfully!
+
+To start using your cluster, you need to run (as a regular user):
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  http://kubernetes.io/docs/admin/addons/
+
+You can now join any number of machines by running the following on each node
+as root:
+
+  kubeadm join --token f7996a.e54fe4f219d3e1d8 192.168.0.23:6443 --discovery-token-ca-cert-hash sha256:f58fcfb9e0a2adc69f06988e2c0499ab003458a6102bb7b73ffcf115f8882acb
+
+Waiting for api server to startup..........
+Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply
+daemonset "kube-proxy" configured
+No resources found
+[node1 /]$
+[node1 /]$ kubectl apply -n kube-system -f \
+>     "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 |tr -d '\n')"
+serviceaccount "weave-net" created
+clusterrole "weave-net" created
+clusterrolebinding "weave-net" created
+role "weave-net" created
+rolebinding "weave-net" created
+daemonset "weave-net" created
+
+
+[node1 /]$ kubectl apply -f https://k8s.io/docs/user-guide//nginx-app.yaml
+service "my-nginx-svc" created
+deployment "my-nginx" created
+
+
+[node1 /]$ kubectl describe deployment my-nginx
+Name:                   my-nginx
+Namespace:              default
+CreationTimestamp:      Sun, 28 Jan 2018 11:56:23 +0000
+Labels:                 app=nginx
+Annotations:            deployment.kubernetes.io/revision=1
+                        kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"apps/v1beta1","kind":"Deployment","metadata":{"annotations":{},"name":"my-nginx","namespace":"default"},"spec":{"replicas":3,"template":...
+Selector:               app=nginx
+Replicas:               3 desired | 3 updated | 3 total | 0 available | 3 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=nginx
+  Containers:
+   nginx:
+    Image:        nginx:1.7.9
+    Port:         80/TCP
+    Environment:  &lt;none>
+    Mounts:       &lt;none>
+  Volumes:        &lt;none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      False   MinimumReplicasUnavailable
+  Progressing    True    ReplicaSetUpdated
+OldReplicaSets:  &lt;none>
+NewReplicaSet:   my-nginx-569477d6d8 (3/3 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  2m    deployment-controller  Scaled up replica set my-nginx-569477d6d8 to 3
+
+
+</pre><br />
+<br />
+<br />
+

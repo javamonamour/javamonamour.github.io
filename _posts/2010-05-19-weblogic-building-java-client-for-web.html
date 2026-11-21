@@ -1,0 +1,36 @@
+---
+layout: post
+title: "WebLogic: building a Java client for a Web Service"
+date: 2010-05-19T10:43:00.000+02:00
+permalink: /2010/05/weblogic-building-java-client-for-web.html
+blogger_id: "6369276596175862785"
+tags: ["clientgen"]
+---
+1) create a WebLogic Web Service project - separate from the WebService service project<br />
+<br />
+2) copy the C:\beaosb\wlserver_10.3\server\lib\wseeclient.zip to the lib directory and UNZIP IT (huge amount of jars there)<br />
+<br />
+3) add all the jars to the project classpath<br />
+<br />
+4) add C:\beaosb\modules\org.apache.ant_1.6.5\lib\ant.jar&nbsp; to the classpath<br />
+<br />
+5) copy the WSDL, run the clientgen wizard, generate the client jar and add it to the classpath <br />
+<br />
+<br />
+6) write this kind of code:<br />
+<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; CompanyDBWSService service = new CompanyDBWSService();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;Company company = new Company();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;company.setId(1234L);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;company.setName("PierreIsAPig");<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;company.setCreationDate(1961);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;service.getCompanyDBWSSoapPort().insertCompany(company);<br />
+<br />
+<br />
+here are the official instructions:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12840_01/wls/docs103/webserv/client.html#wp229351">http://download.oracle.com/docs/cd/E12840_01/wls/docs103/webserv/client.html#wp229351</a><br />
+<br />
+see also this thread<br />
+<br />
+<a href="http://forums.oracle.com/forums/thread.jspa?threadID=723357&amp;tstart=-1">http://forums.oracle.com/forums/thread.jspa?threadID=723357&amp;tstart=-1</a>

@@ -1,0 +1,18 @@
+---
+layout: post
+title: "Troubleshooting classloaders with JRockit"
+date: 2009-12-21T19:13:00.000+01:00
+permalink: /2009/12/troubleshooting-classloaders-with.html
+blogger_id: "7923920114667647726"
+blogger_comments:
+  - author: "Staffan Larsen"
+    date: 2009-12-27
+    html: "-Xverbose:classgc"
+---
+you have 3 options:<br />
+<br />
+-Xverbose:class to detect when a class is being loaded<br />
+<br />
+-Xnoclassgc to disable (use with care!) GC of unused classes<br />
+<br />
+-Xverbose:classgc to trace when a CLASS is garbagecollected...

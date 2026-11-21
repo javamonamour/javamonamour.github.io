@@ -1,0 +1,31 @@
+---
+layout: post
+title: "wlsbjmsrpDataSource"
+date: 2012-06-16T22:52:00.001+02:00
+permalink: /2012/06/wlsbjmsrpdatasource.html
+blogger_id: "7981728013659258273"
+tags: ["OSB"]
+---
+The right configuration for wlsbjmsrpDataSource is:<br />
+<br />
+"Supports Global Transactions" ENABLED<br />
+"Logging Last Resource" ENABLED<br />
+<br />
+If you set "One-Phase Commit" ENABLED, this leads to this error message:<br />
+<br />
+Exception occurred during commit of transaction Name=NewJMSMessagePoller.ReportingMDB,Xid=BEA1-76E0B53E352F1F5F1C3A(131923607)<br />
+,Status=Rolled back. [Reason=javax.transaction.xa.XAException: JDBC driver does not support XA, hence cannot be a participant in two-<br />
+phase commit. To force this participation, set the GlobalTransactionsProtocol attribute to LoggingLastResource (recommended) or Emula<br />
+teTwoPhaseCommit for the Data Source = wlsbjmsrpDataSourceGL],numRepliesOwedMe=0,numRepliesOwedOthers=0,seconds since begin=0,seconds<br />
+left=60,XAServerResourceInfo[WLStore_osbpr1do_FileStore_auto_1]=(ServerResourceInfo[WLStore_osbpr1do_FileStore_auto_1]=(state=rolled<br />
+back,assigned=osbpr1ms1),xar=WLStore_osbpr1do_FileStore_auto_1599741968,re-Registered = false),XAServerResourceInfo[wlsbjmsrpDataSour<br />
+ceGL_osbpr1do]=(ServerResourceInfo[wlsbjmsrpDataSourceGL_osbpr1do]=(state=rolledback,assigned=osbpr1ms1),xar=weblogic.jdbc.wrapper.JT<br />
+SEmulateXAResourceImpl@42f8ac2b,re-Registered = false),SCInfo[osbpr1do+osbpr1ms1]=(state=rolledback),properties=({weblogic.transactio<br />
+n.name=NewJMSMessagePoller.ReportingMDB, weblogic.jdbc.remote.wlsbjmsrpDataSourceGL=t3://nesoa2-osbpr1ms1.acme.com:8001}),OwnerTransactionManager=ServerTM[ServerCoordinatorDescriptor=(CoordinatorURL=osbpr1ms1+nesoa2-osbpr1ms1.acme.com:8001+osbpr1do+t3+, XA<br />
+Resources={WLStore_osbpr1do__WLS_osbpr1ms1, eis/activemq/Queue, wlsbjmsrpDataSourceGL_osbpr1do, eis/fioranomq/Topic, eis/jbossmq/Queu<br />
+e, WLStore_osbpr1do_FileStore_auto_1, WSATGatewayRM_osbpr1ms1_osbpr1do, SOADataSource_osbpr1do, eis/webspheremq/Queue, eis/AQ/aqSampl<br />
+e, WLStore_osbpr1do_NesoaCommonFileStore1, WLStore_osbpr1do_FileStorePerfStore1, eis/aqjms/Queue, NESOADataSource_osbpr1do, eis/tibjm<br />
+s/Queue, eis/sunmq/Queue, eis/pramati/Queue, eis/tibjms/Topic, WLStore_osbpr1do_WseeFileStore_auto_1, SOAXADataSource_osbpr1do, eis/A<br />
+pps/Apps, eis/wls/Queue, eis/tibjmsDirect/Topic, eis/wls/Topic, eis/aqjms/Topic, eis/tibjmsDirect/Queue},NonXAResources={})],Coordina<br />
+torURL=osbpr1ms1+nesoa2-osbpr1ms1.acme.com:8001+osbpr1do+t3+): weblogic.transaction.RollbackException: Could not prepare resourc<br />
+e 'wlsbjmsrpDataSourceGL_osbpr1do

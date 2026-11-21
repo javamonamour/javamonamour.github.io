@@ -1,0 +1,113 @@
+---
+layout: post
+title: "Spring Scheduler starting at 30 minutes after a given hour and then scheduling every 30 minutes"
+date: 2021-11-23T03:19:00.008+01:00
+permalink: /2021/11/spring-scheduler-starting-at-30-minutes.html
+blogger_id: "8873258548258168061"
+---
+not so trivial, you must use 2 different schedulers, because the cron regex doesn't support this case:
+
+<pre class="brush: java" name="code"> 
+
+package com.example.crondemo;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.support.CronTrigger;
+
+
+@SpringBootApplication
+public class CrondemoApplication implements CommandLineRunner {
+    @Autowired
+    ThreadPoolTaskScheduler threadPoolTaskScheduler;
+
+    public static void main(String[] args) {
+        SpringApplication.run(CrondemoApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        // CronTrigger cronTrigger = new CronTrigger("0 30/30 19-22 * * *");  // this at 19:30 20:30...
+        CronTrigger cronTrigger1 = new CronTrigger("0 30 0-8 * * *"); // this is also 20:30 21:30...
+        CronTrigger cronTrigger2 = new CronTrigger("0 0 1-8 * * *"); // this is also 20:30 21:30...
+
+        threadPoolTaskScheduler.schedule(
+                new RunnableTask("Hello Pierluigi1"),
+                cronTrigger1
+        );
+        threadPoolTaskScheduler.schedule(
+                new RunnableTask("Hello Pierluigi2"),
+                cronTrigger2
+        );
+    }
+}
+</pre>
+
+<pre class="brush: java" name="code"> 
+
+package com.example.crondemo;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+
+
+@Configuration
+public class MyConfig {
+    @Bean
+    public ThreadPoolTaskScheduler threadPoolTaskScheduler(){
+        ThreadPoolTaskScheduler threadPoolTaskScheduler
+                = new ThreadPoolTaskScheduler();
+        threadPoolTaskScheduler.setPoolSize(5);
+        threadPoolTaskScheduler.setThreadNamePrefix(
+                "ThreadPoolTaskScheduler");
+        return threadPoolTaskScheduler;
+    }
+}
+</pre>
+
+
+<pre class="brush: java" name="code"> 
+package com.example.crondemo;
+
+import java.util.Date;
+
+class RunnableTask implements Runnable{
+    private String message;
+
+    public RunnableTask(String message){
+        this.message = message;
+    }
+
+    @Override
+    public void run() {
+        System.out.println(new Date()+" Runnable Task with " + message
+                +" on thread "+Thread.currentThread().getName());
+    }
+}
+
+</pre>
+
+
+
+
+The output is:
+
+<pre>
+Tue Nov 23 00:30:21 CET 2021 Runnable Task with Hello Pierluigi1 on thread ThreadPoolTaskScheduler1
+Tue Nov 23 01:00:00 CET 2021 Runnable Task with Hello Pierluigi2 on thread ThreadPoolTaskScheduler2
+Tue Nov 23 01:30:00 CET 2021 Runnable Task with Hello Pierluigi1 on thread ThreadPoolTaskScheduler1
+Tue Nov 23 02:00:00 CET 2021 Runnable Task with Hello Pierluigi2 on thread ThreadPoolTaskScheduler3
+Tue Nov 23 02:30:00 CET 2021 Runnable Task with Hello Pierluigi1 on thread ThreadPoolTaskScheduler2
+Tue Nov 23 03:00:00 CET 2021 Runnable Task with Hello Pierluigi2 on thread ThreadPoolTaskScheduler4
+Tue Nov 23 03:30:12 CET 2021 Runnable Task with Hello Pierluigi1 on thread ThreadPoolTaskScheduler1
+</pre>
+
+
+
+
+
+

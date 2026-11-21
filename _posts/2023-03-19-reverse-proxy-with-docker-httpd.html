@@ -1,0 +1,9 @@
+---
+layout: post
+title: "Reverse Proxy with Docker httpd container on Windows"
+date: 2023-03-19T13:24:00.004+01:00
+permalink: /2023/03/reverse-proxy-with-docker-httpd.html
+blogger_id: "2627527283711881051"
+tags: ["reverseproxy"]
+---
+<p><a href="https://www.middlewareinventory.com/blog/docker-reverse-proxy-example/">&nbsp;https://www.middlewareinventory.com/blog/docker-reverse-proxy-example/</a></p><p>&nbsp;</p><p>I have followed these instructions for Windows and it works, the only change I had to do is to start the container with the&nbsp; "--net=host" options, and from the container I had to configure the ReverseProxyPass to use the IP address of the host (NOT the WSL IP). <br /></p>

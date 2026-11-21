@@ -1,0 +1,15 @@
+---
+layout: post
+title: "Classloaders implementations in WebLogic"
+date: 2009-12-21T12:07:00.000+01:00
+permalink: /2009/12/classloaders-implementations-in.html
+blogger_id: "65734547408471833"
+---
+doing a latency analysis, we discover 3 classloaders in theJRA recording<br />
+<br />
+weblogic.utils.classloaders.ChangeAwareClassLoader<br />
+sun.misc.Launcher$AppClassLoader<br />
+weblogic.utils.classloaders.GenericClassLoader&nbsp; <br />
+<br />
+<br />
+what would be the difference between these 3 classloaders? When one is invoked rather than the other? Which one is most performant? No clue.... still investigating....

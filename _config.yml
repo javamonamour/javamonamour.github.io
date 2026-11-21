@@ -1,0 +1,16 @@
+title: Java mon amour
+description: "Pierre's blog: Java, WebLogic, OSB, Docker, Kubernetes and more"
+url: https://www.javamonamour.org
+baseurl: ""
+timezone: Europe/Rome
+permalink: /:year/:month/:title.html
+paginate: 20
+paginate_path: /page/:num/
+plugins:
+  - jekyll-paginate
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+feed:
+  path: feeds/posts/default.xml
+exclude: [_tools, _export, Gemfile, Gemfile.lock, README.md, vendor]

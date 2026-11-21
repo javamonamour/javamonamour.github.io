@@ -1,0 +1,61 @@
+---
+layout: post
+title: "BPM and VirtualBox"
+date: 2011-07-18T00:36:00.003+02:00
+permalink: /2011/07/bpm-and-virtualbox.html
+blogger_id: "1426843144805217347"
+tags: ["bpm"]
+blogger_comments:
+  - author: "kumar"
+    date: 2012-02-01
+    html: "I downloaded files from oracle for more than 6 times still not able to import. Also I verified downloads with WINMD5Free for MD5 checksums. MD5 checks does not match to these files <br />SHA1 (vbox-oel5u4-soabpm-11gr1ps2-bp1-otn.ovf)= d3ab537113b0032951184c46a98f5ce93b955a8f<br />SHA1 (vbox-oel5u4-soabpm-11gr1ps2bp1-root.vmdk)= 84cdd986624e5af2542cb7d046c30ac9cad85583<br />SHA1 (vbox-oel5u4-soabpm-11gr1ps2bp1-oracle.vmdk)= e73331679806b8d1487251af8201f71f604aeab1<br />Let me know if you have any information."
+---
+I am reading the book "Getting Started with Oracle BPM Suite 11gR1"<br />
+<br />
+For the tutorials, they point you to this page:<br />
+<br />
+<a href="http://www.oracle.com/technetwork/middleware/bpm/learnmore/index.html">http://www.oracle.com/technetwork/middleware/bpm/learnmore/index.html</a><br />
+<br />
+<br />
+Download VirtualBox from here<br />
+<a href="http://www.virtualbox.org/wiki/Downloads">http://www.virtualbox.org/wiki/Downloads</a><br />
+or here <a href="http://www.oracle.com/technetwork/server-storage/virtualbox/downloads/index.html">http://www.oracle.com/technetwork/server-storage/virtualbox/downloads/index.html</a><br />
+<br />
+(in my case, VirtualBox-4.0.12-72916-Win.exe)<br />
+<br />
+Download the VB image as shown here<br />
+<a href="http://www.oracle.com/technetwork/middleware/soasuite/learnmore/vmsoa-172279.html">http://www.oracle.com/technetwork/middleware/soasuite/learnmore/vmsoa-172279.html</a><br />
+<br />
+it's a HUGE download, each file is 1GB...<br />
+<br />
+Then download the Sales Quote Demo.<br />
+<br />
+When importing the appliance into VirtualBox, I get VERR_VD_VMDK_INVALID_HEADER vbox-oel5u4-soabpm-11gr1ps2-bp1-root.vmdk <br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/fb690e602b15c45b.jpg" imageanchor="1" style=""><img border="0" height="270" width="320" src="/images/1b0e86b8d3e83583.jpg" /></a></div><br />
+Being an idiot, at first I swear against Oracle.... then I check all the MD5 checksums...in fact the vbox-oel5u4-soabpm-11gr1ps2bp1-root.vmdk checksum was wrong.... redownload it again.... the second time around it works!<br />
+<br />
+Importing appliance in VBOX takes forever... 37 minutes.... zzzz...<br />
+<br />
+Once started, it gives me an error about the USB controller.... I disable USB and start again.<br />
+<br />
+Virtual Box captures mouse and keyboard, they say that I should use the "host key" = H0JRE CTRL, no clue what this means.... I panic and finally manage to uncapture by hitting every possible combination of keys.<br />
+<br />
+I get a "memory for crash kernel (0x0 to 0x0) not within permissible range" <br />
+<br />
+I discover that I should "enable IO APIC if you want to run a 64-bit guest"<br />
+<a href="http://forums.virtualbox.org/viewtopic.php?f=5&t=24988">http://forums.virtualbox.org/viewtopic.php?f=5&t=24988</a><br />
+<br />
+This is really depressing.<br />
+<br />
+I enable the blessed "IO APIC" in the VM options, and restart.<br />
+This time it seems to start.<br />
+<br />
+I get this other message:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/e60f3483ccbb85aa.jpg" imageanchor="1" style=""><img border="0" height="223" width="256" src="/images/d791b0b4af21f923.jpg" /></a></div><br />
+I think I can survive to this one.<br />
+<br />
+Login as oracle with password as oracle<br />
+<br />
+and.... lo and behold, I am in!

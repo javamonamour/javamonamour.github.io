@@ -1,0 +1,54 @@
+---
+layout: post
+title: "Openshift REST Client API written in Java"
+date: 2017-12-14T07:25:00.001+01:00
+permalink: /2017/12/openshift-rest-client-api-written-in.html
+blogger_id: "7708625513728190955"
+tags: ["openshift", "REST"]
+---
+<a href="https://github.com/openshift/openshift-restclient-java/">https://github.com/openshift/openshift-restclient-java/</a><br />
+<br />
+immensely more usable than the CLI...<br />
+<br />
+I ask myself who wants to learn by heart the hyper-complicated Openshift command line interface, when you can easily wrap all that crap in a nice fluent Java API....<br />
+<br />
+Life is short, I am too busy, no time to learn all the freaking CLIs of the planet... please give me simple and powerful programming tools... I don't want to type any commands... <br />
+<br />
+To get started, create a Maven Java Project, add this in pom.xml:<br />
+<br />
+<br />
+<pre class="brush: xml">  &lt;dependencies>
+   &lt;dependency>
+    &lt;groupId>com.openshift&lt;/groupId>
+    &lt;artifactId>openshift-restclient-java&lt;/artifactId>
+    &lt;version>5.9.3.Final&lt;/version>
+   &lt;/dependency>
+ &lt;/dependencies>
+</pre><br />
+<br />
+then run this:<br />
+<br />
+<pre class="brush: java">
+package org.pierre.ocpclient;
+
+import com.openshift.restclient.ClientBuilder;
+import com.openshift.restclient.IClient;
+import com.openshift.restclient.ResourceKind;
+import com.openshift.restclient.model.IProject;
+import com.openshift.restclient.model.IResource;
+
+public class CreateProject {
+ public static void main(String[] args) {
+  IClient client = new ClientBuilder("https://localhost:8443")
+    .withUserName("admin")
+    .withPassword("admin")
+    .build();
+  
+  IResource request = client.getResourceFactory().stub(ResourceKind.PROJECT_REQUEST, "myfirstproject");
+  IProject project =  (IProject)client.create(request);
+  
+ }
+
+}
+
+</pre>

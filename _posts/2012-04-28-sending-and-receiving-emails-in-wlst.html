@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Sending and receiving emails in WLST / Python"
+date: 2012-04-28T23:26:00.000+02:00
+permalink: /2012/04/sending-and-receiving-emails-in-wlst.html
+blogger_id: "2742471649503260251"
+tags: ["javamail", "WLST"]
+---
+http://docs.python.org/library/smtplib.html<br />
+<br />
+import smtplib<br />
+s = smtplib.SMTP('smtp.acme.com')<br />
+#SMTP.sendmail(from_addr, to_addrs, msg[, mail_options, rcpt_options])<br />
+s.sendmail('pippo@gmail.com', 'pluto@gmail.com', 'ciao come stai?')<br />
+s.quit()<br />
+<br />
+s.login('pierluigi.vernetto@acme.com', 'mypw')<br />
+<br />
+Traceback (innermost last):<br />
+  File "<console>", line 1, in ?<br />
+  File "/opt/oracle/fmw11_1_1_5/wlserver_10.3/common/wlst/modules/jython-modules.jar/Lib/smtplib.py", line 540, in login<br />
+SMTPException: SMTP AUTH extension not supported by server.<br />
+<br />
+s.connect()<br />
+<br />
+<br />
+<br />
+see<br />
+http://www.oracle.com/technetwork/java/javamail/index.html

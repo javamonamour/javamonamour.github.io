@@ -1,0 +1,19 @@
+---
+layout: post
+title: "WebLogic admin failing with \"PKI-02002: Unable to open the wallet. Check password.\""
+date: 2013-05-31T16:34:00.000+02:00
+permalink: /2013/05/weblogic-admin-failing-with-pki-02002.html
+blogger_id: "7973064750081513998"
+---
+"oracle.security.jps.service.credstore.CredStoreException: JPS-01050: Opening of wallet based credential store failed. Reason java.io.IOException: PKI-02002: Unable to open the wallet. Check password."
+
+
+<br/><br/>
+
+find /opt/oracle -user root
+
+<br/><br/>
+
+this detected that the EmbeddedLDAP.tran file was owned by root - which is not ideal.
+
+

@@ -1,0 +1,56 @@
+---
+layout: post
+title: "Injecting Logger"
+date: 2017-11-18T14:50:00.000+01:00
+permalink: /2017/11/injecting-logger.html
+blogger_id: "6856324713312742114"
+tags: ["cdi", "logger", "slf4j"]
+---
+According to <a href="https://docs.jboss.org/weld/reference/2.4.0.CR1/en-US/html/injection.html">https://docs.jboss.org/weld/reference/2.4.0.CR1/en-US/html/injection.html</a> :<br />
+<br />
+<pre class="brush: java">import org.slf4j.Logger;
+
+@Named
+@SessionScoped
+public class CaloriesController implements Serializable  {
+ @Inject
+ private Logger logger;
+    public void insertUser() {
+     logger.debug("insertUser");
+    }
+}
+</pre><br />
+<br />
+but this is not enough... you will get a "WELD-001408 Unsatisfied dependencies for type Logger with qualifiers @Default at injection point " ...<br />
+<br />
+You have to prepare also a PRODUCER:<br />
+<br />
+<pre class="brush: java">package org.pierre.calories.common;
+
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.spi.InjectionPoint;
+import javax.faces.bean.ManagedBean;
+import javax.inject.Named;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Named
+@ManagedBean
+public class LoggingProducer {
+ 
+ @Produces
+ public Logger getLogger(final InjectionPoint ip) {
+  return LoggerFactory.getLogger(ip.getMember().getDeclaringClass());
+ }
+
+}
+
+</pre><br />
+<br />
+See also <a href="https://stackoverflow.com/questions/19768405/weld-001408-unsatisfied-dependencies-for-type-logger-with-qualifiers-default">https://stackoverflow.com/questions/19768405/weld-001408-unsatisfied-dependencies-for-type-logger-with-qualifiers-default</a><br />
+<br />
+<br />
+Again, one would hope that in 2017 these things were a bit better engineered and transparent.... but this is the world of IT, a huge morassic mess.... La Brea Tar Pits:<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/1f6710ebcc843029.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/1cecefe692800e28.jpg" width="640" height="558" data-original-width="241" data-original-height="210" /></a></div>

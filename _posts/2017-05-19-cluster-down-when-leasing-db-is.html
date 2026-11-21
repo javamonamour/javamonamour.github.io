@@ -1,0 +1,42 @@
+---
+layout: post
+title: "Cluster down when leasing DB is restarted"
+date: 2017-05-19T14:18:00.002+02:00
+permalink: /2017/05/cluster-down-when-leasing-db-is.html
+blogger_id: "3313270569641650449"
+---
+if you get often a message
+<br/>
+&lt;BEA-310006> &lt;Critical subsystem JTAMigratableGroup has failed. Setting server state to FAILED.
+Reason: JTA migratable target lost a lease>
+<br/>
+
+you might consider tuning these 2 parameters in confix.xml:
+<br/>
+
+<b>database-leasing-basis-connection-retry-count</b>
+<br/>
+"The maximum number of times Database Leasing will try to obtain a valid
+ connection from the Data Source.
+ (Interface=weblogic.management.configuration.ClusterMBean Attribute=getDatabaseLeasingBasisConnectionRetryCount)" 
+<br/><br/>
+
+Default 1
+
+<br/><br/>
+<b>database-leasing-basis-connection-retry-delay </b>
+<br/>
+The length of time, in milliseconds,Database Leasing will wait before
+ attempting to obtain a new connection from the Data Source when a connection
+ has failed.
+ (Interface=weblogic.management.configuration.ClusterMBean Attribute=getDatabaseLeasingBasisConnectionRetryDelay)
+
+
+<br/>
+<br/>
+
+Default 1000 (millis) <br/><br/>
+
+
+
+

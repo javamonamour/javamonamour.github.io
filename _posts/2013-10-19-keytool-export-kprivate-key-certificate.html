@@ -1,0 +1,53 @@
+---
+layout: post
+title: "keytool: export a private key + certificate to a PKCS12 store"
+date: 2013-10-19T23:45:00.001+02:00
+permalink: /2013/10/keytool-export-kprivate-key-certificate.html
+blogger_id: "6861704994918863350"
+tags: ["jks", "keytool"]
+---
+I have a JKS store pippov2.dev.acme.com.jks contaning some trustedCert entries (caacme, caswisssign) and a private key (pippov2.dev.acme.com). 
+
+<br />
+<br />
+I want to be able to store separately the private key. Keytool allows you to export only to a PKCS12-type store:
+<br />
+<br />
+<pre><span style="font-size: large;">keytool -importkeystore -srckeystore pippov2.dev.acme.com.jks -destkeystore new-store.p12 -deststoretype PKCS12</span>
+</pre>
+<br />
+<i>
+Enter destination keystore password:<br />
+Re-enter new password:<br />
+Enter source keystore password:<br />
+Problem importing entry for alias caacme: java.security.KeyStoreException: TrustedCertEntry not supported.<br />
+Entry for alias caacme not imported.<br />
+Do you want to quit the import process? [no]:<br />
+Problem importing entry for alias caswisssign: java.security.KeyStoreException: TrustedCertEntry not supported.<br />
+Entry for alias caswisssign not imported.<br />
+Do you want to quit the import process? [no]:<br />
+Enter key password for &lt;pippov2.dev.acme.com&gt;<br />
+Entry for alias pippov2.dev.acme.com successfully imported.<br />
+Import command completed:  1 entries successfully imported, 2 entries failed or cancelled<br />
+</i>
+
+<br />
+It's somtehing which take a LOOOOONG time, so be patient.
+<br />
+<br />
+The file new-store.p12 is generated:
+
+<br />
+<pre><span style="font-size: large;">keytool -keystore new-store.p12 -list -storetype PKCS12</span>
+</pre>
+<i>
+Enter keystore password:<br /><br />
+
+Keystore type: PKCS12<br />
+Keystore provider: SunJSSE<br /><br />
+
+Your keystore contains 1 entry<br /><br />
+
+pippov2.dev.acme.com, Oct 19, 2013, PrivateKeyEntry,<br />
+Certificate fingerprint (MD5): 46:A7:6C:E5:13:4C:2F:7B:65:10:42:B0:3B:A9:B1:23<br />
+</i>

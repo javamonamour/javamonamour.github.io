@@ -1,0 +1,24 @@
+---
+layout: post
+title: "OSB JMS proxy and \"reply with success/reply with failure\""
+date: 2011-12-14T23:27:00.001+01:00
+permalink: /2011/12/osb-jms-proxy-and-reply-with.html
+blogger_id: "8897601065098983549"
+tags: ["jms", "OSB", "transactions"]
+---
+I create a PVQueue, override redelivery count = 3 and redelivery delay = 10000<br />
+<br />
+I consume the messages with a JMS PS, no transaction  required, I use the default JMS XA connection factory weblogic.jms.XAConnectionFactory.<br />
+<br />
+If I "<b>reply with success</b>", the JMS message is consumed immediately.<br />
+<br />
+If I "<b>reply with error</b>", the JMS message is consumed immediately.<br />
+<br />
+I set the "Transaction Required" on the Proxy Service, I "reply with error", and the JMS message is consumed immediately.<br />
+<br />
+In all the above cases, in the Operations/Monitoring tab, I see 1 message and 0 errors for the Proxy.<br />
+<br />
+I "<b>Raise Error</b>" and the JMS message is played 4 times (redelivered 3 times + 1 time the first attempt) at 10 seconds interval and then it is consumed and redirected to the Error Destination, where it appears with a JMS_BEA_DeliveryFailureReason=2 and JMSXDeliveryCount=0.<br />
+In the Operations/Monitoring tab, I see 4 messages and 4 errors for the Proxy.<br />
+<br />
+Same as above, without "Transaction Required", and it behaves the same way.

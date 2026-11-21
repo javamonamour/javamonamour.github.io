@@ -1,0 +1,27 @@
+---
+layout: post
+title: "com/sun/xml/ws/client/WSServiceDelegate$DelegatingLoader  filling up PERMGEN"
+date: 2015-09-15T14:07:00.001+02:00
+permalink: /2015/09/comsunxmlwsclientwsservicedelegatedeleg.html
+blogger_id: "8150811156202942318"
+tags: ["jaxws", "webservices"]
+blogger_comments:
+  - author: "Deezer"
+    date: 2016-02-08
+    html: "FYI - There is a bug open for this problem: https://java.net/jira/browse/JAX_WS-1161"
+  - author: "Deezer"
+    date: 2016-02-08
+    html: "Thanks for sharing this.<br /><br />Have you had any other discoveries regarding this, is it perhaps fixed in a newer version of jaxws-rt ?<br /><br />Do you have any suggested sample code for the caching that you suggest?<br /><br /><br />"
+---
+If you invoke WS using SEI through jaxws-rt, you might encounter an issue where your PERM space is filled with instances of com/sun/xml/ws/client/WSServiceDelegate$DelegatingLoader and you get a wonderful OutOfMemory PERMGEN error.
+
+<br/>
+Looking at the code in 
+<a href="http://grepcode.com/file/repo1.maven.org/maven2/com.sun.xml.ws/jaxws-rt/2.2.8/com/sun/xml/ws/client/WSServiceDelegate.java?av=f">http://grepcode.com/file/repo1.maven.org/maven2/com.sun.xml.ws/jaxws-rt/2.2.8/com/sun/xml/ws/client/WSServiceDelegate.java?av=f</a> we see that each invokation to createEndpointIFBaseProxy will instantiate a new DelegatingLoader(loader1, loader2); (which is an inner class).... createEndpointIFBaseProxy  is called for each getPort call...
+This inner class was not there in previous versions of the library.
+<br/><br/>
+
+So you might want to try an older version of the library ... or to apply some caching trick so as to avoid a getPort call for every WS invokation (if the WS is always the same, it seems to me that you don't need to go through all the work of creating a new Proxy for each call.... )
+
+
+

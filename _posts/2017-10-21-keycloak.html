@@ -1,0 +1,81 @@
+---
+layout: post
+title: "Keycloak"
+date: 2017-10-21T18:20:00.000+02:00
+permalink: /2017/10/keycloak.html
+blogger_id: "2758289986743919768"
+tags: ["keycloak"]
+---
+Sadly there is not even a wikipedia entry, apart this short section <a href="https://en.wikipedia.org/wiki/List_of_single_sign-on_implementations">https://en.wikipedia.org/wiki/List_of_single_sign-on_implementations</a> "Federated SSO (LDAP and Active Directory), standard protocols (OpenID Connect, OAuth 2.0 and SAML 2.0) for Web, clustering and single sign on"<br />
+<br />
+How to setup a Keycloak server:<br />
+<a href="http://blog.keycloak.org/2015/10/getting-started-with-keycloak.html">http://blog.keycloak.org/2015/10/getting-started-with-keycloak.html</a><br />
+<br />
+I have done the "Standalone installation" on Windows and it works without a glitch.<br />
+The official documentation is here <a href="http://www.keycloak.org/docs/latest/getting_started/index.html">http://www.keycloak.org/docs/latest/getting_started/index.html</a> - tidy and condensed.<br />
+<br />
+How to secure a REST application with the previously setup Keycloak server <br />
+<a href="http://blog.keycloak.org/2015/10/getting-started-with-keycloak-securing.html">http://blog.keycloak.org/2015/10/getting-started-with-keycloak-securing.html</a><br />
+<br />
+except that the link is broken and I got the repo from "git clone https://github.com/redhat-developer/redhat-sso-quickstarts.git" and cd redhat-sso-quickstarts and cd service-jee-jaxrs. Running mvn package now fails because of the missing keycloak.json file in the config folder.<br />
+<br />
+I follow the instructions here https://github.com/redhat-developer/redhat-sso-quickstarts/tree/7.0.x/service-jee-jaxrs  to create a config\keycloak.json file . Only after creating this file you can run mvn package and build the service.war.<br />
+<br />
+I start a standalone wildfly at 8080, do mvn install wildfly:deploy and I get Unknown authentication mechanism KEYCLOAK<br />
+<br />
+This because in my app the web.xml contains  &lt;login-config>&lt;auth-method>KEYCLOAK&lt;/auth-method>&lt;/login-config><br />
+If I change it to BASIC and redeploy, then hit http://localhost:8080/service/public  , it all works. But I need KEYCLOAK!<br />
+<br />
+<br />
+<br />
+<br />
+Here <a href="https://stackoverflow.com/questions/27253559/keycloak-unknown-authentication-mechanism">https://stackoverflow.com/questions/27253559/keycloak-unknown-authentication-mechanism</a> they explain how to configure Wildfly for KEYCLOAK.<br />
+<br />
+I download the client adapter for Wildfly <a href="http://www.keycloak.org/downloads.html">http://www.keycloak.org/downloads.html</a>, the file is keycloak-wildfly-adapter-dist-3.3.0.CR2.zip and I unzip it in the WLIDFLY_HOME folder, so as to merge it to the existing bin and modules folders. Then I run:<br />
+<br />
+jboss-cli.bat -c --file=adapter-install.cli<br />
+<br />
+<br />
+This adds<br />
+<br />
+<pre class="brush: xml">&lt;security-domain name=&quot;keycloak&quot;&gt;
+ &lt;authentication&gt;
+  &lt;login-module code=&quot;org.keycloak.adapters.jboss.KeycloakLoginModule&quot; flag=&quot;required&quot;/&gt;
+ &lt;/authentication&gt;
+&lt;/security-domain&gt;
+
+</pre><br />
+<br />
+but it still doesn't work, same error "Unknown authentication mechanism KEYCLOAK"...<br />
+<br />
+strange, in Wildfly console I can see Configuration: Subsystems    Subsystem: Security    Security Domain: keycloak<br />
+<br />
+However, I see the message "Extension module org.keycloak.keycloak-adapter-subsystem not found"... so I run also this<br />
+<br />
+jboss-cli.bat -c --file=adapter-install.cli<br />
+<br />
+and restart everything and it works!<br />
+<br />
+Some valuable KEYCLOAK tutorials:<br />
+<br />
+this one with some quick demo on how to secure webapps, nodejs etc applications:<br />
+<br />
+<iframe width="640" height="360" src="https://www.youtube.com/embed/RGp4HUKikts" frameborder="0" allowfullscreen></iframe><br />
+<br />
+<br />
+this one is quite professional on the overall features:<br />
+<br />
+<iframe width="640" height="360" src="https://www.youtube.com/embed/lUO4hjA6bME" frameborder="0" gesture="media" allowfullscreen></iframe><br />
+<br />
+<br />
+<br />
+Detailed configuration instructions here <a href="http://www.keycloak.org/docs/latest/getting_started/topics/secure-jboss-app/download-quickstarts.html">http://www.keycloak.org/docs/latest/getting_started/topics/secure-jboss-app/download-quickstarts.html</a><br />
+<br />
+Quickstarts available here <a href="https://github.com/keycloak/keycloak-quickstarts">https://github.com/keycloak/keycloak-quickstarts</a><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+

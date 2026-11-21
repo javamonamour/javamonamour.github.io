@@ -1,0 +1,29 @@
+---
+layout: post
+title: "Keycloak, cookies and principal"
+date: 2017-11-11T18:04:00.001+01:00
+permalink: /2017/11/keycloak-cookies-and-principal.html
+blogger_id: "513486518384404998"
+tags: ["keycloak"]
+---
+When you access a secured webapp, the first cookie to be created is a JSESSIONID <br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/c32b2ddb9fb998ac.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/f1a36288db9db51a.jpg" width="640" height="350" data-original-width="1081" data-original-height="592" /></a></div><br />
+/pvkeycloakdemo is my webapp root context<br />
+<br />
+When you access a protected resource, you get redirected to keycloak authentication server, and another 2 cookies appear: a OAuth_Token_Request_State (Path=/pvkeycloakdemo) and a AUTH_SESSION_ID (Path=/auth/realms/demo)<br />
+<br />
+After authenticating in Keycloak, I get a KC_RESTART, a KEYCLOAK_IDENTITY and a KEYCLOAK_SESSION (Path=/auth/realms/demo)<br />
+<br />
+KEYCLOAK_SESSION is a special one: it's the only one with a 12 hour expiration time (all others expire at end of session) and the value specifies the realm name : demo/34f600e7-bfd6-475c-9596-72491b9455fa/fa9c5c6b-5e70-43ce-aeb8-34b2188e3c7f (demo in this case)<br />
+<br />
+If you choose the option "remember me", you get also a cookie KEYCLOAK_REMEMBER_ME <br />
+<br />
+<br />
+<br />
+When you do a request.getPrincipal(), the java.security.Principal is a  org.keycloak.KeycloakPrincipal, and the principal Name is the ID that you see in the Keycloak console, not the Name:<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/9acfd5fad2746e4b.jpg" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/9de49bbcebe326e9.jpg" width="640" height="206" data-original-width="986" data-original-height="317" /></a></div><br />
+<br />
+

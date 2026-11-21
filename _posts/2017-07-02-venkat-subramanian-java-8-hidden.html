@@ -1,0 +1,177 @@
+---
+layout: post
+title: "Venkat Subramanian, Java 8 hidden treasures"
+date: 2017-07-02T11:09:00.000+02:00
+permalink: /2017/07/venkat-subramanian-java-8-hidden.html
+blogger_id: "6789001454691012571"
+tags: ["java8"]
+---
+<iframe width="854" height="480" src="https://www.youtube.com/embed/GphO9fWhlAg" frameborder="0" allowfullscreen></iframe>
+
+<br/><br/>
+
+Lot of examples on Collectors here <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html">https://docs.oracle.com/javase/8/docs/api/java/util/stream/Collectors.html</a>
+<br/><br/>
+
+<pre class="brush: java">
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class CSV {
+ public static void main(String[] args) {
+
+  List&lt;String> names = Arrays.asList("a", "b", "c");
+  System.out.println(names.stream().map(String::toUpperCase).collect(Collectors.toList()));
+  System.out.println(names.stream().map(String::toUpperCase).collect(Collectors.joining(",")));
+
+ }
+}
+
+
+</pre>
+
+<br/><br/>
+
+
+
+<pre class="brush: java">
+interface Util {
+ public static int numberOfCores() {
+  return Runtime.getRuntime().availableProcessors();
+ }
+}
+
+public class IFWithStaticMethod {
+ public static void main(String[] args) {
+  System.out.println(Util.numberOfCores());
+
+ }
+}
+</pre>
+
+<br/><br/>
+
+<pre class="brush: java">
+interface Fly {
+ default void takeoff() {
+  System.out.println("Fly:takeoff");
+  getState();
+ }
+
+ void getState();
+}
+
+public class IFDefault implements Fly {
+ public static void main(String[] args) {
+  IFDefault default1 = new IFDefault();
+  default1.takeoff();
+ }
+
+ @Override
+ public void getState() {
+  System.out.println("IFDefault:getState");
+
+ }
+
+}
+
+
+</pre>
+
+<br/><br/>
+
+<pre class="brush: java">
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Comparator;
+
+enum GENDER {
+ MALE, FEMALE
+}
+
+class Person {
+ @Override
+ public String toString() {
+  return "Person [name=" + name + ", gender=" + gender + ", age=" + age + "]";
+ }
+
+ public String getName() {
+  return name;
+ }
+
+ public void setName(String name) {
+  this.name = name;
+ }
+
+ public GENDER getGender() {
+  return gender;
+ }
+
+ public void setGender(GENDER gender) {
+  this.gender = gender;
+ }
+
+ public int getAge() {
+  return age;
+ }
+
+ public void setAge(int age) {
+  this.age = age;
+ }
+
+ String name;
+ GENDER gender;
+ int age;
+
+ public Person(String name, GENDER gender, int age) {
+  super();
+  this.name = name;
+  this.gender = gender;
+  this.age = age;
+ }
+
+}
+
+public class Sorting {
+ public static List&lt;Person> getPersons() {
+  return Arrays.asList(new Person("Sara", GENDER.FEMALE, 20), new Person("Sara", GENDER.FEMALE, 22),
+    new Person("Bob", GENDER.MALE, 20), new Person("Paula", GENDER.FEMALE, 32),
+    new Person("Paul", GENDER.MALE, 32), new Person("Jack", GENDER.MALE, 2),
+    new Person("Jack", GENDER.MALE, 72), new Person("Jill", GENDER.FEMALE, 12));
+ }
+ 
+ public static void main(String[] args) {
+  System.out.println(getPersons().stream().sorted(Comparator.comparing(Person::getName)).collect(Collectors.toList()));
+ }
+
+}
+
+
+</pre>
+
+
+
+<br/><br/>
+
+<pre class="brush: java">
+
+import java.util.function.Predicate;
+
+public class TestPredicate {
+ public static void main(String[] args) {
+  Predicate&lt;Integer> isOdd = (param) -> param % 2 == 0;
+  Predicate&lt;Integer> isOddAndGreaterThan5 = isOdd.and((param) -> param.intValue() > 5);
+  
+  System.out.println(isOdd.test(2));
+  System.out.println(isOdd.test(3));
+  System.out.println(isOddAndGreaterThan5.test(3));
+  System.out.println(isOdd.test(6));
+ }
+}
+
+
+
+</pre>

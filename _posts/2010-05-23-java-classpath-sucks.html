@@ -1,0 +1,38 @@
+---
+layout: post
+title: "Java Classpath Sucks"
+date: 2010-05-23T19:20:00.001+02:00
+permalink: /2010/05/java-classpath-sucks.html
+blogger_id: "4275443061930501214"
+tags: ["classpath"]
+---
+I am planning to develop this concept as I brood more over it... <br />
+Anyway here is my initial thought:<br />
+<br />
+As a developer, I am interested to develop and test code.<br />
+Anything else is a pain in the neck.<br />
+I HATE configuration work. It's boring, it's non-creative, it's conceptually very low level.<br />
+YET I find myself wasting HUMONGOUS amount of time troubleshooting configuration issues, ESPECIALLY bloody CLASSPATH issues.<br />
+<br />
+Classpath issues come mainly in 3 flavour:<br />
+<br />
+1A) the JAR containing the class&nbsp; is not available on your HD (go, download the right version, add the jar to your CLASSPATH)<br />
+or<br />
+1B) you have the JAR but it's not in your CLASSPATH (add it to the classpath)<br />
+<br />
+2) you have the JAR, but it's the wrong version - you will notice usually for some unexpected exception, you will google and hopefully you will find someone saying "if you use version N of library Y then you must use version M or library X...).... download the right version, remove the previous from the CLASSPATH and add the right one<br />
+<br />
+3) you have the same class in 2 different JARs, and of course the WRONG version of the class is in the JAR which appears first in the CLASSPATH.... this is a VERY nasty case, usually very hard to detect.<br />
+<br />
+Now, <b>Maven </b>has done a good job at organizing dependencies, BUT you must use Maven, and be very organized. <br />
+<br />
+So, why on earth the Java language doesn't contain some internal mechanisms to address these issues? Like, an internal Maven-like mechanisms which analyzes your code for dependencies, knows where to download the JAR and automatically does it for you and add it to your classpath?<br />
+Or, some expert system detecting the <b>known incompatibilities</b> and flagging them to you? Or, an automated way to <b>detect multiple instances</b> of the same class in the classpath?<br />
+<br />
+We still have a long way to go before the Java developer job is made hassle-free.... probably by then Java will be extinct and maintained only by some nostalgic old developer.<br />
+<br />
+Java founding fathers probably were aware that point 3 would be an issue, so they introduced the <b>JAR SEALING</b> feature.... which is basically never used by anybody and in any case addresses only some basic issues.<br />
+<br />
+In <b>Java 7</b> they will introduce <b>MODULES</b>, so a class can be accessed only by classes belonging to the same module. This adds a new&nbsp; dimension to the class versioning technology. A class is no longer GLOBAL, exposed via a CLASSPATH, but only LOCAL to a MODULE.<br />
+<br />
+Here <a href="http://www.slideshare.net/gal.marder/whats-expected-in-java-7-1116123">http://www.slideshare.net/gal.marder/whats-expected-in-java-7-1116123</a> a cool presentation on what is new in Java 7.

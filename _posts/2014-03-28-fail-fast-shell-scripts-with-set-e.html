@@ -1,0 +1,31 @@
+---
+layout: post
+title: "Fail fast shell scripts with set -e"
+date: 2014-03-28T21:49:00.000+01:00
+permalink: /2014/03/fail-fast-shell-scripts-with-set-e.html
+blogger_id: "1690420073476166853"
+tags: ["bash"]
+---
+Shell script number one:
+<br/>
+vi testsete.sh
+<br/>
+<pre>
+ls /pippo
+ls /pappo
+</pre>
+<br/>
+chmod 775 testsete.sh
+<br/>
+./testsete.sh<br/>
+<pre>
+ls: /pippo: No such file or directory
+ls: /puppo: No such file or directory
+</pre>
+
+now let's insert a "set -e" at the top of the script, and run again:
+<pre>
+ls: /pippo: No such file or directory
+</pre>
+<br/>
+See? Listing an nonexistent directory returns a non-zero error code, and this makes the script fail immediately, no need for boring explicit testing of the exit code of each command.... I only wish there was an error handler to print a nice error message.... I guess 100 years from now bash will evolve to something decent, for the time being be happy with the horrible crap it is.

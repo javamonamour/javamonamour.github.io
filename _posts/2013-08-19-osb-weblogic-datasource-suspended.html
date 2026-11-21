@@ -1,0 +1,26 @@
+---
+layout: post
+title: "OSB : weblogic datasource suspended"
+date: 2013-08-19T11:39:00.001+02:00
+permalink: /2013/08/osb-weblogic-datasource-suspended.html
+blogger_id: "7913690148586191026"
+tags: ["jms", "OSB"]
+---
+This is the overall story: several JMS Proxy Services (MDB) use a certain DS (datasource). Each of these Proxy has 16 MDB created by OSB. 
+<br/>
+To avoid overloading the DB with too many concurrent requests we sized the Connection Pool (CP) of this DS to 25. Evidently if there is a burst of activity (JMS) on 2 different Proxy Services, the DS will be overloaded and eventually we shall get a 
+<br/><br/>
+weblogic.jdbc.extensions.PoolDisabledSQLException: weblogic.common.resourcepool.ResourceDisabledException: Pool BLA is Suspended, cannot allocate resources to applications...
+<br/>
+
+<br/>
+http://egherardini.wordpress.com/2011/04/27/oracle-soa-suite-11g-datasource-has-been-suspended/
+<br/>
+select count(*) from v$process;<br/>
+select count(*) from v$session;<br/>
+select * from v$parameter where name in ('sessions','processes','transactions');<br/>
+
+<br/><br/>
+
+The only effective workaround I see is associating the same WorkManager with a Max Threads Constraint of 25 to ALL JMS Proxy Services.
+

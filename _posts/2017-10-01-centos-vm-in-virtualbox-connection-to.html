@@ -1,0 +1,35 @@
+---
+layout: post
+title: "CentOS VM in VirtualBox connection to Internet"
+date: 2017-10-01T10:43:00.000+02:00
+permalink: /2017/10/centos-vm-in-virtualbox-connection-to.html
+blogger_id: "5941298521583209240"
+tags: ["virtualbox"]
+---
+Panic, my new CentOS VM was unable to connect to internet, no clue what I had done wrong.<br />
+<br />
+Eventually this post gave me the solution <a href="https://superuser.com/a/1053605/95314">https://superuser.com/a/1053605/95314</a><br />
+<br />
+<br />
+This is how the Network section is setup (pardon my German)<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/e27636bd704c1ce0.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" data-original-height="498" data-original-width="781" height="408" src="/images/ea75c23ada4a01e2.png" width="640" /></a></div><br />
+<br />
+sudo vi /etc/sysconfig/network-scripts/ifcfg-enp0s3<br />
+<br />
+I am adding<br />
+<br />
+DNS1=8.8.8.8<br />
+DNS2=8.8.4.4<br />
+<br />
+and changing this to yes<br />
+<br />
+ONBOOT=yes <br />
+<br />
+<br />
+<br />
+and "sudo reboot now"<br />
+<br />
+Now I can happily ping google.com<br />
+<br />
+

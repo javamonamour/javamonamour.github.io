@@ -1,0 +1,45 @@
+---
+layout: post
+title: "Poor man's wget for Windows"
+date: 2017-01-10T19:42:00.000+01:00
+permalink: /2017/01/poor-mans-wget-for-windows.html
+blogger_id: "7764968721034008366"
+tags: ["windows", "windowssucks"]
+---
+Windows not only is an awfully stinking mastodon, but it even lacks the most basic tools commonly available on Linux, such as telnet and wget.
+<br/><br/>
+I have <a href="http://alvinalexander.com/blog/post/java/jget-something-like-wget">found a bare bones wget implementation for Java </a>and duly simplified (I love to strip away all useless exception handling)
+<br/><br/>
+<pre class="brush: java">
+import java.io.InputStream;
+import java.io.DataInputStream;
+import java.io.BufferedInputStream;
+import java.net.*;
+
+public class JGet {
+    public static void main(String[] args) throws Exception {
+        if ((args.length != 1)) {
+           System.err.println("\nUsage: java JGet [urlToGet]");
+           System.exit(1);
+        }
+        String url = args[0];
+        URL u;
+        InputStream is = null;
+        DataInputStream dis;
+        String s;
+        try {
+           u = new URL(url);
+           is = u.openStream();
+           dis = new DataInputStream(new BufferedInputStream(is));
+           while ((s = dis.readLine()) != null) {
+               System.out.println(s);
+           }
+        } finally {
+           is.close();
+        }
+    }
+}
+</pre>
+<br/><br/>
+All the credits to Alexander.
+

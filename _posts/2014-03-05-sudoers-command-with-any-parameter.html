@@ -1,0 +1,33 @@
+---
+layout: post
+title: "sudoers command with any parameter"
+date: 2014-03-05T13:29:00.002+01:00
+permalink: /2014/03/sudoers-command-with-any-parameter.html
+blogger_id: "2727416167780072335"
+tags: ["sudo"]
+---
+my /etc/sudoers file was configured with
+<br/>
+<i>%users  ALL=NOPASSWD:   /usr/local/bin/puppet agent -t</i>
+<br/>
+
+but then I was not allowed to run
+<br/>
+sudo puppet agent -tv
+<br/>
+and I get a
+<br/>
+<i>Sorry, user soa is not allowed to execute '/usr/local/bin/puppet agent -tv' as root on osb-vagrant.acme.com.</i>
+
+<br/>
+
+A good workaround is to use regexp:
+
+<br/><br/>
+
+<i>%users  ALL=NOPASSWD:   /usr/local/bin/puppet agent -[a-z]*</i>
+
+<br/><br/>
+
+
+

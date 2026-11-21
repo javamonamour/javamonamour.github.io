@@ -1,0 +1,40 @@
+---
+layout: post
+title: "Sample log4j.xml"
+date: 2010-09-12T11:25:00.009+02:00
+permalink: /2010/09/sample-log4jxml.html
+blogger_id: "1219586469399251771"
+tags: ["log4j.xml"]
+---
+As usual, you never find things when you need them, so better have a sample log4j.xml at hand<br />
+<br />
+<br />
+<pre name="code" class="brush: xml">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE log4j:configuration SYSTEM "log4j.dtd"&gt;
+&lt;log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'&gt;
+ &lt;appender name="CA" class="org.apache.log4j.ConsoleAppender"&gt;
+  &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+   &lt;param name="ConversionPattern" value="%-4r [%t] %-5p %c %x - %m%n" /&gt;
+  &lt;/layout&gt;
+ &lt;/appender&gt;
+ &lt;appender name="FILE" class="org.apache.log4j.RollingFileAppender"&gt;
+  &lt;param name="File" value="c:/temp/log4jlog.log" /&gt;
+  &lt;param name="MaxFileSize" value="10MB" /&gt;
+  &lt;param name="MaxBackupIndex" value="3" /&gt;
+  &lt;param name="Threshold" value="DEBUG" /&gt;
+  &lt;layout class="org.apache.log4j.PatternLayout"&gt;
+   &lt;param name="ConversionPattern" value="%-4r [%t] %-5p %c %x - %m%n" /&gt;
+  &lt;/layout&gt;
+ &lt;/appender&gt;
+ &lt;logger name="com.acme.osb" additivity="false"&gt;
+  &lt;level value="DEBUG"/&gt;
+  &lt;appender-ref ref="FILE"/&gt;
+ &lt;/logger&gt;
+
+ &lt;root&gt;
+  &lt;level value="WARN" /&gt;
+  &lt;appender-ref ref="CA" /&gt;
+ &lt;/root&gt;
+&lt;/log4j:configuration&gt;
+
+</pre>

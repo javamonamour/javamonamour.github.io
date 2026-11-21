@@ -1,0 +1,169 @@
+---
+layout: post
+title: "Nexus HTTP/1.1 407 Proxy Authentication Required"
+date: 2018-09-03T13:58:00.001+02:00
+permalink: /2018/09/nexus-http11-407-proxy-authentication.html
+blogger_id: "1269706273385609342"
+tags: ["nexus"]
+---
+While trying to connect to https://repo.typesafe.com/typesafe/ivy-releases/ and https://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/  over a corporate proxy with these 2 sites whitelisted, we keep getting:<br />
+<br />
+<br />
+org.sonatype.nexus.repository.maven.internal.proxy.MavenProxyFacet - Exception org.sonatype.nexus.repository.proxy.ProxyServiceException: HTTP/1.1 407 Proxy Authentication Required checking remote for update, proxy repo ivyreleases_proxy failed to fetch com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/ivys/ivy.xml with status line HTTP/1.1 407 Proxy Authentication Required, content not in cache.<br />
+<br />
+<br />
+<br />
+If you enable ROOT logging at DEBUG (menu Support/Logging in Nexus console) you will see that a redirect is taking place, but the LAZY Nexus developer only logs the message and not the additional ESSENTIAL parameters to understand what is going on <a href="https://github.com/sonatype/nexus-public/blob/master/components/nexus-repository/src/main/java/org/sonatype/nexus/repository/proxy/ProxyFacetSupport.java">https://github.com/sonatype/nexus-public/blob/master/components/nexus-repository/src/main/java/org/sonatype/nexus/repository/proxy/ProxyFacetSupport.java</a>, that is a redirection to https://dl.bintray.com <br />
+<br />
+<pre class="brush: java">2018-09-03 13:11:48,044+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.repository.maven.internal.proxy.MavenProxyFacet - Fetching: GET https://repo.typesafe.com/typesafe/ivy-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/ivys/ivy.xml HTTP/1.1
+2018-09-03 13:11:48,046+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.httpclient.outbound - https://repo.typesafe.com/typesafe/ivy-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/ivys/ivy.xml > GET /typesafe/ivy-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/ivys/ivy.xml HTTP/1.1
+2018-09-03 13:11:48,046+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.internal.httpclient.SharedHttpClientConnectionManager - Connection request: [route: {tls}->http://ourproxyserver:8080->https://repo.typesafe.com:443][total kept alive: 0; route allocated: 0 of 20; total allocated: 0 of 200]
+2018-09-03 13:11:48,046+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.internal.httpclient.SharedHttpClientConnectionManager - Connection leased: [id: 478][route: {tls}->http://ourproxyserver:8080->https://repo.typesafe.com:443][total kept alive: 0; route allocated: 1 of 20; total allocated: 1 of 200]
+2018-09-03 13:11:48,448+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.httpclient.outbound - https://repo.typesafe.com/typesafe/ivy-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/ivys/ivy.xml < HTTP/1.1 302 Moved Temporarily @ 402.5 ms
+2018-09-03 13:11:48,448+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.internal.httpclient.SharedHttpClientConnectionManager - Connection [id: 478][route: {tls}->http://ourproxyserver:8080->https://repo.typesafe.com:443] can be kept alive for 30.0 seconds
+2018-09-03 13:11:48,449+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.internal.httpclient.SharedHttpClientConnectionManager - Connection released: [id: 478][route: {tls}->http://ourproxyserver:8080->https://repo.typesafe.com:443][total kept alive: 1; route allocated: 1 of 20; total allocated: 1 of 200]
+2018-09-03 13:11:48,449+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.httpclient.outbound - https://dl.bintray.com/typesafe/ivy-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/ivys/ivy.xml > GET /typesafe/ivy-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/ivys/ivy.xml HTTP/1.1
+2018-09-03 13:11:48,449+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.internal.httpclient.SharedHttpClientConnectionManager - Connection request: [route: {tls}->http://ourproxyserver:8080->https://dl.bintray.com:443][total kept alive: 1; route allocated: 0 of 20; total allocated: 1 of 200]
+2018-09-03 13:11:48,449+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.internal.httpclient.SharedHttpClientConnectionManager - Connection leased: [id: 479][route: {tls}->http://ourproxyserver:8080->https://dl.bintray.com:443][total kept alive: 1; route allocated: 1 of 20; total allocated: 2 of 200]
+2018-09-03 13:11:48,466+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.internal.httpclient.SharedHttpClientConnectionManager - Connection released: [id: 479][route: {tls}->http://ourproxyserver:8080->https://dl.bintray.com:443][total kept alive: 1; route allocated: 0 of 20; total allocated: 1 of 200]
+2018-09-03 13:11:48,466+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.httpclient.outbound - https://dl.bintray.com/typesafe/ivy-releases/com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/ivys/ivy.xml < HTTP/1.1 407 Proxy Authentication Required @ 17.12 ms
+2018-09-03 13:11:48,466+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.repository.maven.internal.proxy.MavenProxyFacet - Response: HttpResponseProxy{HTTP/1.1 407 Proxy Authentication Required [Proxy-Authenticate: NTLM, Cache-Control: no-cache, Pragma: no-cache, Content-Type: text/html; charset=utf-8, Proxy-Connection: close, Connection: close, Content-Length: 850] org.apache.http.entity.BufferedHttpEntity@3326370a}
+2018-09-03 13:11:48,466+0200 DEBUG [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.repository.maven.internal.proxy.MavenProxyFacet - Status: HTTP/1.1 407 Proxy Authentication Required
+2018-09-03 13:11:48,467+0200 WARN  [qtp46263989-6144]  *UNKNOWN org.sonatype.nexus.repository.maven.internal.proxy.MavenProxyFacet - Exception org.sonatype.nexus.repository.proxy.ProxyServiceException: HTTP/1.1 407 Proxy Authentication Required checking remote for update, proxy repo ivyreleases_proxy failed to fetch com.typesafe.sbt/sbt-native-packager/scala_2.12/sbt_1.0/1.3.4/ivys/ivy.xml with status line HTTP/1.1 407 Proxy Authentication Required, content not in cache.
+org.sonatype.nexus.repository.proxy.ProxyServiceException: HTTP/1.1 407 Proxy Authentication Required
+ at org.sonatype.nexus.repository.proxy.ProxyFacetSupport.mayThrowProxyServiceException(ProxyFacetSupport.java:426)
+ at org.sonatype.nexus.repository.proxy.ProxyFacetSupport.fetch(ProxyFacetSupport.java:400)
+ at org.sonatype.nexus.repository.proxy.ProxyFacetSupport.fetch(ProxyFacetSupport.java:346)
+ at org.sonatype.nexus.repository.maven.internal.proxy.MavenProxyFacet.fetch(MavenProxyFacet.java:73)
+ at org.sonatype.nexus.repository.proxy.ProxyFacetSupport.doGet(ProxyFacetSupport.java:220)
+ at org.sonatype.nexus.repository.proxy.ProxyFacetSupport.lambda$1(ProxyFacetSupport.java:209)
+ at org.sonatype.nexus.repository.proxy.ProxyFacetSupport$$Lambda$269/1592429552.call(Unknown Source)
+ at org.sonatype.nexus.repository.proxy.Cooperation$CooperatingFuture.download(Cooperation.java:262)
+ at org.sonatype.nexus.repository.proxy.Cooperation.download(Cooperation.java:194)
+ at org.sonatype.nexus.repository.proxy.Cooperation.cooperate(Cooperation.java:93)
+ at org.sonatype.nexus.repository.proxy.ProxyFacetSupport.get(ProxyFacetSupport.java:201)
+ at org.sonatype.nexus.repository.proxy.ProxyHandler.handle(ProxyHandler.java:49)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.storage.UnitOfWorkHandler.handle(UnitOfWorkHandler.java:39)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.view.handlers.ContentHeadersHandler.handle(ContentHeadersHandler.java:44)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.maven.internal.VersionPolicyHandler.handle(VersionPolicyHandler.java:61)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.http.PartialFetchHandler.handle(PartialFetchHandler.java:55)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.cache.NegativeCacheHandler.handle(NegativeCacheHandler.java:42)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.view.handlers.ConditionalRequestHandler.handle(ConditionalRequestHandler.java:72)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.assetdownloadcount.internal.AssetDownloadCountContributedHandler.handle(AssetDownloadCountContributedHandler.java:53)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at com.sonatype.nexus.clm.internal.QuarantineContributedHandler.handle(QuarantineContributedHandler.java:68)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at com.sonatype.nexus.usertoken.plugin.internal.UserTokenHandler.handle(UserTokenHandler.java:70)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.view.handlers.HandlerContributor.handle(HandlerContributor.java:67)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.view.handlers.ExceptionHandler.handle(ExceptionHandler.java:44)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.security.SecurityHandler.handle(SecurityHandler.java:52)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.view.handlers.TimingHandler.handle(TimingHandler.java:46)
+ at org.sonatype.nexus.repository.view.Context.proceed(Context.java:80)
+ at org.sonatype.nexus.repository.view.Context.start(Context.java:114)
+ at org.sonatype.nexus.repository.view.Router.dispatch(Router.java:64)
+ at org.sonatype.nexus.repository.view.ConfigurableViewFacet.dispatch(ConfigurableViewFacet.java:52)
+ at org.sonatype.nexus.repository.view.ConfigurableViewFacet.dispatch(ConfigurableViewFacet.java:43)
+ at org.sonatype.nexus.repository.httpbridge.internal.ViewServlet.dispatchAndSend(ViewServlet.java:211)
+ at org.sonatype.nexus.repository.httpbridge.internal.ViewServlet.doService(ViewServlet.java:173)
+ at org.sonatype.nexus.repository.httpbridge.internal.ViewServlet.service(ViewServlet.java:126)
+ at javax.servlet.http.HttpServlet.service(HttpServlet.java:790)
+ at com.google.inject.servlet.ServletDefinition.doServiceImpl(ServletDefinition.java:286)
+ at com.google.inject.servlet.ServletDefinition.doService(ServletDefinition.java:276)
+ at com.google.inject.servlet.ServletDefinition.service(ServletDefinition.java:181)
+ at com.google.inject.servlet.DynamicServletPipeline.service(DynamicServletPipeline.java:71)
+ at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:85)
+ at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:112)
+ at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)
+ at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:61)
+ at org.apache.shiro.web.servlet.AdviceFilter.executeChain(AdviceFilter.java:108)
+ at org.apache.shiro.web.servlet.AdviceFilter.doFilterInternal(AdviceFilter.java:137)
+ at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)
+ at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:66)
+ at org.apache.shiro.web.servlet.AdviceFilter.executeChain(AdviceFilter.java:108)
+ at org.apache.shiro.web.servlet.AdviceFilter.doFilterInternal(AdviceFilter.java:137)
+ at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)
+ at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:66)
+ at org.apache.shiro.web.servlet.AdviceFilter.executeChain(AdviceFilter.java:108)
+ at org.apache.shiro.web.servlet.AdviceFilter.doFilterInternal(AdviceFilter.java:137)
+ at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)
+ at org.apache.shiro.web.servlet.ProxiedFilterChain.doFilter(ProxiedFilterChain.java:66)
+ at org.apache.shiro.web.servlet.AbstractShiroFilter.executeChain(AbstractShiroFilter.java:449)
+ at org.sonatype.nexus.security.SecurityFilter.executeChain(SecurityFilter.java:85)
+ at org.apache.shiro.web.servlet.AbstractShiroFilter$1.call(AbstractShiroFilter.java:365)
+ at org.apache.shiro.subject.support.SubjectCallable.doCall(SubjectCallable.java:90)
+ at org.apache.shiro.subject.support.SubjectCallable.call(SubjectCallable.java:83)
+ at org.apache.shiro.subject.support.DelegatingSubject.execute(DelegatingSubject.java:383)
+ at org.apache.shiro.web.servlet.AbstractShiroFilter.doFilterInternal(AbstractShiroFilter.java:362)
+ at org.sonatype.nexus.security.SecurityFilter.doFilterInternal(SecurityFilter.java:101)
+ at org.apache.shiro.web.servlet.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:125)
+ at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)
+ at org.sonatype.nexus.repository.httpbridge.internal.ExhaustRequestFilter.doFilter(ExhaustRequestFilter.java:71)
+ at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)
+ at com.sonatype.nexus.licensing.internal.LicensingRedirectFilter.doFilter(LicensingRedirectFilter.java:108)
+ at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)
+ at com.codahale.metrics.servlet.AbstractInstrumentedFilter.doFilter(AbstractInstrumentedFilter.java:97)
+ at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)
+ at org.sonatype.nexus.internal.web.ErrorPageFilter.doFilter(ErrorPageFilter.java:68)
+ at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)
+ at org.sonatype.nexus.internal.web.EnvironmentFilter.doFilter(EnvironmentFilter.java:102)
+ at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)
+ at org.sonatype.nexus.internal.web.HeaderPatternFilter.doFilter(HeaderPatternFilter.java:98)
+ at com.google.inject.servlet.FilterChainInvocation.doFilter(FilterChainInvocation.java:82)
+ at com.google.inject.servlet.DynamicFilterPipeline.dispatch(DynamicFilterPipeline.java:104)
+ at com.google.inject.servlet.GuiceFilter.doFilter(GuiceFilter.java:135)
+ at org.sonatype.nexus.bootstrap.osgi.DelegatingFilter.doFilter(DelegatingFilter.java:73)
+ at org.eclipse.jetty.servlet.ServletHandler$CachedChain.doFilter(ServletHandler.java:1629)
+ at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:533)
+ at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:143)
+ at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:548)
+ at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+ at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:190)
+ at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1595)
+ at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:188)
+ at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1253)
+ at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:168)
+ at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:473)
+ at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1564)
+ at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:166)
+ at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1155)
+ at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:141)
+ at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+ at com.codahale.metrics.jetty9.InstrumentedHandler.handle(InstrumentedHandler.java:175)
+ at org.eclipse.jetty.server.handler.HandlerCollection.handle(HandlerCollection.java:126)
+ at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+ at org.eclipse.jetty.server.Server.handle(Server.java:530)
+ at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:347)
+ at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:256)
+ at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:279)
+ at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:102)
+ at org.eclipse.jetty.io.ChannelEndPoint$2.run(ChannelEndPoint.java:124)
+ at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:247)
+ at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.produce(EatWhatYouKill.java:140)
+ at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:131)
+ at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:382)
+ at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:708)
+ at org.eclipse.jetty.util.thread.QueuedThreadPool$2.run(QueuedThreadPool.java:626)
+ at java.lang.Thread.run(Thread.java:745)
+
+
+</pre>
+<br />
+<br />
+<br />
+For pypi.org , you might need to whitelist also https://files.pythonhosted.org:443<br />
+<br />
+<br />
+<br />
+<br />
+

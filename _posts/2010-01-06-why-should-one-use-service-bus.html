@@ -1,0 +1,40 @@
+---
+layout: post
+title: "Why should one use a Service Bus"
+date: 2010-01-06T17:04:00.000+01:00
+permalink: /2010/01/why-should-one-use-service-bus.html
+blogger_id: "3912929553021612770"
+---
+This is a question often asked in interviews.<br />
+Here is a standard short-and-sweet answer:<br />
+<br />
+- standardizing service interfaces<br />
+- switching protocols (eg turning an EJB into a WS)<br />
+- message transformation<br />
+- message routing and/or<br />
+- service orchestration = buzzword for "deciding what goes where and in which sequence"<br />
+- security<br />
+- failover and load balancing <br />
+- monitoring (performance, audit, errors)<br />
+<br />
+advantages:<br />
+- decoupling<br />
+- interface simplification<br />
+- service reusability<br />
+<br />
+Supported transports:<br />
+HTTP(S), JMS, FTP, File, and E-mail<br />
+<br />
+The message context contains: $header, $body, and $attachments<br />
+<br />
+Communication types:<br />
+<ul><li>Synchronous request/response</li>
+<li>Asynchronous publish one-one</li>
+<li>Asynchronous publish one-many</li>
+<li>Asynchronous request/response (synchronous-to-asynchronous bridging)</li>
+</ul>These Transport Providers are available:<br />
+SFTP, Email, File, MQ, EJB, Tuxedo, SB, WS, JPD, FLOW, BPEL 10g, JCA, ALDSP<br />
+<br />
+<br />
+<br />
+<ul></ul>

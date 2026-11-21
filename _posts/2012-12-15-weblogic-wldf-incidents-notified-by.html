@@ -1,0 +1,186 @@
+---
+layout: post
+title: "WebLogic WLDF incidents notified by email"
+date: 2012-12-15T08:56:00.002+01:00
+permalink: /2012/12/weblogic-wldf-incidents-notified-by.html
+blogger_id: "3548530602094952382"
+tags: ["weblogic", "WLDF"]
+---
+Open WebLogic console
+
+<br /><br />
+
+Services / Mail Sessions / new Mail Sessions
+
+<br /><br />
+
+MailSessionAdmin : JavaMail Properties: mail.smtp.host=smtp.acme.com
+<br /><br />
+
+<a href="http://docs.oracle.com/cd/E25178_01/apirefs.1111/e13952/taskhelp/mail/CreateMailSessions.html">here the full list of the JavaMail Properties</a> 
+<br /><br />
+<br />
+
+Diagnostic Modules - Module-FMWDFW - Watches and Notifications - Notifications - FMWDFWNotification; Type = SMTP (E-Mail)  
+
+<br /><br />
+
+SMTP Properties ; Mail Session Name = MailSessionAdmin 
+<br /><br />
+
+E-Mail Recipients = pvernetto@gmail.com
+
+<br /><br />
+
+To test, prepare a exceptionGenerator.jsp containing:
+
+<br /><br />
+
+&lt;%
+
+ throw new NullPointerException("hello");
+
+%>
+
+<br />
+
+
+Deploy the JSP in a TestWebApp war to the WLS, 
+
+<br />
+http://myserver.acme.com:7001/TestWebApp/exceptionGenerator.jsp
+<br />
+
+you should get this:
+
+<br />
+<pre>
+
+ at weblogic.servlet.jsp.JspBase.service(JspBase.java:34)
+ at
+ weblogic.servlet.internal.StubSecurityHelper$ServletServiceAction.run(StubSecurityHelper.java:227)
+
+ at
+ weblogic.servlet.internal.StubSecurityHelper.invokeServlet(StubSecurityHelper.java:125)
+
+ at
+ weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:300)
+
+ at
+ weblogic.servlet.internal.ServletStubImpl.onAddToMapException(ServletStubImpl.java:416)
+
+ at
+ weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:326)
+
+ at weblogic.servlet.internal.TailFilter.doFilter(TailFilter.java:26)
+ at
+ weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+
+ at oracle.security.jps.ee.http.JpsAbsFilter$1.run(JpsAbsFilter.java:111)
+
+ at java.security.AccessController.doPrivileged(Native Method)
+ at
+ oracle.security.jps.util.JpsSubject.doAsPrivileged(JpsSubject.java:313)
+ at
+ oracle.security.jps.ee.util.JpsPlatformUtil.runJaasMode(JpsPlatformUtil.java:413)
+
+ at
+ oracle.security.jps.ee.http.JpsAbsFilter.runJaasMode(JpsAbsFilter.java:94)
+
+ at
+ oracle.security.jps.ee.http.JpsAbsFilter.doFilter(JpsAbsFilter.java:161)
+
+ at oracle.security.jps.ee.http.JpsFilter.doFilter(JpsFilter.java:71)
+ at
+ weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+
+ at oracle.dms.servlet.DMSServletFilter.doFilter(DMSServletFilter.java:136)
+
+ at
+ weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+
+ at
+ weblogic.servlet.internal.WebAppServletContext$ServletInvocationAction.wrapRun(WebAppServletContext.java:3715)
+
+ at
+ weblogic.servlet.internal.WebAppServletContext$ServletInvocationAction.run(WebAppServletContext.java:3681)
+
+ at
+ weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:321)
+
+ at
+ weblogic.security.service.SecurityManager.runAs(SecurityManager.java:120)
+
+ at
+ weblogic.servlet.internal.WebAppServletContext.securedExecute(WebAppServletContext.java:2277)
+
+ at
+ weblogic.servlet.internal.WebAppServletContext.execute(WebAppServletContext.java:2183)
+
+ at
+ weblogic.servlet.internal.ServletRequestImpl.run(ServletRequestImpl.java:1454)
+
+ at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+ at
+ weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+ SUBSYSTEM = HTTP
+ USERID = <WLS Kernel> SEVERITY = Error THREAD = [ACTIVE] ExecuteThread: '3'
+ for queue: 'weblogic.kernel.Default (self-tuning)' MSGID = BEA-101020  MACHINE = myserver TXID =  CONTEXTID =
+ 11d1def534ea1be0:65fd0c39:13b9bd510e7:-8000-00000000000001f7 TIMESTAMP =
+ 1355556858627
+WatchAlarmType: AutomaticReset
+WatchAlarmResetPeriod:
+ 30000
+SMTPNotificationName: FMWDFWNotification
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+
+WatchTime: Dec 15, 2012 8:34:18 AM CET
+WatchDomainName: osbpl1do
+WatchServerName: osbpl1as
+WatchSeverityLevel: Notice
+WatchName: UncheckedException
+WatchRuleType: Log
+WatchRule: (SEVERITY = 'Error') AND ((MSGID = 'WL-101020') OR (MSGID = 'WL-101017') OR (MSGID = 'WL-000802') OR (MSGID = 'BEA-101020') OR (MSGID = 'BEA-101017') OR (MSGID = 'BEA-000802'))
+WatchData: DATE = Dec 15, 2012 8:34:18 AM CET SERVER = osbpl1as MESSAGE = [ServletContext@453292093[app:TestWebApp module:TestWebApp.war path:/TestWebApp spec-version:2.5]] Servlet failed with Exception
+java.lang.NullPointerException: hello
+ at jsp_servlet.__exceptiongenerator._jspService(__exceptiongenerator.java:71)
+ at weblogic.servlet.jsp.JspBase.service(JspBase.java:34)
+ at weblogic.servlet.internal.StubSecurityHelper$ServletServiceAction.run(StubSecurityHelper.java:227)
+ at weblogic.servlet.internal.StubSecurityHelper.invokeServlet(StubSecurityHelper.java:125)
+ at weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:300)
+ at weblogic.servlet.internal.ServletStubImpl.onAddToMapException(ServletStubImpl.java:416)
+ at weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:326)
+ at weblogic.servlet.internal.TailFilter.doFilter(TailFilter.java:26)
+ at weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+ at oracle.security.jps.ee.http.JpsAbsFilter$1.run(JpsAbsFilter.java:111)
+ at java.security.AccessController.doPrivileged(Native Method)
+ at oracle.security.jps.util.JpsSubject.doAsPrivileged(JpsSubject.java:313)
+ at oracle.security.jps.ee.util.JpsPlatformUtil.runJaasMode(JpsPlatformUtil.java:413)
+ at oracle.security.jps.ee.http.JpsAbsFilter.runJaasMode(JpsAbsFilter.java:94)
+ at oracle.security.jps.ee.http.JpsAbsFilter.doFilter(JpsAbsFilter.java:161)
+ at oracle.security.jps.ee.http.JpsFilter.doFilter(JpsFilter.java:71)
+ at weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+ at oracle.dms.servlet.DMSServletFilter.doFilter(DMSServletFilter.java:136)
+ at weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+ at weblogic.servlet.internal.WebAppServletContext$ServletInvocationAction.wrapRun(WebAppServletContext.java:3715)
+ at weblogic.servlet.internal.WebAppServletContext$ServletInvocationAction.run(WebAppServletContext.java:3681)
+ at weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:321)
+ at weblogic.security.service.SecurityManager.runAs(SecurityManager.java:120)
+ at weblogic.servlet.internal.WebAppServletContext.securedExecute(WebAppServletContext.java:2277)
+ at weblogic.servlet.internal.WebAppServletContext.execute(WebAppServletContext.java:2183)
+ at weblogic.servlet.internal.ServletRequestImpl.run(ServletRequestImpl.java:1454)
+ at weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+ at weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+ SUBSYSTEM = HTTP USERID = <WLS Kernel> SEVERITY = Error THREAD = [ACTIVE] ExecuteThread: '3' for queue: 'weblogic.kernel.Default (self-tuning)' MSGID = BEA-101020 MACHINE = myserver TXID =  CONTEXTID = 11d1def534ea1be0:65fd0c39:13b9bd510e7:-8000-00000000000001f7 TIMESTAMP = 1355556858627
+WatchAlarmType: AutomaticReset
+WatchAlarmResetPeriod: 30000
+SMTPNotificationName: FMWDFWNotification 
+
+
+
+</pre>
+
+<br /><br />
+

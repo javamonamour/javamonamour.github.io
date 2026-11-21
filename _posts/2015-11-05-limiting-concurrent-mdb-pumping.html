@@ -1,0 +1,18 @@
+---
+layout: post
+title: "Limiting concurrent MDB pumping messages from a JMS (or MQ) queue (throttle)"
+date: 2015-11-05T13:52:00.002+01:00
+permalink: /2015/11/limiting-concurrent-mdb-pumping.html
+blogger_id: "393609307937767140"
+tags: ["max-threads-constraint", "mdb", "throttle"]
+---
+you can use work managers with max-threads-constraint, or max-beans-in-free-pool : this is the ultimate source of truth... remember that by default you have only 16 concurrent beans registered as consumers on a queue:
+
+<br/><br/>
+
+<a href="https://docs.oracle.com/cd/E24329_01/web.1211/e24390/mdbtuning.htm#PERFM274">https://docs.oracle.com/cd/E24329_01/web.1211/e24390/mdbtuning.htm#PERFM274</a>
+
+<br/><br/>
+
+
+

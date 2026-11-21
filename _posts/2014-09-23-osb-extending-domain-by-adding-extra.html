@@ -1,0 +1,26 @@
+---
+layout: post
+title: "OSB: extending a domain by adding extra Managed Servers"
+date: 2014-09-23T13:51:00.003+02:00
+permalink: /2014/09/osb-extending-domain-by-adding-extra.html
+blogger_id: "521688030458755861"
+tags: ["OSB", "weblogic"]
+---
+See Oracle document "WLST Script to Add a Managed Server to an Existing OSB Cluster (Doc ID 1450865.1)", the provide you a WLST script extendOSBDomain.py to do the job.
+<br/><br/>
+
+The script must:
+<br/><br/>
+<ul>
+<li>Create the new MS and set its listen-address and port etc etc</li>
+<li>Alter the cluster to add the new MS to the cluster address</li>
+<li>Create the JMS resources ["FileStore", "WseeFileStore"] (filestore, Jmsserver), creating also the $DOMAIN_HOME/WseeFileStore_auto_* etc folders, the JMS module and queues ["wli.reporting.jmsprovider.queue", "wli.reporting.jmsprovider_error.queue", "wlsb.internal.transport.task.queue.email", "wlsb.internal.transport.task.queue.file", "wlsb.internal.transport.task.queue.ftp", "wlsb.internal.transport.task.queue.sftp","QueueIn"]</li>
+<li>create a SAF agent</li>
+</ul>
+
+<br/><br/>
+So, on the whole, the job is not as simple as "clone an existing MS". incidentally, cloning doesn't reproduce exactly all settings of the original MS, for instance, log properties like "RotateLogOnStartup" and "limit number and size" are NOT copied, nor are logfilters (and forget about filestores, JMS resources etc).
+
+<br/><br/>
+<a href="http://docs.oracle.com/cd/E29542_01/core.1111/e10106/ha_soa.htm#ASHIA5789">See also this doc about scaling up</a>.
+

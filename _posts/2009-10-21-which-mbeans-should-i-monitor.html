@@ -1,0 +1,9 @@
+---
+layout: post
+title: "Which MBeans should I monitor?"
+date: 2009-10-21T17:42:00.000+02:00
+permalink: /2009/10/which-mbeans-should-i-monitor.html
+blogger_id: "1870130477052871913"
+tags: ["weblogic monitoring"]
+---
+• JVMRuntimeMBean<br />o attribute heapFreeCurrent<br />o attribute heapSizeCurrent<br /><br />• JRockitRuntimeMBean<br />o attribute jvmProcessorLoad<br />o attribute allProcessorsAverageLoad<br />o attribute totalGarbageCollectionTime<br /><br />• JMSDestinationRuntimeMBean<br />o attribute messagesCurrentCount<br />o attribute messagesHighCount<br />o attribute messagesPendingCount<br />o attribute messagesReceivedCount<br /><br />• JDBCConnectionPoolRuntimeMBean<br />o attribute activeConnectionsCurrentCount<br />o attribute activeConnectionsHighCount<br />o attribute connectionsTotalCount<br />o attribute leakedConnectionCount<br />o attribute maxCapacity<br />o attribute waitingForConnectionCurrentCount<br />o attribute waitingForConnectionHighCount<br />o attribute waitSecondsHighCount<br /><br />• JTATransactionStatisticsRuntime<br />o attribute transactionTotalCount<br />o attribute transactionCommittedTotalCount<br />o attribute transactionRolledBackTotalCount<br />o attribute transactionHeuristicsTotalCount<br />o attribute secondsActiveTotalCount<br />o attribute transactionAbandonedTotalCount<br />o attribute transactionRolledBackAppTotalCount<br />o attribute transactionRolledBackResourceTotalCount<br />o attribute transactionRolledBackSystemTotalCount<br />o attribute transactionRolledBackTimeoutTotalCount<br /><br />• EJBTransactionRuntimeMBean<br />o attribute transactionsCommittedTotalCount<br />o attribute transactionsRolledBackTotalCount<br />o attribute transactionsTimedOutTotalCount<br /><br />• EJBPoolRuntimeMBean<br />o attribute beansInUseCount<br />o attribute idleBeansCount<br />o attribute timeoutTotalCount<br />o attribute waiterTotalCount

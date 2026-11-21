@@ -1,0 +1,44 @@
+---
+layout: post
+title: "Shell Script to build a classpath dynamically with all jars in a directory"
+date: 2009-10-08T16:26:00.002+02:00
+permalink: /2009/10/shell-script-to-build-classpath.html
+blogger_id: "4046497345429368466"
+tags: ["bash", "classpath", "jar"]
+---
+copied from http://twit88.com/blog/2008/02/21/unix-shell-script-to-build-classpath-dynamically/  (thanks!)<br />
+<br />
+<pre name="code" class="brush: bash">#!/bin/sh
+
+buildClassPath() {
+jar_dir=$1
+if [ $# -ne 1 ]; then
+echo "Jar directory must be specified."
+exit 1
+fi
+class_path=
+c=1
+for i in `ls $jar_dir/*.jar`
+do
+if [ "$c" -eq "1" ]; then
+class_path=${i}
+c=2
+else
+class_path=${class_path}:${i}
+fi
+done
+echo $class_path
+#return $class_path
+}
+
+CP=`buildClassPath /tmp/lib`
+echo $CP
+</pre><br />
+<br />
+A simplified version:<br />
+<br />
+COH_CLASSPATH=.:$SL_CACHE_CONF_DIR:$COHERENCE_HOME/lib/coherence.jar<br />
+for i in `ls $SL_CACHE_LIB_DIR/*.jar`<br />
+do<br />
+COH_CLASSPATH=${COH_CLASSPATH}:${i}<br />
+done

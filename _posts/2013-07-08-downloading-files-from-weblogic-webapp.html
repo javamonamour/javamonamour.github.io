@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Downloading files from a WebLogic WebApp"
+date: 2013-07-08T17:42:00.002+02:00
+permalink: /2013/07/downloading-files-from-weblogic-webapp.html
+blogger_id: "4987810369586358469"
+tags: ["weblogic"]
+blogger_comments:
+  - author: "Anonymous"
+    date: 2015-07-22
+    html: "People can easily learn how to download files from a web logic web application. Thanks for sharing this function. <a href=\"http://www.cygnismedia.com/web-application/\" rel=\"nofollow\">Web app developer service</a>"
+---
+If you want to download from your WebLogic webapp any file located anywhere in your filesystem, use the virtual-directory-mapping clause in the weblogic.xml of your webapp:
+<br/><br/>
+
+<pre>
+
+&lt;!DOCTYPE weblogic-web-app PUBLIC "-//BEA Systems, Inc.//DTD Web Application 8.1//EN" "http://www.bea.com/servers/wls810/dtd/we
+blogic810-web-jar.dtd">
+
+&lt;weblogic-web-app>
+
+&lt;container-descriptor>
+&lt;index-directory-enabled>true&lt;/index-directory-enabled>
+&lt;/container-descriptor>
+
+&lt;virtual-directory-mapping>
+&lt;local-path>/opt/oracle/apps/downloads/&lt;/local-path>
+&lt;url-pattern>/files/*&lt;/url-pattern>
+&lt;/virtual-directory-mapping>
+
+&lt;/weblogic-web-app>
+
+
+</pre>
+
+
+<br/><br/>
+
+In this case, the folder /opt/oracle/apps/downloads/files should exist, and you can download a file in it by specifying http://myserver.acme.com:7001/mywebapp/files/myfile.txt
+
+
+

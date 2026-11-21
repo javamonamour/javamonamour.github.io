@@ -1,0 +1,9 @@
+---
+layout: post
+title: "JPS-01538: The default policy provider was not found"
+date: 2010-08-01T13:21:00.003+02:00
+permalink: /2010/08/jps-01538-default-policy-provider-was.html
+blogger_id: "8435847537565262026"
+tags: ["oracle.security.jps.config"]
+---
+All of a sudden I am getting this message when starting OSB on Fedora...<br />it is accompanied by:<br /><br />oracle.security.jps.JpsException: JPS-01514: The default context is missing in jps-config.xml.<br /><br />and by<br /><br />oracle.security.jps.config.JpsConfigurationException: /Oracle/Middleware/user_projects/domains/OSBDomainBasic/./config/jps-config.xml (No such file or directory)<br /><br /><br />googling around I found this:<br /><br />-Doracle.security.jps.config has being filled with %DOMAIN_HOME%/config/fmwconfig/jps-config.xml ok ?<br /><br />(at http://forums.oracle.com/forums/thread.jspa?threadID=1072870&tstart=90 )<br /><br /><br /><br />In fact, in $DOMAIN_HOME/bin/setDomainEnv.sh there is:<br /><br />-Doracle.security.jps.config=${DOMAIN_HOME}/config/fmwconfig/jps-config.xml<br /><br /><br />Make sure that your $DOMAIN_HOME/startWebLogic.sh contains at the beginning:<br /><br />export DOMAIN_HOME="/Oracle/Middleware/user_projects/domains/OSBDomainBasic"<br /><br /><br />(make sure "export" is there...)<br /><br />and make sure you have not messed up the <br />EXTRA_JAVA_PROPERTIES and the JAVA_PROPERTIES and the JAVA_OPTIONS variable assignments in the setDomainEnv.sh<br /><br />And, of course, verify that the jps-config.xml file is actually where it's supposed to be and with the right read access.<br /><br />In fact, in my case I had forgotten to correctly put a " in the JAVA_OPTIONS.<br /><br />Unfortunately shell scripts can be very nasty to debug. This is a good reason to keep their complexity to a bare minumum, and use Groovy or other languages.

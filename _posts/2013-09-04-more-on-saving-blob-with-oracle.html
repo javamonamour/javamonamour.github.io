@@ -1,0 +1,53 @@
+---
+layout: post
+title: "More on saving BLOB with Oracle DBAdapter"
+date: 2013-09-04T16:27:00.001+02:00
+permalink: /2013/09/more-on-saving-blob-with-oracle.html
+blogger_id: "7537646751664334659"
+tags: ["blob"]
+---
+This will NOT work:<br/>
+<pre>
+CREATE TABLE BLATABLE (BLAFIELD BLOB);
+
+INSERT INTO BLATABLE (BLAFIELD) VALUES ('SOMEVALUE');
+</pre>
+<br/>
+you get a ORA-01465 -  "invalid hex number"
+<br/>
+<br/>
+
+When I try to save a String to a BLOB field in a stored procedure, I need to convert a String to a bytearray. Using UTL_RAW.CAST_TO_RAW works for strings of < 2K, for longer strings you hit the limit of the internal implementation of this function: 
+
+<br/>
+<pre>
+UTL_RAW.CAST_TO_RAW(theString)
+ORA-06502: PL/SQL: numeric or value error: raw variable length too long
+</pre>
+
+<br/><br/>
+
+Using UTL_RAW.TO_RAW entails that you use a hex representation of a string; if you pass any non-hex string you get:
+<br/><br/>
+
+UTL_RAW.TO_RAW(theString)
+ORA-01465: invalid hex number
+<br/><br/>
+You can test that actually UTL_RAW.TO_RAW converts hex to RAW format:
+<br/>
+UTL_RAW.TO_RAW('3435')  = '45'
+<br/><br/>
+<a href="http://docs.oracle.com/html/A90373_03/ap_urpkg.htm">http://docs.oracle.com/html/A90373_03/ap_urpkg.htm</a>
+<br/>
+
+In XQuery there is no built-in function to transform String or XML in Hex. Sad. <br/> You can either write yourself such XQuery (good luck), or use <a href="http://commons.apache.org/proper/commons-codec/xref/org/apache/commons/codec/binary/Hex.html">Apache Common Hex class</a> in a custom Xpath
+A good way is this:
+<pre>
+
+public static String fromXMLObjectToHexString(org.apache.xmlbeans.XmlObject theXMLObject) {
+ return Hex.encodeHexString(theXMLObject.toString().getBytes());
+}
+
+</pre>
+
+<br/><br/>

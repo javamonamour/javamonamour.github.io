@@ -1,0 +1,54 @@
+---
+layout: post
+title: "Coherence tutorial"
+date: 2010-07-10T22:34:00.003+02:00
+permalink: /2010/07/coherence-tutorial.html
+blogger_id: "7833423264375126513"
+tags: ["coherence"]
+---
+The Coherence tutorial starts here, it's really good:<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E14526_01/coh.350/e14527/installcoh.htm">http://download.oracle.com/docs/cd/E14526_01/coh.350/e14527/installcoh.htm</a><br />
+<br />
+Here is a list of points and concepts to retain:<br />
+<br />
+cache servers<br />
+<br />
+define COHERENCE_HOME<br />
+<br />
+cache-server.cmd<br />
+<br />
+coherence.jar!/tangosol-coherence.xml<br />
+coherence.jar!/tangosol-coherence-override-dev.xml<br />
+<br />
+custom-mbeans.xml<br />
+<br />
+coherence.cmd = cache client<br />
+Map(?)<br />
+enter help<br />
+enter cache mycache<br />
+<br />
+-Dtangosol.coherence.distributed.localstorage=true<br />
+-Dtangosol.coherence.cacheconfig=contacts-cache-config.xml<br />
+<br />
+<br />
+<br />
+<br />
+NamedCache interface<br />
+mycache is defined in <b>coherence-cache-config.xml</b><br />
+<br />
+in <b>tangosol-coherence.xml</b> you find <b>tangosol.coherence.clusteraddress</b> and <b>port</b><br />
+<br />
+NamedCache <br />
+CacheFactory <br />
+CacheService <br />
+<br />
+<b>PortableObject</b> (POF: PofReader PofWriter, optimized serialization algorythm)<br />
+<br />
+<br />
+<br />
+More on Coherence:<br />
+<a href="http://www.oracle.com/technology/pub/articles/vohra-coherence.html">http://www.oracle.com/technology/pub/articles/vohra-coherence.html</a><br />
+<br />
+<b>replicated cache</b> (fast read, slow write)<br />
+<b>distributed (partitioned) cache</b>

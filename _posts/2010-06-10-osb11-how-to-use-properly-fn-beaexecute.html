@@ -1,0 +1,83 @@
+---
+layout: post
+title: "OSB: how to use properly fn-bea:execute-sql"
+date: 2010-06-10T13:35:00.007+02:00
+permalink: /2010/06/osb11-how-to-use-properly-fn-beaexecute.html
+blogger_id: "6944898474971054186"
+tags: ["fn-bea:execute-sql", "osb11"]
+blogger_comments:
+  - author: "akabalde"
+    date: 2016-10-11
+    html: "Thanks a lot!"
+  - author: "Anonymous"
+    date: 2018-10-18
+    html: "for the namespace , it&#39;s possible de make element unqualified in the xsd to ignore namespace:<br />elementFormDefault=&quot;unqualified&quot;"
+---
+Full documentation is here<br />
+<a href="http://download.oracle.com/docs/cd/E14571_01/doc.1111/e15867/xquery.htm#OSBAG451">http://download.oracle.com/docs/cd/E14571_01/doc.1111/e15867/xquery.htm#OSBAG451</a><br />
+<br />
+This statement:<br />
+<br />
+assign "fn-bea:execute-sql('geo_osb_ds',<br />
+&nbsp;&nbsp;&nbsp;&nbsp; xs:QName('Location'),<br />
+&nbsp;&nbsp;&nbsp;&nbsp; 'select SITENAME, LATITUDE, LONGITUDE from GEO_SITE where SITEID &gt; 0')" to sites<br />
+<br />
+will NOT work, only 1 element will be returned.<br />
+<br />
+Bear in mind that bea:execute-sql returns a element()* (with an *), which means that the XML-Fragment returned by the function NEEDS A CONTAINER NODE.<br />
+<br />
+If you want the entire result set to be returned, provide a container node:<br />
+<br />
+<b>&lt;locations&gt;</b><br />
+{fn-bea:execute-sql('geo_osb_ds',<br />
+&nbsp;&nbsp;&nbsp;&nbsp; xs:QName('Location'),<br />
+&nbsp;&nbsp;&nbsp;&nbsp; 'select SITENAME, LATITUDE, LONGITUDE from GEO_SITE where SITEID &gt; 0')<br />
+}&nbsp;&nbsp;&nbsp;&nbsp;<b> &lt;/locations&gt;&nbsp;&nbsp;&nbsp;</b><br />
+<br />
+<br />
+One more thing:<br />
+this<br />
+<br />
+fn-bea:execute-sql('geo_osb_ds',xs:QName('Location'),<br />
+'select SITENAME, LATITUDE, LONGITUDE from GEO_SITE where SITEID = $sideId')<br />
+<br />
+will NOT work, the binding of $siteId will not happen. You must use this syntax:<br />
+<br />
+fn-bea:execute-sql('geo_osb_ds',xs:QName('Location'),<br />
+'select SITENAME, LATITUDE, LONGITUDE from GEO_SITE where SITEID = ?', $sideId)<br />
+<br />
+<br />
+Besides, there is no way you can assign a namespace to the result of the query,<br />
+the namespace will always be empty:<br />
+<br />
+&lt;java:Location&gt;<br />
+&lt;SITEID xmlns=""&gt;1.0&lt;/SITEID&gt;<br />
+&lt;SITENAME xmlns=""&gt;Suresh&lt;/SITENAME&gt;<br />
+&lt;STATEID xmlns=""&gt;345.0&lt;/STATEID&gt;<br />
+&lt;COUNTRYID xmlns=""&gt;23.0&lt;/COUNTRYID&gt;<br />
+&lt;/java:Location&gt;<br />
+<br />
+<br />
+so when you acces it with XPath you should do something like:<br />
+<br />
+declare namespace empty = "";<br />
+<br />
+let $countryId = $item/empty:COUNTRYID/text()<br />
+<br />
+<br />
+Also, even if you provide a column name in lowercase, as in<br />
+select SITEID as siteid...<br />
+fn-bea:execute-sql <b>will convert the element name in UPPERCASE</b>.<br />
+This is a major pain in the neck, it means that you still need to map this element into whatever case you need.<br />
+<br />
+<br />
+<br />
+As for using the SQL IN clause, forget to be able to do it using bind variable "?" in the SQL statement, and passing a XQuery string like 'element1, element2' : it will simply not work, I have tried everything. I don't know which SQL Statement is exactly generated, I should activate the SQL DEbug flag....<br />
+A workaround is forget the fn-bea:execute-sql ? bind variable mechanism and build your SQL query dynamically:&nbsp; <br />
+<br />
+<br />
+<br />
+let $sqlStat := fn:concat('select bla from bla where bla in "', $myListOfMatches, "'")<br />
+fn-bea:execute-sql('geo_osb20_ds', xs:QName('ns1:Location'), $sqlStat)<br />
+<br />
+Dirty trick but it works.

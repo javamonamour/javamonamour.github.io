@@ -1,0 +1,37 @@
+---
+layout: post
+title: "InteractionSpec parameter has invalid value of oracle.tip.adapter.file.outbound.ChunkedInteractionSpec"
+date: 2011-01-17T15:45:00.003+01:00
+permalink: /2011/01/interactionspec-parameter-has-invalid.html
+blogger_id: "2785021042599935845"
+tags: ["chunkread", "FileAdapter"]
+---
+I get this error message when I open this FileAdapter:<br />
+<br />
+<br />
+<pre name="code" class="brush: xml"><adapter-config name="ChunkRead" adapter="File Adapter" wsdlLocation="ChunkRead.wsdl" xmlns="http://platform.integration.oracle/blocks/adapter/fw/metadata">
+  
+  <connection-factory location="eis/FileAdapter" adapterRef=""/>
+  <endpoint-interaction portType="ChunkRead_ptt" operation="ChunkRead">
+    <interaction-spec className="oracle.tip.adapter.file.outbound.ChunkedInteractionSpec">
+      <property name="PhysicalDirectory" value="C:\TEMP"/>
+      <property name="DeleteFile" value="true"/>
+      <property name="FileName" value="dummy.txt"/>
+      <property name="ChunkSize" value="100"/>
+    </interaction-spec>
+  </endpoint-interaction>
+
+</adapter-config>
+
+
+</pre><br />
+<br />
+WTF???<br />
+<br />
+<a href="http://download.oracle.com/docs/cd/E12839_01/integration.1111/e10231/adptr_file.htm">Here</a> it seems like oracle.tip.adapter.file.outbound.ChunkedInteractionSpec is a perfectly valid value...<br />
+<br />
+<br />
+The funny thing is that it deploys just fine.... it MIGHT be a problem in the JDev version number, the application was developed by another developer...<br />
+<br />
+<br />
+Anyway <a href="http://download.oracle.com/docs/cd/E17904_01/integration.1111/e10231/adptr_propertys.htm#CHDEDJEA">here</a> it says that in 11.1.1.4 the ChunkSize property has been added to the File Adapter, so that you can be fed morcels of file without actually having to pull the info in chunked mode.

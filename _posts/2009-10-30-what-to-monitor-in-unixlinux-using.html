@@ -1,0 +1,9 @@
+---
+layout: post
+title: "What to monitor in Unix/Linux using Sitescope"
+date: 2009-10-30T13:27:00.000+01:00
+permalink: /2009/10/what-to-monitor-in-unixlinux-using.html
+blogger_id: "5214778566161963886"
+tags: ["sitescope"]
+---
+a good start would be:<br /><br />Load Average\1minAvg<br />Memory\MemFree<br />Memory\MemTotal<br />Memory\SwapFree<br />Memory\SwapTotal<br />Processor\Average\Idle<br />Processor\Average\System<br />Processor\Average\User<br />System Stats\Context Switches/sec<br /><br />add the JMX monitor this way:<br /><br />service:jmx:rmi:///jndi/iiop://yourserver:yourport/weblogic.management.mbeanservers.runtime<br /><br />and wait forever. Use IE, we had trouble using Firefox.<br /><br />If you receive this error message:<br />Error receiving browse data: org.omg.CORBA.NO_PERMISSION: vmcid: 0x0 minor code: 0 completed: No<br /><br />make sure that Enable IIOP is checked (protocols/IIOP), and that the Default IIOP Username and password are the same as your weblogic user/pw.<br />Also, make sure you restart if you make any changes.<br /> <br /><br />If you get<br /><br />Error receiving browse data: java.rmi.MarshalException: CORBA COMM_FAILURE 1398079696 Maybe; nested exception is: org.omg.CORBA.COMM_FAILURE: vmcid: SUN minor code: 208 completed: Maybe<br /><br />then add “-Dcom.sun.CORBA.transport.ORBTCPReadTimeouts=10:30000:500:10” to JVM start parameters

@@ -1,0 +1,108 @@
+---
+layout: post
+title: "WebLogic monitoring with JMX and JConsole"
+date: 2012-05-03T16:50:00.005+02:00
+permalink: /2012/05/weblogic-monitoring-with-jmx-and.html
+blogger_id: "1201202005071648393"
+tags: ["JConsole", "JMX", "weblogic"]
+---
+<a href="https://blogs.oracle.com/WebLogicServer/entry/managing_weblogic_servers_with">This great post explains you everything</a><br />
+<br />
+<br />
+<b>cd C:\Oracle\Middleware\wlserver_10.3\server\lib<br />
+java -jar wljarbuilder.jar<br />
+echo %JAVA_HOME%</b><br />
+<i>C:\Oracle\MIDDLE~1\JDK160~1</i><br />
+<b>cd %JAVA_HOME%<br />
+cd bin<br />
+jconsole -J-Djava.class.path=C:\Oracle\MIDDLE~1\JDK160~1\lib\jconsole.jar;C:\Oracle\MIDDLE~1\JDK160~1\lib\tools.jar;C:\Oracle\Middleware\wlserver_10.3\server\lib\wlfullclient.jar -J-Djmx.remote.protocol.provider.pkgs=weblogic.management.remote -debug<br />
+<br />
+</b><br />
+<br />
+(make sure you enter it like that, with the -J-D which looks very weird)<br />
+<br />
+when jconsole comes up, choose remote connection, <br />
+provide<br />
+service:jmx:iiop://yourhost:yourport/jndi/weblogic.management.mbeanservers.runtime<br />
+<br />
+(your port is NOT the jmx port provided in -Dcom.sun.management.jmxremote.port=8888, but the listen port of the WLS)<br />
+and enter your weblogic username and password to authenticate<br />
+<br />
+<br />
+You can also find MBean Object Names with weblogic.Admin:<br />
+<br />
+<br />
+<b>java weblogic.Admin -url t3://myserver.acme.com:8105 -username Pierluigi -password weblogic1 -pretty GET -type ClusterRuntime<br />
+</b><br />
+<br />
+and the MBean name is osbdv2do:ServerRuntime=osbdv2ms1,Name=osbdv2cl,Type=ClusterRuntime,Location=osbdv2ms1<br />
+<br />
+<br />
+<i><br />
+---------------------------<br />
+MBeanName: "osbdv2do:ServerRuntime=osbdv2ms1,Name=osbdv2cl,Type=ClusterRuntime,Location=osbdv2ms1"<br />
+ActiveSingletonServices:<br />
+AliveServerCount: 2<br />
+CachingDisabled: true<br />
+CurrentMachine: myserver<br />
+CurrentSecondaryServer: -7551940697957911746S:myserver.acme.com:[8205,8205,-1,-1,-1,-1,-1]:myserver.acme.com:8105,myserver.acme.com:8205:osbdv2do:osbdv2ms2<br />
+DetailedSecondariesDistribution:<br />
+ForeignFragmentsDroppedCount: 0<br />
+FragmentsReceivedCount: 696<br />
+FragmentsSentCount: 805<br />
+HealthState: Component:null,State:HEALTH_OK,MBean:null,ReasonCode:[]<br />
+JobSchedulerRuntime:<br />
+MulticastMessagesLostCount: 2<br />
+Name: osbdv2cl<br />
+Parent: osbdv2ms1<br />
+PrimaryCount: 0<br />
+Registered: true<br />
+ResendRequestsCount: 1<br />
+SecondaryCount: 0<br />
+SecondaryDistributionNames:<br />
+SecondaryServerDetails: -7551940697957911746S:myserver.acme.com:[8205,8205,-1,-1,-1,-1,-1]:myserver.acme.com:8105,myserver.acme.com:8205:osbdv2do:osbdv2ms2<br />
+ServerMigrationRuntime: ServerMigrationRuntime<br />
+ServerNames: osbdv2ms2,osbdv2ms1<br />
+Type: ClusterRuntime<br />
+UnicastMessaging: UnicastMessagingRuntime<br />
+<br />
+</i><br />
+<br />
+<br />
+wlst jmx objectname for clusterruntime:<br />
+<br />
+This is the way to find the OBJECT_NAME associated to a MBean with WLST:<br />
+<br />
+<a href="http://docs.oracle.com/cd/E23943_01/web.1111/e13715/nav_edit.htm#i1001906">http://docs.oracle.com/cd/E23943_01/web.1111/e13715/nav_edit.htm#i1001906</a><br />
+<br />
+java weblogic.WLST<br />
+<br />
+connect(...)<br />
+serverRuntime()<br />
+easeSyntax()<br />
+cd ClusterRuntime<br />
+cd osbdv2cluster<br />
+cmo<br />
+<br />
+<i>[MBeanServerInvocationHandler]com.bea:ServerRuntime=osbdv2ms1,Name=osbdv2cluster,Type=ClusterRuntime</i><br />
+<br />
+so <b>com.bea:ServerRuntime=osbdv2ms1,Name=osbdv2cluster,Type=ClusterRuntime</b> is the OBJECT_NAME<br />
+<br />
+you can extract attributes: ServerNames et AliveServerCount<br />
+<br />
+<br />
+You can test if your OBJECT_NAME is correct with "weblogic.Admin GET -mbean":<br />
+<br />
+<a href="http://docs.oracle.com/cd/E13222_01/wls/docs81/admin_ref/cli30.html#1035148">http://docs.oracle.com/cd/E13222_01/wls/docs81/admin_ref/cli30.html#1035148</a><br />
+<br />
+java weblogic.Admin -url t3://myserver.acme.com:8105 -username pippo -password weblogic1 -pretty GET -mbean osbdv2do:ServerRuntime=osbdv2ms1,Name=osbdv2cl,Type=ClusterRuntime,Location=osbdv2ms1<br />
+<br />
+<br />
+To enable remote JMX connection, in $DOMAIN_HOME/bin/setDomainEnv.sh, almost at the bottom, add:<br />
+<br />
+if [ "${SERVER_NAME}" = "osbdv2ms1" ] ; then<br />
+JAVA_OPTIONS="${JAVA_OPTIONS} -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=8888 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"<br />
+fi<br />
+<br />
+<br />
+Here a <a href="http://java.sun.com/developer/technicalArticles/J2SE/jmx.html">good article on how to expose an interface through a MBean</a>, including the HtmlAdaptorServer

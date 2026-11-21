@@ -1,0 +1,29 @@
+---
+layout: post
+title: "HookedJarClassLoader.assertOpen"
+date: 2010-07-16T09:48:00.000+02:00
+permalink: /2010/07/hookedjarclassloaderassertopen.html
+blogger_id: "359009613725639863"
+tags: ["javacallout", "osb11"]
+blogger_comments:
+  - author: "vernetto"
+    date: 2014-11-05
+    html: "I don&#39;t remember having found a fix... it was a looong time ago :(<br /><br />If I discover something I will let you know!<br /><br />Sorry!"
+  - author: "Anonymous"
+    date: 2014-11-05
+    html: "Bonjour Pierluigi,<br /><br />Got same error yesterday.  Searched through Oracle Support KB to no avail.<br /><br />Have you ever found a workaround for this problem that necessitates a managed server restart?<br /><br />thanks,<br /><br />David"
+---
+In a Java Callout in OSB I get this.... no clue why... no trace in google..<br />
+<br />
+<br />
+<pre>java.lang.IllegalStateException: Already closed
+ at com.bea.wli.sb.resources.archive.classloader.HookedJarClassLoader.assertOpen(HookedJarClassLoader.java:345)
+ at com.bea.wli.sb.resources.archive.classloader.HookedJarClassLoader.getResource(HookedJarClassLoader.java:174)
+ at com.tangosol.util.ExternalizableHelper.loadResource(ExternalizableHelper.java:3020)
+ at com.tangosol.io.pof.ConfigurablePofContext.loadResource(ConfigurablePofContext.java:1224)
+ at com.tangosol.io.pof.ConfigurablePofContext.createPofConfig(ConfigurablePofContext.java:792)
+ at com.tangosol.io.pof.ConfigurablePofContext.initialize(ConfigurablePofContext.java:754)
+ at com.tangosol.io.pof.ConfigurablePofContext.setContextClassLoader(ConfigurablePofContext.java:324)
+ at com.tangosol.coherence.component.util.daemon.queueProcessor.Service.ensureSerializer(Service.CDB:45)
+</pre><br />
+investigating...

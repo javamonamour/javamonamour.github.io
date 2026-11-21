@@ -1,0 +1,95 @@
+---
+layout: post
+title: "Using Nexus 3 as a Docker registry Proxy"
+date: 2018-03-22T10:38:00.001+01:00
+permalink: /2018/03/using-nexus-3-as-docker-registry-proxy.html
+blogger_id: "1274767667603066423"
+tags: ["docker", "nexus"]
+---
+<a href="http://books.sonatype.com/nexus-book/3.0/reference/docker.html#docker-proxy">http://books.sonatype.com/nexus-book/3.0/reference/docker.html#docker-proxy</a><br />
+<br />
+<br />
+If you are behind a firewall, you need to open :<br />
+<br />
+https://registry-1.docker.io<br />
+https://index.docker.io/<br />
+<br />
+<br />
+As explained here <a href="https://hub.docker.com/r/sonatype/nexus3/">https://hub.docker.com/r/sonatype/nexus3/</a> I run <br />
+<br />
+docker run -d -p 8081:8081 -p 8082:8082 --name nexus sonatype/nexus3 <br />
+<br />
+You can open http://localhost:8081/ and login as admin/admin123<br />
+<br />
+At this point, Docker is still not setup in Nexus:<br />
+<br />
+In Nexus console, create a new Docker Proxy repo name "dockerproxy" , URL "https://registry-1.docker.io", Docker index "use docker hub". Also, "enable docker v1 api" checkbox. Choose port HTTP 8082 (it will accept logins only on port 8082, not on 8081!)<br />
+<br />
+You should be able to see its (empty for now) index here <a href="http://localhost:8081/service/rest/repository/browse/dockerproxy/">http://localhost:8081/service/rest/repository/browse/dockerproxy/</a><br />
+<br />
+To configure your docker engine to communicate to the registry:<br />
+<br />
+sudo vi /etc/docker/daemon.json<br />
+<br />
+Add this line:<br />
+<br />
+{"insecure-registries" : [ "localhost:8081", "localhost:8082" ]}<br />
+<br />
+Restart Docker Daemon:<br />
+<br />
+sudo systemctl daemon-reload<br />
+<br />
+sudo systemctl restart docker<br />
+<br />
+<br />
+<br />
+WRONG:<br />
+docker login localhost:8081<br />
+<i><br />
+Username: admin<br />
+Password: <br />
+Error response from daemon: login attempt to http://localhost:8081/v2/ failed with status: 404 Not Found<br />
+</i><br />
+<br />
+RIGHT:<br />
+docker login localhost:8082<br />
+<i><br />
+Username: admin<br />
+Password: <br />
+Login Succeeded<br />
+</i><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+Tag and push your first image:<br />
+<br />
+#check your local images<br />
+<br />
+docker images<br />
+<br />
+#log into nexus registry<br />
+<br />
+docker --debug=true login localhost:8082 -u admin -p admin123<br />
+<br />
+sudo docker run localhost:8082/hello-world<br />
+<br />
+<br />
+You can also create a hosted Docker repository, better if you create a user pippo/pippo and give it access to the Repository,<br />
+<br />
+then "docker login localhost:8082 -u pippo -p pippo" and to push something<br />
+docker tag &lt;image>:&lt;tag> localhost:8082/&lt;image>:&lt;tag> #example: docker tag service:1.2 localhost:8082/service:1.2<br />
+<br />
+#push your tagged image to nexus<br />
+docker push localhost:8082/service:1.2<br />
+<br />
+Troubleshooting:<br />
+<br />
+Check what happens in nexus, in request.log (in /nexus-data/log) I see all HTTP requests issued by docker:<br />
+<br />
+172.17.0.1 - - [21/Mar/2018:10:28:19 +0000] "GET /v2/ HTTP/1.1" 404 1783 8 "docker/18.03.0-ce-rc4 go/go1.9.4 git-commit/fbedb97 kernel/3.10.0-693.21.1.el7.x86_64 os/linux arch/amd64 UpstreamClient(Docker-Client/18.03.0-ce-rc4 \(linux\))"<br />
+<br />
+<br />
+

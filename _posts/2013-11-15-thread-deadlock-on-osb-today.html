@@ -1,0 +1,210 @@
+---
+layout: post
+title: "Thread Deadlock on OSB today"
+date: 2013-11-15T14:02:00.002+01:00
+permalink: /2013/11/thread-deadlock-on-osb-today.html
+blogger_id: "5087185583512719766"
+tags: ["OSB"]
+---
+Strange, I have never seen this before... maybe it's because 2 people with the same userid were using the console at the same time.
+
+<br/><br/>
+
+<pre>
+
+
+***************************************************************************************
+&lt;Nov 15, 2013 12:30:33 PM CET> &lt;Critical> &lt;WebLogicServer> &lt;BEA-000394> &lt;
+
+DEADLOCK DETECTED:
+==================
+
+[deadlocked thread] [ACTIVE] ExecuteThread: '4' for queue: 'weblogic.kernel.Default (self-tuning)':
+--------------------------------------------------------------------------------------------------
+Thread '[ACTIVE] ExecuteThread: '4' for queue: 'weblogic.kernel.Default (self-tuning)'' is waiting to acquire lock 'com.bea.wli.config.component.impl.ReferenceMap@4d86f1a3' that is held by thread '[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)''
+
+Stack trace:
+------------
+        com.bea.wli.config.component.impl.ReferenceMap.getAncestorsOrDescendents(ReferenceMap.java:820)
+        com.bea.wli.sb.transports.TransportDependencyUtils.computeExternalRefs(TransportDependencyUtils.java:97)
+        com.bea.wli.sb.transports.TransportDependencyUtils.completeResourcesDependencies(TransportDependencyUtils.java:409)
+        com.bea.wli.sb.transports.ResourceLifecycleListenerImpl.changesCommitted(ResourceLifecycleListenerImpl.java:158)
+        com.bea.wli.sb.transports.TransportManagerImpl.changesCommitted(TransportManagerImpl.java:1205)
+        com.bea.wli.sb.service.ServiceChangeListener.changesCommitted(ServiceChangeListener.java:146)
+        com.bea.wli.config.impl.ResourceListenerNotifier.afterEnd(ResourceListenerNotifier.java:120)
+        com.bea.wli.config.transaction.TransactionListenerWrapper.afterEnd(TransactionListenerWrapper.java:90)
+        com.bea.wli.config.transaction.TransactionManager.notifyAfterEnd(TransactionManager.java:1154)
+        com.bea.wli.config.transaction.TransactionManager.commit(TransactionManager.java:1519)
+        com.bea.wli.config.transaction.TransactionManager._endTransaction(TransactionManager.java:842)
+        com.bea.wli.config.transaction.TransactionManager.endTransaction(TransactionManager.java:783)
+        com.bea.wli.config.deployment.server.ServerDeploymentReceiver$2.run(ServerDeploymentReceiver.java:275)
+        weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:321)
+        weblogic.security.service.SecurityManager.runAs(SecurityManager.java:120)
+        com.bea.wli.config.deployment.server.ServerDeploymentReceiver.commit(ServerDeploymentReceiver.java:260)
+        weblogic.deploy.service.internal.targetserver.DeploymentReceiverCallbackDeliverer.doCommitCallback(DeploymentReceiverCallbackDeliverer.java:195)
+        weblogic.deploy.service.internal.targetserver.DeploymentReceiverCallbackDeliverer.access$100(DeploymentReceiverCallbackDeliverer.java:13)
+        weblogic.deploy.service.internal.targetserver.DeploymentReceiverCallbackDeliverer$2.run(DeploymentReceiverCallbackDeliverer.java:68)
+        weblogic.work.SelfTuningWorkManagerImpl$WorkAdapterImpl.run(SelfTuningWorkManagerImpl.java:528)
+        weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+        weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+
+[deadlocked thread] [ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)':
+--------------------------------------------------------------------------------------------------
+Thread '[ACTIVE] ExecuteThread: '2' for queue: 'weblogic.kernel.Default (self-tuning)'' is waiting to acquire lock 'com.bea.wli.config.transaction.TransactionManager@56622c18' that is held by thread '[ACTIVE] ExecuteThread: '4' for queue: 'weblogic.kernel.Default (self-tuning)''
+
+Stack trace:
+------------
+        com.bea.wli.config.transaction.TransactionManager.enlistAsRead(TransactionManager.java:972)
+        com.bea.wli.config.transaction.CopyOnWriteTransactionalOwner.getState(CopyOnWriteTransactionalOwner.java:65)
+        com.bea.wli.config.transaction.TransactionalSet$1.access(TransactionalSet.java:80)
+        com.bea.wli.config.transaction.TransactionalSet$1.access(TransactionalSet.java:78)
+        com.bea.wli.config.transaction.CopyOnWriteAccessor.access(CopyOnWriteAccessor.java:50)
+        com.bea.wli.config.transaction.CopyOnWriteAccessors$CopyOnWriteIterator.&lt;init>(CopyOnWriteAccessors.java:47)
+        com.bea.wli.config.transaction.TransactionalSet$1.&lt;init>(TransactionalSet.java:78)
+        com.bea.wli.config.transaction.TransactionalSet.iterator(TransactionalSet.java:78)
+        com.bea.wli.config.component.impl.ReferenceMap.getNumDependents(ReferenceMap.java:731)
+        com.bea.wli.config.task.impl.GetMetadataTask.getMetadata(GetMetadataTask.java:113)
+        com.bea.wli.config.task.impl.GetMetadataTask._execute(GetMetadataTask.java:87)
+        com.bea.wli.config.task.impl.GetMetadataTask._execute(GetMetadataTask.java:41)
+        com.bea.wli.config.task.impl.SessionedTask$1.execute(SessionedTask.java:233)
+        com.bea.wli.config.transaction.TransactionalTask._doExecute(TransactionalTask.java:217)
+        com.bea.wli.config.transaction.TransactionalTask._doExecuteWithRetry(TransactionalTask.java:162)
+        com.bea.wli.config.transaction.TransactionalTask.doExecute(TransactionalTask.java:142)
+        com.bea.wli.config.task.impl.SessionedTask.doExecute(SessionedTask.java:236)
+        com.bea.wli.config.task.impl.SessionedTask.doExecute(SessionedTask.java:191)
+        com.bea.wli.config.task.impl.GetMetadataTask.getMetadata(GetMetadataTask.java:67)
+        com.bea.wli.config.mbeans.Config.getMetadata(Config.java:206)
+        com.bea.wli.config.mbeans.Config.getMetadata(Config.java:201)
+        sun.reflect.GeneratedMethodAccessor614.invoke(Unknown Source)
+        sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+        java.lang.reflect.Method.invoke(Method.java:597)
+        com.bea.alsb.console.support.ConsoleSideMBeanInvocationHandler.__invoke(ConsoleSideMBeanInvocationHandler.java:113)
+        com.bea.alsb.console.support.ConsoleSideMBeanInvocationHandler.invoke(ConsoleSideMBeanInvocationHandler.java:71)
+        $Proxy158.getMetadata(Unknown Source)
+        com.bea.alsb.console.projects.ProjectsHelper.getFoldersMetadata(ProjectsHelper.java:255)
+        com.bea.alsb.console.projects.ProjectsHelper.getSortedFoldersMetadata(ProjectsHelper.java:237)
+        jsp_servlet._jsp._projects.__projectstree$1ProjectsTree.getFolders(__projectstree.java:201)
+        jsp_servlet._jsp._projects.__projectstree$1ProjectsTree.getFolders(__projectstree.java:217)
+        jsp_servlet._jsp._projects.__projectstree$1ProjectsTree.getProjectsTreeNodes(__projectstree.java:188)
+        jsp_servlet._jsp._projects.__projectstree._jspService(__projectstree.java:248)
+        weblogic.servlet.jsp.JspBase.service(JspBase.java:34)
+        weblogic.servlet.internal.StubSecurityHelper$ServletServiceAction.run(StubSecurityHelper.java:227)
+        weblogic.servlet.internal.StubSecurityHelper.invokeServlet(StubSecurityHelper.java:125)
+        weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:300)
+        weblogic.servlet.internal.TailFilter.doFilter(TailFilter.java:26)
+        weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+        org.apache.beehive.netui.pageflow.PageFlowPageFilter.continueChainNoWrapper(PageFlowPageFilter.java:455)
+        org.apache.beehive.netui.pageflow.PageFlowPageFilter.runPage(PageFlowPageFilter.java:432)
+        org.apache.beehive.netui.pageflow.PageFlowPageFilter.doFilter(PageFlowPageFilter.java:284)
+        weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+        weblogic.servlet.internal.RequestDispatcherImpl.invokeServlet(RequestDispatcherImpl.java:524)
+        weblogic.servlet.internal.RequestDispatcherImpl.include(RequestDispatcherImpl.java:444)
+        org.apache.beehive.netui.pageflow.scoping.internal.ScopedRequestDispatcher.include(ScopedRequestDispatcher.java:119)
+        com.bea.netuix.servlets.controls.content.JspContent.beginRender(JspContent.java:552)
+        com.bea.netuix.servlets.controls.content.NetuiContent.beginRender(NetuiContent.java:365)
+        com.bea.netuix.nf.ControlLifecycle$7.visit(ControlLifecycle.java:485)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:518)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walk(ControlTreeWalker.java:220)
+        com.bea.netuix.nf.Lifecycle.processLifecycles(Lifecycle.java:395)
+        com.bea.netuix.nf.Lifecycle.processLifecycles(Lifecycle.java:361)
+        com.bea.netuix.nf.Lifecycle.processLifecycles(Lifecycle.java:352)
+        com.bea.netuix.nf.Lifecycle.run(Lifecycle.java:326)
+        com.bea.netuix.nf.UIControl.render(UIControl.java:582)
+        com.bea.netuix.servlets.controls.PresentationContext.render(PresentationContext.java:486)
+        com.bea.netuix.servlets.util.RenderToolkit.renderChild(RenderToolkit.java:146)
+        com.bea.netuix.servlets.jsp.taglib.RenderChild.doStartTag(RenderChild.java:62)
+        jsp_servlet._framework._skeletons._wliconsole.__flowlayout._jspService(__flowlayout.java:271)
+        weblogic.servlet.jsp.JspBase.service(JspBase.java:34)
+        weblogic.servlet.internal.StubSecurityHelper$ServletServiceAction.run(StubSecurityHelper.java:227)
+        weblogic.servlet.internal.StubSecurityHelper.invokeServlet(StubSecurityHelper.java:125)
+        weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:300)
+        weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:183)
+        weblogic.servlet.internal.RequestDispatcherImpl.invokeServlet(RequestDispatcherImpl.java:526)
+        weblogic.servlet.internal.RequestDispatcherImpl.include(RequestDispatcherImpl.java:444)
+        com.bea.netuix.servlets.controls.application.laf.JspTools.renderJsp(JspTools.java:130)
+        com.bea.netuix.servlets.controls.application.laf.JspControlRenderer.beginRender(JspControlRenderer.java:72)
+        com.bea.netuix.servlets.controls.application.laf.PresentationControlRenderer.beginRender(PresentationControlRenderer.java:65)
+        com.bea.netuix.nf.ControlLifecycle$7.visit(ControlLifecycle.java:481)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:518)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walk(ControlTreeWalker.java:220)
+        com.bea.netuix.nf.Lifecycle.processLifecycles(Lifecycle.java:395)
+        com.bea.netuix.nf.Lifecycle.processLifecycles(Lifecycle.java:361)
+        com.bea.netuix.nf.Lifecycle.processLifecycles(Lifecycle.java:352)
+        com.bea.netuix.nf.Lifecycle.run(Lifecycle.java:326)
+       com.bea.netuix.nf.UIControl.render(UIControl.java:582)
+        com.bea.netuix.servlets.controls.PresentationContext.render(PresentationContext.java:486)
+        com.bea.netuix.servlets.util.RenderToolkit.renderChild(RenderToolkit.java:146)
+        com.bea.netuix.servlets.jsp.taglib.RenderChild.doStartTag(RenderChild.java:62)
+        jsp_servlet._framework._skeletons._wliconsole.__gridlayout._jspService(__gridlayout.java:312)
+        weblogic.servlet.jsp.JspBase.service(JspBase.java:34)
+        weblogic.servlet.internal.StubSecurityHelper$ServletServiceAction.run(StubSecurityHelper.java:227)
+        weblogic.servlet.internal.StubSecurityHelper.invokeServlet(StubSecurityHelper.java:125)
+        weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:300)
+        weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:183)
+        weblogic.servlet.internal.RequestDispatcherImpl.invokeServlet(RequestDispatcherImpl.java:526)
+        weblogic.servlet.internal.RequestDispatcherImpl.include(RequestDispatcherImpl.java:444)
+        com.bea.netuix.servlets.controls.application.laf.JspTools.renderJsp(JspTools.java:130)
+        com.bea.netuix.servlets.controls.application.laf.JspControlRenderer.beginRender(JspControlRenderer.java:72)
+        com.bea.netuix.servlets.controls.application.laf.PresentationControlRenderer.beginRender(PresentationControlRenderer.java:65)
+        com.bea.netuix.nf.ControlLifecycle$7.visit(ControlLifecycle.java:481)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:518)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walkRecursiveRender(ControlTreeWalker.java:529)
+        com.bea.netuix.nf.ControlTreeWalker.walk(ControlTreeWalker.java:220)
+        com.bea.netuix.nf.Lifecycle.processLifecycles(Lifecycle.java:395)
+        com.bea.netuix.nf.Lifecycle.processLifecycles(Lifecycle.java:361)
+        com.bea.netuix.nf.Lifecycle.runOutbound(Lifecycle.java:208)
+        com.bea.netuix.nf.Lifecycle.run(Lifecycle.java:162)
+        com.bea.netuix.servlets.manager.UIServlet.runLifecycle(UIServlet.java:388)
+        com.bea.netuix.servlets.manager.UIServlet.doPost(UIServlet.java:258)
+        com.bea.netuix.servlets.manager.UIServlet.doGet(UIServlet.java:211)
+        com.bea.netuix.servlets.manager.UIServlet.service(UIServlet.java:196)
+        com.bea.netuix.servlets.manager.SingleFileServlet.service(SingleFileServlet.java:251)
+        javax.servlet.http.HttpServlet.service(HttpServlet.java:820)
+        weblogic.servlet.AsyncInitServlet.service(AsyncInitServlet.java:130)
+        weblogic.servlet.internal.StubSecurityHelper$ServletServiceAction.run(StubSecurityHelper.java:227)
+        weblogic.servlet.internal.StubSecurityHelper.invokeServlet(StubSecurityHelper.java:125)
+        weblogic.servlet.internal.ServletStubImpl.execute(ServletStubImpl.java:300)
+        weblogic.servlet.internal.TailFilter.doFilter(TailFilter.java:26)
+        weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+        oracle.security.jps.ee.http.JpsAbsFilter$1.run(JpsAbsFilter.java:111)
+        java.security.AccessController.doPrivileged(Native Method)
+        oracle.security.jps.util.JpsSubject.doAsPrivileged(JpsSubject.java:313)
+        oracle.security.jps.ee.util.JpsPlatformUtil.runJaasMode(JpsPlatformUtil.java:413)
+        oracle.security.jps.ee.http.JpsAbsFilter.runJaasMode(JpsAbsFilter.java:94)
+        oracle.security.jps.ee.http.JpsAbsFilter.doFilter(JpsAbsFilter.java:161)
+        oracle.security.jps.ee.http.JpsFilter.doFilter(JpsFilter.java:71)
+        weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+        oracle.dms.servlet.DMSServletFilter.doFilter(DMSServletFilter.java:136)
+        weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+        weblogic.servlet.internal.RequestEventsFilter.doFilter(RequestEventsFilter.java:27)
+        weblogic.servlet.internal.FilterChainImpl.doFilter(FilterChainImpl.java:56)
+        weblogic.servlet.internal.WebAppServletContext$ServletInvocationAction.wrapRun(WebAppServletContext.java:3715)
+        weblogic.servlet.internal.WebAppServletContext$ServletInvocationAction.run(WebAppServletContext.java:3681)
+        weblogic.security.acl.internal.AuthenticatedSubject.doAs(AuthenticatedSubject.java:321)
+        weblogic.security.service.SecurityManager.runAs(SecurityManager.java:120)
+        weblogic.servlet.internal.WebAppServletContext.securedExecute(WebAppServletContext.java:2277)
+        weblogic.servlet.internal.WebAppServletContext.execute(WebAppServletContext.java:2183)
+        weblogic.servlet.internal.ServletRequestImpl.run(ServletRequestImpl.java:1454)
+        weblogic.work.ExecuteThread.execute(ExecuteThread.java:209)
+        weblogic.work.ExecuteThread.run(ExecuteThread.java:178)
+
+>
+&lt;Nov 15, 2013 12:30:34 PM CET> &lt;Critical> &lt;Health> &lt;BEA-310006> &lt;Critical Subsystem core has failed. Setting server state to FAILED.
+Reason: Thread deadlock detected>
+&lt;Nov 15, 2013 12:30:34 PM CET> &lt;Critical> &lt;WebLogicServer> &lt;BEA-000385> &lt;Server health failed. Reason: health of critical service 'core' failed>
+
+
+</pre>
+

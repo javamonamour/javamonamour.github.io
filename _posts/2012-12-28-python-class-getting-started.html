@@ -1,0 +1,88 @@
+---
+layout: post
+title: "Python class : getting started"
+date: 2012-12-28T11:52:00.001+01:00
+permalink: /2012/12/python-class-getting-started.html
+blogger_id: "6732888816378271925"
+tags: ["python"]
+---
+I have never done any OO in Python, but I think I should. OO is good.<br />
+Maybe one day will shall say "there was a time where people believed in OO, hahaha what a bunch of losers, now we know that the right thing to do is.... (name your methodology)".<br />
+<br />
+But in the meantime OO is better than Hashtables.<br />
+<br />
+Minimalistic class:<br />
+<pre>class Pippo:
+    name = "hello"
+</pre>
+<br />
+<br />
+Unlike in Java, this doesn't work:<br />
+<pre>class Pippo:
+</pre>
+<br />
+<br />
+there MUST be something inside a class.<br />
+<br />
+Now you can do:<br />
+<i>a = Pippo()</i><br />
+<br />
+this is valid because Pippo has been defined.... if you do<br />
+<i>a = Peppo()</i><br />
+you get an error because Peppo class is not defined. <br />
+<br />
+If you do:<br />
+<i>a = Pippo()</i><br />
+<i>print a.name</i><br />
+hello<br />
+<br />
+as expected, name was initialized and it's a Object variable, not a Class variable (I mean, it's not static):<br />
+<br />
+<i>a = Pippo()</i><br />
+<i>b = Pippo()</i><br />
+<i>a.name ="bla"</i><br />
+<i>b.name = "mumble"</i><br />
+<br />
+<i>print a.name</i><br />
+bla<br />
+<i>print b.name</i><br />
+mumble<br />
+<br />
+Now let's do:<br />
+<i>a.name = "ciao"</i><br />
+<i>a.surname = "bello"</i><br />
+<i>print a</i><main .pippo=".pippo" 1="1" instance="instance"></main><br />
+<br />
+<i>print a.name</i><br />
+ciao<br />
+<br />
+<i>print a.surname</i><br />
+bello<br />
+<br />
+so it's not necessary to declare a member of a class in order to use it. I don't like it, very error prone. I am VERY much in favor of VERY strict syntax.<br />
+<br />
+<br />
+So it's a MUCH better approach to use mainly Constructors to assign values to attributes:<br />
+<br />
+<br />
+<br />
+<pre>class Pippo:
+    def __init__(self, name, surname):
+        self.name = name
+        self.surname = surname
+</pre>
+<br />
+<br />
+a = Pippo("alfa", "beta")<br />
+<br />
+<i>print a.name</i><br />
+alfa<br />
+<i>print a.surname</i><br />
+beta<br />
+<br />
+<br />
+now you can define your classes in a module myclasses.py and then do:<br />
+<br />
+from myclasses import Pippo<br />
+<br />
+<br />

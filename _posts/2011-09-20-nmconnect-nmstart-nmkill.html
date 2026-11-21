@@ -1,0 +1,56 @@
+---
+layout: post
+title: "nmConnect, nmStart, nmKill"
+date: 2011-09-20T01:08:00.002+02:00
+permalink: /2011/09/nmconnect-nmstart-nmkill.html
+blogger_id: "3800291538947793598"
+tags: ["nmConnect"]
+---
+<b>cd C:\bea103\wlserver_10.3\server\bin<br />
+setWLSEnv.cmd<br />
+<br />
+java weblogic.WLST<br />
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/42ae1559e647c1b3.jpg" imageanchor="1" style=""><img border="0" height="139" width="100" src="/images/ec407b948c8a883f.jpg" /></a></div><br />
+<br />
+nmConnect('weblogic', 'weblogic', 'localhost', '5556', 'base_domain', 'C:/bea103/user_projects/domains/base_domain', 'plain')<br />
+</b><br />
+<br />
+WLSTException: Error occured while performing nmConnect : Cannot connect to Node Manager.Unexpected response from server: § ? ??F<br />
+<br />
+<br />
+of course! 5556 is the port for 'ssl', and I was trying to use 'plain' !<br />
+<br />
+<br />
+<b>nmConnect('weblogic', 'weblogic', 'localhost', '5556', 'base_domain', 'C:/bea103/user_projects/domains/base_domain', 'ssl')</b><br />
+<br />
+WLSTException: Error occured while performing nmConnect : Cannot connect to Node Manager.Access to domain 'base_domain' for user '<br />
+weblogic' denied <br />
+<br />
+<br />
+edit C:\bea103\user_projects\domains\base_domain\config\nodemanager\nm_password.properties<br />
+<br />
+and enter<br />
+username=weblogic<br />
+password=weblogic<br />
+<br />
+<br />
+<b>nmConnect('weblogic', 'weblogic', 'localhost', '5556', 'base_domain', 'C:/bea103/user_projects/domains/base_domain', 'ssl')</b><br />
+Connecting to Node Manager ...<br />
+Successfully Connected to Node Manager.<br />
+<br />
+wls:/nm/base_domain> <b>nmStart('AdminServer', 'C:/bea103/user_projects/domains/base_domain')</b><br />
+Starting server AdminServer ...<br />
+Error Starting server AdminServer: weblogic.nodemanager.NMException: Exception while starting server 'AdminServer': java.io.IOException: Server failed to start up. See server output log for more details.<br />
+<br />
+the log says:<br />
+<br />
+weblogic.security.SecurityInitializationException: Authentication for user  denied<br />
+<br />
+<br />
+so edit C:\bea103\user_projects\domains\base_domain\servers\AdminServer\security\boot.properties<br />
+<br />
+and enter<br />
+username=weblogic<br />
+password=weblogic

@@ -1,0 +1,24 @@
+---
+layout: post
+title: "taskdef class weblogic.ant.taskdefs.management.WLSTTask cannot be found"
+date: 2011-11-01T21:42:00.000+01:00
+permalink: /2011/11/taskdef-class-weblogicanttaskdefsmanage.html
+blogger_id: "4340712254638514227"
+tags: ["ant"]
+---
+In my build.xml I have declared <br />
+<br />
+taskdef name="wlst" classname="weblogic.ant.taskdefs.management.WLSTTask"<br />
+<br />
+and I get the blessed error<br />
+<br />
+<br />
+<br />
+The solution could simply be adding a "classpath" element to the taskdef: <br />
+<br />
+taskdef classpath="${bea.home}/wlserver_10.3/server/lib/weblogic.jar" name="wlst" classname="weblogic.ant.taskdefs.management.WLSTTask"<br />
+ <br />
+<br />
+In fact taskdef uses the same attributes as typedef<br />
+<br />
+<a href="http://ant.apache.org/manual/Tasks/typedef.html">http://ant.apache.org/manual/Tasks/typedef.html</a>

@@ -1,0 +1,73 @@
+---
+layout: post
+title: "Nexus Repository Health Check (RHC) unauthorized proxy"
+date: 2017-10-05T10:56:00.002+02:00
+permalink: /2017/10/nexus-repository-health-check-rhc.html
+blogger_id: "235051543004818579"
+tags: ["sonatype", "vulnerability"]
+---
+<br />
+"The components in the repository were inspected, but their identity could not be confirmed. This may have happened for the following reasons:<br />
+<br />
+The repository does not contain enough identified components for the results to be meaningful<br />
+The components were built from source instead of pulled from the Central Repository<br />
+The components were obtained from a repository other than the Central Repository<br />
+"<br />
+<br />
+The connection to the Sonatype server is at rhc.sonatype.com port 443, that is IP address 207.223.241.78, which corresponds also to clm.sonatype.com and  insight.sonatype.com<br />
+<br />
+Apparently for the PRO version it's rhc-pro.sonatype.com 443 which is 207.223.241.78<br />
+<br />
+Apparently one can have only ONE health check every 24 hours.<br />
+<br />
+<br />
+Incidentally, if you are using a proxy, and you are not authenticated, you get this error message<br />
+<br />
+org.apache.http.impl.execchain.TunnelRefusedException pxpool-1-thread-4 CONNECT refused by proxy: HTTP/1.1 407 Proxy Authentication Required<br />
+<br />
+<br />
+with this stacktrace<br />
+<br />
+<br />
+<i><br />
+java.lang.Throwable.<init>(String) 1<br />
+ java.lang.Exception.<init>(String) 1<br />
+  org.apache.http.HttpException.<init>(String) 1<br />
+   org.apache.http.impl.execchain.TunnelRefusedException.<init>(String, HttpResponse) 1<br />
+   org.apache.http.impl.execchain.MainClientExec.createTunnelToTarget(AuthState, HttpClientConnection, HttpRoute, HttpRequest, HttpClientContext) 1<br />
+    org.apache.http.impl.execchain.MainClientExec.establishRoute(AuthState, HttpClientConnection, HttpRoute, HttpRequest, HttpClientContext) 1<br />
+     org.apache.http.impl.execchain.MainClientExec.execute(HttpRoute, HttpRequestWrapper, HttpClientContext, HttpExecutionAware) 1<br />
+      org.apache.http.impl.execchain.ProtocolExec.execute(HttpRoute, HttpRequestWrapper, HttpClientContext, HttpExecutionAware) 1<br />
+      org.apache.http.impl.execchain.RetryExec.execute(HttpRoute, HttpRequestWrapper, HttpClientContext, HttpExecutionAware) 1<br />
+       org.apache.http.impl.execchain.RedirectExec.execute(HttpRoute, HttpRequestWrapper, HttpClientContext, HttpExecutionAware) 1<br />
+        org.apache.http.impl.client.InternalHttpClient.doExecute(HttpHost, HttpRequest, HttpContext) 1<br />
+         org.apache.http.impl.client.CloseableHttpClient.execute(HttpUriRequest, HttpContext) 1<br />
+         org.apache.http.impl.client.CloseableHttpClient.execute(HttpUriRequest) 1<br />
+          org.apache.http.impl.client.CloseableHttpClient.execute(HttpUriRequest) 1<br />
+           com.sonatype.nexus.plugins.healthcheck.service.impl.InsightServiceImpl.execute(HttpUriRequest) 1<br />
+            com.sonatype.nexus.plugins.healthcheck.service.impl.InsightServiceImpl.doGet(String) 1<br />
+            com.sonatype.nexus.plugins.healthcheck.service.impl.InsightServiceImpl.getNextRunDeltas(String) 1<br />
+             com.sonatype.nexus.plugins.healthcheck.task.HealthCheckTask.doDeltaCheck(String) 1<br />
+              com.sonatype.nexus.plugins.healthcheck.task.HealthCheckTask.doRunSafe() 1<br />
+               com.sonatype.nexus.plugins.healthcheck.task.HealthCheckTask.doRun() 1<br />
+               org.sonatype.nexus.scheduling.AbstractNexusTask.call() 1<br />
+                org.sonatype.scheduling.DefaultScheduledTask.call() 1<br />
+                 org.sonatype.nexus.threads.MDCAwareCallable.call() 1<br />
+                  org.apache.shiro.subject.support.SubjectCallable.doCall(Callable) 1<br />
+                  org.apache.shiro.subject.support.SubjectCallable.call() 1<br />
+                   java.util.concurrent.FutureTask.run() 1<br />
+                    java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor$ScheduledFutureTask) 1<br />
+                     java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run() 1<br />
+                     java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor$Worker) 1<br />
+                      java.util.concurrent.ThreadPoolExecutor$Worker.run() 1<br />
+                       java.lang.Thread.run() 1<br />
+<br />
+<br />
+</i><br />
+<br />
+<br />
+So <a href="https://support.microsoft.com/en-us/help/248020/iis-5-0-error-message-http-1-1-407-proxy-authentication-required">https://support.microsoft.com/en-us/help/248020/iis-5-0-error-message-http-1-1-407-proxy-authentication-required</a>  you have to talk to the proxy administrator<br />
+<br />
+<br />
+<br />
+

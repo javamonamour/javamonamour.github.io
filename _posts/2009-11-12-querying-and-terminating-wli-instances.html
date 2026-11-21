@@ -1,0 +1,66 @@
+---
+layout: post
+title: "Querying and terminating WLI instances"
+date: 2009-11-12T19:39:00.000+01:00
+permalink: /2009/11/querying-and-terminating-wli-instances.html
+blogger_id: "8533428706043177842"
+---
+see <a href="http://download-llnw.oracle.com/docs/cd/E13214_01/wli/docs92/wli.javadoc/com/bea/wli/management/runtime/ProcessRuntimeMBean.html#terminate%28java.lang.String,%20java.lang.String%29">http://download-llnw.oracle.com/docs/cd/E13214_01/wli/docs92/wli.javadoc/com/bea/wli/management/runtime/ProcessRuntimeMBean.html#terminate(java.lang.String,%20java.lang.String)</a><br />
+<br />
+package com.acme.wli;<br />
+<br />
+import java.util.Iterator;<br />
+import java.util.Set;<br />
+<br />
+import javax.naming.Context;<br />
+import javax.naming.NamingException;<br />
+<br />
+import com.bea.wli.bpm.runtime.ProcessStatus;<br />
+import com.bea.wli.management.runtime.ProcessInstanceQuery;<br />
+import com.bea.wli.management.runtime.ProcessInstanceQueryResult;<br />
+import com.bea.wli.management.runtime.ProcessRuntimeMBean;<br />
+<br />
+import weblogic.jndi.Environment;<br />
+import weblogic.management.MBeanHome;<br />
+/**<br />
+* Ajouter D:\beawliwlp103\wli_10.3\lib\jpdpublic.jar:<br />
+* @author vernetto<br />
+*<br />
+*/<br />
+public class WLITerminator {<br />
+//private static final String SERVICE_URI = "/ProtectionProcesses/com/acme/corp/protectionProcesses/iris/ReceiveCIUN_v5.jpd";<br />
+//private static final String SERVICE_URI = "/ProtectionProcesses/com/acme/corp/protectionProcesses/iris/CotationDataReady_v4.jpd";<br />
+private static final String SERVICE_URI = "/ProtectionProcesses/com/acme/corp/protectionProcesses/iris/HandleCIUN_v1.jpd";<br />
+<br />
+public static void main(String[] args) throws NamingException {<br />
+Environment env = new Environment();<br />
+env.setSecurityPrincipal("weblogic");<br />
+env.setSecurityCredentials("weblogic");<br />
+env.setProviderUrl("t3://admmaintatlas.acme.dns:8501");<br />
+Context ctx = env.getInitialContext();<br />
+MBeanHome home = (MBeanHome)ctx.lookup(MBeanHome.ADMIN_JNDI_NAME);<br />
+System.out.println("Got the Server-specific MBeanHome: " + home);<br />
+Set s = home.getMBeansByType("ProcessRuntime");<br />
+Iterator it = s.iterator(); <br />
+try { <br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; if (it.hasNext()) { <br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;ProcessRuntimeMBean bean = (ProcessRuntimeMBean)it.next();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;ProcessInstanceQuery query = new ProcessInstanceQuery();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//query.setServiceURI(SERVICE_URI);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;query.setStatus(ProcessStatus.ABORTED);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;ProcessInstanceQueryResult info = bean.getProcessInstances(query);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;int count = info.getResultCard();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String[] instances = info.getInstanceIds();<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println("found " + instances.length + " instances");<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;for (int i = 0 ; i &lt;&nbsp; instances.length; i++) {<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;String instanceId = instances[i];<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;ProcessInstanceInfo pi = bean.getProcessInstanceInfo(instanceId, false);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;System.out.println(pi.getServiceURI() + " " + instanceId);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;//bean.terminate(pi.getServiceURI(), instanceId);<br />
+&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;}}<br />
+} catch (Exception ex) {<br />
+System.out.println(ex); <br />
+ex.printStackTrace();<br />
+} <br />
+}<br />
+}

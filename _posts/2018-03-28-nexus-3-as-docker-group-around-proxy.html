@@ -1,0 +1,27 @@
+---
+layout: post
+title: "Nexus 3 as a Docker GROUP around a proxy and 2 hosted repos"
+date: 2018-03-28T14:36:00.000+02:00
+permalink: /2018/03/nexus-3-as-docker-group-around-proxy.html
+blogger_id: "4486493289132186839"
+tags: ["docker", "nexus"]
+---
+We want to provide this setup:<br />
+<br />
+dockergroup repository, "covering" a dockerproxy repo (proxy to docker hub) and 2 hosted repos<br />
+<br />
+Each repo will have its own http port!<br />
+<br />
+1) create these blob stores dockergroup, dockerproxy, dockerhosted1, dockerhosted2 (it's better to have a separate blob store per repo.... beware, the dockergroup blobstore will always stay empty, all the actual store is done in the proxy and hosted repos)<br />
+<br />
+2) create repo dockerproxy,format docker, HTTP port 8084, HTTPS 8484, Enable Docker V1 API, remote storage https://registry-1.docker.io , Docker Index "User Docker Hub"<br />
+<br />
+3) create repo dockerhosted1 (blob dockerhosted1, port http 8082 https 8482) and dockerhosted2 (blob dockerhosted2 port http 8083 https 8483)<br />
+<br />
+4) create repo dockergroup (blob dockergroup, http 8085 https 8485) with members dockerproxy, dockerhosted1, dockerhosted2<br />
+<br />
+<br />
+Now when you want to PULL images, you should login into dockergroup (8085) or into dockerproxy (8084).<br />
+To PUSH images to your HOSTED, you have to login directly into the dockerhosted1 (8082) or dockerhosted2 (8083). PUSHing to the dockergroup will not work, he has no means to ROUTE the image to dockerhosted1 or dockerhosted2 based on some rule.... This is quite a pity indeed, it would be nice if a group had some routing facilities.<br />
+<br />
+

@@ -1,0 +1,70 @@
+---
+layout: post
+title: "Java JSSE SSL flags"
+date: 2019-07-11T20:58:00.001+02:00
+permalink: /2019/07/java-jsse-ssl-flags.html
+blogger_id: "7099249401530776258"
+tags: ["jsse", "ssl"]
+---
+-Djavax.net.debug=help<br />
+<br />
+all            turn on all debugging<br />
+ssl            turn on ssl debugging<br />
+<br />
+The following can be used with ssl:<br />
+<br />
+record       enable per-record tracing<br />
+handshake    print each handshake message<br />
+keygen       print key generation data<br />
+session      print session activity<br />
+defaultctx   print default SSL initialization<br />
+sslctx       print SSLContext tracing<br />
+sessioncache print session cache tracing<br />
+keymanager   print key manager tracing<br />
+trustmanager print trust manager tracing<br />
+pluggability print pluggability tracing<br />
+handshake debugging can be widened with:<br />
+data         hex dump of each handshake message<br />
+verbose      verbose handshake message printing<br />
+<br />
+<br />
+record debugging can be widened with:<br />
+<br />
+plaintext    hex dump of record plaintext<br />
+packet       print raw SSL/TLS packets<br />
+<br />
+<br />
+Other non-so-famous properties:<br />
+<br />
+<br />
+<a href="https://www.oracle.com/technetwork/java/javase/overview/tlsreadme2-176330.html">https://www.oracle.com/technetwork/java/javase/overview/tlsreadme2-176330.html</a><br />
+<br />
+-Dsun.security.ssl.allowUnsafeRenegotiation=true<br />
+<br />
+-Dsun.security.ssl.allowLegacyHelloMessages=true<br />
+<br />
+<a href="https://www.oracle.com/technetwork/java/javase/8u161-relnotes-4021379.html">https://www.oracle.com/technetwork/java/javase/8u161-relnotes-4021379.html</a><br />
+<br />
+-Djdk.tls.allowLegacyResumption=true<br />
+<br />
+-Djdk.tls.allowLegacyMasterSecret=true<br />
+<br />
+-Djdk.tls.traceHandshakeException=true<br />
+<br />
+-Djdk.tls.useExtendedMasterSecret=true<br />
+<br />
+-Djdk.tls.legacyAlgorithms=???<br />
+<br />
+-Djdk.tls.ephemeralDHKeySize=???<br />
+<br />
+<a href="https://docs.oracle.com/javase/10/security/java-secure-socket-extension-jsse-reference-guide.htm">https://docs.oracle.com/javase/10/security/java-secure-socket-extension-jsse-reference-guide.htm</a><br />
+<br />
+<br />
+jdk.tls.client.cipherSuites<br />
+<br />
+jdk.tls.server.cipherSuites<br />
+<br />
+<br />
+<br />
+<br />
+

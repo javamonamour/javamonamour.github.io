@@ -1,0 +1,26 @@
+---
+layout: post
+title: "quick nfs mount on CentOS"
+date: 2017-12-16T11:26:00.003+01:00
+permalink: /2017/12/quick-nfs-mount-on-centos.html
+blogger_id: "7711153821502925930"
+tags: ["centos", "nfs"]
+---
+#find your ip<br />
+ifconfig<br />
+#create folder to share<br />
+sudo mkdir -p /drbd/main/shared <br />
+#who cares about security<br />
+sudo chmod -R 777 /drbd/<br />
+#create folder where local files should appear<br />
+mkdir -p /home/centos/ocpnfs<br />
+sudo vi /etc/exports<br />
+#enter this in /etc/exports<br />
+/drbd/main/shared/ 10.0.2.15(rw)<br />
+#end of /etc/exports<br />
+sudo systemctl restart nfs<br />
+sudo exportfs -v<br />
+sudo mount -t nfs 10.0.2.15:/drbd/main/shared/ /home/centos/ocpnfs<br />
+touch /home/centos/ocpnfs/pippo.txt<br />
+<br />
+

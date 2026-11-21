@@ -1,0 +1,27 @@
+---
+layout: post
+title: "Oracle DB: Am I a SYSDBA?"
+date: 2013-05-21T12:54:00.001+02:00
+permalink: /2013/05/oracle-db-am-i-sysdba.html
+blogger_id: "2090916712200403197"
+tags: ["oracledb"]
+---
+given the user INSTALL, here are all the SQL you can try to check if you are a SYSDBA: <br />
+<br />
+select * from session_privs;<br />select * from user_sys_privs;<br />select * from dba_role_privs where GRANTEE = 'INSTALL';<br />select * from dba_sys_privs where GRANTEE = 'INSTALL';<br /><br />select * from dba_tab_privs where GRANTEE = 'INSTALL';<br /><br />select dbms_metadata.get_granted_ddl('ROLE_GRANT', 'INSTALL')&nbsp; from dual;<br />select dbms_metadata.get_granted_ddl('SYSTEM_GRANT', 'INSTALL') from dual;<br />select dbms_metadata.get_granted_ddl('OBJECT_GRANT', 'INSTALL') from dual;<br />
+<br />
+<br />
+<br />
+
+
+
+In my case, the result of "select * from dba_role_privs where GRANTEE = 'INSTALL';" is:
+<br />
+<br />
+<pre>
+"GRANTEE" "GRANTED_ROLE" "ADMIN_OPTION" "DEFAULT_ROLE"
+"INSTALL" "CONNECT" "NO" "YES"
+"INSTALL" "ROLE_DBA_ADMIN" "NO" "YES"
+
+</pre>
+

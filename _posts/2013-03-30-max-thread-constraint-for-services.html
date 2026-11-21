@@ -1,0 +1,21 @@
+---
+layout: post
+title: "Max thread constraint for Services using Datasources"
+date: 2013-03-30T18:42:00.000+01:00
+permalink: /2013/03/max-thread-constraint-for-services.html
+blogger_id: "8739830035435757358"
+tags: ["weblogic", "workmanager"]
+---
+I am reading the excellent "Wrox Professional Oracle WebLogic server", it recommends to always assign all services (Proxz Services in OSB) a Work Manager with Max Thread Contraint = max Connection in Pool for any DS it's using. So far so good.
+
+<br />
+<br />
+What I didn't know is that in older ( &lt;12 ) versions of weblogic if you name the MaxthreadConstraint as the Datasource, the max number of threads will adjust automatically to match the Maximum Capacity of the Datasource. This is cool.
+
+<br />
+
+In WebLogic 12, you can do this explicitly in the console:
+
+<br /><br />
+
+<a href="/images/ade8379c75db5090.jpg" imageanchor="1"><img border="0" src="/images/b021d6e090347df9.jpg" /></a><!--12--></12>

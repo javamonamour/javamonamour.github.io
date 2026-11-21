@@ -1,0 +1,60 @@
+---
+layout: post
+title: "Apache Directory Service LDAP"
+date: 2018-05-02T15:14:00.000+02:00
+permalink: /2018/05/apache-directory-service-ldap.html
+blogger_id: "3446181469210753658"
+tags: ["LDAP"]
+---
+<a href="http://directory.apache.org/">http://directory.apache.org/</a><br />
+<br />
+install "Apache DS" and "Apache Directory Studio"<br />
+<br />
+DS logs are in D:\apps\ApacheDS\instances\default\log<br />
+<br />
+Open Studio, LDAP / new Connection, port 10389, host localhost, username uid=admin,ou=system password secret<br />
+(see http://directory.apache.org/apacheds/basic-ug/1.4.2-changing-admin-password.html )<br />
+<br />
+if you see this in apacheds logs, no worries:<br />
+"[org.apache.directory.server.core.DefaultDirectoryService] - You didn't change the admin password of directory service instance 'default'.  Please update the admin password as soon as possible to prevent a possible security breach."<br />
+<br />
+DS conf is in D:\apps\ApacheDS\conf\wrapper.conf<br />
+<br />
+To find out at which port the ActiveDS is actually listening (NOT on the default 389 port, but on 10389) I recommend using TCPVIEW.<br />
+<br />
+<pre>dn: dc=example,dc=com
+objectclass: top
+objectclass: dcObject
+objectclass: organization
+dc: example
+o: MCC
+dn: ou=People,dc=example,dc=com
+objectclass: top
+objectclass: organizationalUnit
+ou: People
+dn: uid=admin,ou=People,dc=example,dc=com
+objectclass: top
+objectclass: uidObject
+objectclass: person
+uid: admin
+cn: Manager
+sn: Manager
+userPassword: secret
+dn: ou=Roles,dc=example,dc=com
+objectclass: top
+objectclass: organizationalUnit
+ou: Roles
+dn: cn=Manager,ou=Roles,dc=example,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: Manager
+description: the JBossAS7 group
+member: uid=admin,ou=People,dc=example,dc=com
+
+</pre><br />
+name="bindDN" value="uid=admin,ou=system"<br />
+name="baseCtxDN" value="ou=People,dc=example,dc=com"<br />
+name="rolesCtxDN" value="ou=Roles,dc=example,dc=com"<br />
+<br />
+<br />
+

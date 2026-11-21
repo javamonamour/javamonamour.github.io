@@ -1,0 +1,16 @@
+---
+layout: post
+title: "BEA-395133: XQuery expression evaluates to an invalid XQuery resource name"
+date: 2011-01-13T21:41:00.000+01:00
+permalink: /2011/01/bea-395133-xquery-expression-evaluates.html
+blogger_id: "8853376330843437757"
+tags: ["DynamicXQuery"]
+---
+see <a href="http://download.oracle.com/docs/cd/E14571_01/apirefs.1111/e15034/ExpressionRuntime.html">here</a> for message catalogue<br />
+<br />
+You were trying to use Dynamic XQuery invocation and you got this message.<br />
+Yet the XQuery exists. What can be wrong.<br />
+<br />
+The doc is <a href="http://download.oracle.com/docs/cd/E13159_01/osb/docs10gr3/consolehelp/proxyeditors.html#wp1281717">here</a>.<br />
+<br />
+In fact, the problem was that one should specify the XQuery WITHOUT the .xq at the end :o)  - idiot me.

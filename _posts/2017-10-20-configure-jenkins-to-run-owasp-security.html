@@ -1,0 +1,135 @@
+---
+layout: post
+title: "Configure Jenkins to run the OWASP Security Check plugin"
+date: 2017-10-20T09:52:00.002+02:00
+permalink: /2017/10/configure-jenkins-to-run-owasp-security.html
+blogger_id: "7546202469618659836"
+tags: ["jenkins", "owasp"]
+---
+First make sure that your Jenkins installation is configured with Maven 3.5<br />
+<br />
+You should also install the "OWASP Dependency-Check Plugin" plugin - for this, go to the "manage Jenkins", "manage plugins" and you should find it in the "available plugins" (if not, probably you have to download the hpi files, and copy them in the "plugins" directory under the Jenkins home folder... see <a href="/2017/10/owasp-dependency-check-maven-plugin.html">my previous post</a> on which plugin files are needed ).<br />
+<br />
+create a Maven project:<br />
+<br />
+webgoat_maven<br />
+<br />
+Source Code Manamegent: Git<br />
+<br />
+Repository URL = https://github.com/WebGoat/WebGoat.git<br />
+<br />
+Branch specifier = */develop<br />
+<br />
+Remove all "build triggers"<br />
+<br />
+Pre-Steps : leave empty<br />
+<br />
+Build/Root POM = pom.xml<br />
+<br />
+Goals and Options = package -DskipTests=true<br />
+<br />
+Post Steps (run regardless...) = Invoke OWASP dependency check analysis<br />
+click on "advanced", enable "Generate optional HTML report" and "Generate optional vulnerability report (HTML)"<br />
+<br />
+Post-build Actions: add "Publish OWASP dependency check results"<br />
+click on "advanced", set 5 in the "failed" (red circle) "Priority high" column.... so the build will fail if there are more than 5 highly vulnerable components.<br />
+<br />
+<br />
+<br />
+In the console output of the build, you should see something like this:<br />
+<br />
+<pre>[DependencyCheck] OWASP Dependency-Check Plugin v3.0.0
+[DependencyCheck] Executing Dependency-Check with the following options:
+[DependencyCheck]  -name = Pierre
+[DependencyCheck]  -scanPath = /path/to/workspace/Pierre
+[DependencyCheck]  -outputDirectory = /path/to/workspace/Pierre
+[DependencyCheck]  -dataDirectory = /path/to/workspace/Pierre/dependency-check-data
+[DependencyCheck]  -dataMirroringType = none
+[DependencyCheck]  -isQuickQueryTimestampEnabled = true
+[DependencyCheck]  -jarAnalyzerEnabled = true
+[DependencyCheck]  -nspAnalyzerEnabled = true
+[DependencyCheck]  -composerLockAnalyzerEnabled = true
+[DependencyCheck]  -pythonDistributionAnalyzerEnabled = true
+[DependencyCheck]  -pythonPackageAnalyzerEnabled = true
+[DependencyCheck]  -rubyBundlerAuditAnalyzerEnabled = true
+[DependencyCheck]  -rubyGemAnalyzerEnabled = true
+[DependencyCheck]  -cocoaPodsAnalyzerEnabled = true
+[DependencyCheck]  -swiftPackageManagerAnalyzerEnabled = true
+[DependencyCheck]  -archiveAnalyzerEnabled = true
+[DependencyCheck]  -assemblyAnalyzerEnabled = true
+[DependencyCheck]  -centralAnalyzerEnabled = true
+[DependencyCheck]  -nuspecAnalyzerEnabled = true
+[DependencyCheck]  -nexusAnalyzerEnabled = false
+[DependencyCheck]  -autoconfAnalyzerEnabled = true
+[DependencyCheck]  -cmakeAnalyzerEnabled = true
+[DependencyCheck]  -opensslAnalyzerEnabled = true
+[DependencyCheck]  -showEvidence = true
+[DependencyCheck]  -formats = XML HTML VULN 
+[DependencyCheck]  -autoUpdate = true
+[DependencyCheck]  -updateOnly = false
+
+
+
+</pre><br />
+<br />
+If the "jarAnalyzerEnabled" is not true, then something is wrong.<br />
+<br />
+<br />
+If you see "org.owasp.dependencycheck.data.update.exception.UpdateException: Unable to download the NVD CVE data..... Caused by: org.owasp.dependencycheck.utils.DownloadFailedException: Unable to resolve domain 'nvd.nist.gov' " , most likely you are behind a proxy. You can still build the h2 DB - containing all the vulnerabilities feed - and provide it offline to the Jenkins job. But to build this DB you must run the job on a computer connected to internet, then look in the workspace for a db.h2 file.<br />
+This configuration is to be done in "Invoke OWASP dependency check analysis", then "advanced" and set "Data directory" to the folder where you have copied the h2 db file. Also, check the "Disable NVD auto-update" flag.<br />
+<br />
+If this still fails with this error, then I really don't know where the issue is, probably AGAIN a proxy problem as also explained here <a href="https://github.com/jeremylong/DependencyCheck/issues/932">https://github.com/jeremylong/DependencyCheck/issues/932</a>:<br />
+<br />
+<pre>[DependencyCheck] Message: Could not connect to Central search. Analysis failed.
+[DependencyCheck] org.owasp.dependencycheck.analyzer.exception.AnalysisException: Could not connect to Central search. Analysis failed.
+[DependencyCheck]  at org.owasp.dependencycheck.analyzer.CentralAnalyzer.analyzeDependency(CentralAnalyzer.java:244)
+[DependencyCheck]  at org.owasp.dependencycheck.analyzer.AbstractAnalyzer.analyze(AbstractAnalyzer.java:137)
+[DependencyCheck]  at org.owasp.dependencycheck.AnalysisTask.call(AnalysisTask.java:88)
+[DependencyCheck]  at org.owasp.dependencycheck.AnalysisTask.call(AnalysisTask.java:37)
+[DependencyCheck]  at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+[DependencyCheck]  at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+[DependencyCheck]  at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+[DependencyCheck]  at java.lang.Thread.run(Thread.java:745)
+[DependencyCheck] Caused by: java.io.IOException: Finally failed connecting to Central search. Giving up after 5 tries.
+[DependencyCheck]  at org.owasp.dependencycheck.analyzer.CentralAnalyzer.fetchMavenArtifacts(CentralAnalyzer.java:288)
+[DependencyCheck]  at org.owasp.dependencycheck.analyzer.CentralAnalyzer.analyzeDependency(CentralAnalyzer.java:198)
+[DependencyCheck]  ... 7 more
+
+
+[DependencyCheck] Caused by: java.net.UnknownHostException: search.maven.org
+[DependencyCheck]  at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:184)
+[DependencyCheck]  at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+[DependencyCheck]  at java.net.Socket.connect(Socket.java:589)
+[DependencyCheck]  at sun.net.NetworkClient.doConnect(NetworkClient.java:175)
+[DependencyCheck]  at sun.net.www.http.HttpClient.openServer(HttpClient.java:432)
+[DependencyCheck]  at sun.net.www.http.HttpClient.openServer(HttpClient.java:527)
+[DependencyCheck]  at sun.net.www.http.HttpClient.<init>(HttpClient.java:211)
+[DependencyCheck]  at sun.net.www.http.HttpClient.New(HttpClient.java:308)
+[DependencyCheck]  at sun.net.www.http.HttpClient.New(HttpClient.java:326)
+[DependencyCheck]  at sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1169)
+[DependencyCheck]  at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1105)
+[DependencyCheck]  at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:999)
+[DependencyCheck]  at sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:933)
+[DependencyCheck]  at org.owasp.dependencycheck.data.central.CentralSearch.searchSha1(CentralSearch.java:127)
+[DependencyCheck]  at org.owasp.dependencycheck.analyzer.CentralAnalyzer.fetchMavenArtifacts(CentralAnalyzer.java:266)
+
+</pre><br />
+<br />
+<br />
+<br />
+<br />
+one can try to set -Danalyzer.central.enabled=false<br />
+(see <a href="https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/dependencycheck.properties">https://github.com/jeremylong/DependencyCheck/blob/master/dependency-check-core/src/main/resources/dependencycheck.properties</a> ) and/or enable proxy for https://search.maven.org/solrsearch/select <br />
+<br />
+<br />
+It's nice to read <a href="https://jeremylong.github.io/DependencyCheck/general/internals.html">https://jeremylong.github.io/DependencyCheck/general/internals.html</a> on how the analyzer works.<br />
+<br />
+<br />
+The NVD (National Vulnerability Database) CVE (Common Vulnerabilities and Exposures) feeds are here <a href="https://nvd.nist.gov/vuln/data-feeds">https://nvd.nist.gov/vuln/data-feeds</a>. They contain the Common Platform Enumeration CPE catalog of all known vulnerabilities and Common Weakness Enumeration (CWE) .<br />
+<br />
+<br />
+How to trigger a daily job to get NVD updates: <a href="https://medium.com/@PrakhashS/checking-vulnerabilities-in-3rd-party-dependencies-using-owasp-dependency-check-plugin-in-jenkins-bedfe8de6ba8">https://medium.com/@PrakhashS/checking-vulnerabilities-in-3rd-party-dependencies-using-owasp-dependency-check-plugin-in-jenkins-bedfe8de6ba8</a><br />
+<br />
+<br />
+<br />
+

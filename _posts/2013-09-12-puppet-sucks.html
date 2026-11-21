@@ -1,0 +1,88 @@
+---
+layout: post
+title: "Puppet sucks?"
+date: 2013-09-12T21:18:00.001+02:00
+permalink: /2013/09/puppet-sucks.html
+blogger_id: "3450899432778272950"
+tags: ["puppet"]
+---
+It could suck more. It could also suck less.
+<br />
+After some time using Puppet, these are my thoughts - straight from my heart.
+
+
+<br />
+- for someone having any Groovy, Python or Java background, it's EXTREMELY PAINFUL to accept the limitations of the language
+<br />
+<br />
+- a pathetically poor library of data manipulation functions (dimly enhanced with stdlib-puppet), 
+<br />
+<br />
+- no iterations, no easy way to transform data structures into a different structure
+<br />
+<br />
+- very scarce OO support (there is class inheritance but it's deprecated (???!!!) ) - copy and paste syndrome is the natural outcome
+<br />
+<br />
+- no support for nested resources - everything is at a flat level - to achieve nesting you must write classes, which introduces abstraction which IMHO is not always a good thing
+<br />
+<br />
+- 2 constructs - define and class - whose use cases show a confusingly ambiguous separation
+<br />
+<br />
+- same class "declaration" construct expressed in 2 totally different ways: "include classname" and "class { 'classname': parametername =&gt; parametervalue ...}" . This is like speaking German and Russian in the same sentence, it's just confusing.
+<br />
+- a jargon which openly contradicts well consolidated standards from Software development... like "declare" a class instead of "instantiating a class".... to me, "declare" means "define the class' prototype", and not "instantiate".
+
+<br />
+<br />
+<div class="separator" style="clear: both; text-align: center;">
+<a href="/images/8ba76422419ea836.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/f99f064046cea74a.png" /></a></div>
+<br />
+<br />
+- no enumerations (HORRIBLE! Everything is a String!)
+<br />
+<br />
+- failure upon redefinition of the same resource name (can't you give me a simple option/construct to simply ignore the second declaration?)
+<br />
+<br />
+- limited support for packaging and context separation between modules
+<br />
+<br />
+- a DSL which is ugly and verbose (all those : and , .... and then, have you ever seen a list ending with a COMMA ???? It's ugly!)
+<br />
+<br />
+- for those missing complex data modeling, hash data structures are there, but boy, how painful and fragile it is to use them
+<br />
+<br />
+- no simple options to hook to a CMDB, you must use those hiera and yaml that to me are brittle and limited. Just give me an option to use a DB, it's my decision, why do you impose me to use YAML or JSON, I hate property files to maintain configuration.
+<br />
+<br />
+- the seemingly best IDE available, Geppetto, is way more primitive (e.g. no refactoring available - which to me is an ESSENTIAL feature) than even the most basic Java IDE
+<br />
+<br />
+- lack of a java-like "import modulename.* " statement to avoid having to verbosely specify the fully qualified name of each define/class defined in another module 
+<br />
+<br />
+- lack of notion of a scope/context to keep modules separated (sort of "module" notion in Java)
+<br />
+<br />
+- Ruby???? How many sysops have ever used Ruby before? I mean, Python is 3 times more popular than Ruby, and probably 10 times more in the sysadmin community....
+<br />
+<br />
+On the whole, although Puppet is a very good idea, the implementation is simply too limited in its options. I have said the same about Maven. It will evolve with time until it will incorporate all the features of a modern OO language - it's already evolving with 3.2 version - however it would have been much better to do it since the beginning.<br />
+<br />
+On the whole using Puppet one has the sensation that the last 30 years of Software Engineering have passed in vain.
+<br />
+<br />
+If Infrastructure is CODE (which is a fascinating concept, and I am all for it) then why not have at disposition the BEST coding languages on the market? Why should we castrate ourselves with a very limited DSL? Why reinventing the wheel to make it square?
+<br />
+<br />
+<span style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.727272033691406px;">Andrey says:</span><br />
+<span style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.727272033691406px;"><br /></span>
+<span style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.727272033691406px;">Initially they targeted the language towards system administrators, and programmers could always the Ruby API if they want, but now when Puppet got so much attention from the industry they realize that Puppet DSL is way too simple for what it is already used.</span><br style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.727272033691406px;" /><br style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.727272033691406px;" /><span style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.727272033691406px;">I noticed that shops where programmers dominate tend to choose Chef over Puppet, because Chef is a Ruby DSL and you can always use full power of Ruby inside Chef recipes and cookbooks. But organizations where there is a huge weight of system administrators, who have little or no programming experience, tend to choose Puppet. After all, Puppet DSL was never meant to be a programming language, but rather a modeling language (kind of UML for infrastructure) to describe the state desired of the system.</span><br style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.727272033691406px;" /><br style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.727272033691406px;" /><span style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.727272033691406px;">It's not that I'm defending Puppet DSL, the language clearly sux, but I definitely see now some legit reasoning behind initial language design.</span><br />
+<span style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.727272033691406px;"><br /></span>
+<span style="background-color: white; color: #222222; font-family: arial, sans-serif; font-size: 12.727272033691406px;"><br /></span>
+
+<br/><br/>
+On a final note, I would definitely believe that in the long run Puppet will vanish, replaced by something with a more sound design, more solid and refactorable, encompassing more modern paradigms... what will replace Puppet, no clue, maybe it's not even born yet, but surely it's too a huge business not to interest BIG implementors.

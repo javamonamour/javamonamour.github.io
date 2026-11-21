@@ -1,0 +1,32 @@
+---
+layout: post
+title: "WLST check for existence of a JMSModule"
+date: 2012-08-05T22:18:00.001+02:00
+permalink: /2012/08/wlst-check-for-existence-of-jmsmodule.html
+blogger_id: "5227795589060753291"
+tags: ["WLST"]
+---
+Often you must CONDITIONALLY do an operation based on the existence/non existence of a resource:<br />
+<br />
+<pre name="code" class="brush: java">def deleteJMSModule(jmsModule):
+    myBean = getMBean('/SystemResources/' + jmsModule)
+    if myBean is not None:  
+        edit()
+        startEdit()
+        try:
+            cmo.destroyJMSSystemResource(getMBean('/SystemResources/' + jmsModule))
+            print "deleted JMSModule " + jmsModule
+            validate()    
+            save()
+            activate()
+        except:
+            print('unable to delete preexisting JMSModule ' + jmsModule)
+            dumpStack()
+            undo('true', 'y')
+            cancelEdit('y')
+    else:
+        print 'JMSModule ' + jmsModule + ' does not exist, I will not delete it'
+
+</pre><br />
+<br />
+make sure you check for the existence of the MBean BEFORE you do the edit()... otherwise you will get an exception

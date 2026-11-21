@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Naming conventions for Oracle DDL"
+date: 2011-03-08T18:15:00.004+01:00
+permalink: /2011/03/naming-conventions-for-oracle-ddl.html
+blogger_id: "8798947130337929511"
+tags: ["DDL"]
+---
+Every application should have a 3 letter SYNONYM. eg:<br />
+<br />
+application ORDERPROCESSING has synonym <b>ODP</b><br />
+<br />
+<br />
+Every table should have a 3 letter SYNONYM<br />
+eg:<br />
+table EMPLOYEE has synonym <b>EMP</b><br />
+<br />
+<br />
+A technical PK ID should be called <b>EMP_ID</b><br />
+<br />
+and it should be declared PK as follows:<br />
+CONSTRAINT <b>ODP_EMP_PK</b> PRIMARY KEY (EMP_ID)  ENABLE<br />
+<br />
+that is: {$applicationSynonym}_{$tableSynonym}_PK<br />
+<br />
+<br />
+<br />
+all the VARCHAR2 columns should be declared with the "CHAR" size:<br />
+VARCHAR2(30 CHAR)<br />
+<br />
+all the TIME information should be represented as TIMESTAMP(6)<br />
+<br />
+The foreign keys go like this:<br />
+<br />
+alter table EMPLOYEE add constraint <br />
+<b>ODP_EMP_LAN_FK</b> <br />
+FOREIGN KEY (<b>LAN_ID</b>) <br />
+REFERENCES LANGUAGE(LAN_ID);<br />
+<br />
+where LANGUAGE is the FK table and LAN its synonym.<br />
+<br />
+and always explicitly create the index associated to the FK<br />
+CREATE INDEX <b>ODP_EMP_LAN_FK_I</b> ON EMPLOYEE(LAN_ID); <br />
+<br />
+Unique constraints UK should be declared this way, and can be attached to an index:<br />
+<br />
+CONSTRAINT <br />
+<b>ODP_EMP_UK</b> <br />
+UNIQUE (EMP_CODE, EMP_LAN) <br />
+USING INDEX <br />
+(<br />
+create unique index <br />
+ODP_EMP_UK_I <br />
+on EMPLOYEE(EMP_CODE, EMP_LAN)<br />
+)

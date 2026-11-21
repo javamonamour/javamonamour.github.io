@@ -1,0 +1,35 @@
+---
+layout: post
+title: "Singleton Timer in WebLogic"
+date: 2016-05-08T13:54:00.000+02:00
+permalink: /2016/05/singleton-timer-in-weblogic.html
+blogger_id: "4158794255209269151"
+tags: ["cluster", "scheduler", "timer"]
+---
+If you have a JEE EJB Timer in a Cluster, maybe you want only 1 instance to be active. In this case you should implement a Cluster Aware Singleton Component :
+<br/>
+
+<a href="https://blogs.oracle.com/muraliveligeti/entry/ejb_timer_ejb">https://blogs.oracle.com/muraliveligeti/entry/ejb_timer_ejb</a>
+
+
+<br/><br/>
+
+- create table WEBLOGIC_TIMERS 
+
+<br/><br/>
+
+configure a Datasource and set it in "cluster-Scheduling":
+<br/>
+<div class="separator" style="clear: both; text-align: center;"><a href="/images/e2f90f0acb6a3e16.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="/images/d461a181f6b814e2.png" /></a></div>
+
+
+<br/><br/>
+
+
+
+<br/><br/>
+
+
+
+
+

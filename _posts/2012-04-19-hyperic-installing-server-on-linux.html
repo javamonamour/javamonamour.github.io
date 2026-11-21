@@ -1,0 +1,54 @@
+---
+layout: post
+title: "Hyperic, installing Server on a Linux machine"
+date: 2012-04-19T16:08:00.003+02:00
+permalink: /2012/04/hyperic-installing-server-on-linux.html
+blogger_id: "4270396217269097639"
+tags: ["hyperic"]
+---
+requires root access if you want to use the internal PostGREs Database:<br />
+<br />
+this script:<br />
+/opt/hyperic/installer/data/hqdb/tune-os.sh<br />
+<br />
+must be run as root.<br />
+<br />
+If you are not root, you can try to fool him by doing<br />
+<br />
+touch /tmp/_hq-was-tuned<br />
+<br />
+and hope your system will be fool enough to believe you... do at your own risk!!!<br />
+<br />
+do<br />
+cd /opt/hyperic/server/server-4.6.5-EE/bin/<br />
+./hq-server.sh start<br />
+cd ../logs/<br />
+less bootstrap.log<br />
+<br />
+I find this :o( :<br />
+<br />
+<i><br />
+2012-04-22 11:50:20,511 ERROR [main] [org.apache.tools.ant.UnknownElement@135] Task "dbupgrade" finished with error.<br />
+/opt/hyperic/server/server-4.6.5-EE/data/db-upgrade.xml:43: DBUpgrader: sql error: org.postgresql.util.PSQLException: Connection refused. Check that the hostname and port are correct and that the postmaster is accepting TCP/IP connections.<br />
+at org.hyperic.tools.ant.dbupgrade.DBUpgrader.execute(DBUpgrader.java:244)<br />
+at org.apache.tools.ant.UnknownElement.execute(UnknownElement.java:288)<br />
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+<br />
+</i><br />
+<br />
+<br />
+In fact I do<br />
+<br />
+cd /opt/hyperic/installer/bin<br />
+./db-start.sh<br />
+<br />
+and I find<br />
+<br />
+./db-start.sh: line 7: cd: hqdb: No such file or directory<br />
+./db-start.sh: line 16: /opt/hyperic/installer/bin/pg_ctl: No such file or directory<br />
+<br />
+:o(<br />
+<br />
+<br />
+<br />
+Otherwise you must configure the Server to use an external db, <a href="http://support.hyperic.com/display/DOC/Set+Up+Oracle#SetUpOracle-CreateanOracleinstance">such as Oracle</a>

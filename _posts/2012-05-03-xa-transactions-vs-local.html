@@ -1,0 +1,30 @@
+---
+layout: post
+title: "xa transactions vs local"
+date: 2012-05-03T07:15:00.000+02:00
+permalink: /2012/05/xa-transactions-vs-local.html
+blogger_id: "3987622336871865073"
+tags: ["transactions", "xa"]
+---
+Reblogging an excellent explanation by Mike:<br />
+<br />
+<a href="http://www.theserverside.com/discussions/thread.tss?thread_id=21385">http://www.theserverside.com/discussions/thread.tss?thread_id=21385</a><br />
+<br />
+<br />
+<i>An XA transaction, in the most general terms, is a "global transaction" that may span multiple resources. A non-XA transaction always involves just one resource.<br />
+<br />
+An XA transaction involves a coordinating transaction manager, with one or more databases (or other resources, like JMS) all involved in a single global transaction. Non-XA transactions have no transaction coordinator, and a single resource is doing all its transaction work itself (this is sometimes called local transactions).<br />
+<br />
+XA transactions come from the X/Open group specification on distributed, global transactions. JTA includes the X/Open XA spec, in modified form.<br />
+<br />
+Most stuff in the world is non-XA - a Servlet or EJB or plain old JDBC in a Java application talking to a single database. XA gets involved when you want to work with multiple resources - 2 or more databases, a database and a JMS connection, all of those plus maybe a JCA resource - all in a single transaction. In this scenario, you'll have an app server like Websphere or Weblogic or JBoss acting as the Transaction Manager, and your various resources (Oracle, Sybase, IBM MQ JMS, SAP, whatever) acting as transaction resources. Your code can then update/delete/publish/whatever across the many resources. When you say "commit", the results are commited across all of the resources. When you say "rollback", _everything_ is rolled back across all resources.<br />
+<br />
+The Transaction Manager coordinates all of this through a protocol called Two Phase Commit (2PC). This protocol also has to be supported by the individual resources.<br />
+<br />
+In terms of datasources, an XA datasource is a data source that can participate in an XA global transaction. A non-XA datasource generally can't participate in a global transaction (sort of - some people implement what's called a "last participant" optimization that can let you do this for exactly one non-XA item).<br />
+<br />
+For more details - see the JTA pages on java.sun.com. Look at the XAResource and Xid interfaces in JTA. See the X/Open XA Distributed Transaction specification. Do a google source on "Java JTA XA transaction".<br />
+<br />
+    -Mike <br />
+<br />
+</i>

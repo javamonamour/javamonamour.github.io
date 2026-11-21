@@ -1,0 +1,59 @@
+---
+layout: post
+title: "Transaction Timeout in JBoss"
+date: 2011-03-16T13:00:00.002+01:00
+permalink: /2011/03/transaction-timeout-in-jboss.html
+blogger_id: "5053551423652269693"
+tags: ["jbosstm"]
+---
+as explained <a href="http://community.jboss.org/wiki/transactiontimeout">here</a> (it doesn't go in too much detail though...)<br />
+<br />
+in conf/jboss-service.xml you will find either:<br />
+<br />
+mbean code="org.jboss.tm.TransactionManagerService"<br />
+attribute name="TransactionTimeout" 300<br />
+<br />
+<br />
+or<br />
+mbean code="com.arjuna.ats.jbossatx.jta.TransactionManagerService"<br />
+attribute name="TransactionTimeout" 300<br />
+<br />
+(JBoss can be configured with either TM)<br />
+<br />
+otherwise you can annotate your EJB method with<br />
+<br />
+org.jboss.annotation.ejb.TransactionTimeout<br />
+(value is in SECONDS I suppose)<br />
+<br />
+but apparently this annotation works only with the jboss TM<br />
+<br />
+<a href="http://community.jboss.org/thread/147020">http://community.jboss.org/thread/147020</a><br />
+<br />
+<br />
+<a href="http://stackoverflow.com/questions/2184844/jboss-transaction-timeout-setting">Here</a> the also complain about this.<br />
+<br />
+<br />
+Anyway you can still grab the transaction and set timeout in your code...ONLY IF YOU DO BMT!<br />
+<br />
+don't use <i>EntityManager.getTransaction()</i>, this is a <i>EntityTransaction</i> and will not expose you the UserTransaction timeout... <br />
+<br />
+you have the <i>SessionContext</i> (=EJBContext) injected this way:<br />
+<br />
+<i>@Resource<br />
+private SessionContext sctx;<br />
+...<br />
+<br />
+sctx.getUserTransaction().setTransactionTimeout(1500);<br />
+<br />
+</i><br />
+if you do this on a CMT, you get this:<br />
+<br />
+java.lang.IllegalStateException: Container bla: it is illegal to inject UserTransaction into a CMT bean<br />
+at org.jboss.ejb3.BaseSessionContext.getUserTransaction(BaseSessionContext.java:248)<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+/:o{=

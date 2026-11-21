@@ -1,0 +1,68 @@
+---
+layout: post
+title: "Adam Bien The Great, and how to monitor health of a Docker Container"
+date: 2017-10-06T02:48:00.000+02:00
+permalink: /2017/10/adam-bien-great-and-how-to-monitor.html
+blogger_id: "6969453116839503130"
+tags: ["docker"]
+---
+<iframe width="854" height="480" src="https://www.youtube.com/embed/_CVewEfVQAo" frameborder="0" allowfullscreen></iframe><br />
+<br />
+<br />
+<br />
+git clone https://github.com/AdamBien/airhacks.git<br />
+<br />
+git clone https://github.com/AdamBien/docklands.git<br />
+<br />
+docker build -t airhacks/payara-ping .<br />
+<br />
+<pre>
+Sending build context to Docker daemon  14.85kB
+Step 1/5 : FROM airhacks/payara
+latest: Pulling from airhacks/payara
+785fe1d06b2d: Pull complete 
+b6ea41613b27: Pull complete 
+164939690f71: Pull complete 
+5cd0a8d28e0b: Pull complete 
+1fa1008aa8f7: Pull complete 
+4fe8b3142e9d: Pull complete 
+Digest: sha256:f550a096b325f467155a462069bddd54f8d365fdb285271b9b2fdbfec4464018
+Status: Downloaded newer image for airhacks/payara:latest
+ ---> d2d4659c3fbb
+Step 2/5 : MAINTAINER Adam Bien, adam-bien.com
+ ---> Running in 36c695b80088
+ ---> 8d417d79b693
+Removing intermediate container 36c695b80088
+Step 3/5 : COPY ping.war ${DEPLOYMENT_DIR}
+ ---> 3b2a6278d76e
+Step 4/5 : ENV WAR ping.war
+ ---> Running in fa4484344c05
+ ---> 14d72ab44a73
+Removing intermediate container fa4484344c05
+Step 5/5 : HEALTHCHECK --interval=15s CMD curl --fail http://localhost:8080/ping/resources/pings/echo/+ || exit 1
+ ---> Running in 26f9dd4b7d01
+ ---> d97945495493
+Removing intermediate container 26f9dd4b7d01
+Successfully built d97945495493
+Successfully tagged airhacks/payara-ping:latest
+
+
+
+
+
+
+</pre><br />
+What does a "docker build -t bla"  do? <a href="https://docs.docker.com/engine/reference/commandline/build/#options">https://docs.docker.com/engine/reference/commandline/build/#options</a> "This will build like the previous example, but it will then tag the resulting image. "<br />
+<br />
+<br />
+https://hub.docker.com/r/airhacks/payara-ping/<br />
+<br />
+docker inspect payara-ping<br />
+<br />
+docker exec -it payara-ping /bin/bash<br />
+<br />
+<br />
+cd ../domains/domain1/autodeploy/<br />
+<br />
+<br />
+

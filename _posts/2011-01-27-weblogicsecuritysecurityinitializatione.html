@@ -1,0 +1,53 @@
+---
+layout: post
+title: "weblogic.security.SecurityInitializationException: Authentication denied: Boot identity not valid"
+date: 2011-01-27T13:14:00.000+01:00
+permalink: /2011/01/weblogicsecuritysecurityinitializatione.html
+blogger_id: "6785288894008513865"
+tags: ["boot.properties"]
+blogger_comments:
+  - author: "jacks"
+    date: 2011-05-29
+    html: "Hi go to your domain\\server\\Adminserver then delete all the folder except security and log folder. Edit the boot.properties which is inside security folder with weblogic username and password. when you start it will encrypt the given data."
+---
+in reality, not necessarily the username/passowrd in the boot.properties are wrong..... it could either be that the MS cannot connect to the Admin to verify the identity, or that the MS own LDAP files are corrupted or obsolete. Removing the LDAP files of the MS can help.<br />
+<br />
+this is the complete message:<br />
+<br />
+&lt;Jan 27, 2011 10:30:03 AM GMT&gt; &lt;Critical&gt; &lt;WebLogicServer&gt; &lt;BEA-000386&gt; &lt;Server subsystem failed. Reason: weblogic.security.SecurityInitializationException: Authentication denied: Boot identity not valid; The user name and/or password from the boot identity file (boot.properties) is not valid. The boot identity may have been changed since the boot identity file was created. Please edit and update the boot identity file with the proper values of username and password. The first time the updated boot identity file is used to start the server, these new values are encrypted.<br />
+weblogic.security.SecurityInitializationException: Authentication denied: Boot identity not valid; The user name and/or password from the boot identity file (boot.properties) is not valid. The boot identity may have been changed since the boot identity file was created. Please edit and update the boot identity file with the proper values of username and password. The first time the updated boot identity file is used to start the server, these new values are encrypted.<br />
+at weblogic.security.service.CommonSecurityServiceManagerDelegateImpl.doBootAuthorization(CommonSecurityServiceManagerDelegateImpl.java:959)<br />
+at weblogic.security.service.CommonSecurityServiceManagerDelegateImpl.initialize(CommonSecurityServiceManagerDelegateImpl.java:1050)<br />
+at weblogic.security.service.SecurityServiceManager.initialize(SecurityServiceManager.java:873)<br />
+at weblogic.security.SecurityService.start(SecurityService.java:141)<br />
+at weblogic.t3.srvr.SubsystemRequest.run(SubsystemRequest.java:64)<br />
+Truncated. see log file for complete stacktrace<br />
+Caused By: javax.security.auth.login.FailedLoginException: [Security:090303]Authentication Failed: User weblogic weblogic.security.providers.authentication.LDAPAtnDelegateException: [Security:090295]caught unexpected exception<br />
+at weblogic.security.providers.authentication.LDAPAtnLoginModuleImpl.login(LDAPAtnLoginModuleImpl.java:251)<br />
+at com.bea.common.security.internal.service.LoginModuleWrapper$1.run(LoginModuleWrapper.java:110)<br />
+at java.security.AccessController.doPrivileged(AccessController.java:251)<br />
+at com.bea.common.security.internal.service.LoginModuleWrapper.login(LoginModuleWrapper.java:106)<br />
+at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)<br />
+Truncated. see log file for complete stacktrace<br />
+&gt; <br />
+&lt;Jan 27, 2011 10:30:03 AM GMT&gt; &lt;Notice&gt; &lt;WebLogicServer&gt; &lt;BEA-000365&gt; &lt;Server state changed to FAILED&gt; <br />
+&lt;Jan 27, 2011 10:30:03 AM GMT&gt; &lt;Error&gt; &lt;WebLogicServer&gt; &lt;BEA-000383&gt; &lt;A critical service failed. The server will shut itself down&gt;
+
+
+
+<br/><br/>
+
+
+As found elsewhere, the recipe is:
+<br/><br/>
+Follow the following steps:<br/>
+1: remove the boot.properties file completely from the managed server directory.<br/>
+2: remove the ManagedServerDir/data/ldap directory completely.<br/>
+3: Always keep backup of files before removing it.<br/>
+4: Now try to start the server from the command prompt and provide the username/password used to login to the Admin Console.
+
+<br/><br/>
+
+Remember also - if you use nodemanager - to change the encrypted password in ./servers/myserver/data/nodemanager/boot.properties
+<br/><br/>
+

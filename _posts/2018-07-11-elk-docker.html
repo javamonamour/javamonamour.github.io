@@ -1,0 +1,67 @@
+---
+layout: post
+title: "ELK docker"
+date: 2018-07-11T23:35:00.002+02:00
+permalink: /2018/07/elk-docker.html
+blogger_id: "6027583348314508500"
+tags: ["docker", "elasticsearch", "elk", "kibana", "logstash"]
+---
+http://elk-docker.readthedocs.io/<br />
+<br />
+you have to adjust permanently the max_map_count parameter:<br />
+<br />
+sysctl -w vm.max_map_count=262144<br />
+<br />
+(sysctl - configure kernel parameters at runtime)<br />
+<br />
+ls /proc/sys/vm  to get list of available parameters<br />
+<br />
+sudo vi /etc/sysctl.conf<br />
+vm.max_map_count=262144<br />
+<br />
+try starting the container like this:<br />
+<br />
+sudo docker run -p 5601:5601 -p 9200:9200 -p 5044:5044 -it --name elk sebp/elk<br />
+<br />
+if it fails with this error:<br />
+<br />
+waiting for Elasticsearch to be up (30/30)<br />
+Couln't start Elasticsearch. Exiting.<br />
+<br />
+try allowing more time:<br />
+<br />
+sudo docker run -e ES_CONNECT_RETRY=300 -p 5601:5601 -p 9200:9200 -p 5044:5044 -it --name elk sebp/elk<br />
+<br />
+(see <a href="https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file">https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file</a>  )<br />
+<br />
+then <br />
+<br />
+<a href="http://127.0.0.1:5601/app/kibana">http://127.0.0.1:5601/app/kibana</a>  KIBANA  (you have to wait 1 minute for Kibana to come up)<br />
+<br />
+<a href="http://127.0.0.1:9200/">http://127.0.0.1:9200/</a>  Elasticsearch JSON<br />
+<br />
+to create dummy entry:<br />
+<br />
+docker exec -it elk /bin/bash<br />
+/opt/logstash/bin/logstash --path.data /tmp/logstash/data -e 'input { stdin { } } output { elasticsearch { hosts => ["localhost"] } }'<br />
+this is a dummy entry<br />
+this is a dummy entry2<br />
+CTRL-C<br />
+<br />
+<br />
+Kibana logs : less /var/log/kibana/kibana5.log<br />
+Elasticsearch logs : less /var/log/elasticsearch/elasticsearch.log<br />
+Logstash logs: less /var/log/logstash/logstash-plain.log<br />
+<br />
+tail -f /var/log/elasticsearch/elasticsearch.log /var/log/logstash/logstash-plain.log /var/log/kibana/kibana5.log<br />
+<br />
+<br />
+<br />
+docker network create -d bridge elknet<br />
+<br />
+<br />
+good practical presentation of ELK:<br />
+<br />
+<iframe width="800" height="600" src="https://www.youtube.com/embed/ksTTlXNLick" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe><br />
+<br />
+

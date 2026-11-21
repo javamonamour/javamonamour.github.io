@@ -1,0 +1,16 @@
+---
+layout: post
+title: "detached entity passed to persist"
+date: 2011-03-02T18:40:00.000+01:00
+permalink: /2011/03/detached-entity-passed-to-persist.html
+blogger_id: "4760519445185418475"
+tags: ["JPA"]
+---
+well, if your entity has already an ID, and you invoke<br />
+entitymanager.persist(bla)<br />
+<br />
+Hibernate will think you are trying to persist an already existing entity, and he will react giving this stern and cryptic error message.<br />
+<br />
+Just set the ID to null and you will smile again.<br />
+<br />
+When mapping an entity to another, NEVER map the ID!

@@ -1,0 +1,47 @@
+---
+layout: post
+title: "WLST development with PyDev in Eclipse"
+date: 2010-05-29T20:54:00.000+02:00
+permalink: /2010/05/wlst-development-with-pydev-in-eclipse.html
+blogger_id: "317491255527697307"
+tags: ["pydev", "WLST"]
+blogger_comments:
+  - author: "Simon"
+    date: 2010-05-31
+    html: "You don&#39;t need to download python 2.6 Thats CPython (written in C) and has nothing to do with Jython/WLST.<br /><br />Instead of pydev, try jydt.<br /><br />http://www.redrobinsoftware.net/jydt/<br /><br />WLST also includes ANT tasks for easy integration into eclipse.<br /><br />The interactive interpreter can be spawned at any time by calling org.python.util.InteractiveInterpreter"
+---
+My understanding is that Satya Ghattu has not been working on WLST  for quite some time (cmiiaw)<br />
+and his blog doesn't say much on this  topic.<br />
+I really wish Oracle put some development effort in WLST as honestly it's a bit primitive and lacks many features that for a Java Developer are essential (debugging, remote debugging, a proper IDE etc).<br />
+When people say "just use notepad" it makes me FURIOUS, it's like saying a surgeon "just use a Swiss Army knife instead of a bisturi"....<br />
+<br />
+So in an attempt to make my WLST life easier...<br />
+<br />
+download Python 2.6.5 here (is Python required? I don't think so)<br />
+<a href="http://www.python.org/ftp/python/2.6.5/python-2.6.5.msi">http://www.python.org/ftp/python/2.6.5/python-2.6.5.msi</a><br />
+<br />
+and Jython here (Is Jython required? NO! You already have C:\bea11\oracle_common\util\jython\jython.jar !)<br />
+<a href="http://sourceforge.net/projects/jython/files/jython/jython_installer-2.5.1.jar">http://sourceforge.net/projects/jython/files/jython/jython_installer-2.5.1.jar</a><br />
+<br />
+<br />
+install into Eclipse the PyDev plugin by following their instructions:<br />
+<br />
+<a href="http://pydev.org/manual_101_install.html">http://pydev.org/manual_101_install.html</a><br />
+<br />
+DO NOT declare the system variable PYTHONPATH as c:\Python26, since this will be done automatically by the Intepreter configuration wizard<br />
+<br />
+Configure the Intepreter (Window/Preferences/Pydev/Interpreter Jython...)<br />
+specifying C:\Python26\python.exe for Python<br />
+<a href="http://pydev.org/manual_101_interpreter.html">http://pydev.org/manual_101_interpreter.html</a><br />
+<br />
+and accept the path proposed by default.<br />
+<br />
+Configure the Jython Intepreter (WLST IS Jython, so.... who cares about the Python interpreter!)<br />
+and specify<br />
+C:\bea11\oracle_common\util\jython\jython.jar<br />
+<br />
+and accept the defaults.<br />
+<br />
+mmm it doesn't seem to recognize the WLST commands, like connect and edit... there must be some trick...<br />
+<br />
+ok I give up for lack of time and itnerest, if anyone knows the answer please write a comment.

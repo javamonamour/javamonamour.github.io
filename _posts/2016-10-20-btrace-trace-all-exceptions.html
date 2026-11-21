@@ -1,0 +1,116 @@
+---
+layout: post
+title: "Btrace: trace all Exceptions"
+date: 2016-10-20T10:15:00.000+02:00
+permalink: /2016/10/btrace-trace-all-exceptions.html
+blogger_id: "2799170819559360257"
+tags: ["btrace"]
+---
+see <a href="/2013/06/getting-started-with-btrace.html">/2013/06/getting-started-with-btrace.html</a> for an introduction to btrace. This product is WONDERFUL.
+
+<br/>
+
+In this new case, I want to trace where a given exception (java.io.FileNotFoundException) is thrown. I use the OnThrow.java example on the btrace site, slightly customized:
+
+<br/>
+<pre class="brush: java">
+
+import static com.sun.btrace.BTraceUtils.*;
+
+/**
+ * This example demonstrates printing stack trace
+ * of an exception and thread local variables. This
+ * trace script prints exception stack trace whenever
+ * java.lang.Throwable's constructor returns. This way
+ * you can trace all exceptions that may be caught and
+ * &quot;eaten&quot; silently by the traced program. Note that the
+ * assumption is that the exceptions are thrown soon after
+ * creation [like in &quot;throw new FooException();&quot;] rather
+ * that be stored and thrown later.
+ */
+@BTrace public class OnThrow {    
+    // store current exception in a thread local
+    // variable (@TLS annotation). Note that we can't
+    // store it in a global variable!
+    @TLS static Throwable currentException;
+
+    // introduce probe into every constructor of java.lang.Throwable
+    // class and store &quot;this&quot; in the thread local variable.
+    @OnMethod(
+        clazz=&quot;java.io.FileNotFoundException&quot;,
+        method=&quot;&lt;init&gt;&quot;
+    )
+    public static void onthrow(@Self Throwable self) {
+        currentException = self;
+    }
+
+    @OnMethod(
+        clazz=&quot;java.io.FileNotFoundException&quot;,
+        method=&quot;&lt;init&gt;&quot;
+    )
+    public static void onthrow1(@Self Throwable self, String s) {
+        currentException = self;
+    }
+
+    @OnMethod(
+        clazz=&quot;java.io.FileNotFoundException&quot;,
+        method=&quot;&lt;init&gt;&quot;
+    )
+    public static void onthrow1(@Self Throwable self, String s, Throwable cause) {
+        currentException = self;
+    }
+
+    @OnMethod(
+        clazz=&quot;java.io.FileNotFoundException&quot;,
+        method=&quot;&lt;init&gt;&quot;
+    )
+    public static void onthrow2(@Self Throwable self, Throwable cause) {
+        currentException = self;
+    }
+
+    // when any constructor of java.lang.Throwable returns
+    // print the currentException's stack trace.
+    @OnMethod(
+        clazz=&quot;java.io.FileNotFoundException&quot;,
+        method=&quot;&lt;init&gt;&quot;,
+        location=@Location(Kind.RETURN)
+    )
+    public static void onthrowreturn() {
+        if (currentException != null) {
+            Threads.jstack(currentException);
+            println(&quot;=====================&quot;);
+            currentException = null;
+        }
+    }
+}
+
+</pre>
+
+<br/>
+<br/>
+Since we have Java6, I had to download an old version of btrace (1.2.1 or so). I could not run the btracec and btrace scripts for shell compatibility issues, so I run directly the java commands:
+<br/>
+<pre>
+/opt/pippo/java/jdk160_115/bin/java -cp /tmp/btrace-bin/build/btrace-client.jar:/opt//pippo/java/jdk160_115/lib/tools.jar com.sun.btrace.compiler.Compiler $*
+/tmp/btrace-bin/bin/OnThrow
+</pre>
+<br/>
+<pre>
+
+/opt/pippo/java/jdk160_115/bin/java -Dcom.sun.btrace.probeDescPath=. -Dcom.sun.btrace.dumpClasses=false -Dcom.sun.btrace.debug=false -Dcom.sun.btrace.unsafe=false -cp /tmp/btrace-bin/build/btrace-client.jar:/opt/pippo/java/jdk160_115/lib/tools.jar:/usr/share/lib/java/dtrace.jar com.sun.btrace.client.Main 23262 /tmp/btrace-bin/bin/OnThrow.class 
+</pre>
+<br/>
+
+
+with 23262  being the PID of my WebLogic application server.
+
+<br/><br/>
+
+Btrace is the best thing after ice cream in life.
+<br/><br/>
+
+
+
+
+
+

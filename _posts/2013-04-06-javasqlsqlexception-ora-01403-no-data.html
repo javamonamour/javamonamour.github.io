@@ -1,0 +1,38 @@
+---
+layout: post
+title: " java.sql.SQLException: ORA-01403: no data found"
+date: 2013-04-06T22:28:00.001+02:00
+permalink: /2013/04/javasqlsqlexception-ora-01403-no-data.html
+blogger_id: "3230079980327448982"
+tags: ["PL-SQL"]
+---
+In a PL/SQL function, I do:
+<br/>
+<pre>
+SELECT ISRETRIABLE INTO isRetriable
+from ACME_ERRORCODES
+where ERRORCODE=theERRORCODE;
+</pre>
+
+
+<br/>
+If theERRORCODE is not found, I get a "ORA-01403: no data found".<br/>
+In reality, in this case I would like to return 0.
+<br/>
+
+This can be achieved by adding the clause:
+<br/>
+
+<pre>
+
+  EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+      return 0;
+  WHEN OTHERS THEN
+    RAISE;
+</pre>
+
+<br/>
+
+
+

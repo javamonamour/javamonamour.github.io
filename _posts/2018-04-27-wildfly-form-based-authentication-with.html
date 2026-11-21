@@ -1,0 +1,208 @@
+---
+layout: post
+title: "Wildfly FORM based authentication with DB realm"
+date: 2018-04-27T08:07:00.000+02:00
+permalink: /2018/04/wildfly-form-based-authentication-with.html
+blogger_id: "7747877399709093139"
+tags: ["security", "wildfly"]
+---
+https://dzone.com/articles/jdbc-realm-and-form-based-0<br />
+<br />
+https://github.com/myfear/SimpleJDBCRealmWildFly<br />
+<br />
+<br />
+CREATE TABLE Users(username VARCHAR(255) PRIMARY KEY, passwd VARCHAR(255));<br />
+<br />
+CREATE TABLE UserRoles(username VARCHAR(255), role VARCHAR(32));<br />
+<br />
+the jar file  is in:<br />
+D:\apps\wildfly12\modules\system\layers\base\org\picketbox\main\picketbox-5.0.2.Final.jar <br />
+<br />
+<br />
+java -classpath modules/system/layers/base/org/picketbox/main/picketbox-5.0.2.Final.jar org.jboss.security.Base64Encoder admin SHA-256<br />
+[jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=]<br />
+<br />
+INSERT INTO users (username, passwd) VALUES ('myfear', 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=');<br />
+INSERT INTO userroles (username, role) VALUES ('myfear', 'ADMIN');<br />
+<br />
+<pre class="brush. xml">&lt;security-domain name=&quot;secureDomain&quot; cache-type=&quot;default&quot;&gt;
+                    &lt;authentication&gt;
+                        &lt;login-module code=&quot;Database&quot; flag=&quot;required&quot;&gt;
+                            &lt;module-option name=&quot;dsJndiName&quot; value=&quot;java:jboss/datasources/UserDS&quot;/&gt;
+                            &lt;module-option name=&quot;principalsQuery&quot; value=&quot;select passwd from Users where username=?&quot;/&gt;
+                            &lt;module-option name=&quot;rolesQuery&quot; value=&quot;select role, 'Roles' from UserRoles where username=?&quot;/&gt;
+                            &lt;module-option name=&quot;hashAlgorithm&quot; value=&quot;SHA-256&quot;/&gt;
+                            &lt;module-option name=&quot;hashEncoding&quot; value=&quot;base64&quot;/&gt;
+                        &lt;/login-module&gt;
+                    &lt;/authentication&gt;
+                &lt;/security-domain&gt;
+
+</pre><br />
+<br />
+<br />
+To debug security, make sure you enable logging:<br />
+<br />
+<pre class="brush: xml">
+    &lt;profile&gt;
+        &lt;subsystem xmlns=&quot;urn:jboss:domain:logging:4.0&quot;&gt;
+            &lt;console-handler name=&quot;CONSOLE&quot;&gt;
+                &lt;level name=&quot;ALL&quot;/&gt;
+                &lt;formatter&gt;
+                    &lt;named-formatter name=&quot;COLOR-PATTERN&quot;/&gt;
+                &lt;/formatter&gt;
+            &lt;/console-handler&gt;
+   
+   
+   
+           &lt;logger category=&quot;org.jboss.security&quot; use-parent-handlers=&quot;false&quot;&gt;
+                &lt;level name=&quot;TRACE&quot;/&gt;
+                &lt;handlers&gt;
+                    &lt;handler name=&quot;CONSOLE&quot;/&gt;
+                &lt;/handlers&gt;
+            &lt;/logger&gt;
+
+</pre><br />
+<br />
+you get this:<br />
+<br />
+<br />
+08:37:33,815 TRACE [org.jboss.security] (MSC service thread 1-7) PBOX00227: removeAppConfig(jboss-web-policy)<br />
+08:37:33,815 TRACE [org.jboss.security] (MSC service thread 1-6) PBOX00227: removeAppConfig(jaspitest)<br />
+08:37:33,815 TRACE [org.jboss.security] (MSC service thread 1-8) PBOX00337: nextState for action getPolicyConfiguration: open<br />
+08:37:33,818 TRACE [org.jboss.security] (MSC service thread 1-8) PBOX00315: delete, contextID: simpeljdbcrealm-1.0-SNAPSHOT.war<br />
+08:37:33,818 TRACE [org.jboss.security] (MSC service thread 1-8) PBOX00337: nextState for action delete: deleted<br />
+08:37:33,819 TRACE [org.jboss.security] (MSC service thread 1-1) PBOX00337: nextState for action getPolicyConfiguration: open<br />
+08:37:33,822 TRACE [org.jboss.security] (MSC service thread 1-1) PBOX00315: delete, contextID: simpeljdbcrealm-1.0-SNAPSHOT.war<br />
+08:37:33,823 TRACE [org.jboss.security] (MSC service thread 1-1) PBOX00337: nextState for action delete: deleted<br />
+08:37:33,824 TRACE [org.jboss.security] (MSC service thread 1-5) PBOX00337: nextState for action getPolicyConfiguration: open<br />
+08:37:33,825 TRACE [org.jboss.security] (MSC service thread 1-5) PBOX00315: delete, contextID: kitchensink.war<br />
+08:37:33,825 TRACE [org.jboss.security] (MSC service thread 1-5) PBOX00337: nextState for action delete: deleted<br />
+08:37:33,827 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action getPolicyConfiguration: open<br />
+08:37:33,827 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00315: delete, contextID: kitchensink.war<br />
+08:37:33,828 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action delete: deleted<br />
+08:37:33,842 TRACE [org.jboss.security] (ServerService Thread Pool -- 74) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:37:33,851 TRACE [org.jboss.security] (ServerService Thread Pool -- 76) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:37:33,856 TRACE [org.jboss.security] (ServerService Thread Pool -- 76) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:37:33,867 TRACE [org.jboss.security] (MSC service thread 1-2) PBOX00227: removeAppConfig(secureDomain)<br />
+08:37:33,869 TRACE [org.jboss.security] (ServerService Thread Pool -- 74) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:37:33,908 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00227: removeAppConfig(other)<br />
+08:37:33,908 TRACE [org.jboss.security] (MSC service thread 1-1) PBOX00227: removeAppConfig(jboss-ejb-policy)<br />
+08:37:47,423 TRACE [org.jboss.security] (MSC service thread 1-6) PBOX00226: addAppConfig(dummy), AuthInfo: AppConfigurationEntry[]:<br />
+08:37:52,909 TRACE [org.jboss.security] (MSC service thread 1-4) PBOX00337: nextState for action getPolicyConfiguration: open<br />
+08:37:52,909 DEBUG [org.jboss.security] (MSC service thread 1-4) PBOX00307: Constructing JBossPolicyConfiguration with contextID simpeljdbcrealm-1.0-SNAPSHOT.war<br />
+08:37:52,911 TRACE [org.jboss.security] (MSC service thread 1-4) PBOX00337: nextState for action getPolicyConfiguration: open<br />
+08:37:52,918 TRACE [org.jboss.security] (MSC service thread 1-4) PBOX00314: commit, contextID: simpeljdbcrealm-1.0-SNAPSHOT.war<br />
+08:37:52,918 TRACE [org.jboss.security] (MSC service thread 1-4) PBOX00337: nextState for action commit: inService<br />
+08:37:53,703 TRACE [org.jboss.security] (MSC service thread 1-1) PBOX00337: nextState for action getPolicyConfiguration: open<br />
+08:37:53,703 DEBUG [org.jboss.security] (MSC service thread 1-1) PBOX00307: Constructing JBossPolicyConfiguration with contextID kitchensink.war<br />
+08:37:53,712 TRACE [org.jboss.security] (MSC service thread 1-1) PBOX00337: nextState for action getPolicyConfiguration: open<br />
+08:37:53,714 TRACE [org.jboss.security] (MSC service thread 1-1) PBOX00310: addToRole, permission: [MemberRegistration,role-ref=**]<br />
+08:37:53,716 TRACE [org.jboss.security] (MSC service thread 1-1) PBOX00337: nextState for action addToRole: open<br />
+08:37:53,717 TRACE [org.jboss.security] (MSC service thread 1-1) PBOX00314: commit, contextID: kitchensink.war<br />
+08:37:53,721 TRACE [org.jboss.security] (MSC service thread 1-1) PBOX00337: nextState for action commit: inService<br />
+08:37:58,946 TRACE [org.jboss.security] (ServerService Thread Pool -- 66) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:37:58,952 TRACE [org.jboss.security] (ServerService Thread Pool -- 66) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:37:58,960 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action getPolicyConfiguration: open<br />
+08:37:58,968 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00310: addToRole, permission: ("javax.security.jacc.WebResourcePermission" "/faces/admin/*")<br />
+08:37:58,968 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToRole: open<br />
+08:37:58,969 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebUserDataPermission" "/faces/admin/*")<br />
+08:37:58,976 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:58,980 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebUserDataPermission" "/faces/admin/*")<br />
+08:37:58,980 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:58,986 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebResourcePermission" "/faces/users/*")<br />
+08:37:58,986 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:58,987 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebResourcePermission" "/faces/users/*")<br />
+08:37:58,989 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:58,992 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebResourcePermission" "/faces/users/*")<br />
+08:37:58,997 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:58,998 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebResourcePermission" "/faces/users/*")<br />
+08:37:58,999 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:58,999 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebUserDataPermission" "/faces/users/*")<br />
+08:37:58,999 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:59,000 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebUserDataPermission" "/faces/users/*")<br />
+08:37:59,000 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:59,004 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebResourcePermission" "/:/faces/admin/*:/faces/users/*")<br />
+08:37:59,010 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:59,011 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebResourcePermission" "/:/faces/admin/*:/faces/users/*")<br />
+08:37:59,014 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:59,014 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebResourcePermission" "/:/faces/admin/*:/faces/users/*")<br />
+08:37:59,020 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:59,021 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebUserDataPermission" "/:/faces/admin/*:/faces/users/*")<br />
+08:37:59,021 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:59,022 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebUserDataPermission" "/:/faces/admin/*:/faces/users/*")<br />
+08:37:59,022 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:37:59,027 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00310: addToRole, permission: ("javax.security.jacc.WebRoleRefPermission" "Faces Servlet" "**")<br />
+08:37:59,033 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToRole: open<br />
+08:37:59,034 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00310: addToRole, permission: ("javax.security.jacc.WebRoleRefPermission" "Faces Servlet" "ADMIN")<br />
+08:37:59,036 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToRole: open<br />
+08:37:59,046 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00310: addToRole, permission: ("javax.security.jacc.WebRoleRefPermission" "" "**")<br />
+08:37:59,047 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToRole: open<br />
+08:37:59,049 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00310: addToRole, permission: ("javax.security.jacc.WebRoleRefPermission" "" "ADMIN")<br />
+08:37:59,051 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToRole: open<br />
+08:37:59,056 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00314: commit, contextID: simpeljdbcrealm-1.0-SNAPSHOT.war<br />
+08:37:59,058 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action commit: inService<br />
+08:38:00,471 TRACE [org.jboss.security] (ServerService Thread Pool -- 64) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:38:01,078 TRACE [org.jboss.security] (ServerService Thread Pool -- 64) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:38:01,081 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action getPolicyConfiguration: open<br />
+08:38:01,086 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebResourcePermission" "/")<br />
+08:38:01,087 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:38:01,088 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebResourcePermission" "/")<br />
+08:38:01,088 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:38:01,089 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebResourcePermission" "/")<br />
+08:38:01,092 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:38:01,097 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebUserDataPermission" "/")<br />
+08:38:01,098 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:38:01,098 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00312: addToUncheckedPolicy, permission: ("javax.security.jacc.WebUserDataPermission" "/")<br />
+08:38:01,100 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToUncheckedPolicy: open<br />
+08:38:01,101 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00310: addToRole, permission: ("javax.security.jacc.WebRoleRefPermission" "Faces Servlet" "**")<br />
+08:38:01,103 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToRole: open<br />
+08:38:01,104 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00310: addToRole, permission: ("javax.security.jacc.WebRoleRefPermission" "org.jboss.as.quickstarts.kitchensink.rest.JaxRsActivator" "**")<br />
+08:38:01,110 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToRole: open<br />
+08:38:01,111 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00310: addToRole, permission: ("javax.security.jacc.WebRoleRefPermission" "" "**")<br />
+08:38:01,113 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action addToRole: open<br />
+08:38:01,119 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00314: commit, contextID: kitchensink.war<br />
+08:38:01,120 TRACE [org.jboss.security] (MSC service thread 1-3) PBOX00337: nextState for action commit: inService<br />
+08:39:10,718 TRACE [org.jboss.security] (default task-1) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:39:10,964 TRACE [org.jboss.security] (default task-1) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:39:13,160 TRACE [org.jboss.security] (default task-1) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:39:13,260 TRACE [org.jboss.security] (default task-2) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:39:13,261 TRACE [org.jboss.security] (default task-3) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:39:13,284 TRACE [org.jboss.security] (default task-4) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:39:13,331 TRACE [org.jboss.security] (default task-1) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:39:13,375 TRACE [org.jboss.security] (default task-5) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:39:17,603 TRACE [org.jboss.security] (default task-5) PBOX00200: Begin isValid, principal: org.wildfly.extension.undertow.security.AccountImpl$AccountPrincipal@c0d93cdc, cache entry: null<br />
+08:39:17,605 TRACE [org.jboss.security] (default task-5) PBOX00209: defaultLogin, principal: org.wildfly.extension.undertow.security.AccountImpl$AccountPrincipal@c0d93cdc<br />
+08:39:17,616 TRACE [org.jboss.security] (default task-5) PBOX00221: Begin getAppConfigurationEntry(secureDomain), size: 6<br />
+08:39:17,618 TRACE [org.jboss.security] (default task-5) PBOX00224: End getAppConfigurationEntry(secureDomain), AuthInfo: AppConfigurationEntry[]:<br />
+LoginModule Class: org.jboss.security.auth.spi.DatabaseServerLoginModule<br />
+08:39:17,629 TRACE [org.jboss.security] (default task-5) PBOX00236: Begin initialize method<br />
+08:39:17,636 DEBUG [org.jboss.security] (default task-5) PBOX00281: Password hashing activated, algorithm: SHA-256, encoding: base64, charset: null, callback: null, storeCallBack: null<br />
+08:39:17,638 TRACE [org.jboss.security] (default task-5) PBOX00262: Module options [dsJndiName: java:jboss/datasources/DOICHDS, principalsQuery: select passwd from Users where username=?, rolesQuery: select role, 'Roles' from UserRoles where username=?, suspendResume: true]<br />
+08:39:17,648 TRACE [org.jboss.security] (default task-5) PBOX00240: Begin login method<br />
+08:39:17,670 TRACE [org.jboss.security] (default task-5) PBOX00263: Executing query select passwd from Users where username=? with username myfear<br />
+08:39:17,724 TRACE [org.jboss.security] (default task-5) PBOX00241: End login method, isValid: true<br />
+08:39:17,725 TRACE [org.jboss.security] (default task-5) PBOX00242: Begin commit method, overall result: true<br />
+08:39:17,728 TRACE [org.jboss.security] (default task-5) PBOX00263: Executing query select role, 'Roles' from UserRoles where username=? with username myfear<br />
+08:39:17,735 TRACE [org.jboss.security] (default task-5) PBOX00263: Executing query select role, 'Roles' from UserRoles where username=? with username myfear<br />
+08:39:17,776 TRACE [org.jboss.security] (default task-5) PBOX00210: defaultLogin, login context: javax.security.auth.login.LoginContext@59f877d, subject: Subject(745690868).principals=org.jboss.security.SimplePrincipal@1437571176(myfear)org.jboss.security.SimpleGroup@1704402987(Roles(members:ADMIN))org.jboss.security.SimpleGroup@1704402987(CallerPrincipal(members:myfear))<br />
+08:39:17,777 TRACE [org.jboss.security] (default task-5) PBOX00207: updateCache, input subject: Subject(745690868).principals=org.jboss.security.SimplePrincipal@1437571176(myfear)org.jboss.security.SimpleGroup@1704402987(Roles(members:ADMIN))org.jboss.security.SimpleGroup@1704402987(CallerPrincipal(members:myfear)), cached subject: Subject(882771324).principals=org.jboss.security.SimplePrincipal@1437571176(myfear)org.jboss.security.SimpleGroup@1704402987(Roles(members:ADMIN))org.jboss.security.SimpleGroup@1704402987(CallerPrincipal(members:myfear))<br />
+08:39:17,780 TRACE [org.jboss.security] (default task-5) PBOX00208: Inserted cache info: org.jboss.security.authentication.JBossCachedAuthenticationManager$DomainInfo@4b02ffcf<br />
+08:39:17,785 TRACE [org.jboss.security] (default task-5) PBOX00201: End isValid, result = true<br />
+08:39:17,798 TRACE [org.jboss.security] (default task-5) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:39:17,814 TRACE [org.jboss.security] (default task-5) PBOX00200: Begin isValid, principal: org.wildfly.extension.undertow.security.AccountImpl$AccountPrincipal@c0d93cdc, cache entry: org.jboss.security.authentication.JBossCachedAuthenticationManager$DomainInfo@4b02ffcf<br />
+08:39:17,814 TRACE [org.jboss.security] (default task-5) PBOX00204: Begin validateCache, domainInfo: org.jboss.security.authentication.JBossCachedAuthenticationManager$DomainInfo@4b02ffcf, credential class: class [C<br />
+08:39:17,815 TRACE [org.jboss.security] (default task-5) PBOX00205: End validateCache, result = true<br />
+08:39:17,817 TRACE [org.jboss.security] (default task-5) PBOX00201: End isValid, result = true<br />
+08:39:17,832 TRACE [org.jboss.security] (default task-5) PBOX00354: Setting security roles ThreadLocal: null<br />
+08:39:17,906 TRACE [org.jboss.security] (default task-5) PBOX00200: Begin isValid, principal: org.wildfly.extension.undertow.security.AccountImpl$AccountPrincipal@c0d93cdc, cache entry: org.jboss.security.authentication.JBossCachedAuthenticationManager$DomainInfo@4b02ffcf<br />
+08:39:17,906 TRACE [org.jboss.security] (default task-5) PBOX00204: Begin validateCache, domainInfo: org.jboss.security.authentication.JBossCachedAuthenticationManager$DomainInfo@4b02ffcf, credential class: class [C<br />
+08:39:17,910 TRACE [org.jboss.security] (default task-5) PBOX00205: End validateCache, result = true<br />
+08:39:17,916 TRACE [org.jboss.security] (default task-5) PBOX00201: End isValid, result = true<br />
+08:39:17,920 TRACE [org.jboss.security] (default task-5) PBOX00354: Setting security roles ThreadLocal: null<br />
+<br />
+<br />
+<br />
+   <br />
+<br />
+<br />
+

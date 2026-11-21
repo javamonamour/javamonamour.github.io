@@ -1,0 +1,17 @@
+---
+layout: post
+title: "Windows Explorer cannot find files"
+date: 2010-07-02T10:11:00.001+02:00
+permalink: /2010/07/windows-explorer-cannot-find-files.html
+blogger_id: "7283957285743509452"
+tags: ["windows"]
+---
+http://support.microsoft.com/default.aspx?scid=kb;en-us;309173<br />
+<br />
+<br />
+<i>set the FilterFilesWithUnknownExtensions DWORD value to 1 in the following registry key:</i><br />
+<i>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\ContentIndex</i><br />
+<br />
+Remember also to enable the "find hidden files" advanced option.<br />
+<br />
+This is one of those jaw-dropping things ... why on earth would you NOT want to find files with unregistered extension...

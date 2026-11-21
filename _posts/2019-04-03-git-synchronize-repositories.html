@@ -1,0 +1,83 @@
+---
+layout: post
+title: "git synchronize repositories"
+date: 2019-04-03T21:30:00.001+02:00
+permalink: /2019/04/git-synchronize-repositories.html
+blogger_id: "3409728108197607028"
+tags: ["git"]
+---
+It happens that an external Git repository has to be mirrored internally in a corporate git repository. This cloning and mirroring should include branches, tags, commit history etc. and be one-way (internal changes are lot upon synchronization)<br />
+<br />
+Luckily you don't have to write special scripts, all is provided by git:<br />
+<br />
+<br />
+<a href="https://help.github.com/en/articles/duplicating-a-repository">https://help.github.com/en/articles/duplicating-a-repository</a><br />
+<br />
+<br />
+<br />
+Let's make an experiment<br />
+<br />
+in github I create a "gitclonesource" and a "gitclonedestination" empty repositories<br />
+<br />
+mkdir gitclonetests<br />
+cd gitclonetests<br />
+<br />
+<br />
+#let's prepare the source<br />
+mkdir gitclonesource<br />
+cd gitclonesource<br />
+git init<br />
+echo "ciao" > README.md<br />
+git add README.md<br />
+git commit -m "first commit"<br />
+git remote add origin https://github.com/vernetto/gitclonesource.git<br />
+git push -u origin master<br />
+<br />
+#create branch<br />
+git checkout -b mybranch<br />
+echo "hello" >> mybranch.txt<br />
+git add mybranch.txt<br />
+git commit -am "added mybranch.txt"<br />
+git push --set-upstream origin mybranch<br />
+<br />
+#create tag<br />
+git checkout master<br />
+git tag -a v1.4 -m "my version 1.4"<br />
+git push --tags<br />
+<br />
+<br />
+<br />
+#now clone source and push to destination with all branches and tags<br />
+cd ..<br />
+#this will create a folder gitclonesource.git<br />
+git clone --bare https://github.com/vernetto/gitclonesource.git<br />
+#when you cd, you will see a message BARE:master if using Git bash<br />
+cd gitclonesource.git/ <br />
+git push --mirror  https://github.com/vernetto/gitclonedestination<br />
+<br />
+<pre>Counting objects: 7, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (7/7), 600 bytes | 200.00 KiB/s, done.
+Total 7 (delta 0), reused 0 (delta 0)
+To https://github.com/vernetto/gitclonedestination
+ * [new branch]      master -> master
+ * [new branch]      mybranch -> mybranch
+ * [new tag]         v1.4 -> v1.4
+
+</pre><br />
+<br />
+<br />
+and, lo and behold, in the gitclonedestination I can find my branch and the tag! All cloned in one go!<br />
+<br />
+at this point you can cleanup the gitclonedestination.git:<br />
+<br />
+cd ..<br />
+rm -rf gitclonedestination.git<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
