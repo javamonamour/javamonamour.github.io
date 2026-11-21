@@ -5,21 +5,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 {% seo %}
 {% feed_meta %}
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css?v=3">
 </head>
 <body>
-<header class="site-header">
-  <a class="site-title" href="/">{{ site.title }}</a>
-  <nav><a href="/archive.html">Archive</a> <a href="/labels.html">Labels</a> <a href="/feeds/posts/default.xml">RSS</a></nav>
+<header class="hero">
+  <div class="hero-inner">
+    <a class="site-title" href="/">Java <span>mon amour</span></a>
+    <p class="tagline">Java, WebLogic, OSB, Docker, Kubernetes &amp; friends &mdash; {{ site.posts.size }} posts since 2009</p>
+    <form class="search" action="/search.html" method="get" role="search">
+      <input type="search" name="q" placeholder="Search the blog…" aria-label="Search the blog">
+      <button type="submit" aria-label="Search">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </button>
+    </form>
+  </div>
+  <nav class="topnav">
+    <a href="/">Home</a><a href="/archive.html">Archive</a><a href="/labels.html">Labels</a><a href="/search.html">Search</a><a href="/feeds/posts/default.xml">RSS</a>
+  </nav>
 </header>
 <div class="wrap">
   <main>{{ content }}</main>
   <aside>
-    <h3>Top labels</h3>
-    <p class="cloud">{% assign top = site.data.labels | sort: "count" | reverse %}{% for l in top limit: 40 %}<a href="/search/label/{{ l.slug }}">{{ l.name }}</a> <small>({{ l.count }})</small> {% endfor %}</p>
-    <p><a href="/labels.html">All {{ site.data.labels.size }} labels &raquo;</a></p>
+    <div class="card about">
+      <img src="/assets/cup.svg" alt="" width="90" height="90">
+      <p>Notes, tips and war stories from many years of Java middleware, DevOps and cloud. Have fun!</p>
+    </div>
+    <div class="card">
+      <h3>Top labels</h3>
+      <p class="cloud">{% assign top = site.data.labels | sort: "count" | reverse %}{% for l in top limit: 40 %}<a href="/search/label/{{ l.slug }}">{{ l.name }}<small>{{ l.count }}</small></a>{% endfor %}</p>
+      <p><a href="/labels.html">All {{ site.data.labels.size }} labels &raquo;</a></p>
+    </div>
   </aside>
 </div>
-<footer>&copy; Pierre Vernetto &middot; {{ site.posts.size }} posts</footer>
+<footer>Made with <span class="heart">&#9829;</span> and lots of &#9749; &middot; &copy; Pierre Vernetto</footer>
 </body>
 </html>
