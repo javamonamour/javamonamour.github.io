@@ -1,6 +1,6 @@
 title: Java mon amour
 description: "Pierre's blog: Java, WebLogic, OSB, Docker, Kubernetes and more"
-url: https://www.javamonamour.org
+url: https://javamonamour.github.io
 baseurl: ""
 timezone: Europe/Rome
 permalink: /:year/:month/:title.html

@@ -1,6 +1,6 @@
 # Java mon amour
 
-Blog https://www.javamonamour.org, migrated from Blogger to GitHub Pages (Jekyll).
+Blog https://javamonamour.github.io (formerly www.javamonamour.org), migrated from Blogger to GitHub Pages (Jekyll).
 
 - `_tools/export_blogger.py` downloads posts, pages and comments from the Blogger feed into `_export/`
 - `_tools/convert.py` generates `_posts/`, `search/label/`, `_data/labels.json` and `images/`
